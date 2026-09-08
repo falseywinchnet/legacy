@@ -16,7 +16,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def driver(target, record_bytes=24, argument_offsets=(0, 4, 8, 12, 16, 20), result_offset=20, result_bytes=4):
+def driver(target, record_bytes=24, argument_offsets=(0, 4, 8, 12, 16, 20), result_offset=20, result_bytes=4, setup_offsets=(), capture_offsets=()):
     origin = 0x8c4
     code = bytearray()
     labels = {}
@@ -40,10 +40,20 @@ def driver(target, record_bytes=24, argument_offsets=(0, 4, 8, 12, 16, 20), resu
     jump('done')
     emit('3d'); u16(record_bytes)
     emit('74 03'); jump('error')
+    for record_offset, address in setup_offsets:
+        emit('a1'); u16(0x1a00 + record_offset)
+        emit('a3'); u16(address)
+        emit('a1'); u16(0x1a00 + record_offset + 2)
+        emit('a3'); u16(address + 2)
     for offset in argument_offsets:
         emit('68'); u16(0x1a00 + offset)
     emit('0e e8')
     u16(target - (origin + len(code) + 2))
+    for address, record_offset in capture_offsets:
+        emit('a1'); u16(address)
+        emit('a3'); u16(0x1a00 + record_offset)
+        emit('a1'); u16(address + 2)
+        emit('a3'); u16(0x1a00 + record_offset + 2)
     emit('bb 01 00 ba'); u16(0x1a00 + result_offset)
     emit('b9'); u16(result_bytes)
     emit('b4 40 cd 21 73 03'); jump('error')
@@ -58,14 +68,14 @@ def driver(target, record_bytes=24, argument_offsets=(0, 4, 8, 12, 16, 20), resu
 
 
 def probe(name, records, *, record_bytes=24, argument_offsets=(0, 4, 8, 12, 16, 20),
-          result_offset=20, result_bytes=4, coprocessor=False):
+          result_offset=20, result_bytes=4, coprocessor=False, setup_offsets=(), capture_offsets=()):
     original = (ROOT / 'originals/runup2/RUNUP2.EXE').read_bytes()
     metadata = json.loads((ROOT / 'recovery/runup-1991-debug/build-metadata.json').read_text())
     if hashlib.sha256(original).hexdigest() != metadata['sha256']:
         raise ValueError('Unexpected executable')
     proc = next(r for r in metadata['modules']['4']['symbol_records']
                 if r.get('kind') == '0x1' and r.get('name') == name)
-    patch = driver(proc['code_offset'], record_bytes, argument_offsets, result_offset, result_bytes)
+    patch = driver(proc['code_offset'], record_bytes, argument_offsets, result_offset, result_bytes, setup_offsets, capture_offsets)
     exe = bytearray(original)
     header = struct.unpack_from('<H', exe, 8)[0] * 16
     exe[header + 0x8c4:header + 0x8c4 + len(patch)] = patch

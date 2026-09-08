@@ -82,4 +82,52 @@ std::int32_t log_log(std::int32_t x1, std::int32_t x2,
     return static_cast<std::int32_t>(std::pow(10.0, exponent));
 }
 
+float breaking_depth(float deep_water_height, float period, float slope_cotangent) {
+    // DBPLOT, 0000:31e8, November 1991 coefficients and high-steepness caps.
+    const float pi = static_cast<float>(4.0 * std::atan(1.0));
+    const float wavelength = static_cast<float>(static_cast<double>(period) * period * 16.1f / pi);
+    const float steepness = static_cast<float>(static_cast<double>(deep_water_height) / wavelength);
+    if (steepness < 0.002f || steepness > 0.07f) {
+        throw std::domain_error("RUNUP wave steepness is outside 0.002 to 0.07");
+    }
+    const float x = static_cast<float>(std::log10(static_cast<double>(steepness)));
+    const float slope = static_cast<float>(1.0 / slope_cotangent);
+    constexpr float slope30 = 1.0f / 30.0f;
+    struct Line { float x1, difference_y, difference_x, y1; };
+    // The 1991 compiler folded these constant differences to binary32.
+    constexpr Line mild{-1.2218f, -0.7842f - (-0.382f), -1.2218f - (-2.5229f), -0.7842f};
+    constexpr Line middle{-1.2596f, -0.7986f - (-0.3511f), -1.2596f - (-2.6990f), -0.7986f};
+    constexpr Line steep{-1.3468f, -0.8262f - (-0.3978f), -1.3468f - (-2.6990f), -0.8262f};
+    constexpr Line steepest{-1.6021f, -0.9838f - (-0.4783f), -1.6021f - (-2.6990f), -0.9838f};
+    const auto ordinate = [x](Line line) {
+        return static_cast<float>((static_cast<double>(x) - line.x1) * line.difference_y /
+                                   line.difference_x + line.y1);
+    };
+    const auto blend = [slope](float x1, float x2, float upper, float lower) {
+        return static_cast<float>((static_cast<double>(upper) - lower) *
+                                   (static_cast<double>(slope) - x1) /
+                                   (static_cast<double>(x1) - x2) + upper);
+    };
+    float y;
+    if (slope <= 0.02f) {
+        y = steepness > 0.06f ? mild.y1 : ordinate(mild);
+    } else if (slope <= slope30) {
+        const float upper = ordinate(mild);
+        const float lower = steepness > 0.055f ? middle.y1 : ordinate(middle);
+        y = blend(0.02f, slope30, upper, lower);
+    } else if (slope <= 0.05f) {
+        const float upper = ordinate(middle);
+        const float lower = steepness > 0.045f ? steep.y1 : ordinate(steep);
+        y = blend(slope30, 0.05f, upper, lower);
+    } else if (slope <= 0.1f) {
+        const float upper = ordinate(steep);
+        const float lower = steepness > 0.025f ? steepest.y1 : ordinate(steepest);
+        y = blend(0.05f, 0.1f, upper, lower);
+    } else {
+        y = steepness > 0.025f ? steepest.y1 : ordinate(steepest);
+    }
+    const float ratio = static_cast<float>(std::pow(10.0, std::pow(10.0, static_cast<double>(y))));
+    return static_cast<float>(static_cast<double>(deep_water_height) * ratio);
+}
+
 }  // namespace legacy::runup

@@ -28,7 +28,7 @@ python3 tools/probe_runup_routines.py LOGLOG 10 100 100 1000 50
 
 The original result is **499**, despite the idealized mathematical interpolation giving 500. Stored single-precision logarithms and truncation to an integer account for this case. Replacing the routine with a mathematically neater formula would change the program.
 
-The initial C++ implementations of LOOK, RINT, SWLINT, LOGLIN, and LOGLOG are in `src/runup/math.cpp`. Four interpolation routines have 1,000 raw original-reference cases each, including interval endpoints and zero-width linear intervals. These are useful differential checks, not a claim of complete numerical equivalence or full program completion. LOOK has been translated from the disassembly; its reference checks are still to be added.
+The initial C++ implementations of LOOK, RINT, SWLINT, LOGLIN, and LOGLOG are in `src/runup/math.cpp`. The five lookup/interpolation routines and DBPLOT each have 1,000 raw original-reference cases, including interval endpoints and zero-width linear intervals. These are useful differential checks, not a claim of complete numerical equivalence or full program completion. LOOK is compared against original lower/upper index and flag results.
 
 C++ arithmetic uses explicit single-precision storage points, wider expression intermediates, and disabled floating-point contraction. Further routine and whole-program checks will determine where the original software floating-point implementation needs closer reproduction.
 
@@ -41,3 +41,7 @@ C++ arithmetic uses explicit single-precision storage points, wider expression i
 - Recover CHAMP's p-code logic and file/database formats, then implement its project, transect, erosion, wave-setup, plotting, and export workflows.
 - Complete the Dear ImGui application, bundled examples, file dialogs, useful errors, and installable packages so ordinary users need no development tools or knowledge of this recovery work.
 - Verify the completed applications on macOS, Linux, and Windows and publish the corresponding artifacts.
+
+The first four-routine build passed GitHub Actions on macOS, Linux, and Windows at commit `600adb2`. The subsequent LOOK and DBPLOT additions pass locally; their cross-platform results must be checked after the next push.
+
+Confirmed changes between the printed listing and executable are recorded in [RUNUP historical differences](RUNUP_DIFFERENCES.md).

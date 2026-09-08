@@ -16,4 +16,5 @@ with tempfile.TemporaryDirectory() as tmp:
         failures = [i // 4 for i in range(0, min(len(actual), len(expected)), 4)
                     if actual[i:i + 4] != expected[i:i + 4]]
         raise SystemExit(f'{routine}: byte mismatch at records {failures[:20]}, lengths {len(actual)}/{len(expected)}')
-print(f'{routine}: {len(expected) // 4} original routine results match bit for bit')
+record_size = 12 if routine == 'LOOK' else 4
+print(f'{routine}: {len(expected) // record_size} original routine results match bit for bit')

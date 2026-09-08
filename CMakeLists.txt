@@ -20,7 +20,7 @@ endif()
 
 if(BUILD_TESTING)
   find_package(Python3 COMPONENTS Interpreter REQUIRED)
-  foreach(routine RINT SWLINT LOGLIN LOGLOG)
+  foreach(routine LOOK RINT SWLINT LOGLIN LOGLOG DBPLOT)
     add_test(NAME runup_${routine}_original
       COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_routine_reference.py
         $<TARGET_FILE:runup_math_probe> ${routine}

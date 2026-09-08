@@ -12,6 +12,8 @@ struct Bracket {
     bool outside;
 };
 
+float breaking_depth(float deep_water_height, float period, float slope_cotangent);
+
 Bracket bracket(std::span<const std::int32_t> table, std::int32_t value);
 std::int32_t linear_integer(std::int32_t x1, std::int32_t x2,
                             std::int32_t y1, std::int32_t y2, std::int32_t x);

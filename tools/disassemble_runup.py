@@ -8,6 +8,7 @@ import argparse
 from pathlib import Path
 import json
 import struct
+import re
 from capstone import Cs, CS_ARCH_X86, CS_MODE_16
 
 
@@ -44,7 +45,9 @@ def disassemble(exe_path, metadata_path, output):
             symbols[s['segment'] * 16 + s['offset']] = s['name']
         for s in module.get('symbol_records', []):
             if s.get('kind') == '0x5':
-                data.setdefault(s['data_offset'], []).append(s['name'])
+                ds_offset = (s['segment'] - 0xdca) * 16 + s['data_offset']
+                if module.get('library_index') == 0:
+                    data.setdefault(ds_offset, set()).add(s['name'])
     engine = Cs(CS_ARCH_X86, CS_MODE_16)
     output.mkdir(parents=True, exist_ok=True)
     for module in list(meta['modules'].values())[:4]:
@@ -80,6 +83,13 @@ def disassemble(exe_path, metadata_path, output):
                         extra = symbols.get(module['segment'] * 16 + int(ins.op_str, 0), '')
                     except ValueError:
                         pass
+                for match in re.finditer(r'\[(0x[0-9a-f]+)\]', ins.op_str):
+                    offset = int(match.group(1), 16)
+                    if offset in data:
+                        extra += ('; ' if extra else '') + '/'.join(sorted(data[offset]))
+                    elif 0x15b0 <= offset < 0x16f0:
+                        value = struct.unpack_from('<f', exe, header + 0xdca * 16 + offset)[0]
+                        extra += ('; ' if extra else '') + f'constant f32={value!r}'
                 lines.append(f'{ins.address:04x}  {original_bytes.hex():24s} {ins.mnemonic:8s} {ins.op_str}' + (f' ; {extra}' if extra else ''))
             (output / (proc['name'] + '.asm')).write_text('\n'.join(lines) + '\n')
     return output

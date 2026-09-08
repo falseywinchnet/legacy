@@ -5,3 +5,6 @@
 /recovery/catalogs/
 /recovery/runup-1991-debug/subsections/
 /build/
+
+__pycache__/
+*.pyc
