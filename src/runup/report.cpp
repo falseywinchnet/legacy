@@ -1,20 +1,19 @@
 // SPDX-License-Identifier: MIT
 #include "legacy/runup.hpp"
 #include <cmath>
-#include <iomanip>
-#include <locale>
-#include <sstream>
 
 namespace legacy::runup {
 namespace {
 std::string real(float x, int width, int decimals) {
     if (!std::isfinite(x)) return std::string(width, '*');
-    std::ostringstream stream;
-    stream.imbue(std::locale::classic());
-    stream << std::fixed << std::setprecision(decimals) << x;
-    auto value = stream.str();
-    if (value.starts_with("0.")) value.erase(0, 1);
-    else if (value.starts_with("-0.")) value.erase(1, 1);
+    if (std::abs(x) > std::pow(10.0, width)) return std::string(width, '*');
+    const auto divisor = static_cast<long long>(std::pow(10.0, decimals));
+    const auto rounded = static_cast<long long>(std::round(std::abs(static_cast<double>(x)) * divisor));
+    const auto whole = rounded / divisor;
+    auto fraction = std::to_string(rounded % divisor);
+    fraction.insert(0, decimals - fraction.size(), '0');
+    std::string value = (x < 0 && rounded != 0 ? "-" : "") +
+        (whole == 0 ? std::string() : std::to_string(whole)) + "." + fraction;
     if (value.size() > static_cast<std::size_t>(width)) return std::string(width, '*');
     return std::string(width - value.size(), ' ') + value;
 }
@@ -81,6 +80,16 @@ std::string legacy_report(const std::vector<ProfileResult>& profiles) {
         line(report, "           (FT.)          (FT.)          (SEC.)                                              (FT.)            (FT.)"); line(report);
         for (const auto& row : result.waves) {
             if (row.fatal_error) return report;
+            if (row.steepness_error) {
+                line(report);
+                std::string output;
+                put(output, 9, real(row.wave.water_level, 6, 2));
+                put(output, 24, real(row.wave.height, 6, 2));
+                put(output, 39, real(row.wave.period, 6, 2));
+                put(output, 72, row.steepness_error < 0 ? "**** H0/L0 LESS THAN 0.002 ****" : "**** H0/L0 GREATER THAN 0.07 ****");
+                line(report, output);
+                continue;
+            }
             if (!row.error.empty()) { line(report, " " + row.error); continue; }
             line(report);
             std::string output;
@@ -89,9 +98,19 @@ std::string legacy_report(const std::vector<ProfileResult>& profiles) {
             put(output, 39, real(row.wave.period, 6, 2));
             put(output, 63, integer(row.breaking_slope, 2));
             put(output, 80, integer(row.runup_slope, 2));
-            put(output, 92, real(row.runup, 6, 2));
-            put(output, 109, real(row.breaker_depth, 6, 2));
+            if (row.converged) {
+                put(output, 92, real(row.runup, 6, 2));
+                put(output, 109, real(row.breaker_depth, 6, 2));
+            } else {
+                put(output, 88, real(row.previous_runup, 6, 2));
+                put(output, 95, real(row.runup, 6, 2));
+                put(output, 109, real(row.breaker_depth, 6, 2));
+            }
             line(report, output);
+            if (!row.converged) {
+                line(report, std::string(91, ' ') + "SOLUTION DOES NOT CONVERGE");
+                line(report);
+            }
             if (row.may_reflect)
                 line(report, " COMPOSITE SLOPE USED BUT WAVE MAY REFLECT, NOT BREAK");
             if (row.toe_limited)

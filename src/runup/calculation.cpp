@@ -218,6 +218,7 @@ void Calculation::run() {
             converged = true;
             return;
         }
+        previous_result = R;
         R = R1;
     }
     iterations = 10;

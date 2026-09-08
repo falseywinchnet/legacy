@@ -34,7 +34,7 @@ FEMA's 2024 RUNUP reconstruction is a separate version, not the source baseline 
 
 Keep the original algorithms, numerical tables, data formats, and CHAMP workflow legible as they become C++. Favor explicit data and straightforward functions, with a small interface around the actual calculations. Preserve original files separately from translations and identify unresolved historical differences instead of silently choosing a replacement.
 
-The current RUNUP calculation includes profile geometry, breaking depth, curve selection, roughness, scaling, structure/composite branches, and convergence. Five complete reports (44 wave calculations) and 6,209 raw numerical routine records match the original reference on the development Mac. Additional branch and error-path comparisons are in progress; these fixtures do not establish universal equivalence. See [implementation evidence and remaining work](docs/IMPLEMENTATION.md).
+The current RUNUP calculation includes profile geometry, breaking depth, curve selection, roughness, scaling, structure/composite branches, convergence, and historical reports and diagnostics. The expanded reference suite contains 113 complete report files and 6,209 raw numerical routine records. The first 26 reports passed on macOS, Linux, and Windows; the expanded suite passes on the development Mac and is checked by the next CI run. These fixtures do not establish universal equivalence. See [implementation evidence and remaining work](docs/IMPLEMENTATION.md).
 
 For the current development build:
 

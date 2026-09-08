@@ -93,11 +93,12 @@ float breaking_depth(float deep_water_height, float period, float slope_cotangen
     const float pi = static_cast<float>(4.0 * std::atan(1.0));
     const float wavelength = static_cast<float>(static_cast<double>(period) * period * 16.1f / pi);
     const float steepness = static_cast<float>(static_cast<double>(deep_water_height) / wavelength);
-    if (steepness < 0.002f || steepness > 0.07f) {
-        throw std::domain_error("RUNUP wave steepness is outside 0.002 to 0.07");
-    }
+    if (steepness < 0.002f) throw WaveSteepnessError(true);
+    if (steepness > 0.07f) throw WaveSteepnessError(false);
     const float x = static_cast<float>(std::log10(static_cast<double>(steepness)));
     const float slope = static_cast<float>(1.0 / slope_cotangent);
+    if (!std::isfinite(slope))
+        throw std::domain_error("RUNUP slope division cannot be represented by the original REAL*4 runtime");
     constexpr float slope30 = 1.0f / 30.0f;
     struct Line { float x1, difference_y, difference_x, y1; };
     // The 1991 compiler folded these constant differences to binary32.

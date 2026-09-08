@@ -2,6 +2,7 @@
 #include "legacy/runup.hpp"
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
 
 int main(int argc, char** argv) {
     if (argc != 3) {

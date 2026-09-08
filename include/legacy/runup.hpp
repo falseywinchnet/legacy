@@ -27,6 +27,7 @@ struct WaveResult {
     int breaking_slope{}, runup_slope{}, iterations{};
     bool converged{}, table_exceeded{}, may_reflect{}, toe_limited{};
     bool fatal_error{};
+    int steepness_error{}; // -1 below the model range, +1 above it.
     std::string error;
 };
 struct ProfileResult {

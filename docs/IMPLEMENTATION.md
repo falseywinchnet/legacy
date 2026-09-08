@@ -36,7 +36,7 @@ C++ arithmetic uses explicit single-precision storage points, wider expression i
 
 ## Complete-report milestone
 
-The `runup` executable reads the original fixed-column files and produces original-format reports without an emulator or historical runtime. Its five supplied reference cases contain 44 wave calculations and 17,633 report bytes. All five currently match byte for byte on the development Mac, including fixed-column parsing, missing leading zeroes, NUL bytes in historical headings, carriage returns, and page controls.
+The `runup` executable reads the original fixed-column files and produces original-format reports without an emulator or historical runtime. Its five supplied reference cases contain 44 wave calculations and 17,633 report bytes. These have passed byte-for-byte comparison on macOS, Linux, and Windows. The current expanded suite contains 113 complete reference files, including 80 deterministic varied profiles, structure/approach/berm cases, varying roughness and water levels, nonconvergence, steepness errors, arithmetic stops, a 20-point boundary case, and a five-profile input. Formatting preserves missing leading zeroes, NUL bytes in historical headings, carriage returns, and page controls.
 
 The first published wave also matches captured original intermediate values, including its four convergence iterations, structure and approach geometry, breaking station, effective slope, and final raw binary32 runup. The snapshot probe can stop at input, wave, and curve boundaries, including a selected repeated curve visit, to locate discrepancies before formatting.
 
@@ -44,12 +44,12 @@ The native geometry and curve code is in `src/runup/calculation.cpp` and `src/ru
 
 ## Work still required
 
-- Expand RUNUP comparison beyond the five supplied cases: all structure branches, varying roughness/water levels, nonconvergence, historical errors, boundary profiles, and report diagnostics. Finish unsupported edge behavior exposed by those comparisons.
+- Continue RUNUP boundary review while integrating the desktop application. The current fixtures cover normal results, nonconvergence, reflection notes, model steepness limits, multiple profiles, and observed arithmetic stops. Malformed-input UX must remain clear, and new discrepancies must become reproducible tests.
 - Translate all active WHAFIS 4.0G computational and input/output paths from the recovered source; verify against the original Windows executable, including marsh data and 500-year behavior.
 - Recover CHAMP's p-code logic and file/database formats, then implement its project, transect, erosion, wave-setup, plotting, and export workflows.
 - Complete the Dear ImGui application, bundled examples, file dialogs, useful errors, and installable packages so ordinary users need no development tools or knowledge of this recovery work.
 - Verify the completed applications on macOS, Linux, and Windows and publish the corresponding artifacts.
 
-All six numerical routines passed GitHub Actions on macOS, Linux, and Windows at commit `30c0b1b`. The complete-report additions pass locally; their cross-platform results must be checked after the next push.
+The complete model and first 26 report fixtures passed GitHub Actions on macOS, Linux, and Windows at commit `11df6f3`. The subsequent 80-profile and boundary additions pass locally; their cross-platform results must be checked after the next push. Address, undefined-behavior, and float-to-integer sanitizers passed the first complete model suite; the expanded final suite is rerun before its commit.
 
 Confirmed changes between the printed listing and executable are recorded in [RUNUP historical differences](RUNUP_DIFFERENCES.md).

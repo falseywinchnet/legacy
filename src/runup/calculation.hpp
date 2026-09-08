@@ -12,8 +12,8 @@ using Integer = std::int32_t;
 struct Calculation {
     struct CurveTrace { Integer slope, depth, ratio; float raw_runup, runup_station, runup_elevation; };
     std::vector<CurveTrace> curve_trace;
-    std::array<Integer, 21> DEP{}, DL{};
-    std::array<float, 21> S{}, ROUGH{}, RDL{}, RDEPP{}, HORIZ{}, VERT{}, MWA{}, SA1{};
+    std::array<Integer, 22> DEP{}, DL{};
+    std::array<float, 22> S{}, ROUGH{}, RDL{}, RDEPP{}, HORIZ{}, VERT{}, MWA{}, SA1{};
     Integer NP{}, MAXPTS{};
     float WTL{}, WTB{}, H0{}, T{};
     Integer DS1{}, DTR{}, DLE{}, DS{}, DC{}, II{}, DCS{}, KK{}, LL{}, H0T2{}, RS{};
@@ -22,7 +22,7 @@ struct Calculation {
     float HST{}, MWST{}, HSA{}, RDTR{}, RDSL{}, CS{}, BDLP{}, STS{};
     Integer ending_slope{}, iterations{};
     bool table_exceeded{}, converged{};
-    float result{}, breaker_depth{};
+    float result{}, previous_result{}, breaker_depth{};
     Integer approach_depth{}, wavelength_lower{}, wavelength_upper{}, wavelength_index{};
     float approach_length{};
     bool wavelength_required{};

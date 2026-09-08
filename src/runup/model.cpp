@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 #include "legacy/runup.hpp"
+#include "legacy/runup_math.hpp"
 #include "calculation.hpp"
 #include <algorithm>
+#include <bit>
 #include <cmath>
 #include <istream>
 #include <stdexcept>
@@ -27,7 +29,9 @@ float number(std::string value, int decimals, std::size_t line_number) {
         double x = std::stod(value, &used);
         if (used != value.size() || !std::isfinite(x)) throw std::invalid_argument("number");
         if (value.find('.') == std::string::npos) x /= std::pow(10.0, decimals);
-        return static_cast<float>(x);
+        const auto stored = static_cast<float>(x);
+        if (!std::isfinite(stored)) throw std::invalid_argument("number exceeds REAL*4");
+        return stored;
     } catch (...) {
         throw std::runtime_error("Invalid RUNUP number on line " + std::to_string(line_number) + ": " + value);
     }
@@ -82,8 +86,8 @@ std::vector<Profile> read_input(std::istream& input) {
 }
 
 ProfileResult calculate(const Profile& profile) {
-    if (profile.points.size() < 2 || profile.points.size() > 19)
-        throw std::invalid_argument("RUNUP requires 2 to 19 supplied points plus its landward extension");
+    if (profile.points.size() < 2 || profile.points.size() > 20)
+        throw std::invalid_argument("RUNUP requires 2 to 20 supplied points");
     ProfileResult result;
     result.profile = profile;
     detail::Calculation c;
@@ -105,13 +109,20 @@ ProfileResult calculate(const Profile& profile) {
         if (std::abs(rise) < 0.0001f) rise = 0.0001f;
         c.S[i] = static_cast<float>((static_cast<double>(c.RDL[i + 1]) - c.RDL[i]) / rise);
     }
-    result.slopes.assign(c.S.begin() + 1, c.S.begin() + c.MAXPTS + 1);
     c.DEP[c.NP] = c.DEP[c.MAXPTS] + 10000;
     c.RDEPP[c.NP] = static_cast<float>(static_cast<double>(c.RDEPP[c.MAXPTS]) + 1000.0);
     c.RDL[c.NP] = static_cast<float>((static_cast<double>(c.RDEPP[c.NP]) - c.RDEPP[c.MAXPTS]) *
                                     c.S[c.MAXPTS] / 100.0 + c.RDL[c.MAXPTS]);
     c.DL[c.NP] = static_cast<int>(static_cast<double>(c.DEP[c.NP] - c.DEP[c.MAXPTS]) * c.S[c.MAXPTS] /
                                  100.0 + c.DL[c.MAXPTS]);
+    if (c.MAXPTS == 20) {
+        // The 21st extension point crosses the original COMMON-array boundaries.
+        // Reproduce the defined byte effects without out-of-bounds C++ accesses.
+        c.DL[1] = c.DEP[21];
+        c.BDLP = c.RDEPP[21]; c.MWA[1] = c.RDL[21];
+        c.S[1] = std::bit_cast<float>(c.DL[21]);
+    }
+    result.slopes.assign(c.S.begin() + 1, c.S.begin() + c.MAXPTS + 1);
     float previous_water = 0;
     for (const auto& wave : profile.waves) {
         WaveResult row;
@@ -127,19 +138,23 @@ ProfileResult calculate(const Profile& profile) {
             c.DEP[i] = static_cast<int>(static_cast<double>(c.DEP[i]) - water + previous_water);
             c.RDEPP[i] = static_cast<float>(static_cast<double>(c.RDEPP[i]) - water + previous_water);
         }
+        if (c.MAXPTS == 20) { c.DL[1] = c.DEP[21]; c.BDLP = c.RDEPP[21]; }
         previous_water = water;
         c.WTL = 0; c.CS = 0; c.STS = 0;
         try {
             c.run();
-            row.runup = c.result; row.previous_runup = c.R;
+            row.runup = c.result; row.previous_runup = c.previous_result;
             row.breaker_depth = c.breaker_depth;
             row.breaking_slope = c.II; row.runup_slope = c.ending_slope;
             row.iterations = c.iterations; row.converged = c.converged;
             row.table_exceeded = c.table_exceeded; row.may_reflect = c.CS == 1;
             row.toe_limited = c.STS == 1;
+        } catch (const WaveSteepnessError& error) {
+            row.error = error.what();
+            row.steepness_error = error.too_low ? -1 : 1;
         } catch (const std::exception& error) {
             row.error = error.what();
-            row.fatal_error = row.error != "RUNUP wave steepness is outside 0.002 to 0.07";
+            row.fatal_error = true;
         }
         result.waves.push_back(row);
         if (row.fatal_error) break;

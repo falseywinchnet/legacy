@@ -3,8 +3,16 @@
 
 #include <cstdint>
 #include <span>
+#include <stdexcept>
 
 namespace legacy::runup {
+
+class WaveSteepnessError final : public std::domain_error {
+public:
+    explicit WaveSteepnessError(bool low)
+        : std::domain_error(low ? "RUNUP H0/L0 is less than 0.002" : "RUNUP H0/L0 is greater than 0.07"), too_low(low) {}
+    bool too_low;
+};
 
 struct Bracket {
     std::int32_t lower;  // One-based indices used by the original tables.
