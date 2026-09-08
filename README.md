@@ -34,8 +34,10 @@ FEMA's 2024 RUNUP reconstruction is a separate version, not the source baseline 
 
 Keep the original algorithms, numerical tables, data formats, and CHAMP workflow legible as they become C++. Favor explicit data and straightforward functions, with a small interface around the actual calculations. Preserve original files separately from translations and identify unresolved historical differences instead of silently choosing a replacement.
 
-No C++ port or modern cross-platform build is implemented yet. The first import is recovered source and historical material; the macOS/Linux/Windows build and Dear ImGui interface are the intended destination.
+Implementation is underway. The first C++ numerical routines compile through CMake and Make and are compared against raw results from the original executable. The complete engines, CHAMP workflow, and desktop interface are still being implemented. See [implementation evidence and remaining work](docs/IMPLEMENTATION.md).
+
+For the current development build, run `make test`, or use CMake directly. GitHub Actions builds and compares the C++ routines on macOS, Linux, and Windows.
 
 ## Attribution
 
-Historical material retains the notices and authorship found in its original distributions and manuals. This repository does not assign a new blanket license to recovered third-party files. The small installer extraction utility credits its format reference and includes that reference project's MIT notice.
+**Work: Astra · Sponsor: Rainstar · Foundation: Hashem.** New implementation and project tooling are [MIT licensed](LICENSE). Preserved historical material and third-party components retain their existing notices; see [credits and notices](NOTICE.md).

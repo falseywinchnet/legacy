@@ -1,0 +1,60 @@
+{
+  "emulator": "DOSBox-X 2026.08.31, normal CPU core, fpu=false",
+  "cases": [
+    {
+      "program": "runup",
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "b65b06cbc3f022dd027b31701bf3f2d73dd280251cfb95cb896f9489685b4d14",
+      "output_sha256": "886fd925686b8c3ba4d73aa02501eee69cef574a9b25f91903ff9be0a112d891",
+      "output_bytes": 3357,
+      "floating_point": "original software emulator",
+      "name": "published-sample",
+      "input": "originals/runup2/test.in",
+      "output": "tests/reference/runup/published-sample.out"
+    },
+    {
+      "program": "runup",
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "f0c172fe2acc4d9807bf7e3f54e369a10f3a710d08396b551efb4aa9a3280cf0",
+      "output_sha256": "a4d9cb98e5e924991322744334731bbdad5ac5e3095d8fa9d6ec2f3d5a3d6069",
+      "output_bytes": 3662,
+      "floating_point": "original software emulator",
+      "name": "champ-r1",
+      "input": "originals/champ2/r1.dat",
+      "output": "tests/reference/runup/champ-r1.out"
+    },
+    {
+      "program": "runup",
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "6a42901159c2e874864b8feff4c69c77fbf54400efcae49ad5ec961c1a087aac",
+      "output_sha256": "2a2a7a1f3ecbd3b69ec7305455252f18dd0b08ec82a836c79df6eb6f50073b04",
+      "output_bytes": 3290,
+      "floating_point": "original software emulator",
+      "name": "champ-r2",
+      "input": "originals/champ2/r2.dat",
+      "output": "tests/reference/runup/champ-r2.out"
+    },
+    {
+      "program": "runup",
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "07663077c88a396345be191685a4230e84692945d34a62e7c9be987cfd8ee7c2",
+      "output_sha256": "5d9c6fa29509f274924e4ec2429cb6eac5f1c04239c2977e361cfd2bd1f43cd3",
+      "output_bytes": 3941,
+      "floating_point": "original software emulator",
+      "name": "champ-r3",
+      "input": "originals/champ2/r3.dat",
+      "output": "tests/reference/runup/champ-r3.out"
+    },
+    {
+      "program": "runup",
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "debacb86b3a301329ade4978c2c2830d636f02eebacbf1c47899cefc3b7c2793",
+      "output_sha256": "96f6bb1e113734a161e715ddf5509231f954b404f5602957d75210f3cee80a3c",
+      "output_bytes": 3383,
+      "floating_point": "original software emulator",
+      "name": "champ-r4",
+      "input": "originals/champ2/r4.dat",
+      "output": "tests/reference/runup/champ-r4.out"
+    }
+  ]
+}
