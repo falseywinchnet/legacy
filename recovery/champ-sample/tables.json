@@ -1,0 +1,6897 @@
+{
+  "ADJTRANS": [
+    {
+      "ADJSTATION": 1219.0,
+      "ELEVATION": 6.5,
+      "SOURCE": "Topo Map",
+      "STATION": 1219.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 1302.0,
+      "ELEVATION": 5.0,
+      "SOURCE": "Topo Map",
+      "STATION": 1302.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 1610.0,
+      "ELEVATION": 0.0,
+      "SOURCE": "Topo Map",
+      "STATION": 1610.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": -47.0,
+      "ELEVATION": -3.299999952316284,
+      "SOURCE": "",
+      "STATION": -47.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": -11.0,
+      "ELEVATION": -1.5,
+      "SOURCE": "",
+      "STATION": -11.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 0.0,
+      "ELEVATION": 0.0,
+      "SOURCE": "",
+      "STATION": 0.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 75.0,
+      "ELEVATION": 10.0,
+      "SOURCE": "",
+      "STATION": 75.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 177.0,
+      "ELEVATION": 10.0,
+      "SOURCE": "",
+      "STATION": 177.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 195.0,
+      "ELEVATION": 11.399999618530273,
+      "SOURCE": "",
+      "STATION": 195.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 221.0,
+      "ELEVATION": 13.300000190734863,
+      "SOURCE": "",
+      "STATION": 221.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 225.0,
+      "ELEVATION": 13.600000381469727,
+      "SOURCE": "",
+      "STATION": 225.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 235.0,
+      "ELEVATION": 16.0,
+      "SOURCE": "",
+      "STATION": 235.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 245.0,
+      "ELEVATION": 18.0,
+      "SOURCE": "",
+      "STATION": 245.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 268.0,
+      "ELEVATION": 20.700000762939453,
+      "SOURCE": "",
+      "STATION": 268.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 271.0,
+      "ELEVATION": 19.200000762939453,
+      "SOURCE": "",
+      "STATION": 271.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 276.0,
+      "ELEVATION": 18.0,
+      "SOURCE": "",
+      "STATION": 276.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 280.0,
+      "ELEVATION": 15.5,
+      "SOURCE": "",
+      "STATION": 280.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 290.0,
+      "ELEVATION": 14.300000190734863,
+      "SOURCE": "",
+      "STATION": 290.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 304.0,
+      "ELEVATION": 14.300000190734863,
+      "SOURCE": "",
+      "STATION": 304.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 324.0,
+      "ELEVATION": 14.0,
+      "SOURCE": "",
+      "STATION": 324.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 354.0,
+      "ELEVATION": 14.0,
+      "SOURCE": "",
+      "STATION": 354.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 390.0,
+      "ELEVATION": 15.0,
+      "SOURCE": "",
+      "STATION": 390.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 490.0,
+      "ELEVATION": 10.0,
+      "SOURCE": "",
+      "STATION": 490.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 1200.0,
+      "ELEVATION": 5.0,
+      "SOURCE": "",
+      "STATION": 1200.0,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 1512.9498291015625,
+      "ELEVATION": 3.814345121383667,
+      "SOURCE": "",
+      "STATION": 1512.9498291015625,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 1768.1314697265625,
+      "ELEVATION": 5.6856770515441895,
+      "SOURCE": "",
+      "STATION": 1768.1314697265625,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 2002.0478515625,
+      "ELEVATION": 7.812190532684326,
+      "SOURCE": "",
+      "STATION": 2002.0478515625,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 2184.927978515625,
+      "ELEVATION": 11.554854393005371,
+      "SOURCE": "",
+      "STATION": 2184.927978515625,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 2346.543212890625,
+      "ELEVATION": 12.065217018127441,
+      "SOURCE": "",
+      "STATION": 2346.543212890625,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": 2495.39892578125,
+      "ELEVATION": 13.426186561584473,
+      "SOURCE": "",
+      "STATION": 2495.39892578125,
+      "trans_id": "3"
+    },
+    {
+      "ADJSTATION": -2670.0,
+      "ELEVATION": -34.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -2670.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": -1500.0,
+      "ELEVATION": -22.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -1500.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": -585.0,
+      "ELEVATION": -10.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -585.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": -150.0,
+      "ELEVATION": -4.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -150.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": 0.0,
+      "ELEVATION": 0.0,
+      "SOURCE": "Surveyed",
+      "STATION": 0.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": 185.0,
+      "ELEVATION": 5.0,
+      "SOURCE": "Surveyed",
+      "STATION": 185.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": 250.0,
+      "ELEVATION": 10.0,
+      "SOURCE": "Surveyed",
+      "STATION": 250.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": 300.0,
+      "ELEVATION": 20.0,
+      "SOURCE": "Surveyed",
+      "STATION": 300.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": 350.0,
+      "ELEVATION": 25.0,
+      "SOURCE": "Surveyed",
+      "STATION": 350.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": 400.0,
+      "ELEVATION": 20.0,
+      "SOURCE": "Surveyed",
+      "STATION": 400.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": 650.0,
+      "ELEVATION": 10.0,
+      "SOURCE": "Surveyed",
+      "STATION": 650.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": 700.0,
+      "ELEVATION": 8.0,
+      "SOURCE": "Surveyed",
+      "STATION": 700.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": 3500.0,
+      "ELEVATION": 10.399999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 3500.0,
+      "trans_id": "1"
+    },
+    {
+      "ADJSTATION": -2670.0,
+      "ELEVATION": -34.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -2670.0,
+      "trans_id": "2"
+    },
+    {
+      "ADJSTATION": -1500.0,
+      "ELEVATION": -22.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -1500.0,
+      "trans_id": "2"
+    },
+    {
+      "ADJSTATION": -60.0,
+      "ELEVATION": -4.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -60.0,
+      "trans_id": "2"
+    },
+    {
+      "ADJSTATION": 0.0,
+      "ELEVATION": 0.0,
+      "SOURCE": "Surveyed",
+      "STATION": 0.0,
+      "trans_id": "2"
+    },
+    {
+      "ADJSTATION": 75.0,
+      "ELEVATION": 5.0,
+      "SOURCE": "Surveyed",
+      "STATION": 75.0,
+      "trans_id": "2"
+    },
+    {
+      "ADJSTATION": 100.0,
+      "ELEVATION": 10.0,
+      "SOURCE": "Surveyed",
+      "STATION": 100.0,
+      "trans_id": "2"
+    },
+    {
+      "ADJSTATION": 200.0,
+      "ELEVATION": 15.0,
+      "SOURCE": "Surveyed",
+      "STATION": 200.0,
+      "trans_id": "2"
+    },
+    {
+      "ADJSTATION": 275.0,
+      "ELEVATION": 10.0,
+      "SOURCE": "Surveyed",
+      "STATION": 275.0,
+      "trans_id": "2"
+    },
+    {
+      "ADJSTATION": 400.0,
+      "ELEVATION": 8.0,
+      "SOURCE": "Surveyed",
+      "STATION": 400.0,
+      "trans_id": "2"
+    },
+    {
+      "ADJSTATION": 3500.0,
+      "ELEVATION": 10.399999618530273,
+      "SOURCE": "Topo Map",
+      "STATION": 3500.0,
+      "trans_id": "2"
+    },
+    {
+      "ADJSTATION": -400.0,
+      "ELEVATION": -8.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -400.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 0.0,
+      "ELEVATION": 0.0,
+      "SOURCE": "Surveyed",
+      "STATION": 0.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 72.0,
+      "ELEVATION": 6.400000095367432,
+      "SOURCE": "Surveyed",
+      "STATION": 72.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 118.0,
+      "ELEVATION": 9.0,
+      "SOURCE": "Surveyed",
+      "STATION": 118.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 149.0,
+      "ELEVATION": 9.899999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 149.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 163.0,
+      "ELEVATION": 24.399999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 163.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 185.0,
+      "ELEVATION": 22.600000381469727,
+      "SOURCE": "Surveyed",
+      "STATION": 185.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 212.0,
+      "ELEVATION": 29.0,
+      "SOURCE": "Surveyed",
+      "STATION": 212.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 236.0,
+      "ELEVATION": 28.100000381469727,
+      "SOURCE": "Surveyed",
+      "STATION": 236.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 282.0,
+      "ELEVATION": 34.5,
+      "SOURCE": "Surveyed",
+      "STATION": 282.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 300.0,
+      "ELEVATION": 27.299999237060547,
+      "SOURCE": "Surveyed",
+      "STATION": 300.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 346.0,
+      "ELEVATION": 30.899999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 346.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 384.0,
+      "ELEVATION": 20.899999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 384.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 430.0,
+      "ELEVATION": 30.100000381469727,
+      "SOURCE": "Surveyed",
+      "STATION": 430.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 442.0,
+      "ELEVATION": 23.5,
+      "SOURCE": "Surveyed",
+      "STATION": 442.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 456.0,
+      "ELEVATION": 24.899999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 456.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 483.0,
+      "ELEVATION": 22.399999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 483.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 516.0,
+      "ELEVATION": 23.100000381469727,
+      "SOURCE": "Surveyed",
+      "STATION": 516.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 567.0,
+      "ELEVATION": 14.300000190734863,
+      "SOURCE": "Surveyed",
+      "STATION": 567.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 639.0,
+      "ELEVATION": 5.800000190734863,
+      "SOURCE": "Surveyed",
+      "STATION": 639.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 736.0,
+      "ELEVATION": 4.300000190734863,
+      "SOURCE": "Surveyed",
+      "STATION": 736.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 824.0,
+      "ELEVATION": 3.700000047683716,
+      "SOURCE": "Surveyed",
+      "STATION": 824.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 897.0,
+      "ELEVATION": 5.0,
+      "SOURCE": "Surveyed",
+      "STATION": 897.0,
+      "trans_id": "4"
+    },
+    {
+      "ADJSTATION": 1034.0,
+      "ELEVATION": 9.0,
+      "SOURCE": "Surveyed",
+      "STATION": 1034.0,
+      "trans_id": "4"
+    }
+  ],
+  "EROSION": [
+    {
+      "ELEVATION": -34.0,
+      "STATION": -2670.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": -22.0,
+      "STATION": -1500.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": -10.0,
+      "STATION": -585.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": -4.0,
+      "STATION": -150.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": -1.2269760370254517,
+      "STATION": -46.011600494384766,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 2.4488680362701416,
+      "STATION": -1.9014719724655151,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 0.0,
+      "STATION": -31.287887573242188,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 8.142822265625,
+      "STATION": 225.85670471191406,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 10.399999618530273,
+      "STATION": 316.143798828125,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 22.86042022705078,
+      "STATION": 328.60418701171875,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 25.0,
+      "STATION": 350.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 20.0,
+      "STATION": 400.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 10.0,
+      "STATION": 650.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 8.0,
+      "STATION": 700.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 10.399999618530273,
+      "STATION": 3500.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": -34.0,
+      "STATION": -2670.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": -22.0,
+      "STATION": -1500.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": -4.0,
+      "STATION": -60.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 0.0,
+      "STATION": 0.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 5.0,
+      "STATION": 75.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 6.825257778167725,
+      "STATION": 84.12628936767578,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 10.494409561157227,
+      "STATION": 267.58380126953125,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 10.0,
+      "STATION": 275.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 8.0,
+      "STATION": 400.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 10.399999618530273,
+      "STATION": 3500.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": -8.0,
+      "STATION": -400.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": -1.7790900468826294,
+      "STATION": -88.9544906616211,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 5.798480033874512,
+      "STATION": 1.9763389825820923,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 0.0,
+      "STATION": -67.60541534423828,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 8.46041202545166,
+      "STATION": 108.45349884033203,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 10.399999618530273,
+      "STATION": 186.03689575195313,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 26.71245002746582,
+      "STATION": 202.34939575195313,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 29.0,
+      "STATION": 212.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 28.100000381469727,
+      "STATION": 236.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 34.5,
+      "STATION": 282.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 27.299999237060547,
+      "STATION": 300.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 30.899999618530273,
+      "STATION": 346.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 20.899999618530273,
+      "STATION": 384.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 30.100000381469727,
+      "STATION": 430.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 23.5,
+      "STATION": 442.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 24.899999618530273,
+      "STATION": 456.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 22.399999618530273,
+      "STATION": 483.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 23.100000381469727,
+      "STATION": 516.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 14.300000190734863,
+      "STATION": 567.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 5.800000190734863,
+      "STATION": 639.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 4.300000190734863,
+      "STATION": 736.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 3.700000047683716,
+      "STATION": 824.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 5.0,
+      "STATION": 897.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 9.0,
+      "STATION": 1034.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 6.5,
+      "STATION": 1219.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 5.0,
+      "STATION": 1302.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 0.0,
+      "STATION": 1610.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": -3.299999952316284,
+      "STATION": -47.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": -1.5,
+      "STATION": -11.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 0.0,
+      "STATION": 0.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 6.500855922698975,
+      "STATION": 48.75642013549805,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 13.804089546203613,
+      "STATION": 413.918212890625,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 10.0,
+      "STATION": 490.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 5.0,
+      "STATION": 1200.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 3.814345121383667,
+      "STATION": 1512.9498291015625,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 5.6856770515441895,
+      "STATION": 1768.1314697265625,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 7.812190532684326,
+      "STATION": 2002.0478515625,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 11.554854393005371,
+      "STATION": 2184.927978515625,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 12.065217018127441,
+      "STATION": 2346.543212890625,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 13.426186561584473,
+      "STATION": 2495.39892578125,
+      "trans_id": "3"
+    }
+  ],
+  "GEOMETRY": [
+    {
+      "APPROACH_SLOPE": 40.0,
+      "APPROACH_X": 225.85670471191406,
+      "APPROACH_Y": 8.142822265625,
+      "CRITICAL_AREA": 540,
+      "DEPOSITED_AREA": 530,
+      "ERODED_AREA": 537,
+      "EROSION_STATUS": "RETREAT",
+      "FACESWFL_X": 316.143798828125,
+      "FACESWFL_Y": 10.399999618530273,
+      "FACE_SLOPE": 1.0,
+      "FACE_X": 328.60418701171875,
+      "FACE_Y": 22.86042022705078,
+      "PEAK_X": 348.5304870605469,
+      "PEAK_Y": 24.853059768676758,
+      "REMOVEFACE_X": -9999.0,
+      "REMOVEFACE_Y": -9999.0,
+      "REMOVE_SLOPE": 50.0,
+      "REMOVE_X": -9999.0,
+      "REMOVE_Y": -9999.0,
+      "RESERVOIR_AREA": 814,
+      "SEAWARDAPPROACH_X": -1.9014719724655151,
+      "SEAWARDAPPROACH_Y": 2.4488680362701416,
+      "SEAWARD_SLOPE": 12.0,
+      "SEAWARD_X": -46.011600494384766,
+      "SEAWARD_Y": -1.2269760370254517,
+      "SWEL1_X": 252.0,
+      "SWEL1_Y": 10.399999618530273,
+      "SWFL1": 10.399999618530273,
+      "TOE_X": 204.6685028076172,
+      "TOE_Y": 6.512965202331543,
+      "trans_id": "1"
+    },
+    {
+      "APPROACH_SLOPE": 40.0,
+      "APPROACH_X": -9999.0,
+      "APPROACH_Y": -9999.0,
+      "CRITICAL_AREA": 540,
+      "DEPOSITED_AREA": -9999,
+      "ERODED_AREA": -9999,
+      "EROSION_STATUS": "REMOVE",
+      "FACESWFL_X": -9999.0,
+      "FACESWFL_Y": -9999.0,
+      "FACE_SLOPE": 1.0,
+      "FACE_X": 200.6551971435547,
+      "FACE_Y": 10.399999618530273,
+      "PEAK_X": 200.6551971435547,
+      "PEAK_Y": 14.956319808959961,
+      "REMOVEFACE_X": -9999.0,
+      "REMOVEFACE_Y": -9999.0,
+      "REMOVE_SLOPE": 50.0,
+      "REMOVE_X": 267.58380126953125,
+      "REMOVE_Y": 10.494409561157227,
+      "RESERVOIR_AREA": 215,
+      "SEAWARDAPPROACH_X": -9999.0,
+      "SEAWARDAPPROACH_Y": -9999.0,
+      "SEAWARD_SLOPE": 12.0,
+      "SEAWARD_X": -9999.0,
+      "SEAWARD_Y": -9999.0,
+      "SWEL1_X": 108.0,
+      "SWEL1_Y": 10.399999618530273,
+      "SWFL1": 10.399999618530273,
+      "TOE_X": 84.12628936767578,
+      "TOE_Y": 6.825257778167725,
+      "trans_id": "2"
+    },
+    {
+      "APPROACH_SLOPE": 40.0,
+      "APPROACH_X": -9999.0,
+      "APPROACH_Y": -9999.0,
+      "CRITICAL_AREA": 540,
+      "DEPOSITED_AREA": -9999,
+      "ERODED_AREA": -9999,
+      "EROSION_STATUS": "REMOVE",
+      "FACESWFL_X": -9999.0,
+      "FACESWFL_Y": -9999.0,
+      "FACE_SLOPE": 1.0,
+      "FACE_X": 264.4341125488281,
+      "FACE_Y": 10.399999618530273,
+      "PEAK_X": 264.4341125488281,
+      "PEAK_Y": 20.281400680541992,
+      "REMOVEFACE_X": -9999.0,
+      "REMOVEFACE_Y": -9999.0,
+      "REMOVE_SLOPE": 50.0,
+      "REMOVE_X": 413.918212890625,
+      "REMOVE_Y": 13.804089546203613,
+      "RESERVOIR_AREA": 349,
+      "SEAWARDAPPROACH_X": -9999.0,
+      "SEAWARDAPPROACH_Y": -9999.0,
+      "SEAWARD_SLOPE": 12.0,
+      "SEAWARD_X": -9999.0,
+      "SEAWARD_Y": -9999.0,
+      "SWEL1_X": 182.1428985595703,
+      "SWEL1_Y": 10.399999618530273,
+      "SWFL1": 10.399999618530273,
+      "TOE_X": 48.75642013549805,
+      "TOE_Y": 6.500855922698975,
+      "trans_id": "3"
+    },
+    {
+      "APPROACH_SLOPE": 40.0,
+      "APPROACH_X": 108.45349884033203,
+      "APPROACH_Y": 8.46041202545166,
+      "CRITICAL_AREA": 540,
+      "DEPOSITED_AREA": 519,
+      "ERODED_AREA": 526,
+      "EROSION_STATUS": "RETREAT",
+      "FACESWFL_X": 186.03689575195313,
+      "FACESWFL_Y": 10.399999618530273,
+      "FACE_SLOPE": 1.0,
+      "FACE_X": 202.34939575195313,
+      "FACE_Y": 26.71245002746582,
+      "PEAK_X": 281.7554931640625,
+      "PEAK_Y": 34.46598815917969,
+      "REMOVEFACE_X": -9999.0,
+      "REMOVEFACE_Y": -9999.0,
+      "REMOVE_SLOPE": 50.0,
+      "REMOVE_X": -9999.0,
+      "REMOVE_Y": -9999.0,
+      "RESERVOIR_AREA": 2190,
+      "SEAWARDAPPROACH_X": 1.9763389825820923,
+      "SEAWARDAPPROACH_Y": 5.798480033874512,
+      "SEAWARD_SLOPE": 12.0,
+      "SEAWARD_X": -88.9544906616211,
+      "SEAWARD_Y": -1.7790900468826294,
+      "SWEL1_X": 149.48280334472656,
+      "SWEL1_Y": 10.399999618530273,
+      "SWFL1": 10.399999618530273,
+      "TOE_X": -9999.0,
+      "TOE_Y": -9999.0,
+      "trans_id": "4"
+    }
+  ],
+  "MG": [
+    {
+      "% OF COVERAGE": 0.0,
+      "AVERAGE SPACING": 327.0,
+      "BASE STEM DIAMETER": 0.0019000000320374966,
+      "DRAG COEFF": 0.10000000149011612,
+      "FRONTALAREARATIO": 0.0,
+      "MID STEM DIAMETER": 0.0,
+      "PLANTTYPE": "saltmeadow grass",
+      "STATION_B": 650.0,
+      "TOP STEM DIAMETER": 0.0,
+      "UNFLEXED STEM HEIGHT": 0.8500000238418579,
+      "trans_id": "1"
+    },
+    {
+      "% OF COVERAGE": 0.0,
+      "AVERAGE SPACING": 327.0,
+      "BASE STEM DIAMETER": 0.0019000000320374966,
+      "DRAG COEFF": 0.10000000149011612,
+      "FRONTALAREARATIO": 0.0,
+      "MID STEM DIAMETER": 0.0,
+      "PLANTTYPE": "saltmeadow grass",
+      "STATION_B": 700.0,
+      "TOP STEM DIAMETER": 0.0,
+      "UNFLEXED STEM HEIGHT": 0.8500000238418579,
+      "trans_id": "1"
+    },
+    {
+      "% OF COVERAGE": 0.0,
+      "AVERAGE SPACING": 327.0,
+      "BASE STEM DIAMETER": 0.0019000000320374966,
+      "DRAG COEFF": 0.10000000149011612,
+      "FRONTALAREARATIO": 0.0,
+      "MID STEM DIAMETER": 0.0,
+      "PLANTTYPE": "saltmeadow grass",
+      "STATION_B": 3500.0,
+      "TOP STEM DIAMETER": 0.0,
+      "UNFLEXED STEM HEIGHT": 0.8500000238418579,
+      "trans_id": "1"
+    },
+    {
+      "% OF COVERAGE": 0.0,
+      "AVERAGE SPACING": 327.0,
+      "BASE STEM DIAMETER": 0.0019000000320374966,
+      "DRAG COEFF": 0.10000000149011612,
+      "FRONTALAREARATIO": 0.0,
+      "MID STEM DIAMETER": 0.0,
+      "PLANTTYPE": "saltmeadow grass",
+      "STATION_B": 591.0,
+      "TOP STEM DIAMETER": 0.0,
+      "UNFLEXED STEM HEIGHT": 0.8500000238418579,
+      "trans_id": "1"
+    },
+    {
+      "% OF COVERAGE": 0.0,
+      "AVERAGE SPACING": 327.0,
+      "BASE STEM DIAMETER": 0.0019000000320374966,
+      "DRAG COEFF": 0.10000000149011612,
+      "FRONTALAREARATIO": 0.0,
+      "MID STEM DIAMETER": 0.0,
+      "PLANTTYPE": "saltmeadow grass",
+      "STATION_B": 400.0,
+      "TOP STEM DIAMETER": 0.0,
+      "UNFLEXED STEM HEIGHT": 0.8500000238418579,
+      "trans_id": "2"
+    },
+    {
+      "% OF COVERAGE": 0.0,
+      "AVERAGE SPACING": 327.0,
+      "BASE STEM DIAMETER": 0.0019000000320374966,
+      "DRAG COEFF": 0.10000000149011612,
+      "FRONTALAREARATIO": 0.0,
+      "MID STEM DIAMETER": 0.0,
+      "PLANTTYPE": "saltmeadow grass",
+      "STATION_B": 3500.0,
+      "TOP STEM DIAMETER": 0.0,
+      "UNFLEXED STEM HEIGHT": 0.8500000238418579,
+      "trans_id": "2"
+    },
+    {
+      "% OF COVERAGE": 0.0,
+      "AVERAGE SPACING": 327.0,
+      "BASE STEM DIAMETER": 0.0019000000320374966,
+      "DRAG COEFF": 0.10000000149011612,
+      "FRONTALAREARATIO": 0.0,
+      "MID STEM DIAMETER": 0.0,
+      "PLANTTYPE": "saltmeadow grass",
+      "STATION_B": 2303.0,
+      "TOP STEM DIAMETER": 0.0,
+      "UNFLEXED STEM HEIGHT": 0.8500000238418579,
+      "trans_id": "2"
+    },
+    {
+      "% OF COVERAGE": 0.0,
+      "AVERAGE SPACING": 327.0,
+      "BASE STEM DIAMETER": 0.0019000000320374966,
+      "DRAG COEFF": 0.10000000149011612,
+      "FRONTALAREARATIO": 0.0,
+      "MID STEM DIAMETER": 0.0,
+      "PLANTTYPE": "saltmeadow grass",
+      "STATION_B": 275.0,
+      "TOP STEM DIAMETER": 0.0,
+      "UNFLEXED STEM HEIGHT": 0.8500000238418579,
+      "trans_id": "2"
+    }
+  ],
+  "PROJECT": [
+    {
+      "CLIENT NAME": "FEMA",
+      "COMMUNITY NAME": "Coastal Town USA",
+      "ENGINEER NAME": "John Doe",
+      "NUMBER TRANSECT": "4",
+      "PROJECTION": "Lat/Long",
+      "SCALE": "1\"=500'",
+      "TITLE": "Sample Data",
+      "UNITS": "English",
+      "VDATUM": "NGVD 29"
+    }
+  ],
+  "RUNUP": [
+    {
+      "ELEVATION_B": -34.0,
+      "ELEVATION_E": -22.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -2670.0,
+      "STATION_E": -1500.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": -22.0,
+      "ELEVATION_E": -10.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -1500.0,
+      "STATION_E": -585.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": -10.0,
+      "ELEVATION_E": -4.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -585.0,
+      "STATION_E": -150.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": -4.0,
+      "ELEVATION_E": -1.6752769947052002,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -150.0,
+      "STATION_E": -62.822898864746094,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": -1.6752769947052002,
+      "ELEVATION_E": 0.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -62.822898864746094,
+      "STATION_E": -42.719573974609375,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": 0.0,
+      "ELEVATION_E": 1.791185975074768,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -42.719573974609375,
+      "STATION_E": -21.225339889526367,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": 1.791185975074768,
+      "ELEVATION_E": 7.884175777435303,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -21.225339889526367,
+      "STATION_E": 222.49429321289063,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": 7.884175777435303,
+      "ELEVATION_E": 10.399999618530273,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 222.49429321289063,
+      "STATION_E": 323.1272888183594,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": 10.399999618530273,
+      "ELEVATION_E": 23.636369705200195,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 323.1272888183594,
+      "STATION_E": 336.36358642578125,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": 23.636369705200195,
+      "ELEVATION_E": 25.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 336.36358642578125,
+      "STATION_E": 350.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": 25.0,
+      "ELEVATION_E": 20.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 350.0,
+      "STATION_E": 400.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": 20.0,
+      "ELEVATION_E": 10.0,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 400.0,
+      "STATION_E": 650.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": 10.0,
+      "ELEVATION_E": 8.0,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 650.0,
+      "STATION_E": 700.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": 8.0,
+      "ELEVATION_E": 10.399999618530273,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 700.0,
+      "STATION_E": 3500.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": -34.0,
+      "ELEVATION_E": -22.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -2670.0,
+      "STATION_E": -1500.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION_B": -22.0,
+      "ELEVATION_E": -4.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -1500.0,
+      "STATION_E": -60.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION_B": -4.0,
+      "ELEVATION_E": 0.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -60.0,
+      "STATION_E": 0.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION_B": 0.0,
+      "ELEVATION_E": 5.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 0.0,
+      "STATION_E": 75.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION_B": 5.0,
+      "ELEVATION_E": 9.55555534362793,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 75.0,
+      "STATION_E": 302.7778015136719,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION_B": 9.55555534362793,
+      "ELEVATION_E": 8.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 302.7778015136719,
+      "STATION_E": 400.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION_B": 8.0,
+      "ELEVATION_E": 10.399999618530273,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 400.0,
+      "STATION_E": 3500.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION_B": -10.0,
+      "ELEVATION_E": null,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -585.0,
+      "STATION_E": null,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION_B": -3.299999952316284,
+      "ELEVATION_E": -1.5,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -47.0,
+      "STATION_E": -11.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": 0.0,
+      "ELEVATION_E": 6.800000190734863,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 0.0,
+      "STATION_E": 51.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": 6.599999904632568,
+      "ELEVATION_E": 13.985710144042969,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 50.0,
+      "STATION_E": 410.28570556640625,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": 14.0,
+      "ELEVATION_E": 10.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 410.0,
+      "STATION_E": 490.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": 10.0,
+      "ELEVATION_E": 5.0,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 490.0,
+      "STATION_E": 1200.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": -4.800000190734863,
+      "ELEVATION_E": null,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -169.0,
+      "STATION_E": null,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": -6.5,
+      "ELEVATION_E": null,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -242.0,
+      "STATION_E": null,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": -13.899999618530273,
+      "ELEVATION_E": null,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -435.0,
+      "STATION_E": null,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": -19.0,
+      "ELEVATION_E": null,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -633.0,
+      "STATION_E": null,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": -23.5,
+      "ELEVATION_E": null,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -832.0,
+      "STATION_E": null,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": -26.299999237060547,
+      "ELEVATION_E": null,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -1032.0,
+      "STATION_E": null,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": -28.600000381469727,
+      "ELEVATION_E": null,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -1231.0,
+      "STATION_E": null,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": -31.5,
+      "ELEVATION_E": null,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -1431.0,
+      "STATION_E": null,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": -34.0,
+      "ELEVATION_E": null,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -1630.0,
+      "STATION_E": null,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": -8.0,
+      "ELEVATION_E": -1.8623549938201904,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -400.0,
+      "STATION_E": -93.11773681640625,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": -1.8623549938201904,
+      "ELEVATION_E": 0.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -93.11773681640625,
+      "STATION_E": -70.76947784423828,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 0.0,
+      "ELEVATION_E": 5.599582195281982,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -70.76947784423828,
+      "STATION_E": -3.5744969844818115,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 5.599582195281982,
+      "ELEVATION_E": 8.352590560913086,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -3.5744969844818115,
+      "STATION_E": 106.5457992553711,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 8.352590560913086,
+      "ELEVATION_E": 10.399999618530273,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 106.5457992553711,
+      "STATION_E": 188.44219970703125,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 10.399999618530273,
+      "ELEVATION_E": 27.459720611572266,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 188.44219970703125,
+      "STATION_E": 205.5019073486328,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 27.459720611572266,
+      "ELEVATION_E": 29.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 205.5019073486328,
+      "STATION_E": 212.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 29.0,
+      "ELEVATION_E": 28.100000381469727,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 212.0,
+      "STATION_E": 236.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 28.100000381469727,
+      "ELEVATION_E": 34.5,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 236.0,
+      "STATION_E": 282.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 34.5,
+      "ELEVATION_E": 27.299999237060547,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 282.0,
+      "STATION_E": 300.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 27.299999237060547,
+      "ELEVATION_E": 30.899999618530273,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 300.0,
+      "STATION_E": 346.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 30.899999618530273,
+      "ELEVATION_E": 20.899999618530273,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 346.0,
+      "STATION_E": 384.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 20.899999618530273,
+      "ELEVATION_E": 30.100000381469727,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 384.0,
+      "STATION_E": 430.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 30.100000381469727,
+      "ELEVATION_E": 23.5,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 430.0,
+      "STATION_E": 442.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 23.5,
+      "ELEVATION_E": 24.899999618530273,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 442.0,
+      "STATION_E": 456.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 24.899999618530273,
+      "ELEVATION_E": 22.399999618530273,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 456.0,
+      "STATION_E": 483.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 22.399999618530273,
+      "ELEVATION_E": 23.100000381469727,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 483.0,
+      "STATION_E": 516.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 23.100000381469727,
+      "ELEVATION_E": 14.300000190734863,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 516.0,
+      "STATION_E": 567.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 14.300000190734863,
+      "ELEVATION_E": 5.800000190734863,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 567.0,
+      "STATION_E": 639.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 5.800000190734863,
+      "ELEVATION_E": 4.300000190734863,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 639.0,
+      "STATION_E": 736.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 4.300000190734863,
+      "ELEVATION_E": 3.700000047683716,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 736.0,
+      "STATION_E": 824.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 3.700000047683716,
+      "ELEVATION_E": 5.0,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 824.0,
+      "STATION_E": 897.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 5.0,
+      "ELEVATION_E": 9.0,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 897.0,
+      "STATION_E": 1034.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 9.0,
+      "ELEVATION_E": 6.5,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 1034.0,
+      "STATION_E": 1219.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 6.5,
+      "ELEVATION_E": 5.0,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 1219.0,
+      "STATION_E": 1302.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 5.0,
+      "ELEVATION_E": 0.0,
+      "NOTE": null,
+      "REMOVESTATUS": true,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": 1302.0,
+      "STATION_E": 1610.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": -1.399999976158142,
+      "ELEVATION_E": 0.0,
+      "NOTE": null,
+      "REMOVESTATUS": false,
+      "ROUGHNESS COEFF": 1.0,
+      "STATION_B": -11.0,
+      "STATION_E": 0.0,
+      "SURFACE DESCRIPTION": "SMOOTH",
+      "trans_id": "3"
+    }
+  ],
+  "RUNUP OUTPUT": [
+    {
+      "BREAKER DEPTH": 26.049999237060547,
+      "BREAKING SLOPE NUMBER": 6.0,
+      "DEEP WATER WAVE HEIGHT": 16.700000762939453,
+      "RUNUP ABOVE WATER LEVEL": 2.8399999141693115,
+      "RUNUP SLOPE NUMBER": 13.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.300000190734863,
+      "trans_id": "3"
+    },
+    {
+      "BREAKER DEPTH": 26.399999618530273,
+      "BREAKING SLOPE NUMBER": 6.0,
+      "DEEP WATER WAVE HEIGHT": 16.700000762939453,
+      "RUNUP ABOVE WATER LEVEL": 3.009999990463257,
+      "RUNUP SLOPE NUMBER": 13.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.800000190734863,
+      "trans_id": "3"
+    },
+    {
+      "BREAKER DEPTH": 26.75,
+      "BREAKING SLOPE NUMBER": 6.0,
+      "DEEP WATER WAVE HEIGHT": 16.700000762939453,
+      "RUNUP ABOVE WATER LEVEL": 3.1700000762939453,
+      "RUNUP SLOPE NUMBER": 13.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 11.300000190734863,
+      "trans_id": "3"
+    },
+    {
+      "BREAKER DEPTH": 27.1299991607666,
+      "BREAKING SLOPE NUMBER": 6.0,
+      "DEEP WATER WAVE HEIGHT": 17.5,
+      "RUNUP ABOVE WATER LEVEL": 2.9700000286102295,
+      "RUNUP SLOPE NUMBER": 13.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.300000190734863,
+      "trans_id": "3"
+    },
+    {
+      "BREAKER DEPTH": 27.479999542236328,
+      "BREAKING SLOPE NUMBER": 6.0,
+      "DEEP WATER WAVE HEIGHT": 17.5,
+      "RUNUP ABOVE WATER LEVEL": 3.1500000953674316,
+      "RUNUP SLOPE NUMBER": 13.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.800000190734863,
+      "trans_id": "3"
+    },
+    {
+      "BREAKER DEPTH": 27.84000015258789,
+      "BREAKING SLOPE NUMBER": 6.0,
+      "DEEP WATER WAVE HEIGHT": 17.5,
+      "RUNUP ABOVE WATER LEVEL": 3.1500000953674316,
+      "RUNUP SLOPE NUMBER": 13.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 11.300000190734863,
+      "trans_id": "3"
+    },
+    {
+      "BREAKER DEPTH": 28.329999923706055,
+      "BREAKING SLOPE NUMBER": 6.0,
+      "DEEP WATER WAVE HEIGHT": 18.399999618530273,
+      "RUNUP ABOVE WATER LEVEL": 2.940000057220459,
+      "RUNUP SLOPE NUMBER": 13.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.300000190734863,
+      "trans_id": "3"
+    },
+    {
+      "BREAKER DEPTH": 28.700000762939453,
+      "BREAKING SLOPE NUMBER": 6.0,
+      "DEEP WATER WAVE HEIGHT": 18.399999618530273,
+      "RUNUP ABOVE WATER LEVEL": 3.130000114440918,
+      "RUNUP SLOPE NUMBER": 13.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.800000190734863,
+      "trans_id": "3"
+    },
+    {
+      "BREAKER DEPTH": 29.68000030517578,
+      "BREAKING SLOPE NUMBER": 5.0,
+      "DEEP WATER WAVE HEIGHT": 18.399999618530273,
+      "RUNUP ABOVE WATER LEVEL": 3.309999942779541,
+      "RUNUP SLOPE NUMBER": 13.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 11.300000190734863,
+      "trans_id": "3"
+    },
+    {
+      "BREAKER DEPTH": 26.600000381469727,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 16.700000762939453,
+      "RUNUP ABOVE WATER LEVEL": 1.6699999570846558,
+      "RUNUP SLOPE NUMBER": 9.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.300000190734863,
+      "trans_id": "1"
+    },
+    {
+      "BREAKER DEPTH": 26.969999313354492,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 16.700000762939453,
+      "RUNUP ABOVE WATER LEVEL": 1.840000033378601,
+      "RUNUP SLOPE NUMBER": 9.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.800000190734863,
+      "trans_id": "1"
+    },
+    {
+      "BREAKER DEPTH": 27.34000015258789,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 16.700000762939453,
+      "RUNUP ABOVE WATER LEVEL": 1.840000033378601,
+      "RUNUP SLOPE NUMBER": 9.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 11.300000190734863,
+      "trans_id": "1"
+    },
+    {
+      "BREAKER DEPTH": 27.690000534057617,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 17.5,
+      "RUNUP ABOVE WATER LEVEL": 1.75,
+      "RUNUP SLOPE NUMBER": 9.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.300000190734863,
+      "trans_id": "1"
+    },
+    {
+      "BREAKER DEPTH": 28.06999969482422,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 17.5,
+      "RUNUP ABOVE WATER LEVEL": 1.9199999570846558,
+      "RUNUP SLOPE NUMBER": 9.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.800000190734863,
+      "trans_id": "1"
+    },
+    {
+      "BREAKER DEPTH": 28.450000762939453,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 17.5,
+      "RUNUP ABOVE WATER LEVEL": 1.9199999570846558,
+      "RUNUP SLOPE NUMBER": 9.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 11.300000190734863,
+      "trans_id": "1"
+    },
+    {
+      "BREAKER DEPTH": 28.90999984741211,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 18.399999618530273,
+      "RUNUP ABOVE WATER LEVEL": 1.840000033378601,
+      "RUNUP SLOPE NUMBER": 9.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.300000190734863,
+      "trans_id": "1"
+    },
+    {
+      "BREAKER DEPTH": 29.299999237060547,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 18.399999618530273,
+      "RUNUP ABOVE WATER LEVEL": 1.840000033378601,
+      "RUNUP SLOPE NUMBER": 9.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.800000190734863,
+      "trans_id": "1"
+    },
+    {
+      "BREAKER DEPTH": 29.690000534057617,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 18.399999618530273,
+      "RUNUP ABOVE WATER LEVEL": 2.0199999809265137,
+      "RUNUP SLOPE NUMBER": 9.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 11.300000190734863,
+      "trans_id": "1"
+    },
+    {
+      "BREAKER DEPTH": 26.600000381469727,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 16.700000762939453,
+      "RUNUP ABOVE WATER LEVEL": 1.6699999570846558,
+      "RUNUP SLOPE NUMBER": 7.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.300000190734863,
+      "trans_id": "2"
+    },
+    {
+      "BREAKER DEPTH": 26.969999313354492,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 16.700000762939453,
+      "RUNUP ABOVE WATER LEVEL": 1.6699999570846558,
+      "RUNUP SLOPE NUMBER": 7.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.800000190734863,
+      "trans_id": "2"
+    },
+    {
+      "BREAKER DEPTH": 27.34000015258789,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 16.700000762939453,
+      "RUNUP ABOVE WATER LEVEL": 1.6699999570846558,
+      "RUNUP SLOPE NUMBER": 7.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 11.300000190734863,
+      "trans_id": "2"
+    },
+    {
+      "BREAKER DEPTH": 27.690000534057617,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 17.5,
+      "RUNUP ABOVE WATER LEVEL": 1.5800000429153442,
+      "RUNUP SLOPE NUMBER": 7.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.300000190734863,
+      "trans_id": "2"
+    },
+    {
+      "BREAKER DEPTH": 28.06999969482422,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 17.5,
+      "RUNUP ABOVE WATER LEVEL": 1.75,
+      "RUNUP SLOPE NUMBER": 7.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.800000190734863,
+      "trans_id": "2"
+    },
+    {
+      "BREAKER DEPTH": 28.450000762939453,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 17.5,
+      "RUNUP ABOVE WATER LEVEL": 1.75,
+      "RUNUP SLOPE NUMBER": 7.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 11.300000190734863,
+      "trans_id": "2"
+    },
+    {
+      "BREAKER DEPTH": 28.90999984741211,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 18.399999618530273,
+      "RUNUP ABOVE WATER LEVEL": 1.659999966621399,
+      "RUNUP SLOPE NUMBER": 7.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.300000190734863,
+      "trans_id": "2"
+    },
+    {
+      "BREAKER DEPTH": 29.299999237060547,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 18.399999618530273,
+      "RUNUP ABOVE WATER LEVEL": 1.659999966621399,
+      "RUNUP SLOPE NUMBER": 7.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.800000190734863,
+      "trans_id": "2"
+    },
+    {
+      "BREAKER DEPTH": 29.690000534057617,
+      "BREAKING SLOPE NUMBER": 2.0,
+      "DEEP WATER WAVE HEIGHT": 18.399999618530273,
+      "RUNUP ABOVE WATER LEVEL": 1.840000033378601,
+      "RUNUP SLOPE NUMBER": 7.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 11.300000190734863,
+      "trans_id": "2"
+    },
+    {
+      "BREAKER DEPTH": 27.799999237060547,
+      "BREAKING SLOPE NUMBER": 1.0,
+      "DEEP WATER WAVE HEIGHT": 18.100000381469727,
+      "RUNUP ABOVE WATER LEVEL": 3.0799999237060547,
+      "RUNUP SLOPE NUMBER": 6.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 9.399999618530273,
+      "trans_id": "4"
+    },
+    {
+      "BREAKER DEPTH": 28.190000534057617,
+      "BREAKING SLOPE NUMBER": 1.0,
+      "DEEP WATER WAVE HEIGHT": 18.100000381469727,
+      "RUNUP ABOVE WATER LEVEL": 3.259999990463257,
+      "RUNUP SLOPE NUMBER": 6.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 9.899999618530273,
+      "trans_id": "4"
+    },
+    {
+      "BREAKER DEPTH": 28.579999923706055,
+      "BREAKING SLOPE NUMBER": 1.0,
+      "DEEP WATER WAVE HEIGHT": 18.100000381469727,
+      "RUNUP ABOVE WATER LEVEL": 3.440000057220459,
+      "RUNUP SLOPE NUMBER": 6.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.399999618530273,
+      "trans_id": "4"
+    },
+    {
+      "BREAKER DEPTH": 29.1299991607666,
+      "BREAKING SLOPE NUMBER": 1.0,
+      "DEEP WATER WAVE HEIGHT": 19.100000381469727,
+      "RUNUP ABOVE WATER LEVEL": 3.25,
+      "RUNUP SLOPE NUMBER": 6.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 9.399999618530273,
+      "trans_id": "4"
+    },
+    {
+      "BREAKER DEPTH": 29.530000686645508,
+      "BREAKING SLOPE NUMBER": 1.0,
+      "DEEP WATER WAVE HEIGHT": 19.100000381469727,
+      "RUNUP ABOVE WATER LEVEL": 3.440000057220459,
+      "RUNUP SLOPE NUMBER": 6.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 9.899999618530273,
+      "trans_id": "4"
+    },
+    {
+      "BREAKER DEPTH": 29.93000030517578,
+      "BREAKING SLOPE NUMBER": 1.0,
+      "DEEP WATER WAVE HEIGHT": 19.100000381469727,
+      "RUNUP ABOVE WATER LEVEL": 3.440000057220459,
+      "RUNUP SLOPE NUMBER": 6.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.399999618530273,
+      "trans_id": "4"
+    },
+    {
+      "BREAKER DEPTH": 30.31999969482422,
+      "BREAKING SLOPE NUMBER": 1.0,
+      "DEEP WATER WAVE HEIGHT": 20.0,
+      "RUNUP ABOVE WATER LEVEL": 3.4000000953674316,
+      "RUNUP SLOPE NUMBER": 6.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 9.399999618530273,
+      "trans_id": "4"
+    },
+    {
+      "BREAKER DEPTH": 30.729999542236328,
+      "BREAKING SLOPE NUMBER": 1.0,
+      "DEEP WATER WAVE HEIGHT": 20.0,
+      "RUNUP ABOVE WATER LEVEL": 3.4000000953674316,
+      "RUNUP SLOPE NUMBER": 6.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 9.899999618530273,
+      "trans_id": "4"
+    },
+    {
+      "BREAKER DEPTH": 31.139999389648438,
+      "BREAKING SLOPE NUMBER": 1.0,
+      "DEEP WATER WAVE HEIGHT": 20.0,
+      "RUNUP ABOVE WATER LEVEL": 3.5999999046325684,
+      "RUNUP SLOPE NUMBER": 6.0,
+      "WATER LEVEL ABOVE DATUM": 10.399999618530273,
+      "WAVE PERIOD": 10.399999618530273,
+      "trans_id": "4"
+    }
+  ],
+  "RUNUP ZONE": [
+    {
+      "ELEVATION_B": -34.0,
+      "ELEVATION_E": 10.474443435668945,
+      "STATION_B": -1630.0,
+      "STATION_E": 238.48643493652344,
+      "ZONE": "VE",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": 10.474443435668945,
+      "ELEVATION_E": 14.0,
+      "STATION_B": 238.48643493652344,
+      "STATION_E": 410.0,
+      "ZONE": "AE",
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION_B": -34.0,
+      "ELEVATION_E": 9.24888801574707,
+      "STATION_B": -2670.0,
+      "STATION_E": 277.08282470703125,
+      "ZONE": "VE",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": 9.24888801574707,
+      "ELEVATION_E": 25.0,
+      "STATION_B": 277.08282470703125,
+      "STATION_E": 350.0,
+      "ZONE": "AE",
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION_B": -34.0,
+      "ELEVATION_E": 9.094444274902344,
+      "STATION_B": -2670.0,
+      "STATION_E": 279.72222900390625,
+      "ZONE": "VE",
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION_B": 9.094444274902344,
+      "ELEVATION_E": 9.55555534362793,
+      "STATION_B": 279.72222900390625,
+      "STATION_E": 302.7778015136719,
+      "ZONE": "AE",
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION_B": -8.0,
+      "ELEVATION_E": 10.767777442932129,
+      "STATION_B": -400.0,
+      "STATION_E": 188.80996704101563,
+      "ZONE": "VE",
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION_B": 10.767777442932129,
+      "ELEVATION_E": 29.0,
+      "STATION_B": 188.80996704101563,
+      "STATION_E": 212.0,
+      "ZONE": "AE",
+      "trans_id": "4"
+    }
+  ],
+  "STILLWATER": [
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": -23.0,
+      "trans_id": "1"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 0.0,
+      "trans_id": "1"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 225.0,
+      "trans_id": "1"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 317.0,
+      "trans_id": "1"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 319.0,
+      "trans_id": "1"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 590.0,
+      "trans_id": "1"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.359000205993652,
+      "STATION": 650.0,
+      "trans_id": "1"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.324000358581543,
+      "STATION": 700.0,
+      "trans_id": "1"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 10.399999618530273,
+      "STATION": 3500.0,
+      "trans_id": "1"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.5,
+      "STATION": 2.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.5,
+      "STATION": 109.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.5,
+      "STATION": 186.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.5,
+      "STATION": 187.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 7.0,
+      "STATION": 628.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 7.0,
+      "STATION": 639.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 7.0,
+      "STATION": 736.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 7.0,
+      "STATION": 824.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 7.0,
+      "STATION": 897.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 7.0,
+      "STATION": 966.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 7.0,
+      "STATION": 1180.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 7.0,
+      "STATION": 1219.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 7.0,
+      "STATION": 1302.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 7.0,
+      "STATION": 1610.0,
+      "trans_id": "4"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 0.0,
+      "trans_id": "2"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 75.0,
+      "trans_id": "2"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 84.0,
+      "trans_id": "2"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 268.0,
+      "trans_id": "2"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 275.0,
+      "trans_id": "2"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 400.0,
+      "trans_id": "2"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 3500.0,
+      "trans_id": "2"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 0.0,
+      "trans_id": "3"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 49.0,
+      "trans_id": "3"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 12.399999618530273,
+      "STATION": 344.0,
+      "trans_id": "3"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 10.399999618530273,
+      "STATION": 482.0,
+      "trans_id": "3"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 10.399999618530273,
+      "STATION": 490.0,
+      "trans_id": "3"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 10.399999618530273,
+      "STATION": 1200.0,
+      "trans_id": "3"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 10.399999618530273,
+      "STATION": 1513.0,
+      "trans_id": "3"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 10.399999618530273,
+      "STATION": 1768.0,
+      "trans_id": "3"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 10.399999618530273,
+      "STATION": 2002.0,
+      "trans_id": "3"
+    },
+    {
+      "10-YEAR SWEL": 6.599999904632568,
+      "100-YEAR SWEL": 10.399999618530273,
+      "STATION": 2129.0,
+      "trans_id": "3"
+    }
+  ],
+  "TRANSECT": [
+    {
+      "ELEVATION": -8.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -400.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 0.0,
+      "SOURCE": "Surveyed",
+      "STATION": 0.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 6.400000095367432,
+      "SOURCE": "Surveyed",
+      "STATION": 72.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 9.0,
+      "SOURCE": "Surveyed",
+      "STATION": 118.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 9.899999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 149.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 24.399999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 163.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 22.600000381469727,
+      "SOURCE": "Surveyed",
+      "STATION": 185.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 29.0,
+      "SOURCE": "Surveyed",
+      "STATION": 212.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 28.100000381469727,
+      "SOURCE": "Surveyed",
+      "STATION": 236.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 34.5,
+      "SOURCE": "Surveyed",
+      "STATION": 282.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 27.299999237060547,
+      "SOURCE": "Surveyed",
+      "STATION": 300.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 30.899999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 346.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 20.899999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 384.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 30.100000381469727,
+      "SOURCE": "Surveyed",
+      "STATION": 430.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 23.5,
+      "SOURCE": "Surveyed",
+      "STATION": 442.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 24.899999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 456.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 22.399999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 483.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 23.100000381469727,
+      "SOURCE": "Surveyed",
+      "STATION": 516.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 14.300000190734863,
+      "SOURCE": "Surveyed",
+      "STATION": 567.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 5.800000190734863,
+      "SOURCE": "Surveyed",
+      "STATION": 639.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 4.300000190734863,
+      "SOURCE": "Surveyed",
+      "STATION": 736.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 3.700000047683716,
+      "SOURCE": "Surveyed",
+      "STATION": 824.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 5.0,
+      "SOURCE": "Surveyed",
+      "STATION": 897.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 9.0,
+      "SOURCE": "Surveyed",
+      "STATION": 1034.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 6.5,
+      "SOURCE": "Topo Map",
+      "STATION": 1219.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 5.0,
+      "SOURCE": "Topo Map",
+      "STATION": 1302.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": 0.0,
+      "SOURCE": "Topo Map",
+      "STATION": 1610.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION": -34.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -2670.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": -22.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -1500.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": -10.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -585.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": -4.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -150.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 0.0,
+      "SOURCE": "Surveyed",
+      "STATION": 0.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 5.0,
+      "SOURCE": "Surveyed",
+      "STATION": 185.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 10.0,
+      "SOURCE": "Surveyed",
+      "STATION": 250.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 20.0,
+      "SOURCE": "Surveyed",
+      "STATION": 300.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 25.0,
+      "SOURCE": "Surveyed",
+      "STATION": 350.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 20.0,
+      "SOURCE": "Surveyed",
+      "STATION": 400.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 10.0,
+      "SOURCE": "Surveyed",
+      "STATION": 650.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 8.0,
+      "SOURCE": "Surveyed",
+      "STATION": 700.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": 10.399999618530273,
+      "SOURCE": "Surveyed",
+      "STATION": 3500.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION": -34.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -2670.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": -22.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -1500.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": -4.0,
+      "SOURCE": "Bathymetric Map",
+      "STATION": -60.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 0.0,
+      "SOURCE": "Surveyed",
+      "STATION": 0.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 5.0,
+      "SOURCE": "Surveyed",
+      "STATION": 75.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 10.0,
+      "SOURCE": "Surveyed",
+      "STATION": 100.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 15.0,
+      "SOURCE": "Surveyed",
+      "STATION": 200.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 10.0,
+      "SOURCE": "Surveyed",
+      "STATION": 275.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 8.0,
+      "SOURCE": "Surveyed",
+      "STATION": 400.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": 10.399999618530273,
+      "SOURCE": "Topo Map",
+      "STATION": 3500.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION": -3.299999952316284,
+      "SOURCE": "",
+      "STATION": -47.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": -1.5,
+      "SOURCE": "",
+      "STATION": -11.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 0.0,
+      "SOURCE": "",
+      "STATION": 0.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 10.0,
+      "SOURCE": "",
+      "STATION": 75.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 10.0,
+      "SOURCE": "",
+      "STATION": 177.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 11.399999618530273,
+      "SOURCE": "",
+      "STATION": 195.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 13.300000190734863,
+      "SOURCE": "",
+      "STATION": 221.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 13.600000381469727,
+      "SOURCE": "",
+      "STATION": 225.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 16.0,
+      "SOURCE": "",
+      "STATION": 235.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 18.0,
+      "SOURCE": "",
+      "STATION": 245.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 20.700000762939453,
+      "SOURCE": "",
+      "STATION": 268.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 19.200000762939453,
+      "SOURCE": "",
+      "STATION": 271.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 18.0,
+      "SOURCE": "",
+      "STATION": 276.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 15.5,
+      "SOURCE": "",
+      "STATION": 280.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 14.300000190734863,
+      "SOURCE": "",
+      "STATION": 290.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 14.300000190734863,
+      "SOURCE": "",
+      "STATION": 304.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 14.0,
+      "SOURCE": "",
+      "STATION": 324.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 14.0,
+      "SOURCE": "",
+      "STATION": 354.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 15.0,
+      "SOURCE": "",
+      "STATION": 390.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 10.0,
+      "SOURCE": "",
+      "STATION": 490.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 5.0,
+      "SOURCE": "",
+      "STATION": 1200.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 3.814345121383667,
+      "SOURCE": "",
+      "STATION": 1512.9498291015625,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 5.6856770515441895,
+      "SOURCE": "",
+      "STATION": 1768.1314697265625,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 7.812190532684326,
+      "SOURCE": "",
+      "STATION": 2002.0478515625,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 11.554854393005371,
+      "SOURCE": "",
+      "STATION": 2184.927978515625,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 12.065217018127441,
+      "SOURCE": "",
+      "STATION": 2346.543212890625,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION": 13.426186561584473,
+      "SOURCE": "",
+      "STATION": 2495.39892578125,
+      "trans_id": "3"
+    }
+  ],
+  "TRANSECTCTL": [
+    {
+      "AREA_DES": "",
+      "AVERAGERUNUP": 1.848888874053955,
+      "BEARING": 90.0,
+      "DIR1": "90",
+      "DIR2": "90",
+      "DWH": 28.0,
+      "DWP": 12.699999809265137,
+      "FETCHLEN": 75.0,
+      "JOBNUMBER": "1",
+      "LASTSLOPE": 7.0,
+      "LOC0": null,
+      "LOCATION_X": 38.0,
+      "LOCATION_Y": 20.0,
+      "LOC_DES": "South of Town, at No Name Avenue",
+      "MDWH": 17.527999877929688,
+      "MDWP": 10.795000076293945,
+      "METHOD": "SPM",
+      "MHWE": 2.0,
+      "MLWE": -2.0,
+      "NOTE": null,
+      "RANGE1": 3500.0,
+      "RANGE2": 3500.0,
+      "SFETCH": "WIS",
+      "SFLOOD": "Atlantic Ocean",
+      "SMHLWE": "NOAA",
+      "SOURCE1": "FEMA Surge Model",
+      "SOURCE10": "FEMA Surge Model",
+      "SOURCE_2": "Back bay",
+      "SPREAD": 5.0,
+      "SWFL1": 10.399999618530273,
+      "SWFL10": 6.599999904632568,
+      "SWFL10_2": 3.299999952316284,
+      "SWFL1_2": 6.599999904632568,
+      "TYPE1": "Sandy Beach - Small Dune",
+      "TYPE2": "Hurricane",
+      "WSM": 2.0,
+      "interx": 500,
+      "intery": 500,
+      "trans_id": "1",
+      "xmax": 3600,
+      "xmin": -2700,
+      "ymax": 1350,
+      "ymin": -1750,
+      "yscale": 50
+    },
+    {
+      "AREA_DES": "",
+      "AVERAGERUNUP": 1.6944444179534912,
+      "BEARING": 90.0,
+      "DIR1": "90",
+      "DIR2": "90",
+      "DWH": 28.0,
+      "DWP": 12.699999809265137,
+      "FETCHLEN": 75.0,
+      "JOBNUMBER": "1",
+      "LASTSLOPE": 50.0,
+      "LOC0": null,
+      "LOCATION_X": 38.0,
+      "LOCATION_Y": 20.0,
+      "LOC_DES": "South of Town, at No Name Avenue",
+      "MDWH": 17.527999877929688,
+      "MDWP": 10.795000076293945,
+      "METHOD": "SPM",
+      "MHWE": 2.0,
+      "MLWE": -2.0,
+      "NOTE": null,
+      "RANGE1": 3500.0,
+      "RANGE2": 3500.0,
+      "SFETCH": "WIS",
+      "SFLOOD": "Atlantic Ocean",
+      "SMHLWE": "NOAA",
+      "SOURCE1": "FEMA Surge Model",
+      "SOURCE10": "FEMA Surge Model",
+      "SOURCE_2": null,
+      "SPREAD": 5.0,
+      "SWFL1": 10.399999618530273,
+      "SWFL10": 6.599999904632568,
+      "SWFL10_2": null,
+      "SWFL1_2": null,
+      "TYPE1": "Sandy Beach - Small Dune",
+      "TYPE2": "Hurricane",
+      "WSM": 2.0,
+      "interx": 500,
+      "intery": 500,
+      "trans_id": "2",
+      "xmax": 3626,
+      "xmin": -2795,
+      "ymax": 1000,
+      "ymin": -1750,
+      "yscale": 50
+    },
+    {
+      "AREA_DES": "",
+      "AVERAGERUNUP": 3.07444429397583,
+      "BEARING": 90.0,
+      "DIR1": "90",
+      "DIR2": "90",
+      "DWH": 28.0,
+      "DWP": 12.699999809265137,
+      "FETCHLEN": 75.0,
+      "JOBNUMBER": "1",
+      "LASTSLOPE": 7.5,
+      "LOC0": null,
+      "LOCATION_X": 38.0,
+      "LOCATION_Y": 20.0,
+      "LOC_DES": "South of Town, at No Name Avenue",
+      "MDWH": 17.527999877929688,
+      "MDWP": 10.795000076293945,
+      "METHOD": "SPM",
+      "MHWE": 2.0,
+      "MLWE": -2.0,
+      "NOTE": null,
+      "RANGE1": 3500.0,
+      "RANGE2": 3500.0,
+      "SFETCH": "WIS",
+      "SFLOOD": "Atlantic Ocean",
+      "SMHLWE": "NOAA",
+      "SOURCE1": "FEMA Surge Model",
+      "SOURCE10": "FEMA Surge Model",
+      "SOURCE_2": "Back bay",
+      "SPREAD": 5.0,
+      "SWFL1": 10.399999618530273,
+      "SWFL10": 6.599999904632568,
+      "SWFL10_2": 3.299999952316284,
+      "SWFL1_2": 6.599999904632568,
+      "TYPE1": "Sandy Beach - Small Dune",
+      "TYPE2": "Hurricane",
+      "WSM": 2.0,
+      "interx": 500,
+      "intery": 250,
+      "trans_id": "3",
+      "xmax": 2500,
+      "xmin": -1700,
+      "ymax": 1250,
+      "ymin": -1750,
+      "yscale": 50
+    },
+    {
+      "AREA_DES": "",
+      "AVERAGERUNUP": 3.3677778244018555,
+      "BEARING": 90.0,
+      "DIR1": "90",
+      "DIR2": "90",
+      "DWH": 30.5,
+      "DWP": 11.699999809265137,
+      "FETCHLEN": 75.0,
+      "JOBNUMBER": "1",
+      "LASTSLOPE": 1.2000000476837158,
+      "LOC0": null,
+      "LOCATION_X": 38.0,
+      "LOCATION_Y": 20.0,
+      "LOC_DES": "South of Town, at No Name Avenue",
+      "MDWH": 19.093000411987305,
+      "MDWP": 9.944999694824219,
+      "METHOD": "SPM",
+      "MHWE": 2.0,
+      "MLWE": -2.0,
+      "NOTE": null,
+      "RANGE1": 3500.0,
+      "RANGE2": 3500.0,
+      "SFETCH": "WIS",
+      "SFLOOD": "Atlantic Ocean",
+      "SMHLWE": "NOAA",
+      "SOURCE1": "FEMA Surge Model",
+      "SOURCE10": "FEMA Surge Model",
+      "SOURCE_2": "Backbay",
+      "SPREAD": 5.0,
+      "SWFL1": 10.399999618530273,
+      "SWFL10": 6.599999904632568,
+      "SWFL10_2": null,
+      "SWFL1_2": 7.0,
+      "TYPE1": "Sandy Beach - Small Dune",
+      "TYPE2": "Hurricane",
+      "WSM": 2.0999999046325684,
+      "interx": 500,
+      "intery": 300,
+      "trans_id": "4",
+      "xmax": 1651,
+      "xmin": -441,
+      "ymax": 1061,
+      "ymin": -265,
+      "yscale": 30
+    }
+  ],
+  "WHAFIS": [
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 8.108612060546875,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 0,
+      "STATION_B": null,
+      "STATION_E": 225.41189575195313,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "1"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 10.399999618530273,
+      "FETCHOBSTRUCTION": "Fetch",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 1,
+      "STATION_B": null,
+      "STATION_E": 317.0674133300781,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "1"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 10.0,
+      "FETCHOBSTRUCTION": "Fetch",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 2,
+      "STATION_B": null,
+      "STATION_E": 650.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "1"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 8.0,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 3,
+      "STATION_B": null,
+      "STATION_E": 700.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "1"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 10.399999618530273,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 4,
+      "STATION_B": null,
+      "STATION_E": 3500.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 10.399999618530273,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "1"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 2.4724009037017822,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": null,
+      "STATION_B": null,
+      "STATION_E": 0.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "1"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 12.399999618530273,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": null,
+      "STATION_B": null,
+      "STATION_E": 319.23590087890625,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "1"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "AS",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 12.399999618530273,
+      "FETCHOBSTRUCTION": "OBSTRUCTION",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": null,
+      "STATION_B": null,
+      "STATION_E": 589.949951171875,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 12.399999618530273,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "1"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IE",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 0.0,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": null,
+      "STATION_B": null,
+      "STATION_E": -22.572717666625977,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 12.399999618530273,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "1"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "OF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 5.798480033874512,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 0,
+      "STATION_B": null,
+      "STATION_E": 1.9763389825820923,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 12.5,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IE",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 0.0,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 0,
+      "STATION_B": null,
+      "STATION_E": 0.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 12.399999618530273,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "2"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 5.0,
+      "FETCHOBSTRUCTION": "Fetch",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 1,
+      "STATION_B": null,
+      "STATION_E": 75.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "2"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 6.825257778167725,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 2,
+      "STATION_B": null,
+      "STATION_E": 84.12628936767578,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "2"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 10.489999771118164,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 3,
+      "STATION_B": null,
+      "STATION_E": 267.58380126953125,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "2"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "VH",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 10.0,
+      "FETCHOBSTRUCTION": "OBSTRUCTION",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": 1,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": "Mid Atlantic",
+      "SECONDARYREGION": "",
+      "SEGMENT_NO": 4,
+      "STATION_B": null,
+      "STATION_E": 275.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": 1.0,
+      "trans_id": "2"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "VH",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 8.0,
+      "FETCHOBSTRUCTION": "OBSTRUCTION",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": 1,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": "Mid Atlantic",
+      "SECONDARYREGION": "",
+      "SEGMENT_NO": 5,
+      "STATION_B": null,
+      "STATION_E": 400.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": 1.0,
+      "trans_id": "2"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "VH",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 10.399999618530273,
+      "FETCHOBSTRUCTION": "OBSTRUCTION",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": 1,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": "Mid Atlantic",
+      "SECONDARYREGION": "",
+      "SEGMENT_NO": 6,
+      "STATION_B": null,
+      "STATION_E": 3500.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": 1.0,
+      "trans_id": "2"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IE",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 0.0,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 0,
+      "STATION_B": null,
+      "STATION_E": 0.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 12.399999618530273,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "3"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 6.500855922698975,
+      "FETCHOBSTRUCTION": "Fetch",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 1,
+      "STATION_B": null,
+      "STATION_E": 48.75642013549805,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "3"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "BU",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 10.0,
+      "FETCHOBSTRUCTION": "OBSTRUCTION",
+      "MEANDIA": null,
+      "NOROWS": 1,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": 18.0,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 2,
+      "STATION_B": null,
+      "STATION_E": 490.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": 40.0,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "3"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "OF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 8.46041202545166,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 1,
+      "STATION_B": null,
+      "STATION_E": 108.45349884033203,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "OF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 10.399999618530273,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 2,
+      "STATION_B": null,
+      "STATION_E": 186.03689575195313,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 5.800000190734863,
+      "FETCHOBSTRUCTION": "Fetch",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 3,
+      "STATION_B": null,
+      "STATION_E": 639.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 4.300000190734863,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 4,
+      "STATION_B": null,
+      "STATION_E": 736.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 3.700000047683716,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 5,
+      "STATION_B": null,
+      "STATION_E": 824.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 5.0,
+      "FETCHOBSTRUCTION": "Fetch",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 6,
+      "STATION_B": null,
+      "STATION_E": 897.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 6.5,
+      "FETCHOBSTRUCTION": "Fetch",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 8,
+      "STATION_B": null,
+      "STATION_E": 1219.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 5.0,
+      "FETCHOBSTRUCTION": "Fetch",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 9,
+      "STATION_B": null,
+      "STATION_E": 1302.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 0.0,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 10,
+      "STATION_B": null,
+      "STATION_E": 1610.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 7.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "OF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 12.5,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": null,
+      "STATION_B": null,
+      "STATION_E": 186.61000061035156,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 6.998050212860107,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": null,
+      "STATION_B": null,
+      "STATION_E": 965.4845581054688,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "AS",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 6.998050212860107,
+      "FETCHOBSTRUCTION": "OBSTRUCTION",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": null,
+      "STATION_B": null,
+      "STATION_E": 1180.102783203125,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "AS",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 7.0,
+      "FETCHOBSTRUCTION": "OBSTRUCTION",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": null,
+      "STATION_B": null,
+      "STATION_E": 628.4344482421875,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 7.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "4"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "BU",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 5.0,
+      "FETCHOBSTRUCTION": "OBSTRUCTION",
+      "MEANDIA": null,
+      "NOROWS": 1,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": 16.0,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 3,
+      "STATION_B": null,
+      "STATION_E": 1200.0,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": 40.0,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "3"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 3.814345121383667,
+      "FETCHOBSTRUCTION": "Fetch",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 4,
+      "STATION_B": null,
+      "STATION_E": 1512.9498291015625,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "3"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 5.6856770515441895,
+      "FETCHOBSTRUCTION": "Fetch",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 5,
+      "STATION_B": null,
+      "STATION_E": 1768.1314697265625,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "3"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 7.812190532684326,
+      "FETCHOBSTRUCTION": "Fetch",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": 6,
+      "STATION_B": null,
+      "STATION_E": 2002.0478515625,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "3"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "AS",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 10.399999618530273,
+      "FETCHOBSTRUCTION": "OBSTRUCTION",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": null,
+      "STATION_B": null,
+      "STATION_E": 482.3599853515625,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 10.399999618530273,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "3"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 10.399999618530273,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": null,
+      "STATION_B": null,
+      "STATION_E": 2128.927978515625,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 0.0,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "3"
+    },
+    {
+      "AVGHEIGHT": null,
+      "AVGSPACING": null,
+      "CARD": "IF",
+      "DRAGCOEFF": null,
+      "DUNETYPE": null,
+      "ELEVATION_B": null,
+      "ELEVATION_E": 12.399999618530273,
+      "FETCHOBSTRUCTION": "FETCH",
+      "MEANDIA": null,
+      "NOROWS": null,
+      "NOTE": null,
+      "NUMBERPLANTTYPE": null,
+      "OPENSPACE": null,
+      "PLANTTYPE": null,
+      "PRIMARYREGION": null,
+      "SECONDARYREGION": null,
+      "SEGMENT_NO": null,
+      "STATION_B": null,
+      "STATION_E": 344.0400085449219,
+      "SURGECOMPONENT": null,
+      "TOTALLENGTH": null,
+      "TOTALSTILLWATER": 12.399999618530273,
+      "WAVESETUP": null,
+      "WEIGHTINGFACTOR": null,
+      "trans_id": "3"
+    }
+  ],
+  "WHAFIS INPUT": [
+    {
+      "FIELD 1": "0",
+      "FIELD 2": "0",
+      "FIELD 3": "75",
+      "FIELD 4": "6.6",
+      "FIELD 5": "12.4",
+      "FIELD 6": "44.8",
+      "FIELD 7": "12.7",
+      "FIELD 8": "",
+      "FIELD 9": null,
+      "WHAFIS CARD": "IE",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "51.",
+      "FIELD 2": "6.6",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "334.5",
+      "FIELD 2": "12.4",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "973.",
+      "FIELD 2": "6.600512",
+      "FIELD 3": "6.6",
+      "FIELD 4": "6.6",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "AS",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "1070.",
+      "FIELD 2": "6",
+      "FIELD 3": "0.45",
+      "FIELD 4": "1",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "BU",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "1170.",
+      "FIELD 2": "5.2",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "1250.",
+      "FIELD 2": "4.6",
+      "FIELD 3": "0.4",
+      "FIELD 4": "1",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "BU",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "1600.",
+      "FIELD 2": "4.8",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "2300.",
+      "FIELD 2": "4.4",
+      "FIELD 3": "0.45",
+      "FIELD 4": "10",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "BU",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "2350.",
+      "FIELD 2": "4.4",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "2700.",
+      "FIELD 2": "-4.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "3200.",
+      "FIELD 2": "2",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "4300.",
+      "FIELD 2": "2",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "5000.",
+      "FIELD 2": "-2.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "6300.",
+      "FIELD 2": "-4.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "6900.",
+      "FIELD 2": "-4.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "7300.",
+      "FIELD 2": "-3.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "7700.",
+      "FIELD 2": "-4.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "9900.",
+      "FIELD 2": "-4.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "10200.",
+      "FIELD 2": "-3.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "10500.",
+      "FIELD 2": "-4.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "11400.",
+      "FIELD 2": "-4.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "13000.",
+      "FIELD 2": "-6.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "14100.",
+      "FIELD 2": "-4.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "16000.",
+      "FIELD 2": "2",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": null,
+      "FIELD 2": null,
+      "FIELD 3": null,
+      "FIELD 4": null,
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "ET",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "-67",
+      "FIELD 2": "0",
+      "FIELD 3": "75",
+      "FIELD 4": "6.6",
+      "FIELD 5": "12.5",
+      "FIELD 6": "48.8",
+      "FIELD 7": "11.7",
+      "FIELD 8": "",
+      "FIELD 9": null,
+      "WHAFIS CARD": "IE",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "-3.6",
+      "FIELD 2": "5.6",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "106.6",
+      "FIELD 2": "8.352591",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "188.4",
+      "FIELD 2": "10.4",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "191.",
+      "FIELD 2": "12.5",
+      "FIELD 3": "6.6",
+      "FIELD 4": "12.5",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "630.",
+      "FIELD 2": "7",
+      "FIELD 3": "6.6",
+      "FIELD 4": "7",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "AS",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "639.",
+      "FIELD 2": "5.8",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "0",
+      "FIELD 2": "0",
+      "FIELD 3": "75",
+      "FIELD 4": "6.6",
+      "FIELD 5": "12.4",
+      "FIELD 6": "44.8",
+      "FIELD 7": "12.7",
+      "FIELD 8": "",
+      "FIELD 9": null,
+      "WHAFIS CARD": "IE",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "75.",
+      "FIELD 2": "5",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "302.8",
+      "FIELD 2": "9.555555",
+      "FIELD 3": "6.6",
+      "FIELD 4": "12.4",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "400.",
+      "FIELD 2": "8",
+      "FIELD 3": "2",
+      "FIELD 4": "1",
+      "FIELD 5": "0",
+      "FIELD 6": "1",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": null,
+      "WHAFIS CARD": "VH",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "SPAT",
+      "FIELD 2": "0.1",
+      "FIELD 3": "0",
+      "FIELD 4": "0.85",
+      "FIELD 5": "327",
+      "FIELD 6": "0.0019",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0",
+      "WHAFIS CARD": "MG",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "2303.",
+      "FIELD 2": "9.5",
+      "FIELD 3": "2",
+      "FIELD 4": "1",
+      "FIELD 5": "0",
+      "FIELD 6": "1",
+      "FIELD 7": "6.6",
+      "FIELD 8": "10.4",
+      "FIELD 9": null,
+      "WHAFIS CARD": "VH",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "SPAT",
+      "FIELD 2": "0.1",
+      "FIELD 3": "0",
+      "FIELD 4": "0.85",
+      "FIELD 5": "327",
+      "FIELD 6": "0.0019",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0",
+      "WHAFIS CARD": "MG",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "3500.",
+      "FIELD 2": "10.4",
+      "FIELD 3": "2",
+      "FIELD 4": "1",
+      "FIELD 5": "0",
+      "FIELD 6": "1",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": null,
+      "WHAFIS CARD": "VH",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "SPAT",
+      "FIELD 2": "0.1",
+      "FIELD 3": "0",
+      "FIELD 4": "0.85",
+      "FIELD 5": "327",
+      "FIELD 6": "0.0019",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0",
+      "WHAFIS CARD": "MG",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "-22.57272",
+      "FIELD 2": "0",
+      "FIELD 3": "75",
+      "FIELD 4": "6.6",
+      "FIELD 5": "12.4",
+      "FIELD 6": "44.8",
+      "FIELD 7": "12.7",
+      "FIELD 8": "",
+      "FIELD 9": null,
+      "WHAFIS CARD": "IE",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "0",
+      "FIELD 2": "2.472401",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "225.4",
+      "FIELD 2": "8.108612",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "317.1",
+      "FIELD 2": "10.4",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "319.2",
+      "FIELD 2": "12.4",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "736.",
+      "FIELD 2": "4.3",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "824.",
+      "FIELD 2": "3.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "897.",
+      "FIELD 2": "5",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "966.",
+      "FIELD 2": "7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "1182.",
+      "FIELD 2": "7.000439",
+      "FIELD 3": "6.6",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "AS",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "1219.",
+      "FIELD 2": "6.5",
+      "FIELD 3": "1.3",
+      "FIELD 4": "10",
+      "FIELD 5": "20",
+      "FIELD 6": "1",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": null,
+      "WHAFIS CARD": "VE",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "1302.",
+      "FIELD 2": "5",
+      "FIELD 3": "1.3",
+      "FIELD 4": "10",
+      "FIELD 5": "20",
+      "FIELD 6": "1",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": null,
+      "WHAFIS CARD": "VE",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "1610.",
+      "FIELD 2": "0",
+      "FIELD 3": "1.3",
+      "FIELD 4": "10",
+      "FIELD 5": "20",
+      "FIELD 6": "1",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": null,
+      "WHAFIS CARD": "VE",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": null,
+      "FIELD 2": null,
+      "FIELD 3": null,
+      "FIELD 4": null,
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "ET",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "1530.",
+      "FIELD 2": "4.9",
+      "FIELD 3": "0.45",
+      "FIELD 4": "6",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "BU",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "11700.",
+      "FIELD 2": "-4.7",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "OF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": null,
+      "FIELD 2": null,
+      "FIELD 3": null,
+      "FIELD 4": null,
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "ET",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "590.",
+      "FIELD 2": "12.4",
+      "FIELD 3": "6.6",
+      "FIELD 4": "12.4",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "AS",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "650.",
+      "FIELD 2": "10",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "700.",
+      "FIELD 2": "8",
+      "FIELD 3": "0",
+      "FIELD 4": "0",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "3500.",
+      "FIELD 2": "10.4",
+      "FIELD 3": "6.6",
+      "FIELD 4": "10.4",
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": null,
+      "FIELD 2": null,
+      "FIELD 3": null,
+      "FIELD 4": null,
+      "FIELD 5": null,
+      "FIELD 6": null,
+      "FIELD 7": null,
+      "FIELD 8": null,
+      "FIELD 9": null,
+      "WHAFIS CARD": "ET",
+      "trans_id": "1"
+    }
+  ],
+  "WHAFIS PART 1": [
+    {
+      "FIELD 1": "-23",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "0",
+      "FIELD 3": "75",
+      "FIELD 4": "6.6",
+      "FIELD 5": "12.4",
+      "FIELD 6": "44.8",
+      "FIELD 7": "12.7",
+      "FIELD 8": "0",
+      "FIELD 9": "0.089",
+      "WHAFIS CARD": "IE",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "0",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "2",
+      "FIELD 3": "0",
+      "FIELD 4": "12.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.032",
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "225",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "8",
+      "FIELD 3": "0",
+      "FIELD 4": "12.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.026",
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "317",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "10.4",
+      "FIELD 3": "0",
+      "FIELD 4": "12.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.047",
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "319",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "12.4",
+      "FIELD 3": "0",
+      "FIELD 4": "12.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.952",
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "590",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "12.4",
+      "FIELD 3": "6.6",
+      "FIELD 4": "12.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.04",
+      "WHAFIS CARD": "AS",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "650",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "10",
+      "FIELD 3": "0",
+      "FIELD 4": "12.359",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.04",
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "700",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "8",
+      "FIELD 3": "0",
+      "FIELD 4": "12.324",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0",
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "3500",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "10.4",
+      "FIELD 3": "6.6",
+      "FIELD 4": "10.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.001",
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "FIELD 1": "0",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "0",
+      "FIELD 3": "75",
+      "FIELD 4": "6.6",
+      "FIELD 5": "12.4",
+      "FIELD 6": "44.8",
+      "FIELD 7": "12.7",
+      "FIELD 8": "0",
+      "FIELD 9": "0.067",
+      "WHAFIS CARD": "IE",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "75",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "5",
+      "FIELD 3": "0",
+      "FIELD 4": "12.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.083",
+      "WHAFIS CARD": "IF",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "84",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "7",
+      "FIELD 3": "0",
+      "FIELD 4": "12.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.029",
+      "WHAFIS CARD": "IF",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "2",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "6",
+      "FIELD 3": "75",
+      "FIELD 4": "6.6",
+      "FIELD 5": "12.5",
+      "FIELD 6": "48.8",
+      "FIELD 7": "11.7",
+      "FIELD 8": "0",
+      "FIELD 9": "0.019",
+      "WHAFIS CARD": "IE",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "109",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "8",
+      "FIELD 3": "0",
+      "FIELD 4": "12.5",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.024",
+      "WHAFIS CARD": "OF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "186",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "10.4",
+      "FIELD 3": "0",
+      "FIELD 4": "12.5",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.058",
+      "WHAFIS CARD": "OF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "187",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "12.5",
+      "FIELD 3": "0",
+      "FIELD 4": "12.5",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "3.5",
+      "WHAFIS CARD": "OF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "628",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "7",
+      "FIELD 3": "6.6",
+      "FIELD 4": "7",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.113",
+      "WHAFIS CARD": "AS",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "639",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "5.8",
+      "FIELD 3": "0",
+      "FIELD 4": "7",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.025",
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "736",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "4.3",
+      "FIELD 3": "0",
+      "FIELD 4": "7",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.011",
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "824",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "3.7",
+      "FIELD 3": "0",
+      "FIELD 4": "7",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.004",
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "897",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "5",
+      "FIELD 3": "0",
+      "FIELD 4": "7",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.023",
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "966",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "7",
+      "FIELD 3": "0",
+      "FIELD 4": "7",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.029",
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "1180",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "7",
+      "FIELD 3": "6.6",
+      "FIELD 4": "7",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.013",
+      "WHAFIS CARD": "AS",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "1219",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "6.5",
+      "FIELD 3": "0",
+      "FIELD 4": "7",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.016",
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "1302",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "5",
+      "FIELD 3": "0",
+      "FIELD 4": "7",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.017",
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "1610",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "0",
+      "FIELD 3": "6.6",
+      "FIELD 4": "7",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.016",
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "FIELD 1": "268",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "10.49",
+      "FIELD 3": "0",
+      "FIELD 4": "12.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.016",
+      "WHAFIS CARD": "IF",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "275",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "10",
+      "FIELD 3": "2",
+      "FIELD 4": "1",
+      "FIELD 5": "0",
+      "FIELD 6": "1",
+      "FIELD 7": "0",
+      "FIELD 8": "12.4",
+      "FIELD 9": "-0.019",
+      "WHAFIS CARD": "VH",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "0",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "0.1",
+      "FIELD 3": "0",
+      "FIELD 4": "0.85",
+      "FIELD 5": "327",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0",
+      "WHAFIS CARD": "MG",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "400",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "8",
+      "FIELD 3": "2",
+      "FIELD 4": "1",
+      "FIELD 5": "0",
+      "FIELD 6": "1",
+      "FIELD 7": "0",
+      "FIELD 8": "12.4",
+      "FIELD 9": "0",
+      "WHAFIS CARD": "VH",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "0",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "0.1",
+      "FIELD 3": "0",
+      "FIELD 4": "0.85",
+      "FIELD 5": "327",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0",
+      "WHAFIS CARD": "MG",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "3500",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "10.4",
+      "FIELD 3": "2",
+      "FIELD 4": "1",
+      "FIELD 5": "0",
+      "FIELD 6": "1",
+      "FIELD 7": "0",
+      "FIELD 8": "12.4",
+      "FIELD 9": "0.001",
+      "WHAFIS CARD": "VH",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "0",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "0.1",
+      "FIELD 3": "0",
+      "FIELD 4": "0.85",
+      "FIELD 5": "327",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0",
+      "WHAFIS CARD": "MG",
+      "trans_id": "2"
+    },
+    {
+      "FIELD 1": "0",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "0",
+      "FIELD 3": "75",
+      "FIELD 4": "6.6",
+      "FIELD 5": "12.4",
+      "FIELD 6": "44.8",
+      "FIELD 7": "12.7",
+      "FIELD 8": "0",
+      "FIELD 9": "0.143",
+      "WHAFIS CARD": "IE",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "49",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "7",
+      "FIELD 3": "0",
+      "FIELD 4": "12.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.036",
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "344",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "12.4",
+      "FIELD 3": "6.6",
+      "FIELD 4": "12.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.018",
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "482",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "10.4",
+      "FIELD 3": "6.6",
+      "FIELD 4": "10.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.053",
+      "WHAFIS CARD": "AS",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "490",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "10",
+      "FIELD 3": "0.45",
+      "FIELD 4": "1",
+      "FIELD 5": "0",
+      "FIELD 6": "10.4",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.007",
+      "WHAFIS CARD": "BU",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "1200",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "5",
+      "FIELD 3": "0.4",
+      "FIELD 4": "1",
+      "FIELD 5": "0",
+      "FIELD 6": "10.4",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "-0.006",
+      "WHAFIS CARD": "BU",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "1513",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "4",
+      "FIELD 3": "0",
+      "FIELD 4": "10.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.002",
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "1768",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "6",
+      "FIELD 3": "0",
+      "FIELD 4": "10.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.008",
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "2002",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "8",
+      "FIELD 3": "0",
+      "FIELD 4": "10.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.012",
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "FIELD 1": "2129",
+      "FIELD 10": "0",
+      "FIELD 11": "0",
+      "FIELD 2": "10.4",
+      "FIELD 3": "0",
+      "FIELD 4": "10.4",
+      "FIELD 5": "0",
+      "FIELD 6": "0",
+      "FIELD 7": "0",
+      "FIELD 8": "0",
+      "FIELD 9": "0.019",
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    }
+  ],
+  "WHAFIS PART 2": [
+    {
+      "STATION": 2.0,
+      "WAVE CREST ELEVATION": 16.0,
+      "WAVE HEIGHT": 5.0,
+      "WAVE PERIOD": 11.699999809265137,
+      "WHAFIS CARD": "IE",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 103.6500015258789,
+      "WAVE CREST ELEVATION": 14.989999771118164,
+      "WAVE HEIGHT": 3.549999952316284,
+      "WAVE PERIOD": 11.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 109.0,
+      "WAVE CREST ELEVATION": 14.930000305175781,
+      "WAVE HEIGHT": 3.4700000286102295,
+      "WAVE PERIOD": 11.699999809265137,
+      "WHAFIS CARD": "OF",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 186.0,
+      "WAVE CREST ELEVATION": 13.640000343322754,
+      "WAVE HEIGHT": 1.6299999952316284,
+      "WAVE PERIOD": 11.699999809265137,
+      "WHAFIS CARD": "OF",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 187.0,
+      "WAVE CREST ELEVATION": 12.510000228881836,
+      "WAVE HEIGHT": 0.009999999776482582,
+      "WAVE PERIOD": 11.699999809265137,
+      "WHAFIS CARD": "OF",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 628.0,
+      "WAVE CREST ELEVATION": 7.0,
+      "WAVE HEIGHT": 0.0,
+      "WAVE PERIOD": 0.0,
+      "WHAFIS CARD": "AS",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 639.0,
+      "WAVE CREST ELEVATION": 7.050000190734863,
+      "WAVE HEIGHT": 0.07999999821186066,
+      "WAVE PERIOD": 0.3199999928474426,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 736.0,
+      "WAVE CREST ELEVATION": 7.239999771118164,
+      "WAVE HEIGHT": 0.3499999940395355,
+      "WAVE PERIOD": 0.6899999976158142,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 824.0,
+      "WAVE CREST ELEVATION": 7.360000133514404,
+      "WAVE HEIGHT": 0.5099999904632568,
+      "WAVE PERIOD": 0.8399999737739563,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 897.0,
+      "WAVE CREST ELEVATION": 7.440000057220459,
+      "WAVE HEIGHT": 0.6200000047683716,
+      "WAVE PERIOD": 0.9300000071525574,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 966.0,
+      "WAVE CREST ELEVATION": 7.010000228881836,
+      "WAVE HEIGHT": 0.009999999776482582,
+      "WAVE PERIOD": 1.0,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 1180.0,
+      "WAVE CREST ELEVATION": 7.0,
+      "WAVE HEIGHT": 0.0,
+      "WAVE PERIOD": 0.0,
+      "WHAFIS CARD": "AS",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 1219.0,
+      "WAVE CREST ELEVATION": 7.119999885559082,
+      "WAVE HEIGHT": 0.17000000178813934,
+      "WAVE PERIOD": 0.49000000953674316,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 1302.0,
+      "WAVE CREST ELEVATION": 7.260000228881836,
+      "WAVE HEIGHT": 0.3700000047683716,
+      "WAVE PERIOD": 0.7099999785423279,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 1456.0,
+      "WAVE CREST ELEVATION": 7.449999809265137,
+      "WAVE HEIGHT": 0.6399999856948853,
+      "WAVE PERIOD": 0.9399999976158142,
+      "WHAFIS CARD": "  ",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 1579.199951171875,
+      "WAVE CREST ELEVATION": 7.579999923706055,
+      "WAVE HEIGHT": 0.8199999928474426,
+      "WAVE PERIOD": 1.059999942779541,
+      "WHAFIS CARD": "  ",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 1610.0,
+      "WAVE CREST ELEVATION": 7.610000133514404,
+      "WAVE HEIGHT": 0.8600000143051147,
+      "WAVE PERIOD": 1.090000033378601,
+      "WHAFIS CARD": "IF",
+      "trans_id": "4"
+    },
+    {
+      "STATION": 0.0,
+      "WAVE CREST ELEVATION": 19.010000228881836,
+      "WAVE HEIGHT": 9.449999809265137,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IE",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 75.0,
+      "WAVE CREST ELEVATION": 16.3799991607666,
+      "WAVE HEIGHT": 5.690000057220459,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IF",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 84.0,
+      "WAVE CREST ELEVATION": 15.319999694824219,
+      "WAVE HEIGHT": 4.170000076293945,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IF",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 185.1999969482422,
+      "WAVE CREST ELEVATION": 14.289999961853027,
+      "WAVE HEIGHT": 2.700000047683716,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 268.0,
+      "WAVE CREST ELEVATION": 13.4399995803833,
+      "WAVE HEIGHT": 1.4800000190734863,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IF",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 275.0,
+      "WAVE CREST ELEVATION": 13.489999771118164,
+      "WAVE HEIGHT": 1.559999942779541,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "VH",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 400.0,
+      "WAVE CREST ELEVATION": 13.569999694824219,
+      "WAVE HEIGHT": 1.6699999570846558,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "VH",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 550.0,
+      "WAVE CREST ELEVATION": 13.720000267028809,
+      "WAVE HEIGHT": 1.8799999952316284,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 710.0,
+      "WAVE CREST ELEVATION": 13.789999961853027,
+      "WAVE HEIGHT": 1.9900000095367432,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 870.0,
+      "WAVE CREST ELEVATION": 13.8100004196167,
+      "WAVE HEIGHT": 2.0199999809265137,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 1190.0,
+      "WAVE CREST ELEVATION": 13.800000190734863,
+      "WAVE HEIGHT": 2.009999990463257,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 1830.0,
+      "WAVE CREST ELEVATION": 13.720000267028809,
+      "WAVE HEIGHT": 1.8899999856948853,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 3110.0,
+      "WAVE CREST ELEVATION": 13.510000228881836,
+      "WAVE HEIGHT": 1.5800000429153442,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 3500.0,
+      "WAVE CREST ELEVATION": 13.399999618530273,
+      "WAVE HEIGHT": 1.4299999475479126,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "VH",
+      "trans_id": "2"
+    },
+    {
+      "STATION": 0.0,
+      "WAVE CREST ELEVATION": 19.010000228881836,
+      "WAVE HEIGHT": 9.449999809265137,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IE",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 49.0,
+      "WAVE CREST ELEVATION": 15.319999694824219,
+      "WAVE HEIGHT": 4.170000076293945,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 152.25,
+      "WAVE CREST ELEVATION": 14.300000190734863,
+      "WAVE HEIGHT": 2.7200000286102295,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 255.5,
+      "WAVE CREST ELEVATION": 13.279999732971191,
+      "WAVE HEIGHT": 1.2599999904632568,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 344.0,
+      "WAVE CREST ELEVATION": 12.40999984741211,
+      "WAVE HEIGHT": 0.009999999776482582,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 482.0,
+      "WAVE CREST ELEVATION": 10.399999618530273,
+      "WAVE HEIGHT": 0.0,
+      "WAVE PERIOD": 0.0,
+      "WHAFIS CARD": "AS",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 490.0,
+      "WAVE CREST ELEVATION": 10.399999618530273,
+      "WAVE HEIGHT": 0.0,
+      "WAVE PERIOD": 0.0,
+      "WHAFIS CARD": "BU",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 1200.0,
+      "WAVE CREST ELEVATION": 10.399999618530273,
+      "WAVE HEIGHT": 0.0,
+      "WAVE PERIOD": 0.0,
+      "WHAFIS CARD": "BU",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 1356.5,
+      "WAVE CREST ELEVATION": 10.710000038146973,
+      "WAVE HEIGHT": 0.4399999976158142,
+      "WAVE PERIOD": 0.7799999713897705,
+      "WHAFIS CARD": "  ",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 1481.699951171875,
+      "WAVE CREST ELEVATION": 10.859999656677246,
+      "WAVE HEIGHT": 0.6499999761581421,
+      "WAVE PERIOD": 0.9399999976158142,
+      "WHAFIS CARD": "  ",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 1513.0,
+      "WAVE CREST ELEVATION": 10.890000343322754,
+      "WAVE HEIGHT": 0.699999988079071,
+      "WAVE PERIOD": 0.9800000190734863,
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 1691.5,
+      "WAVE CREST ELEVATION": 11.0600004196167,
+      "WAVE HEIGHT": 0.9399999976158142,
+      "WAVE PERIOD": 1.1399999856948853,
+      "WHAFIS CARD": "  ",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 1768.0,
+      "WAVE CREST ELEVATION": 11.130000114440918,
+      "WAVE HEIGHT": 1.0399999618530273,
+      "WAVE PERIOD": 1.190000057220459,
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 1931.800048828125,
+      "WAVE CREST ELEVATION": 11.210000038146973,
+      "WAVE HEIGHT": 1.159999966621399,
+      "WAVE PERIOD": 1.2999999523162842,
+      "WHAFIS CARD": "  ",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 2002.0,
+      "WAVE CREST ELEVATION": 11.199999809265137,
+      "WAVE HEIGHT": 1.1399999856948853,
+      "WAVE PERIOD": 1.340000033378601,
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 2103.60009765625,
+      "WAVE CREST ELEVATION": 10.640000343322754,
+      "WAVE HEIGHT": 0.3499999940395355,
+      "WAVE PERIOD": 1.3899999856948853,
+      "WHAFIS CARD": "  ",
+      "trans_id": "3"
+    },
+    {
+      "STATION": 2129.0,
+      "WAVE CREST ELEVATION": 10.40999984741211,
+      "WAVE HEIGHT": 0.009999999776482582,
+      "WAVE PERIOD": 1.399999976158142,
+      "WHAFIS CARD": "IF",
+      "trans_id": "3"
+    },
+    {
+      "STATION": -23.0,
+      "WAVE CREST ELEVATION": 19.010000228881836,
+      "WAVE HEIGHT": 9.449999809265137,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IE",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 0.0,
+      "WAVE CREST ELEVATION": 17.969999313354492,
+      "WAVE HEIGHT": 7.949999809265137,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 101.25,
+      "WAVE CREST ELEVATION": 16.540000915527344,
+      "WAVE HEIGHT": 5.920000076293945,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 202.5,
+      "WAVE CREST ELEVATION": 15.100000381469727,
+      "WAVE HEIGHT": 3.859999895095825,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 225.0,
+      "WAVE CREST ELEVATION": 14.779999732971191,
+      "WAVE HEIGHT": 3.4000000953674316,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 317.0,
+      "WAVE CREST ELEVATION": 13.489999771118164,
+      "WAVE HEIGHT": 1.5499999523162842,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 319.0,
+      "WAVE CREST ELEVATION": 12.40999984741211,
+      "WAVE HEIGHT": 0.009999999776482582,
+      "WAVE PERIOD": 12.699999809265137,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 590.0,
+      "WAVE CREST ELEVATION": 12.399999618530273,
+      "WAVE HEIGHT": 0.0,
+      "WAVE PERIOD": 0.0,
+      "WHAFIS CARD": "AS",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 650.0,
+      "WAVE CREST ELEVATION": 12.520000457763672,
+      "WAVE HEIGHT": 0.23000000417232513,
+      "WAVE PERIOD": 0.5699999928474426,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 700.0,
+      "WAVE CREST ELEVATION": 12.569999694824219,
+      "WAVE HEIGHT": 0.3499999940395355,
+      "WAVE PERIOD": 0.6899999976158142,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 800.0,
+      "WAVE CREST ELEVATION": 12.630000114440918,
+      "WAVE HEIGHT": 0.5400000214576721,
+      "WAVE PERIOD": 0.8600000143051147,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 900.0,
+      "WAVE CREST ELEVATION": 12.670000076293945,
+      "WAVE HEIGHT": 0.699999988079071,
+      "WAVE PERIOD": 0.9700000286102295,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 1000.0,
+      "WAVE CREST ELEVATION": 12.699999809265137,
+      "WAVE HEIGHT": 0.8399999737739563,
+      "WAVE PERIOD": 1.0700000524520874,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 1100.0,
+      "WAVE CREST ELEVATION": 12.720000267028809,
+      "WAVE HEIGHT": 0.9599999785423279,
+      "WAVE PERIOD": 1.149999976158142,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 1200.0,
+      "WAVE CREST ELEVATION": 12.729999542236328,
+      "WAVE HEIGHT": 1.0700000524520874,
+      "WAVE PERIOD": 1.2200000286102295,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 1300.0,
+      "WAVE CREST ELEVATION": 12.729999542236328,
+      "WAVE HEIGHT": 1.1699999570846558,
+      "WAVE PERIOD": 1.2799999713897705,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 1400.0,
+      "WAVE CREST ELEVATION": 12.720000267028809,
+      "WAVE HEIGHT": 1.25,
+      "WAVE PERIOD": 1.340000033378601,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 1600.0,
+      "WAVE CREST ELEVATION": 12.649999618530273,
+      "WAVE HEIGHT": 1.350000023841858,
+      "WAVE PERIOD": 1.440000057220459,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 1800.0,
+      "WAVE CREST ELEVATION": 12.529999732971191,
+      "WAVE HEIGHT": 1.3700000047683716,
+      "WAVE PERIOD": 1.5299999713897705,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 2200.0,
+      "WAVE CREST ELEVATION": 12.15999984741211,
+      "WAVE HEIGHT": 1.2400000095367432,
+      "WAVE PERIOD": 1.6699999570846558,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 2600.0,
+      "WAVE CREST ELEVATION": 11.680000305175781,
+      "WAVE HEIGHT": 0.949999988079071,
+      "WAVE PERIOD": 1.7999999523162842,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 2800.0,
+      "WAVE CREST ELEVATION": 11.420000076293945,
+      "WAVE HEIGHT": 0.7699999809265137,
+      "WAVE PERIOD": 1.850000023841858,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 2900.0,
+      "WAVE CREST ELEVATION": 11.279999732971191,
+      "WAVE HEIGHT": 0.6700000166893005,
+      "WAVE PERIOD": 1.8799999952316284,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 3000.0,
+      "WAVE CREST ELEVATION": 11.140000343322754,
+      "WAVE HEIGHT": 0.5600000023841858,
+      "WAVE PERIOD": 1.909999966621399,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 3100.0,
+      "WAVE CREST ELEVATION": 11.0,
+      "WAVE HEIGHT": 0.46000000834465027,
+      "WAVE PERIOD": 1.9299999475479126,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 3200.0,
+      "WAVE CREST ELEVATION": 10.850000381469727,
+      "WAVE HEIGHT": 0.3499999940395355,
+      "WAVE PERIOD": 1.9600000381469727,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 3300.0,
+      "WAVE CREST ELEVATION": 10.699999809265137,
+      "WAVE HEIGHT": 0.23999999463558197,
+      "WAVE PERIOD": 1.9600000381469727,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 3400.0,
+      "WAVE CREST ELEVATION": 10.550000190734863,
+      "WAVE HEIGHT": 0.11999999731779099,
+      "WAVE PERIOD": 1.9600000381469727,
+      "WHAFIS CARD": "  ",
+      "trans_id": "1"
+    },
+    {
+      "STATION": 3500.0,
+      "WAVE CREST ELEVATION": 10.40999984741211,
+      "WAVE HEIGHT": 0.009999999776482582,
+      "WAVE PERIOD": 1.9600000381469727,
+      "WHAFIS CARD": "IF",
+      "trans_id": "1"
+    }
+  ],
+  "WHAFIS PART 3": [
+    {
+      "STATION BEGIN": 319.0,
+      "STATION END": 590.0,
+      "trans_id": "1"
+    },
+    {
+      "STATION BEGIN": 187.0,
+      "STATION END": 628.0,
+      "trans_id": "4"
+    },
+    {
+      "STATION BEGIN": 966.0,
+      "STATION END": 1180.0,
+      "trans_id": "4"
+    },
+    {
+      "STATION BEGIN": 344.0,
+      "STATION END": 482.0,
+      "trans_id": "3"
+    }
+  ],
+  "WHAFIS PART 4": [
+    {
+      "10-Year Surge": 6.599999904632568,
+      "100-Year Surge": 12.359999656677246,
+      "STATION": 650.0,
+      "trans_id": "1"
+    },
+    {
+      "10-Year Surge": 6.599999904632568,
+      "100-Year Surge": 12.319999694824219,
+      "STATION": 700.0,
+      "trans_id": "1"
+    },
+    {
+      "10-Year Surge": 6.599999904632568,
+      "100-Year Surge": 10.399999618530273,
+      "STATION": 3500.0,
+      "trans_id": "1"
+    },
+    {
+      "10-Year Surge": 6.599999904632568,
+      "100-Year Surge": 7.0,
+      "STATION": 628.0,
+      "trans_id": "4"
+    },
+    {
+      "10-Year Surge": 6.599999904632568,
+      "100-Year Surge": 10.399999618530273,
+      "STATION": 482.0,
+      "trans_id": "3"
+    }
+  ],
+  "WHAFIS PART 5": [
+    {
+      "Location": "      WINDWARD",
+      "STATION": 245.07000732421875,
+      "trans_id": "1"
+    },
+    {
+      "Location": "      WINDWARD",
+      "STATION": 128.82000732421875,
+      "trans_id": "4"
+    },
+    {
+      "Location": "      WINDWARD",
+      "STATION": 164.36000061035156,
+      "trans_id": "2"
+    },
+    {
+      "Location": "      WINDWARD",
+      "STATION": 132.27000427246094,
+      "trans_id": "3"
+    }
+  ],
+  "WHAFIS PART 6": [
+    {
+      "ELEVATION BEGIN": 19.010000228881836,
+      "ELEVATION END": 18.5,
+      "FHF": 90.0,
+      "STATION BEGIN": -23.0,
+      "STATION END": -11.699999809265137,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 19.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 18.5,
+      "ELEVATION END": 17.5,
+      "FHF": 90.0,
+      "STATION BEGIN": -11.699999809265137,
+      "STATION END": 33.20000076293945,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 18.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 17.5,
+      "ELEVATION END": 16.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 33.20000076293945,
+      "STATION END": 104.19999694824219,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 17.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 16.5,
+      "ELEVATION END": 15.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 104.19999694824219,
+      "STATION END": 174.60000610351563,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 16.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 15.5,
+      "ELEVATION END": 14.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 174.60000610351563,
+      "STATION END": 245.0,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 15.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 14.5,
+      "ELEVATION END": 14.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 245.0,
+      "STATION END": 245.0,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 15.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 14.5,
+      "ELEVATION END": 13.5,
+      "FHF": 55.0,
+      "STATION BEGIN": 245.0,
+      "STATION END": 316.1000061035156,
+      "ZONE": "A11",
+      "ZONE ELEVATION": 14.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 13.5,
+      "ELEVATION END": 12.5,
+      "FHF": 55.0,
+      "STATION BEGIN": 316.1000061035156,
+      "STATION END": 318.79998779296875,
+      "ZONE": "A11",
+      "ZONE ELEVATION": 13.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 12.5,
+      "ELEVATION END": 12.40999984741211,
+      "FHF": 55.0,
+      "STATION BEGIN": 318.79998779296875,
+      "STATION END": 319.0,
+      "ZONE": "A11",
+      "ZONE ELEVATION": 12.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 12.40999984741211,
+      "ELEVATION END": 12.399999618530273,
+      "FHF": 55.0,
+      "STATION BEGIN": 319.0,
+      "STATION END": 590.0,
+      "ZONE": "X",
+      "ZONE ELEVATION": 12.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 12.399999618530273,
+      "ELEVATION END": 12.5,
+      "FHF": 55.0,
+      "STATION BEGIN": 590.0,
+      "STATION END": 638.9000244140625,
+      "ZONE": "A11",
+      "ZONE ELEVATION": 12.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 12.5,
+      "ELEVATION END": 12.520000457763672,
+      "FHF": 55.0,
+      "STATION BEGIN": 638.9000244140625,
+      "STATION END": 650.0,
+      "ZONE": "A11",
+      "ZONE ELEVATION": 13.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 12.520000457763672,
+      "ELEVATION END": 12.569999694824219,
+      "FHF": 55.0,
+      "STATION BEGIN": 650.0,
+      "STATION END": 700.0,
+      "ZONE": "A11",
+      "ZONE ELEVATION": 13.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 12.569999694824219,
+      "ELEVATION END": 12.5,
+      "FHF": 55.0,
+      "STATION BEGIN": 700.0,
+      "STATION END": 1830.699951171875,
+      "ZONE": "A11",
+      "ZONE ELEVATION": 13.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 12.5,
+      "ELEVATION END": 11.5,
+      "FHF": 55.0,
+      "STATION BEGIN": 1830.699951171875,
+      "STATION END": 2738.10009765625,
+      "ZONE": "A11",
+      "ZONE ELEVATION": 12.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 11.5,
+      "ELEVATION END": 10.5,
+      "FHF": 55.0,
+      "STATION BEGIN": 2738.10009765625,
+      "STATION END": 3435.39990234375,
+      "ZONE": "A11",
+      "ZONE ELEVATION": 11.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 10.5,
+      "ELEVATION END": 10.40999984741211,
+      "FHF": 55.0,
+      "STATION BEGIN": 3435.39990234375,
+      "STATION END": 3500.0,
+      "ZONE": "A11",
+      "ZONE ELEVATION": 10.0,
+      "trans_id": "1"
+    },
+    {
+      "ELEVATION BEGIN": 16.0,
+      "ELEVATION END": 15.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 2.0,
+      "STATION END": 52.0,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 16.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION BEGIN": 15.5,
+      "ELEVATION END": 14.600000381469727,
+      "FHF": 90.0,
+      "STATION BEGIN": 52.0,
+      "STATION END": 128.8000030517578,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 15.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION BEGIN": 14.600000381469727,
+      "ELEVATION END": 14.5,
+      "FHF": 10.0,
+      "STATION BEGIN": 128.8000030517578,
+      "STATION END": 134.6999969482422,
+      "ZONE": "A 2",
+      "ZONE ELEVATION": 15.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION BEGIN": 14.5,
+      "ELEVATION END": 13.5,
+      "FHF": 10.0,
+      "STATION BEGIN": 134.6999969482422,
+      "STATION END": 186.10000610351563,
+      "ZONE": "A 2",
+      "ZONE ELEVATION": 14.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION BEGIN": 13.5,
+      "ELEVATION END": 12.510000228881836,
+      "FHF": 10.0,
+      "STATION BEGIN": 186.10000610351563,
+      "STATION END": 187.0,
+      "ZONE": "A 2",
+      "ZONE ELEVATION": 13.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION BEGIN": 12.510000228881836,
+      "ELEVATION END": 7.0,
+      "FHF": 10.0,
+      "STATION BEGIN": 187.0,
+      "STATION END": 628.0,
+      "ZONE": "X",
+      "ZONE ELEVATION": 13.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION BEGIN": 7.0,
+      "ELEVATION END": 7.010000228881836,
+      "FHF": 10.0,
+      "STATION BEGIN": 628.0,
+      "STATION END": 966.0,
+      "ZONE": "A 2",
+      "ZONE ELEVATION": 7.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION BEGIN": 7.010000228881836,
+      "ELEVATION END": 7.0,
+      "FHF": 10.0,
+      "STATION BEGIN": 966.0,
+      "STATION END": 1180.0,
+      "ZONE": "X",
+      "ZONE ELEVATION": 7.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION BEGIN": 7.0,
+      "ELEVATION END": 7.5,
+      "FHF": 10.0,
+      "STATION BEGIN": 1180.0,
+      "STATION END": 1504.5999755859375,
+      "ZONE": "A 2",
+      "ZONE ELEVATION": 7.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION BEGIN": 7.5,
+      "ELEVATION END": 7.610000133514404,
+      "FHF": 10.0,
+      "STATION BEGIN": 1504.5999755859375,
+      "STATION END": 1610.0,
+      "ZONE": "A 2",
+      "ZONE ELEVATION": 8.0,
+      "trans_id": "4"
+    },
+    {
+      "ELEVATION BEGIN": 19.010000228881836,
+      "ELEVATION END": 18.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 0.0,
+      "STATION END": 14.600000381469727,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 19.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION BEGIN": 18.5,
+      "ELEVATION END": 17.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 14.600000381469727,
+      "STATION END": 43.099998474121094,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 18.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION BEGIN": 17.5,
+      "ELEVATION END": 16.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 43.099998474121094,
+      "STATION END": 71.5999984741211,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 17.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION BEGIN": 16.5,
+      "ELEVATION END": 15.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 71.5999984741211,
+      "STATION END": 82.4000015258789,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 16.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION BEGIN": 15.5,
+      "ELEVATION END": 14.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 82.4000015258789,
+      "STATION END": 164.3000030517578,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 15.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION BEGIN": 14.5,
+      "ELEVATION END": 14.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 164.3000030517578,
+      "STATION END": 164.3000030517578,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 15.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION BEGIN": 14.5,
+      "ELEVATION END": 13.5,
+      "FHF": 70.0,
+      "STATION BEGIN": 164.3000030517578,
+      "STATION END": 262.0,
+      "ZONE": "A14",
+      "ZONE ELEVATION": 14.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION BEGIN": 19.010000228881836,
+      "ELEVATION END": 18.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 0.0,
+      "STATION END": 6.800000190734863,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 19.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 18.5,
+      "ELEVATION END": 17.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 6.800000190734863,
+      "STATION END": 20.0,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 18.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 17.5,
+      "ELEVATION END": 16.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 20.0,
+      "STATION END": 33.29999923706055,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 17.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 16.5,
+      "ELEVATION END": 15.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 33.29999923706055,
+      "STATION END": 46.5,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 16.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 15.5,
+      "ELEVATION END": 14.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 46.5,
+      "STATION END": 132.1999969482422,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 15.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 14.5,
+      "ELEVATION END": 14.5,
+      "FHF": 90.0,
+      "STATION BEGIN": 132.1999969482422,
+      "STATION END": 132.1999969482422,
+      "ZONE": "V18",
+      "ZONE ELEVATION": 15.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 14.5,
+      "ELEVATION END": 13.5,
+      "FHF": 45.0,
+      "STATION BEGIN": 132.1999969482422,
+      "STATION END": 233.39999389648438,
+      "ZONE": "A 9",
+      "ZONE ELEVATION": 14.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 13.5,
+      "ELEVATION END": 12.5,
+      "FHF": 45.0,
+      "STATION BEGIN": 233.39999389648438,
+      "STATION END": 334.3999938964844,
+      "ZONE": "A 9",
+      "ZONE ELEVATION": 13.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 12.5,
+      "ELEVATION END": 12.40999984741211,
+      "FHF": 45.0,
+      "STATION BEGIN": 334.3999938964844,
+      "STATION END": 344.0,
+      "ZONE": "A 9",
+      "ZONE ELEVATION": 12.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 12.40999984741211,
+      "ELEVATION END": 10.399999618530273,
+      "FHF": 45.0,
+      "STATION BEGIN": 344.0,
+      "STATION END": 482.0,
+      "ZONE": "X",
+      "ZONE ELEVATION": 12.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 10.399999618530273,
+      "ELEVATION END": 10.5,
+      "FHF": 45.0,
+      "STATION BEGIN": 482.0,
+      "STATION END": 1250.5,
+      "ZONE": "A 9",
+      "ZONE ELEVATION": 10.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 10.5,
+      "ELEVATION END": 10.5,
+      "FHF": 45.0,
+      "STATION BEGIN": 1250.5,
+      "STATION END": 2118.800048828125,
+      "ZONE": "A 9",
+      "ZONE ELEVATION": 11.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 10.5,
+      "ELEVATION END": 10.40999984741211,
+      "FHF": 45.0,
+      "STATION BEGIN": 2118.800048828125,
+      "STATION END": 2129.0,
+      "ZONE": "A 9",
+      "ZONE ELEVATION": 10.0,
+      "trans_id": "3"
+    },
+    {
+      "ELEVATION BEGIN": 13.5,
+      "ELEVATION END": 13.5,
+      "FHF": 70.0,
+      "STATION BEGIN": 262.0,
+      "STATION END": 292.5,
+      "ZONE": "A14",
+      "ZONE ELEVATION": 13.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION BEGIN": 13.5,
+      "ELEVATION END": 13.5,
+      "FHF": 70.0,
+      "STATION BEGIN": 292.5,
+      "STATION END": 3135.60009765625,
+      "ZONE": "A14",
+      "ZONE ELEVATION": 14.0,
+      "trans_id": "2"
+    },
+    {
+      "ELEVATION BEGIN": 13.5,
+      "ELEVATION END": 13.399999618530273,
+      "FHF": 70.0,
+      "STATION BEGIN": 3135.60009765625,
+      "STATION END": 3500.0,
+      "ZONE": "A14",
+      "ZONE ELEVATION": 13.0,
+      "trans_id": "2"
+    }
+  ]
+}
