@@ -79,7 +79,13 @@ std::int32_t log_log(std::int32_t x1, std::int32_t x2,
     const float slope = static_cast<float>((static_cast<double>(ly1) - ly2) /
                                            (static_cast<double>(lx1) - lx2));
     const double exponent = (static_cast<double>(lx) - lx1) * slope + ly1;
-    return static_cast<std::int32_t>(std::pow(10.0, exponent));
+    // __FHfexp uses FYL2X followed by the original software F2XM1 path.
+    // For positive integral base-10 exponents its result lies just below the
+    // integer. Preserve truncation even where binary64 exp2 rounds back up.
+    // Original routine probes cover each representable INTEGER*4 decade.
+    if (exponent >= 1.0 && exponent <= 9.0 && exponent == std::trunc(exponent))
+        return static_cast<std::int32_t>(std::pow(10.0, exponent)) - 1;
+    return static_cast<std::int32_t>(std::exp2(std::log2(10.0) * exponent));
 }
 
 float breaking_depth(float deep_water_height, float period, float slope_cotangent) {

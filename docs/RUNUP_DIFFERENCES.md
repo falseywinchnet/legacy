@@ -31,3 +31,10 @@ LOGLOG and LOGLIN store logarithms and slopes as REAL*4 and truncate the final r
 The binary includes Microsoft's floating-point emulation library. DOSBox-X with `fpu=false` reproduces the archived sample output byte for byte. With its coprocessor enabled, the same executable prints one slope as 6.87 rather than the archived 6.88; captured software-path slope storage is exactly 6.875. Report formatting and floating-point execution mode therefore require explicit treatment.
 
 This is a growing list of established differences, not an exhaustive comparison of the full programs.
+# Additional executable findings from the complete calculation
+
+- The executable's RUN `I2` and SIMPCOMP1 `I3` blending weights are INTEGER*4. Their intermediate fractional values truncate before blending. The printed listing declares these weights real.
+- RUN's source line 579 uses `J-A+1` for the approach toe, where the scanned listing shows `I-A+1`. Label 503 tests `A == I`, not `A == 1`.
+- The exact-vertex geometry branch reads a distinct local `HOSCALE` (letter O), which remains zero, while the other branch reads common-block `H0SCALE` (zero). The disassembly distinguishes the addresses.
+- `__FHfexp` uses `FYL2X` and the software `F2XM1` path. The integer logarithmic interpolation result can lie immediately below an exact power of ten. Direct probes give 9 for constant ordinates of 10 and 999 for 1,000; native `std::pow` alone changes complete RUNUP results.
+- The original formatter suppresses leading zeroes in fractional fixed-point fields. Empty portions of its static page heading contain NUL bytes. The compatibility report preserves both.

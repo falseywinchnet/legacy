@@ -14,15 +14,32 @@ import subprocess
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-BOUNDARIES = {'input': 0x08de, 'first-wave': 0x0a95}
+BOUNDARIES = {'input': 0x08de, 'first-wave': 0x0a95,
+              'first-curve': 0x35c7, 'curve-value': 0x3e13}
 
 
-def capture(input_path, boundary='first-wave'):
+def capture(input_path, boundary='first-wave', visit=1):
     exe = bytearray((ROOT / 'originals/runup2/RUNUP2.EXE').read_bytes())
     header = struct.unpack_from('<H', exe, 8)[0] * 16
     patch = bytes.fromhex('bb0100 ba0000 b90063 b440 cd21 b8004c cd21')
-    at = header + BOUNDARIES[boundary]
-    exe[at:at + len(patch)] = patch
+    address = BOUNDARIES[boundary]
+    at = header + address
+    if visit == 1:
+        exe[at:at + len(patch)] = patch
+    else:
+        if boundary not in ('first-curve', 'curve-value'):
+            raise ValueError('Repeated visits are supported only for curve boundaries')
+        # The original main will not reach this space before RUN returns.
+        # Both selected boundaries begin with an independent three-byte instruction.
+        trampoline = 0x0a95
+        original = exe[at:at + 3]
+        code = bytearray.fromhex('9c 50 ff069062 813e9062')
+        code += struct.pack('<H', visit)
+        code += b'\x75' + bytes([len(patch)]) + patch
+        code += bytes.fromhex('58 9d') + original
+        code += b'\xe9' + struct.pack('<h', address + 3 - (trampoline + len(code) + 3))
+        exe[header + trampoline:header + trampoline + len(code)] = code
+        exe[at:at + 3] = b'\xe9' + struct.pack('<h', trampoline - address - 3)
     with tempfile.TemporaryDirectory(prefix='runup-state-') as directory:
         work = Path(directory)
         (work / 'MODEL.EXE').write_bytes(exe)
@@ -60,8 +77,9 @@ if __name__ == '__main__':
     parser.add_argument('input', type=Path)
     parser.add_argument('output', type=Path)
     parser.add_argument('--at', choices=BOUNDARIES, default='first-wave')
+    parser.add_argument('--visit', type=int, default=1)
     args = parser.parse_args()
-    data = capture(args.input, args.at)
+    data = capture(args.input, args.at, args.visit)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_bytes(data)
     args.output.with_suffix('.json').write_text(json.dumps(named_values(data), indent=2) + '\n')

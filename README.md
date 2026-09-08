@@ -4,7 +4,7 @@ Recover the original FEMA **CHAMP 2.0 (Coastal Hazard Analysis Modeling Program)
 
 The intended targets are **macOS, Linux, and Windows**, using **Make/CMake** and **GitHub Actions runners**. CHAMP's project and transect workflow is part of the port, alongside both numerical engines.
 
-**Original source recovery comes first.** Search historical distributions, web archives, government document and microfiche repositories, and original contractor records. Do not replace a missing original with a convenient modern reconstruction. Testing, certification, and process scaffolding are not the current priority.
+**Native implementation is underway.** RUNUP now runs as a standalone C++ program and reproduces all five supplied reference reports byte for byte. WHAFIS, the CHAMP workflow, and the Dear ImGui application remain in progress. The original executables and recovered source are the behavior baseline; further source hunting is not a prerequisite.
 
 ## Recovered so far
 
@@ -14,7 +14,7 @@ The intended targets are **macOS, Linux, and Windows**, using **Make/CMake** and
 | RUNUP | **November 1991 DOS executable with original debug records:** four Fortran filenames, 18 application procedures, 693 line mappings, and **3,587 original table integers extracted directly from the binary**. Original samples, 1981 printed source, March 1990 listing, and a higher-resolution archived scan are preserved. | Original digital Fortran, especially the revision that produced the November 1991 executable. Debug records preserve names and locations, not source text. |
 | CHAMP | **Original 2007 CHAMP 2.0 installer**, application and sample project/transect files, manual, and earlier 2001/2004 distributions. Embedded metadata preserves the original project path, a developer credit, and 30 named VB objects in each inspected 2001/2007 application. | Original Visual Basic project, forms, modules, and build material. These are absent from the installers inspected; application p-code survives. |
 
-Read the [source recovery findings](recovery/FINDINGS.md) for exact versions, archive links, source-listing page ranges, and the unresolved leads. The [microfiche search record](recovery/microfiche/README.md) adds 32 inspected catalog records, physical fiche identifiers, search limits, and an unsent inquiry for the missing source holdings.
+Read the [source recovery findings](recovery/FINDINGS.md) for exact versions, archive links, and source-listing page ranges. The earlier archive research is preserved as provenance. No staff requests or human-mediated archive searches are needed to continue this port.
 
 ## Repository layout
 
@@ -34,9 +34,16 @@ FEMA's 2024 RUNUP reconstruction is a separate version, not the source baseline 
 
 Keep the original algorithms, numerical tables, data formats, and CHAMP workflow legible as they become C++. Favor explicit data and straightforward functions, with a small interface around the actual calculations. Preserve original files separately from translations and identify unresolved historical differences instead of silently choosing a replacement.
 
-Implementation is underway. The first C++ numerical routines compile through CMake and Make and are compared against raw results from the original executable. The complete engines, CHAMP workflow, and desktop interface are still being implemented. See [implementation evidence and remaining work](docs/IMPLEMENTATION.md).
+The current RUNUP calculation includes profile geometry, breaking depth, curve selection, roughness, scaling, structure/composite branches, and convergence. Five complete reports (44 wave calculations) and 6,209 raw numerical routine records match the original reference on the development Mac. Additional branch and error-path comparisons are in progress; these fixtures do not establish universal equivalence. See [implementation evidence and remaining work](docs/IMPLEMENTATION.md).
 
-For the current development build, run `make test`, or use CMake directly. GitHub Actions builds and compares the C++ routines on macOS, Linux, and Windows.
+For the current development build:
+
+```sh
+make test
+build/native/runup originals/runup2/test.in result.out
+```
+
+The command-line program has no emulator, Python, Fortran, or original-executable dependency. GitHub Actions builds and checks C++ on macOS, Linux, and Windows. Ready-to-run desktop packages will follow the completed interface.
 
 ## Attribution
 

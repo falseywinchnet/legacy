@@ -28,20 +28,28 @@ python3 tools/probe_runup_routines.py LOGLOG 10 100 100 1000 50
 
 The original result is **499**, despite the idealized mathematical interpolation giving 500. Stored single-precision logarithms and truncation to an integer account for this case. Replacing the routine with a mathematically neater formula would change the program.
 
-The initial C++ implementations of LOOK, RINT, SWLINT, LOGLIN, and LOGLOG are in `src/runup/math.cpp`. The five lookup/interpolation routines and DBPLOT each have 1,000 raw original-reference cases, including interval endpoints and zero-width linear intervals. These are useful differential checks, not a claim of complete numerical equivalence or full program completion. LOOK is compared against original lower/upper index and flag results.
+The C++ implementations of LOOK, RINT, SWLINT, LOGLIN, LOGLOG, and DBPLOT are in `src/runup/math.cpp`. There are 6,209 raw original-reference cases, including interval endpoints, zero-width linear intervals, constant logarithmic ordinates, and all nine positive INTEGER*4 decades. These are differential checks, not a proof of complete numerical equivalence. LOOK is compared against original lower/upper index and flag results.
 
 C++ arithmetic uses explicit single-precision storage points, wider expression intermediates, and disabled floating-point contraction. Further routine and whole-program checks will determine where the original software floating-point implementation needs closer reproduction.
 
 `tools/disassemble_runup.py` decodes the application's Microsoft `INT 34h–3Dh` floating-point traps along with x86 instructions and annotates the original source-line mappings. Reading these bytes as ordinary instructions alone produces misleading disassembly. Its optional research dependency is Capstone 5.
 
+## Complete-report milestone
+
+The `runup` executable reads the original fixed-column files and produces original-format reports without an emulator or historical runtime. Its five supplied reference cases contain 44 wave calculations and 17,633 report bytes. All five currently match byte for byte on the development Mac, including fixed-column parsing, missing leading zeroes, NUL bytes in historical headings, carriage returns, and page controls.
+
+The first published wave also matches captured original intermediate values, including its four convergence iterations, structure and approach geometry, breaking station, effective slope, and final raw binary32 runup. The snapshot probe can stop at input, wave, and curve boundaries, including a selected repeated curve visit, to locate discrepancies before formatting.
+
+The native geometry and curve code is in `src/runup/calculation.cpp` and `src/runup/curves.cpp`. Original variable names are retained inside the calculation record to make comparisons with original debug symbols reviewable; the public interface uses profile, wave, and result records. Table constants are generated reproducibly from the recovered binary data.
+
 ## Work still required
 
-- Complete RUNUP's profile parsing, wave-breaking, structure classification, curve selection, roughness, convergence, reports, and error behavior; compare each against the original binary and the earlier printed source.
+- Expand RUNUP comparison beyond the five supplied cases: all structure branches, varying roughness/water levels, nonconvergence, historical errors, boundary profiles, and report diagnostics. Finish unsupported edge behavior exposed by those comparisons.
 - Translate all active WHAFIS 4.0G computational and input/output paths from the recovered source; verify against the original Windows executable, including marsh data and 500-year behavior.
 - Recover CHAMP's p-code logic and file/database formats, then implement its project, transect, erosion, wave-setup, plotting, and export workflows.
 - Complete the Dear ImGui application, bundled examples, file dialogs, useful errors, and installable packages so ordinary users need no development tools or knowledge of this recovery work.
 - Verify the completed applications on macOS, Linux, and Windows and publish the corresponding artifacts.
 
-The first four-routine build passed GitHub Actions on macOS, Linux, and Windows at commit `600adb2`. The subsequent LOOK and DBPLOT additions pass locally; their cross-platform results must be checked after the next push.
+All six numerical routines passed GitHub Actions on macOS, Linux, and Windows at commit `30c0b1b`. The complete-report additions pass locally; their cross-platform results must be checked after the next push.
 
 Confirmed changes between the printed listing and executable are recorded in [RUNUP historical differences](RUNUP_DIFFERENCES.md).
