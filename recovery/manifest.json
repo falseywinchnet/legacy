@@ -1,0 +1,414 @@
+{
+  "recovered_on": "2026-09-08",
+  "files": [
+    {
+      "path": "originals/archives/whafis4-2007.zip",
+      "kind": "original distribution",
+      "bytes": 254173,
+      "sha256": "6bf0f506f8059795feb1d25de827ea0f2debb646d785fba240fb1107bb6b2bae",
+      "download_url": "https://web.archive.org/web/20081031000000id_/http://www.fema.gov/library/file?type=publishedFile&file=whafis4.zip&fileid=4a4deea0-51a4-11dc-9950-000bdba87d5b",
+      "resolved_url": "https://web.archive.org/web/20081102135735id_/https://www.fema.gov/library/file?type=publishedFile&file=whafis4.zip&fileid=4a4deea0-51a4-11dc-9950-000bdba87d5b",
+      "retrieved": "2026-09-08",
+      "wayback_capture_utc": "20081102135735"
+    },
+    {
+      "path": "originals/archives/runup2-1991.zip",
+      "kind": "original distribution",
+      "bytes": 60194,
+      "sha256": "4e92e9cb0840cefa4086a7b78e9aba872dbc12b677ae04e921c67faf23a8c52b",
+      "download_url": "https://web.archive.org/web/20041118144021id_/http://www.fema.gov/media/fhm/frm_run2.zip",
+      "resolved_url": "https://web.archive.org/web/20041118144021id_/http://www.fema.gov/media/fhm/frm_run2.zip",
+      "retrieved": "2026-09-08",
+      "wayback_capture_utc": "20041118144021"
+    },
+    {
+      "path": "originals/archives/whafis3-1989.zip",
+      "kind": "original distribution",
+      "bytes": 46710,
+      "sha256": "a6b3155db61beca416a9d7abff657716fd558259106e36844988753e844bb35a",
+      "download_url": "https://web.archive.org/web/20041119021327id_/http://fema.gov/media/fhm/frm_wfis.zip",
+      "resolved_url": "https://web.archive.org/web/20041119021327id_/http://fema.gov/media/fhm/frm_wfis.zip",
+      "retrieved": "2026-09-08",
+      "wayback_capture_utc": "20041119021327"
+    },
+    {
+      "path": "originals/archives/champ2-2007.zip",
+      "kind": "original distribution",
+      "bytes": 26867656,
+      "sha256": "b91c7e0e4c249926f18b49ac8817a1fd942f9b2747fa5c4ffa98f1caf753d5f8",
+      "download_url": "https://web.archive.org/web/20081031000000id_/http://www.fema.gov/library/file?type=publishedFile&file=champ_2_setup.zip&fileid=ab66cd30-655c-11dc-9950-000bdba87d5b",
+      "resolved_url": "https://web.archive.org/web/20081101022843id_/https://www.fema.gov/library/file?type=publishedFile&file=champ_2_setup.zip&fileid=ab66cd30-655c-11dc-9950-000bdba87d5b",
+      "retrieved": "2026-09-08",
+      "wayback_capture_utc": "20081101022843"
+    },
+    {
+      "path": "originals/archives/champ-2004.zip",
+      "kind": "original distribution",
+      "bytes": 22053063,
+      "sha256": "144594c2072b7e46234a571a00b43a1b9490cec9f78cab8cdfb174c61b59d364",
+      "download_url": "https://web.archive.org/web/20041118092350id_/http://fema.gov/media/fhm/frm_chmp.zip",
+      "resolved_url": "https://web.archive.org/web/20041118092350id_/http://fema.gov/media/fhm/frm_chmp.zip",
+      "retrieved": "2026-09-08",
+      "wayback_capture_utc": "20041118092350"
+    },
+    {
+      "path": "originals/manuals/CHAMP2.0_Manual.pdf",
+      "kind": "historical document scan or original PDF",
+      "bytes": 3592549,
+      "sha256": "f057506aacad3098c655bf62171680730261a1adcbbb0ded8f6540fa2c970151",
+      "download_url": "https://hazards.fema.gov/femaportal/docs/CHAMP/CHAMP2.0_Manual.pdf",
+      "resolved_url": "https://hazards.fema.gov/femaportal/docs/CHAMP/CHAMP2.0_Manual.pdf",
+      "retrieved": "2026-09-08"
+    },
+    {
+      "path": "originals/manuals/RUNUP2.0_Manual.pdf",
+      "kind": "historical document scan or original PDF",
+      "bytes": 2656131,
+      "sha256": "e9b12aaaef5d9d1cfe06410056a4f076c467de5ef9c6d366555d66c033a7f4f2",
+      "download_url": "https://hazards.fema.gov/femaportal/docs/RUNUP/RUNUP2.0_Manual.pdf",
+      "resolved_url": "https://hazards.fema.gov/femaportal/docs/RUNUP/RUNUP2.0_Manual.pdf",
+      "retrieved": "2026-09-08"
+    },
+    {
+      "path": "originals/manuals/RUNUP2.0_Technical_Documentation_1991.pdf",
+      "kind": "historical document scan or original PDF",
+      "bytes": 9307736,
+      "sha256": "5c5c1cecee83cb35eaf2f0387be775fd0b646b9065038c654ab00187dcbc400a",
+      "download_url": "https://hazards.fema.gov/femaportal/docs/RUNUP/RUNUP2.0_Technical_Documentation_1991.pdf",
+      "resolved_url": "https://hazards.fema.gov/femaportal/docs/RUNUP/RUNUP2.0_Technical_Documentation_1991.pdf",
+      "retrieved": "2026-09-08"
+    },
+    {
+      "path": "originals/manuals/WHAFIS3.0_Manual_1988.pdf",
+      "kind": "historical document scan or original PDF",
+      "bytes": 5264772,
+      "sha256": "e73c960e65849bf76d9cb7273f88a67bc3cafae587e641a11f0923cd5965352c",
+      "download_url": "https://hazards.fema.gov/femaportal/docs/WHAFIS/WHAFIS3.0_Manual_1988.pdf",
+      "resolved_url": "https://hazards.fema.gov/femaportal/docs/WHAFIS/WHAFIS3.0_Manual_1988.pdf",
+      "retrieved": "2026-09-08"
+    },
+    {
+      "path": "originals/manuals/WHAFIS4.0_Supplement_2007.pdf",
+      "kind": "historical document scan or original PDF",
+      "bytes": 22181,
+      "sha256": "902e475204a655d00381a4b42adef7663e4578ef0cac15644f3d1e8caeafd8e0",
+      "download_url": "https://hazards.fema.gov/femaportal/docs/WHAFIS/WHAFIS4.0_Supplement_2007.pdf",
+      "resolved_url": "https://hazards.fema.gov/femaportal/docs/WHAFIS/WHAFIS4.0_Supplement_2007.pdf",
+      "retrieved": "2026-09-08"
+    },
+    {
+      "path": "originals/manuals/NAS_Wave_Height_Manual_1977.pdf",
+      "kind": "historical document scan or original PDF",
+      "bytes": 2444650,
+      "sha256": "b053532c96d9f23b2776baecc5e0d4fabc891eaa6b690e64271004eb9d188e5f",
+      "download_url": "https://hazards.fema.gov/femaportal/docs/WHAFIS/NAS_Wave_Height_Manual_1977.pdf",
+      "resolved_url": "https://hazards.fema.gov/femaportal/docs/WHAFIS/NAS_Wave_Height_Manual_1977.pdf",
+      "retrieved": "2026-09-08"
+    },
+    {
+      "path": "originals/manuals/HartyHerchenroder_Marsh_Grass_Methodology_1984.pdf",
+      "kind": "historical document scan or original PDF",
+      "bytes": 2673136,
+      "sha256": "44b27e5c150950fb5af9bfe0511fb02e21a3c1e94f06b708ab2acab5b5afd624",
+      "download_url": "https://hazards.fema.gov/femaportal/docs/WHAFIS/HartyHerchenroder_Marsh_Grass_Methodology_1984.pdf",
+      "resolved_url": "https://hazards.fema.gov/femaportal/docs/WHAFIS/HartyHerchenroder_Marsh_Grass_Methodology_1984.pdf",
+      "retrieved": "2026-09-08"
+    },
+    {
+      "path": "originals/whafis4/MG.DAT",
+      "kind": "verbatim archive member",
+      "bytes": 3523,
+      "sha256": "1e2c13d4354c2aa03ecafae03312c5be804d55f3ccaaf119c155f56bed97f0dc",
+      "container": "originals/archives/whafis4-2007.zip",
+      "member": "MG.DAT"
+    },
+    {
+      "path": "originals/whafis4/WHAFIS4G.FOR",
+      "kind": "verbatim archive member",
+      "bytes": 256048,
+      "sha256": "29aa7eb8907344e3b645a73776f74b93a7f63c389d4b3f248a15156eef19acfb",
+      "container": "originals/archives/whafis4-2007.zip",
+      "member": "WHAFIS4G.FOR"
+    },
+    {
+      "path": "originals/whafis4/WHAFIS4.exe",
+      "kind": "verbatim archive member",
+      "bytes": 393216,
+      "sha256": "041aaf91a59fb61e7e74ed7e17fca44695fa059eb0e0771b9e6b119902fead5c",
+      "container": "originals/archives/whafis4-2007.zip",
+      "member": "WHAFIS4.exe"
+    },
+    {
+      "path": "originals/whafis4/whafis4doc.pdf",
+      "kind": "verbatim archive member",
+      "bytes": 22181,
+      "sha256": "902e475204a655d00381a4b42adef7663e4578ef0cac15644f3d1e8caeafd8e0",
+      "container": "originals/archives/whafis4-2007.zip",
+      "member": "whafis4doc.pdf"
+    },
+    {
+      "path": "originals/runup2/test.in",
+      "kind": "verbatim archive member",
+      "bytes": 514,
+      "sha256": "b65b06cbc3f022dd027b31701bf3f2d73dd280251cfb95cb896f9489685b4d14",
+      "container": "originals/archives/runup2-1991.zip",
+      "member": "test.in"
+    },
+    {
+      "path": "originals/runup2/RUN.BAT",
+      "kind": "verbatim archive member",
+      "bytes": 49,
+      "sha256": "83fd9c39d4c5a455539200a3b036a513f220f144dd6213df73f235a20ef5af5e",
+      "container": "originals/archives/runup2-1991.zip",
+      "member": "RUN.BAT"
+    },
+    {
+      "path": "originals/runup2/RUNUP2.EXE",
+      "kind": "verbatim archive member",
+      "bytes": 119691,
+      "sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "container": "originals/archives/runup2-1991.zip",
+      "member": "RUNUP2.EXE"
+    },
+    {
+      "path": "originals/runup2/README",
+      "kind": "verbatim archive member",
+      "bytes": 708,
+      "sha256": "2aa50f108aa61c992344a8773b5743da0a59b77fc4702cbc9021f0c9ff1cc503",
+      "container": "originals/archives/runup2-1991.zip",
+      "member": "README"
+    },
+    {
+      "path": "originals/runup2/test.out",
+      "kind": "verbatim archive member",
+      "bytes": 3357,
+      "sha256": "886fd925686b8c3ba4d73aa02501eee69cef574a9b25f91903ff9be0a112d891",
+      "container": "originals/archives/runup2-1991.zip",
+      "member": "test.out"
+    },
+    {
+      "path": "originals/whafis3/test.in",
+      "kind": "verbatim archive member",
+      "bytes": 389,
+      "sha256": "9226cbee404df4796a9c11d45cf79729c758d9c64f81630ee807b709a7e63b6e",
+      "container": "originals/archives/whafis3-1989.zip",
+      "member": "test.in"
+    },
+    {
+      "path": "originals/whafis3/MG.DAT",
+      "kind": "verbatim archive member",
+      "bytes": 3523,
+      "sha256": "1e2c13d4354c2aa03ecafae03312c5be804d55f3ccaaf119c155f56bed97f0dc",
+      "container": "originals/archives/whafis3-1989.zip",
+      "member": "MG.DAT"
+    },
+    {
+      "path": "originals/whafis3/RUN.BAT",
+      "kind": "verbatim archive member",
+      "bytes": 75,
+      "sha256": "410d55a3e7984c67a0dadd6adc831e841052df13011e7efff0e85e908590d92e",
+      "container": "originals/archives/whafis3-1989.zip",
+      "member": "RUN.BAT"
+    },
+    {
+      "path": "originals/whafis3/WHAFIS3.EXE",
+      "kind": "verbatim archive member",
+      "bytes": 160294,
+      "sha256": "9be1f69d64a3d77adeb7f5dfc8aad01c0e3dd500589a553a246013189db94d34",
+      "container": "originals/archives/whafis3-1989.zip",
+      "member": "WHAFIS3.EXE"
+    },
+    {
+      "path": "originals/whafis3/Readme",
+      "kind": "verbatim archive member",
+      "bytes": 708,
+      "sha256": "2aa50f108aa61c992344a8773b5743da0a59b77fc4702cbc9021f0c9ff1cc503",
+      "container": "originals/archives/whafis3-1989.zip",
+      "member": "Readme"
+    },
+    {
+      "path": "originals/whafis3/TEST.OUT",
+      "kind": "verbatim archive member",
+      "bytes": 9711,
+      "sha256": "e35fc1b73b3b37e85a9646c8f3ee271f4ba3d48727c3438efe509ef3d712fcca",
+      "container": "originals/archives/whafis3-1989.zip",
+      "member": "TEST.OUT"
+    },
+    {
+      "path": "originals/champ2/R2.OUT",
+      "kind": "verbatim installer member",
+      "bytes": 3290,
+      "sha256": "2f8090508937abc0e8656ea7ee2c26169648ed4923933dedf89acee8beb19828",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> R2.OUT"
+    },
+    {
+      "path": "originals/champ2/R3.OUT",
+      "kind": "verbatim installer member",
+      "bytes": 3941,
+      "sha256": "5d9c6fa29509f274924e4ec2429cb6eac5f1c04239c2977e361cfd2bd1f43cd3",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> R3.OUT"
+    },
+    {
+      "path": "originals/champ2/R1.OUT",
+      "kind": "verbatim installer member",
+      "bytes": 3662,
+      "sha256": "a4d9cb98e5e924991322744334731bbdad5ac5e3095d8fa9d6ec2f3d5a3d6069",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> R1.OUT"
+    },
+    {
+      "path": "originals/champ2/R4.OUT",
+      "kind": "verbatim installer member",
+      "bytes": 3383,
+      "sha256": "96f6bb1e113734a161e715ddf5509231f954b404f5602957d75210f3cee80a3c",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> R4.OUT"
+    },
+    {
+      "path": "originals/champ2/mg.dat",
+      "kind": "verbatim installer member",
+      "bytes": 3522,
+      "sha256": "5a91458cd71a4a6484c29b0fa84b147cfe6aa00525cb0096387a814414fefd00",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> mg.dat"
+    },
+    {
+      "path": "originals/champ2/r4.dat",
+      "kind": "verbatim installer member",
+      "bytes": 474,
+      "sha256": "debacb86b3a301329ade4978c2c2830d636f02eebacbf1c47899cefc3b7c2793",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> r4.dat"
+    },
+    {
+      "path": "originals/champ2/RUNUP2.EXE",
+      "kind": "verbatim installer member",
+      "bytes": 119691,
+      "sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> RUNUP2.EXE"
+    },
+    {
+      "path": "originals/champ2/mg.dat1",
+      "kind": "verbatim installer member",
+      "bytes": 3523,
+      "sha256": "1e2c13d4354c2aa03ecafae03312c5be804d55f3ccaaf119c155f56bed97f0dc",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> mg.dat1"
+    },
+    {
+      "path": "originals/champ2/r3.dat",
+      "kind": "verbatim installer member",
+      "bytes": 596,
+      "sha256": "07663077c88a396345be191685a4230e84692945d34a62e7c9be987cfd8ee7c2",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> r3.dat"
+    },
+    {
+      "path": "originals/champ2/r2.dat",
+      "kind": "verbatim installer member",
+      "bytes": 462,
+      "sha256": "6a42901159c2e874864b8feff4c69c77fbf54400efcae49ad5ec961c1a087aac",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> r2.dat"
+    },
+    {
+      "path": "originals/champ2/WHAFIS4.exe",
+      "kind": "verbatim installer member",
+      "bytes": 393216,
+      "sha256": "041aaf91a59fb61e7e74ed7e17fca44695fa059eb0e0771b9e6b119902fead5c",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> WHAFIS4.exe"
+    },
+    {
+      "path": "originals/champ2/r1.dat",
+      "kind": "verbatim installer member",
+      "bytes": 537,
+      "sha256": "f0c172fe2acc4d9807bf7e3f54e369a10f3a710d08396b551efb4aa9a3280cf0",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> r1.dat"
+    },
+    {
+      "path": "originals/champ2/W4.OUT",
+      "kind": "verbatim installer member",
+      "bytes": 12259,
+      "sha256": "dd917569c21ba1a71b5c2387b2c7015d264a00d57d9f3fa2527f2f0b823b4c63",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> W4.OUT"
+    },
+    {
+      "path": "originals/champ2/W2.OUT",
+      "kind": "verbatim installer member",
+      "bytes": 12073,
+      "sha256": "f48351f454bf756487700c6a39081d267d1a3253fa3d8b52c4784f015d4ab20f",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> W2.OUT"
+    },
+    {
+      "path": "originals/champ2/W3.OUT",
+      "kind": "verbatim installer member",
+      "bytes": 10782,
+      "sha256": "e3ed5466bff9baf9892d78d23af8e8dd0507d604123603dbfad62273732ac628",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> W3.OUT"
+    },
+    {
+      "path": "originals/champ2/champ.exe",
+      "kind": "verbatim installer member",
+      "bytes": 868352,
+      "sha256": "aa94a899e8881298e436164dbdaa35b2c51b3f691225d8a4f50e960cf9602443",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> champ.exe"
+    },
+    {
+      "path": "originals/champ2/W1.OUT",
+      "kind": "verbatim installer member",
+      "bytes": 12306,
+      "sha256": "2cee059a637b866daae6b9fff716794baed0263313a75561923e734efda75ac1",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> W1.OUT"
+    },
+    {
+      "path": "originals/champ2/w3.dat",
+      "kind": "verbatim installer member",
+      "bytes": 661,
+      "sha256": "3d7d9cca79b74e68c09486f91cae54138877cb4e7ed48c2c46c327f06460b709",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> w3.dat"
+    },
+    {
+      "path": "originals/champ2/w2.dat",
+      "kind": "verbatim installer member",
+      "bytes": 661,
+      "sha256": "3142a532b1e9c9abbdbca1e35848279fa89fa882c00951891e8b556dc6b2829d",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> w2.dat"
+    },
+    {
+      "path": "originals/champ2/sample.mdb",
+      "kind": "verbatim installer member",
+      "bytes": 278528,
+      "sha256": "545abf0a6ba9ee6f6c6e29771a72f5e14eea088eb0ee42d099615e408f0d158d",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> sample.mdb"
+    },
+    {
+      "path": "originals/champ2/w1.dat",
+      "kind": "verbatim installer member",
+      "bytes": 598,
+      "sha256": "59deaadb4eac3778cbffa6ad9639e7b721cdd66d2ba515b024d388cbddb02e10",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> w1.dat"
+    },
+    {
+      "path": "originals/champ2/w4.dat",
+      "kind": "verbatim installer member",
+      "bytes": 908,
+      "sha256": "27a636a46af2f4952099212f9f7fc934f01e6bd7acc868ad6b2188a54397e8b4",
+      "container": "originals/archives/champ2-2007.zip",
+      "member": "setup.exe -> CHAMP.msi -> Data1.cab -> w4.dat"
+    }
+  ]
+}

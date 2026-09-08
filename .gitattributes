@@ -1,0 +1,7 @@
+# Historical files retain original bytes, including Fortran CRLF line endings.
+originals/** -text
+*.zip binary
+*.pdf binary
+*.EXE binary
+*.exe binary
+*.mdb binary

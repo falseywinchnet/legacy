@@ -1,0 +1,14 @@
+To run the Federal Emergency Management Agency (FEMA) Wave Height 
+Analysis for Flood Insurance Study (WHAFIS) program, Version 3.0, 
+create an input file using whatever editor is available on the 
+personal computer being used, then at the command prompt, type:   
+
+         > WHAFIS3 filename.in filename.out
+
+
+A marshgrass data file (mg.dat)is included with the WHAFIS program.  
+This file must be accessible to the program even if the marshgrass
+option is not being used.  The output filename must not be the same 
+as any existing filename or scratch files will be created; if scratch
+files are created, they must be deleted prior to running the program.
+                                   

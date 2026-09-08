@@ -1,43 +1,38 @@
-# Legacy — Software Forward Port Effort
+# Legacy — CHAMP, WHAFIS, and RUNUP forward port
 
-This repository is a **legacy software forward port effort**: a home for bringing older software forward to current operating systems, hardware, toolchains, and dependency ecosystems while preserving its original purpose and behavior.
+Recover the original FEMA **CHAMP 2.0 (Coastal Hazard Analysis Modeling Program)** and its two numerical engines, **WHAFIS** and **RUNUP**, then carry all three forward into clean, legible, modern orthodox C++ with a simple **Dear ImGui** interface.
 
-The goal is to make historically useful software buildable, runnable, and maintainable again, with clear records of what changed and why.
+The intended targets are **macOS, Linux, and Windows**, using **Make/CMake** and **GitHub Actions runners**. CHAMP's project and transect workflow is part of the port, alongside both numerical engines.
 
-## Scope
+**Original source recovery comes first.** Search historical distributions, web archives, government document and microfiche repositories, and original contractor records. Do not replace a missing original with a convenient modern reconstruction. Testing, certification, and process scaffolding are not the current priority.
 
-- Recover and document original source, build instructions, dependencies, and platform assumptions.
-- Update obsolete build systems, APIs, dependencies, and platform integrations for modern environments.
-- Preserve meaningful functionality, data formats, and workflows wherever practical.
-- Record compatibility changes, deliberate departures from original behavior, and remaining limitations.
-- Establish reproducible builds and focused checks for each port as software is introduced.
+## Recovered so far
 
-## Porting principles
+| Component | What is now in this repository | What remains missing |
+| --- | --- | --- |
+| WHAFIS | **Original digital `WHAFIS4G.FOR`, August 2007**, recovered from an archived FEMA ZIP. It also embeds the WHAFIS 3.0 reference source, with revision history through May 1989. Original executables, marsh data, and manuals are preserved. | Earlier independent development snapshots, if recoverable. The 2007 source is available to port. |
+| RUNUP | **November 1991 DOS executable**, original sample input/output, the **1981 printed source**, and the **March 1990 source listing published in April 1991**. | Original digital Fortran, especially the revision that produced the November 1991 executable. |
+| CHAMP | **Original 2007 CHAMP 2.0 installer**, extracted application and sample project/transect files, manual, and an earlier 2004 installer. | Original Visual Basic project, forms, modules, and build material. These are absent from the installers inspected. |
 
-**Preserve provenance.** Identify the original project, author or maintainer, source location, version, and applicable license. Retain original copyright and attribution notices.
+Read the [source recovery findings](recovery/FINDINGS.md) for exact versions, archive links, source-listing page ranges, and the unresolved leads.
 
-**Make changes traceable.** Keep imported source and subsequent porting changes distinguishable in version history. Explain why compatibility changes are necessary.
+## Repository layout
 
-**Respect original behavior.** Treat existing behavior and file formats as compatibility requirements where feasible. Document intentional changes and migration needs.
+- [`originals/whafis4/WHAFIS4G.FOR`](originals/whafis4/WHAFIS4G.FOR): the recovered digital source, preserved byte for byte.
+- [`originals/archives/`](originals/archives/): historical distribution ZIPs.
+- [`originals/manuals/`](originals/manuals/): primary manuals, including the printed RUNUP source listings.
+- [`originals/runup2/`](originals/runup2/), [`originals/whafis3/`](originals/whafis3/), and [`originals/champ2/`](originals/champ2/): original programs and supporting data extracted without running them.
+- [`recovery/manifest.json`](recovery/manifest.json): original URLs, archive members, sizes, and SHA-256 hashes.
+- [`tools/extract_champ_installer.py`](tools/extract_champ_installer.py): static extraction of the recovered CHAMP InstallShield payloads.
 
-**Verify on stated targets.** Document the operating system, architecture, compiler or runtime, dependency versions, and checks used to establish that a port works. Distinguish verified support from planned support.
+FEMA's 2024 RUNUP reconstruction is a separate version, not the source baseline for this effort. Its documentation acknowledges the missing November 1991 digital source and the need to infer intervening changes. Recovering the actual earlier files remains an open task.
 
-## Adding a forward port
+## Port direction
 
-Each software project added here should include:
+Keep the original algorithms, numerical tables, data formats, and CHAMP workflow legible as they become C++. Favor explicit data and straightforward functions, with a small interface around the actual calculations. Preserve original files separately from translations and identify unresolved historical differences instead of silently choosing a replacement.
 
-1. Its original identity, source, version, and license information.
-2. A description of what the software does and why it is being carried forward.
-3. Its original environment and intended modern target environments.
-4. Reproducible setup, build, and run instructions.
-5. A record of porting changes, verification results, known issues, and remaining work.
+No C++ port or modern cross-platform build is implemented yet. The first import is recovered source and historical material; the macOS/Linux/Windows build and Dear ImGui interface are the intended destination.
 
-The repository structure can grow around the needs of the software being ported. Project-specific instructions should live alongside the relevant source.
+## Attribution
 
-## Current status
-
-This repository is at the initial setup stage. No legacy software has been imported or ported yet, and no build or platform support is currently claimed.
-
-## Licensing
-
-Legacy software added to this repository retains its applicable licensing and attribution requirements. Consult the license files and notices accompanying each project. This README does not grant a blanket license for future imports or contributions.
+Historical material retains the notices and authorship found in its original distributions and manuals. This repository does not assign a new blanket license to recovered third-party files. The small installer extraction utility credits its format reference and includes that reference project's MIT notice.
