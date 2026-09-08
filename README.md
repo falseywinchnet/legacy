@@ -4,7 +4,7 @@ Recover the original FEMA **CHAMP 2.0 (Coastal Hazard Analysis Modeling Program)
 
 The intended targets are **macOS, Linux, and Windows**, using **Make/CMake** and **GitHub Actions runners**. CHAMP's project and transect workflow is part of the port, alongside both numerical engines.
 
-**Native implementation is underway.** RUNUP and WHAFIS now run as standalone C++ programs. RUNUP matches 113 complete original reports; WHAFIS matches 15 complete reports after excluding only execution metadata, including all four supplied CHAMP reports. The CHAMP workflow and Dear ImGui application remain in progress. The original executables and recovered source are the behavior baseline; further source hunting is not a prerequisite.
+**Native implementation is underway.** RUNUP and WHAFIS now run as standalone C++ programs. RUNUP matches 113 complete original reports; WHAFIS matches 17 complete reports after excluding only execution metadata, including all four supplied CHAMP reports. The CHAMP workflow and Dear ImGui application remain in progress. The original executables and recovered source are the behavior baseline; further source hunting is not a prerequisite.
 
 ## Recovered so far
 

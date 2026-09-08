@@ -108,6 +108,20 @@
       "output": "tests/reference/whafis4/trees.out",
       "input_sha256": "4869e683c485ceaec55811e9e8b9802924b66d5b0135f0ccb782a6e3bacb3038",
       "output_sha256": "54688e2642f378435d87104323b77bb6525b393d940814a7b1fe301c18d36b46"
+    },
+    {
+      "name": "champ-w1-500",
+      "input": "tests/reference/whafis4/champ-w1-500.dat",
+      "input_sha256": "74c0adbc31d0860e6c0ade3d63f88622687e14ba7ec12fd3ffe96ab23f71a55f",
+      "output": "tests/reference/whafis4/champ-w1-500.out",
+      "output_sha256": "69c9de564a7fab2f3e3bc77a27b2403d60f26c367b454983eb363a4ebd336caf"
+    },
+    {
+      "name": "champ-w4-500",
+      "input": "tests/reference/whafis4/champ-w4-500.dat",
+      "input_sha256": "ca4f0da401b9d5370c4a615da8450cadbaa41ff02198f0654c9b31e74c88c309",
+      "output": "tests/reference/whafis4/champ-w4-500.out",
+      "output_sha256": "77440e39ce5582961b443cf57905770c5ad081ee3ebdde77c8af642ad3112ac2"
     }
   ],
   "routines": {
@@ -127,13 +141,13 @@
       "records": 1000,
       "input_sha256": "921f64842359c35412ad1e8065e6138964ea176a5f58516c68bf6d4bfd8f0b50",
       "expected_sha256": "5f6381726d57df04e17d40e366f1754e55f07c107b3c1d7fa4535a1a06b0645e",
-      "matched": false
+      "matched": true
     },
     "HIN": {
       "records": 1000,
       "input_sha256": "4b52aef336cc66cbeccd52f256425fffcf8c463bd8e9cd0c1bbe07ca2fa5724d",
       "expected_sha256": "4acae393c2234acb25c450ad50ec3d27461450b7955eb783caecf3ebcc4baab3",
-      "matched": false
+      "matched": true
     }
   }
 }

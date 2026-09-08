@@ -1,6 +1,7 @@
 #pragma once
 #include "legacy/whafis.hpp"
 #include "support.hpp"
+#include "wind.hpp"
 namespace legacy::whafis::detail {
 class Engine {
   public:

@@ -1,116 +1,67 @@
-// Port of WHAFIS4G.FOR: HIN. Source labels support differential review.
 #include "engine.hpp"
+
 namespace legacy::whafis::detail {
-float Engine::hin(float whi, float afl, float w, float d, float wpt) {
-    float alpha{};
-    float beta{};
-    float c2log{};
-    float ca{};
-    float cdnew{};
-    float crav{};
-    float dc{};
-    float dd{};
-    float dnewstr{};
-    float dstr{};
-    float efl{};
-    float epp{};
-    float f{};
-    float g{};
-    float hbm{};
-    float result{};
-    float hs{};
-    float part1{};
-    float phi{};
-    float pi{};
-    float pi2{};
-    float rav{};
-    float tanhi{};
-    float tmp{};
-    float tmp1{};
-    float u{};
-    float whii{};
-    float wht{};
-    float wli{};
-    float wlnew{};
-    float wlonew{};
-    float wpi{};
-    float wpistr{};
-    float wptstr{};
-    float x{};
-    float yi{};
-    float ynew{};
-    pi = 3.1415926536f;
-    g = 32.2f;
-    crav = power((wide(1.357e-3f) * wide(g)), .8557f);
-    wptstr = maximum(.01f, wpt);
-    dstr = maximum(.01f, d);
-    ca = power((wide(3.6f) / wide(5.28f)), 0.23f);
-    u = (wide((wide(0.589f) * wide(ca))) * wide(power(w, 1.23f)));
-    hbm = shbm(wptstr, 0.0f, dstr);
-    whii = minimum(whi, hbm);
-    yi = hm0(whii, dstr, wptstr);
-    alpha = (wide((wide((wide(.283f) / wide(g))) * wide(u))) * wide(u));
-    beta = std::tanh(
-        (wide(.53f) * wide(power((wide((wide(g) * wide(d))) / wide(power(u, 2))), .75f))));
-    x = (wide(yi) / wide((wide(alpha) * wide(beta))));
-    if ((x < 1)) {
-        goto L20;
+float Engine::hin(float incident_height, float fetch_length, float wind_speed, float depth,
+                  float transmitted_period) {
+    // SPM 1984 fetch growth, with Thompson–Vincent significant-height conversion
+    // and the model's Miche breaking limit. The Windows compiler inlines SHBM;
+    // its observable binary32 intermediates are retained here (00407e9b..0040839e).
+    constexpr float gravity = 32.2f;
+    constexpr float twice_pi = 6.283185482025146484375f;
+    constexpr float gravity_over_twice_pi = 5.12478923797607421875f;
+    constexpr float wind_coefficient = 0.539335548877716064453125f;
+    constexpr float height_coefficient = 0.008788819424808025360107421875f;
+    constexpr float rav_coefficient = 0.068646885454654693603515625f;
+    constexpr float two_log_coefficient = 0.118764765560626983642578125f;
+    const float period = std::max(.01f, transmitted_period);
+    const float water_depth = std::max(.01f, depth);
+    const float adjusted_wind =
+        static_cast<float>(std::pow(double(wind_speed), double(1.23f)) * wind_coefficient);
+    const float incident_limit = shbm(period, 0, water_depth);
+    const float incident_zero_moment =
+        hm0(std::min(incident_height, incident_limit), water_depth, period);
+    const float alpha =
+        static_cast<float>(double(adjusted_wind) * height_coefficient * adjusted_wind);
+    const float wind_squared = static_cast<float>(double(adjusted_wind) * adjusted_wind);
+    const float beta = static_cast<float>(
+        std::tanh(std::pow((double(depth) * gravity) / wind_squared, .75) * .53f));
+    const float limiting_height = static_cast<float>(double(beta) * alpha);
+    const double ratio = double(incident_zero_moment) / limiting_height;
+    float zero_moment = incident_zero_moment;
+    if (ratio < 1) {
+        const double inverse_tanh = .5 * std::log((ratio + 1) / (1 - ratio));
+        const double fetch_root = (double(beta) / .00565f) * inverse_tanh;
+        const double equivalent_fetch = fetch_root * fetch_root * wind_squared / gravity;
+        const double growth =
+            (double(.00565f) / beta) *
+            std::sqrt(((equivalent_fetch + fetch_length) * gravity) / wind_squared);
+        zero_moment = static_cast<float>(std::tanh(growth) * limiting_height);
     }
-    ynew = yi;
-    goto L100;
-L20:;
-    tanhi = (wide(.5f) * wide(std::log((wide((wide(1) + wide(x))) / wide((wide(1) - wide(x)))))));
-    efl = (wide((wide(power((wide((wide(beta) / wide(.00565f))) * wide(tanhi)), 2)) *
-                 wide(power(u, 2)))) /
-           wide(g));
-    f = (wide(efl) + wide(afl));
-    ynew = (wide((wide(alpha) * wide(beta))) *
-            wide(std::tanh((wide((wide(.00565f) / wide(beta))) *
-                            wide(std::sqrt((wide((wide(g) * wide(f))) / wide(power(u, 2)))))))));
-L100:;
-    pi2 = (wide(2.f) * wide(pi));
-    wlonew = (wide((wide((wide(g) / wide(pi2))) * wide(wptstr))) * wide(wptstr));
-    wlonew = maximum(0.1f, wlonew);
-    dnewstr = maximum(0.01f, d);
-    cdnew = (wide(dnewstr) / wide(wlonew));
-    wlnew = (wide(wlonew) * wide(std::sqrt(std::tanh((wide(pi2) * wide(cdnew))))));
-    wlnew = maximum(0.01f, wlnew);
-    wpi = wptstr;
-    wpistr = maximum(0.1f, wpi);
-    wli = wlnew;
-    c2log = (wide(.394528f) * wide(std::log10(2.0f)));
-    epp = (wide(ynew) / wide((wide((wide(4) * wide(wli))) * wide(.002f))));
-    epp = maximum(1.0e-4f, epp);
-    dd = (wide(dnewstr) / wide((wide(g) * wide(power(wpi, 2)))));
-    dc = 5.5722e-5f;
-    part1 = (wide(.9f) + wide((wide(.42707f) * wide(std::log10((wide(dd) / wide(dc)))))));
-    if ((epp <= 2)) {
-        phi = (wide(part1) - wide((wide(1.411296f) * wide(std::log10(epp)))));
-    }
-    if ((epp > 2)) {
-        phi = (wide((wide(part1) - wide(c2log))) - wide((wide(1.016768f) * wide(std::log10(epp)))));
-    }
-    tmp1 = (wide(crav) * wide(power(wpistr, 1.7114f)));
-    tmp = (wide(tmp1) / wide(power(dnewstr, .8557f)));
-    rav = (wide(1.477f) + wide((wide(.477f) * wide((wide(tmp) - wide(1.0f))))));
-    if ((rav > 1.7f)) {
-        rav = 1.7f;
-    }
-    if ((rav < 1.0f)) {
-        rav = 1.0f;
-    }
-    if ((phi < 1)) {
-        phi = 1;
-    }
-    if ((phi > rav)) {
-        phi = rav;
-    }
-    hs = (wide(phi) * wide(ynew));
-    wht = (wide(1.6f) * wide(hs));
-    hbm = shbm(wptstr, 0.0f, dstr);
-    wht = minimum(wht, hbm);
-    result = wht;
-    return result;
-    return result;
+
+    const float deep_wavelength =
+        static_cast<float>(double(period) * gravity_over_twice_pi * period);
+    const float wavelength_scale = std::max(.1f, deep_wavelength);
+    const double wavelength = std::max(
+        double(.01f), std::sqrt(std::tanh((double(water_depth) / wavelength_scale) * twice_pi)) *
+                          wavelength_scale);
+    const float epsilon =
+        static_cast<float>(std::max(double(1.e-4f), zero_moment / (wavelength * 4 * .002f)));
+    const float depth_term = static_cast<float>(
+        std::log10((water_depth / (double(period) * period * gravity)) / 5.5722e-5f) * .42707f +
+        .9f);
+    float phi =
+        static_cast<float>(epsilon <= 2 ? depth_term - std::log10(double(epsilon)) * 1.411296f
+                                        : double(depth_term) - two_log_coefficient -
+                                              std::log10(double(epsilon)) * 1.016768f);
+    const float period_factor = static_cast<float>(
+        std::pow(double(std::max(.1f, period)), double(1.7114f)) * rav_coefficient);
+    const double limiting_ratio = std::clamp(
+        (period_factor / std::pow(double(water_depth), double(.8557f)) - 1) * .477f + 1.477f, 1.0,
+        double(1.7f));
+    phi = std::max(phi, 1.0f);
+    if (phi > limiting_ratio)
+        phi = static_cast<float>(limiting_ratio);
+    const float controlling_height = static_cast<float>(double(phi) * zero_moment * 1.6f);
+    return std::min(controlling_height, shbm(period, 0, water_depth));
 }
 } // namespace legacy::whafis::detail

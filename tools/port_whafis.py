@@ -275,6 +275,10 @@ def translate(p, s, n):
         return [name.lower()+'('+', '.join(expr(p,arg)[0] for arg in split(args))+');']
     if '=' in s:
         lhs,rhs=s.split('=',1); a,ak=expr(p,lhs); b,bk=expr(p,rhs)
+        if p.name == 'FETCH' and lhs.strip() == 'TAUOLD':
+            b = 'double(wpold) * static_cast<float>(double(wpold) * wpold)'
+        if p.name == 'FETCH' and lhs.strip() == 'WLOAVG':
+            b = '(double(wpnew) * wpnew + static_cast<float>(double(wpold) * wpold)) * 2.562394618988037109375f'
         if ak != 'text' and bk=='text': b=f'word({b})'
         return [f'{a} = {b};']
     raise ValueError(('statement',p.name,n,s))
@@ -298,6 +302,13 @@ def body(p):
             out.append(f'for ({name} = {start}; {name} {">=" if step.startswith("(-") or step.startswith("-") else "<="} {bound}; {name} += {step}) {{')
             loops.append(end)
         else: out += translate(p,s,n)
+        if p.name == 'FETCH' and n == 1179:
+            out += ['{', 'const auto coefficients = wind_coefficients(w);',
+                    'ctau = coefficients.period_growth;', 'crstr = coefficients.height_limit;',
+                    'cwpf = coefficients.period_limit;', 'cbeth = coefficients.height_depth;',
+                    'cbett = coefficients.period_depth;', 'caavg = coefficients.energy_input;',
+                    'cbavg = coefficients.energy_limit;', 'cfnut = coefficients.shallow_period_factor;',
+                    'cnut = 1.70537817478179931640625f;', '}']
         while loops and label==loops[-1]: out.append('}');loops.pop()
     assert not loops, (p.name,loops)
     return out
@@ -322,7 +333,7 @@ def signature(p):
     return ('float' if p.kind=='FUNCTION' else 'void')+' '+p.name.lower()+'('+', '.join(args)+')'
 
 
-header=['#pragma once','#include "support.hpp"','#include "legacy/whafis.hpp"','namespace legacy::whafis::detail {','class Engine {','public:', 'RecordFiles io;', 'std::vector<TransectResult> transects;', 'void record_transect(std::string_view title);']
+header=['#pragma once','#include "support.hpp"','#include "wind.hpp"','#include "legacy/whafis.hpp"','namespace legacy::whafis::detail {','class Engine {','public:', 'RecordFiles io;', 'std::vector<TransectResult> transects;', 'void record_transect(std::string_view title);']
 for name,sym in sorted(shared.items()): header.append(sym.declaration()+' '+name.lower()+'{};')
 for p in procedures.values(): header.append(signature(p)+';')
 header += ['};','}']
@@ -330,7 +341,7 @@ header += ['};','}']
 (ROOT/'src/whafis/engine.hpp').write_text('\n'.join(header)+'\n')
 for p in procedures.values():
     result=['// Port of WHAFIS4G.FOR: '+p.name+'. Source labels support differential review.', '#include "engine.hpp"','namespace legacy::whafis::detail {',signature(p).replace(' '+p.name.lower()+'(', ' Engine::'+p.name.lower()+'(')+' {']
-    if p.name in ('SHBM', 'T'): continue # Maintained from original instruction/storage sequence.
+    if p.name in ('SHBM', 'T', 'HM0', 'HIN'): continue # Maintained from original instruction/storage sequence.
     for name in sorted(p.used-set(p.args)-p.shared):
         sym=p.symbol(name)
         var=p.variable(name)[0]
@@ -339,7 +350,9 @@ for p in procedures.values():
             v,k=expr(p,sym.init)
             if k=='text' and sym.kind!='text':v=f'word({v})'
             init=' = '+v
-        wide_locals = {'FETCH': {'TSAVG', 'SAVG', 'GAVG', 'DAVG', 'GSLAVG', 'STMP'},
+        wide_locals = {'FETCH': {'TSAVG', 'SAVG', 'GAVG', 'DAVG', 'GSLAVG', 'STMP', 'HS', 'TMP', 'RAV', 'DD',
+                                'NUTAVG', 'RSTRAVG', 'FTAVG', 'DELTAU', 'TAUOLD', 'TAUNEW', 'CDNEW',
+                                'FDAVG', 'CSLAVG', 'T2AVG', 'T78AVG', 'Q18', 'RNEW'},
                        'WHAFIS4': {'STMP'}}
         declared = 'double' if name in wide_locals.get(p.name, set()) else sym.declaration()
         result.append(declared+' '+var+init+';')

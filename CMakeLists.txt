@@ -51,7 +51,7 @@ if(BUILD_TESTING)
   add_test(NAME whafis_complete_original_reports
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_whafis_reference.py
       $<TARGET_FILE:whafis> ${CMAKE_CURRENT_SOURCE_DIR})
-  foreach(routine SHBM T)
+  foreach(routine SHBM T HM0 HIN)
     add_test(NAME whafis_${routine}_original
       COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_whafis_routine.py
         $<TARGET_FILE:whafis_math_probe> ${routine} ${CMAKE_CURRENT_SOURCE_DIR})

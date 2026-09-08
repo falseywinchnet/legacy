@@ -23,7 +23,7 @@ void Engine::fetch(float &wpi, bool &test, float &wpt, float &w) {
     float cbett{};
     float ccavg{};
     float cdavg{};
-    float cdnew{};
+    double cdnew{};
     float cdold{};
     float cdpavg{};
     float cfnut{};
@@ -35,17 +35,17 @@ void Engine::fetch(float &wpi, bool &test, float &wpt, float &w) {
     float cpavg{};
     float crav{};
     float crstr{};
-    float cslavg{};
+    double cslavg{};
     float ctau{};
     float cwpf{};
     double davg{};
     float davgstr{};
     float dc{};
-    float dd{};
+    double dd{};
     float delta1{};
     float delta2{};
     float delta3{};
-    float deltau{};
+    double deltau{};
     float dg{};
     float dgsl{};
     float dltaold{};
@@ -69,7 +69,7 @@ void Engine::fetch(float &wpi, bool &test, float &wpt, float &w) {
     float epp{};
     float epshb{};
     float esfo{};
-    float fdavg{};
+    double fdavg{};
     float fi{};
     float fl1avg{};
     float fl5avg{};
@@ -78,7 +78,7 @@ void Engine::fetch(float &wpi, bool &test, float &wpt, float &w) {
     float flold{};
     float fnut{};
     float fo{};
-    float ftavg{};
+    double ftavg{};
     float g{};
     float gamh{};
     float gamt{};
@@ -90,10 +90,10 @@ void Engine::fetch(float &wpi, bool &test, float &wpt, float &w) {
     float gslnew{};
     float gslold{};
     float hbm{};
-    float hs{};
+    double hs{};
     int ipass{};
     int nfom1{};
-    float nutavg{};
+    double nutavg{};
     float oom{};
     float p{};
     float part1{};
@@ -103,7 +103,7 @@ void Engine::fetch(float &wpi, bool &test, float &wpt, float &w) {
     float pi4{};
     float pid2{};
     float q17{};
-    float q18{};
+    double q18{};
     float q27{};
     float q28{};
     float q2a{};
@@ -111,10 +111,10 @@ void Engine::fetch(float &wpi, bool &test, float &wpt, float &w) {
     float rat1{};
     float rat2{};
     float ratx{};
-    float rav{};
-    float rnew{};
+    double rav{};
+    double rnew{};
     float rold{};
-    float rstravg{};
+    double rstravg{};
     double savg{};
     float sdpavg{};
     float sen{};
@@ -130,17 +130,17 @@ void Engine::fetch(float &wpi, bool &test, float &wpt, float &w) {
     float sslavg{};
     double stmp{};
     float stof{};
-    float t2avg{};
+    double t2avg{};
     float t4avg{};
     float t5avg{};
-    float t78avg{};
+    double t78avg{};
     float t7avg{};
     float t8avg{};
-    float taunew{};
-    float tauold{};
+    double taunew{};
+    double tauold{};
     float tdx{};
     float tdxmax{};
-    float tmp{};
+    double tmp{};
     float tmp1{};
     double tsavg{};
     float tsnew{};
@@ -269,6 +269,18 @@ L100:;
     ccavg = (wide(1.f) / wide((wide((wide(3.f) * wide(pi))) * wide(std::sqrt(2.0f)))));
     c1d3 = (wide(1.f) / wide(3.f));
     cfnut = power((wide(cbeth) / wide(power(cbett, 2))), 2);
+    {
+        const auto coefficients = wind_coefficients(w);
+        ctau = coefficients.period_growth;
+        crstr = coefficients.height_limit;
+        cwpf = coefficients.period_limit;
+        cbeth = coefficients.height_depth;
+        cbett = coefficients.period_depth;
+        caavg = coefficients.energy_input;
+        cbavg = coefficients.energy_limit;
+        cfnut = coefficients.shallow_period_factor;
+        cnut = 1.70537817478179931640625f;
+    }
     dx = 25;
     x = (wide(esfo) - wide(bsfo));
     if ((x < 500)) {
@@ -348,7 +360,7 @@ L110:;
         dltappd = 0.0f;
     }
     deltau = (wide((wide((wide(dxn) * wide(ctau))) * wide(ftavg))) * wide(dltaold));
-    tauold = power(wpold, 3);
+    tauold = double(wpold) * static_cast<float>(double(wpold) * wpold);
     taunew = (wide(tauold) + wide(deltau));
     wpnew = power(taunew, c1d3);
     dltaold = 1.0f;
@@ -382,9 +394,10 @@ L110:;
     }
     cgtold = (wide((wide(0.5f) * wide(wlold))) * wide((wide(1.0f) + wide(flold))));
     cgtnew = (wide((wide(0.5f) * wide(wlnew))) * wide((wide(1.0f) + wide(flnew))));
-    wloavg =
-        (wide((wide(0.5f) * wide(clo))) * wide((wide(power(wpold, 2)) + wide(power(wpnew, 2)))));
-    wloavg = maximum(0.1f, wloavg);
+    wloavg = (double(wpnew) * wpnew + static_cast<float>(double(wpold) * wpold)) *
+             2.562394618988037109375f;
+    wloavg = (double(wpnew) * wpnew + static_cast<float>(double(wpold) * wpold)) *
+             2.562394618988037109375f;
     cdavg = (wide(davgstr) / wide(wloavg));
     dpavg = (wide(pi2) * wide(cdavg));
     sdpavg = minimum(1.e9f, std::sinh(minimum(50.0f, dpavg)));

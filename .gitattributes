@@ -5,3 +5,7 @@ originals/** -text
 *.EXE binary
 *.exe binary
 *.mdb binary
+# Reference records are executable evidence; preserve fixed columns and CRLF.
+tests/reference/** -text -whitespace
+tests/reference/**/*.out binary
+tests/reference/**/*.bin binary
