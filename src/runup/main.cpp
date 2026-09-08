@@ -17,7 +17,11 @@ int main(int argc, char** argv) {
         bool failed = false;
         for (const auto& profile : profiles) {
             results.push_back(legacy::runup::calculate(profile));
-            for (const auto& row : results.back().waves) if (!row.error.empty()) failed = true;
+            for (const auto& row : results.back().waves) if (!row.error.empty()) {
+                failed = true;
+                std::cerr << "RUNUP: " << row.error << " (water " << row.wave.water_level
+                          << ", height " << row.wave.height << ", period " << row.wave.period << ")\n";
+            }
         }
         std::ofstream output(argv[2], std::ios::binary);
         if (!output) throw std::runtime_error("Cannot open output file: " + std::string(argv[2]));

@@ -80,6 +80,7 @@ std::string legacy_report(const std::vector<ProfileResult>& profiles) {
         line(report, "        ABOVE DATUM    WAVE HEIGHT    WAVE PERIOD            NUMBER           NUMBER      WATER LEVEL        DEPTH");
         line(report, "           (FT.)          (FT.)          (SEC.)                                              (FT.)            (FT.)"); line(report);
         for (const auto& row : result.waves) {
+            if (row.fatal_error) return report;
             if (!row.error.empty()) { line(report, " " + row.error); continue; }
             line(report);
             std::string output;
@@ -91,6 +92,10 @@ std::string legacy_report(const std::vector<ProfileResult>& profiles) {
             put(output, 92, real(row.runup, 6, 2));
             put(output, 109, real(row.breaker_depth, 6, 2));
             line(report, output);
+            if (row.may_reflect)
+                line(report, " COMPOSITE SLOPE USED BUT WAVE MAY REFLECT, NOT BREAK");
+            if (row.toe_limited)
+                line(report, " WARNING:COMPOSITE SLOPE USED,BUT INPUT PROFILE DOES NOT EXTEND TO BREAKER DEPTH");
         }
     }
     return report;

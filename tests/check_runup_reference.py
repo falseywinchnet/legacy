@@ -12,7 +12,7 @@ with tempfile.TemporaryDirectory(prefix='runup-check-') as work:
     for case in manifest['cases']:
         output = Path(work) / (case['name'] + '.out')
         completed = subprocess.run([binary, root / case['input'], output], capture_output=True)
-        if completed.returncode:
+        if completed.returncode != case.get('expected_exit', 0):
             raise SystemExit(f"{case['name']}: native run failed: {completed.stderr.decode(errors='replace')}")
         expected, actual = (root / case['output']).read_bytes(), output.read_bytes()
         if actual != expected:

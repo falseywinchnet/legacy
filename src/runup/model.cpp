@@ -137,8 +137,12 @@ ProfileResult calculate(const Profile& profile) {
             row.iterations = c.iterations; row.converged = c.converged;
             row.table_exceeded = c.table_exceeded; row.may_reflect = c.CS == 1;
             row.toe_limited = c.STS == 1;
-        } catch (const std::exception& error) { row.error = error.what(); }
+        } catch (const std::exception& error) {
+            row.error = error.what();
+            row.fatal_error = row.error != "RUNUP wave steepness is outside 0.002 to 0.07";
+        }
         result.waves.push_back(row);
+        if (row.fatal_error) break;
     }
     return result;
 }

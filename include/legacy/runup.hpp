@@ -26,6 +26,7 @@ struct WaveResult {
     float runup{}, previous_runup{}, breaker_depth{};
     int breaking_slope{}, runup_slope{}, iterations{};
     bool converged{}, table_exceeded{}, may_reflect{}, toe_limited{};
+    bool fatal_error{};
     std::string error;
 };
 struct ProfileResult {

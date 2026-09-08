@@ -55,6 +55,237 @@
       "name": "champ-r4",
       "input": "originals/champ2/r4.dat",
       "output": "tests/reference/runup/champ-r4.out"
+    },
+    {
+      "name": "uniform-1",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/uniform-1.dat",
+      "output": "tests/reference/runup/branches/uniform-1.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "d4ba798c47ced87ed96cd811a4790228204e2a84107b8be658ef5c52b00a2e0a",
+      "output_sha256": "5c2c389758335fa4b0e72e20e89381f6bf985df9f2cc3592ef7d208d3df31ff5",
+      "output_bytes": 5109
+    },
+    {
+      "name": "uniform-2",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/uniform-2.dat",
+      "output": "tests/reference/runup/branches/uniform-2.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "b575178f779e092ac7a4e0309a97d2ad000bbba205274def14f3cd234b35bb85",
+      "output_sha256": "95c33ae0f01d1e9a414a020ab6b3ed435e903b9891d9118e6e20a0c0e0854a88",
+      "output_bytes": 5109
+    },
+    {
+      "name": "uniform-4",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/uniform-4.dat",
+      "output": "tests/reference/runup/branches/uniform-4.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "d78b795ee787f847114a4f608d3f8cf6dfc0498e3d81b3fc3b38ad97a0e70ca3",
+      "output_sha256": "8e44351f38decc85ab7c07eb1acb0cb5bcd2b2462fcb5b9dc19e8db355d3fcd7",
+      "output_bytes": 4889
+    },
+    {
+      "name": "uniform-8",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/uniform-8.dat",
+      "output": "tests/reference/runup/branches/uniform-8.out",
+      "expected_exit": 1,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "1990287de72f2dc8c8b21063b68155603d3497a06c16d34bc2b41b4108788c38",
+      "output_sha256": "735dbaa3f15910ce68cafd0de1a9fb5a8d0d51cdd0711d4dbd7af8d7b911cf30",
+      "output_bytes": 2033
+    },
+    {
+      "name": "uniform-8-rough",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/uniform-8-rough.dat",
+      "output": "tests/reference/runup/branches/uniform-8-rough.out",
+      "expected_exit": 1,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "4072e7b26333b5cfb372b4626720d284c147751bea4eaae66bf77022671b3394",
+      "output_sha256": "44342d9f7c9dfdf989d7a941934e37d81ece8445b60aa0fded7d0f409fb91d28",
+      "output_bytes": 2033
+    },
+    {
+      "name": "uniform-15",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/uniform-15.dat",
+      "output": "tests/reference/runup/branches/uniform-15.out",
+      "expected_exit": 1,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "80b39f0f4fd3c4f64a262c23d1abf1efedf689ca99a7b57e1141c40346242112",
+      "output_sha256": "1082c2a47e45fa92d87fa768cda72651e523d3ba641c87f75dad9339c704c742",
+      "output_bytes": 2033
+    },
+    {
+      "name": "uniform-30",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/uniform-30.dat",
+      "output": "tests/reference/runup/branches/uniform-30.out",
+      "expected_exit": 1,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "5d295677b02caf32fee64d0d15b675879847eebea83fc22d8272d76fede98f28",
+      "output_sha256": "4fff4d8790a7ae9cccc94951a579996c3fef229d9aa0820c2cbbcc92fbc7e26c",
+      "output_bytes": 2033
+    },
+    {
+      "name": "uniform-50",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/uniform-50.dat",
+      "output": "tests/reference/runup/branches/uniform-50.out",
+      "expected_exit": 1,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "6441e03505b08617f80f13d854fa7e7b7b0f1aa20c2e15bf0912002a0ebfa852",
+      "output_sha256": "526f22b2ab772ea9db3358fecf48f425b83e4d41ccf1ba148c71d1c93a90dc7b",
+      "output_bytes": 2033
+    },
+    {
+      "name": "uniform-100",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/uniform-100.dat",
+      "output": "tests/reference/runup/branches/uniform-100.out",
+      "expected_exit": 1,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "86157a3c6e26606d91ac5e3eacde842a7b7f15ea430cfac627229ed0494d1314",
+      "output_sha256": "0a0f37448b85ae065c1af453a686d574df829c31485192a46d7939f7cd0467da",
+      "output_bytes": 2033
+    },
+    {
+      "name": "approach-5-structure-2",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/approach-5-structure-2.dat",
+      "output": "tests/reference/runup/branches/approach-5-structure-2.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "f7ab716a767e997a86054fc772895d5f53ff5483d2b512ee907a9ca7c9ce0af8",
+      "output_sha256": "7e258ed1fa9136f5aa65e3e8779ec23efe4859cbf80c8585cd3afb260dc88feb",
+      "output_bytes": 4982
+    },
+    {
+      "name": "approach-5-structure-6",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/approach-5-structure-6.dat",
+      "output": "tests/reference/runup/branches/approach-5-structure-6.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "cbc5a2a31cdc9b75db51d7d670524933d4428c9419e6104cac366e70f1844af1",
+      "output_sha256": "37bd559086c2e52674f61f0cc6cb4243491be7c356ee5670ebfa55dac68e6e63",
+      "output_bytes": 4982
+    },
+    {
+      "name": "approach-10-structure-2",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/approach-10-structure-2.dat",
+      "output": "tests/reference/runup/branches/approach-10-structure-2.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "a26d021e16d3738fdfdf6dcbca1a100f5774fe6143025f9dbc4d848c936815a6",
+      "output_sha256": "2e265bc707081e91a40ffe029445258006797d2190a151ec3192775d39d6954e",
+      "output_bytes": 4982
+    },
+    {
+      "name": "approach-10-structure-6",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/approach-10-structure-6.dat",
+      "output": "tests/reference/runup/branches/approach-10-structure-6.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "5dc1da1fe2ac340998467eb727539ff493495816e796cbb5847035f21060b5d5",
+      "output_sha256": "7450be29a953d64d9f0b87fd388b25983d513db59c9f0c5658b9e88acac8dea3",
+      "output_bytes": 4982
+    },
+    {
+      "name": "approach-20-structure-2",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/approach-20-structure-2.dat",
+      "output": "tests/reference/runup/branches/approach-20-structure-2.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "481b212afae1ab54129c09ac0211d88dc43ae9afb95587e93daa1059bc3ecb27",
+      "output_sha256": "1bb23a8e049ea467f68c3e28b078b223eb5c39482581d641ce72110c97bda84c",
+      "output_bytes": 5202
+    },
+    {
+      "name": "approach-20-structure-6",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/approach-20-structure-6.dat",
+      "output": "tests/reference/runup/branches/approach-20-structure-6.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "0a7574c6fe1ed2ffd4118891efe84965a4cc42401b0df6846c2973df1cf7be39",
+      "output_sha256": "9d6e21fc90b6b3271005454c6f27656aa581893dbf91d98f58ac33614334b19f",
+      "output_bytes": 4982
+    },
+    {
+      "name": "approach-50-structure-2",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/approach-50-structure-2.dat",
+      "output": "tests/reference/runup/branches/approach-50-structure-2.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "5b8896a41bd6558c795b7d0c88c821b904b0b92c8b011fe2f919dc95192dd087",
+      "output_sha256": "faaabd3422e41f9a2e303749f97f3148fb33465011ce7a874cded3c1e6075bdf",
+      "output_bytes": 5092
+    },
+    {
+      "name": "approach-50-structure-6",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/approach-50-structure-6.dat",
+      "output": "tests/reference/runup/branches/approach-50-structure-6.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "da6b4d87e4dc408912841ea813773a54ee3e76f7d8181f5853ca8b2dc6906006",
+      "output_sha256": "3533786f133daf1d19ac8b27993c7b4608f922323c00d9776bd5b149405bf61f",
+      "output_bytes": 4982
+    },
+    {
+      "name": "segmented",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/segmented.dat",
+      "output": "tests/reference/runup/branches/segmented.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "2ef902e290e1fe9d609226b0ff1b445dfa116a1dc9d6e6422150d3805f1bfe5c",
+      "output_sha256": "c7a3822a9db89a0254f4bf75142335292218d800e826cbfd97ab88d66e336711",
+      "output_bytes": 5240
+    },
+    {
+      "name": "segmented-rough",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/segmented-rough.dat",
+      "output": "tests/reference/runup/branches/segmented-rough.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "21b37e57bdaec24b228fdd0033a648517717775dc4064f055a6020b619d2ac05",
+      "output_sha256": "f050da4578c220ae84413822080f5569e740ab973a4dcde6ad029e6a097b0f4b",
+      "output_bytes": 5240
+    },
+    {
+      "name": "berm",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/berm.dat",
+      "output": "tests/reference/runup/branches/berm.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "ae27313a28a18ec143b87cfba7bddff3501efdf8590f35227b0b6eae7fd1bfb1",
+      "output_sha256": "e4bc9c2b5248c0e02b9e0520dbe1fba0d20ba33cb083a32dffc916245aa9f179",
+      "output_bytes": 5130
+    },
+    {
+      "name": "berm-rough",
+      "program": "runup",
+      "input": "tests/reference/runup/branches/berm-rough.dat",
+      "output": "tests/reference/runup/branches/berm-rough.out",
+      "expected_exit": 0,
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "e7b916ed38d247617e86bbf399a0f77e828532434dad0f2dbac2f96f5c16da69",
+      "output_sha256": "eb493382cb4823b49e5f4472c437022f7a542c473580b49527fd15fdedca9cba",
+      "output_bytes": 5130
     }
   ]
 }

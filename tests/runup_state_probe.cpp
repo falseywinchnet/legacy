@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <iostream>
 #include <iterator>
+#include <string>
 #include <vector>
 
 int main(int argc, char** argv) {
