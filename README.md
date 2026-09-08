@@ -11,8 +11,8 @@ The intended targets are **macOS, Linux, and Windows**, using **Make/CMake** and
 | Component | What is now in this repository | What remains missing |
 | --- | --- | --- |
 | WHAFIS | **Original digital `WHAFIS4G.FOR`, August 2007**, recovered from an archived FEMA ZIP. It also embeds the WHAFIS 3.0 reference source, with revision history through May 1989. Original executables, marsh data, and manuals are preserved. | Earlier independent development snapshots, if recoverable. The 2007 source is available to port. |
-| RUNUP | **November 1991 DOS executable**, original sample input/output, the **1981 printed source**, and the **March 1990 source listing published in April 1991**. | Original digital Fortran, especially the revision that produced the November 1991 executable. |
-| CHAMP | **Original 2007 CHAMP 2.0 installer**, extracted application and sample project/transect files, manual, and an earlier 2004 installer. | Original Visual Basic project, forms, modules, and build material. These are absent from the installers inspected. |
+| RUNUP | **November 1991 DOS executable with original debug records:** four Fortran filenames, 18 application procedures, 693 line mappings, and **3,587 original table integers extracted directly from the binary**. Original samples, 1981 printed source, March 1990 listing, and a higher-resolution archived scan are preserved. | Original digital Fortran, especially the revision that produced the November 1991 executable. Debug records preserve names and locations, not source text. |
+| CHAMP | **Original 2007 CHAMP 2.0 installer**, application and sample project/transect files, manual, and earlier 2001/2004 distributions. Embedded metadata preserves the original project path, a developer credit, and 30 named VB objects in each inspected 2001/2007 application. | Original Visual Basic project, forms, modules, and build material. These are absent from the installers inspected; application p-code survives. |
 
 Read the [source recovery findings](recovery/FINDINGS.md) for exact versions, archive links, source-listing page ranges, and the unresolved leads.
 
@@ -24,6 +24,9 @@ Read the [source recovery findings](recovery/FINDINGS.md) for exact versions, ar
 - [`originals/runup2/`](originals/runup2/), [`originals/whafis3/`](originals/whafis3/), and [`originals/champ2/`](originals/champ2/): original programs and supporting data extracted without running them.
 - [`recovery/manifest.json`](recovery/manifest.json): original URLs, archive members, sizes, and SHA-256 hashes.
 - [`tools/extract_champ_installer.py`](tools/extract_champ_installer.py): static extraction of the recovered CHAMP InstallShield payloads.
+- [`recovery/runup-1991-debug/`](recovery/runup-1991-debug/): original NB02 debug bytes and decoded build records.
+- [`recovery/runup-1991-tables.json`](recovery/runup-1991-tables.json): original integer table data, with executable offsets and hashes.
+- [`tools/extract_runup_debug.py`](tools/extract_runup_debug.py), [`tools/extract_runup_tables.py`](tools/extract_runup_tables.py), and [`tools/extract_champ_metadata.py`](tools/extract_champ_metadata.py): reproducible static readers for these recoveries.
 
 FEMA's 2024 RUNUP reconstruction is a separate version, not the source baseline for this effort. Its documentation acknowledges the missing November 1991 digital source and the need to infer intervening changes. Recovering the actual earlier files remains an open task.
 

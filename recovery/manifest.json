@@ -409,6 +409,62 @@
       "sha256": "27a636a46af2f4952099212f9f7fc934f01e6bd7acc868ad6b2188a54397e8b4",
       "container": "originals/archives/champ2-2007.zip",
       "member": "setup.exe -> CHAMP.msi -> Data1.cab -> w4.dat"
+    },
+    {
+      "path": "originals/archives/champ-2001.zip",
+      "kind": "original distribution",
+      "bytes": 21206825,
+      "sha256": "0cb5b67e98aebd855bf472350c4d39afcd950b81a9e59a052d0e2509caa9447c",
+      "download_url": "https://web.archive.org/web/20011215142624id_/http://www.fema.gov/mit/tsd/frm_chmp.zip",
+      "resolved_url": "https://web.archive.org/web/20011215142624id_/http://www.fema.gov/mit/tsd/frm_chmp.zip",
+      "retrieved": "2026-09-08",
+      "wayback_capture_utc": "20011215142624"
+    },
+    {
+      "path": "originals/manuals/RUNUP_Technical_Documentation_1991_archived2009.pdf",
+      "kind": "historical document scan",
+      "bytes": 6660634,
+      "sha256": "e0bd8b141e226d1746f429c97bcda5ac786c4391577602506778c7e18c96a3cb",
+      "download_url": "https://web.archive.org/web/20090111065806id_/http://www.fema.gov/library/file?type=publishedFile&file=wave_runup_techdoc_1991.pdf&fileid=1ba3d030-956c-11dd-91c1-001185636a87",
+      "resolved_url": "https://web.archive.org/web/20090111065806id_/http://www.fema.gov/library/file?type=publishedFile&file=wave_runup_techdoc_1991.pdf&fileid=1ba3d030-956c-11dd-91c1-001185636a87",
+      "retrieved": "2026-09-08",
+      "wayback_capture_utc": "20090111065806"
+    },
+    {
+      "path": "originals/manuals/RUNUP_Readme_2008.pdf",
+      "kind": "original distribution documentation",
+      "bytes": 40364,
+      "sha256": "3bf413699939b0eb804ed85510afd19c3d77fea78a25bcc64027b8a0a73314a6",
+      "download_url": "https://web.archive.org/web/20090111065823id_/http://www.fema.gov/library/file?type=publishedFile&file=runup_v2_readme.pdf&fileid=74e94630-7937-11dd-956a-001185636a87",
+      "resolved_url": "https://web.archive.org/web/20090111065823id_/http://www.fema.gov/library/file?type=publishedFile&file=runup_v2_readme.pdf&fileid=74e94630-7937-11dd-956a-001185636a87",
+      "retrieved": "2026-09-08",
+      "wayback_capture_utc": "20090111065823"
+    },
+    {
+      "path": "originals/manuals/RUNUP_Readme_2008.doc",
+      "kind": "original distribution documentation",
+      "bytes": 101888,
+      "sha256": "23d98df793853fa43f99d20869475106c72283ca83a26362b0282712c84d0d6e",
+      "download_url": "https://web.archive.org/web/20090111065826id_/http://www.fema.gov/library/file?type=publishedFile&file=runup_v2_readme.doc&fileid=5828e460-7937-11dd-956a-001185636a87",
+      "resolved_url": "https://web.archive.org/web/20090111065826id_/http://www.fema.gov/library/file?type=publishedFile&file=runup_v2_readme.doc&fileid=5828e460-7937-11dd-956a-001185636a87",
+      "retrieved": "2026-09-08",
+      "wayback_capture_utc": "20090111065826"
+    },
+    {
+      "path": "originals/champ1-2001/champ.exe",
+      "kind": "original application",
+      "bytes": 782336,
+      "sha256": "d7d1852562a214e9a6a748579da627f60e0498439c079b927cf6711d2aebfe62",
+      "archive": "originals/archives/champ-2001.zip",
+      "archive_member": "program files/CHAMP/champ.exe",
+      "zip_member_datetime": [
+        2001,
+        2,
+        5,
+        9,
+        11,
+        34
+      ]
     }
   ]
 }

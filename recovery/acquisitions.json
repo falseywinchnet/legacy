@@ -180,5 +180,33 @@
     "sha256": "ed32f9f4b33070b66713c0b8c14a52eef62aeb88cbeabc9c060ffcf2b4b5e919",
     "download_url": "https://web.archive.org/web/20081031000000id_/http://www.fema.gov/library/file?type=publishedFile&file=whafis3.zip&fileid=f7f8e9f0-9196-11dd-91c1-001185636a87",
     "resolved_url": "https://web.archive.org/web/20081102135739id_/https://www.fema.gov/library/file?type=publishedFile&file=whafis3.zip&fileid=f7f8e9f0-9196-11dd-91c1-001185636a87"
+  },
+  {
+    "local_path": "recovery/downloads/champ-2001-original.zip",
+    "bytes": 21206825,
+    "sha256": "0cb5b67e98aebd855bf472350c4d39afcd950b81a9e59a052d0e2509caa9447c",
+    "download_url": "https://web.archive.org/web/20011215142624id_/http://www.fema.gov/mit/tsd/frm_chmp.zip",
+    "resolved_url": "https://web.archive.org/web/20011215142624id_/http://www.fema.gov/mit/tsd/frm_chmp.zip"
+  },
+  {
+    "local_path": "recovery/downloads/runup-readme-2009.doc",
+    "bytes": 101888,
+    "sha256": "23d98df793853fa43f99d20869475106c72283ca83a26362b0282712c84d0d6e",
+    "download_url": "https://web.archive.org/web/20090111065826id_/http://www.fema.gov/library/file?type=publishedFile&file=runup_v2_readme.doc&fileid=5828e460-7937-11dd-956a-001185636a87",
+    "resolved_url": "https://web.archive.org/web/20090111065826id_/http://www.fema.gov/library/file?type=publishedFile&file=runup_v2_readme.doc&fileid=5828e460-7937-11dd-956a-001185636a87"
+  },
+  {
+    "local_path": "recovery/downloads/runup-readme-2009.pdf",
+    "bytes": 40364,
+    "sha256": "3bf413699939b0eb804ed85510afd19c3d77fea78a25bcc64027b8a0a73314a6",
+    "download_url": "https://web.archive.org/web/20090111065823id_/http://www.fema.gov/library/file?type=publishedFile&file=runup_v2_readme.pdf&fileid=74e94630-7937-11dd-956a-001185636a87",
+    "resolved_url": "https://web.archive.org/web/20090111065823id_/http://www.fema.gov/library/file?type=publishedFile&file=runup_v2_readme.pdf&fileid=74e94630-7937-11dd-956a-001185636a87"
+  },
+  {
+    "local_path": "recovery/downloads/runup-techdoc-2009.pdf",
+    "bytes": 6660634,
+    "sha256": "e0bd8b141e226d1746f429c97bcda5ac786c4391577602506778c7e18c96a3cb",
+    "download_url": "https://web.archive.org/web/20090111065806id_/http://www.fema.gov/library/file?type=publishedFile&file=wave_runup_techdoc_1991.pdf&fileid=1ba3d030-956c-11dd-91c1-001185636a87",
+    "resolved_url": "https://web.archive.org/web/20090111065806id_/http://www.fema.gov/library/file?type=publishedFile&file=wave_runup_techdoc_1991.pdf&fileid=1ba3d030-956c-11dd-91c1-001185636a87"
   }
 ]
