@@ -14,7 +14,7 @@ The intended targets are **macOS, Linux, and Windows**, using **Make/CMake** and
 | RUNUP | **November 1991 DOS executable with original debug records:** four Fortran filenames, 18 application procedures, 693 line mappings, and **3,587 original table integers extracted directly from the binary**. Original samples, 1981 printed source, March 1990 listing, and a higher-resolution archived scan are preserved. | Original digital Fortran, especially the revision that produced the November 1991 executable. Debug records preserve names and locations, not source text. |
 | CHAMP | **Original 2007 CHAMP 2.0 installer**, application and sample project/transect files, manual, and earlier 2001/2004 distributions. Embedded metadata preserves the original project path, a developer credit, and 30 named VB objects in each inspected 2001/2007 application. | Original Visual Basic project, forms, modules, and build material. These are absent from the installers inspected; application p-code survives. |
 
-Read the [source recovery findings](recovery/FINDINGS.md) for exact versions, archive links, source-listing page ranges, and the unresolved leads.
+Read the [source recovery findings](recovery/FINDINGS.md) for exact versions, archive links, source-listing page ranges, and the unresolved leads. The [microfiche search record](recovery/microfiche/README.md) adds 32 inspected catalog records, physical fiche identifiers, search limits, and an unsent inquiry for the missing source holdings.
 
 ## Repository layout
 

@@ -1,0 +1,113 @@
+{"alternate_locations":{"servers":[{"server":"dn721900.ca.archive.org","dir":"/0/items/micro_IA41152602_0228"}],"workable":[{"server":"dn721900.ca.archive.org","dir":"/0/items/micro_IA41152602_0228"}]},"created":1788901508,"d1":"ia601008.us.archive.org","d2":"ia801008.us.archive.org","dir":"/31/items/micro_IA41152602_0228","files":[{"name":"__ia_thumb.jpg","source":"original","mtime":"1780458421","size":"13068","md5":"d9048e1cabc1cc64d14f601bccc0f92a","crc32":"a3079ffd","sha1":"7b216146ea634fb065cdb1e6085d32b1ad3c717f","format":"Item Tile"},{"name":"micro_IA41152602_0228.pdf","source":"derivative","pdf_module_version":"0.0.25","pdf_degraded":"invalid-jp2-headers","format":"Text PDF","original":"micro_IA41152602_0228_page_numbers.json","mtime":"1780458329","size":"3165845","md5":"7daaf1fb1cf28e1c22a2fc03ce32a30f","crc32":"3f4f917e","sha1":"043028cb1bf7a33c2fb3783a7b97316ab1525aa9"},{"name":"micro_IA41152602_0228_archive.torrent","source":"metadata","btih":"3de3c3c7a7a04482f931d7d2bf9e42602fe7620b","mtime":"1784148755","size":"21880","md5":"68db8468700f2a3c3222d7097a7d4e6b","crc32":"3340d438","sha1":"be6a512bec991d366c3d1bb242da9ad3d8019007","format":"Archive BitTorrent"},{"name":"micro_IA41152602_0228_chocr.html.gz","source":"derivative","ocr":"tesseract 5.3.0-6-g76ae","ocr_parameters":"lang-eng;two-pass-disabled;pass-dpi-disabled;autonomous-mode-disabled;binarisation-method-otsu","ocr_module_version":"0.0.21","ocr_detected_script":"Latin","ocr_detected_script_conf":"0.9656","ocr_detected_lang":"en","ocr_detected_lang_conf":"1.0000","format":"chOCR","original":"micro_IA41152602_0228_jp2.zip","mtime":"1780457193","size":"369143","md5":"c5e17da555ee23dcfbfed42eaa927949","crc32":"8c9c6bfd","sha1":"5c513d6867c82fc05ea6e3b70fab69982a1c9718"},{"name":"micro_IA41152602_0228_djvu.txt","source":"derivative","format":"DjVuTXT","original":"micro_IA41152602_0228_djvu.xml","mtime":"1780458390","size":"25877","md5":"4a266e05a0181852aa0abaffcbd99fd4","crc32":"b65ad132","sha1":"2c8a4fa972e9caebfe4fd456da658fd1de3c1df0"},{"name":"micro_IA41152602_0228_djvu.xml","source":"derivative","format":"Djvu XML","original":"micro_IA41152602_0228_hocr.html","mtime":"1780457506","size":"337358","md5":"231fdf41a48822a2fbdc1b09debec661","crc32":"a57797d6","sha1":"11035075a9e02a5fc481a5dfbf91ccb3341c8091"},{"name":"micro_IA41152602_0228_files.xml","source":"original","format":"Metadata","md5":"18dd1913f600ac99f75e23871f632500","summation":"md5"},{"name":"micro_IA41152602_0228_hocr.html","source":"derivative","hocr_char_to_word_module_version":"1.3.0","hocr_char_to_word_hocr_version":"1.1.56","ocr_parameters":"lang-eng;two-pass-disabled;pass-dpi-disabled;autonomous-mode-disabled;binarisation-method-otsu","ocr_module_version":"0.0.21","ocr_detected_script":"Latin","ocr_detected_script_conf":"0.9656","ocr_detected_lang":"en","ocr_detected_lang_conf":"1.0000","format":"hOCR","original":"micro_IA41152602_0228_chocr.html.gz","mtime":"1780457419","size":"634964","md5":"d217feb8981bd7bbe99d2186c0fabede","crc32":"40abd5ae","sha1":"6e8f5bbef0463cad56d6bbba4d189237a35297bb"},{"name":"micro_IA41152602_0228_hocr_pageindex.json.gz","source":"derivative","hocr_pageindex_module_version":"1.1.0","hocr_pageindex_hocr_version":"1.1.56","format":"OCR Page Index","original":"micro_IA41152602_0228_hocr.html","mtime":"1780457611","size":"203","md5":"4e2e1375d47da068f90ce83f8bcea015","crc32":"c4fa5beb","sha1":"242dc79775b5ef4250417b56971bde9e1f0e4e1e"},{"name":"micro_IA41152602_0228_hocr_searchtext.txt.gz","source":"derivative","hocr_fts_text_module_version":"1.2.0","hocr_fts_text_hocr_version":"1.1.56","word_conf_0_10":"156","word_conf_11_20":"71","word_conf_21_30":"96","word_conf_31_40":"78","word_conf_41_50":"81","word_conf_51_60":"79","word_conf_61_70":"63","word_conf_71_80":"62","word_conf_81_90":"140","word_conf_91_100":"3278","format":"OCR Search Text","original":"micro_IA41152602_0228_hocr.html","mtime":"1780457791","size":"9351","md5":"098f5a3c607c28a1103efa1d69e22fed","crc32":"1f24f3e4","sha1":"698b70b488837a4eca66b1ed90338c62b2db15a6"},{"name":"micro_IA41152602_0228_itemimage.png","source":"original","mtime":"1780092148","size":"320734","md5":"4e343c21ba5935e7d50652c4d9192cc4","crc32":"d6d5d992","sha1":"1c2eb69f3fb81ca9d26bd1ceb52a99f896a45a65","format":"Item Image"},{"name":"micro_IA41152602_0228_jp2.zip","source":"derivative","format":"Single Page Processed JP2 ZIP","original":"micro_IA41152602_0228_micro_scan.json","mtime":"1780456787","size":"9539101","md5":"73ba145b70157d0eddbaaa2266b2e0e2","crc32":"bcd612e8","sha1":"dfcce3a0aa6d9e37f6a89f21a41ef72dd25381f4","filecount":"16"},{"name":"micro_IA41152602_0228_meta.sqlite","source":"original","mtime":"1780455403","size":"20480","md5":"7bd4ef31aa87efbae003824a7b32bdb6","crc32":"3d591fa9","sha1":"3da7cd62b8bb07071d210970e0e72dd3baf19091","format":"Metadata"},{"name":"micro_IA41152602_0228_meta.xml","source":"original","mtime":"1784148750","size":"2321","md5":"97fc2d0ee1b3883746e92174850aca12","crc32":"20655297","sha1":"f39462c77b15eaa77f75fea90db314a0b13e68c8","format":"Metadata"},{"name":"micro_IA41152602_0228_micro_jp2.zip","source":"original","mtime":"1780092157","size":"443069487","md5":"fefd44fc60c7b78adf6d0aceb425c6fa","crc32":"535ee04a","sha1":"d89ae049e4e4c6851e26de6076bd5aeb20c3e709","format":"Micro Cards JP2 ZIP","filecount":"18"},{"name":"micro_IA41152602_0228_micro_scan.json","source":"original","format":"Micro Cards Data JSON","original":"micro_IA41152602_0228_micro_jp2.zip","mtime":"1780455381","size":"3580","md5":"cac76b6e106c629b805870d098423037","crc32":"8a153ef2","sha1":"0e4d59d8212dc8e869013c111a8995d4e9eb42f7"},{"name":"micro_IA41152602_0228_page_numbers.json","source":"derivative","hocr_pagenumber_module_version":"1.0.5","hocr_pagenumber_hocr_version":"1.1.54","hocr_pagenumber_confidence":"0","format":"Page Numbers JSON","original":"micro_IA41152602_0228_hocr.html","mtime":"1780457995","size":"2684","md5":"473ebec6fb9a6158ab2167375602f21d","crc32":"b572e7eb","sha1":"9473e025eba2516be67e5243cac3aa55eb6c62cc"},{"name":"micro_IA41152602_0228_scandata.xml","source":"derivative","format":"Scandata","original":"micro_IA41152602_0228_micro_scan.json","mtime":"1780457995","size":"5381","md5":"6165922e6e5c9a0272675743689a6700","crc32":"81199259","sha1":"dec68c561693833eda4739efc382c1f336a4e1ca"},{"name":"micro_IA41152602_0228_thumb_avif.zip","source":"derivative","microfiche_deriver_module_version":"1.6.x","format":"AVIF Thumbnails ZIP","original":"micro_IA41152602_0228_micro_jp2.zip","mtime":"1780092593","size":"1276501","md5":"f7d3be21712f0f3287d7026b2f45d20a","crc32":"2d9c326f","sha1":"e0975fecf96d3483e5084164118f52bec66dc5c7","filecount":"2"}],"files_count":19,"item_last_updated":1784148756,"item_size":458817958,"metadata":{"identifier":"micro_IA41152602_0228","adaptive_ocr":"true","betterpdf":"true","bookreader-defaults":"mode/1up","boxid":"IA41152602","cardcount":"1","collection":["microfiche","us-government-printing-office","us-gpo"],"contributor":"Internet Archive","envelopeid":"0228","language":"English","mediatype":"texts","operator":"associate-dylan-lewis@northernlightsdigitallibrary.org","ppi":"400","scandate":"20260529214205","scanner":"microfiche-rmd-01","scanningcenter":"sanfrancisco","software_version":"ArchiveCD Version 3.1.29","source":"Microfiche","total-time":"41","uploader":"associate-dylan-lewis@northernlightsdigitallibrary.org","title":"Flood Insurance Study: Wave Height Analysis, City of Hallandale, Florida","publicdate":"2026-05-29 22:01:25","addeddate":"2026-05-29 22:04:22","identifier-access":"http://archive.org/details/micro_IA41152602_0228","identifier-ark":"ark:/13960/s27vm9k2ptm","micro_review":"done","derive_version":"1.6.x","review_time":"58","review_operator":"supervisor-carla-igot@archive.org","review_date":"20260603025616","catalog_number":["FEM 1.209:125110","Mar 83-7293"],"imagecount":"15","ocr":"tesseract 5.3.0-6-g76ae","ocr_parameters":"-l eng","ocr_module_version":"0.0.21","ocr_detected_script":"Latin","ocr_detected_script_conf":"0.9656","ocr_detected_lang":"en","ocr_detected_lang_conf":"1.0000","page_number_confidence":"0","page_number_module_version":"1.0.5","pdf_degraded":"invalid-jp2-headers","pdf_module_version":"0.0.25","date":"1982-07-06","creator":"United States. Federal Emergency Management Agency"},"micro_scan":{"cards":[{"metadata":{"card_index":0,"invert":true},"pages":[{"crop_box":[0,578.9895336622873,50015.850569627255,5171.890695743096],"type":"titlebar","rotation":null,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[1631.029545220739,5631.137142773952,4932.464096138249,9712.18096879695],"type":"cover","rotation":-0.01,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[4942.963331706144,5631.137142773952,8236.39804255968,9712.18096879695],"type":"normal","rotation":0.45,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[8358.89503902322,5631.137142773952,11648.329829844764,9712.18096879695],"type":"normal","rotation":-0.03,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[11710.828025828498,5631.137142773952,15012.262576746007,9712.18096879695],"type":"normal","rotation":0.32,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[15174.758773529416,5631.137142773952,18476.193324446922,9712.18096879695],"type":"normal","rotation":0.53,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[18534.69160039867,5631.137142773952,21840.126071348164,9712.18096879695],"type":"normal","rotation":0.37,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[21950.62330771574,5631.137142773952,25252.057858633252,9712.18096879695],"type":"normal","rotation":0,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[25362.55509500083,5631.137142773952,29515.97261273161,8843.69666830352],"type":"normal","rotation":-0.42,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[32230.417789922856,5631.137142773952,36383.83530765364,8843.69666830352],"type":"normal","rotation":0.08,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[39058.28128452502,5631.137142773952,42311.71679505868,9712.18096879695],"type":"normal","rotation":0.11,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[42470.213071810096,5631.137142773952,45811.64682304748,9712.18096879695],"type":"normal","rotation":0.38,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[45786.1467783275,5631.137142773952,49123.580609532895,9712.18096879695],"type":"normal","rotation":0.42,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[1631.029545220739,9843.052936456479,5832.446103335369,13212.110996785756],"type":"normal","rotation":0.55,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[8406.894079407066,9895.051896872314,11748.327830644446,14024.094763279158],"type":"normal","rotation":0.25,"rotation_confidence":null,"rotation_enabled":true,"orientation":0},{"crop_box":[11710.828025828498,9895.051896872314,15012.262576746007,13976.095722895312],"type":"normal","rotation":0.76,"rotation_confidence":null,"rotation_enabled":true,"orientation":0}],"real_width":50019,"real_height":36161,"width":12505,"height":9041,"rotation":0.171875}],"identifier":"micro_IA41152602_0228","metadata":{"author":[],"catalog_number":["FEM 1.209: 125110"],"date":"","issue":null,"notes":"","title":"micro_IA41152602_0228","total_cards":1,"volume":null,"issue_type":"normal","language":["English"],"pub_collection":"us-gpo"},"technical_metadata":{"stitching_version":"1.4.0","stitch_error_metrics":[{"mean_error":0.99,"stddev":0.55,"min_error":0.01,"max_error":3.11,"force_used":false}]},"review_app_version":"2025.11.07"},"page_numbers":{
+    "identifier": "micro_IA41152602_0228",
+    "format-version": "2",
+    "archive-hocr-tools-version": "1.1.54",
+    "confidence": 0,
+    "pages": [
+        {
+            "leafNum": 1,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 2,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 3,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 4,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 5,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 6,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 7,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 8,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 9,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 10,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 11,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 12,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 13,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 14,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        },
+        {
+            "leafNum": 15,
+            "confidence": null,
+            "pageNumber": "",
+            "pageProb": null,
+            "wordConf": null
+        }
+    ]
+},"server":"ia601008.us.archive.org","uniq":2043412018,"workable_servers":["ia601008.us.archive.org","ia801008.us.archive.org"]}
