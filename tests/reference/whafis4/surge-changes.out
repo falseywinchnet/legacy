@@ -1,0 +1,189 @@
+ WAVE HEIGHT COMPUTATIONS FOR FLOOD INSURANCE STUDIES (WHAFIS VERSION 4.0G, 08_2007)
+ Executed on: Tue Sep  8 19:00:49 2026
+ Input file:  Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-wy3pne00\INPUT.DAT                                  
+ Output file: Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-wy3pne00\OUTPUT.OUT                                 
+
+
+
+                                             WHAFIS compatibility case: surge-changes                                               
+                                                     THIS IS A 100-YEAR CASE
+
+                                                             PART1 INPUT
+
+          IE      0.000     -5.000     10.000      6.000     12.000      8.000      7.000      0.000      0.030      0.000
+          IF    200.000      1.000      6.000     12.000      0.000      0.000      0.000      0.000      0.016      0.000
+          IF    500.000      3.000      5.000     10.000      0.000      0.000      0.000      0.000      0.006      0.000
+          IF    900.000      5.000      0.000      9.556      0.000      0.000      0.000      0.000      0.006      0.000
+          IF   1400.000      8.000      4.000      9.000      0.000      0.000      0.000      0.000      0.006      0.000
+          ET      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000
+1
+
+
+            END        END      FETCH SURGE ELEV SURGE ELEV    INITIAL    INITIAL                BOTTOM    AVERAGE
+        STATION  ELEVATION     LENGTH    10-YEAR   100-YEAR WAVE HEIGHT  W. PERIOD                SLOPE    A-ZONES
+  IE      0.000     -5.000     10.000      6.000     12.000      8.000      7.000      0.000      0.030      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    200.000      1.000      6.000     12.000      0.000      0.000      0.000      0.000      0.016      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    500.000      3.000      5.000     10.000      0.000      0.000      0.000      0.000      0.006      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    900.000      5.000      0.000      9.556      0.000      0.000      0.000      0.000      0.006      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF   1400.000      8.000      4.000      9.000      0.000      0.000      0.000      0.000      0.006      0.000
+
+
+  ------------------------------------------------END OF TRANSECT-------------------------------------------------
+
+
+  NOTE:
+
+  SURGE ELEVATION INCLUDES CONTRIBUTIONS FROM ASTRONOMICAL AND STORM TIDES.
+1
+
+
+
+                                                PART2: CONTROLLING WAVE HEIGHTS, SPECTRAL 
+                                                       PEAK WAVE PERIOD, AND WAVE CREST ELEVATIONS
+
+                                          LOCATION        CONTROLLING  SPECTRAL PEAK   WAVE CREST
+                                                          WAVE HEIGHT  WAVE PERIOD     ELEVATION 
+
+                                        IE       0.00         8.00         7.00        17.60
+
+                                               100.00         8.39         7.00        17.87
+
+                                        IF     200.00         8.01         7.00        17.60
+
+                                               305.00         7.06         7.00        16.24
+
+                                               410.00         6.08         7.00        14.86
+
+                                        IF     500.00         5.23         7.00        13.66
+
+                                               600.00         4.79         7.00        13.24
+
+                                               700.00         4.35         7.00        12.82
+
+                                               800.00         3.90         7.00        12.40
+
+                                        IF     900.00         3.45         7.00        11.97
+
+                                              1000.00         2.93         7.00        11.49
+
+                                              1100.00         2.40         7.00        11.01
+
+                                              1200.00         1.86         7.00        10.53
+
+                                              1300.00         1.32         7.00        10.04
+
+                                        IF    1400.00         0.78         7.00         9.54
+     TRANSMITTED WAVE HEIGHT AT LAST FETCH OR OBSTRUCTION = 0.78 WHICH EXCEEDS 0.5.
+
+
+
+                                        PART3 LOCATION OF AREAS ABOVE 100-YEAR SURGE
+
+                                        NO AREAS ABOVE 100-YEAR SURGE IN THIS TRANSECT
+
+
+
+                                                  PART4 LOCATION OF SURGE CHANGES
+
+                                        STATION          10-YEAR SURGE          100-YEAR SURGE
+
+                                        500.00                 5.00                10.00
+
+                                        900.00                 5.00                 9.56
+
+                                       1400.00                 4.00                 9.00
+
+
+
+                                                       PART5  LOCATION OF V ZONES
+
+                                             STATION OF GUTTER          LOCATION OF ZONE
+
+                                                      986.36               WINDWARD
+
+
+
+                                                   PART6 NUMBERED A ZONES AND V ZONES
+
+                                        STATION OF GUTTER  ELEVATION  ZONE DESIGNATION   FHF
+
+
+                                               0.00          17.60
+
+                                                                          V18  EL=18      90
+
+                                             200.00          17.60
+
+                                                                          V18  EL=18      90
+
+                                             208.06          17.50
+
+                                                                          V18  EL=17      90
+
+                                             285.05          16.50
+
+                                                                          V18  EL=16      90
+
+                                             361.19          15.50
+
+                                                                          V16  EL=15      80
+
+                                             436.83          14.50
+
+                                                                          V16  EL=14      80
+
+                                             500.00          13.66
+
+                                                                          V15  EL=14      75
+
+                                             538.37          13.50
+
+                                                                          V15  EL=13      75
+
+                                             776.19          12.50
+
+                                                                          V14  EL=12      70
+
+                                             900.00          11.97
+
+                                                                          V14  EL=12      70
+
+                                             986.36          11.60
+
+                                                                          A12  EL=12      60
+
+                                             998.86          11.50
+
+                                                                          A12  EL=11      60
+
+                                            1205.15          10.50
+
+                                                                          A12  EL=10      60
+
+                                            1400.00           9.54
+
+
+
+                                                  ZONE TERMINATED AT END OF TRANSECT
+
+
+
+                                                  PART 7   POSTSCRIPT NOTES
+
+

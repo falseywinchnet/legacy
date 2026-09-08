@@ -1,0 +1,135 @@
+ WAVE HEIGHT COMPUTATIONS FOR FLOOD INSURANCE STUDIES (WHAFIS VERSION 4.0G, 08_2007)
+ Executed on: Tue Sep  8 19:00:17 2026
+ Input file:  Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-eitz2ipv\INPUT.DAT                                  
+ Output file: Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-eitz2ipv\OUTPUT.OUT                                 
+
+
+
+                                                WHAFIS compatibility case: inland                                                   
+                                                     THIS IS A 100-YEAR CASE
+
+                                                             PART1 INPUT
+
+          IE      0.000     -5.000     10.000      6.000     12.000      8.000      7.000      0.000      0.050      0.000
+          IF    100.000      0.000      0.000     12.000      0.000      0.000      0.000      0.000      0.016      0.000
+          IF    500.000      3.000      0.000     12.000      0.000      0.000      0.000      0.000      0.005      0.000
+          IF   1500.000      7.000      0.000     12.000      0.000      0.000      0.000      0.000      0.004      0.000
+          ET      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000
+1
+
+
+            END        END      FETCH SURGE ELEV SURGE ELEV    INITIAL    INITIAL                BOTTOM    AVERAGE
+        STATION  ELEVATION     LENGTH    10-YEAR   100-YEAR WAVE HEIGHT  W. PERIOD                SLOPE    A-ZONES
+  IE      0.000     -5.000     10.000      6.000     12.000      8.000      7.000      0.000      0.050      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    100.000      0.000      0.000     12.000      0.000      0.000      0.000      0.000      0.016      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    500.000      3.000      0.000     12.000      0.000      0.000      0.000      0.000      0.005      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF   1500.000      7.000      0.000     12.000      0.000      0.000      0.000      0.000      0.004      0.000
+
+
+  ------------------------------------------------END OF TRANSECT-------------------------------------------------
+
+
+  NOTE:
+
+  SURGE ELEVATION INCLUDES CONTRIBUTIONS FROM ASTRONOMICAL AND STORM TIDES.
+1
+
+
+
+                                                PART2: CONTROLLING WAVE HEIGHTS, SPECTRAL 
+                                                       PEAK WAVE PERIOD, AND WAVE CREST ELEVATIONS
+
+                                          LOCATION        CONTROLLING  SPECTRAL PEAK   WAVE CREST
+                                                          WAVE HEIGHT  WAVE PERIOD     ELEVATION 
+
+                                        IE       0.00         8.00         7.00        17.60
+
+                                        IF     100.00         8.07         7.00        17.65
+
+                                               220.00         7.99         7.00        17.59
+
+                                               380.00         7.27         7.00        17.09
+
+                                        IF     500.00         6.64         7.00        16.65
+
+                                               600.00         6.36         7.00        16.45
+
+                                               700.00         6.08         7.00        16.26
+
+                                               800.00         5.80         7.00        16.06
+
+                                               900.00         5.51         7.00        15.86
+
+                                              1000.00         5.23         7.00        15.66
+
+                                              1100.00         4.94         7.00        15.46
+
+                                              1200.00         4.65         7.00        15.26
+
+                                              1300.00         4.36         7.00        15.06
+
+                                              1400.00         4.07         7.00        14.85
+
+                                        IF    1500.00         3.78         7.00        14.65
+     TRANSMITTED WAVE HEIGHT AT LAST FETCH OR OBSTRUCTION = 3.78 WHICH EXCEEDS 0.5.
+
+
+
+                                        PART3 LOCATION OF AREAS ABOVE 100-YEAR SURGE
+
+                                        NO AREAS ABOVE 100-YEAR SURGE IN THIS TRANSECT
+
+
+
+                                                  PART4 LOCATION OF SURGE CHANGES
+
+                                        STATION          10-YEAR SURGE          100-YEAR SURGE
+
+                                                  NO SURGE CHANGES IN THIS TRANSECT
+
+
+
+                                                   PART6 NUMBERED A ZONES AND V ZONES
+
+                                        STATION OF GUTTER  ELEVATION  ZONE DESIGNATION   FHF
+
+
+                                               0.00          17.60
+
+                                                                          V19  EL=18      95
+
+                                             249.08          17.50
+
+                                                                          V19  EL=17      95
+
+                                             576.16          16.50
+
+                                                                          V19  EL=16      95
+
+                                            1079.92          15.50
+
+                                                                          V19  EL=15      95
+
+                                            1500.00          14.65
+
+
+
+                                                  ZONE TERMINATED AT END OF TRANSECT
+
+
+
+                                                  PART 7   POSTSCRIPT NOTES
+
+

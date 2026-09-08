@@ -8,7 +8,7 @@ The original November 1991 RUNUP executes under DOSBox-X 2026.08.31 on an Apple 
 
 Enabling the emulated coprocessor changes one profile slope's printed rounding from 6.88 to 6.87 in that same case. The numerical result rows are unchanged in that observed case. Both are executions of the same historical binary; the software path is the current reference because it reproduces the archived output exactly. Neither path should be silently mixed with the other when generating comparison data.
 
-The original WHAFIS 4.0G Windows executable also executes through Wine 11.4 in an isolated prefix. A complete output was obtained for CHAMP's `w1.dat`. WHAFIS outputs include execution time and absolute input/output paths, which must be separated explicitly from numerical comparison.
+The original WHAFIS 4.0G Windows executable also executes through Wine 11.4 in an isolated prefix. Complete outputs were obtained for all four CHAMP WHAFIS input files. WHAFIS outputs include execution time and absolute input/output paths, which must be separated explicitly from numerical comparison.
 
 Reproduce an original RUNUP output:
 
@@ -45,11 +45,21 @@ The native geometry and curve code is in `src/runup/calculation.cpp` and `src/ru
 ## Work still required
 
 - Continue RUNUP boundary review while integrating the desktop application. The current fixtures cover normal results, nonconvergence, reflection notes, model steepness limits, multiple profiles, and observed arithmetic stops. Malformed-input UX must remain clear, and new discrepancies must become reproducible tests.
-- Translate all active WHAFIS 4.0G computational and input/output paths from the recovered source; verify against the original Windows executable, including marsh data and 500-year behavior.
+- Expand WHAFIS comparisons beyond its four supplied full reports and two fully matched numerical routines, including every obstruction, marsh-region, 500-year, and error path. Refine the remaining source translations against direct binary probes and simplify their C++ structure.
 - Recover CHAMP's p-code logic and file/database formats, then implement its project, transect, erosion, wave-setup, plotting, and export workflows.
 - Complete the Dear ImGui application, bundled examples, file dialogs, useful errors, and installable packages so ordinary users need no development tools or knowledge of this recovery work.
 - Verify the completed applications on macOS, Linux, and Windows and publish the corresponding artifacts.
 
-The complete model and first 26 report fixtures passed GitHub Actions on macOS, Linux, and Windows at commit `11df6f3`. The subsequent 80-profile and boundary additions pass locally; their cross-platform results must be checked after the next push. Address, undefined-behavior, and float-to-integer sanitizers passed the first complete model suite; the expanded final suite is rerun before its commit.
+The expanded RUNUP suite passed GitHub Actions on macOS, Linux, and Windows at commit `d656bbc`. The same 113-report and 6,209-routine suite also passed local address, undefined-behavior, and float-to-integer sanitizers.
 
-Confirmed changes between the printed listing and executable are recorded in [RUNUP historical differences](RUNUP_DIFFERENCES.md).
+## WHAFIS native milestone
+
+The `whafis` C++ program covers the complete active 4.0G source: surge preprocessing, inland and overwater fetch, dunes, buildings, vegetation and marshes, default plant lookup, above-surge sections, all report sections, and 100-/500-year wind options. The current 15-report suite includes all four supplied CHAMP reports, dunes, buildings, trees, marsh defaults and region weighting, surge changes, above-surge sections, comments, nondefault winds, and two 500-year cases. It matches 129,596 bytes after excluding exactly three metadata lines: execution date, input filename, and output filename. Every remaining byte, including spacing and line endings, is compared. Coverage of a source path does not establish its numerical equivalence. Two additional 500-year reports still have a one-hundredth-foot station difference; their original inputs and outputs are retained in `tests/reference/whafis4/pending` while the arithmetic is refined. They are not counted among the passing reports.
+
+The historical scratch-file conversions are performed in memory, with the same field widths and decimal precision. The included `MG.DAT` table eliminates an external runtime data-file requirement. One-based arrays have bounds checks, and each calculation owns its state. `tools/port_whafis.py` preserves the source control-flow labels while producing the initial readable C++ statements; binary-verified routines are maintained directly. Further simplification is part of the ongoing implementation.
+
+WHAFIS's retained `.trace` section names 17 original procedures. `tools/disassemble_whafis.py` locates these procedures without guessed boundaries. `tools/probe_whafis_routines.py` patches only temporary executable copies to call the original routines on binary inputs. The breaking-height routine SHBM and period-growth routine T each match 1,000 original binary32 results. HM0 and HIN probes have been captured for refinement; these are not yet claimed to match. `tools/capture_whafis_state.py` captures original COMMON storage just before the report phase, allowing differences hidden by printed rounding to be inspected.
+
+The supplied Windows compiler retains some intermediate quantities in x87 registers across source assignments. The C++ implementation preserves those wider intermediates where established from the executable, including fetch-cell midpoint elevations and the breaking-height wavelength calculation. This prevents a one-hundredth-foot station discrepancy and a boundary flood-zone elevation discrepancy found in the supplied reports.
+
+Confirmed RUNUP changes between the printed listing and executable are recorded in [RUNUP historical differences](RUNUP_DIFFERENCES.md).

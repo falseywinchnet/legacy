@@ -1,0 +1,131 @@
+ WAVE HEIGHT COMPUTATIONS FOR FLOOD INSURANCE STUDIES (WHAFIS VERSION 4.0G, 08_2007)
+ Executed on: Tue Sep  8 19:00:35 2026
+ Input file:  Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-9d773tvx\INPUT.DAT                                  
+ Output file: Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-9d773tvx\OUTPUT.OUT                                 
+
+
+
+                                             WHAFIS compatibility case: marsh-custom                                                
+                                                     THIS IS A 100-YEAR CASE
+
+                                                             PART1 INPUT
+
+          IE      0.000     -5.000     10.000      6.000     12.000      8.000      7.000      0.000      0.030      0.000
+          VH    200.000      1.000      2.000      1.000      0.000      1.000      0.000     12.000      0.011      0.000
+          MG       SPAT      0.100      1.000      0.850    327.000      0.020      0.010      0.010      1.380      0.000
+          IF    800.000      4.000      0.000     12.000      0.000      0.000      0.000      0.000      0.005      0.000
+          ET      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000
+1
+
+
+            END        END      FETCH SURGE ELEV SURGE ELEV    INITIAL    INITIAL                BOTTOM    AVERAGE
+        STATION  ELEVATION     LENGTH    10-YEAR   100-YEAR WAVE HEIGHT  W. PERIOD                SLOPE    A-ZONES
+  IE      0.000     -5.000     10.000      6.000     12.000      8.000      7.000      0.000      0.030      0.000
+
+
+            END        END              REGION 1                NO. OF  NEW SURGE  NEW SURGE     BOTTOM    AVERAGE
+        STATION  ELEVATION   REGION 1     WEIGHT   REGION 2 PLANT TYPES   10-YEAR   100-YEAR      SLOPE    A-ZONES
+  VH    200.000      1.000      2.000      1.000      0.000      1.000      0.000     12.000      0.011      0.000
+
+
+          PLANT       DRAG   COVERAGE  AVG. STEM     NUMBER  BASE STEM   MID STEM   TOP STEM   LEAF-STEM
+           TYPE     COEFF.      RATIO     HEIGHT    DENSITY   DIAMETER   DIAMETER   DIAMETER  AREA RATIO
+  MG       SPAT      0.100      1.000      0.850    327.000      0.020      0.010      0.010      1.380      0.000
+
+
+  ----------------------------------------------------------------------------------------------------------------
+                          PLANT CHARACTERISTICS INCLUDING VALUES SUPPLIED BY THE PROGRAM
+
+
+          PLANT       DRAG   COVERAGE  AVG. STEM     NUMBER  BASE STEM   MID STEM   TOP STEM   LEAF-STEM
+           TYPE     COEFF.      RATIO     HEIGHT    DENSITY   DIAMETER   DIAMETER   DIAMETER  AREA RATIO
+           SPAT      0.100      1.000      0.850    327.000      0.020      0.010      0.010      1.380
+
+
+  ----------------------------------------------------------------------------------------------------------------
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    800.000      4.000      0.000     12.000      0.000      0.000      0.000      0.000      0.005      0.000
+
+
+  ------------------------------------------------END OF TRANSECT-------------------------------------------------
+
+
+  NOTE:
+
+  SURGE ELEVATION INCLUDES CONTRIBUTIONS FROM ASTRONOMICAL AND STORM TIDES.
+1
+
+
+
+                                                PART2: CONTROLLING WAVE HEIGHTS, SPECTRAL 
+                                                       PEAK WAVE PERIOD, AND WAVE CREST ELEVATIONS
+
+                                          LOCATION        CONTROLLING  SPECTRAL PEAK   WAVE CREST
+                                                          WAVE HEIGHT  WAVE PERIOD     ELEVATION 
+
+                                        IE       0.00         8.00         7.00        17.60
+
+                                               110.00         8.33         7.00        17.83
+
+                                        VH     200.00         7.89         7.00        17.52
+
+                                               350.00         7.51         7.00        17.25
+
+                                               450.00         7.16         7.00        17.01
+
+                                               550.00         6.82         7.00        16.77
+
+                                               650.00         6.47         7.00        16.53
+
+                                               750.00         6.12         7.00        16.28
+
+                                        IF     800.00         5.94         7.00        16.16
+     TRANSMITTED WAVE HEIGHT AT LAST FETCH OR OBSTRUCTION = 5.94 WHICH EXCEEDS 0.5.
+
+
+
+                                        PART3 LOCATION OF AREAS ABOVE 100-YEAR SURGE
+
+                                        NO AREAS ABOVE 100-YEAR SURGE IN THIS TRANSECT
+
+
+
+                                                  PART4 LOCATION OF SURGE CHANGES
+
+                                        STATION          10-YEAR SURGE          100-YEAR SURGE
+
+                                                  NO SURGE CHANGES IN THIS TRANSECT
+
+
+
+                                                   PART6 NUMBERED A ZONES AND V ZONES
+
+                                        STATION OF GUTTER  ELEVATION  ZONE DESIGNATION   FHF
+
+
+                                               0.00          17.60
+
+                                                                          V19  EL=18      95
+
+                                             211.89          17.50
+
+                                                                          V19  EL=17      95
+
+                                             660.93          16.50
+
+                                                                          V19  EL=16      95
+
+                                             800.00          16.16
+
+
+
+                                                  ZONE TERMINATED AT END OF TRANSECT
+
+
+
+                                                  PART 7   POSTSCRIPT NOTES
+
+

@@ -4,7 +4,7 @@ Recover the original FEMA **CHAMP 2.0 (Coastal Hazard Analysis Modeling Program)
 
 The intended targets are **macOS, Linux, and Windows**, using **Make/CMake** and **GitHub Actions runners**. CHAMP's project and transect workflow is part of the port, alongside both numerical engines.
 
-**Native implementation is underway.** RUNUP now runs as a standalone C++ program and reproduces all five supplied reference reports byte for byte. WHAFIS, the CHAMP workflow, and the Dear ImGui application remain in progress. The original executables and recovered source are the behavior baseline; further source hunting is not a prerequisite.
+**Native implementation is underway.** RUNUP and WHAFIS now run as standalone C++ programs. RUNUP matches 113 complete original reports; WHAFIS matches 15 complete reports after excluding only execution metadata, including all four supplied CHAMP reports. The CHAMP workflow and Dear ImGui application remain in progress. The original executables and recovered source are the behavior baseline; further source hunting is not a prerequisite.
 
 ## Recovered so far
 
@@ -34,16 +34,17 @@ FEMA's 2024 RUNUP reconstruction is a separate version, not the source baseline 
 
 Keep the original algorithms, numerical tables, data formats, and CHAMP workflow legible as they become C++. Favor explicit data and straightforward functions, with a small interface around the actual calculations. Preserve original files separately from translations and identify unresolved historical differences instead of silently choosing a replacement.
 
-The current RUNUP calculation includes profile geometry, breaking depth, curve selection, roughness, scaling, structure/composite branches, convergence, and historical reports and diagnostics. The expanded reference suite contains 113 complete report files and 6,209 raw numerical routine records. The first 26 reports passed on macOS, Linux, and Windows; the expanded suite passes on the development Mac and is checked by the next CI run. These fixtures do not establish universal equivalence. See [implementation evidence and remaining work](docs/IMPLEMENTATION.md).
+The current RUNUP calculation includes profile geometry, breaking depth, curve selection, roughness, scaling, structure/composite branches, convergence, and historical reports and diagnostics. The expanded reference suite contains 113 complete report files and 6,209 raw numerical routine records. All 113 reports and the 6,209 routine records passed on macOS, Linux, and Windows at commit `d656bbc`. These fixtures do not establish universal equivalence. See [implementation evidence and remaining work](docs/IMPLEMENTATION.md).
 
 For the current development build:
 
 ```sh
 make test
 build/native/runup originals/runup2/test.in result.out
+build/native/whafis originals/champ2/w1.dat wave-result.out
 ```
 
-The command-line program has no emulator, Python, Fortran, or original-executable dependency. GitHub Actions builds and checks C++ on macOS, Linux, and Windows. Ready-to-run desktop packages will follow the completed interface.
+Both command-line programs have no emulator, Python, Fortran, or original-executable dependency. WHAFIS includes the original marsh-grass defaults and exposes calculated wave points through a C++ library interface. GitHub Actions builds and checks C++ on macOS, Linux, and Windows. Ready-to-run desktop packages will follow the completed interface.
 
 ## Attribution
 

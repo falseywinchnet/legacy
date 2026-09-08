@@ -1,0 +1,129 @@
+ WAVE HEIGHT COMPUTATIONS FOR FLOOD INSURANCE STUDIES (WHAFIS VERSION 4.0G, 08_2007)
+ Executed on: Tue Sep  8 19:00:26 2026
+ Input file:  Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-gx_qva6b\INPUT.DAT                                  
+ Output file: Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-gx_qva6b\OUTPUT.OUT                                 
+
+
+
+                                          WHAFIS compatibility case: dunes-and-buildings                                            
+                                                     THIS IS A 100-YEAR CASE
+
+                                                             PART1 INPUT
+
+          IE      0.000     -5.000     10.000      6.000     12.000      8.000      7.000      0.000      0.060      0.000
+          DU    100.000      1.000      0.000      0.000     12.000      0.000      0.000      0.000      0.055      0.000
+          DU    200.000      6.000      1.000      0.000     12.000      0.000      0.000      0.000      0.013      0.000
+          BU    400.000      5.000      0.700      4.000      0.000     12.000      0.000      0.000      0.003      0.000
+          IF    800.000      8.000      0.000     12.000      0.000      0.000      0.000      0.000      0.007      0.000
+          ET      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000
+1
+
+
+            END        END      FETCH SURGE ELEV SURGE ELEV    INITIAL    INITIAL                BOTTOM    AVERAGE
+        STATION  ELEVATION     LENGTH    10-YEAR   100-YEAR WAVE HEIGHT  W. PERIOD                SLOPE    A-ZONES
+  IE      0.000     -5.000     10.000      6.000     12.000      8.000      7.000      0.000      0.060      0.000
+
+
+     DUNE CREST DUNE CREST    DUNE OR  NEW SURGE  NEW SURGE                                      BOTTOM    AVERAGE
+        STATION  ELEVATION    SEAWALL    10-YEAR   100-YEAR                                       SLOPE    A-ZONES
+  DU    100.000      1.000      0.000      0.000     12.000      0.000      0.000      0.000      0.055      0.000
+
+
+     DUNE CREST DUNE CREST    DUNE OR  NEW SURGE  NEW SURGE                                      BOTTOM    AVERAGE
+        STATION  ELEVATION    SEAWALL    10-YEAR   100-YEAR                                       SLOPE    A-ZONES
+  DU    200.000      6.000      1.000      0.000     12.000      0.000      0.000      0.000      0.013      0.000
+
+
+            END        END OPEN SPACE     NO. OF  NEW SURGE  NEW SURGE                           BOTTOM    AVERAGE
+        STATION  ELEVATION      RATIO       ROWS    10-YEAR   100-YEAR                            SLOPE    A-ZONES
+  BU    400.000      5.000      0.700      4.000      0.000     12.000      0.000      0.000      0.003      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    800.000      8.000      0.000     12.000      0.000      0.000      0.000      0.000      0.007      0.000
+
+
+  ------------------------------------------------END OF TRANSECT-------------------------------------------------
+
+
+  NOTE:
+
+  SURGE ELEVATION INCLUDES CONTRIBUTIONS FROM ASTRONOMICAL AND STORM TIDES.
+1
+
+
+
+                                                PART2: CONTROLLING WAVE HEIGHTS, SPECTRAL 
+                                                       PEAK WAVE PERIOD, AND WAVE CREST ELEVATIONS
+
+                                          LOCATION        CONTROLLING  SPECTRAL PEAK   WAVE CREST
+                                                          WAVE HEIGHT  WAVE PERIOD     ELEVATION 
+
+                                        IE       0.00         8.00         7.00        17.60
+
+                                        DU     100.00         8.00         7.00        17.60
+
+                                        DU     200.00         6.25         7.00        16.38
+
+                                        BU     400.00         3.06         7.00        14.15
+
+                                               520.00         3.28         7.00        14.30
+
+                                               680.00         3.24         7.00        14.27
+
+                                        IF     800.00         3.04         7.00        14.13
+     TRANSMITTED WAVE HEIGHT AT LAST FETCH OR OBSTRUCTION = 3.04 WHICH EXCEEDS 0.5.
+
+
+
+                                        PART3 LOCATION OF AREAS ABOVE 100-YEAR SURGE
+
+                                        NO AREAS ABOVE 100-YEAR SURGE IN THIS TRANSECT
+
+
+
+                                                  PART4 LOCATION OF SURGE CHANGES
+
+                                        STATION          10-YEAR SURGE          100-YEAR SURGE
+
+                                                  NO SURGE CHANGES IN THIS TRANSECT
+
+
+
+                                                   PART6 NUMBERED A ZONES AND V ZONES
+
+                                        STATION OF GUTTER  ELEVATION  ZONE DESIGNATION   FHF
+
+
+                                               0.00          17.60
+
+                                                                          V19  EL=18      95
+
+                                             108.19          17.50
+
+                                                                          V19  EL=17      95
+
+                                             190.04          16.50
+
+                                                                          V19  EL=16      95
+
+                                             278.67          15.50
+
+                                                                          V19  EL=15      95
+
+                                             368.24          14.50
+
+                                                                          V19  EL=14      95
+
+                                             800.00          14.13
+
+
+
+                                                  ZONE TERMINATED AT END OF TRANSECT
+
+
+
+                                                  PART 7   POSTSCRIPT NOTES
+
+

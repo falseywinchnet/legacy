@@ -1,0 +1,139 @@
+{
+  "program": "WHAFIS 4.0G",
+  "binary_sha256": "041aaf91a59fb61e7e74ed7e17fca44695fa059eb0e0771b9e6b119902fead5c",
+  "emulator": "Wine 11.4",
+  "normalization": "Exclude only Executed on, Input file, and Output file header lines; compare every other byte unchanged.",
+  "cases": [
+    {
+      "name": "champ-w1",
+      "input": "tests/reference/whafis4/champ-w1.dat",
+      "output": "tests/reference/whafis4/champ-w1.out",
+      "input_sha256": "59deaadb4eac3778cbffa6ad9639e7b721cdd66d2ba515b024d388cbddb02e10",
+      "output_sha256": "0380bd81add4506385b4f8acc37297fe9b90441466b73747f30ba435efc46b5c"
+    },
+    {
+      "name": "champ-w2",
+      "input": "tests/reference/whafis4/champ-w2.dat",
+      "output": "tests/reference/whafis4/champ-w2.out",
+      "input_sha256": "3142a532b1e9c9abbdbca1e35848279fa89fa882c00951891e8b556dc6b2829d",
+      "output_sha256": "d5a67e8cd6c01c3cf326b08106bbf0d73ef1acc5fc55dc751f57350fde5199e7"
+    },
+    {
+      "name": "champ-w3",
+      "input": "tests/reference/whafis4/champ-w3.dat",
+      "output": "tests/reference/whafis4/champ-w3.out",
+      "input_sha256": "3d7d9cca79b74e68c09486f91cae54138877cb4e7ed48c2c46c327f06460b709",
+      "output_sha256": "ba89a30d698ed1f1d27cbc7280ee2bc91da3bef2c916f01a6f72d07addaee9b5"
+    },
+    {
+      "name": "champ-w4",
+      "input": "tests/reference/whafis4/champ-w4.dat",
+      "output": "tests/reference/whafis4/champ-w4.out",
+      "input_sha256": "27a636a46af2f4952099212f9f7fc934f01e6bd7acc868ad6b2188a54397e8b4",
+      "output_sha256": "90547b33eddc10eb381d1f39500062a330aaa73c60613dc64e9d5da0b981c065"
+    },
+    {
+      "name": "above-surge",
+      "input": "tests/reference/whafis4/above-surge.dat",
+      "output": "tests/reference/whafis4/above-surge.out",
+      "input_sha256": "831a54c943256d87c84d4b16ec068b552ee18bd7b9e50a9a239e4dca948bfcfc",
+      "output_sha256": "b94c5dfb5216a0382922110f7b35885ee3a01a48bc1f9bb4cbc1b124c66c9e6a"
+    },
+    {
+      "name": "champ-w2-500",
+      "input": "tests/reference/whafis4/champ-w2-500.dat",
+      "output": "tests/reference/whafis4/champ-w2-500.out",
+      "input_sha256": "605fa86d0fd932a628d7842c71df0abc0735fe2764ae01fcb5d10376cf084214",
+      "output_sha256": "ea85825183a0376581a1e9cf55004804a95e8f404fc2cf8e05cbabaa09af6af1"
+    },
+    {
+      "name": "champ-w3-500",
+      "input": "tests/reference/whafis4/champ-w3-500.dat",
+      "output": "tests/reference/whafis4/champ-w3-500.out",
+      "input_sha256": "adb09f6cd5bfe75b86b4f7923aea19bbb19fc065dd051dedbd0d63d3582ba7ba",
+      "output_sha256": "543e758a270d3b2c54449bf676055da1f1069f60a3f5210ab492bd905933bb0e"
+    },
+    {
+      "name": "comments-and-wind",
+      "input": "tests/reference/whafis4/comments-and-wind.dat",
+      "output": "tests/reference/whafis4/comments-and-wind.out",
+      "input_sha256": "43e5d3f06eecedc7a4677e4bc89e28d9ed7b8340ac562c61f2e99e4af2102c3f",
+      "output_sha256": "37bb13174ffbef1d28df282f3273edca0d44b9a9345cd8e2f737567d72a8ab24"
+    },
+    {
+      "name": "dunes-and-buildings",
+      "input": "tests/reference/whafis4/dunes-and-buildings.dat",
+      "output": "tests/reference/whafis4/dunes-and-buildings.out",
+      "input_sha256": "31aa4f38692dda09c6d04afe4f1989b2b7abd71f2506e0619eea957e2c2c480c",
+      "output_sha256": "d67e3869fcc0e74bd4f4774cf26a3ac2449a03eed4586b1dd81a6148e6e44d60"
+    },
+    {
+      "name": "inland",
+      "input": "tests/reference/whafis4/inland.dat",
+      "output": "tests/reference/whafis4/inland.out",
+      "input_sha256": "229019ae1d5d666c5d9587c032d6c1ee46518dd213bc782c06fcb0fe3bb8ba80",
+      "output_sha256": "6050d4c9098d4d74020774eb2d6ab737b90155dc74ffd24e7113ffc13f836979"
+    },
+    {
+      "name": "marsh-custom",
+      "input": "tests/reference/whafis4/marsh-custom.dat",
+      "output": "tests/reference/whafis4/marsh-custom.out",
+      "input_sha256": "eea8ed126416744aeea8f3984adf585bf606b33f971a230325e5830eb7452b2d",
+      "output_sha256": "da070e140406b4b0577304509342eb4de8e312f103a42a36e47bb63a14c5ead8"
+    },
+    {
+      "name": "marsh-regions",
+      "input": "tests/reference/whafis4/marsh-regions.dat",
+      "output": "tests/reference/whafis4/marsh-regions.out",
+      "input_sha256": "12428c24a5b4f9910212149ba9f94132c8edabbc56e4c2d31c5390411090f4e8",
+      "output_sha256": "07fdc0e631c4a01b49234d3a21816f43accb2d59fb431dfc88a852d19ce480a8"
+    },
+    {
+      "name": "overwater",
+      "input": "tests/reference/whafis4/overwater.dat",
+      "output": "tests/reference/whafis4/overwater.out",
+      "input_sha256": "01987b31f968f02c9af2d21933adc3bcb46d9eb0e071d1beb8b788e6ef662f60",
+      "output_sha256": "bfe125a3d7648b0661d9a2602b129209078b3e61ad1e46340bd667450e3d774d"
+    },
+    {
+      "name": "surge-changes",
+      "input": "tests/reference/whafis4/surge-changes.dat",
+      "output": "tests/reference/whafis4/surge-changes.out",
+      "input_sha256": "bde57eb1afdebaa40556297f7aa736cd7bd8dc5b1cd64e89438e691b2e39b581",
+      "output_sha256": "7514e6d84cb455a59be1ea4c632afa9185a1c7a34d6c5be78b4ec1a366aa05f5"
+    },
+    {
+      "name": "trees",
+      "input": "tests/reference/whafis4/trees.dat",
+      "output": "tests/reference/whafis4/trees.out",
+      "input_sha256": "4869e683c485ceaec55811e9e8b9802924b66d5b0135f0ccb782a6e3bacb3038",
+      "output_sha256": "54688e2642f378435d87104323b77bb6525b393d940814a7b1fe301c18d36b46"
+    }
+  ],
+  "routines": {
+    "SHBM": {
+      "records": 1000,
+      "input_sha256": "f03001207a07a1a18a6d488dcdf53431db884164f794fb734c9c142df6f7f6dd",
+      "expected_sha256": "59d3e6d186874d3f09daec832bc47210a949bd70f83a85ffbb3cf8b9dd930233",
+      "matched": true
+    },
+    "T": {
+      "records": 1000,
+      "input_sha256": "51939cbbb275ebae94076231bea44caed3a979dd39c82824c2d84651423e0a18",
+      "expected_sha256": "17d5e2bfc20d8cac5202c8c24148c8daac497947dcaca6f6e98224f2ffce1aa8",
+      "matched": true
+    },
+    "HM0": {
+      "records": 1000,
+      "input_sha256": "921f64842359c35412ad1e8065e6138964ea176a5f58516c68bf6d4bfd8f0b50",
+      "expected_sha256": "5f6381726d57df04e17d40e366f1754e55f07c107b3c1d7fa4535a1a06b0645e",
+      "matched": false
+    },
+    "HIN": {
+      "records": 1000,
+      "input_sha256": "4b52aef336cc66cbeccd52f256425fffcf8c463bd8e9cd0c1bbe07ca2fa5724d",
+      "expected_sha256": "4acae393c2234acb25c450ad50ec3d27461450b7955eb783caecf3ebcc4baab3",
+      "matched": false
+    }
+  }
+}
