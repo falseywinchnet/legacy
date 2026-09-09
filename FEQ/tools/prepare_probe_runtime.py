@@ -60,6 +60,29 @@ def main():
                 text = text.replace(statement,statement+'\n\t\tfeq_path(buf);')
             return text
         change(name,paths,'Interpret the released Windows path separators through the native filesystem.')
+    def decimal(text):
+        declarations = ('int feq_decimal_fixed(char*, int, float, int, int);\n'
+                        'int feq_decimal_exponential(char*, int, float, int);\n')
+        anchor = '#endif\n\n int\n'
+        if text.count(anchor) != 1:
+            raise ValueError('Unexpected wref.c declarations.')
+        text = text.replace(anchor,'#endif\n\n'+declarations+'\n int\n')
+        original = '\tsprintf(buf,"%#.*E", d, dd);'
+        replacement = ('\tif (len == sizeof(real)) {\n'
+                       '\t\tif (feq_decimal_exponential(buf, sizeof(buf), p->pf, d) < 0) goto nogood;\n'
+                       '\t} else\n'+original)
+        if text.count(original) != 1:
+            raise ValueError('Unexpected exponential conversion site.')
+        text = text.replace(original,replacement)
+        start = text.index('#ifdef USE_STRLEN')
+        end = text.index('\n#ifndef WANT_LEAD_0',start)
+        text = text[:start]+('\tif (len == sizeof(real)) {\n'
+                            '\t\tn = feq_decimal_fixed(buf, sizeof(buf), p->pf, d, f__scale);\n'
+                            '\t\tif (n < 0) { while (--w >= 0) PUT(\'*\'); return 0; }\n'
+                            '\t\tb = buf; n += d1;\n'
+                            '\t} else {\n'+text[start:end]+'\n\t}\n')+text[end:]
+        return text
+    change('wref.c',decimal,'Use original-verified REAL*4 decimal conversion; retain the existing field layout and REAL*8 path.')
     compatibility = r'''#include "f2c.h"
 #include "fio.h"
 #undef getc
@@ -87,7 +110,7 @@ int feq_compat_getc(FILE* stream) {
     manifest = {'upstream':'https://www.netlib.org/f2c/libf2c.zip',
                 'header_sha256':hashlib.sha256(args.header.read_bytes()).hexdigest(),
                 'changes':records,'command':command,'returncode':process.returncode,
-                'numeric_format_policy':'Leading zero enabled; no output values rounded or normalized after writing.'}
+                'numeric_format_policy':'Leading zero enabled; REAL*4 uses independently verified original decimal conversion before field layout; REAL*8 retains Netlib conversion. No output rewriting.'}
     if process.returncode == 0:
         manifest['library_sha256'] = hashlib.sha256((output/'libf2c.a').read_bytes()).hexdigest()
     (output/'compatibility-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')

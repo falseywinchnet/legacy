@@ -153,7 +153,7 @@ python3 FEQ/tools/compare_active_matrices.py compare \
 ```
 
 Every active word now matches throughout all four models, including 568 FEQEX4
-matrices. The current full-output comparison passes 11 of 17 files. `model-active-matrices.json` preserves all
+matrices. The current full-output comparison passes 13 of 17 files. `model-active-matrices.json` preserves all
 trace hashes, counts, and independent original-output checks.
 Unused COMMON capacity is outside this compact comparison. The older full-COMMON
 capture remains in `matrix-entry-comparison.json` as historical evidence.
@@ -163,3 +163,33 @@ The six control-transition solver fixtures can be recaptured with
 using the same `--native` and new `--output` arguments as the earlier examples.
 They cover FEQEX4 matrices 38 through 43 and preserve every factorized coefficient
 and solution word.
+
+
+## Original decimal digits
+
+The REAL*4 digit probe replaces only the temporary PROGRAM driver and invokes
+unchanged `_jwe_iroc` after original runtime startup. It captures 2,360 cases in
+bounded batches; the preserved executable is hash-checked and never edited.
+The native fixture driver uses explicit little-endian records on every platform.
+
+```sh
+FEQ/build/research-python/bin/python FEQ/tools/probe_decimal_original.py \
+  --native FEQ/build/core/feq_decimal_probe --output FEQ/build/decimal-recapture
+```
+
+Input records are 16 bytes: float bits, edit kind, signed precision, and signed
+scale as four 32-bit words. Output records are 32 bytes: signed count and
+exponent, unsigned status, 16-bit general state and engineering shift, followed
+by sixteen digit/padding bytes. F/E/G/EN kinds are 4/0/8/12. Precision is an
+unsigned descriptor byte; scale is signed 16 bit. Captured fixtures and the
+complete generator are committed under `tests/reference/decimal_digits/` and
+`tools/probe_decimal_original.py`. The CMake test needs no Wine or original
+binary. This verifies digit conversion, including special-value tokens; signs,
+field overflow, and descriptor layout require separate report checks.
+
+`prepare_probe_runtime.py` now connects REAL*4 F/E output to the independently
+verified digit converter before field layout. Rebuild that isolated runtime,
+recompile translated sources so their header receipts are current, then use
+`link_feq_research.py`. The linker also accepts `--program fequtl` for the utility
+research engine; matrix tracing is restricted to FEQ. Its final application
+runtime and installation workflow are still being developed.

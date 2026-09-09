@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Link a compiled FEQ research candidate with the independently verified core.
+"""Link a compiled FEQ or FEQUTL research candidate with the independently verified core.
 
 All authored components are rebuilt for this link. Historical translation
 objects must have a successful, current source-hash compilation receipt.
@@ -27,7 +27,10 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--compiler', default='c++')
     parser.add_argument('--matrix-trace', action='store_true')
+    parser.add_argument('--program', choices=('feq','fequtl'), default='feq')
     args = parser.parse_args()
+    if args.matrix_trace and args.program != 'feq':
+        parser.error('Matrix tracing applies only to FEQ.')
     directory, runtime, output = args.directory.resolve(), args.runtime.resolve(), args.output.resolve()
     object_directory = output.with_name(output.name+'.objects')
     if output.exists() or object_directory.exists() or ROOT/'build' not in output.parents:
@@ -47,7 +50,7 @@ def main():
             raise ValueError('Source changed or failed to compile: '+path.name)
         if record.get('headers_sha256') != headers_sha256:
             raise ValueError('Headers changed or compilation receipt predates header verification: '+path.name)
-        if path.name == 'linsys.cpp':
+        if args.program == 'feq' and path.name == 'linsys.cpp':
             continue
         obj = path.with_suffix('.o')
         if not obj.is_file():
@@ -62,8 +65,10 @@ def main():
              '-I',str(ROOT/'include'),'-iquote',str(directory),'-iquote',str(runtime)]
     if args.matrix_trace:
         flags.append('-DFEQ_RESEARCH_MATRIX_TRACE')
-    sources = ['src/md5.cpp','src/profile_matrix.cpp','src/section_interpolation.cpp','src/table_interpolation.cpp',
-               'tools/profile_compat.cpp','tools/section_compat.cpp','tools/table_compat.cpp','tools/probe_support.cpp']
+    sources = ['src/decimal.cpp','tools/decimal_compat.cpp','src/md5.cpp','tools/probe_support.cpp']
+    if args.program == 'feq':
+        sources.extend(['src/profile_matrix.cpp','src/section_interpolation.cpp','src/table_interpolation.cpp',
+                        'tools/profile_compat.cpp','tools/section_compat.cpp','tools/table_compat.cpp'])
     if args.matrix_trace:
         sources.append('tools/matrix_trace.cpp')
     commands = []
@@ -83,7 +88,7 @@ def main():
     command = [args.compiler,'-o',str(output),*[str(path) for path in objects],str(library)]
     subprocess.run(command,check=True)
     manifest = {'status':'Research candidate; whole-model acceptance requires independent comparison.',
-                'matrix_trace':args.matrix_trace,'compiler':subprocess.check_output([args.compiler,'--version'],text=True),
+                'program':args.program,'matrix_trace':args.matrix_trace,'compiler':subprocess.check_output([args.compiler,'--version'],text=True),
                 'compile_commands':commands,'link_command':command,'inputs':inputs,'headers':headers,
                 'runtime':str(library),'runtime_sha256':sha256(library),
                 'executable':str(output),'executable_sha256':sha256(output)}

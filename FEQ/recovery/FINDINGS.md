@@ -151,7 +151,7 @@ units, including their unified COMMON definitions and dynamic-array adapters.
 All 27 callback parameters use four concrete function-pointer signatures,
 derived from 91 recorded call constraints or inspected unused routine bodies.
 All six supplied cases execute. The current whole-file acceptance result is
-**11 of 17 files matching**; the remaining numerical and decimal-formatting differences are unresolved.
+**13 of 17 files matching**; all twelve FEQ files pass, and four FEQUTL numerical outputs remain unresolved.
 The full results are in `cpp-research-status.json`. Passing a direct routine test
 does not establish equivalence of an entire hydraulic model.
 
@@ -190,8 +190,8 @@ Subsequent tracing identified retained old/new impulse sums, original SIGN
 semantics at signed zero, single-precision square-root call boundaries, and a
 wider boundary-flow report temporary. With these corrections, every active
 solver word matches in all 621 FEQEX1 matrices. Its main report matches except
-execution clocks. Its history has three decimal-rounding differences, including
-98.25 printed as 98.3 by the released runtime and 98.2 by the current candidate.
+execution clocks. The earlier candidate had three history rounding differences,
+including 98.25 printed as 98.3 by the released runtime and 98.2 by printf.
 Direct original `VAR_DECIMAL` probes also produce 0.12 for 0.125 in an F5.2
 field, so a blanket change to half-away rounding is not justified.
 
@@ -231,12 +231,41 @@ water-level and discharge history also matches the distributed file exactly.
 `CMPCOR` compares a wider relative correction against the stored binary32
 maximum; rounding both operands first could report a different maximum-error
 node. Preserving that comparison fixes the remaining location discrepancy.
-Two decimal-formatting differences remain in FEQEX4's main report.
+The independent decimal converter described below resolves the final two
+FEQEX4 report rounding differences and all three FEQEX1 history differences.
 
-The current whole-output result is 11 of 17 files. The six failures include
-FEQEX1's history, FEQEX4's main report, and four FEQUTL outputs.
+The current whole-output result is 13 of 17 files. Every FEQ output matches,
+masking only execution clocks; the four failures are FEQUTL outputs.
 `cpp-research-status.json` records the current executable and output hashes.
 `model-active-matrices.json` records complete active-matrix trace comparisons,
 with the original trace runs' independent report checks. The older full-COMMON
 comparison is retained in `matrix-entry-comparison.json`. See
 [NUMERICAL_PROBES.md](NUMERICAL_PROBES.md) for commands and probe limits.
+
+## Single precision decimal conversion
+
+The original runtime's REAL*4 branch of `_jwe_iroc` (RVA `0xe3fd0`) scales the
+magnitude using a binary exponent estimate and two decimal-power tables. It
+extracts sixteen trial digits to make its halfway decision, keeps at most nine
+significant digits, and explicitly rounds a residual through binary32 when
+propagating a nearly-ten carry. These intermediate operations explain why
+98.25 prints as 98.3 in F5.1 but 0.125 prints as 0.12 in F5.2. Blanket half-away
+or printf half-even policies do not reproduce the released routine.
+
+`src/decimal.cpp` independently implements the recovered conversion with
+explicit binary64 operations and observed binary32 stores. All 2,360 direct
+original tests match the complete 32-byte result record: digit buffer, count,
+decimal exponent, finite/special status, and general/engineering edit state.
+The fixtures cover all finite exponent fields, both signs, zero, subnormals,
+finite extremes, infinities, quiet/signaling NaN bit patterns, decimal halfway
+values and their immediate neighbors, and signed scale factors. Special values
+are inspected as bits before arithmetic. The original disassembly and power
+constants are preserved alongside the probe and equations.
+
+The research I/O bridge substitutes this conversion before F/E field layout.
+No model outputs are rewritten after execution. Double precision conversion
+still uses the existing research runtime; the single precision fixture result
+does not imply verification of every formatted-I/O descriptor. Fresh full-model
+runs produce twelve exact FEQ report comparisons and unchanged, exact active
+matrix traces. FEQUTL still requires numerical recovery, and application
+packaging and broader input coverage remain open.

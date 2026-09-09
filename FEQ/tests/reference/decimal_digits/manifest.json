@@ -1,0 +1,16 @@
+{
+  "original_sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399",
+  "routine": "_jwe_iroc (REAL*4 branch), _jwe_igetfig",
+  "cases": 2360,
+  "input_record_bytes": 16,
+  "output_record_bytes": 32,
+  "input_sha256": "b702f99adebf794e55597615d072b2d29d727e73ab92d366ad4a01d7f55b368d",
+  "output_sha256": "a91afd0d5c1d5f693967e1f42e301d192bea19383e8638a16f80aa0cca16e11b",
+  "probe": "tools/probe_decimal_original.py",
+  "probe_sha256": "447303bf9492cfbe1c7d8addb784ac0c77e109b392926d80a76fb9a8844c6545",
+  "native_sha256": "32176c5c04dcc4214081cea3a0e4a3da63bfe89e18c9cbfff503b0700c67b879",
+  "exact_bytes": true,
+  "input_layout": "little endian uint32 float bits, uint32 edit kind, int32 precision, int32 scale",
+  "output_layout": "little endian int32 count, int32 exponent, uint32 status, uint16 G state, int16 EN shift, 16 digit/padding bytes",
+  "scope": "Digit conversion only. Field layout, sign, padding and end-user program coverage require separate verification."
+}

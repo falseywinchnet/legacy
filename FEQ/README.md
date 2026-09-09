@@ -50,16 +50,23 @@ points accompany [`src/section_interpolation.cpp`](src/section_interpolation.cpp
 The captured fixtures are in
 [`tests/reference/section_interpolation/`](tests/reference/section_interpolation/).
 
-Complete translated research engines also execute all six examples. Full-engine
-equivalence remains in progress: the current strict comparison passes 11 of the
-17 files. Every FEQEX2 and FEQEX3 report matches, masking only execution clocks;
-their water-level and discharge histories match without masking. FEQEX1's main
-report also matches, with three decimal-rounding differences remaining in its
-history file. FEQEX4's history matches exactly; two decimal-rounding differences
-remain in its main report. The FEQUTL reports/tables still have numerical differences.
+The independent single precision decimal converter matches **all 2,360 direct
+original-executable cases**, including every finite exponent field, subnormals,
+signed zeros, halfway values and their adjacent floats, infinities, and NaNs.
+It preserves the original nine digit ceiling and binary scaling steps. The
+captured digit bytes, counts, exponents, and G/EN descriptor states are committed
+under [`tests/reference/decimal_digits/`](tests/reference/decimal_digits/).
+
+Complete translated research engines execute all six examples. **All twelve
+FEQ report files now match**, masking only execution clocks; all four FEQ
+water-level and discharge histories match raw bytes. Every numerical value,
+diagnostic, convergence location, and other report byte is included. Across
+both programs, the strict comparison passes 13 of 17 files. Four FEQUTL reports
+and tables still have numerical differences.
 [`recovery/cpp-research-status.json`](recovery/cpp-research-status.json) records
 the actual binaries, runtime changes, and all comparisons. These research
-engines are not application releases.
+engines are not application releases, and example coverage does not establish
+complete input-space equivalence.
 
 Tracing establishes exact active solver inputs at every matrix assembly in
 FEQEX1 (621 matrices), FEQEX2 (325), FEQEX3 (578), and FEQEX4 (568). These comparisons
@@ -78,7 +85,7 @@ cmake --build FEQ/build/core --config Release
 ctest --test-dir FEQ/build/core -C Release --output-on-failure
 ```
 
-This checks the original-executable matrix and interpolation fixtures, defined
+This checks the original-executable matrix, interpolation and decimal fixtures, defined
 shared storage, and the historical input fingerprint algorithm. It does not require Wine,
 Fortran, or a source translator. The CI workflow runs these checks on Windows,
 macOS, and Linux, with a separate sanitizer build.
