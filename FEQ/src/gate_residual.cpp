@@ -140,4 +140,37 @@ GateFreeOrifice gate_free_orifice(float head, float datum, float discharge_coeff
     const float flow = static_cast<float>(static_cast<double>(area)*speed);
     return GateFreeOrifice{area,flow};
 }
+
+float gate_contact_squared_flow(float opening, float gate_area, float discharge_coefficient,
+    double upstream_depth, float upstream_bottom, float gate_bottom, float upstream_area,
+    float upstream_energy_factor, float gravity_twice) {
+    // UFGATE 0x4817a9..0x4817ed and midpoint 0x480ee5..0x480f35:
+    // E=AG*CD (retained),
+    // Q^2=REAL(((E^2*2g)*((Y1+Z1B)-HG-Z2B)) / (1-(E/A1)^2*alpha1)).
+    const double effective_area = static_cast<double>(gate_area)*discharge_coefficient;
+    const double upstream_surface = upstream_depth+upstream_bottom;
+    const double head = (upstream_surface-opening)-gate_bottom;
+    const double numerator = ((effective_area*effective_area)*gravity_twice)*head;
+    const double ratio = effective_area/upstream_area;
+    const double denominator = 1.0-(ratio*ratio)*upstream_energy_factor;
+    return static_cast<float>(numerator/denominator);
+}
+
+GateOrificeState gate_orifice_state(float opening, float gate_area, float discharge_coefficient,
+    float contraction_coefficient, float upstream_depth, float upstream_bottom,
+    float gate_bottom, float upstream_area, float upstream_energy_factor, float gravity_twice) {
+    // UFGATE 0x4822f2..0x482382: AT=REAL(CD*CC*AG), Y2=REAL(HG*CC),
+    // V=REAL(sqrt((((Y1+Z1B)-Z2B)-Y2)*2g / (1-(AT/A1)^2*alpha1))),
+    // QFREE=REAL(AT*V). The REAL depth and speed stores both affect flow.
+    const float area = static_cast<float>((static_cast<double>(discharge_coefficient)*
+        contraction_coefficient)*gate_area);
+    const float depth = static_cast<float>(static_cast<double>(opening)*contraction_coefficient);
+    const double upstream_surface = static_cast<double>(upstream_depth)+upstream_bottom;
+    const double head = (upstream_surface-gate_bottom)-depth;
+    const double ratio = static_cast<double>(area)/upstream_area;
+    const double denominator = 1.0-(ratio*ratio)*upstream_energy_factor;
+    const float speed = static_cast<float>(std::sqrt((head*gravity_twice)/denominator));
+    const float flow = static_cast<float>(static_cast<double>(area)*speed);
+    return GateOrificeState{area,depth,flow};
+}
 } // namespace feq

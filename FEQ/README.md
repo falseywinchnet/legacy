@@ -158,6 +158,18 @@ capacity failures. It preserves the REAL logarithms and the paired products
 used by LSTOPF's released loop. See
 [`tests/reference/power_spacing/`](tests/reference/power_spacing/).
 
+Gate lip-contact flow, the transition midpoint and free-orifice state match
+**1,280 original instruction-sequence cases**, including all eight stored
+results. They preserve the unrounded coefficient-area product and midpoint,
+and the separately stored jet depth and square-root velocity. See
+[`tests/reference/gate_state/`](tests/reference/gate_state/).
+
+The complete supplied gate example also matches **all 19,701 residual-entry
+records**, including every trial argument and every value in the gate COMMON
+block. The capture limits exceed the complete call counts. Its remaining
+twenty report-line differences are list-directed number formatting; see
+[`recovery/gate-residual-trajectories.json`](recovery/gate-residual-trajectories.json).
+
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,
 the caller's float store, and the head-loss result at three scales and around

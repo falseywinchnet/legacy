@@ -100,5 +100,26 @@ struct GateFreeOrifice {
 GateFreeOrifice gate_free_orifice(float head, float datum, float discharge_coefficient,
     float contraction_coefficient, float gate_area, float opening, float gate_bottom,
     float upstream_area, float upstream_energy_factor, float gravity_twice);
+
+// Squared flow when the rising tailwater reaches the gate lip. This limit
+// uses a retained CD*AG product; it does not store an effective area first.
+// At the transition midpoint, depth is the retained head and bottom is its
+// datum; their sum is the same upstream surface used by the released block.
+float gate_contact_squared_flow(float opening, float gate_area, float discharge_coefficient,
+    double upstream_depth, float upstream_bottom, float gate_bottom, float upstream_area,
+    float upstream_energy_factor, float gravity_twice);
+
+struct GateOrificeState {
+    float effective_area;
+    float depth;
+    float flow;
+};
+
+// UFGATE's free-orifice state stores the contracted depth before computing
+// the available head. FNDFOQ's separate contraction-head calculation above
+// keeps that product wide; these two released store sequences are distinct.
+GateOrificeState gate_orifice_state(float opening, float gate_area, float discharge_coefficient,
+    float contraction_coefficient, float upstream_depth, float upstream_bottom,
+    float gate_bottom, float upstream_area, float upstream_energy_factor, float gravity_twice);
 } // namespace feq
 #endif

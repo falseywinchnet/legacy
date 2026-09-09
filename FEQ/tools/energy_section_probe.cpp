@@ -73,8 +73,31 @@ int main(int argc, char** argv) {
         const bool gate_free = argc == 2 && std::strcmp(argv[1],"--gate-free") == 0;
         const bool gate_orifice = argc == 2 && std::strcmp(argv[1],"--gate-orifice") == 0;
         const bool power_spacing = argc == 2 && std::strcmp(argv[1],"--power-spacing") == 0;
+        const bool gate_state = argc == 2 && std::strcmp(argv[1],"--gate-state") == 0;
         const bool specific_energy = argc == 2 && std::strcmp(argv[1],"--specific-energy") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (gate_state) {
+                float fields[14]{};
+                for (int i = 0; i < 14; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                write_float(feq::gate_contact_squared_flow(fields[0],fields[1],fields[2],
+                    fields[4],fields[5],fields[6],fields[7],fields[8],fields[9]));
+                const feq::GateOrificeState result = feq::gate_orifice_state(fields[0],fields[1],
+                    fields[2],fields[3],fields[4],fields[5],fields[6],fields[7],fields[8],fields[9]);
+                write_float(result.effective_area);
+                write_float(result.depth);
+                write_float(result.flow);
+                // UFGATE retains this midpoint through section lookup and
+                // both the contact-flow calculation and bracket construction.
+                const double midpoint = (static_cast<double>(fields[0])+fields[10])*0.5;
+                write_float(static_cast<float>((midpoint+fields[11])-fields[5]));
+                write_float(feq::gate_contact_squared_flow(fields[0],fields[1],fields[2],
+                    midpoint,fields[11],fields[6],fields[7],fields[8],fields[9]));
+                write_float(static_cast<float>((midpoint+fields[11])-fields[12]));
+                const feq::GateTailwaterLevels levels = feq::gate_tailwater_levels(
+                    0.0F,0.0F,fields[13],fields[12],fields[11]);
+                write_float(static_cast<float>(levels.head/fields[0]));
+                continue;
+            }
             if (power_spacing) {
                 float fields[4]{};
                 for (int i = 0; i < 4; ++i) { fields[i] = std::bit_cast<float>(read_word()); }

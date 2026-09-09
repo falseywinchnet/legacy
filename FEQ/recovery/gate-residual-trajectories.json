@@ -1,0 +1,2078 @@
+{
+  "created_utc": "2026-09-09T12:39:22.658340+00:00",
+  "scope": "Complete supplied UTLEXM gate residual-entry trajectories; no field or argument masks.",
+  "total_records": 19701,
+  "record_bytes": 172,
+  "exact_bytes": true,
+  "comparisons": [
+    {
+      "routine": "_rsomy3_",
+      "records": 12866,
+      "bytes": 2212952,
+      "exact_bytes": true,
+      "original_trace": "build/gate-complete-original-1/test/trace-00.bin",
+      "native_trace": "build/gate-state-call-native-1/test/gate-00.bin",
+      "sha256": "61a732c8edf3b5de771253ee66b265ae52c2832ee1a53a5572d14110e2b3aba2"
+    },
+    {
+      "routine": "_rsomy4_",
+      "records": 823,
+      "bytes": 141556,
+      "exact_bytes": true,
+      "original_trace": "build/gate-complete-original-1/test/trace-01.bin",
+      "native_trace": "build/gate-state-call-native-1/test/gate-01.bin",
+      "sha256": "bb1f2bccf90663c9dc6838f590ef245b909c9eb05551b9b70a07118a3c4b3aab"
+    },
+    {
+      "routine": "_rswmy3_",
+      "records": 5444,
+      "bytes": 936368,
+      "exact_bytes": true,
+      "original_trace": "build/gate-complete-original-1/test/trace-02.bin",
+      "native_trace": "build/gate-state-call-native-1/test/gate-02.bin",
+      "sha256": "f55bd4b9fe12cad650dee014e3abbb3b0cd9ef6790c303b7ab82d8b1abad79fe"
+    },
+    {
+      "routine": "_rswmy4_",
+      "records": 568,
+      "bytes": 97696,
+      "exact_bytes": true,
+      "original_trace": "build/gate-complete-original-1/test/trace-03.bin",
+      "native_trace": "build/gate-state-call-native-1/test/gate-03.bin",
+      "sha256": "e6d411670d01c404ba9d4f7e70e769738cbe75227b58c6543645c5d2e4eb3ca6"
+    }
+  ],
+  "original_configuration": {
+    "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+    "hooks": [
+      {
+        "routine": "_rsomy3_",
+        "limit": 100000,
+        "captures": [
+          {
+            "symbol": "_ufcom_",
+            "bytes": 168
+          },
+          {
+            "stack_offset": 4,
+            "dereference": true,
+            "bytes": 4
+          }
+        ]
+      },
+      {
+        "routine": "_rsomy4_",
+        "limit": 100000,
+        "captures": [
+          {
+            "symbol": "_ufcom_",
+            "bytes": 168
+          },
+          {
+            "stack_offset": 4,
+            "dereference": true,
+            "bytes": 4
+          }
+        ]
+      },
+      {
+        "routine": "_rswmy3_",
+        "limit": 100000,
+        "captures": [
+          {
+            "symbol": "_ufcom_",
+            "bytes": 168
+          },
+          {
+            "stack_offset": 4,
+            "dereference": true,
+            "bytes": 4
+          }
+        ]
+      },
+      {
+        "routine": "_rswmy4_",
+        "limit": 100000,
+        "captures": [
+          {
+            "symbol": "_ufcom_",
+            "bytes": 168
+          },
+          {
+            "stack_offset": 4,
+            "dereference": true,
+            "bytes": 4
+          }
+        ]
+      }
+    ]
+  },
+  "original_trace_tool_sha256": "52e56a56d56a2b8d97e1ecd20cb2f805a5f67127842c3788d908ccd56deb8410",
+  "original_trace_manifest": {
+    "original": {
+      "path": "originals/feq1061/wrdapp/FEQ_10.61/BIN/fequtl.exe",
+      "bytes": 2094240,
+      "sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2"
+    },
+    "traced_sha256": "e3e498f5623bcbab3c0c84b8343f26748217836ec35f119d9a6e2f6c5594eb4b",
+    "command": [
+      "wine",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/gate-complete-original-1/TRACE.EXE",
+      "..\\data\\utlexm.in",
+      "utlexm.out",
+      "utlexm.tab"
+    ],
+    "returncode": 0,
+    "hooks": [
+      {
+        "routine": "_rsomy3_",
+        "limit": 100000,
+        "captures": [
+          {
+            "symbol": "_ufcom_",
+            "bytes": 168
+          },
+          {
+            "stack_offset": 4,
+            "dereference": true,
+            "bytes": 4
+          }
+        ],
+        "file": "trace-00.bin",
+        "record_bytes": 172,
+        "original_rva": 518656,
+        "hook_rva": 64258048,
+        "displaced_bytes": "558bec538b5d08",
+        "displaced_instructions": [
+          "push ebp",
+          "mov ebp, esp",
+          "push ebx",
+          "mov ebx, dword ptr [ebp + 8]"
+        ],
+        "replaced_header_padding": "244865616465723a202f70726a2f636f6e74726f6c2f7372632f6865616465722f77696e6e742f52",
+        "records": 12866,
+        "sha256": "61a732c8edf3b5de771253ee66b265ae52c2832ee1a53a5572d14110e2b3aba2"
+      },
+      {
+        "routine": "_rsomy4_",
+        "limit": 100000,
+        "captures": [
+          {
+            "symbol": "_ufcom_",
+            "bytes": 168
+          },
+          {
+            "stack_offset": 4,
+            "dereference": true,
+            "bytes": 4
+          }
+        ],
+        "file": "trace-01.bin",
+        "record_bytes": 172,
+        "original_rva": 518848,
+        "hook_rva": 64262144,
+        "displaced_bytes": "558bec8b4d08",
+        "displaced_instructions": [
+          "push ebp",
+          "mov ebp, esp",
+          "mov ecx, dword ptr [ebp + 8]"
+        ],
+        "replaced_header_padding": "244865616465723a202f70726a2f636f6e74726f6c2f7372632f6865616465722f77696e6e742f52",
+        "records": 823,
+        "sha256": "bb1f2bccf90663c9dc6838f590ef245b909c9eb05551b9b70a07118a3c4b3aab"
+      },
+      {
+        "routine": "_rswmy3_",
+        "limit": 100000,
+        "captures": [
+          {
+            "symbol": "_ufcom_",
+            "bytes": 168
+          },
+          {
+            "stack_offset": 4,
+            "dereference": true,
+            "bytes": 4
+          }
+        ],
+        "file": "trace-02.bin",
+        "record_bytes": 172,
+        "original_rva": 519024,
+        "hook_rva": 64266240,
+        "displaced_bytes": "558bec538b5d08",
+        "displaced_instructions": [
+          "push ebp",
+          "mov ebp, esp",
+          "push ebx",
+          "mov ebx, dword ptr [ebp + 8]"
+        ],
+        "replaced_header_padding": "244865616465723a202f70726a2f636f6e74726f6c2f7372632f6865616465722f77696e6e742f52",
+        "records": 5444,
+        "sha256": "f55bd4b9fe12cad650dee014e3abbb3b0cd9ef6790c303b7ab82d8b1abad79fe"
+      },
+      {
+        "routine": "_rswmy4_",
+        "limit": 100000,
+        "captures": [
+          {
+            "symbol": "_ufcom_",
+            "bytes": 168
+          },
+          {
+            "stack_offset": 4,
+            "dereference": true,
+            "bytes": 4
+          }
+        ],
+        "file": "trace-03.bin",
+        "record_bytes": 172,
+        "original_rva": 519232,
+        "hook_rva": 64270336,
+        "displaced_bytes": "558bec8b4d08",
+        "displaced_instructions": [
+          "push ebp",
+          "mov ebp, esp",
+          "mov ecx, dword ptr [ebp + 8]"
+        ],
+        "replaced_header_padding": "244865616465723a202f70726a2f636f6e74726f6c2f7372632f6865616465722f77696e6e742f52",
+        "records": 568,
+        "sha256": "e6d411670d01c404ba9d4f7e70e769738cbe75227b58c6543645c5d2e4eb3ca6"
+      }
+    ],
+    "output_verification": {
+      "utlexm.out": {
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
+        "actual_sha256": "c8cc10621dd8caccc473ce9fd509b85af81da37ca34069d8c7b04bdc509f60f3",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 775740,
+        "actual_bytes": 775740
+      },
+      "utlexm.tab": {
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
+        "actual_sha256": "2eebd8d9884c61f805879405ab45d3473d477ae45d6fbc4f87dc5e01c766cfc6",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 135953,
+        "actual_bytes": 135953
+      }
+    },
+    "outputs": [
+      {
+        "path": "test/trace-00.bin",
+        "bytes": 2212952,
+        "sha256": "61a732c8edf3b5de771253ee66b265ae52c2832ee1a53a5572d14110e2b3aba2"
+      },
+      {
+        "path": "test/trace-01.bin",
+        "bytes": 141556,
+        "sha256": "bb1f2bccf90663c9dc6838f590ef245b909c9eb05551b9b70a07118a3c4b3aab"
+      },
+      {
+        "path": "test/trace-02.bin",
+        "bytes": 936368,
+        "sha256": "f55bd4b9fe12cad650dee014e3abbb3b0cd9ef6790c303b7ab82d8b1abad79fe"
+      },
+      {
+        "path": "test/trace-03.bin",
+        "bytes": 97696,
+        "sha256": "e6d411670d01c404ba9d4f7e70e769738cbe75227b58c6543645c5d2e4eb3ca6"
+      },
+      {
+        "path": "test/utlexm.chx",
+        "bytes": 12998,
+        "sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af"
+      },
+      {
+        "path": "test/utlexm.out",
+        "bytes": 775740,
+        "sha256": "c8cc10621dd8caccc473ce9fd509b85af81da37ca34069d8c7b04bdc509f60f3"
+      },
+      {
+        "path": "test/utlexm.tab",
+        "bytes": 135953,
+        "sha256": "2eebd8d9884c61f805879405ab45d3473d477ae45d6fbc4f87dc5e01c766cfc6"
+      }
+    ]
+  },
+  "native_instrumentation": {
+    "routines": [
+      "rsomy3_",
+      "rsomy4_",
+      "rswmy3_",
+      "rswmy4_"
+    ],
+    "limit": 100000,
+    "record_bytes": 172,
+    "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-3/ufgate.cpp",
+    "source_sha256": "53c0c4016826c3fada2429e6edd74211b578acb737bc8178860ebe35e846488e",
+    "instrumented_sha256": "9e94e8bd8195c2c2b09abd0379238a969bc4431095f056dc17a5d5169bd20e30",
+    "tool_sha256": "4b724bb16d72c6da8b192b10c4c6a21b0f11525a328f3c1c09e5bbf23b30f2d3"
+  },
+  "native_run_manifest": {
+    "purpose": "C++ research execution; equivalence requires a separate comparison.",
+    "created_utc": "2026-09-09T12:36:33.973577+00:00",
+    "host": "macOS-26.5-arm64-arm-64bit",
+    "legacy_path_links": false,
+    "inputs": [
+      {
+        "path": "data/CULVERT.IN",
+        "bytes": 8263,
+        "sha256": "fbd6ce4963c88319bf79469188e34422eef5d22c58a02f9ecb5ff483287a40b0"
+      },
+      {
+        "path": "data/FEQEX1",
+        "bytes": 13850,
+        "sha256": "29c0db7065d86cb04206b35aaaf932e260126b9c00de8034e4d61cf99eae24b4"
+      },
+      {
+        "path": "data/FEQEX2",
+        "bytes": 8996,
+        "sha256": "ef75e6c0c063a155e495a5f0f8b871fd2dc4e47f5297c7e6250236efa11b743c"
+      },
+      {
+        "path": "data/FEQEX3",
+        "bytes": 9767,
+        "sha256": "f85f8cb1566c6cfcb68739e7cb5dac3896d0b7c541746c6cd45cf1f08ff31ab7"
+      },
+      {
+        "path": "data/FEQEX4",
+        "bytes": 7604,
+        "sha256": "e48e0e0ea8329c9b1e732ec77ab08773984e39e13c4ffd449b443ff44b1c5fa6"
+      },
+      {
+        "path": "data/MODEL01.INP",
+        "bytes": 7363,
+        "sha256": "07764dad7c1bc3943ee5eb8da7bcc239cd5eeddcaa0ea092db83f4b860418df8"
+      },
+      {
+        "path": "data/TYPE5.TAB",
+        "bytes": 11513,
+        "sha256": "dd15462267c4a24caa402e6257e0f903c3b677dbf48344c8eb7021fe8acd81b1"
+      },
+      {
+        "path": "data/UTLEXM.IN",
+        "bytes": 60045,
+        "sha256": "53b079f89acbf771ed164c4bfbeec888426ee17e33073778b963f65abb1d3ea8"
+      },
+      {
+        "path": "data/WEIRTABS",
+        "bytes": 4689,
+        "sha256": "e818590713f9878ded0de329fd47142df35bd9c0f73ce0c161b7593c5892ee1d"
+      },
+      {
+        "path": "data/culvert.out",
+        "bytes": 141152,
+        "sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72"
+      },
+      {
+        "path": "data/culvert.tab",
+        "bytes": 6015,
+        "sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade"
+      },
+      {
+        "path": "data/feqex1.out",
+        "bytes": 1693210,
+        "sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e"
+      },
+      {
+        "path": "data/feqex1.out.spi",
+        "bytes": 1836,
+        "sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc"
+      },
+      {
+        "path": "data/feqex1.out.wsq",
+        "bytes": 129731,
+        "sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b"
+      },
+      {
+        "path": "data/feqex2.out",
+        "bytes": 876444,
+        "sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db"
+      },
+      {
+        "path": "data/feqex2.out.spi",
+        "bytes": 1132,
+        "sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60"
+      },
+      {
+        "path": "data/feqex2.out.wsq",
+        "bytes": 15809,
+        "sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b"
+      },
+      {
+        "path": "data/feqex3.out",
+        "bytes": 1340610,
+        "sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96"
+      },
+      {
+        "path": "data/feqex3.out.spi",
+        "bytes": 1132,
+        "sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41"
+      },
+      {
+        "path": "data/feqex3.out.wsq",
+        "bytes": 23579,
+        "sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2"
+      },
+      {
+        "path": "data/feqex4.out",
+        "bytes": 1371793,
+        "sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650"
+      },
+      {
+        "path": "data/feqex4.out.spi",
+        "bytes": 1132,
+        "sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6"
+      },
+      {
+        "path": "data/feqex4.out.wsq",
+        "bytes": 23579,
+        "sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff"
+      },
+      {
+        "path": "data/utlexm.chx",
+        "bytes": 12998,
+        "sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af"
+      },
+      {
+        "path": "data/utlexm.out",
+        "bytes": 775740,
+        "sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de"
+      },
+      {
+        "path": "data/utlexm.tab",
+        "bytes": 135953,
+        "sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705"
+      }
+    ],
+    "binaries": [
+      {
+        "path": "bin/feq",
+        "bytes": 1319896,
+        "sha256": "18a886c4cc5c505901d54fb06549b61a3570b5675319ab6957b2b9af840942d3"
+      },
+      {
+        "path": "bin/fequtl",
+        "bytes": 1435168,
+        "sha256": "98a58f4e06635dcc324c8f171e0ec944f92c6580ba795cd4a15202b6970ef160"
+      }
+    ],
+    "cases": [
+      {
+        "case": "utlexm",
+        "program": "fequtl",
+        "arguments": [
+          "..\\data\\utlexm.in",
+          "utlexm.out",
+          "utlexm.tab"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.3841414579655975,
+        "process_completed": true,
+        "outputs": [
+          {
+            "path": "gate-00.bin",
+            "bytes": 2212952,
+            "sha256": "61a732c8edf3b5de771253ee66b265ae52c2832ee1a53a5572d14110e2b3aba2"
+          },
+          {
+            "path": "gate-01.bin",
+            "bytes": 141556,
+            "sha256": "bb1f2bccf90663c9dc6838f590ef245b909c9eb05551b9b70a07118a3c4b3aab"
+          },
+          {
+            "path": "gate-02.bin",
+            "bytes": 936368,
+            "sha256": "f55bd4b9fe12cad650dee014e3abbb3b0cd9ef6790c303b7ab82d8b1abad79fe"
+          },
+          {
+            "path": "gate-03.bin",
+            "bytes": 97696,
+            "sha256": "e6d411670d01c404ba9d4f7e70e769738cbe75227b58c6543645c5d2e4eb3ca6"
+          },
+          {
+            "path": "utlexm.chx",
+            "bytes": 12998,
+            "sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af"
+          },
+          {
+            "path": "utlexm.out",
+            "bytes": 775750,
+            "sha256": "f71c1ce1fcb452eaec451b9faea439e7492e23a1ea97658b302df5e4067b75ea"
+          },
+          {
+            "path": "utlexm.tab",
+            "bytes": 135953,
+            "sha256": "d7cae2e0c3cb07c8732c32cfaedbbb3ce7c83796b3d4b506a387457623a5e776"
+          }
+        ]
+      }
+    ]
+  },
+  "native_link_manifest": {
+    "status": "Research candidate; whole-model acceptance requires independent comparison.",
+    "program": "fequtl",
+    "matrix_trace": false,
+    "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
+    "compile_commands": [
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/decimal.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/decimal.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/decimal_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/decimal_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/md5.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/md5.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/probe_support.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/probe_support.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_energy.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_energy.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/energy_section_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/energy_section_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_geometry.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_geometry.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_flux.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_flux.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_properties.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_properties.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/power.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/power.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/elevation_arguments.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/elevation_arguments.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/elevation_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/elevation_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/trigonometry.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/trigonometry.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/arch_perimeter.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/arch_perimeter.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/arch_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/arch_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/conduit_boundary.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/conduit_boundary.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/conduit_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/conduit_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_interpolation.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_interpolation.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_extension.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_extension.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/gaussian_rule.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/gaussian_rule.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/section_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_sinuosity.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_sinuosity.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/sinuosity_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/sinuosity_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/table_interpolation.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/table_interpolation.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/table_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/table_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/weir_flow.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/weir_flow.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/weir_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/weir_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/root_solver.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/root_solver.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/root_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/root_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/culvert_loss.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/culvert_loss.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/steady_residual.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/steady_residual.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/approach_residual.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/approach_residual.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/gate_residual.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/gate_residual.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/power_spacing.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/power_spacing.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/geometry_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/geometry_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/flux_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/flux_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/properties_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/properties_compat.o"
+      ]
+    ],
+    "link_command": [
+      "c++",
+      "-o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/binsearch.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/bridge.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/chanrat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/common.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/conduit.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/critq.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culverta.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culvertb.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culvertc.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culvertd.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culverte.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/dynamic_storage.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/embank.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/expcon.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fequtl.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/findbrk.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/floodway.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrftb.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrinl.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrlin.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrplg.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrstr.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrtdl.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrtim.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrunt.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/getsvn_msw_lf95.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/hec2x.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/home_name.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/imptrap.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/inputproc.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/inv_gate.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/lf95_ms_s_npf.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/linuxcr.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/location.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/lprfit.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/makelakexs.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/mkembank.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/mkwspro.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/newlookup.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/numrmath.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/nxttok.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/orifice.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/pumpitem.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/pwd.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/riserclv.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/ritter.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/rootfind.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/sinuous.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/sortser.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/svn_report.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tabfit.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tableid.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tablook.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tabstore.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tracking.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/ufgate.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/ufgculv.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/wspro.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/xsection.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/decimal.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/decimal_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/md5.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/probe_support.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_energy.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/energy_section_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_geometry.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_flux.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_properties.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/power.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/elevation_arguments.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/elevation_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/trigonometry.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/arch_perimeter.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/arch_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/conduit_boundary.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/conduit_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_interpolation.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_extension.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/gaussian_rule.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_sinuosity.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/sinuosity_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/table_interpolation.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/table_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/weir_flow.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/weir_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/root_solver.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/root_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/culvert_loss.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/steady_residual.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/approach_residual.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/gate_residual.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/power_spacing.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/geometry_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/flux_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/properties_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/libf2c.a"
+    ],
+    "inputs": [
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/binsearch.cpp",
+        "source_sha256": "5a6791d99b882ea1ca06b46ab058fe08d7c1e8800ec3aa2277ca7359efd5d47b",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/binsearch.o",
+        "object_sha256": "3ce0b04e05fcaa1cc8d6c4fc33b0db493170059e663309c7a2200720d883557f"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/bridge.cpp",
+        "source_sha256": "1d78bf5cc998d1441fa6ba5e1b74c1e35dccc200b7fbd6ec36653fa4dbd5b4fd",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/bridge.o",
+        "object_sha256": "f2688ceba1eb619d57e003c49af6eaaf934a3333d71ac6fe1ef7fa179bcbee3f"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/chanrat.cpp",
+        "source_sha256": "838ce0c8d0a22cd29c5c699b920a8e73a0b5b6f0252aa57f277c1f42c945d1ed",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/chanrat.o",
+        "object_sha256": "aa6183353829ffdb49f72f818d4a12f3a14928403ea53bbb025b5c7182db11fb"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/common.cpp",
+        "source_sha256": "5a6d92d7e54e8e55ffdd37865b2d73d015a2931bd1c0a8d2da4448746060023f",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/common.o",
+        "object_sha256": "7f7f16c8a367cc28ecd46a5425a2ed18c3bd97334b308396fbbbe61df1f7494f"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/conduit.cpp",
+        "source_sha256": "dba18eb87589311246c445a27d849928f4492219a68dc78b63faae7ccfe7dd3b",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/conduit.o",
+        "object_sha256": "da2f1147946a756d99e588257f4a8937a2abaaf6c2fe89d83f86f6efed0b84ff"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/critq.cpp",
+        "source_sha256": "97af53efa7e70da5b2aad6977001edad6b495ce2ee07ecc2e8a21a1c8018cf11",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/critq.o",
+        "object_sha256": "775cdc939b72367f99ed8752e8a928cda2a49b4ef1d15b6a71026bc3e1c2226d"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culverta.cpp",
+        "source_sha256": "7b00da2b49889bd10fdd6ffcf98587c8842ac14f973dccbdef1340e09c5e2688",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culverta.o",
+        "object_sha256": "0e26239343035d0295494aeb2e150b1ff41ae2dd8cdc1107bdb7c1f6beb96e08"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culvertb.cpp",
+        "source_sha256": "bea115d83efe031689bacff9463b32621d3ae2857652293c56d49f0884a4c8f7",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culvertb.o",
+        "object_sha256": "ae94aa10c1e3d8ba0d71efd1cc927a262c42bb197d4897f4d97479473b44e9f4"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culvertc.cpp",
+        "source_sha256": "3b29ee9dbf59319ff0b0980b73d1e72b5bcb06c4d4b23244d414dc0fa4d91aab",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culvertc.o",
+        "object_sha256": "8289a79dccc6ac2ea4ad5b4c4c147206bdd3981b641ac32fa868ba7085317737"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culvertd.cpp",
+        "source_sha256": "424315c1903978181b9cc2a49c6f3091220b17b26d26971e19c235dc334146bd",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culvertd.o",
+        "object_sha256": "fc5465593c3c0501816783f3f2f0780e33d1ce655e4bb6db132ab74dca3bd835"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culverte.cpp",
+        "source_sha256": "1fedd007e50584cb978662586c8615b8c58f4592d8cbe0b31063ea9228738b24",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/culverte.o",
+        "object_sha256": "aec0f33a3a4d36ccc7f1f73747795a87b53590e4e3a4c7af5e5a107f0d2daf6d"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/dynamic_storage.cpp",
+        "source_sha256": "e61e1cb32e2438a4b28d0739487f2142f5c3529b35b8d76b3bc40cca28fc3273",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/dynamic_storage.o",
+        "object_sha256": "a9c5fb9b2f4dd711f96801f8ba108eb3d8e1519ef5877a81492b4bacd0fd764f"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/embank.cpp",
+        "source_sha256": "fe7e05dee0ebac7ffda8a408e5a7754fad041176975ed8e173449407d9a3576d",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/embank.o",
+        "object_sha256": "69731bf5586d3a5a22ca85c9d2a09ada312a6db90334b38ea557a359a10fbfd2"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/expcon.cpp",
+        "source_sha256": "ab9c08ddfdc424a76b001e825563b5a1dc783b3833737238006595a7140c7efd",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/expcon.o",
+        "object_sha256": "42890646cbab96f86bf67395410e1f03b2ee7def7039b83074284fb9e34640f3"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fequtl.cpp",
+        "source_sha256": "a2da6edabe2225231188677892a6631bc0906d3581e44b6d0f1f301aa51f604b",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fequtl.o",
+        "object_sha256": "ae2c990d1cf6df6e4762b92030082bb7c1debde94af8a7347c5d546c223d9387"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/findbrk.cpp",
+        "source_sha256": "a5adce98534929732933e2d42531fb97b72c5bdd7fb8276637823f91d0e94871",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/findbrk.o",
+        "object_sha256": "63d64c3d1896c6ccbdf36c85ffe71c59fd69a7a00b43175092f027b99af4b955"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/floodway.cpp",
+        "source_sha256": "7d6547f771e8adb4837df727487d9cf4e325f02770f21bf01f9e155cce0e7f52",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/floodway.o",
+        "object_sha256": "03995d10348f0e5756e29dad66f26c97b4f864f47ac4302a56fafee52a798d2b"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrftb.cpp",
+        "source_sha256": "ac75fe2c6a2f68d36114bab502e002d514d0866c5b4338f15ecd47cb95609106",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrftb.o",
+        "object_sha256": "55c70b229ee631338a471fdaead7ab1ce21108bcc76cda618258255e9d606b47"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrinl.cpp",
+        "source_sha256": "74d1d00ad7fa85a3c48c42f4910acec19a876e1bdf50756fb3cf231be6e0053b",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrinl.o",
+        "object_sha256": "0824838b5a301f08ceba1d961bfbec57a69d7e7761ba2e0e1082f8666c826006"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrlin.cpp",
+        "source_sha256": "ada5fd3081302d280fde00f2a6dc5992967b773427ffababc05ebfad266c0ef7",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrlin.o",
+        "object_sha256": "2ec0f26f4a688631502f5b6aca68f1eb8d43e0a22529e922728221e3b210359a"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrplg.cpp",
+        "source_sha256": "bf67f19bf68e42c4d1c23490295ae6d512d1ca6c55fda04f02dc4994daea5b1f",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrplg.o",
+        "object_sha256": "aefe4dfa7c7d4d778687518b09278aac80d6201d177675c7f7137910497b0e5b"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrstr.cpp",
+        "source_sha256": "f566adb62da438cf4f9c30126595a0dc893462da22aa8f6211f1a3a51f709c71",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrstr.o",
+        "object_sha256": "43b0729aa079cb11a81ae164cfbbc9c92e97523efe4ff1070efcfdb3174ba9e3"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrtdl.cpp",
+        "source_sha256": "421f208c79ad925184a0c2ba2f24e22a38072b173c4a8a1c6ac47aac373caf01",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrtdl.o",
+        "object_sha256": "77256cd100e3a4308c6a703567153e06852e5e851035abb3070a00c63bbb713d"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrtim.cpp",
+        "source_sha256": "b855c7cd9c1a481249a7350a4fcee20376de87d28886a15871eed037035bfd41",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrtim.o",
+        "object_sha256": "f792dbabb76da539d33c4098fdc0c6f93d7da191ba21fb4656b6d9a4dcc74dbe"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrunt.cpp",
+        "source_sha256": "2886b0baba483164aa75c50c30f29322afa68552cd78394cd76c50ee077fe84e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/fqshrunt.o",
+        "object_sha256": "b34c9e057f841cf6583b477dc59c662e6bb411e08019989976233485ba4ec74e"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/getsvn_msw_lf95.cpp",
+        "source_sha256": "8c9461a1d8760b8307480f95120b132144e407e21959ada658c2bdc774e52b88",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/getsvn_msw_lf95.o",
+        "object_sha256": "54389061ca399fc5b00c4cbee07a3c77e081ae60de0e1e4eff8e0d7d2eda8528"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/hec2x.cpp",
+        "source_sha256": "b739149fbff46d7e1a608a2435ef0f777e43465bd2ac8a8f855a0738b98f07f6",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/hec2x.o",
+        "object_sha256": "b3ef6f241cd0df5055e6867aae2cea9966ee6d06165fed28cc8a3733b3e32f13"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/home_name.cpp",
+        "source_sha256": "6b2002f92149229fefe64a17e194f3f351be3bcf0a577ca663672cd3f667624f",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/home_name.o",
+        "object_sha256": "d48eb22903e2decc84c975673cbae9ad14cc7d1c5638aae2e6f6878df1368fb6"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/imptrap.cpp",
+        "source_sha256": "5d5bcff011305f50f3f4f22fe5c0306680a9d19ae9e79d329f841cbf68a701b5",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/imptrap.o",
+        "object_sha256": "ff011325bc5dee142a694a5bdda2d94f42ffe17240793aff80918236a9a27d35"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/inputproc.cpp",
+        "source_sha256": "08f521044f51ffe8c0031fc5263140e2912e1aaec12fa7b7ea9fdb3160ea20a9",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/inputproc.o",
+        "object_sha256": "521cc316fde71f5043f285a8930b36165f48645f62a3e71ee435a891cd7edb11"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/inv_gate.cpp",
+        "source_sha256": "bb3bc989c900de3a58c4726c5a34eca34a40c41faa09b0a83117a6b307835aa8",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/inv_gate.o",
+        "object_sha256": "5a86b98214b6bac2717bfb98a8fadea8f957c6d2950bd681f2c9d8a44fce2e23"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/lf95_ms_s_npf.cpp",
+        "source_sha256": "7150561583e3cc8aff59f769aacb7000b4cc7b9b215a2c2ea1e571f3bfdb47c3",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/lf95_ms_s_npf.o",
+        "object_sha256": "acbfa384b36a48af6888dce697bd742a6fc49830dbf359557cb63582cdc317e7"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/linuxcr.cpp",
+        "source_sha256": "bc0eb625c47638902508cac4a75e6e73594c4a450fd7bd1aac7b3d8c5c5aaf0e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/linuxcr.o",
+        "object_sha256": "9080dd13670991cf5abe9030bb7ff7cc66dab9b80b4461cf8d34cd23eff8bfb9"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/location.cpp",
+        "source_sha256": "820e2d18c08925498bd21a335673141cc1d3c317022a294fb063fca140014831",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/location.o",
+        "object_sha256": "624cf09f2297839abb68d57251732a6355f7c3dbc86d2f2eac8a29925351d83c"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/lprfit.cpp",
+        "source_sha256": "620f6488d4e82bb6eff6e0194b69e8fbf38a2e7d0a83d619c8f2d750403001f5",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/lprfit.o",
+        "object_sha256": "cb5440827d1d2e765940efb0f6fd6377e1826671c5e4e1cce1d48a3df54e3302"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/makelakexs.cpp",
+        "source_sha256": "77862c33b11ab7040e8199cff3690602671e3f29559dc7f1b2e40f3b2a1f928b",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/makelakexs.o",
+        "object_sha256": "bf2c01b3e57aa2921f58a7da58587d4cfaba63430915683adf22a23b9474ff96"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/mkembank.cpp",
+        "source_sha256": "b69ac59dae79046546ca4238e6f334225ea028898f97ddc17c2c86cbc9e077b1",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/mkembank.o",
+        "object_sha256": "ca9c4340c63fa42f49f02c5da4aa5eb3711f2e7dc1ea3b81521be0c184ec36d1"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/mkwspro.cpp",
+        "source_sha256": "74c1ed793697db2ccfb8f3076dd929a818057ee2ac86ba6f43e782f699fbb46c",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/mkwspro.o",
+        "object_sha256": "487a1a5fc28f22b57b041093f1df3e061a37afa4f66514ec71ce41c429ad20c7"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/newlookup.cpp",
+        "source_sha256": "24765bf7f97a395d93e6bb228f0aac58e56d40d1e9555d96821b7951acaf954e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/newlookup.o",
+        "object_sha256": "00108a45731903738fa0eee925bc6ef0afa4849a00b1d1fc69a347f068ce16e3"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/numrmath.cpp",
+        "source_sha256": "218904a2296f9dac290e771ff351a5ea1e19d484e2caa232f4d5f939ad6bbc74",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/numrmath.o",
+        "object_sha256": "489c5065d32baecc87570ed32a540d4189e91db1b15010892088a95478c5ce5f"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/nxttok.cpp",
+        "source_sha256": "71427cd25f2d5619e263b86ec6545ed04f7cc9b744c6b53519682be428e92462",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/nxttok.o",
+        "object_sha256": "f8a7d391d4d82ad7689ab7fbf99805914598d969a16bbf2ac2f4e92bf890a641"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/orifice.cpp",
+        "source_sha256": "cfa7866c66d6f3eb054d28831cb75d49ac12bdcce1a1619af8a60d3ba9eb4043",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/orifice.o",
+        "object_sha256": "88295c15f9a422a53f484af693393d0f0fa2a5ed6a68fda4690a9c9fa8d6f444"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/pumpitem.cpp",
+        "source_sha256": "fa94b234cadaa560492b6848085d82af6b58053d8065f3383a8e6f39b07ec360",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/pumpitem.o",
+        "object_sha256": "8d26f15b8b66de1c4e48ffdbe9e9a9b2f466f44bdc71c2b62d4bf403385e42d1"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/pwd.cpp",
+        "source_sha256": "6679ef34de4899c817e39673d61e3987979ad1063ce81ac0798bfdfdb51dc938",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/pwd.o",
+        "object_sha256": "f0a823c9b43d35b63900e594ef5192899fcc7b62de68bc67a92b36b3fb66df7b"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/riserclv.cpp",
+        "source_sha256": "aeec638520fcdb0b8667d8ae41ae0733a690557354c2466df206eeafd8470481",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/riserclv.o",
+        "object_sha256": "fdec651e962eb8ba10e53f376d19eb090128e2557fd49c63d45233e169886317"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/ritter.cpp",
+        "source_sha256": "0067382a05e15388f040855fb50cd8588972bac3f0ef3f8145d74e942705eccf",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/ritter.o",
+        "object_sha256": "afed68ae434601ab06ddf30106f34dc61518b5c6f791826c256d07b6e4d2407b"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/rootfind.cpp",
+        "source_sha256": "5c012049bb9a8f4d983f32e43188d9812d749c6350024beadc6552f499be41ab",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/rootfind.o",
+        "object_sha256": "7d93b4775206d9afa9c2f1c1ef770b60adf32513a07e853bd4e95798ae3e2197"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/sinuous.cpp",
+        "source_sha256": "a409008144f7da71505acec4db5064e359836fe19ce569e15e2504c7e458c56a",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/sinuous.o",
+        "object_sha256": "a9c1582ed60b0e4d8edd0e909e70d04e97ef2e229afc5dc0965622dbffb2743b"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/sortser.cpp",
+        "source_sha256": "a19c500fbb7e6b18f95632c9471a7413d1f9247f1147b78719da6f7fc0be4f5c",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/sortser.o",
+        "object_sha256": "a2c7d3942514c482e14b979c63d42a775d6d0aa64771b122daf3e80ad76fb9ff"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/svn_report.cpp",
+        "source_sha256": "3cc2211f1fa7a2d08bebc499f0ad1df71d89c023fa7745624ef89d4cda29884e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/svn_report.o",
+        "object_sha256": "07d4276b7215114936d57e1991dfa28db34bde829baf8d0c67e6d0e2ae31d56c"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tabfit.cpp",
+        "source_sha256": "dc44d72625019d8e34c89c59d4453faa117bd2f0d1f7a3046a8602ab78bd34d4",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tabfit.o",
+        "object_sha256": "a97c5a872b66ce924776976b7f9d03d93ae339e30ad6832b45bf3840a99dffe5"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tableid.cpp",
+        "source_sha256": "d75520d3e86a27f4b1d9bf8cf8cb7863e01c7c7ea3e3b7a224fa1e5233dad020",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tableid.o",
+        "object_sha256": "48c42af9e4da21ffc551b2add09f1e21cee718a9b02a7ac42e951ce7ee8aa737"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tablook.cpp",
+        "source_sha256": "2c6a135c49d99183d1c60f272aa88d1683bed123e49ae6bda0b08c274fa218a9",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tablook.o",
+        "object_sha256": "2b93ac79ce694c14116fc56a24559d3f25bd9f5137d32e7468ffe593484bba8b"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tabstore.cpp",
+        "source_sha256": "50da306e0d73129eabf85348712033ba1d9198405a09ca2d77233ebecb6017e3",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tabstore.o",
+        "object_sha256": "553abefb9a2c3906aff83571c157527ac59a17b3edf45c459f8af5a9efba6518"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tracking.cpp",
+        "source_sha256": "c4abfdfb99d746e697c1e52489868498d0318873c789ed5ac5ed24168519fb14",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/tracking.o",
+        "object_sha256": "bab222e0d36ca39cd49b994e3b6660271c093977660c15f1d5c9bcb3a46e178b"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/ufgate.cpp",
+        "source_sha256": "9e94e8bd8195c2c2b09abd0379238a969bc4431095f056dc17a5d5169bd20e30",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/ufgate.o",
+        "object_sha256": "314cee5219c91dcbb52dac693fe4527d2973a11a41c7ae5441c81bc800a71820"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/ufgculv.cpp",
+        "source_sha256": "2083e6c02a4beff3cf711e476f4008eac05ad1a0b31a27aaf06ae413d9ec0bfc",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/ufgculv.o",
+        "object_sha256": "3cc39cd568457e19fc32b027f4732728b57ec65956c56067fec9f8544a2c696b"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/wspro.cpp",
+        "source_sha256": "77c117af1ba041120029243b3dfa7b25d710b2a872133d9d4a8ae127654e2a02",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/wspro.o",
+        "object_sha256": "b30c2cea20d85fadce8f3be464af591051a9d0f16f4dbac2fa6f556c59bc9244"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/xsection.cpp",
+        "source_sha256": "6952330eef503523cb03bf7132c6a3091a79a55b866c7fa585fc478dd5b594e2",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/xsection.o",
+        "object_sha256": "e3874c84dd9fc922e627f40e31ea40a277e7d7e209dbfc67228cdf865fee56f3"
+      },
+      {
+        "source": "src/decimal.cpp",
+        "source_sha256": "fc4ea6c7bc0d9c2c9c11f6ade6a0af446f70387055a02d23ce1440856129a943",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/decimal.o",
+        "object_sha256": "5e33d5bb3be0a524c6d3d03dcf18252d412d1dca1c0bda94eee273a0b2d1c893"
+      },
+      {
+        "source": "tools/decimal_compat.cpp",
+        "source_sha256": "92c6799d779f38c7127439d15d1f10db3e4008bf1e7626190dacf8e4568b1e46",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/decimal_compat.o",
+        "object_sha256": "66871cc40bdcb6ccdbb11f0d132637bd50368bbc48567862c7c1e1d39d257f15"
+      },
+      {
+        "source": "src/md5.cpp",
+        "source_sha256": "d6bb87806da3143f0ef1e0bcd0bdbd55313faf18877296122404a68e6833d11e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/md5.o",
+        "object_sha256": "9458a25fbc4fd9f1a803080b6bb3c302eaeb96cec009428f0800ace47a9265d7"
+      },
+      {
+        "source": "tools/probe_support.cpp",
+        "source_sha256": "a870e589f7c3f23a167d557c8250b234ded6f46fc59a2f0e3f79ee93cd9219b8",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/probe_support.o",
+        "object_sha256": "52fa0014979dbf7582ea8d57a756d08b4342c4958ca117d4e6cc44c7a181c268"
+      },
+      {
+        "source": "src/section_energy.cpp",
+        "source_sha256": "32fe77750bcf4e47a6d2e701ca35b392b4f5717c14bbc2cea1ee222543945e3b",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_energy.o",
+        "object_sha256": "5326103d5b6d2e651de8f7f39b8ed1ff4212d283ed428ea2ea58e4db3e75ab62"
+      },
+      {
+        "source": "tools/energy_section_compat.cpp",
+        "source_sha256": "a36488bc6c9940498aad9412715344a2d5807f33b492298ce1008d1060301a2d",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/energy_section_compat.o",
+        "object_sha256": "147f5b11a52144e56f9f46cfc13fa220f52b04f1ad5f02dec7142df05a3ad1f7"
+      },
+      {
+        "source": "src/section_geometry.cpp",
+        "source_sha256": "fe34c3e7d094078c40ff38b9dbeda2c3c5bfa72c4ea90651535d84edde41168d",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_geometry.o",
+        "object_sha256": "bb67306426abd995cc69ea39aed94e598f9eecf2ad750f45715573bcd3b9093a"
+      },
+      {
+        "source": "src/section_flux.cpp",
+        "source_sha256": "15e58322bf295bf3cd281d3e09c8fda83271d44202e429ce432b6f5f8210379b",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_flux.o",
+        "object_sha256": "e69c7626b70530b7b7383dea2f062f0462b31c711f159f675e5a27a0780da97b"
+      },
+      {
+        "source": "src/section_properties.cpp",
+        "source_sha256": "4c508f788eb69367b7b8e13f3cb7b94890955b4bddcf5bf4f50cb4c52eb3f0df",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_properties.o",
+        "object_sha256": "05630609d209094d578a5bf65774168cc8c78026f23bfa011c1b9023d8bf4fcd"
+      },
+      {
+        "source": "src/power.cpp",
+        "source_sha256": "3741294df8a60132910b84901bb5fd6aef4972fba1b0a7aced643ca0672cc5d6",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/power.o",
+        "object_sha256": "f6f732848d9fb19ead94e76088e09d31c492b13605d8b5e785d988ff2a5f6806"
+      },
+      {
+        "source": "src/elevation_arguments.cpp",
+        "source_sha256": "1805f69ca14dc57e28385b1010aa80ad54dc4282fb1b55f8804b8db23bcc6cea",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/elevation_arguments.o",
+        "object_sha256": "82c7ad84b3227fa77ac9d7c8a48baf73cb9d5c78ce1e9eb9bc0e1e0aef93c501"
+      },
+      {
+        "source": "tools/elevation_compat.cpp",
+        "source_sha256": "7c8939b4793a8559278bd086d3d7000f2d5c976228347a6bcf355e273463859a",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/elevation_compat.o",
+        "object_sha256": "8fb3e6eb8581569e5cff8958600f6767d1fa0e6ee79de1a293e1ecfb90a7a961"
+      },
+      {
+        "source": "src/trigonometry.cpp",
+        "source_sha256": "2c27e7b70b181f0370a86a180394e49af0f11700554023559bc6de9425b294ad",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/trigonometry.o",
+        "object_sha256": "322efe0afe0f77b94162531b318fb33e416a7b43c3005d1271d987a235bd9c3d"
+      },
+      {
+        "source": "src/arch_perimeter.cpp",
+        "source_sha256": "52c3a12bd53c622c0b9adaebc661f2e79fcb453b055140f6c255ed3e595dbf2f",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/arch_perimeter.o",
+        "object_sha256": "10b59f3522bf725babc8dd7445eec89b18f0667de0664be2828087ce8221e2b8"
+      },
+      {
+        "source": "tools/arch_compat.cpp",
+        "source_sha256": "0fb78497c1243d37764ad54d1af772e3c260a1f3f357ae834bd6ec031a1b9f8c",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/arch_compat.o",
+        "object_sha256": "f0fd8bc8b20d285deddfadb76cc7fa0d509180cd6e33bb40a7297d7473030e31"
+      },
+      {
+        "source": "src/conduit_boundary.cpp",
+        "source_sha256": "710b3caed76592b0a9662a7c58507a95d89f8037117b3b34516a339ef0de0eb5",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/conduit_boundary.o",
+        "object_sha256": "6986393b2a18c1552086f279e011ffdaab725054f2e3d334f355ddd54cb7af2f"
+      },
+      {
+        "source": "tools/conduit_compat.cpp",
+        "source_sha256": "ee435a41589135678427e26951ef56ddffbcad8d8f2d4dc754ace7ad2f5cc629",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/conduit_compat.o",
+        "object_sha256": "c287d075d6e0fbb55502fe7c0e79f17ca93e35df944f906f9d392c45ea296071"
+      },
+      {
+        "source": "src/section_interpolation.cpp",
+        "source_sha256": "d5bfa0e05b310fa31799bfd0cdbacdd440b03c29f0faba50ac251168a47c24cc",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_interpolation.o",
+        "object_sha256": "4be56ae3192abf2de4ad99064d177332679efc305264756fc46260545b021cc6"
+      },
+      {
+        "source": "src/section_extension.cpp",
+        "source_sha256": "e7c26f445b063f7ef4684c7b0e36a33f711d503b83d20e34e413e23a5bed47f8",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_extension.o",
+        "object_sha256": "730e82f7fa0192cbb2163a200e24c1652548dc053cfe8d254ab9a0171049d055"
+      },
+      {
+        "source": "src/gaussian_rule.cpp",
+        "source_sha256": "a44976f0fabb0e9b1bdc8cf8fe78e239c6b6e586cac87ba54064da7c433c55b0",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/gaussian_rule.o",
+        "object_sha256": "d24198de568135df364270270ed77d191b693e293adc05f55f25c834e5ae4bf7"
+      },
+      {
+        "source": "tools/section_compat.cpp",
+        "source_sha256": "63aa92e9f4ee224b34ad4b1e25972f6bb3031a9ff53c4e672460d2fd04669a4c",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_compat.o",
+        "object_sha256": "04f070c6d85925a6707af6bbc86990ec3ada15cdc3f3a88241101881795e8554"
+      },
+      {
+        "source": "src/section_sinuosity.cpp",
+        "source_sha256": "a9ecedc4d036099de1943b6c1ed8cd678db326a480311c4e2607128b136f055c",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/section_sinuosity.o",
+        "object_sha256": "ee09b7b5386e47a6d1c3796364cce7191c23e703712a60e276c11e0bc4023af3"
+      },
+      {
+        "source": "tools/sinuosity_compat.cpp",
+        "source_sha256": "95d027535202d228c9f775e071663396975330165d472007a5e8af081a2495ac",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/sinuosity_compat.o",
+        "object_sha256": "9e3f40c983028cf87288c38f484b87e607a0a011e056a41b20c6f00ca7bedb96"
+      },
+      {
+        "source": "src/table_interpolation.cpp",
+        "source_sha256": "89e9e05005916cf4417c08871c9f23f7724a295563102cff54bfdd1c3a7e96f6",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/table_interpolation.o",
+        "object_sha256": "b7c3def15dcb1ff46a77d5e07a40b7408ab1100b18e6f78d02752bd49e6461d2"
+      },
+      {
+        "source": "tools/table_compat.cpp",
+        "source_sha256": "d59a741ef18d4b965c8b4c5375d1c402a789d38877897f651e1bd5e56f6eb672",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/table_compat.o",
+        "object_sha256": "8ff3041767713131a846ed69d00b9760a0d7168c941a2666a3d77d940ba197cb"
+      },
+      {
+        "source": "src/weir_flow.cpp",
+        "source_sha256": "b341e80eb668e8398729731336b7c8e99587fd7c252ebedbb9d9564b5a9950aa",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/weir_flow.o",
+        "object_sha256": "d0e398656f046f3cbb21fccddabd478a09346a28d4465b99c3b2b843ad26f497"
+      },
+      {
+        "source": "tools/weir_compat.cpp",
+        "source_sha256": "803cab87339b7a26718b32f4abd767b01f1d886bccdbb1d5af8d3142e819000f",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/weir_compat.o",
+        "object_sha256": "d13effd2fad2007fc8829f2671b0c0395e3316f0189d8957a2594f0be5f1686d"
+      },
+      {
+        "source": "src/root_solver.cpp",
+        "source_sha256": "aaf4ab46c5ba6c988b87f32880c6648c50e5366446a2c5b4b37190e376b5f6b9",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/root_solver.o",
+        "object_sha256": "9f99da9e56e1f1053d777d7edbb49d599f91d26f915d8fc5d4e34ca11e3483f0"
+      },
+      {
+        "source": "tools/root_compat.cpp",
+        "source_sha256": "332e23bbf19f81e988a27108ef064981cae50b197b074dbf89a0a572efedf015",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/root_compat.o",
+        "object_sha256": "743098554e4a0cb1eed7412d94bceb9c7d099c23d045babe103d882cfd20880c"
+      },
+      {
+        "source": "src/culvert_loss.cpp",
+        "source_sha256": "553dd56a460988b28e128a6546ccbf9f5a04feeb6ea0f480e4e76200d9df887b",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/culvert_loss.o",
+        "object_sha256": "7c443b785b636cf49fdaa2f4b7bd333df51bf9dc86c77ec16dcf0389d62a33d9"
+      },
+      {
+        "source": "src/steady_residual.cpp",
+        "source_sha256": "6d100e1160d8bde24fb33f92ec582b4b6960e6ddaf690020379717cfbba998cc",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/steady_residual.o",
+        "object_sha256": "6b6dc1fe9fe878edd739c84ca54f7067366f6d6ffaec7cf463aa2a6b7db2604b"
+      },
+      {
+        "source": "src/approach_residual.cpp",
+        "source_sha256": "700249a6845c044a824c8c1ae7bc081900ae83e008919835b1d5da8cba56d1c7",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/approach_residual.o",
+        "object_sha256": "f7f4683aa3cc6cbe44dca0b5dc270a0f2e0a3510ab404bb3c95a6e9cf686e8bb"
+      },
+      {
+        "source": "src/gate_residual.cpp",
+        "source_sha256": "bac3821fe0b890b098ddf13ee8c691fedbc181e58bb21b0f6a3c811fce63466e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/gate_residual.o",
+        "object_sha256": "99db791d855b3ac56e5f65b64b880bf9be61354e97440ba950416abac3fb23b2"
+      },
+      {
+        "source": "src/power_spacing.cpp",
+        "source_sha256": "5a34000806412fb53c0b5946ca5073e8c24f28ab78d42df4a121c79bc0256141",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/power_spacing.o",
+        "object_sha256": "0c5118e18b7f22ef5e6a91bf0e601759f79a09fcddd2638a07cb478ccb92a16f"
+      },
+      {
+        "source": "tools/geometry_compat.cpp",
+        "source_sha256": "476a40591bc2a69578c115c0e96e21b0d1f9e42b49e0d74d9e877b37b3d18e36",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/geometry_compat.o",
+        "object_sha256": "d8fdb6c63b3a3c9640af81e168480ef0cd9273dcd76840689284b24c530732c7"
+      },
+      {
+        "source": "tools/flux_compat.cpp",
+        "source_sha256": "41b96881f6aab1d80653286d5c66b1e0ec105fdaec5467e28dbcf04e614022ba",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/flux_compat.o",
+        "object_sha256": "c5750ab9730f2733145a5641e129b897b87d61f851be8ff9f9f4b6fe645aa340"
+      },
+      {
+        "source": "tools/properties_compat.cpp",
+        "source_sha256": "582c4e8eba11c644ae04e369fa564f4e88a041ccab35d6ad424521800b83ccf4",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1.objects/properties_compat.o",
+        "object_sha256": "de09b970b4e79ae5cc650ee3a0ceb019ea7ec0bae54e3e9d9bc84cd7c1e8d842"
+      }
+    ],
+    "headers": [
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/callbacks.hpp",
+        "sha256": "489b0339684878499380fb54784eeefbdcc8ed824b39836cbd21a3acfb726659"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-gate-state-call-1/common.hpp",
+        "sha256": "d73d86c7d3cd9e6cca1440c9923f6ac343e29d04cb34d6632d3457eb577cc682"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/arith.h",
+        "sha256": "abc51ffe35d22dcdd92b51bbb118b3b5230257da152063ad348b4dcf476aaa81"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/ctype.h",
+        "sha256": "d0ad794c6aa175d755865b9031c148965df143d70bf0ddaa86fac0ec73077f10"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/f2c.h",
+        "sha256": "bfa7da7ffbe28587f448e973b0c9f05981ca2c623889f12e52c30908fea7d47d"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/fio.h",
+        "sha256": "7809841061835701ce0d57c458211957d4b99e2b605671a1ebddf927c30bbc2a"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/fmt.h",
+        "sha256": "fdf64c20b25ea3490115747d0d3da14145698c2f84749d5c3b6e3ef8719d5eab"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/fp.h",
+        "sha256": "e5d9cea765b3170c4dbabf33b441234ec9f1349c4ae84395f855ab68e916ab93"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/lio.h",
+        "sha256": "d13b5bb1c0217dd0456251dbd8400fd2ac75910b0c135cc45a59d7dfc2181345"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/rawio.h",
+        "sha256": "20b52b4a0cc686d625cd915b9c7b2852d2c816f2a568509a72db80bef647a97f"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/signal1.h",
+        "sha256": "df7c42b66f2614e157987e39903607cc1213706f110a46f65209dc60a0061350"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/sysdep1.h",
+        "sha256": "adb4392f31a4cf0f843ecd8b044b0c6e235281ee45953dd1198dc167a1a3431a"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/approach_residual.hpp",
+        "sha256": "37fd5ac6fb4684ab97fefaa5fd38f4e733e04ac0753c003b13f4f91776d06aab"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/arch_perimeter.hpp",
+        "sha256": "c896e5d5ae7acb95e0a1df66e9a77afd8435caf2f0a53df7ed7bf384d9c0d75f"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/conduit_boundary.hpp",
+        "sha256": "e54b39d885c76d6326af109bea40d1a39ace4b14cd7a808d591d0469cef287d7"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/culvert_loss.hpp",
+        "sha256": "8ac9eb3305654aaf1932678069c3a91449729af6eb8442afd788768cada3d29e"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/decimal.hpp",
+        "sha256": "d4ad5b2782e6ec3fb25a012e0c995b90a21f3ee04a80f25892ce3492fce5a6b9"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/elevation_arguments.hpp",
+        "sha256": "6700320997456730792d72899372d71c12394094d7ccbb96d00a48836749575c"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/gate_residual.hpp",
+        "sha256": "cad31d01ef027db1d310013428e3a1058f2262a9ec68a6f1a64b3c2aa0d9e413"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/gaussian_rule.hpp",
+        "sha256": "a0f6d6e931c1c78ea1e7a9d52e830ff8d617c56b23707d469f6c6af67a7e4017"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/md5.hpp",
+        "sha256": "d2c953de7476991010daf3ab84d91efa765c7459499838451a48cc2cf3b3b3f1"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/power.hpp",
+        "sha256": "818b3a7a0aba1f7692f4ff4b12455b674e7e2888d1d1656c563846ea0203400e"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/power_spacing.hpp",
+        "sha256": "1bd35e93722584d60417e9c59b542297bb9ef8e11c2aa79314e12ebc00591a22"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/profile_matrix.hpp",
+        "sha256": "e256c95d7f2263388ca3c008a52290bb56d86ca912dd66682894ffe786f914b1"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/root_solver.hpp",
+        "sha256": "fa3102a7e27911e86ed370b560daf3e7a873c50b90a53f544a450d7cb0b0d2f2"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/section_energy.hpp",
+        "sha256": "c4ad5f10ff6fec2deb3c393dade7b774ae6124bd1ec2c0c996ce21f483db777b"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/section_extension.hpp",
+        "sha256": "6c0d4409475988ae170194a3e99f3f764676594e8254980c31cb4645fe695774"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/section_flux.hpp",
+        "sha256": "258e1645b45364c03875ace1536243475ecafefc205a83eeced909df3a0a35aa"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/section_geometry.hpp",
+        "sha256": "b84271ba692d9f7ddb96f1fc9fc82fa191c8fe1533e84fd2ade919b3859cbc79"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/section_interpolation.hpp",
+        "sha256": "ce8040b06db196b88c17b2bc3efad874977d703e29d5a65ded45424544c5ea79"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/section_properties.hpp",
+        "sha256": "31809329813e12247609a63d334c023dfd68b56d078015340c2f2640549e395d"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/section_sinuosity.hpp",
+        "sha256": "6947933d48aceb35d67145b47ed2ab7b17a333ce7ac7ca52c6cfffe55da9f723"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/steady_residual.hpp",
+        "sha256": "c270eb7e6cacfb2032950a12baf22723d62ae89501ea27fe50733c37b99a93b1"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/storage.hpp",
+        "sha256": "bc54a4996aef1a7cbb73145107f7d5d56cb4fe6dc23c0bf1209ccc8761a348a8"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/table_interpolation.hpp",
+        "sha256": "4383b8f51ce6cb6109b772b0ddc05a7ef14dffdfc42e3d082436f76b2a236355"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/trigonometry.hpp",
+        "sha256": "14dbaff5885f424bd1b2417d77641f6a657da826f18f5fd6127a2c6365d6bef4"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/weir_flow.hpp",
+        "sha256": "74da1bb05cdd908646a95d72d1f8f552d05b0b09a32bf5965be3966a60d64056"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/src/power_coefficients.inc",
+        "sha256": "5a7cf978bf9e95f2bf16705092f4429ae52ec0cd182615f7d2adb05cb3e8b732"
+      }
+    ],
+    "runtime": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/libf2c.a",
+    "runtime_sha256": "fcea1684c9f9c944ecb34ec18d59a29c91c70a0875f7d0b10bf557e74d1a4700",
+    "executable": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-gate-state-call-1",
+    "executable_sha256": "98a58f4e06635dcc324c8f171e0ec944f92c6580ba795cd4a15202b6970ef160"
+  }
+}

@@ -278,6 +278,62 @@ def integrate_gate_orifice(data):
     return edit_text(data,edits)
 
 
+def integrate_gate_state(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'ufgate_']
+    if len(targets) != 1:raise ValueError('Expected one UFGATE state definition.')
+    function = targets[0];body = function.child_by_field_name('body');edits = []
+    assignments = [node for node in nodes(function) if node.type == 'assignment_expression']
+    contact = [node for node in assignments if content(node.child_by_field_name('left'),data) == 'ufcom_1.qsqr'
+               and 'ufcom_1.hg' in content(node.child_by_field_name('right'),data)]
+    free_flow = [node for node in assignments if content(node.child_by_field_name('left'),data) == 'qfree'
+                 and content(node.child_by_field_name('right'),data).startswith('ufcom_1.at * sqrt(')]
+    if len(contact) != 2 or len(free_flow) != 1:raise ValueError('Expected two contact formulas and one free-orifice setup.')
+    contact_kinds = set()
+    for assignment in contact:
+        siblings = [node for node in assignment.parent.parent.named_children if node.type != 'comment']
+        index = siblings.index(assignment.parent)
+        if not content(siblings[index-2],data).startswith('feq_gen_r_d_1 =') or not content(siblings[index-1],data).startswith('feq_gen_r_d_2 ='):
+            raise ValueError('Unexpected contact-flow temporary boundaries.')
+        midpoint = 'h1swso' in content(assignment,data)
+        if not midpoint and 'ufcom_1.y1' not in content(assignment,data):
+            raise ValueError('Unknown upstream contact-flow surface.')
+        contact_kinds.add(midpoint)
+        surface = 'h1swso,hdatum' if midpoint else 'ufcom_1.y1,ufcom_1.z1b'
+        replacement = '''// Retain CD*AG through both the numerator and approach-velocity ratio.
+            ufcom_1.qsqr = feq::gate_contact_squared_flow(ufcom_1.hg,ufcom_1.ag,ufcom_1.cd,
+                '''+surface+''',ufcom_1.z2b,ufcom_1.a1,ufcom_1.alpha1,ufcom_1.twog);'''
+        edits.append((siblings[index-2].start_byte,assignment.parent.end_byte,replacement))
+    if contact_kinds != {False,True}:raise ValueError('Missing one original contact-flow context.')
+    siblings = [node for node in free_flow[0].parent.parent.named_children if node.type != 'comment']
+    index = siblings.index(free_flow[0].parent)
+    for distance,prefix in ((3,'ufcom_1.at ='),(2,'ufcom_1.y2 ='),(1,'feq_gen_r_d_1 =')):
+        if not content(siblings[index-distance],data).startswith(prefix):
+            raise ValueError('Unexpected free-orifice setup boundaries.')
+    replacement = '''// Preserve separate REAL stores for effective area, jet depth and speed.
+        orifice_state = feq::gate_orifice_state(ufcom_1.hg,ufcom_1.ag,ufcom_1.cd,ufcom_1.cc,
+            ufcom_1.y1,ufcom_1.z1b,ufcom_1.z2b,ufcom_1.a1,ufcom_1.alpha1,ufcom_1.twog);
+        ufcom_1.at = orifice_state.effective_area;
+        ufcom_1.y2 = orifice_state.depth;
+        qfree = orifice_state.flow;'''
+    edits.append((siblings[index-3].start_byte,free_flow[0].parent.end_byte,replacement))
+    promoted = set()
+    for node in nodes(function):
+        if node.type == 'declaration' and content(node.child_by_field_name('type'),data) == 'real':
+            names = [content(item,data) for item in node.children_by_field_name('declarator')]
+            wide = [name for name in names if name in ('h1swso','h4swso')]
+            if wide:
+                narrow = [name for name in names if name not in wide]
+                edits.append((node.start_byte,node.end_byte,
+                    ('real '+', '.join(narrow)+';\n    ' if narrow else '')+'double '+', '.join(wide)+';'))
+                promoted.update(wide)
+        if node.type == 'pointer_expression' and content(node,data) in ('&h1swso','&h4swso'):
+            raise ValueError('Retained midpoint head unexpectedly passed by address.')
+    if promoted != {'h1swso','h4swso'}:raise ValueError('Expected both original midpoint heads.')
+    edits.append((body.start_byte+1,body.start_byte+1,'\n    feq::GateOrificeState orifice_state{};\n'))
+    return edit_text(data,edits)
+
+
 def integrate_power_spacing(data):
     targets = [function for function in functions(data)
                if content(identifier(function.child_by_field_name('declarator')),data) == 'lstopf_']
@@ -858,7 +914,7 @@ def main():
         elif path.name == 'critq.cpp':data = integrate_specific_energy(integrate_critical_speed_store(data))
         elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
         elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
-        elif path.name == 'ufgate.cpp':data = integrate_power_spacing(integrate_gate_orifice(integrate_gate_free(integrate_gate_levels(integrate_gate_residuals(data)))))
+        elif path.name == 'ufgate.cpp':data = integrate_gate_state(integrate_power_spacing(integrate_gate_orifice(integrate_gate_free(integrate_gate_levels(integrate_gate_residuals(data))))))
         elif path.name == 'tablook.cpp':data = integrate_scalar_moment(data)
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
@@ -904,6 +960,9 @@ def main():
                 {'file':'ufgate.cpp','function':'lstopf_','component':'src/power_spacing.cpp',
                  'scope':'Geometric breakpoint counts, REAL logarithms, paired retained products and capacity failure; preserve original ratio lookup.',
                  'verification':'tests/reference/power_spacing/manifest.json'},
+                {'file':'ufgate.cpp','function':'ufgate_','component':'src/gate_residual.cpp',
+                 'scope':'Lip-contact squared flow, retained midpoint heads and normalized tailwater, and free-orifice stored depth/speed setup.',
+                 'verification':'tests/reference/gate_state/manifest.json'},
                 {'file':'critq.cpp','function':'fise_','component':'src/section_energy.cpp',
                  'scope':'Unrounded inverse-specific-energy residual after original selected section lookup.',
                  'verification':'tests/reference/specific_energy/manifest.json'},

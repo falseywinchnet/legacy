@@ -840,3 +840,56 @@ culvert calculations. Fresh FEQ traces retain all 2,092 exact active matrices.
 FEQ/build/python312/bin/python FEQ/tools/probe_power_spacing_original.py \
   --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/power-spacing-recapture
 ```
+
+## Gate contact, midpoint and free-orifice states
+
+`probe_gate_state_original.py` captures six unchanged UFGATE instruction
+blocks, covering lip-contact squared flow, the free-orifice state, the
+transition midpoint, its contact flow and root bound, and normalized
+tailwater depth. All eight output floats match in each of 1,280 cases:
+40,960 bytes without tolerance. Inputs cover three scales, six large and
+small datums, zero contact head, approach-velocity corrections near their
+singular limit and two states from the supplied original gate traces.
+The instruction ranges and hashes are recorded in the fixture manifest.
+
+Lip-contact flow retains `E=AG*CD` through both the numerator and the
+approach-area ratio before storing squared flow. Its transition midpoint
+retains `0.5*(HG+H1FWUL)` through the section-depth calculation and root
+bound; normalized tailwater similarly divides the retained head by HG.
+The integration replaces both contact-flow expressions and preserves the
+original section lookups and all four residual solvers.
+
+The UFGATE free-orifice block stores `AT=REAL(CD*CC*AG)` and
+`Y2=REAL(HG*CC)` before computing the available head. It also stores the
+square-root velocity before multiplication by AT. Its contracted-depth
+store is distinct from FNDFOQ, which retains that product in its head
+calculation. Separate C++ functions preserve both released sequences.
+The fixtures execute the arithmetic around supplied section properties;
+the intervening section lookup is covered separately by the section fixtures
+and complete-example comparisons.
+
+The complete original gate trajectory was then recaptured with a 100,000-call
+limit for each residual, exceeding every actual count. All 12,866 RSOMY3,
+823 RSOMY4, 5,444 RSWMY3 and 568 RSWMY4 entry records match the integrated
+C++ engine. Each 172-byte record contains the two table addresses, forty
+COMMON REAL values and the trial argument. This establishes identical
+residual inputs throughout the supplied gate computation, with no tolerance
+or skipped fields. Capture, binary and input hashes are preserved in
+`gate-residual-trajectories.json`.
+
+`tools/instrument_gate_entries.py` reproduces the diagnostic candidate from
+an integrated source directory. Its generated sources and headers were
+compared byte for byte with the compiled tracing candidate. Compile and link
+that disposable output with the regular research tools, then run UTLEXM;
+the four `gate-00.bin` through `gate-03.bin` files use the original record
+layout. The original hook configuration is embedded in the trajectory receipt.
+
+The gate report is left with twenty list-directed formatting differences;
+its hydraulic rows match. Across the complete examples, 14 of 17 files still
+match with only execution clocks masked. The numerical culvert differences
+remain, and all 2,092 FEQ solver matrices still match every word.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_gate_state_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/gate-state-recapture
+```
