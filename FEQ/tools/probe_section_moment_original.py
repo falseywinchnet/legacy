@@ -16,16 +16,17 @@ import subprocess
 
 from inspect_binary import coff_symbols
 from probe_profile_original import Driver, ORIGINAL_SHA256, ROOT, real
+from probe_geometry_original import ORIGINAL_SHA256 as UTILITY_SHA256
 from probe_section_original import fixtures, record
 
 
-def image(original, pe, symbols, cases):
+def image(original, pe, symbols, cases, program='feq'):
     base = pe.OPTIONAL_HEADER.ImageBase
     start = base+symbols['_MAIN__']['rva']
     imports = {item.name.decode():item.address for dll in pe.DIRECTORY_ENTRY_IMPORT for item in dll.imports if item.name}
     code = Driver(start, imports)
     table = base+symbols['_ftable_']['rva']
-    scratch = base+symbols['_matcom2_']['rva']
+    scratch = base+symbols['_matcom2_']['rva'] if program == 'feq' else table+4096
     offvec = base+symbols['_offcom_']['rva']
     code.emit('fc')
     code.push(-11)
@@ -68,14 +69,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--native', type=Path, required=True)
+    parser.add_argument('--program', choices=('feq','fequtl'), default='feq')
     parser.add_argument('--wine-prefix', type=Path, default=ROOT/'build/wineprefix')
     args = parser.parse_args()
     output = args.output.resolve()
     if output.exists() or ROOT/'build' not in output.parents:
         parser.error('Use a new FEQ/build/ directory.')
     output.mkdir(parents=True)
-    original = (ROOT/'originals/feq1061/wrdapp/FEQ_10.61/BIN/feq.exe').read_bytes()
-    if hashlib.sha256(original).hexdigest() != ORIGINAL_SHA256:
+    original = (ROOT/'originals/feq1061/wrdapp/FEQ_10.61/BIN'/(args.program+'.exe')).read_bytes()
+    original_sha256 = ORIGINAL_SHA256 if args.program == 'feq' else UTILITY_SHA256
+    if hashlib.sha256(original).hexdigest() != original_sha256:
         raise ValueError('The recovered original executable hash changed.')
     pe = pefile.PE(data=original)
     symbols = {item['name']:item for item in coff_symbols(original)}
@@ -95,7 +98,7 @@ def main():
     for first in range(0,len(cases),16):
         batch = cases[first:first+16]
         executable = output/'PROBE.EXE'
-        executable.write_bytes(image(original,pe,symbols,batch))
+        executable.write_bytes(image(original,pe,symbols,batch,args.program))
         command = [str(executable)] if os.name == 'nt' else ['wine',str(executable)]
         process = subprocess.run(command,cwd=output,env=env,capture_output=True,timeout=30,stdin=subprocess.DEVNULL)
         if process.returncode or len(process.stdout) != len(batch)*60:
@@ -119,7 +122,7 @@ def main():
     for item in records:
         start,end = item['offset'],item['offset']+32
         item['exact_bytes'] = native.stdout[start:end] == expected[start:end]
-    comparison = {'original_sha256':ORIGINAL_SHA256,'routines':['_xlkt20_','_xlkt21_'],
+    comparison = {'original_sha256':original_sha256,'routines':['_xlkt20_','_xlkt21_'],
                   'native_sha256':hashlib.sha256(args.native.read_bytes()).hexdigest(),
                   'input_sha256':hashlib.sha256(inputs).hexdigest(),'output_sha256':hashlib.sha256(expected).hexdigest(),
                   'native_returncode':native.returncode,'fixtures':records,

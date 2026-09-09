@@ -33,7 +33,7 @@ struct SectionDiagnostic {
     std::size_t subsection;
     float percentage;
 };
-struct SectionProperties {
+struct SectionTotals {
     // The sixteen computed COMPEL values, in original XSV(2)..XSV(17) order.
     // XSV(1) and XSV(18)..XSV(22) belong to the caller and are not overwritten.
     std::array<float,16> values;
@@ -46,7 +46,7 @@ struct SectionProperties {
 // The initial sinuosity sums are supplied by the Gaussian pass for mode 1 and
 // are normally zero for modes 0/2. Diagnostics are returned in original order
 // so callers can preserve their own reporting and error-flag conventions.
-SectionProperties section_properties(const SectionPropertyOptions& options,
+SectionTotals section_properties(const SectionPropertyOptions& options,
     std::span<const SubsectionElements> subsections, const SectionFlux& flux,
     double area_sinuosity, double discharge_sinuosity,
     std::span<float> previous_conveyance, std::span<float> previous_width,

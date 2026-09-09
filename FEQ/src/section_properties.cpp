@@ -7,7 +7,7 @@
 #include <stdexcept>
 
 namespace feq {
-SectionProperties section_properties(const SectionPropertyOptions& options,
+SectionTotals section_properties(const SectionPropertyOptions& options,
     std::span<const SubsectionElements> subsections, const SectionFlux& flux,
     double area_sinuosity, double discharge_sinuosity,
     std::span<float> previous_conveyance, std::span<float> previous_width,
@@ -19,7 +19,7 @@ SectionProperties section_properties(const SectionPropertyOptions& options,
         !std::isfinite(options.gravity) || !std::isfinite(options.slot_width)) {
         throw std::invalid_argument("Invalid section property extent or option.");
     }
-    SectionProperties result{};
+    SectionTotals result{};
     result.vertical_warning_remaining = vertical_warning;
     std::vector<float> conveyance(count,0.0F);
     double area = 0.0;

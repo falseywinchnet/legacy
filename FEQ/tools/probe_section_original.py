@@ -17,6 +17,7 @@ import subprocess
 
 from inspect_binary import coff_symbols
 from probe_profile_original import Driver, ORIGINAL_SHA256, ROOT, real
+from probe_geometry_original import ORIGINAL_SHA256 as UTILITY_SHA256
 
 
 def fixtures():
@@ -43,13 +44,14 @@ def record(case):
     return struct.pack('<I15f',case['mode'],case['depth'],*case['lower'],*case['upper'])
 
 
-def image(original,pe,symbols,cases):
+def image(original,pe,symbols,cases,program='feq'):
+    routines = ('_xlkt20_','_xxlkt20_') if program == 'feq' else ('_xlkt20_',)
     base = pe.OPTIONAL_HEADER.ImageBase
     start = base+symbols['_MAIN__']['rva']
     imports = {item.name.decode():item.address for dll in pe.DIRECTORY_ENTRY_IMPORT for item in dll.imports if item.name}
     code = Driver(start,imports)
     table = base+symbols['_ftable_']['rva']
-    scratch = base+symbols['_matcom2_']['rva']
+    scratch = base+symbols['_matcom2_']['rva'] if program == 'feq' else table+4096
     offvec = base+symbols['_offcom_']['rva']
     code.emit('fc')
     code.push(-11)
@@ -67,7 +69,7 @@ def image(original,pe,symbols,cases):
         struct.pack_into('<7f',payload,40*4,*case['upper'])
         code.copy(table,payload)
         code.copy(scratch,struct.pack('<If',1,case['depth']))
-        for function in ('_xlkt20_','_xxlkt20_'):
+        for function in routines:
             for address in reversed([scratch,scratch+4]+[scratch+8+i*4 for i in range(7)]):
                 code.push(address)
             code.call(base+symbols[function]['rva'])
@@ -89,14 +91,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--native',type=Path,required=True)
+    parser.add_argument('--program',choices=('feq','fequtl'),default='feq')
     parser.add_argument('--wine-prefix',type=Path,default=ROOT/'build/wineprefix')
     args = parser.parse_args()
     output = args.output.resolve()
     if output.exists() or ROOT/'build' not in output.parents:
         parser.error('Use a new FEQ/build/ directory.')
     output.mkdir(parents=True)
-    original = (ROOT/'originals/feq1061/wrdapp/FEQ_10.61/BIN/feq.exe').read_bytes()
-    if hashlib.sha256(original).hexdigest()!=ORIGINAL_SHA256:
+    original = (ROOT/'originals/feq1061/wrdapp/FEQ_10.61/BIN'/(args.program+'.exe')).read_bytes()
+    original_sha256 = ORIGINAL_SHA256 if args.program == 'feq' else UTILITY_SHA256
+    routines = ['_xlkt20_','_xxlkt20_'] if args.program == 'feq' else ['_xlkt20_']
+    record_bytes = 28*len(routines)
+    if hashlib.sha256(original).hexdigest()!=original_sha256:
         raise ValueError('The recovered original executable hash changed.')
     pe = pefile.PE(data=original)
     symbols = {item['name']:item for item in coff_symbols(original)}
@@ -111,20 +117,20 @@ def main():
     for first in range(0,len(cases),16):
         batch = cases[first:first+16]
         executable = output/'PROBE.EXE'
-        executable.write_bytes(image(original,pe,symbols,batch))
+        executable.write_bytes(image(original,pe,symbols,batch,args.program))
         command = [str(executable)] if os.name=='nt' else ['wine',str(executable)]
         process = subprocess.run(command,cwd=output,env=env,capture_output=True,timeout=30,stdin=subprocess.DEVNULL)
-        if process.returncode or len(process.stdout)!=len(batch)*56:
+        if process.returncode or len(process.stdout)!=len(batch)*record_bytes:
             (output/'error.log').write_bytes(process.stdout+process.stderr)
             raise RuntimeError(f'Original section driver failed: exit {process.returncode}, {len(process.stdout)} bytes.')
         raw.extend(process.stdout)
         for index,case in enumerate(batch):
-            normal = process.stdout[index*56:index*56+28]
-            fast = process.stdout[index*56+28:index*56+56]
+            normal = process.stdout[index*record_bytes:index*record_bytes+28]
+            fast = process.stdout[index*record_bytes+28:index*record_bytes+56] if len(routines) == 2 else normal
             if normal!=fast:
                 raise ValueError('The original lookup routines disagree: '+case['name'])
             records.append({'name':case['name'],'offset':len(expected),'bytes':28,
-                            'original_routines_agree':True,'sha256':hashlib.sha256(normal).hexdigest()})
+                            'original_calls_agree':True,'original_calls':len(routines),'sha256':hashlib.sha256(normal).hexdigest()})
             expected.extend(normal)
         print(f'{first+len(batch)}/{len(cases)} original intervals captured.',flush=True)
     (output/'original-both-routines.bin').write_bytes(raw)
@@ -135,7 +141,7 @@ def main():
     for item in records:
         start,end = item['offset'],item['offset']+28
         item['exact_bytes'] = native.stdout[start:end]==expected[start:end]
-    comparison = {'original_sha256':ORIGINAL_SHA256,'routines':['_xlkt20_','_xxlkt20_'],
+    comparison = {'original_sha256':original_sha256,'routines':routines,
                   'native_sha256':hashlib.sha256(args.native.read_bytes()).hexdigest(),
                   'input_sha256':hashlib.sha256(inputs).hexdigest(),'output_sha256':hashlib.sha256(expected).hexdigest(),
                   'native_returncode':native.returncode,'fixtures':records,

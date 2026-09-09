@@ -92,7 +92,7 @@ int main() {
                 beta_mode == 3 ? feq::BetaMethod::energy : feq::BetaMethod::geometric_mean;
             const feq::SectionPropertyOptions options{static_cast<int>(average_roughness),static_cast<int>(sinuosity_mode),
                 beta,usgs_coefficients != 0,manning_factor,gravity,slot,false};
-            const feq::SectionProperties properties = feq::section_properties(options,elements,
+            const feq::SectionTotals properties = feq::section_properties(options,elements,
                 beta_mode == 0 ? feq::SectionFlux{} : flux,0.0,0.0,previous_conveyance,previous_width,false);
             for (std::uint32_t index = 0; index < 22; ++index) {
                 write_float(index >= 1 && index <= 16 ? properties.values[index-1] : static_cast<float>(9000+index));

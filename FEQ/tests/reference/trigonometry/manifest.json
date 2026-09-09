@@ -1,0 +1,15 @@
+{
+  "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+  "routines": [
+    "_g_asin",
+    "_g_acos"
+  ],
+  "cases": 2780,
+  "input_sha256": "50e6c6b7b11717edb488d15e090cc0a7ed2d7315d7616cc2d06707db01eb33a9",
+  "output_sha256": "141e24a455163b22ed46a2167358ff1a8e89ae5a380bcdb1dfa9ee0caf1aab72",
+  "native_sha256": "4cab6411c9c88f7c753339737c0108f2363dbeb2fba7c422ab29a1fdac7061cc",
+  "native_returncode": 0,
+  "exact_bytes": true,
+  "probe": "tools/probe_trigonometry_original.py",
+  "probe_sha256": "8cb7b40b27b5b67349a0c66cf671f1059e824fcfec3befd890331570732d7238"
+}

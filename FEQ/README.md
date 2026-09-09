@@ -80,6 +80,17 @@ capacity. Both preserve the original mixed precision and in-place updates.
 Their fixtures are in [`tests/reference/section_properties/`](tests/reference/section_properties/)
 and [`tests/reference/elevation_arguments/`](tests/reference/elevation_arguments/).
 
+The pipe-arch perimeter matches **757 direct original-executable cases**,
+covering all seven standard families, three unit conversions, rise and span
+selection, endpoint tolerances, and out-of-table returns. Its inverse
+trigonometry preserves the original approximation coefficients and matches
+**2,780 binary64 return values**. The formula comments identify the released
+constants and every observed single precision store. Section and scalar table
+lookups have also been independently recaptured from FEQUTL, with all output
+bits agreeing with the corresponding FEQ fixtures. The fixtures are in
+[`tests/reference/arch_perimeter/`](tests/reference/arch_perimeter/) and
+[`tests/reference/trigonometry/`](tests/reference/trigonometry/).
+
 The independent single precision decimal converter matches **all 2,360 direct
 original-executable cases**, including every finite exponent field, subnormals,
 signed zeros, halfway values and their adjacent floats, infinities, and NaNs.

@@ -1,0 +1,15 @@
+// Public headers must coexist in one client translation unit.
+// Work: Astra. Sponsor: Rainstar. Foundation: Hashem. MIT licensed.
+#include <feq/arch_perimeter.hpp>
+#include <feq/decimal.hpp>
+#include <feq/elevation_arguments.hpp>
+#include <feq/md5.hpp>
+#include <feq/power.hpp>
+#include <feq/profile_matrix.hpp>
+#include <feq/section_flux.hpp>
+#include <feq/section_geometry.hpp>
+#include <feq/section_interpolation.hpp>
+#include <feq/section_properties.hpp>
+#include <feq/storage.hpp>
+#include <feq/table_interpolation.hpp>
+#include <feq/trigonometry.hpp>

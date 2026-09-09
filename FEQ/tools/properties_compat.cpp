@@ -32,7 +32,7 @@ extern "C" int feq_section_properties(int subsections, int average, int mode,
     }
     const feq::SectionPropertyOptions options{average,mode,beta,usgs == 1,factor,gravity,slot,no_warnings == 0};
     const feq::SectionFlux flux{flow,momentum,energy,dflow,dmomentum,denergy};
-    const feq::SectionProperties result = feq::section_properties(options,elements,flux,area_sinuosity,discharge_sinuosity,
+    const feq::SectionTotals result = feq::section_properties(options,elements,flux,area_sinuosity,discharge_sinuosity,
         std::span<float>(previous_conveyance,count),std::span<float>(previous_width,count),*vertical_warning == 1);
     for (std::size_t index = 0; index < result.values.size(); ++index) { xsv[index+1] = result.values[index]; }
     if (*vertical_warning == 1 && !result.vertical_warning_remaining) { *vertical_warning = 0; }

@@ -3,7 +3,7 @@ project(FEQNumerics VERSION 0.0.1 LANGUAGES CXX)
 
 option(FEQ_SANITIZERS "Check authored C++ for invalid memory and undefined behavior" OFF)
 
-add_library(feq_numerics STATIC src/elevation_arguments.cpp src/section_properties.cpp src/section_flux.cpp src/power.cpp src/section_geometry.cpp src/decimal.cpp src/md5.cpp src/profile_matrix.cpp src/section_interpolation.cpp src/table_interpolation.cpp)
+add_library(feq_numerics STATIC src/arch_perimeter.cpp src/trigonometry.cpp src/elevation_arguments.cpp src/section_properties.cpp src/section_flux.cpp src/power.cpp src/section_geometry.cpp src/decimal.cpp src/md5.cpp src/profile_matrix.cpp src/section_interpolation.cpp src/table_interpolation.cpp)
 target_include_directories(feq_numerics PUBLIC include)
 target_compile_features(feq_numerics PUBLIC cxx_std_20)
 set_target_properties(feq_numerics PROPERTIES CXX_EXTENSIONS OFF)
@@ -24,6 +24,9 @@ feq_checks(feq_numerics)
 
 include(CTest)
 if(BUILD_TESTING)
+    add_library(feq_public_headers OBJECT tests/public_headers.cpp)
+    target_link_libraries(feq_public_headers PRIVATE feq_numerics)
+    feq_checks(feq_public_headers)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
     add_test(NAME explicit_cpp_style COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/check_cpp_style.py)
     add_executable(feq_storage_test tests/storage_test.cpp)
@@ -84,6 +87,18 @@ if(BUILD_TESTING)
     feq_checks(feq_elevation_probe)
     add_test(NAME elevation_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_elevation_fixture.py $<TARGET_FILE:feq_elevation_probe>)
+
+    add_executable(feq_trigonometry_probe tools/trigonometry_probe.cpp)
+    target_link_libraries(feq_trigonometry_probe PRIVATE feq_numerics)
+    feq_checks(feq_trigonometry_probe)
+    add_test(NAME trigonometry_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_trigonometry_fixture.py $<TARGET_FILE:feq_trigonometry_probe>)
+
+    add_executable(feq_arch_probe tools/arch_probe.cpp)
+    target_link_libraries(feq_arch_probe PRIVATE feq_numerics)
+    feq_checks(feq_arch_probe)
+    add_test(NAME arch_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_arch_fixture.py $<TARGET_FILE:feq_arch_probe>)
 
     add_executable(feq_decimal_probe tools/decimal_probe.cpp)
     target_link_libraries(feq_decimal_probe PRIVATE feq_numerics)

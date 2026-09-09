@@ -72,6 +72,9 @@ def main():
     else:
         sources.extend(['src/section_geometry.cpp','src/section_flux.cpp','src/section_properties.cpp','src/power.cpp',
                         'src/elevation_arguments.cpp','tools/elevation_compat.cpp',
+                        'src/trigonometry.cpp','src/arch_perimeter.cpp','tools/arch_compat.cpp',
+                        'src/section_interpolation.cpp','tools/section_compat.cpp',
+                        'src/table_interpolation.cpp','tools/table_compat.cpp',
                         'tools/geometry_compat.cpp','tools/flux_compat.cpp','tools/properties_compat.cpp'])
     if args.matrix_trace:
         sources.append('tools/matrix_trace.cpp')

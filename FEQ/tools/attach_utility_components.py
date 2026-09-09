@@ -137,6 +137,109 @@ def integrate_elevations(data):
         data,[(starts[0].start_byte,returns[0].start_byte,replacement)])
 
 
+def integrate_critical_speed_store(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'critq_']
+    if len(targets) != 1:
+        raise ValueError('Expected one CRITQ function definition.')
+    calls = [node for node in nodes(targets[0]) if node.type == 'call_expression' and
+             content(node.child_by_field_name('function'),data) == 'sqrt']
+    if len(calls) != 1:
+        raise ValueError('Expected one critical-speed square root.')
+    call = calls[0]
+    return edit_text(data,[(call.start_byte,call.end_byte,
+        'static_cast<float>(/* Original 0x411964 stores sqrt(g*A/T) as REAL before Q=A*speed. */ '+content(call,data)+')')])
+
+
+def integrate_arch(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'rharch_']
+    if len(targets) != 1:
+        raise ValueError('Expected one RHARCH definition.')
+    statements = [node for node in targets[0].child_by_field_name('body').named_children if node.type != 'comment']
+    starts = [node for node in statements if node.type == 'expression_statement' and
+              content(node,data) == '*rise = static_cast<double>(*cfac) * *rise;']
+    if len(starts) != 1 or statements[-1].type != 'return_statement':
+        raise ValueError('Expected RHARCH executable boundaries.')
+    replacement = r"""
+    // Original-verified standard interpolation, legacy ASIN, and arch geometry.
+    if (*rise <= 0.0F && *span <= 0.0F) {
+        feq_gen_io_d__309.ciunit = *stdout;
+        s_wsfe(&feq_gen_io_d__309);
+        e_wsfe();
+        s_stop(const_cast<char*>("Abnormal stop. Errors found."),static_cast<ftnlen>(28));
+        return 0;
+    }
+    int feq_span_warning = 0;
+    float feq_warning_values[2] = {};
+    const int feq_arch_error = feq_arch_perimeter(*np,&rsvec[1],&spvec[1],&r1vec[1],&r3vec[1],
+        *cfac,rise,span,nrh,&rhx[1],&rhy[1],a,&feq_span_warning,feq_warning_values);
+    if (feq_arch_error != 0) {
+        cilist* feq_error_format = feq_arch_error == 571 ? &feq_gen_io_d__300 : &feq_gen_io_d__307;
+        feq_error_format->ciunit = *stdout;
+        feq_gen_r_d_1 = static_cast<double>(feq_arch_error == 571 ? *rise : *span)/ *cfac;
+        feq_gen_r_d_2 = static_cast<double>(feq_arch_error == 571 ? rsvec[1] : spvec[1])/ *cfac;
+        feq_gen_r_d_3 = static_cast<double>(feq_arch_error == 571 ? rsvec[*np] : spvec[*np])/ *cfac;
+        s_wsfe(feq_error_format);
+        do_fio(&feq_gen_c_d_1,reinterpret_cast<char*>(&feq_gen_r_d_1),static_cast<ftnlen>(sizeof(real)));
+        do_fio(&feq_gen_c_d_1,reinterpret_cast<char*>(&feq_gen_r_d_2),static_cast<ftnlen>(sizeof(real)));
+        do_fio(&feq_gen_c_d_1,reinterpret_cast<char*>(&feq_gen_r_d_3),static_cast<ftnlen>(sizeof(real)));
+        e_wsfe();
+        *eflag = 1;
+        return 0;
+    }
+    if (feq_span_warning != 0) {
+        feq_gen_io_d__304.ciunit = *stdout;
+        s_wsfe(&feq_gen_io_d__304);
+        do_fio(&feq_gen_c_d_1,reinterpret_cast<char*>(&feq_warning_values[0]),static_cast<ftnlen>(sizeof(real)));
+        do_fio(&feq_gen_c_d_1,reinterpret_cast<char*>(&feq_warning_values[1]),static_cast<ftnlen>(sizeof(real)));
+        e_wsfe();
+    }
+    """
+    declaration = ('extern "C" int feq_arch_perimeter(int,const float*,const float*,const float*,const float*,'
+                   'float,float*,float*,int*,float*,float*,float*,int*,float*);\n')
+    return declaration.encode()+edit_text(data,[(starts[0].start_byte,statements[-1].start_byte,replacement)])
+
+
+def integrate_section_lookup(data):
+    edits = []
+    found = set()
+    for function in functions(data):
+        name = content(identifier(function.child_by_field_name('declarator')),data)
+        if name not in ('xlkt20_','xlkt21_'):
+            continue
+        body = content(function,data)
+        begin = body.index('/*     FETCH VALUES FROM FTAB */')
+        end = body.rindex('    return 0;')
+        call = ('feq_interpolate_section_interval_moment(l,l+xoff,doff,*ya,a,t,dt,j,k,dk,b,db);'
+                if name == 'xlkt21_' else 'feq_interpolate_section_interval(l,l+xoff,doff,*ya,a,t,dt,k,dk,b,db);')
+        body = body[:begin]+'    // Directly verified against both FEQ and FEQUTL releases.\n    '+call+'\n'+body[end:]
+        edits.append((function.start_byte,function.end_byte,body))
+        found.add(name)
+    if found != {'xlkt20_','xlkt21_'}:
+        raise ValueError('Expected both section lookup routines.')
+    declaration = ('extern "C" void feq_interpolate_section_interval(int,int,int,float,float*,float*,float*,float*,float*,float*,float*);\n'
+                   'extern "C" void feq_interpolate_section_interval_moment(int,int,int,float,float*,float*,float*,float*,float*,float*,float*,float*);\n')
+    return declaration.encode()+edit_text(data,edits)
+
+
+def integrate_scalar_lookup(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'lktab_']
+    if len(targets) != 1:
+        raise ValueError('Expected one scalar LKTAB definition.')
+    function = targets[0]
+    body = content(function,data)
+    begin = body.index('L2:')
+    end = body.index('L5:',begin)
+    body = body[:begin]+('L2:\nL3:\nL4:\n'
+        '    // Every output bit verified against both released programs.\n'
+        '    feq_interpolate_function_interval(feq_gen_type_d_,lsta,inc,arg,func,pdv);\n'
+        '    goto L1000;\n')+body[end:]
+    declaration = 'extern "C" void feq_interpolate_function_interval(int,int,int,float,float*,float*);\n'
+    return declaration.encode()+edit_text(data,[(function.start_byte,function.end_byte,body)])
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('source',type=Path);parser.add_argument('output',type=Path)
@@ -145,9 +248,18 @@ def main():
     output.mkdir(parents=True)
     for path in source.glob('*.hpp'):shutil.copy2(path,output/path.name)
     sources = []
+    integrated_files = set()
     for path in sorted(source.glob('*.cpp')):
         data = path.read_bytes();sources.append({'name':path.name,'sha256':hashlib.sha256(data).hexdigest()})
-        (output/path.name).write_bytes(integrate_elevations(integrate_properties(integrate_geometry(data))) if path.name == 'xsection.cpp' else data)
+        if path.name == 'xsection.cpp':data = integrate_elevations(integrate_properties(integrate_geometry(data)))
+        elif path.name == 'critq.cpp':data = integrate_critical_speed_store(data)
+        elif path.name == 'conduit.cpp':data = integrate_arch(data)
+        elif path.name == 'fqshrftb.cpp':data = integrate_scalar_lookup(integrate_section_lookup(data))
+        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp'):
+            integrated_files.add(path.name)
+        (output/path.name).write_bytes(data)
+    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp'}:
+        raise ValueError('Prepared utility sources are missing required integration files.')
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
                 'component':'src/section_geometry.cpp','scope':'First pass: geometric accumulation and line roughness weights.'},
@@ -156,9 +268,20 @@ def main():
                 {'file':'xsection.cpp','function':'compel_','component':'src/section_properties.cpp',
                  'scope':'Section aggregation, conveyance, coefficients, critical flows and KOLD/TSOLD updates; retain original diagnostic formats.'},
                 {'file':'xsection.cpp','function':'chkarg_','component':'src/elevation_arguments.cpp',
-                 'scope':'Elevation spacing, near-zero insertion, stable sort and duplicate removal; retain ERR:525 formatting.'}]}
+                 'scope':'Elevation spacing, near-zero insertion, stable sort and duplicate removal; retain ERR:525 formatting.'},
+                {'file':'critq.cpp','function':'critq_','scope':'REAL critical-speed store before multiplication by area.',
+                 'evidence':'recovery/assembly/fequtl/_critq_.asm, VA 0x411964.'},
+                {'file':'conduit.cpp','function':'rharch_','component':'src/arch_perimeter.cpp',
+                 'scope':'Standard interpolation and area-adjusted perimeter; retain original diagnostic formats.',
+                 'verification':'tests/reference/arch_perimeter/manifest.json'},
+                {'file':'fqshrftb.cpp','functions':['xlkt20_','xlkt21_'],'component':'src/section_interpolation.cpp',
+                 'verification':['tests/reference/section_interpolation/fequtl-manifest.json',
+                                 'tests/reference/section_first_moment/fequtl-manifest.json']},
+                {'file':'fqshrftb.cpp','function':'lktab_','component':'src/table_interpolation.cpp',
+                 'scope':'Scalar table types 2, 3 and 4.',
+                 'verification':'tests/reference/function_tables/fequtl-manifest.json'}]}
     (output/'verified-components.json').write_text(json.dumps(manifest,indent=2)+'\n')
-    print('Integrated independent FBASEL geometry/analytical flux, COMPEL properties and CHKARG spacing.')
+    print('Integrated independent section geometry/flux/properties, elevations, arch perimeter and section lookups.')
 
 
 if __name__ == '__main__':main()

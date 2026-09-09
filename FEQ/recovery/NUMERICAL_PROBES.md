@@ -224,10 +224,11 @@ python3 FEQ/tools/link_feq_research.py FEQ/build/utility-candidate --program feq
   --runtime FEQ/build/f2c/compat --output FEQ/build/fequtl-candidate
 ```
 
-The utility integration replaces only the first geometric pass. Native output
-verification must still use the unmodified full reports with the existing
-clock-only comparison policy. Flux, conveyance, derivative fitting and culvert
-computations remain separate recovery work.
+The utility integration now includes geometric and analytical flux passes,
+section-property aggregation, elevation spacing, pipe-arch geometry, and section
+and scalar table interpolation. Native output verification still uses complete
+reports with the existing clock-only comparison policy. The remaining weir and
+culvert flow differences require further recovery work.
 
 ## Powers and analytical flow integrals
 
@@ -263,3 +264,37 @@ coefficient tables to hexadecimal C++ literals. `src/power_coefficients.inc`
 records the original executable and table-byte hashes. The compiler receipt
 inventory includes `.inc` files so a coefficient change invalidates old object
 receipts. All new fixture comparisons are raw-byte equality tests.
+
+## Pipe-arch geometry and original inverse trigonometry
+
+`probe_arch_original.py` reconstructs seven standard arch families from the
+released conduit tables. It captures 757 cases with three unit conversions,
+rise/span selection, both table endpoints, and values on either side of the
+0.1-inch clamping threshold. Every returned dimension, error flag, point count,
+invert offset, and coordinate word is compared, including untouched output
+sentinels on error. The original span branch emits an error even after a small
+out-of-range value has been clamped; the independent implementation retains it.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_arch_original.py \
+  --native FEQ/build/core/feq_arch_probe --output FEQ/build/arch-recapture
+FEQ/build/python312/bin/python FEQ/tools/probe_trigonometry_original.py \
+  --native FEQ/build/core/feq_trigonometry_probe --output FEQ/build/trigonometry-recapture
+```
+
+The ASIN/ACOS probe captures the binary64 register result for 2,780 calls,
+including signed zeros, endpoints, polynomial-branch neighbors, exponent-field
+samples and random finite arguments. The C++ retains the original polynomial
+coefficients and approximate pi constants. `arch_perimeter.cpp` documents the
+original REAL square-root and angle stores, reciprocal constants, and area
+correction. Its finite-angle sine/cosine calls use the host math library; the
+committed arch fixture replay checks their final coordinate bits on each CI
+platform. These finite fixtures do not establish equivalence outside their
+covered inputs.
+
+The section, first-moment, and scalar table drivers now accept `--program
+fequtl`. Their independently captured utility outputs are byte-identical to
+the existing FEQ fixtures; separate utility manifests retain that evidence.
+`attach_utility_components.py` verifies that every required target source is
+present before reporting a successful integration. The normal CMake build
+also compiles all public headers together to detect conflicting declarations.
