@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import shutil
 from prepare_cpp_probe import content, edit_text, functions, identifier, nodes
+from attach_verified_components import restore_traced_precision
 
 ROOT = Path(__file__).resolve().parents[1]
 DECLARATION = ('extern "C" void feq_section_geometry(float,int,int,const float*,const float*,'
@@ -227,6 +228,16 @@ def integrate_conduit_boundaries(data):
     declaration = ('extern "C" void feq_conduit_boundary(int,int,float,float,float,float,float,float,'
                    'const float*,const float*,int*,float*,float*);\n')
     return declaration.encode()+edit_text(data,edits)
+
+
+def integrate_station_fractions(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'interp_']
+    if len(targets) != 1:
+        raise ValueError('Expected exactly one utility INTERP definition.')
+    function = targets[0]
+    body = restore_traced_precision(content(function,data),'interp_',program='fequtl')
+    return b'#include <feq/section_interpolation.hpp>\n'+edit_text(data,[(function.start_byte,function.end_byte,body)])
 
 
 def integrate_section_lookup(data):
@@ -542,7 +553,7 @@ def main():
         if path.name == 'xsection.cpp':data = integrate_elevations(integrate_properties(integrate_geometry(data)))
         elif path.name == 'critq.cpp':data = integrate_critical_speed_store(data)
         elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
-        elif path.name == 'fqshrftb.cpp':data = integrate_scalar_lookup(integrate_section_lookup(data))
+        elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
         elif path.name == 'culvertc.cpp':data = integrate_steady_profile(integrate_steady_residuals(data))
@@ -572,6 +583,9 @@ def main():
                 {'file':'fqshrftb.cpp','functions':['xlkt20_','xlkt21_'],'component':'src/section_interpolation.cpp',
                  'verification':['tests/reference/section_interpolation/fequtl-manifest.json',
                                  'tests/reference/section_first_moment/fequtl-manifest.json']},
+                {'file':'fqshrftb.cpp','function':'interp_','component':'src/section_interpolation.cpp',
+                 'scope':'Wide station offsets, spans and reciprocal multiplication before property stores.',
+                 'verification':'tests/reference/station_fraction/manifest.json'},
                 {'file':'fqshrftb.cpp','function':'xlkt22_','component':'src/section_energy.cpp',
                  'scope':'All eleven properties including logarithmic critical flow; XLKTAL delegates to this routine.',
                  'verification':'tests/reference/section_energy/manifest.json'},

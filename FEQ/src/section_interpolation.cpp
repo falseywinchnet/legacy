@@ -12,6 +12,15 @@ namespace feq {
 static_assert(std::numeric_limits<float>::is_iec559 && std::numeric_limits<float>::digits == 24);
 static_assert(std::numeric_limits<double>::is_iec559 && std::numeric_limits<double>::digits == 53);
 
+double section_station_fraction(float left, float right, float station) {
+    // f = (station-left) * [1/(right-left)]. INTERP retains the reciprocal
+    // across stations. Replacing this multiplication with division changes
+    // output bits. FEQUTL 5.80: 0x442e8d, 0x443756, 0x4438a5.
+    const double offset = static_cast<double>(station)-left;
+    const double span = static_cast<double>(right)-left;
+    return offset*(1.0/span);
+}
+
 SectionProperties interpolate_section(float depth, const SectionTableRow& lower,
                                       const SectionTableRow& upper, bool has_slopes) {
     if (!std::isfinite(depth) || !std::isfinite(lower.depth) || !std::isfinite(upper.depth) ||

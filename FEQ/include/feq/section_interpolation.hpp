@@ -4,6 +4,11 @@
 
 namespace feq {
 
+// Fraction of the distance between two cross sections at a requested station.
+// The caller validates the station and distinct bounds. Distances and the
+// reciprocal remain binary64 until individual table properties are stored.
+double section_station_fraction(float left, float right, float station);
+
 // FEQ table rows store sqrt(conveyance), not conveyance. The two slopes
 // are present only when the table header specifies a derivative offset.
 struct SectionTableRow {

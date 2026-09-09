@@ -489,3 +489,39 @@ first difference moves from line 55 back to line 13, demonstrating that
 independent rounding errors can cancel. Four utility outputs still differ;
 these changes do not establish whole-program equivalence. Fresh complete
 FEQ runs retain all twelve matching outputs and all 2,092 exact active matrices.
+
+
+## Cross-section station fractions
+
+`probe_station_fraction_original.py` captures 585 station fractions from the
+released FEQUTL INTERP instruction blocks. The temporary PROGRAM driver copies
+the complete input table, loops over its records, and writes each retained
+fraction as binary64. The numerical blocks at 0x442e8d..0x442ea5,
+0x443756..0x443773 and 0x4438a5..0x4438b7 are copied byte for byte; the manifest
+records their hashes. Original runtime startup establishes the original
+floating-point precision before the driver executes. The preserved executable
+is hash-checked and never modified.
+
+Each input has three binary32 values: left station, right station, and requested
+station. Each output is one binary64 fraction. Cases cover both endpoints,
+near-endpoint stations, negative coordinates, adjacent float coordinates and
+five distance scales. All output bits match `section_station_fraction`.
+The formula is `(station-left) * (1/(right-left))`, with wide subtraction and
+reciprocal multiplication. Direct wide division differs in 116 fixture cases;
+single-precision distances and fraction differ in 443. Neither is a valid
+replacement for the observed arithmetic.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_station_fraction_original.py \
+  --native FEQ/build/core/feq_section_probe --output FEQ/build/station-recapture
+```
+
+The integration applies the same station-fraction helper in FEQ and FEQUTL,
+retains wide INTERP distances, and preserves the existing property stores.
+The supplied UTLEXM table now agrees through line 1045; its first difference
+moves from the interpolated top width at line 545 to the first moment in the
+closed-section extension at line 1046. The report and culvert differences
+remain at lines 1921, 711 and 13. All twelve FEQ outputs still agree with only
+execution clocks excluded, and all 2,092 active FEQ matrices remain byte-exact.
+The full comparison still passes 13 of 17 files; four FEQUTL outputs and the
+final application release remain incomplete.

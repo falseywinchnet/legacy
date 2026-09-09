@@ -39,6 +39,14 @@ void write_float(float value) {
         static_cast<unsigned char>(word >> 16),static_cast<unsigned char>(word >> 24)};
     std::cout.write(reinterpret_cast<const char*>(bytes),4);
 }
+void write_double(double value) {
+    const std::uint64_t word = std::bit_cast<std::uint64_t>(value);
+    unsigned char bytes[8]{};
+    for (unsigned int index = 0; index < 8; ++index) {
+        bytes[index] = static_cast<unsigned char>(word >> (8*index));
+    }
+    std::cout.write(reinterpret_cast<const char*>(bytes),8);
+}
 }
 
 int main(int argc, char** argv) {
@@ -48,10 +56,18 @@ int main(int argc, char** argv) {
 #endif
     try {
         const bool with_moment = argc == 2 && std::string(argv[1]) == "--first-moment";
-        if (argc != 1 && !with_moment) {
-            throw std::runtime_error("Use no arguments or --first-moment.");
+        const bool station_mode = argc == 2 && std::string(argv[1]) == "--station";
+        if (argc != 1 && !with_moment && !station_mode) {
+            throw std::runtime_error("Use no arguments, --first-moment, or --station.");
         }
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (station_mode) {
+                const float left = read_float();
+                const float right = read_float();
+                const float station = read_float();
+                write_double(feq::section_station_fraction(left,right,station));
+                continue;
+            }
             const std::uint32_t mode = read_word();
             if (mode > 1) {
                 throw std::runtime_error("Invalid section fixture interpolation mode.");

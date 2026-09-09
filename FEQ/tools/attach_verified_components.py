@@ -24,7 +24,7 @@ DECLARATION = ('extern "C" void feq_interpolate_critical_flow_interval(int,int,f
                'extern "C" void feq_interpolate_function_interval(int,int,int,float,float*,float*);\n')
 
 
-def restore_traced_precision(body, name):
+def restore_traced_precision(body, name, program='feq'):
     """Apply only observed register/store differences, preserving source comments."""
     data = body.encode()
     function = functions(data)[0]
@@ -103,10 +103,11 @@ def restore_traced_precision(body, name):
         if len(expressions) != 2:
             raise ValueError('The expected two INTERP fractions changed.')
         for node in expressions:
-            edits.append((node.start_byte,node.end_byte,'fac = feq_gen_h_d_ * (1.0 / dx)'))
+            edits.append((node.start_byte,node.end_byte,'fac = feq::section_station_fraction(*xl,*xr,x[j])'))
+        addresses = '0x434aed and 0x435403' if program == 'feq' else '0x442e8d, 0x443756 and 0x4438a5'
         edits.append((function.child_by_field_name('body').start_byte+1,
                       function.child_by_field_name('body').start_byte+1,
-                      '\n    // Original 0x434aed and 0x435403 use a retained reciprocal for each station fraction.\n'))
+                      '\n    // Original '+addresses+' retain wide distances and a reciprocal for station fractions.\n'))
     else:
         raise ValueError('Unrecognized traced routine: '+name)
     return edit_text(data, edits).decode()
@@ -312,6 +313,8 @@ def main():
             result = DECLARATION.encode()+result
         if args.traced_register_stores and path.name == 'brnmat.cpp':
             result = b'#include <cmath>\n'+result
+        if args.traced_register_stores and path.name == 'fqshrftb.cpp':
+            result = b'#include <feq/section_interpolation.hpp>\n'+result
         (output/path.name).write_bytes(result)
     if energy_definitions != 1:
         raise ValueError('Expected exactly one XLKT22 definition in the FEQ translation.')

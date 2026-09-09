@@ -92,6 +92,13 @@ the wide velocity heads, friction, interpolated loss coefficients and returned
 residual. See [`src/approach_residual.cpp`](src/approach_residual.cpp) and
 [`tests/reference/approach_residual/`](tests/reference/approach_residual/).
 
+Cross-section station fractions match **585 original instruction-sequence
+cases**, including adjacent float stations and five distance scales. The
+implementation keeps wide station differences and the original reciprocal
+multiplication. These distinctions are observable: 116 fixtures differ under
+direct division, and 443 differ with single-precision distances and fraction.
+See [`tests/reference/station_fraction/`](tests/reference/station_fraction/).
+
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,
 the caller's float store, and the head-loss result at three scales and around
