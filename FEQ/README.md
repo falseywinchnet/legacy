@@ -106,6 +106,12 @@ The implementation keeps the unrounded new area for the first-moment integral
 and preserves the original zero-width skip and unit thresholds. See
 [`tests/reference/section_slot/`](tests/reference/section_slot/).
 
+The Gauss-Legendre rule generator matches **every supported order from 1
+through 256**, including all 65,792 binary64 node and weight values. Its C++
+implementation preserves the Legendre recurrence, implicit QL rotations,
+convergence threshold and eigenvector ordering. See
+[`tests/reference/gaussian_rule/`](tests/reference/gaussian_rule/).
+
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,
 the caller's float store, and the head-loss result at three scales and around

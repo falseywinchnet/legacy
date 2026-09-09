@@ -256,6 +256,24 @@ def integrate_section_slot(data):
     return b'#include <feq/section_extension.hpp>\n'+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
 
 
+def integrate_gaussian_rule(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'grule_']
+    if len(targets) != 1:
+        raise ValueError('Expected exactly one GRULE definition.')
+    body = targets[0].child_by_field_name('body')
+    replacement = '''{
+    // All 256 supported orders verified against original GRULE/IMTQL2.
+    const feq::GaussianRule rule = feq::gaussian_rule(static_cast<std::size_t>(*n));
+    for (std::size_t index = 0; index < rule.nodes.size(); ++index) {
+        feq_storage_x[index] = rule.nodes[index];
+        feq_storage_w[index] = rule.weights[index];
+    }
+    return 0;
+}'''
+    return b'#include <feq/gaussian_rule.hpp>\n'+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
+
+
 def integrate_section_lookup(data):
     edits = []
     found = set()
@@ -574,10 +592,11 @@ def main():
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
         elif path.name == 'culvertc.cpp':data = integrate_steady_profile(integrate_steady_residuals(data))
         elif path.name == 'culvertd.cpp':data = integrate_approach_residual(integrate_culvert_losses(data))
-        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp'):
+        elif path.name == 'numrmath.cpp':data = integrate_gaussian_rule(data)
+        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp'):
             integrated_files.add(path.name)
         (output/path.name).write_bytes(data)
-    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp'}:
+    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp'}:
         raise ValueError('Prepared utility sources are missing required integration files.')
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
@@ -591,6 +610,9 @@ def main():
                 {'file':'xsection.cpp','function':'cuttab_','component':'src/section_extension.cpp',
                  'scope':'Standard slot detection, wide area/first moment, copied properties and retained row count.',
                  'verification':'tests/reference/section_slot/manifest.json'},
+                {'file':'numrmath.cpp','function':'grule_','component':'src/gaussian_rule.cpp',
+                 'scope':'Legendre recurrence, implicit QL first eigenvector components and scaled weights.',
+                 'verification':'tests/reference/gaussian_rule/manifest.json'},
                 {'file':'critq.cpp','function':'critq_','scope':'REAL critical-speed store before multiplication by area.',
                  'evidence':'recovery/assembly/fequtl/_critq_.asm, VA 0x411964.'},
                 {'file':'conduit.cpp','function':'rharch_','component':'src/arch_perimeter.cpp',

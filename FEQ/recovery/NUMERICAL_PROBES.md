@@ -564,3 +564,40 @@ differences remain at lines 1921 and 711; the CULVERT table still differs at
 line 13. The combined comparison remains 13 of 17 files, with all twelve FEQ
 outputs and all 2,092 active matrices still exact apart from report clocks.
 Four utility outputs and final application release work remain incomplete.
+
+
+## Gauss-Legendre quadrature rules
+
+`probe_gaussian_rule_original.py` calls the unchanged GRULE routine for every
+order from 1 through 256, the full extent of its local work array. The temporary
+PROGRAM driver loops over these calls in one process and writes the nodes and
+weights as raw binary64 values. The preserved executable is hash-checked and
+never modified; the original startup, GRULE and IMTQL2 instructions execute
+normally. The FEQUTL cross-section quadrature bank uses at most 21 points, which
+is covered within this larger supported domain.
+
+Each input record is a four-byte unsigned order. Each output record has the
+ordered nodes followed by the corresponding weights, both arrays of `order`
+binary64 values. All 65,792 values match the independent C++ implementation.
+The initial translated routine also matched every captured value, ruling out
+the rule generator as the cause of the remaining sinuosity-table difference.
+
+The C++ implementation forms the symmetric Legendre recurrence matrix with
+zero diagonal and `i/sqrt(4*i*i-1)` off-diagonal. Implicit QL rotations carry
+the first eigenvector components; weights are `2*v*v`. It preserves the
+original 2.2e-16 deflation threshold, 30-iteration limit, SIGN treatment of
+negative zero, selection-sort tie handling, and arithmetic order. Partial
+results retain the original one-based unconverged index in the core API.
+The GRULE adapter copies the nodes and weights through the original interface.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_gaussian_rule_original.py \
+  --native FEQ/build/core/feq_gaussian_rule_probe --output FEQ/build/gaussian-recapture
+```
+
+The integration preserves the previous complete-report comparison: 13 of 17
+files match, and all 2,092 active FEQ matrices remain byte-exact. The remaining
+first differences are UTLEXM report line 1921, UTLEXM table line 1370, CULVERT
+report line 711 and CULVERT table line 13. This component establishes quadrature
+rule behavior; the separate linearly varying sinuosity integration and final
+application release work remain incomplete.

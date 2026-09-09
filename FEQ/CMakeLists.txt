@@ -7,6 +7,7 @@ add_library(feq_numerics STATIC src/section_energy.cpp src/conduit_boundary.cpp 
 target_include_directories(feq_numerics PUBLIC include)
 target_sources(feq_numerics PRIVATE src/root_solver.cpp src/culvert_loss.cpp src/steady_residual.cpp src/approach_residual.cpp)
 target_sources(feq_numerics PRIVATE src/section_extension.cpp)
+target_sources(feq_numerics PRIVATE src/gaussian_rule.cpp)
 target_compile_features(feq_numerics PUBLIC cxx_std_20)
 set_target_properties(feq_numerics PROPERTIES CXX_EXTENSIONS OFF)
 
@@ -128,6 +129,11 @@ if(BUILD_TESTING)
     feq_checks(feq_slot_probe)
     add_test(NAME section_slot_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_slot_fixture.py $<TARGET_FILE:feq_slot_probe>)
+    add_executable(feq_gaussian_rule_probe tools/gaussian_rule_probe.cpp)
+    target_link_libraries(feq_gaussian_rule_probe PRIVATE feq_numerics)
+    feq_checks(feq_gaussian_rule_probe)
+    add_test(NAME gaussian_rule_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gaussian_rule_fixture.py $<TARGET_FILE:feq_gaussian_rule_probe>)
     add_test(NAME approach_residual_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_approach_residual_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
     foreach(method regflt rgf rgf5)

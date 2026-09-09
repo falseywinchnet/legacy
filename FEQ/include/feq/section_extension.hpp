@@ -11,7 +11,7 @@ namespace feq {
 // count. The column-major table has thirteen columns, each with row_stride
 // elements of storage; count is the number of initialized rows to examine.
 // Values after the returned count remain untouched. Columns are depth, width,
-// area, first moment, conveyance, beta, alpha, five auxiliary fields, and Qc.
+// area, first moment, sqrt(conveyance), beta, alpha, five auxiliary fields, and Qc.
 std::size_t cut_section_slot(std::span<float> table, std::size_t row_stride,
                              std::size_t count, float gravity);
 
