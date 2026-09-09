@@ -41,5 +41,11 @@ SectionProperties interpolate_section(float depth, const SectionTableRow& lower,
 float interpolate_section_first_moment(float depth, const SectionTableRow& lower,
                                        const SectionTableRow& upper, float lower_first_moment);
 
+// LKTJ's scalar first-moment lookup retains width and area throughout and
+// uses a different REAL sixth from XLKT21/22. The caller selects the interval.
+float interpolate_scalar_first_moment(float depth, float lower_depth,
+    float lower_width, float lower_area, float lower_first_moment,
+    float upper_depth, float upper_width);
+
 } // namespace feq
 #endif

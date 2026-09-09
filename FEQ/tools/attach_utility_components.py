@@ -104,6 +104,107 @@ def integrate_sinuosity(data):
     return declaration.encode()+edit_text(data,[(analytical[0].start_byte,analytical[0].start_byte,replacement)])
 
 
+def integrate_gate_residuals(data):
+    mapping = {'rsomy3_':'gate_orifice_jet_residual', 'rswmy3_':'gate_weir_jet_residual',
+               'rsomy4_':'gate_orifice_tailwater_residual', 'rswmy4_':'gate_weir_tailwater_residual'}
+    edits = [];found = set()
+    for function in functions(data):
+        name = content(identifier(function.child_by_field_name('declarator')),data)
+        if name not in mapping:
+            continue
+        body = function.child_by_field_name('body')
+        lookup = [node for node in body.named_children if node.type == 'expression_statement' and
+                  (content(node,data).startswith('lktj_(') or content(node,data).startswith('xlkt22_('))]
+        if len(lookup) != 1:
+            raise ValueError('Expected one original section lookup in '+name)
+        jet = name.endswith('3_')
+        depth = '*y3u' if jet else 'ufcom_1.y3'
+        replacement = '''
+    // Retain the original section lookup and every COMMON REAL store.
+    const feq::GateResidualInput input{ufcom_1.y1,ufcom_1.z1b,ufcom_1.z3b,
+        ufcom_1.at,ufcom_1.a1,ufcom_1.alpha1,ufcom_1.cd,ufcom_1.bg,ufcom_1.cc,
+        ufcom_1.ag,ufcom_1.g,ufcom_1.twog,ufcom_1.a4,ufcom_1.beta4,ufcom_1.j4,
+        ufcom_1.j4aty3,ufcom_1.qsqr,'''+depth+''',ufcom_1.dz};
+    const feq::GateResidual result = feq::'''+mapping[name]+'''(input);
+'''+('    ufcom_1.qsqr = result.squared_flow;\n' if jet else '')+'''    return result.value;
+'''
+        edits.append((lookup[0].end_byte,body.end_byte-1,replacement));found.add(name)
+    if found != set(mapping):
+        raise ValueError('Missing original gate residuals: '+str(set(mapping)-found))
+    return b'#include <feq/gate_residual.hpp>\n'+edit_text(data,edits)
+
+
+def integrate_scalar_moment(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'lktj_']
+    if len(targets) != 1:
+        raise ValueError('Expected one scalar first-moment lookup.')
+    body = targets[0].child_by_field_name('body')
+    start = [node for node in body.named_children if node.type == 'expression_statement' and
+             content(node,data) == 'y0 = ftab[l];']
+    if len(start) != 1:
+        raise ValueError('Expected the start of LKTJ interval arithmetic.')
+    replacement = '''// Keep the original interval selection, diagnostics and cached row.
+    *j = feq::interpolate_scalar_first_moment(y,ftab[l],ftab[l+1],ftab[l+2],ftab[l+5],
+        ftab[l+xoff],ftab[l+xoff+1]);
+    return 0;
+'''
+    return b'#include <feq/section_interpolation.hpp>\n'+edit_text(data,[(start[0].start_byte,body.end_byte-1,replacement)])
+
+
+def integrate_gate_levels(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'ufgate_']
+    if len(targets) != 1:
+        raise ValueError('Expected one UFGATE for tailwater elevation integration.')
+    function = targets[0];body = function.child_by_field_name('body');edits = [];found = set();counts = {}
+    edits.append((body.start_byte+1,body.start_byte+1,
+        '\n    feq::GateTailwaterLevels tailwater_levels{};\n'
+        '    feq::GateSubmergedLevels submerged_levels{};\n'
+        '    float stored_gate_head = 0.0F, stored_gate_drop = 0.0F;\n'
+        '    float stored_submerged_head = 0.0F, stored_submerged_drop = 0.0F;\n'))
+    for node in nodes(function):
+        if node.type == 'declaration' and content(node.child_by_field_name('type'),data) == 'real':
+            declarations = node.children_by_field_name('declarator')
+            names = [content(item,data) for item in declarations]
+            wide = [name for name in names if name in ('h4f','fdrop','h4','drop')]
+            if wide:
+                narrow = [name for name in names if name not in wide]
+                edits.append((node.start_byte,node.end_byte,
+                    ('real '+', '.join(narrow)+';\n    ' if narrow else '')+'double '+', '.join(wide)+';'))
+                found.update(wide)
+        if node.type == 'assignment_expression':
+            left = content(node.child_by_field_name('left'),data)
+            replacements = {
+                'zw4f':'tailwater_levels = feq::gate_tailwater_levels(ufcom_1.y1,ufcom_1.z1b,y4f,ufcom_1.z4b,hdatum)',
+                'h4f':'h4f = tailwater_levels.head',
+                'fdrop':'fdrop = tailwater_levels.drop',
+                'drop':'submerged_levels = feq::gate_submerged_levels(ufcom_1.y1,ufcom_1.z1b,fdrop,pfdvec[j-1],ufcom_1.z4b,hdatum);\n            drop = submerged_levels.drop',
+                'ufcom_1.y4':'ufcom_1.y4 = submerged_levels.depth',
+                'h4':'h4 = submerged_levels.head'}
+            if left in replacements:
+                edits.append((node.start_byte,node.end_byte,replacements[left]));counts[left] = counts.get(left,0)+1
+            elif left == 'zw4':
+                if node.parent.type != 'expression_statement':raise ValueError('Unexpected ZW4 assignment context.')
+                edits.append((node.parent.start_byte,node.parent.end_byte,''));counts[left] = counts.get(left,0)+1
+        if node.type == 'expression_statement' and content(node,data).startswith('do_fio('):
+            statement = content(node,data)
+            for name,stored in (('h4f','stored_gate_head'),('fdrop','stored_gate_drop'),
+                                ('h4','stored_submerged_head'),('drop','stored_submerged_drop')):
+                if '(char *)&'+name+',' in statement:
+                    replacement = stored+' = static_cast<float>('+name+');\n        '+statement.replace('&'+name+',','&'+stored+',')
+                    edits.append((node.start_byte,node.end_byte,replacement));counts['print_'+name] = counts.get('print_'+name,0)+1
+        if node.type == 'pointer_expression' and content(node,data) in ('&h4f','&fdrop','&h4','&drop'):
+            parent = node.parent
+            while parent is not None and parent.type != 'call_expression':parent = parent.parent
+            if parent is None or content(parent.child_by_field_name('function'),data) != 'do_fio':
+                raise ValueError('A retained gate level has an unexpected address use.')
+    if found != {'h4f','fdrop','h4','drop'} or counts != {'zw4f':2,'h4f':2,'fdrop':2,'print_fdrop':2,'print_h4f':2,
+            'drop':2,'zw4':2,'ufcom_1.y4':2,'h4':2,'print_drop':2,'print_h4':2}:
+        raise ValueError('Unexpected UFGATE level stores: '+str((found,counts)))
+    return edit_text(data,edits)
+
+
 PROPERTY_DECLARATION = ('extern "C" int feq_section_properties(int,int,int,const char*,float,float,float,int,int,int*,'
     'const float*,const float*,const double*,const double*,const float*,const float*,const float*,const float*,'
     'double,double,double,double,double,double,double,double,float*,float*,float*,int*,int*,float*);\n')
@@ -638,15 +739,17 @@ def main():
         elif path.name == 'critq.cpp':data = integrate_critical_speed_store(data)
         elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
         elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
+        elif path.name == 'ufgate.cpp':data = integrate_gate_levels(integrate_gate_residuals(data))
+        elif path.name == 'tablook.cpp':data = integrate_scalar_moment(data)
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
         elif path.name == 'culvertc.cpp':data = integrate_steady_profile(integrate_steady_residuals(data))
         elif path.name == 'culvertd.cpp':data = integrate_approach_residual(integrate_culvert_losses(data))
         elif path.name == 'numrmath.cpp':data = integrate_gaussian_rule(data)
-        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp'):
+        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'):
             integrated_files.add(path.name)
         (output/path.name).write_bytes(data)
-    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp'}:
+    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'}:
         raise ValueError('Prepared utility sources are missing required integration files.')
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
@@ -666,6 +769,16 @@ def main():
                 {'file':'numrmath.cpp','function':'grule_','component':'src/gaussian_rule.cpp',
                  'scope':'Legendre recurrence, implicit QL first eigenvector components and scaled weights.',
                  'verification':'tests/reference/gaussian_rule/manifest.json'},
+                {'file':'ufgate.cpp','functions':['rsomy3_','rswmy3_','rsomy4_','rswmy4_'],
+                 'component':'src/gate_residual.cpp',
+                 'scope':'Wide momentum residuals and explicit squared-flow stores after original section lookups.',
+                 'verification':'tests/reference/gate_residual/manifest.json'},
+                {'file':'ufgate.cpp','function':'ufgate_','component':'src/gate_residual.cpp',
+                 'scope':'Retained free/submerged tailwater surfaces, heads and drops; section-depth and report REAL stores.',
+                 'verification':'tests/reference/gate_levels/manifest.json'},
+                {'file':'tablook.cpp','function':'lktj_','component':'src/section_interpolation.cpp',
+                 'scope':'Wide width and area, released REAL reciprocal of six; retain original bounds and cached row.',
+                 'verification':'tests/reference/gate_residual/manifest.json'},
                 {'file':'critq.cpp','function':'critq_','scope':'REAL critical-speed store before multiplication by area.',
                  'evidence':'recovery/assembly/fequtl/_critq_.asm, VA 0x411964.'},
                 {'file':'conduit.cpp','function':'rharch_','component':'src/arch_perimeter.cpp',

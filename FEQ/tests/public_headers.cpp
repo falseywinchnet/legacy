@@ -18,6 +18,7 @@
 #include <feq/section_extension.hpp>
 #include <feq/gaussian_rule.hpp>
 #include <feq/section_sinuosity.hpp>
+#include <feq/gate_residual.hpp>
 #include <feq/section_properties.hpp>
 #include <feq/storage.hpp>
 #include <feq/table_interpolation.hpp>

@@ -647,3 +647,46 @@ UTLEXM line 1921 and CULVERT line 711; the CULVERT table still differs at line
 2,092 active matrices remain byte-exact. The full comparison remains 13 of
 17 files. Four utility outputs and final application release work remain
 incomplete.
+
+## Underflow-gate momentum and tailwater levels
+
+`probe_gate_residual_original.py` streams 840 cross-section intervals into a
+temporary original PROGRAM driver. For each interval it restores the original
+gate COMMON block and calls each unchanged RSOMY3, RSWMY3, RSOMY4 and RSWMY4.
+The 3,360 calls retain their original LKTJ or XLKT22 lookups. All binary64
+returns and all forty REAL COMMON values match the independent C++ component.
+The section fixtures span five table types, three depth scales, zero/nonzero
+lower depths, and seven positions per interval. The residual cases vary
+gravity, gate geometry, contraction/discharge coefficients and both section
+properties. No report masking or numerical tolerance is used.
+
+The jet residuals explicitly store QSQR as REAL before the momentum equation.
+Their intermediate area ratios and the final normalized momentum residual
+remain wide. These fixtures also distinguish LKTJ from the other first-moment
+lookups: LKTJ retains width and area throughout and multiplies by the REAL
+sixth `0x3e2aaaab`. The independent `interpolate_scalar_first_moment` preserves
+that ordering; the engine retains original interval selection, bounds
+diagnostics and its cached row pointer.
+
+`probe_gate_levels_original.py` captures two unchanged UFGATE instruction
+sequences, at RVAs `0x819a9..0x819d3` and `0x81b76..0x81bab`. The first keeps
+the tailwater elevation while computing free-flow head and drop. The second
+multiplies the retained free drop by its fraction, keeps the resulting
+tailwater elevation, stores the trial section-4 depth as REAL, and retains
+the head and drop. All five outputs match for 678 cases, including drops
+above positive and negative large datums and zero/full-drop endpoints.
+The engine uses explicit REAL report copies for the retained quantities.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_gate_residual_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/gate-residual-recapture
+FEQ/build/python312/bin/python FEQ/tools/probe_gate_levels_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/gate-levels-recapture
+```
+
+The integrated UFGATE free-drop row now matches. The next UTLEXM table
+difference is line 1630, where a submerged-flow entry is `7934-2` in the
+original and `7935-2` in C++. Other first differences remain at UTLEXM report
+line 1921, CULVERT report line 711 and CULVERT table line 13. The full
+comparison remains 13 of 17 files; four utility outputs and final application
+release work remain incomplete.

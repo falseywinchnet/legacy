@@ -79,7 +79,7 @@ def main():
                         'src/section_sinuosity.cpp','tools/sinuosity_compat.cpp',
                         'src/table_interpolation.cpp','tools/table_compat.cpp',
                         'src/weir_flow.cpp','tools/weir_compat.cpp','src/root_solver.cpp','tools/root_compat.cpp',
-                        'src/culvert_loss.cpp','src/steady_residual.cpp','src/approach_residual.cpp',
+                        'src/culvert_loss.cpp','src/steady_residual.cpp','src/approach_residual.cpp','src/gate_residual.cpp',
                         'tools/geometry_compat.cpp','tools/flux_compat.cpp','tools/properties_compat.cpp'])
     if args.matrix_trace:
         sources.append('tools/matrix_trace.cpp')

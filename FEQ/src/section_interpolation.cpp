@@ -112,4 +112,19 @@ float interpolate_section_first_moment(float depth, const SectionTableRow& lower
     return static_cast<float>(lower_first_moment+half_h*((wide_area+lower.area)-correction));
 }
 
+float interpolate_scalar_first_moment(float depth, float lower_depth,
+    float lower_width, float lower_area, float lower_first_moment,
+    float upper_depth, float upper_width) {
+    const double interval = static_cast<double>(upper_depth)-lower_depth;
+    const double h = static_cast<double>(depth)-lower_depth;
+    const double half_h = h*0.5;
+    const double slope = (static_cast<double>(upper_width)-lower_width)/interval;
+    const double width = h*slope+lower_width;
+    const double area = (width+lower_width)*half_h+lower_area;
+    // J=J0+h/2*[A+A0-h*(T-T0)*REAL(1/6)]. LKTJ 0x4784af..0x4784ef
+    // has no intermediate REAL stores; its constant is bits 0x3e2aaaab.
+    const double correction = ((width-lower_width)*h)*0.1666666716337204;
+    return static_cast<float>(((area+lower_area)-correction)*half_h+lower_first_moment);
+}
+
 } // namespace feq

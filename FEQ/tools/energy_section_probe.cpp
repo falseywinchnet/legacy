@@ -3,6 +3,8 @@
 #include <feq/section_energy.hpp>
 #include <feq/steady_residual.hpp>
 #include <feq/approach_residual.hpp>
+#include <feq/gate_residual.hpp>
+#include <array>
 #include <bit>
 #include <cstdint>
 #include <cstring>
@@ -65,7 +67,23 @@ int main(int argc, char** argv) {
         const bool steady = argc == 2 && std::strcmp(argv[1],"--steady") == 0;
         const bool profile = argc == 2 && std::strcmp(argv[1],"--profile") == 0;
         const bool approach = argc == 2 && std::strcmp(argv[1],"--approach") == 0;
+        const bool gate = argc == 2 && std::strcmp(argv[1],"--gate") == 0;
+        const bool gate_levels = argc == 2 && std::strcmp(argv[1],"--gate-levels") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (gate_levels) {
+                float fields[6]{};
+                for (int i = 0; i < 6; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const feq::GateTailwaterLevels result = feq::gate_tailwater_levels(
+                    fields[0],fields[1],fields[2],fields[3],fields[4]);
+                write_double(result.head);
+                write_double(result.drop);
+                const feq::GateSubmergedLevels submerged = feq::gate_submerged_levels(
+                    fields[0],fields[1],result.drop,fields[5],fields[3],fields[4]);
+                write_float(submerged.depth);
+                write_double(submerged.head);
+                write_double(submerged.drop);
+                continue;
+            }
             if (profile) {
                 float fields[8]{};
                 for (int i = 0; i < 8; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
@@ -79,6 +97,44 @@ int main(int argc, char** argv) {
             const feq::EnergySectionRow lower = read_row();
             const feq::EnergySectionRow upper = read_row();
             const feq::EnergySectionRow following = read_row();
+            if (gate) {
+                static_cast<void>(read_word());
+                static_cast<void>(read_word());
+                std::array<float,40> initial{};
+                for (std::size_t i = 0; i < initial.size(); ++i) { initial[i] = std::bit_cast<float>(read_word()); }
+                const feq::EnergySectionProperties properties = feq::interpolate_energy_section(
+                    depth,lower,upper,table_type == 32 || table_type == 35,&following);
+                for (int routine = 0; routine < 4; ++routine) {
+                    std::array<float,40> fields = initial;
+                    fields[14] = depth;
+                    if (routine < 2) {
+                        fields[38] = feq::interpolate_scalar_first_moment(depth,lower.section.depth,
+                            lower.section.top_width,lower.section.area,lower.first_moment,
+                            upper.section.depth,upper.section.top_width);
+                    } else {
+                        fields[6] = properties.section.area;
+                        fields[15] = properties.section.top_width;
+                        fields[9] = properties.first_moment;
+                        fields[19] = properties.section.conveyance;
+                        fields[20] = properties.section.conveyance_slope;
+                        fields[26] = properties.section.momentum_factor;
+                        fields[35] = properties.section.momentum_factor_slope;
+                        fields[39] = properties.energy_factor;
+                        fields[34] = properties.energy_factor_slope;
+                        fields[23] = properties.critical_flow;
+                    }
+                    const feq::GateResidualInput input{fields[0],fields[10],fields[12],fields[17],fields[5],
+                        fields[25],fields[30],fields[29],fields[31],fields[28],fields[32],fields[33],fields[6],
+                        fields[26],fields[9],fields[38],fields[36],routine < 2 ? depth : fields[2],fields[37]};
+                    const feq::GateResidual result = routine == 0 ? feq::gate_orifice_jet_residual(input) :
+                        routine == 1 ? feq::gate_weir_jet_residual(input) :
+                        routine == 2 ? feq::gate_orifice_tailwater_residual(input) : feq::gate_weir_tailwater_residual(input);
+                    fields[36] = result.squared_flow;
+                    write_double(result.value);
+                    for (std::size_t i = 0; i < fields.size(); ++i) { write_float(fields[i]); }
+                }
+                continue;
+            }
             if (approach) {
                 float fields[15]{};
                 for (int i = 0; i < 15; ++i) { fields[i] = std::bit_cast<float>(read_word()); }

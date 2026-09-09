@@ -119,6 +119,14 @@ These exercise OLDBETA, NEWBETA, NEWBETAX, clipped boundaries, multiple roughnes
 modes and quadrature orders. See
 [`tests/reference/section_sinuosity/`](tests/reference/section_sinuosity/).
 
+Underflow-gate momentum matches **3,360 direct original residual calls**,
+including squared-flow stores and all forty REAL values in the gate COMMON
+block. The same fixtures verify LKTJ's distinct scalar first-moment arithmetic.
+Another **678 cases** capture the original free and submerged tailwater
+elevation instructions, including small drops above large datums. See
+[`tests/reference/gate_residual/`](tests/reference/gate_residual/) and
+[`tests/reference/gate_levels/`](tests/reference/gate_levels/).
+
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,
 the caller's float store, and the head-loss result at three scales and around
