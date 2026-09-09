@@ -1,3 +1,4 @@
+#include <feq/root_solver.hpp>
 #include <feq/section_energy.hpp>
 #include <feq/conduit_boundary.hpp>
 // Public headers must coexist in one client translation unit.

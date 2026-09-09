@@ -77,7 +77,7 @@ def main():
                         'src/conduit_boundary.cpp','tools/conduit_compat.cpp',
                         'src/section_interpolation.cpp','tools/section_compat.cpp',
                         'src/table_interpolation.cpp','tools/table_compat.cpp',
-                        'src/weir_flow.cpp','tools/weir_compat.cpp',
+                        'src/weir_flow.cpp','tools/weir_compat.cpp','src/root_solver.cpp','tools/root_compat.cpp',
                         'tools/geometry_compat.cpp','tools/flux_compat.cpp','tools/properties_compat.cpp'])
     if args.matrix_trace:
         sources.append('tools/matrix_trace.cpp')

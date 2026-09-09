@@ -57,6 +57,13 @@ critical flow, match every bit. The tests cover five table types, explicit
 slopes, three scales, interval endpoints, and the special zero-depth rule.
 The fixtures are in [`tests/reference/section_energy/`](tests/reference/section_energy/).
 
+The culvert `RGF3` root solver matches **423 original-executable cases**, including
+every bracket field, failure flag, callback count, and trial argument. The tests
+cover convergence thresholds, wide residuals, repeated-endpoint damping, all
+four return flags, the 101-evaluation limit, three numerical scales, and
+callbacks that adjust the trial argument. The fixtures are in
+[`tests/reference/root_solver/`](tests/reference/root_solver/).
+
 The independent section-boundary geometry also matches **every geometric output
 bit in 363 direct FEQUTL tests**. These cover dry, partially submerged, and fully
 submerged boundaries, multiple subsections, three scales, vertical/horizontal

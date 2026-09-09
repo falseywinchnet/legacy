@@ -1,0 +1,47 @@
+// Research adapter for the independently verified root solver.
+// Work: Astra. Sponsor: Rainstar. Foundation: Hashem. MIT licensed.
+#include <feq/root_solver.hpp>
+
+namespace {
+typedef double (*HistoricalResidual)(float*);
+struct Callback {
+    HistoricalResidual function;
+    feq::RootBracket* bracket;
+    float* left;
+    float* right;
+    float* fl;
+    float* fr;
+    float* trial;
+    int* flag;
+};
+void write_state(const Callback& callback, bool write_trial) {
+    *callback.left = callback.bracket->left;
+    *callback.right = callback.bracket->right;
+    *callback.fl = callback.bracket->left_residual;
+    *callback.fr = callback.bracket->right_residual;
+    if (write_trial) { *callback.trial = callback.bracket->trial; }
+    *callback.flag = callback.bracket->flag;
+}
+double evaluate(void* pointer, float& argument) {
+    const Callback& callback = *static_cast<Callback*>(pointer);
+    // Retain argument addresses and global visibility during nested residuals.
+    write_state(callback,true);
+    const double result = callback.function(callback.trial);
+    callback.bracket->left = *callback.left;
+    callback.bracket->right = *callback.right;
+    callback.bracket->left_residual = *callback.fl;
+    callback.bracket->right_residual = *callback.fr;
+    callback.bracket->flag = *callback.flag;
+    argument = *callback.trial;
+    return result;
+}
+}
+extern "C" void feq_root3(float epsx, float epsf, HistoricalResidual function,
+    float* left, float* right, float* fl, float* fr, float* trial, int* flag) {
+    // FLAG is output-only; XM is written before its first evaluation. Avoid
+    // reading either output when the calling routine has not initialized it.
+    feq::RootBracket bracket{*left,*right,*fl,*fr,0.0F,0};
+    Callback callback{function,&bracket,left,right,fl,fr,trial,flag};
+    feq::solve_root3(epsx,epsf,evaluate,&callback,bracket);
+    write_state(callback,bracket.flag != 1);
+}

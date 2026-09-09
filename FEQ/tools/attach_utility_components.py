@@ -336,6 +336,18 @@ def integrate_weir_drop_fractions(data):
     return b'#include <feq/power.hpp>\n'+edit_text(data,[(statement.start_byte,statement.end_byte,replacement)])
 
 
+def integrate_root3(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'rgf3_']
+    if len(targets) != 1:
+        raise ValueError('Expected one RGF3 definition.')
+    body = targets[0].child_by_field_name('body')
+    replacement = ('{\n    // Original-verified bracket updates, wide residuals and convergence ordering.\n'
+        '    feq_root3(*epsx,*epsf,f,a,b,fl,fr,xm,feq_gen_flag_d_);\n    return 0;\n}')
+    declaration = 'extern "C" void feq_root3(float,float,double(*)(float*),float*,float*,float*,float*,float*,int*);\n'
+    return declaration.encode()+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('source',type=Path);parser.add_argument('output',type=Path)
@@ -352,10 +364,11 @@ def main():
         elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
         elif path.name == 'fqshrftb.cpp':data = integrate_scalar_lookup(integrate_section_lookup(data))
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
-        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp'):
+        elif path.name == 'rootfind.cpp':data = integrate_root3(data)
+        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp'):
             integrated_files.add(path.name)
         (output/path.name).write_bytes(data)
-    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp'}:
+    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp'}:
         raise ValueError('Prepared utility sources are missing required integration files.')
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
@@ -389,6 +402,9 @@ def main():
                 {'file':'embank.cpp','function':'sbfemb_',
                  'scope':'Retained Simpson width/flow registers and original REAL reciprocal of six.',
                  'evidence':'recovery/assembly/fequtl/_sbfemb_.asm, VA 0x42ff92..0x42ffb5.'},
+                {'file':'rootfind.cpp','function':'rgf3_','component':'src/root_solver.cpp',
+                 'scope':'Modified false position, wide callback results, mutable trial arguments and exact failure outputs.',
+                 'verification':'tests/reference/root_solver/manifest.json'},
                 {'file':'embank.cpp','function':'embank_','component':'src/power.cpp',
                  'scope':'Original reciprocal and REAL power argument/result for partial free-drop fractions.',
                  'evidence':'recovery/assembly/fequtl/_embank_.asm, VA 0x431d10..0x431d4a.'}]}

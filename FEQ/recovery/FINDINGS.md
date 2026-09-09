@@ -373,3 +373,28 @@ all twelve FEQ reports and every word of all 2,092 active matrices. Later
 utility flow tables, generated section geometry, Gaussian integration, and
 end-user packaging remain unfinished. No tolerance or numerical masking has
 been introduced.
+
+## Culvert root iteration
+
+`src/root_solver.cpp` implements RGF3's modified false-position iteration.
+All 423 direct calls to the original routine match every bracket field, return
+flag, evaluation count, and trial argument. The temporary original driver
+supplies both polynomial callbacks and scripted binary64 residuals. It records
+the incoming argument before any callback adjustment. Tests exercise endpoint
+precedence, residual values adjacent to a tolerance, the failure sentinel and
+its strict comparison, interval collapse, the right-endpoint tie rule, repeated
+sign damping, and the 101-evaluation failure path.
+
+The original stores the trial as REAL at `0x473045`, but retains FM and FMOLD
+at its 53-bit register precision. A callback result just below EPSF must pass
+the residual test even when its rounded REAL value equals EPSF. FL and FR round
+only when the bracket updates. The independent implementation keeps the
+original ordering and output effects of each exit. The research adapter keeps
+the historical trial-argument address and exposes updated bracket residuals
+during nested callbacks.
+
+After integration, all six supplied examples finish, all twelve FEQ outputs
+remain exact except execution clocks, and the FEQUTL CHX remains byte-exact.
+Four FEQUTL numerical outputs remain different. All 22 local component checks
+pass in both release and address/undefined-behavior sanitizer builds. Full
+application equivalence and end-user packaging remain in progress.

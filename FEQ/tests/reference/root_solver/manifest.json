@@ -1,0 +1,2130 @@
+{
+  "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+  "routines": [
+    "_rgf3_"
+  ],
+  "cases": 423,
+  "input_sha256": "a44dd114f5ba6b9e969039885bc209889e05c87f457e0e6cff428ceccaab9699",
+  "output_sha256": "a823b490a9d7d103154679a0fad7249b720b91c96f1b22e336473ba7c33e3094",
+  "probe_sha256": "b5012de6574dcbddefebb06ad5dcd2d740c39ab5e138462ef9a89584b7155e4f",
+  "fixtures": [
+    {
+      "name": "left-endpoint-including-tolerance",
+      "offset": 0,
+      "bytes": 432
+    },
+    {
+      "name": "right-endpoint-including-tolerance",
+      "offset": 432,
+      "bytes": 432
+    },
+    {
+      "name": "left-priority-both-endpoints",
+      "offset": 864,
+      "bytes": 432
+    },
+    {
+      "name": "same-sign-positive",
+      "offset": 1296,
+      "bytes": 432
+    },
+    {
+      "name": "same-sign-negative",
+      "offset": 1728,
+      "bytes": 432
+    },
+    {
+      "name": "zero-residual",
+      "offset": 2160,
+      "bytes": 432
+    },
+    {
+      "name": "negative-zero-residual",
+      "offset": 2592,
+      "bytes": 432
+    },
+    {
+      "name": "failure-sentinel",
+      "offset": 3024,
+      "bytes": 432
+    },
+    {
+      "name": "sentinel-equality-then-zero",
+      "offset": 3456,
+      "bytes": 432
+    },
+    {
+      "name": "below-sentinel-before-float-store",
+      "offset": 3888,
+      "bytes": 432
+    },
+    {
+      "name": "residual-just-below-tolerance",
+      "offset": 4320,
+      "bytes": 432
+    },
+    {
+      "name": "residual-equal-tolerance",
+      "offset": 4752,
+      "bytes": 432
+    },
+    {
+      "name": "residual-negative-just-below-tolerance",
+      "offset": 5184,
+      "bytes": 432
+    },
+    {
+      "name": "collapse-before-residual-left",
+      "offset": 5616,
+      "bytes": 432
+    },
+    {
+      "name": "collapse-before-residual-right",
+      "offset": 6048,
+      "bytes": 432
+    },
+    {
+      "name": "collapse-tie-takes-right",
+      "offset": 6480,
+      "bytes": 432
+    },
+    {
+      "name": "failure-before-collapse",
+      "offset": 6912,
+      "bytes": 432
+    },
+    {
+      "name": "zero-before-collapse",
+      "offset": 7344,
+      "bytes": 432
+    },
+    {
+      "name": "iteration-limit-101-calls",
+      "offset": 7776,
+      "bytes": 432
+    },
+    {
+      "name": "negative-iteration-limit",
+      "offset": 8208,
+      "bytes": 432
+    },
+    {
+      "name": "alternating-iteration-limit",
+      "offset": 8640,
+      "bytes": 432
+    },
+    {
+      "name": "mutated-trial-success",
+      "offset": 9072,
+      "bytes": 432
+    },
+    {
+      "name": "mutated-trials-in-bracket",
+      "offset": 9504,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-0",
+      "offset": 9936,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-1",
+      "offset": 10368,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-2",
+      "offset": 10800,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-3",
+      "offset": 11232,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-4",
+      "offset": 11664,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-5",
+      "offset": 12096,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-6",
+      "offset": 12528,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-7",
+      "offset": 12960,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-8",
+      "offset": 13392,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-9",
+      "offset": 13824,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-10",
+      "offset": 14256,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-11",
+      "offset": 14688,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-12",
+      "offset": 15120,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-13",
+      "offset": 15552,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-14",
+      "offset": 15984,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-15",
+      "offset": 16416,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-16",
+      "offset": 16848,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-17",
+      "offset": 17280,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-18",
+      "offset": 17712,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-19",
+      "offset": 18144,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-20",
+      "offset": 18576,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-21",
+      "offset": 19008,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-22",
+      "offset": 19440,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-23",
+      "offset": 19872,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-24",
+      "offset": 20304,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-25",
+      "offset": 20736,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-26",
+      "offset": 21168,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-27",
+      "offset": 21600,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-28",
+      "offset": 22032,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-29",
+      "offset": 22464,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-30",
+      "offset": 22896,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-31",
+      "offset": 23328,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-32",
+      "offset": 23760,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-33",
+      "offset": 24192,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-34",
+      "offset": 24624,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-35",
+      "offset": 25056,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-36",
+      "offset": 25488,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-37",
+      "offset": 25920,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-38",
+      "offset": 26352,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-39",
+      "offset": 26784,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-40",
+      "offset": 27216,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-41",
+      "offset": 27648,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-42",
+      "offset": 28080,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-43",
+      "offset": 28512,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-44",
+      "offset": 28944,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-45",
+      "offset": 29376,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-46",
+      "offset": 29808,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-47",
+      "offset": 30240,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-48",
+      "offset": 30672,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-49",
+      "offset": 31104,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-50",
+      "offset": 31536,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-51",
+      "offset": 31968,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-52",
+      "offset": 32400,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-53",
+      "offset": 32832,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-54",
+      "offset": 33264,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-55",
+      "offset": 33696,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-56",
+      "offset": 34128,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-57",
+      "offset": 34560,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-58",
+      "offset": 34992,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1e-05-trial-59",
+      "offset": 35424,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-0",
+      "offset": 35856,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-1",
+      "offset": 36288,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-2",
+      "offset": 36720,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-3",
+      "offset": 37152,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-4",
+      "offset": 37584,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-5",
+      "offset": 38016,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-6",
+      "offset": 38448,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-7",
+      "offset": 38880,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-8",
+      "offset": 39312,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-9",
+      "offset": 39744,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-10",
+      "offset": 40176,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-11",
+      "offset": 40608,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-12",
+      "offset": 41040,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-13",
+      "offset": 41472,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-14",
+      "offset": 41904,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-15",
+      "offset": 42336,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-16",
+      "offset": 42768,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-17",
+      "offset": 43200,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-18",
+      "offset": 43632,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-19",
+      "offset": 44064,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-20",
+      "offset": 44496,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-21",
+      "offset": 44928,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-22",
+      "offset": 45360,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-23",
+      "offset": 45792,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-24",
+      "offset": 46224,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-25",
+      "offset": 46656,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-26",
+      "offset": 47088,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-27",
+      "offset": 47520,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-28",
+      "offset": 47952,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-29",
+      "offset": 48384,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-30",
+      "offset": 48816,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-31",
+      "offset": 49248,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-32",
+      "offset": 49680,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-33",
+      "offset": 50112,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-34",
+      "offset": 50544,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-35",
+      "offset": 50976,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-36",
+      "offset": 51408,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-37",
+      "offset": 51840,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-38",
+      "offset": 52272,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-39",
+      "offset": 52704,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-40",
+      "offset": 53136,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-41",
+      "offset": 53568,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-42",
+      "offset": 54000,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-43",
+      "offset": 54432,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-44",
+      "offset": 54864,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-45",
+      "offset": 55296,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-46",
+      "offset": 55728,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-47",
+      "offset": 56160,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-48",
+      "offset": 56592,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-49",
+      "offset": 57024,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-50",
+      "offset": 57456,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-51",
+      "offset": 57888,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-52",
+      "offset": 58320,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-53",
+      "offset": 58752,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-54",
+      "offset": 59184,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-55",
+      "offset": 59616,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-56",
+      "offset": 60048,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-57",
+      "offset": 60480,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-58",
+      "offset": 60912,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1e-05-trial-59",
+      "offset": 61344,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-0",
+      "offset": 61776,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-1",
+      "offset": 62208,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-2",
+      "offset": 62640,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-3",
+      "offset": 63072,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-4",
+      "offset": 63504,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-5",
+      "offset": 63936,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-6",
+      "offset": 64368,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-7",
+      "offset": 64800,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-8",
+      "offset": 65232,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-9",
+      "offset": 65664,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-10",
+      "offset": 66096,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-11",
+      "offset": 66528,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-12",
+      "offset": 66960,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-13",
+      "offset": 67392,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-14",
+      "offset": 67824,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-15",
+      "offset": 68256,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-16",
+      "offset": 68688,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-17",
+      "offset": 69120,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-18",
+      "offset": 69552,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-19",
+      "offset": 69984,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-20",
+      "offset": 70416,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-21",
+      "offset": 70848,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-22",
+      "offset": 71280,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-23",
+      "offset": 71712,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-24",
+      "offset": 72144,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-25",
+      "offset": 72576,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-26",
+      "offset": 73008,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-27",
+      "offset": 73440,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-28",
+      "offset": 73872,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-29",
+      "offset": 74304,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-30",
+      "offset": 74736,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-31",
+      "offset": 75168,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-32",
+      "offset": 75600,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-33",
+      "offset": 76032,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-34",
+      "offset": 76464,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-35",
+      "offset": 76896,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-36",
+      "offset": 77328,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-37",
+      "offset": 77760,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-38",
+      "offset": 78192,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-39",
+      "offset": 78624,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-40",
+      "offset": 79056,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-41",
+      "offset": 79488,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-42",
+      "offset": 79920,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-43",
+      "offset": 80352,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-44",
+      "offset": 80784,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-45",
+      "offset": 81216,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-46",
+      "offset": 81648,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-47",
+      "offset": 82080,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-48",
+      "offset": 82512,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-49",
+      "offset": 82944,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-50",
+      "offset": 83376,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-51",
+      "offset": 83808,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-52",
+      "offset": 84240,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-53",
+      "offset": 84672,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-54",
+      "offset": 85104,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-55",
+      "offset": 85536,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-56",
+      "offset": 85968,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-57",
+      "offset": 86400,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-58",
+      "offset": 86832,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-1.0-trial-59",
+      "offset": 87264,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-0",
+      "offset": 87696,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-1",
+      "offset": 88128,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-2",
+      "offset": 88560,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-3",
+      "offset": 88992,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-4",
+      "offset": 89424,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-5",
+      "offset": 89856,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-6",
+      "offset": 90288,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-7",
+      "offset": 90720,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-8",
+      "offset": 91152,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-9",
+      "offset": 91584,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-10",
+      "offset": 92016,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-11",
+      "offset": 92448,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-12",
+      "offset": 92880,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-13",
+      "offset": 93312,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-14",
+      "offset": 93744,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-15",
+      "offset": 94176,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-16",
+      "offset": 94608,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-17",
+      "offset": 95040,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-18",
+      "offset": 95472,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-19",
+      "offset": 95904,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-20",
+      "offset": 96336,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-21",
+      "offset": 96768,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-22",
+      "offset": 97200,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-23",
+      "offset": 97632,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-24",
+      "offset": 98064,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-25",
+      "offset": 98496,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-26",
+      "offset": 98928,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-27",
+      "offset": 99360,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-28",
+      "offset": 99792,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-29",
+      "offset": 100224,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-30",
+      "offset": 100656,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-31",
+      "offset": 101088,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-32",
+      "offset": 101520,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-33",
+      "offset": 101952,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-34",
+      "offset": 102384,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-35",
+      "offset": 102816,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-36",
+      "offset": 103248,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-37",
+      "offset": 103680,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-38",
+      "offset": 104112,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-39",
+      "offset": 104544,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-40",
+      "offset": 104976,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-41",
+      "offset": 105408,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-42",
+      "offset": 105840,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-43",
+      "offset": 106272,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-44",
+      "offset": 106704,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-45",
+      "offset": 107136,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-46",
+      "offset": 107568,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-47",
+      "offset": 108000,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-48",
+      "offset": 108432,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-49",
+      "offset": 108864,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-50",
+      "offset": 109296,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-51",
+      "offset": 109728,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-52",
+      "offset": 110160,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-53",
+      "offset": 110592,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-54",
+      "offset": 111024,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-55",
+      "offset": 111456,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-56",
+      "offset": 111888,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-57",
+      "offset": 112320,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-58",
+      "offset": 112752,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-1.0-trial-59",
+      "offset": 113184,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-0",
+      "offset": 113616,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-1",
+      "offset": 114048,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-2",
+      "offset": 114480,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-3",
+      "offset": 114912,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-4",
+      "offset": 115344,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-5",
+      "offset": 115776,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-6",
+      "offset": 116208,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-7",
+      "offset": 116640,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-8",
+      "offset": 117072,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-9",
+      "offset": 117504,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-10",
+      "offset": 117936,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-11",
+      "offset": 118368,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-12",
+      "offset": 118800,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-13",
+      "offset": 119232,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-14",
+      "offset": 119664,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-15",
+      "offset": 120096,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-16",
+      "offset": 120528,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-17",
+      "offset": 120960,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-18",
+      "offset": 121392,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-19",
+      "offset": 121824,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-20",
+      "offset": 122256,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-21",
+      "offset": 122688,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-22",
+      "offset": 123120,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-23",
+      "offset": 123552,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-24",
+      "offset": 123984,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-25",
+      "offset": 124416,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-26",
+      "offset": 124848,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-27",
+      "offset": 125280,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-28",
+      "offset": 125712,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-29",
+      "offset": 126144,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-30",
+      "offset": 126576,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-31",
+      "offset": 127008,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-32",
+      "offset": 127440,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-33",
+      "offset": 127872,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-34",
+      "offset": 128304,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-35",
+      "offset": 128736,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-36",
+      "offset": 129168,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-37",
+      "offset": 129600,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-38",
+      "offset": 130032,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-39",
+      "offset": 130464,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-40",
+      "offset": 130896,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-41",
+      "offset": 131328,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-42",
+      "offset": 131760,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-43",
+      "offset": 132192,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-44",
+      "offset": 132624,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-45",
+      "offset": 133056,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-46",
+      "offset": 133488,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-47",
+      "offset": 133920,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-48",
+      "offset": 134352,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-49",
+      "offset": 134784,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-50",
+      "offset": 135216,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-51",
+      "offset": 135648,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-52",
+      "offset": 136080,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-53",
+      "offset": 136512,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-54",
+      "offset": 136944,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-55",
+      "offset": 137376,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-56",
+      "offset": 137808,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-57",
+      "offset": 138240,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-58",
+      "offset": 138672,
+      "bytes": 432
+    },
+    {
+      "name": "script-scale-10000.0-trial-59",
+      "offset": 139104,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-0",
+      "offset": 139536,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-1",
+      "offset": 139968,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-2",
+      "offset": 140400,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-3",
+      "offset": 140832,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-4",
+      "offset": 141264,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-5",
+      "offset": 141696,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-6",
+      "offset": 142128,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-7",
+      "offset": 142560,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-8",
+      "offset": 142992,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-9",
+      "offset": 143424,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-10",
+      "offset": 143856,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-11",
+      "offset": 144288,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-12",
+      "offset": 144720,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-13",
+      "offset": 145152,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-14",
+      "offset": 145584,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-15",
+      "offset": 146016,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-16",
+      "offset": 146448,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-17",
+      "offset": 146880,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-18",
+      "offset": 147312,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-19",
+      "offset": 147744,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-20",
+      "offset": 148176,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-21",
+      "offset": 148608,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-22",
+      "offset": 149040,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-23",
+      "offset": 149472,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-24",
+      "offset": 149904,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-25",
+      "offset": 150336,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-26",
+      "offset": 150768,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-27",
+      "offset": 151200,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-28",
+      "offset": 151632,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-29",
+      "offset": 152064,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-30",
+      "offset": 152496,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-31",
+      "offset": 152928,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-32",
+      "offset": 153360,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-33",
+      "offset": 153792,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-34",
+      "offset": 154224,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-35",
+      "offset": 154656,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-36",
+      "offset": 155088,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-37",
+      "offset": 155520,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-38",
+      "offset": 155952,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-39",
+      "offset": 156384,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-40",
+      "offset": 156816,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-41",
+      "offset": 157248,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-42",
+      "offset": 157680,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-43",
+      "offset": 158112,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-44",
+      "offset": 158544,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-45",
+      "offset": 158976,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-46",
+      "offset": 159408,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-47",
+      "offset": 159840,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-48",
+      "offset": 160272,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-49",
+      "offset": 160704,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-50",
+      "offset": 161136,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-51",
+      "offset": 161568,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-52",
+      "offset": 162000,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-53",
+      "offset": 162432,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-54",
+      "offset": 162864,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-55",
+      "offset": 163296,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-56",
+      "offset": 163728,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-57",
+      "offset": 164160,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-58",
+      "offset": 164592,
+      "bytes": 432
+    },
+    {
+      "name": "quadratic-scale-10000.0-trial-59",
+      "offset": 165024,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-0",
+      "offset": 165456,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-1",
+      "offset": 165888,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-2",
+      "offset": 166320,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-3",
+      "offset": 166752,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-4",
+      "offset": 167184,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-5",
+      "offset": 167616,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-6",
+      "offset": 168048,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-7",
+      "offset": 168480,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-8",
+      "offset": 168912,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-9",
+      "offset": 169344,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-10",
+      "offset": 169776,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-11",
+      "offset": 170208,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-12",
+      "offset": 170640,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-13",
+      "offset": 171072,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-14",
+      "offset": 171504,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-15",
+      "offset": 171936,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-16",
+      "offset": 172368,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-17",
+      "offset": 172800,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-18",
+      "offset": 173232,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-19",
+      "offset": 173664,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-20",
+      "offset": 174096,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-21",
+      "offset": 174528,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-22",
+      "offset": 174960,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-23",
+      "offset": 175392,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-24",
+      "offset": 175824,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-25",
+      "offset": 176256,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-26",
+      "offset": 176688,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-27",
+      "offset": 177120,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-28",
+      "offset": 177552,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-29",
+      "offset": 177984,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-30",
+      "offset": 178416,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-31",
+      "offset": 178848,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-32",
+      "offset": 179280,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-33",
+      "offset": 179712,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-34",
+      "offset": 180144,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-35",
+      "offset": 180576,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-36",
+      "offset": 181008,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-37",
+      "offset": 181440,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-38",
+      "offset": 181872,
+      "bytes": 432
+    },
+    {
+      "name": "mutable-script-39",
+      "offset": 182304,
+      "bytes": 432
+    }
+  ],
+  "native_sha256": "ec26fe22fc4472db42549a712e490665594c7f2f5c3dc50ad374557e0afc963c",
+  "native_returncode": 0,
+  "exact_bytes": true
+}
