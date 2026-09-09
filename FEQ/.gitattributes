@@ -2,6 +2,10 @@
 originals/** -text -whitespace
 tests/reference/** -text -whitespace
 recovery/diffs/** -text -whitespace
+# Retain historical C++ promotion spacing for source-hash provenance.
+engines/feq/** -whitespace
+engines/fequtl/** -whitespace
+engines/runtime/** -whitespace
 *.zip binary
 *.exe binary
 *.EXE binary

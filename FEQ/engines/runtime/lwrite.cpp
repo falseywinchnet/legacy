@@ -1,0 +1,322 @@
+#include "feq_io.hpp"
+#include "f2c.h"
+#include "fio.h"
+#include "fmt.h"
+#include "lio.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int feq_decimal_list_real(char*, int, real);
+
+ftnint L_len;
+int f__Aquote;
+
+ static VOID
+donewrec(Void)
+{
+	if (f__recpos)
+		(*f__donewrec)();
+	}
+
+ static VOID
+#ifdef KR_headers
+lwrt_I(n) longint n;
+#else
+lwrt_I(longint n)
+#endif
+{
+	char *p;
+	int ndigit, sign;
+
+	p = f__icvt(n, &ndigit, &sign, 10);
+	if(f__recpos + ndigit >= L_len)
+		donewrec();
+	PUT(' ');
+	if (sign)
+		PUT('-');
+	while(*p)
+		PUT(*p++);
+}
+ static VOID
+#ifdef KR_headers
+lwrt_L(n, len) ftnint n; ftnlen len;
+#else
+lwrt_L(ftnint n, ftnlen len)
+#endif
+{
+	if(f__recpos+LLOGW>=L_len)
+		donewrec();
+	wrt_L(reinterpret_cast<char*>(&n),LLOGW, len);
+}
+ static VOID
+#ifdef KR_headers
+lwrt_A(p,len) char *p; ftnlen len;
+#else
+lwrt_A(char *p, ftnlen len)
+#endif
+{
+	int a;
+	char *p1, *pe;
+
+	a = 0;
+	pe = p + len;
+	if (f__Aquote) {
+		a = 3;
+		if (len > 1 && p[len-1] == ' ') {
+			while(--len > 1 && p[len-1] == ' ');
+			pe = p + len;
+			}
+		p1 = p;
+		while(p1 < pe)
+			if (*p1++ == '\'')
+				a++;
+		}
+	if(f__recpos+len+a >= L_len)
+		donewrec();
+	if (a
+#ifndef OMIT_BLANK_CC
+		|| !f__recpos
+#endif
+		)
+		PUT(' ');
+	if (a) {
+		PUT('\'');
+		while(p < pe) {
+			if (*p == '\'')
+				PUT('\'');
+			PUT(*p++);
+			}
+		PUT('\'');
+		}
+	else
+		while(p < pe)
+			PUT(*p++);
+}
+
+ static int
+#ifdef KR_headers
+l_g(buf, n) char *buf; double n;
+#else
+l_g(char *buf, double n)
+#endif
+{
+#ifdef Old_list_output
+	doublereal absn;
+	char *fmt;
+
+	absn = n;
+	if (absn < 0)
+		absn = -absn;
+	fmt = LLOW <= absn && absn < LHIGH ? LFFMT : LEFMT;
+#ifdef USE_STRLEN
+	sprintf(buf, fmt, n);
+	return strlen(buf);
+#else
+	return sprintf(buf, fmt, n);
+#endif
+
+#else
+	char *b, c, c1;
+
+	b = buf;
+	*b++ = ' ';
+	if (n < 0) {
+		*b++ = '-';
+		n = -n;
+		}
+	else
+		*b++ = ' ';
+	if (n == 0) {
+#ifdef SIGNED_ZEROS
+		if (signbit_f2c(&n))
+			*b++ = '-';
+#endif
+		*b++ = '0';
+		*b++ = '.';
+		*b = 0;
+		goto f__ret;
+		}
+	sprintf(b, LGFMT, n);
+	switch(*b) {
+#ifndef WANT_LEAD_0
+		case '0':
+			while(b[0] = b[1])
+				b++;
+			break;
+#endif
+		case 'i':
+		case 'I':
+			/* Infinity */
+		case 'n':
+		case 'N':
+			/* NaN */
+			while(*++b);
+			break;
+
+		default:
+	/* Fortran 77 insists on having a decimal point... */
+		    for(;; b++)
+			switch(*b) {
+			case 0:
+				*b++ = '.';
+				*b = 0;
+				goto f__ret;
+			case '.':
+				while(*++b);
+				goto f__ret;
+			case 'E':
+				for(c1 = '.', c = 'E';  *b = c1;
+					c1 = c, c = *++b);
+				goto f__ret;
+			}
+		}
+ f__ret:
+	return b - buf;
+#endif
+	}
+
+ static VOID
+#ifdef KR_headers
+l_put(s) char *s;
+#else
+l_put(char *s)
+#endif
+{
+#ifdef KR_headers
+	void (*pn)() = f__putn;
+#else
+	void (*pn)(int) = f__putn;
+#endif
+	int c;
+
+	while(c = *s++)
+		(*pn)(c);
+	}
+
+ static VOID
+lwrt_R(real n)
+{
+	char buf[LEFBL];
+	int length = feq_decimal_list_real(buf, sizeof(buf), n);
+	if (length < 0) f__fatal(117, "REAL*4 list conversion");
+	if (f__recpos + length >= L_len) donewrec();
+	l_put(buf);
+}
+
+ static VOID
+#ifdef KR_headers
+lwrt_F(n) double n;
+#else
+lwrt_F(double n)
+#endif
+{
+	char buf[LEFBL];
+
+	if(f__recpos + l_g(buf,n) >= L_len)
+		donewrec();
+	l_put(buf);
+}
+ static VOID
+#ifdef KR_headers
+lwrt_C(a,b) double a,b;
+#else
+lwrt_C(double a, double b)
+#endif
+{
+	char *ba, *bb, bufa[LEFBL], bufb[LEFBL];
+	int al, bl;
+
+	al = l_g(bufa, a);
+	for(ba = bufa; *ba == ' '; ba++)
+		--al;
+	bl = l_g(bufb, b) + 1;	/* intentionally high by 1 */
+	for(bb = bufb; *bb == ' '; bb++)
+		--bl;
+	if(f__recpos + al + bl + 3 >= L_len)
+		donewrec();
+#ifdef OMIT_BLANK_CC
+	else
+#endif
+	PUT(' ');
+	PUT('(');
+	l_put(ba);
+	PUT(',');
+	if (f__recpos + bl >= L_len) {
+		(*f__donewrec)();
+#ifndef OMIT_BLANK_CC
+		PUT(' ');
+#endif
+		}
+	l_put(bb);
+	PUT(')');
+}
+
+ int
+#ifdef KR_headers
+l_write(number,ptr,len,type) ftnint *number,type; char *ptr; ftnlen len;
+#else
+l_write(ftnint *number, char *ptr, ftnlen len, ftnint type)
+#endif
+{
+	int i;
+	longint x;
+	double y,z;
+	for(i=0;i< *number; i++)
+	{
+		switch((int)type)
+		{
+		default: f__fatal(117,"unknown type in lio");
+		case TYINT1:
+			x = feq_io_load<char>(ptr);
+			goto xint;
+		case TYSHORT:
+			x=feq_io_load<short>(ptr);
+			goto xint;
+#ifdef Allow_TYQUAD
+		case TYQUAD:
+			x = feq_io_load<longint>(ptr);
+			goto xint;
+#endif
+		case TYLONG:
+			x=feq_io_load<ftnint>(ptr);
+		xint:	lwrt_I(x);
+			break;
+		case TYREAL:
+			lwrt_R(feq_io_load<real>(ptr));
+			break;
+		case TYDREAL:
+			y=feq_io_load<doublereal>(ptr);
+			lwrt_F(y);
+			break;
+		case TYCOMPLEX:
+			y = feq_io_load<real>(ptr);
+			z = feq_io_load<real>(ptr+sizeof(real));
+			goto xcomplex;
+		case TYDCOMPLEX:
+			y = feq_io_load<doublereal>(ptr);
+			z = feq_io_load<doublereal>(ptr+sizeof(doublereal));
+		xcomplex:
+			lwrt_C(y,z);
+			break;
+		case TYLOGICAL1:
+			x = feq_io_load<char>(ptr);
+			goto xlog;
+		case TYLOGICAL2:
+			x = feq_io_load<short>(ptr);
+			goto xlog;
+		case TYLOGICAL:
+			x = feq_io_load<ftnint>(ptr);
+		xlog:	lwrt_L(static_cast<ftnint>(x), sizeof(ftnint));
+			break;
+		case TYCHAR:
+			lwrt_A(ptr,len);
+			break;
+		}
+		ptr += len;
+	}
+	return(0);
+}
+#ifdef __cplusplus
+}
+#endif

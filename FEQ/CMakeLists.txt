@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
-project(FEQNumerics VERSION 0.0.1 LANGUAGES CXX)
+project(FEQ VERSION 0.1.0 LANGUAGES CXX)
 
 option(FEQ_SANITIZERS "Check authored C++ for invalid memory and undefined behavior" OFF)
+option(FEQ_BUILD_ENGINES "Build the complete native FEQ and FEQUTL programs" ON)
 
 add_library(feq_numerics STATIC src/section_energy.cpp src/conduit_boundary.cpp src/weir_flow.cpp src/arch_perimeter.cpp src/trigonometry.cpp src/elevation_arguments.cpp src/section_properties.cpp src/section_flux.cpp src/power.cpp src/section_geometry.cpp src/decimal.cpp src/md5.cpp src/profile_matrix.cpp src/section_interpolation.cpp src/table_interpolation.cpp)
 target_include_directories(feq_numerics PUBLIC include)
@@ -34,6 +35,9 @@ endfunction()
 feq_checks(feq_numerics)
 
 include(CTest)
+if(FEQ_BUILD_ENGINES)
+    include(cmake/engines.cmake)
+endif()
 if(BUILD_TESTING)
     add_library(feq_public_headers OBJECT tests/public_headers.cpp)
     target_link_libraries(feq_public_headers PRIVATE feq_numerics)

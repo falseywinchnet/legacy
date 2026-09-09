@@ -1,4 +1,4 @@
-name: FEQ numerical core
+name: FEQ native programs
 on:
   push:
     paths: ['FEQ/**', '.github/workflows/feq-build.yml']
@@ -21,8 +21,21 @@ jobs:
         run: cmake -S FEQ -B FEQ/build/core -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build FEQ/build/core --config Release --parallel 2
-      - name: Compare original executable fixtures
+      - name: Compare complete models and original executable fixtures
         run: ctest --test-dir FEQ/build/core -C Release --output-on-failure
+      - name: Install native programs
+        run: cmake --install FEQ/build/core --config Release --prefix FEQ/build/package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FEQ-native-${{ runner.os }}
+          path: FEQ/build/package
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: FEQ-verification-${{ runner.os }}
+          path: |
+            FEQ/build/core/Testing/Temporary/LastTest.log
+            FEQ/build/core/example-verification
   sanitizers:
     runs-on: ubuntu-latest
     steps:
@@ -30,3 +43,10 @@ jobs:
       - run: cmake -S FEQ -B FEQ/build/core -DCMAKE_BUILD_TYPE=Debug -DFEQ_SANITIZERS=ON
       - run: cmake --build FEQ/build/core --parallel 2
       - run: ctest --test-dir FEQ/build/core --output-on-failure
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: FEQ-sanitizer-verification
+          path: |
+            FEQ/build/core/Testing/Temporary/LastTest.log
+            FEQ/build/core/example-verification

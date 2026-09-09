@@ -1,0 +1,321 @@
+{
+  "status": "Research integration; passing component fixtures does not establish whole-engine acceptance.",
+  "changes": [
+    {
+      "file": "brnmat.cpp",
+      "function": "xxlkt20_",
+      "component": "src/section_interpolation.cpp",
+      "verification": "Original-executable fixture replay; see tests/reference/section_interpolation and section_first_moment."
+    },
+    {
+      "file": "brnmat.cpp",
+      "function": "setinx_",
+      "rounding": "double reciprocal followed by binary32 distance/time ratio",
+      "original_addresses": [
+        "0x40c5fd",
+        "0x40c680"
+      ],
+      "evidence": "recovery/probes/branch-distance-trace.json"
+    },
+    {
+      "file": "brnmat.cpp",
+      "function": "setinx_",
+      "rounding": "Restore original register precision and explicit binary32 stores.",
+      "evidence": "recovery/NUMERICAL_PROBES.md"
+    },
+    {
+      "file": "exnmat.cpp",
+      "function": "bdftab_",
+      "rounding": "Retained control and correction registers; observed critical-speed REAL stores.",
+      "evidence": "recovery/assembly/feq/_bdftab_.asm"
+    },
+    {
+      "file": "exnmat.cpp",
+      "function": "contrl_",
+      "rounding": "Restore original register precision and explicit binary32 stores.",
+      "evidence": "recovery/NUMERICAL_PROBES.md"
+    },
+    {
+      "file": "exnmat.cpp",
+      "function": "setext_",
+      "rounding": "Retained control and correction registers; observed critical-speed REAL stores.",
+      "evidence": "recovery/assembly/feq/_setext_.asm"
+    },
+    {
+      "file": "fqshrftb.cpp",
+      "function": "interp_",
+      "rounding": "Restore original register precision and explicit binary32 stores.",
+      "evidence": "recovery/NUMERICAL_PROBES.md"
+    },
+    {
+      "file": "fqshrftb.cpp",
+      "function": "lktab_",
+      "component": "src/table_interpolation.cpp",
+      "verification": "360 original-executable fixtures; all value and derivative bits exact."
+    },
+    {
+      "file": "fqshrftb.cpp",
+      "function": "xlkt20_",
+      "component": "src/section_interpolation.cpp",
+      "verification": "Original-executable fixture replay; see tests/reference/section_interpolation and section_first_moment."
+    },
+    {
+      "file": "fqshrftb.cpp",
+      "function": "xlkt21_",
+      "component": "src/section_interpolation.cpp",
+      "verification": "Original-executable fixture replay; see tests/reference/section_interpolation and section_first_moment."
+    },
+    {
+      "file": "fqshrftb.cpp",
+      "function": "xlkt22_",
+      "component": "src/section_energy.cpp",
+      "verification": "tests/reference/section_energy/manifest.json and feq-manifest.json"
+    },
+    {
+      "file": "fqshrftb.cpp",
+      "function": "lktqc_",
+      "component": "src/section_energy.cpp",
+      "verification": "tests/reference/critical_flow/manifest.json and feq-manifest.json"
+    },
+    {
+      "file": "ntmatrix.cpp",
+      "function": "bdyflw_",
+      "rounding": "Restore original register precision and explicit binary32 stores.",
+      "evidence": "recovery/NUMERICAL_PROBES.md"
+    },
+    {
+      "file": "ntmatrix.cpp",
+      "function": "cmpcor_",
+      "rounding": "Retained control and correction registers; observed critical-speed REAL stores.",
+      "evidence": "recovery/assembly/feq/_cmpcor_.asm"
+    },
+    {
+      "file": "runinit.cpp",
+      "function": "sfpsbm_",
+      "rounding": "Retained scalar and power temporaries; separate REAL stores for output arguments.",
+      "evidence": "recovery/assembly/feq/_sfpsbm_.asm"
+    }
+  ],
+  "source_files": [
+    {
+      "name": "binsearch.cpp",
+      "sha256": "5a6791d99b882ea1ca06b46ab058fe08d7c1e8800ec3aa2277ca7359efd5d47b"
+    },
+    {
+      "name": "block.cpp",
+      "sha256": "b21919efe2b90b5a6decdc93385dbc9d5a5f66e4f4546766803144a46bf7a500"
+    },
+    {
+      "name": "brnmat.cpp",
+      "sha256": "dffc1744123a7f66c61730f9d3b752773efadc3f152bba4ac949ff445e0c1e78"
+    },
+    {
+      "name": "chkinput.cpp",
+      "sha256": "40c87e7f78c11c14b89faa60e62bb6e296ddfe562c54963f0199e3aa32345d8e"
+    },
+    {
+      "name": "common.cpp",
+      "sha256": "73b57174abd1b095670c8d5c36fb4250193056984cbb1f99a5b12b81787b2b5a"
+    },
+    {
+      "name": "debug.cpp",
+      "sha256": "00ed52eaac2e259b07bcd851ee15757b78efbbfbeb31d5d56089e9ef3147d99f"
+    },
+    {
+      "name": "dmpmc.cpp",
+      "sha256": "3faeebb9da3402ed3a9289efed0d778f38cc258b29de839f798366b42af26637"
+    },
+    {
+      "name": "doeqz.cpp",
+      "sha256": "4581a78ec884732172be2ff9c6084915bb5c0efe8aa84397d2de3da0647625a5"
+    },
+    {
+      "name": "dtendlay.cpp",
+      "sha256": "baa943b5c4609a3529b0f7074f89f7e1d6801702f9bb92dc76d81a55bb2ebe39"
+    },
+    {
+      "name": "dual_source.cpp",
+      "sha256": "525f19ed96348727e30e53b639fcc78e869dcfa7c3801cf7358ca250a323f510"
+    },
+    {
+      "name": "dynamic_storage.cpp",
+      "sha256": "e61e1cb32e2438a4b28d0739487f2142f5c3529b35b8d76b3bc40cca28fc3273"
+    },
+    {
+      "name": "exnmat.cpp",
+      "sha256": "07fd25ce9c0616a675a1b5eb0187ed51a7101e127a5e17303bebb6a6a402a004"
+    },
+    {
+      "name": "feq.cpp",
+      "sha256": "70ebcc244aaede2a4251fa91eeff55ebdfef5221a62422dd0c1561aa94974ae0"
+    },
+    {
+      "name": "fqshrarg.cpp",
+      "sha256": "7ac0ea82b3b197095b5551f1ef8085e257d2bdd6866bb0d57a64eb8999c3645e"
+    },
+    {
+      "name": "fqshrftb.cpp",
+      "sha256": "f37c9dbfda49fb577ade3cea89b187ed46df13a7baedcedea37079e8864aa313"
+    },
+    {
+      "name": "fqshrinl.cpp",
+      "sha256": "74d1d00ad7fa85a3c48c42f4910acec19a876e1bdf50756fb3cf231be6e0053b"
+    },
+    {
+      "name": "fqshrlin.cpp",
+      "sha256": "ada5fd3081302d280fde00f2a6dc5992967b773427ffababc05ebfad266c0ef7"
+    },
+    {
+      "name": "fqshrplg.cpp",
+      "sha256": "bf67f19bf68e42c4d1c23490295ae6d512d1ca6c55fda04f02dc4994daea5b1f"
+    },
+    {
+      "name": "fqshrstr.cpp",
+      "sha256": "f566adb62da438cf4f9c30126595a0dc893462da22aa8f6211f1a3a51f709c71"
+    },
+    {
+      "name": "fqshrtdl.cpp",
+      "sha256": "421f208c79ad925184a0c2ba2f24e22a38072b173c4a8a1c6ac47aac373caf01"
+    },
+    {
+      "name": "fqshrtim.cpp",
+      "sha256": "b855c7cd9c1a481249a7350a4fcee20376de87d28886a15871eed037035bfd41"
+    },
+    {
+      "name": "fqshrunt.cpp",
+      "sha256": "2886b0baba483164aa75c50c30f29322afa68552cd78394cd76c50ee077fe84e"
+    },
+    {
+      "name": "ftlookup.cpp",
+      "sha256": "b48c672598fdfb19ff230fbc889976f139c313d34a752cf47e9dc06e5e153458"
+    },
+    {
+      "name": "genscn.cpp",
+      "sha256": "2146ec44d1f046e0fae6c4732b50d549b7995e9f5ccc5668a2ca26373fd73fc4"
+    },
+    {
+      "name": "getcode.cpp",
+      "sha256": "b2edf705a1cc62736ddd8c83b7570f1c0501d05334c747d26706df4a843dda8e"
+    },
+    {
+      "name": "getsvn_msw_lf95.cpp",
+      "sha256": "8c9461a1d8760b8307480f95120b132144e407e21959ada658c2bdc774e52b88"
+    },
+    {
+      "name": "hecdmy.cpp",
+      "sha256": "01ec56e197652e236f5d37a9825428145cdfb287e7db0de25b9cc68cc7cd101e"
+    },
+    {
+      "name": "hi_iq_ns.cpp",
+      "sha256": "b92941eaeea6a023665b215b815e19f6e6529fbc3bc982a866da023766211325"
+    },
+    {
+      "name": "home_name.cpp",
+      "sha256": "6b2002f92149229fefe64a17e194f3f351be3bcf0a577ca663672cd3f667624f"
+    },
+    {
+      "name": "input.cpp",
+      "sha256": "32bc84501577f250e4b241d17e39fd0a70140a85e75592088a847564d4f564af"
+    },
+    {
+      "name": "inputuf.cpp",
+      "sha256": "0ebd2af4e3fab88047fb17c86426209a0ad553c5a4a8d354747f6cca8016e72e"
+    },
+    {
+      "name": "iounits.cpp",
+      "sha256": "832c17db5e85fdd3bec83f2b290b5acbf6e25e49608ec23207f9c734cb1de7c5"
+    },
+    {
+      "name": "lf95_ms_s_npf.cpp",
+      "sha256": "7150561583e3cc8aff59f769aacb7000b4cc7b9b215a2c2ea1e571f3bfdb47c3"
+    },
+    {
+      "name": "linsys.cpp",
+      "sha256": "ec50035e6a6b44eb23a8b7aad7e97539d67dd3507a69cd6a23fb543c951a7457"
+    },
+    {
+      "name": "linuxcr.cpp",
+      "sha256": "bc0eb625c47638902508cac4a75e6e73594c4a450fd7bd1aac7b3d8c5c5aaf0e"
+    },
+    {
+      "name": "locsubs.cpp",
+      "sha256": "01a91da53ea73658770c5b640660faaee3646ec997a290ab58cbe2efa7be1b8a"
+    },
+    {
+      "name": "macro.cpp",
+      "sha256": "83eb74ddc0c3f2327a9071015e72b17e2ab0b9415e10e5fab3bdcb8a3779b120"
+    },
+    {
+      "name": "makpat.cpp",
+      "sha256": "4150154107cda42bb7381a1be3c58d85c032e700f45eb6a648741f115c540643"
+    },
+    {
+      "name": "miscfeq.cpp",
+      "sha256": "1045062b00a96be76a89531d58eeb13e12e4998b94e4b95cc750b7c1b285a177"
+    },
+    {
+      "name": "mkdir_fun.cpp",
+      "sha256": "5decc0b22b28a40b6f2bb23f2a0be5c2a5f1f2e42960d30b7706eb03722f7042"
+    },
+    {
+      "name": "newlookup.cpp",
+      "sha256": "24765bf7f97a395d93e6bb228f0aac58e56d40d1e9555d96821b7951acaf954e"
+    },
+    {
+      "name": "ntmatrix.cpp",
+      "sha256": "b1d6a446d0a442f9b4f5503d3fa59947da524b41480e3154fcf080cb5b050d8c"
+    },
+    {
+      "name": "ntwmxstr.cpp",
+      "sha256": "7b0e2c3a92e620cff74ad88c07016d75516741a8862bd8ab8e266b10abce3e63"
+    },
+    {
+      "name": "nxttok.cpp",
+      "sha256": "71427cd25f2d5619e263b86ec6545ed04f7cc9b744c6b53519682be428e92462"
+    },
+    {
+      "name": "output.cpp",
+      "sha256": "f1e98f9470e99cce23a957defe9f58b2a24570a0a8ca9cdaff3c0f5e82e3b67a"
+    },
+    {
+      "name": "putpat.cpp",
+      "sha256": "4b4afa04a4c65755ca61d6f0ac96b07672a9b088c2b0acb853bbfdc6173c144a"
+    },
+    {
+      "name": "pwd_msw_lf95.cpp",
+      "sha256": "60cccc3d508defe9995d4ac9df1fbb74d9ddce2adc4dad76c57168ebe53dbe68"
+    },
+    {
+      "name": "runinit.cpp",
+      "sha256": "92b77b2c69f82168b0999c65aa95e4c6b116f4f09dfd6477ba983567d36fa8a4"
+    },
+    {
+      "name": "schematic.cpp",
+      "sha256": "4b4d9044d482c531d39cd43f03b3a35d4e2457e46206a4799fe79be66e531b03"
+    },
+    {
+      "name": "select.cpp",
+      "sha256": "a63290a38da1436617744e890500974b1530c28f832714283019969b8f1282da"
+    },
+    {
+      "name": "sideweir.cpp",
+      "sha256": "119d1d27ea3719269469ef4e1a432ea0aea6d1783f056197065579e05b69c7a7"
+    },
+    {
+      "name": "svn_report.cpp",
+      "sha256": "3cc2211f1fa7a2d08bebc499f0ad1df71d89c023fa7745624ef89d4cda29884e"
+    },
+    {
+      "name": "tableid.cpp",
+      "sha256": "d75520d3e86a27f4b1d9bf8cf8cb7863e01c7c7ea3e3b7a224fa1e5233dad020"
+    },
+    {
+      "name": "tdtchk_free.cpp",
+      "sha256": "79d765220bd404ec270699e5d6b387b94f48f995f7d0d716bb1d600d5bd5d65d"
+    },
+    {
+      "name": "timeman.cpp",
+      "sha256": "64f57d96e831605527e3c328bc76dbd6f6cc35aa16512016d6f5be88dba8b415"
+    }
+  ]
+}

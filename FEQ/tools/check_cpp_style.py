@@ -6,7 +6,7 @@ import re
 root = Path(__file__).resolve().parents[1]
 ignore = re.compile(r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'',re.S)
 errors = []
-for directory in ('src','include','tests','tools'):
+for directory in ('src','include','tests','tools','engines'):
     for path in (root/directory).rglob('*'):
         if path.suffix not in ('.cpp','.hpp'):
             continue
@@ -18,4 +18,4 @@ for directory in ('src','include','tests','tools'):
 if errors:
     print('\n'.join(errors))
     raise SystemExit(1)
-print('Authored C++ uses explicit types and indexed loops.')
+print('C++ uses explicit types and indexed loops.')

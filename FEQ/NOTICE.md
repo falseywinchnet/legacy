@@ -19,6 +19,11 @@ historical code. Any translated reference code retains its historical notices;
 the project does not assert that the recovered distribution has an MIT license.
 
 Wine, native Fortran compiler builds, and source-to-source translation probes are
-development tools used to investigate behavior. They are not the intended native
-application runtime. Research build products are kept outside the preserved
-source tree and are not application releases.
+development tools used to investigate behavior. The native application builds
+from the checked-in C++ in `engines/`, including translated historical source
+that retains its original notices. It requires none of those development tools.
+
+The statically linked record I/O support in `engines/runtime/` derives from
+Netlib libf2c. Its AT&T, Lucent Technologies and Bellcore permission and warranty
+notice is preserved in `engines/runtime/NOTICE.txt` and installed with the
+programs. New compatibility changes do not replace that notice.

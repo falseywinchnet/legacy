@@ -1,0 +1,147 @@
+[
+  {
+    "file": "engines/feq/fqshrftb.cpp",
+    "expression": "hdin",
+    "length": "sizeof(hdin)"
+  },
+  {
+    "file": "engines/feq/fqshrftb.cpp",
+    "expression": "hdout",
+    "length": "sizeof(hdout)"
+  },
+  {
+    "file": "engines/feq/fqshrftb.cpp",
+    "expression": "hditem",
+    "length": "sizeof(hditem)"
+  },
+  {
+    "file": "engines/feq/fqshrftb.cpp",
+    "expression": "rowin",
+    "length": "sizeof(rowin)"
+  },
+  {
+    "file": "engines/feq/fqshrftb.cpp",
+    "expression": "rowout",
+    "length": "sizeof(rowout)"
+  },
+  {
+    "file": "engines/feq/fqshrftb.cpp",
+    "expression": "feq_gen_inform_d_ + (formid - 1) * 80",
+    "length": "80"
+  },
+  {
+    "file": "engines/feq/fqshrftb.cpp",
+    "expression": "prform + (formid - 1) * 80",
+    "length": "80"
+  },
+  {
+    "file": "engines/feq/fqshrstr.cpp",
+    "expression": "feq_gen_rout_format_d_",
+    "length": "sizeof(feq_gen_rout_format_d_)"
+  },
+  {
+    "file": "engines/feq/fqshrstr.cpp",
+    "expression": "feq_gen_iout_format_d_",
+    "length": "sizeof(feq_gen_iout_format_d_)"
+  },
+  {
+    "file": "engines/feq/fqshrstr.cpp",
+    "expression": "feq_gen_rout_format_d_",
+    "length": "sizeof(feq_gen_rout_format_d_)"
+  },
+  {
+    "file": "engines/feq/fqshrstr.cpp",
+    "expression": "feq_gen_iout_format_d_",
+    "length": "sizeof(feq_gen_iout_format_d_)"
+  },
+  {
+    "file": "engines/fequtl/wspro.cpp",
+    "expression": "staout",
+    "length": "sizeof(staout)"
+  },
+  {
+    "file": "engines/fequtl/fqshrftb.cpp",
+    "expression": "hdin",
+    "length": "sizeof(hdin)"
+  },
+  {
+    "file": "engines/fequtl/fqshrftb.cpp",
+    "expression": "hdout",
+    "length": "sizeof(hdout)"
+  },
+  {
+    "file": "engines/fequtl/fqshrftb.cpp",
+    "expression": "hditem",
+    "length": "sizeof(hditem)"
+  },
+  {
+    "file": "engines/fequtl/fqshrftb.cpp",
+    "expression": "rowin",
+    "length": "sizeof(rowin)"
+  },
+  {
+    "file": "engines/fequtl/fqshrftb.cpp",
+    "expression": "rowout",
+    "length": "sizeof(rowout)"
+  },
+  {
+    "file": "engines/fequtl/fqshrftb.cpp",
+    "expression": "feq_gen_inform_d_ + (formid - 1) * 80",
+    "length": "80"
+  },
+  {
+    "file": "engines/fequtl/fqshrftb.cpp",
+    "expression": "prform + (formid - 1) * 80",
+    "length": "80"
+  },
+  {
+    "file": "engines/fequtl/hec2x.cpp",
+    "expression": "staout",
+    "length": "sizeof(staout)"
+  },
+  {
+    "file": "engines/fequtl/hec2x.cpp",
+    "expression": "staout",
+    "length": "sizeof(staout)"
+  },
+  {
+    "file": "engines/fequtl/tabstore.cpp",
+    "expression": "staout",
+    "length": "sizeof(staout)"
+  },
+  {
+    "file": "engines/fequtl/tabstore.cpp",
+    "expression": "prform + (feq_gen_type_d_ - 20) * 80",
+    "length": "80"
+  },
+  {
+    "file": "engines/fequtl/inv_gate.cpp",
+    "expression": "hdin + 1",
+    "length": "n - 2"
+  },
+  {
+    "file": "engines/fequtl/inv_gate.cpp",
+    "expression": "hdin + 1",
+    "length": "n - 2"
+  },
+  {
+    "file": "engines/fequtl/fqshrstr.cpp",
+    "expression": "feq_gen_rout_format_d_",
+    "length": "sizeof(feq_gen_rout_format_d_)"
+  },
+  {
+    "file": "engines/fequtl/fqshrstr.cpp",
+    "expression": "feq_gen_iout_format_d_",
+    "length": "sizeof(feq_gen_iout_format_d_)"
+  },
+  {
+    "file": "engines/fequtl/fqshrstr.cpp",
+    "expression": "feq_gen_rout_format_d_",
+    "length": "sizeof(feq_gen_rout_format_d_)"
+  },
+  {
+    "file": "engines/fequtl/fqshrstr.cpp",
+    "expression": "feq_gen_iout_format_d_",
+    "length": "sizeof(feq_gen_iout_format_d_)"
+  }
+]

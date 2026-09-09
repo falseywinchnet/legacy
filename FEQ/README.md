@@ -4,11 +4,11 @@ This project is bringing **USGS FEQ 10.61** and **FEQUTL 5.80** to modern,
 portable C++. FEQ solves one-dimensional unsteady flow in channel networks and
 control structures. FEQUTL produces the hydraulic function tables used by FEQ.
 
-**Implementation in progress. A native C++ application is not released yet.**
-The original releases, manuals, source comparison, executable regression
-baseline, and first verified independent C++ numerical components are available
-here. The completed coastal software is a separate
-project in [`../CHAMP/`](../CHAMP/).
+**Both complete engines now build as native C++20 programs.** The desktop
+launcher and installation packages are still in development. The build requires
+no Fortran compiler, source translator, Wine installation, or runtime download.
+It includes the independently verified numerical library and the preserved
+engine implementation, with defined C++ storage and native file handling.
 
 **Work: Astra · Sponsor: Rainstar · Foundation: Hashem.** New project work is
 covered by the [MIT license](LICENSE), subject to the explicit scope and preserved
@@ -24,9 +24,13 @@ clocks. Five files match without any masking, including all four FEQ water-level
 and discharge histories. No hydraulic values, diagnostics, spacing, version
 fields, or convergence results are excluded from this comparison.
 
-This establishes the original executable baseline. It does not yet establish
-C++ equivalence. See [the recorded comparison](recovery/reference-1061-comparison.json)
-and [recovery findings](recovery/FINDINGS.md).
+That comparison first established the original executable baseline. The native
+C++ programs now pass the same complete comparison as an automated build test.
+The test also rejects sanitizer diagnostics. See [the original baseline](recovery/reference-1061-comparison.json),
+[the C++ evidence](recovery/cpp-research-status.json), and
+[recovery findings](recovery/FINDINGS.md). The scope of these checks is the
+captured numerical cases and supplied models; they are not a proof for every
+possible input deck.
 
 The independent C++ profile-matrix factorization and solution routines now match
 **every output bit in 62 direct tests of the original executable**. These include
@@ -363,22 +367,39 @@ the printed reports; those differences are now corrected. The trace hooks,
 build provenance and report checks are recorded in
 [`recovery/utility-state-trajectories.json`](recovery/utility-state-trajectories.json).
 
-## Build and check the independent C++ components
+## Build and run the native programs
 
-A C++20 compiler and CMake 3.20 or newer build the numerical library. Python 3
-runs the fixture comparison during testing. From the collection root:
+A C++20 compiler and CMake 3.20 or newer build both programs and the numerical
+library. Python 3 runs the fixture comparisons during testing. From the
+collection root:
 
 ```sh
-cmake -S FEQ -B FEQ/build/core -DCMAKE_BUILD_TYPE=Release
-cmake --build FEQ/build/core --config Release
-ctest --test-dir FEQ/build/core -C Release --output-on-failure
+cmake -S FEQ -B FEQ/build/native -DCMAKE_BUILD_TYPE=Release
+cmake --build FEQ/build/native --config Release
+ctest --test-dir FEQ/build/native -C Release --output-on-failure
+cmake --install FEQ/build/native --config Release --prefix FEQ/build/install
 ```
 
-This checks the original-executable matrix, interpolation, geometry, flux, power,
-and decimal fixtures, defined
-shared storage, and the historical input fingerprint algorithm. It does not require Wine,
-Fortran, or a source translator. The CI workflow runs these checks on Windows,
-macOS, and Linux, with a separate sanitizer build.
+The installed `bin/feq` and `bin/fequtl` programs accept the historical commands
+(`.exe` on Windows):
+
+```sh
+feq input-file report-file
+fequtl input-file report-file table-file
+```
+
+Run these commands from the working directory expected by the model's relative
+file references. Use a separate output directory for a new run. Windows path
+separators and uniquely matching ASCII filename casing are accepted on other
+operating systems. Input files and hydraulic tables retain their original
+formats; the reports retain their original CRLF bytes.
+
+The 68 automated checks include all 17 complete example outputs, original
+numerical fixtures, shared storage, input fingerprints, and unaligned scalar I/O.
+The CI workflow builds and tests the complete programs on Windows, macOS, and
+Linux, with a separate sanitizer build. To build only the numerical library,
+configure with `-DFEQ_BUILD_ENGINES=OFF`. Maintainer details and the runtime's
+preserved license are in [`engines/README.md`](engines/README.md).
 
 [`recovery/NUMERICAL_PROBES.md`](recovery/NUMERICAL_PROBES.md) explains how to
 recapture the original-machine-code fixtures and trace a full model.

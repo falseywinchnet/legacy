@@ -1,0 +1,64 @@
+{
+  "upstream": "https://www.netlib.org/f2c/libf2c.zip",
+  "header_sha256": "3a5bcb7c693224ca5dc35714350874dee733c32a20aae10b031ffce06088c555",
+  "changes": [
+    {
+      "file": "f2c.h",
+      "reason": "Use the translator integer32 ABI; integer64 remains explicitly long long on LLP64 and LP64 hosts.",
+      "before_sha256": "7d323c009951dbd40201124b9302cb21daab2d98bed3d4a56b51b48958bc76ef",
+      "after_sha256": "bfa7da7ffbe28587f448e973b0c9f05981ca2c623889f12e52c30908fea7d47d"
+    },
+    {
+      "file": "fio.h",
+      "reason": "forunit.cmn permits logical unit 1024; formatted input must consume CRLF as one newline.",
+      "before_sha256": "8f982ce5c09be2794975d1a758ff10b4e06fc110d324fe6dd8a7cb531ad373e4",
+      "after_sha256": "7809841061835701ce0d57c458211957d4b99e2b605671a1ebddf927c30bbc2a"
+    },
+    {
+      "file": "open.c",
+      "reason": "Sequential formatted output uses the original CRLF bytes on every host.",
+      "before_sha256": "0b24258c852fa675ec901e827ec25ddc0de2cbe4ab19ed3f759d28408bd5d5ed",
+      "after_sha256": "b0579892c7465b1ce2d621c5873cea822d10b7407a409fdcc3e9fb82f517e1cb"
+    },
+    {
+      "file": "open.c",
+      "reason": "Interpret the released Windows path separators through the native filesystem.",
+      "before_sha256": "b0579892c7465b1ce2d621c5873cea822d10b7407a409fdcc3e9fb82f517e1cb",
+      "after_sha256": "309ac2279e5307bde4e5f7a329896ab1c6dc1bec867336736a7ab2def0c9e3ea"
+    },
+    {
+      "file": "inquire.c",
+      "reason": "Interpret the released Windows path separators through the native filesystem.",
+      "before_sha256": "c95d8cb1609b3804025e13930941b44ab511a801ed130c307bed23860f7df88a",
+      "after_sha256": "e7151944b5c14e73607ff8ad06588965349c80a34653fc7a1335dbb6fdf6210f"
+    },
+    {
+      "file": "wref.c",
+      "reason": "Use original-verified REAL*4 decimal conversion; retain the existing field layout and REAL*8 path.",
+      "before_sha256": "b50d19306bc6c46600547ac6d15e41d261a7cc4ba289c24545af5f490c45b52a",
+      "after_sha256": "b7ef4fe7b8224def72cfce9291ce5fc242f3715db122985f0743faeed994490c"
+    },
+    {
+      "file": "lwrite.c",
+      "reason": "Use original-verified scalar REAL*4 list fields, including trailing zeros and one-blank separators; retain other type writers.",
+      "before_sha256": "373788b2ffd6f8b006a91070215e8cbec435b8cdb99a99638dc42230ac1148c0",
+      "after_sha256": "6450db90b8f651dacef133b4b0f4699aa33c2c3d03c5850c22a2b99f6fae11ed"
+    },
+    {
+      "file": "makefile.u",
+      "reason": "Link the explicit CRLF reader into the isolated research runtime.",
+      "before_sha256": "49e21183a0855e219410e90bc25b1f6807a83a6712e8327094c80b814280de0f",
+      "after_sha256": "347d357efa29497b3d9789fba3bffbcf9b11f9c8a0beeaae902d7546d91512c5"
+    }
+  ],
+  "command": [
+    "make",
+    "-f",
+    "makefile.u",
+    "-j4",
+    "CFLAGS=-O1 -fno-fast-math -ffp-contract=off -DWANT_LEAD_0 -DUIOLEN_int"
+  ],
+  "returncode": 0,
+  "numeric_format_policy": "Leading zero enabled; REAL*4 uses independently verified original decimal conversion and scalar list fields; REAL*8 retains Netlib conversion. No output rewriting.",
+  "library_sha256": "dab42ee7e4759b0698f3b2c1adf7e120d197ee182f2da6c7d96118dce521a7ae"
+}
