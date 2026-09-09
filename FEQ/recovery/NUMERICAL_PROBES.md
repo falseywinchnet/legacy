@@ -1251,3 +1251,60 @@ agreement; broader numerical coverage and application release work remain.
 FEQ/build/python312/bin/python FEQ/tools/probe_critical_flow_limit_original.py \
   --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/critical-limit-recapture
 ```
+
+## Generalized Ritter flow and utility table-memory agreement
+
+After all supplied reports agreed, a comparison of the first 5,000 function-table
+words still found differences at words 196, 201 and 236. These were Escoffier
+values in the approach table used by GRITTER. RITTER retains its wave accumulator
+across successive rows, including across report calls. The translation had
+rounded that accumulator to REAL after every row. The corrected implementation
+keeps W and Wold wide while separately converting each report and table value.
+
+`probe_ritter_original.py --mode wave` captures 3,072 unchanged RITTER arithmetic
+blocks at `0x471b7a..0x471bd0`. Inputs include a binary64 previous Escoffier
+value. The original computes C=REAL(sqrt(g*A/T)) and then retains
+W=Wold+2*g*(Y-Yold)/(C+Cold). Each output record preserves C, wide W and its
+REAL copy. The fixture covers three scales and initial and subsequent rows.
+
+The `section` mode calls the entire unchanged XLOOKW routine in 3,072 cases.
+It verifies area, top width, top-width derivative, celerity and Escoffier
+interpolation at both endpoints and interior depths, including the zero-depth
+branch. Area and width are stored with FST and their wider registers remain
+available to the celerity calculation. The celerity itself stores REAL before
+entering the Escoffier denominator. The research adapter preserves the original
+interval search, depth handling, diagnostics and cached row.
+
+The `residual` mode exercises 3,072 unchanged FRIT blocks at
+`0x4716ba..0x4716ff`. It records both the wide returned residual and the effective
+area. FRIT replaces nonpositive area with one, and retains W1+V1, Q/A and the
+normalized imbalance without REAL stores. Cases include negative and zero
+area, signed flow and near-root cancellation. Every output bit agrees in all
+three fixture families. Their independent formulas and precision boundaries
+are documented in `src/ritter_flow.cpp`.
+
+The current candidate passes all 66 release and sanitizer checks and all 17
+complete example outputs. The 2,092 active FEQ matrices and 19,701 gate residual
+entries remain byte-identical. A new utility-state comparison additionally
+checks all 2,873 FNDHPL entry states, 540 FNDECT partial-flow states and 60 FRFTRN
+entry snapshots. Each FRFTRN snapshot includes the first 5,000 table words,
+including the Ritter table. All 1,563,352 captured bytes agree without masks.
+These snapshots cover that table prefix at the stated entry points, not the
+entire function-table bank at every instruction.
+
+`tools/compare_utility_states.py` verifies the original executable identity,
+hook configuration, exact trace sizes/counts, equal model inputs, complete
+instrumented reports and all current source/object/header/runtime/executable
+hashes. `recovery/utility-state-trajectories.json` records this evidence.
+Broader numerical coverage and application release work remain open.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_ritter_original.py --mode wave \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/ritter-wave-recapture
+FEQ/build/python312/bin/python FEQ/tools/probe_ritter_original.py --mode section \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/ritter-section-recapture
+FEQ/build/python312/bin/python FEQ/tools/probe_ritter_original.py --mode residual \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/ritter-residual-recapture
+FEQ/build/python312/bin/python FEQ/tools/trace_original.py --case utlexm \
+  --config FEQ/recovery/probes/transition-state-utlexm.json --output FEQ/build/utility-state-reference
+```

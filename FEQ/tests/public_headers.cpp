@@ -29,3 +29,4 @@
 #include <feq/tailwater_residual.hpp>
 #include <feq/channel_rating.hpp>
 #include <feq/transition_energy.hpp>
+#include <feq/ritter_flow.hpp>

@@ -143,6 +143,14 @@ flow stays wide across reporting, slope calculation and individual table
 stores. Both the retained flow and its REAL copies match every bit. See
 [`tests/reference/critical_flow_limit/`](tests/reference/critical_flow_limit/).
 
+The generalized Ritter wave-table step, complete `XLOOKW` interval lookup and
+`FRIT` flow residual each match **3,072 original-executable cases**. The
+Escoffier variable remains wide between table rows; the celerity, stored table
+values and report copies retain their original REAL stores. The interval lookup
+also retains the wider area and width used to compute celerity. See
+[`src/ritter_flow.cpp`](src/ritter_flow.cpp) and
+[`tests/reference/ritter_wave/`](tests/reference/ritter_wave/).
+
 The standalone conveyance lookup matches **2,688 calls to the complete original
 LKTK routine**, covering all fourteen accepted section table types, three
 scales, interval endpoints, and increasing or decreasing conveyance. Its
@@ -346,6 +354,14 @@ FEQEX1 (621 matrices), FEQEX2 (325), FEQEX3 (578), and FEQEX4 (568). These compa
 include every active coefficient, residual, and profile/block index, with no tolerance.
 The recorded comparison and trace configurations are in
 [`recovery/model-active-matrices.json`](recovery/model-active-matrices.json).
+
+The utility state comparison also matches **all 2,873 transition head-search
+entries, 540 partial-flow report states and 60 snapshots of the first 5,000
+function-table words** in UTLEXM. No state fields are masked. This table-memory
+comparison exposed three Ritter accumulator differences that did not change
+the printed reports; those differences are now corrected. The trace hooks,
+build provenance and report checks are recorded in
+[`recovery/utility-state-trajectories.json`](recovery/utility-state-trajectories.json).
 
 ## Build and check the independent C++ components
 

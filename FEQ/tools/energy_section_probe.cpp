@@ -9,6 +9,7 @@
 #include <feq/tailwater_residual.hpp>
 #include <feq/channel_rating.hpp>
 #include <feq/transition_energy.hpp>
+#include <feq/ritter_flow.hpp>
 #include <feq/weir_flow.hpp>
 #include <array>
 #include <bit>
@@ -38,6 +39,11 @@ void write_word(std::uint32_t word) {
         static_cast<unsigned char>(word >> 16),static_cast<unsigned char>(word >> 24)};
     std::cout.write(reinterpret_cast<const char*>(bytes),4);
  }
+double read_double() {
+    const std::uint64_t low = read_word();
+    const std::uint64_t high = read_word();
+    return std::bit_cast<double>(low | (high << 32));
+}
 void write_float(float value) { write_word(std::bit_cast<std::uint32_t>(value)); }
 void write_double(double value) {
     const std::uint64_t bits = std::bit_cast<std::uint64_t>(value);
@@ -89,6 +95,9 @@ int main(int argc, char** argv) {
         const bool transition_factors = argc == 2 && std::strcmp(argv[1],"--transition-factors") == 0;
         const bool transition_energy = argc == 2 && std::strcmp(argv[1],"--transition-energy") == 0;
         const bool critical_limit = argc == 2 && std::strcmp(argv[1],"--critical-limit") == 0;
+        const bool ritter_wave = argc == 2 && std::strcmp(argv[1],"--ritter-wave") == 0;
+        const bool ritter_section = argc == 2 && std::strcmp(argv[1],"--ritter-section") == 0;
+        const bool ritter_residual = argc == 2 && std::strcmp(argv[1],"--ritter-residual") == 0;
         const bool transition_spacing = argc == 2 && std::strcmp(argv[1],"--transition-spacing") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
             if (transition_spacing) {
@@ -123,6 +132,34 @@ int main(int argc, char** argv) {
                 write_double(flow);
                 write_float(static_cast<float>(flow));
                 write_float(feq::critical_flow_limit_slope(flow,fields[6]));
+                continue;
+            }
+            if (ritter_wave) {
+                float fields[6]{};
+                for (int i = 0; i < 6; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const double previous_escoffier = read_double();
+                const feq::RitterWaveStep result = feq::advance_ritter_wave(fields[1],fields[2],fields[3],fields[4],fields[0],fields[5],previous_escoffier);
+                write_float(result.celerity);
+                write_double(result.escoffier);
+                write_float(static_cast<float>(result.escoffier));
+                continue;
+            }
+            if (ritter_section) {
+                float fields[12]{};
+                for (int i = 0; i < 12; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const feq::RitterSectionRow lower{fields[2],fields[3],fields[4],fields[5],fields[6]};
+                const feq::RitterSectionRow upper{fields[7],fields[8],fields[9],fields[10],fields[11]};
+                const feq::RitterSectionProperties result = feq::interpolate_ritter_section(fields[0],fields[1],lower,upper);
+                write_float(result.area);write_float(result.top_width);write_float(result.top_width_slope);
+                write_float(result.celerity);write_float(result.escoffier);
+                continue;
+            }
+            if (ritter_residual) {
+                float fields[5]{};
+                for (int i = 0; i < 5; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                float area = fields[4];
+                write_double(feq::ritter_flow_residual(fields[0],fields[1],fields[2],fields[3],area));
+                write_float(area);
                 continue;
             }
             if (transition_factors) {

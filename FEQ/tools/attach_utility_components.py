@@ -931,6 +931,63 @@ def integrate_critical_flow_limit(data):
     return b'#include <feq/section_energy.hpp>\n'+edit_text(data,edits)
 
 
+def integrate_ritter(data):
+    edits = [];found = set()
+    for function in functions(data):
+        name = content(identifier(function.child_by_field_name('declarator')),data)
+        body = function.child_by_field_name('body')
+        if name == 'frit_':
+            guards = [node for node in body.named_children if node.type == 'if_statement' and
+                content(node.child_by_field_name('condition'),data) == '(ritcom_1.a <= (float)0.)']
+            if len(guards) != 1:raise ValueError('Expected FRIT area guard after both lookups.')
+            replacement = ('return feq::ritter_flow_residual(ritcom_1.w1,ritcom_1.v1,\n'
+                '        ritcom_1.w,ritcom_1.q,ritcom_1.a);\n')
+            edits.append((guards[0].start_byte,body.end_byte-1,replacement));found.add('residual')
+        elif name == 'ritter_':
+            edits.append((body.start_byte+1,body.start_byte+1,'\n    feq::RitterWaveStep wave_step{};\n'))
+            for node in nodes(body):
+                if node.type == 'declaration' and content(node.child_by_field_name('type'),data) == 'real':
+                    declarators = node.children_by_field_name('declarator')
+                    if any(item.type != 'identifier' for item in declarators):continue
+                    names = [content(item,data) for item in declarators]
+                    wide = [item for item in names if item in ('w','wold')]
+                    if wide:
+                        narrow = [item for item in names if item not in wide]
+                        replacement = ('real '+', '.join(narrow)+';\n    ' if narrow else '')+'double '+', '.join(wide)+';'
+                        edits.append((node.start_byte,node.end_byte,replacement))
+                        found.update(item+'-declaration' for item in wide)
+                if node.type != 'expression_statement':continue
+                text = content(node,data)
+                if text.startswith('feq_gen_c_d_ = sqrt('):
+                    replacement = ('wave_step = feq::advance_ritter_wave(y,yold,a,t,*grav,cold,wold);\n'
+                        '    feq_gen_c_d_ = wave_step.celerity;');key = 'step'
+                elif text.startswith('w = static_cast<double>(wold)'):
+                    replacement = 'w = wave_step.escoffier;';key = 'wave'
+                elif text.startswith('do_fio(') and '(char *)&w,' in text:
+                    replacement = '{ real reported_w = static_cast<real>(w); '+text.replace('(char *)&w,','(char *)&reported_w,')+' }';key = 'wave-report'
+                else:continue
+                if key in found:raise ValueError('Duplicate Ritter integration site: '+key)
+                edits.append((node.start_byte,node.end_byte,replacement));found.add(key)
+    if found != {'residual','w-declaration','wold-declaration','step','wave','wave-report'}:
+        raise ValueError('Missing Ritter residual, wave accumulator or report site.')
+    return b'#include <feq/ritter_flow.hpp>\n'+edit_text(data,edits)
+
+
+def integrate_ritter_lookup(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'xlookw_']
+    if len(targets) != 1:raise ValueError('Expected XLOOKW.')
+    function = targets[0];text = content(function,data)
+    begin = text.index('/*     FETCH VALUES FROM FTAB */')
+    end = text.index('itab[*adrs + 3] = lsta;',begin)
+    replacement = ('// Preserve the original interval search, diagnostics and cache.\n'
+        '    feq_interpolate_ritter_section_interval(lsta,lsta+*xoff,depth,grvcom_1.grav,\n'
+        '        area,top,dtop,feq_gen_c_d_,w);\n    ')
+    changed = text[:begin]+replacement+text[end:]
+    declaration = 'extern "C" void feq_interpolate_ritter_section_interval(int,int,float,float,float*,float*,float*,float*,float*);\n'
+    return declaration.encode()+edit_text(data,[(function.start_byte,function.end_byte,changed)])
+
+
 def integrate_weir_report_head(data):
     edits = []
     for function in functions(data):
@@ -1180,19 +1237,20 @@ def main():
         elif path.name == 'conduit.cpp':data = integrate_critical_flow_limit(integrate_conduit_boundaries(integrate_arch(data)))
         elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
         elif path.name == 'ufgate.cpp':data = integrate_gate_state(integrate_power_spacing(integrate_gate_orifice(integrate_gate_free(integrate_gate_levels(integrate_gate_residuals(data))))))
-        elif path.name == 'tablook.cpp':data = integrate_scalar_moment(integrate_scalar_conveyance(data))
+        elif path.name == 'tablook.cpp':data = integrate_ritter_lookup(integrate_scalar_moment(integrate_scalar_conveyance(data)))
         elif path.name == 'embank.cpp':data = integrate_weir_report_head(integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data))))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
         elif path.name == 'chanrat.cpp':data = integrate_channel_rating(data)
         elif path.name == 'expcon.cpp':data = integrate_transition_energy(data)
+        elif path.name == 'ritter.cpp':data = integrate_ritter(data)
         elif path.name == 'culverta.cpp':data = integrate_tailwater_spacing(integrate_tailwater_momentum(data))
         elif path.name == 'culvertc.cpp':data = integrate_full_barrel(integrate_steady_profile(integrate_steady_residuals(data)))
         elif path.name == 'culvertd.cpp':data = integrate_departure_energy(integrate_normal_flow_residual(integrate_approach_residual(integrate_culvert_losses(data))))
         elif path.name == 'numrmath.cpp':data = integrate_gaussian_rule(data)
-        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','chanrat.cpp','expcon.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'):
+        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','chanrat.cpp','expcon.cpp','ritter.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'):
             integrated_files.add(path.name)
         (output/path.name).write_bytes(data)
-    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','chanrat.cpp','expcon.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'}:
+    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','chanrat.cpp','expcon.cpp','ritter.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'}:
         raise ValueError('Prepared utility sources are missing required integration files.')
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
@@ -1251,6 +1309,12 @@ def main():
                 {'file':'conduit.cpp','function':'qclim_','component':'src/section_energy.cpp',
                  'scope':'REAL logarithm and exponential stores, retained limiting flow, REAL report/table copies and wide critical-slope arithmetic.',
                  'verification':'tests/reference/critical_flow_limit/manifest.json'},
+                {'file':'ritter.cpp','functions':['ritter_','frit_'],'component':'src/ritter_flow.cpp',
+                 'scope':'Retained Escoffier accumulator, independent REAL table/report stores and wide generalized Ritter residual.',
+                 'verification':['tests/reference/ritter_wave/manifest.json','tests/reference/ritter_residual/manifest.json']},
+                {'file':'tablook.cpp','function':'xlookw_','component':'src/ritter_flow.cpp',
+                 'scope':'Wide width/area registers through REAL celerity and Escoffier interpolation; retain original search, diagnostics and cached row.',
+                 'verification':'tests/reference/ritter_section/manifest.json'},
                 {'file':'fqshrftb.cpp','functions':['xlkt20_','xlkt21_'],'component':'src/section_interpolation.cpp',
                  'verification':['tests/reference/section_interpolation/fequtl-manifest.json',
                                  'tests/reference/section_first_moment/fequtl-manifest.json']},

@@ -1,0 +1,27 @@
+{
+  "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+  "hooks": [
+    {
+      "routine": "_fndhpl_",
+      "limit": 100000,
+      "captures": [{"symbol": "_feccom_", "bytes": 104}]
+    },
+    {
+      "routine": "_fndect_",
+      "offset": 1031,
+      "limit": 100000,
+      "captures": [
+        {"symbol": "_feccom_", "bytes": 104},
+        {"rva": 1506272, "bytes": 4}
+      ]
+    },
+    {
+      "routine": "_frftrn_",
+      "limit": 100000,
+      "captures": [
+        {"symbol": "_feccom_", "bytes": 104},
+        {"symbol": "_ftable_", "bytes": 20000}
+      ]
+    }
+  ]
+}
