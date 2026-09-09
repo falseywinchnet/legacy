@@ -36,12 +36,17 @@ double evaluate(void* pointer, float& argument) {
     return result;
 }
 }
-extern "C" void feq_root3(float epsx, float epsf, HistoricalResidual function,
+extern "C" void feq_root_variant(int method, float epsx, float epsf, HistoricalResidual function,
     float* left, float* right, float* fl, float* fr, float* trial, int* flag) {
     // FLAG is output-only; XM is written before its first evaluation. Avoid
     // reading either output when the calling routine has not initialized it.
     feq::RootBracket bracket{*left,*right,*fl,*fr,0.0F,0};
     Callback callback{function,&bracket,left,right,fl,fr,trial,flag};
-    feq::solve_root3(epsx,epsf,evaluate,&callback,bracket);
+    feq::solve_root(static_cast<feq::RootMethod>(method),epsx,epsf,evaluate,&callback,bracket);
     write_state(callback,bracket.flag != 1);
+}
+extern "C" void feq_root3(float epsx, float epsf, HistoricalResidual function,
+    float* left, float* right, float* fl, float* fr, float* trial, int* flag) {
+    feq_root_variant(static_cast<int>(feq::RootMethod::rgf3),epsx,epsf,function,
+        left,right,fl,fr,trial,flag);
 }

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Require every bracket field and trial argument captured from original RGF3."""
+"""Require every bracket field and trial argument captured from the original."""
 from pathlib import Path
 import subprocess
 import sys
 import json
 
-fixtures = Path(__file__).resolve().parent/'reference/root_solver'
+method = next((argument[2:] for argument in sys.argv[2:] if argument in ('--regflt','--rgf','--rgf5')), 'rgf3')
+directory = 'root_solver' if method == 'rgf3' else 'root_solver_'+method
+fixtures = Path(__file__).resolve().parent/'reference'/directory
 inputs = (fixtures/'inputs.bin').read_bytes()
 expected = (fixtures/'outputs.bin').read_bytes()
 process = subprocess.run([sys.argv[1],*sys.argv[2:]],input=inputs,capture_output=True,timeout=30)

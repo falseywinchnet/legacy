@@ -3,16 +3,21 @@
 #include <cmath>
 
 namespace feq {
-void solve_root3(float argument_tolerance, float residual_tolerance,
+void solve_root(RootMethod method, float argument_tolerance, float residual_tolerance,
     RootResidual residual, void* context, RootBracket& bracket) {
+    const bool collapse_first = method == RootMethod::rgf3 || method == RootMethod::rgf5;
+    const double damping = collapse_first ? 0.5 : static_cast<double>(0.9F);
+    if (method == RootMethod::rgf5 && argument_tolerance < 1.0E-6F) {
+        argument_tolerance = 1.0E-6F;
+    }
     bracket.flag = 0;
     double left = bracket.left;
     double right = bracket.right;
-    if (std::abs(bracket.left_residual) <= residual_tolerance) {
+    if (method == RootMethod::rgf3 && std::abs(bracket.left_residual) <= residual_tolerance) {
         bracket.trial = bracket.left;
         return;
     }
-    if (std::abs(bracket.right_residual) <= residual_tolerance) {
+    if (method == RootMethod::rgf3 && std::abs(bracket.right_residual) <= residual_tolerance) {
         bracket.trial = bracket.right;
         bracket.left_residual = bracket.right_residual;
         return;
@@ -40,12 +45,25 @@ void solve_root3(float argument_tolerance, float residual_tolerance,
             bracket.left_residual = static_cast<float>(middle);
             return;
         }
-        // Relative interval collapse precedes residual convergence. Ties
-        // choose the right endpoint and copy FR into the reported FL.
-        if (std::abs(left-right)/(std::abs(left)+std::abs(right)) < argument_tolerance) {
+        // REGFLT/RGF test residual convergence first (0x4726df/0x47294f).
+        // RGF3/RGF5 test interval collapse first (0x4730a9/0x47333f).
+        if (!collapse_first && std::abs(middle) < residual_tolerance) {
             bracket.left = static_cast<float>(left);
             bracket.right = static_cast<float>(right);
-            if (std::abs(bracket.left_residual) < std::abs(bracket.right_residual)) {
+            bracket.left_residual = static_cast<float>(middle);
+            return;
+        }
+        const double relative_width = std::abs(left-right)/(std::abs(left)+std::abs(right));
+        const bool collapsed = method == RootMethod::rgf5 ?
+            relative_width <= argument_tolerance : relative_width < argument_tolerance;
+        if (collapsed) {
+            bracket.left = static_cast<float>(left);
+            bracket.right = static_cast<float>(right);
+            // RGF retains XM and returns FM; the other variants select the
+            // endpoint with smaller |F|, with ties going to the right.
+            if (method == RootMethod::rgf) {
+                bracket.left_residual = static_cast<float>(middle);
+            } else if (std::abs(bracket.left_residual) < std::abs(bracket.right_residual)) {
                 bracket.trial = static_cast<float>(left);
             } else {
                 bracket.trial = static_cast<float>(right);
@@ -53,7 +71,7 @@ void solve_root3(float argument_tolerance, float residual_tolerance,
             }
             return;
         }
-        if (std::abs(middle) < residual_tolerance) {
+        if (collapse_first && std::abs(middle) < residual_tolerance) {
             bracket.left = static_cast<float>(left);
             bracket.right = static_cast<float>(right);
             bracket.left_residual = static_cast<float>(middle);
@@ -63,27 +81,34 @@ void solve_root3(float argument_tolerance, float residual_tolerance,
         if (iterations > 100) {
             bracket.left = static_cast<float>(left);
             bracket.right = static_cast<float>(right);
+            if (method == RootMethod::rgf) {
+                bracket.left_residual = static_cast<float>(middle);
+            }
             bracket.flag = 2;
             return;
         }
-        // Retain the sign change. Repeated residuals of the same sign halve
-        // the opposite endpoint residual (Illinois modified false position).
+        // Retain the sign change. Repeated residuals of the same sign damp
+        // the opposite residual by 0.5 (RGF3/5) or REAL(0.9) (REGFLT/RGF).
         // FR/FL are REAL stores at 0x4731a1/0x4731d1; the next comparison
         // still uses the unrounded callback result.
         if (bracket.left_residual*middle <= 0.0) {
             right = bracket.trial;
             bracket.right_residual = static_cast<float>(middle);
             if (previous*middle > 0.0) {
-                bracket.left_residual = static_cast<float>(0.5*bracket.left_residual);
+                bracket.left_residual = static_cast<float>(damping*bracket.left_residual);
             }
         } else {
             left = bracket.trial;
             bracket.left_residual = static_cast<float>(middle);
             if (middle*previous > 0.0) {
-                bracket.right_residual = static_cast<float>(0.5*bracket.right_residual);
+                bracket.right_residual = static_cast<float>(damping*bracket.right_residual);
             }
         }
         previous = middle;
     }
+}
+void solve_root3(float argument_tolerance, float residual_tolerance,
+    RootResidual residual, void* context, RootBracket& bracket) {
+    solve_root(RootMethod::rgf3,argument_tolerance,residual_tolerance,residual,context,bracket);
 }
 }

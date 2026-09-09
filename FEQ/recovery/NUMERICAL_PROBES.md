@@ -402,3 +402,38 @@ result each store REAL. Ratios supplied to the logarithms remain wide. A
 zero-depth lower row selects the upper and following rows for critical flow
 without changing the geometric interpolation interval. The integration retains
 the original table selection, cached pointers, clamping and diagnostics.
+
+## False-position variants and steady-flow energy residuals
+
+`probe_root_original.py` calls the unmodified `REGFLT`, `RGF`, `RGF3`, or
+`RGF5` routine selected by `--method`. Each has 434 cases with scripted wide
+residuals, quadratic functions, mutable trial arguments, endpoint and tolerance
+boundaries, and iteration-limit exits. Each record contains all five mutable
+REAL fields, the flag, callback count, and 101 trial slots. There is no numeric
+mask. Core and adapter comparisons independently require every captured byte.
+
+The four routines share the false-position formula, but their state transitions
+are not interchangeable. Only RGF3 accepts an initially small endpoint residual
+without evaluating a trial. REGFLT and RGF test residual convergence before
+interval collapse and damp repeated endpoint residuals by the stored REAL
+constant 0.9. RGF3 and RGF5 test collapse first and damp by 0.5. RGF5 enforces a
+REAL 1E-6 argument-tolerance floor and accepts equality at interval collapse.
+RGF returns the most recent residual at collapse and iteration failure; REGFLT,
+RGF3 and RGF5 choose the better endpoint at collapse and retain the previous
+left residual at iteration failure. Callback results and their previous values
+stay wide; bracket residuals and trial arguments store REAL.
+
+`probe_steady_residual_original.py` calls original SBER and SPER with synthetic
+section tables and populated COMMON values. Their original XLKTAL calls run
+unchanged. The 840 cases cover five table types, three depth scales, endpoints,
+barrel-height clamping, forward and reverse flow, signed bed slopes, and both
+eddy-loss branches. Each output contains both binary64 return values and the
+unchanged query depth. All 1,680 return values match bit for bit. The independent
+C++ keeps the velocity, energy, eddy losses and normalized residual wide, as
+shown by the original instruction streams, and retains the distinction between
+the depth used for lookup and the depth used for energy.
+
+These kernels are integrated into the utility research engine. They do not
+complete whole-program equivalence: four supplied utility numerical outputs
+still differ. The complete FEQ report and active-matrix checks remain separate
+and are rerun on the integrated binaries.

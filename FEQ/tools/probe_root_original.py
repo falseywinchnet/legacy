@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capture unchanged RGF3 with scripted wide residuals and polynomial callbacks.
+"""Capture unchanged root routines with wide residuals and polynomial callbacks.
 
 Only a temporary PROGRAM driver and its callback are installed. Each original
 trial argument, mutable bracket field, status, and callback count is captured.
@@ -48,6 +48,12 @@ def fixtures():
     add('alternating-iteration-limit',sequence=[(-1.)**i for i in range(101)])
     add('mutated-trial-success',mutations=[3.125])
     add('mutated-trials-in-bracket',sequence=[1.,-1.,.75,0.],mutations=[6.125,2.75,4.5,3.9])
+    for epsx in (.5,math.nextafter(.5,0.),.49999997,.50000006):
+        add(f'collapse-tolerance-{epsx}',a=1.,b=3.,epsx=epsx,sequence=[1.,0.])
+    for epsx in (-1.,0.,.0000005,.000001,.000002):
+        add(f'collapse-floor-{epsx}',a=1.,b=1.0000019,epsx=epsx,sequence=[1.,0.])
+    add('negative-residual-tolerance',epsf=-1.,sequence=[.01,0.])
+    add('zero-width-zero-center',a=0.,b=0.,sequence=[1.,0.])
     for scale in (.00001,1.,10000.):
         for trial in range(60):
             a=real(rng.uniform(-20.,0.)*scale);b=real(rng.uniform(.1,30.)*scale)
@@ -76,7 +82,7 @@ def record(case):
         *case['coefficients'],*padded(case['sequence']),*padded(case['mutations']))
 
 
-def image(original,pe,symbols,cases):
+def image(original,pe,symbols,cases,method='rgf3'):
     base=pe.OPTIONAL_HEADER.ImageBase;start=base+symbols['_MAIN__']['rva'];scratch=base+symbols['_ftable_']['rva']+4096
     state=scratch+2048;counter=state+4;trace=state+8
     imports={item.name.decode():item.address for dll in pe.DIRECTORY_ENTRY_IMPORT for item in dll.imports if item.name}
@@ -101,7 +107,7 @@ def image(original,pe,symbols,cases):
         code.emit('31c0bf'+struct.pack('<I',state).hex()+'b967000000f3ab')
         args=[scratch+8,scratch+12,callback,scratch+16,scratch+20,scratch+24,scratch+28,scratch+32,state]
         for value in reversed(args):code.push(value)
-        code.call(base+symbols['_rgf3_']['rva']);code.emit('83c424')
+        code.call(base+symbols['_'+method+'_']['rva']);code.emit('83c424')
         code.write(scratch+16,20,state+512);code.write(state,412,state+512)
     driver=code.finish();later=sorted(item['rva'] for item in symbols.values() if item['type']==32 and item['section']==1 and item['rva']>symbols['_MAIN__']['rva'])
     if len(driver)>later[0]-symbols['_MAIN__']['rva']:raise ValueError('Root driver exceeds replaceable PROGRAM body.')
@@ -112,6 +118,7 @@ def image(original,pe,symbols,cases):
 def main():
     import pefile
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--native',type=Path)
+    parser.add_argument('--method',choices=['regflt','rgf','rgf3','rgf5'],default='rgf3')
     parser.add_argument('--fixtures',type=Path);parser.add_argument('--wine-prefix',type=Path,default=ROOT/'build/wineprefix')
     args=parser.parse_args();output=args.output.resolve()
     if output.exists() or ROOT/'build' not in output.parents:parser.error('Use a new FEQ/build/ directory.')
@@ -125,7 +132,7 @@ def main():
         batch=cases[first:first+20]
         while True:
             try:
-                payload=image(original,pe,symbols,batch)
+                payload=image(original,pe,symbols,batch,args.method)
                 break
             except ValueError as error:
                 if str(error)!='Root driver exceeds replaceable PROGRAM body.' or len(batch)==1:raise
@@ -140,11 +147,11 @@ def main():
         first+=len(batch);(output/'outputs.partial.bin').write_bytes(expected)
         print(f'{first}/{len(cases)} original root cases captured.',flush=True)
     (output/'outputs.bin').write_bytes(expected)
-    manifest=dict(original_sha256=ORIGINAL_SHA256,routines=['_rgf3_'],cases=len(cases),
+    manifest=dict(original_sha256=ORIGINAL_SHA256,routines=['_'+args.method+'_'],cases=len(cases),
         input_sha256=hashlib.sha256(inputs).hexdigest(),output_sha256=hashlib.sha256(expected).hexdigest(),
         probe_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),fixtures=records)
     if args.native:
-        native=subprocess.run([str(args.native.resolve())],input=inputs,capture_output=True,timeout=30);(output/'native.bin').write_bytes(native.stdout);(output/'native.stderr.log').write_bytes(native.stderr)
+        native=subprocess.run([str(args.native.resolve()),'--'+args.method],input=inputs,capture_output=True,timeout=30);(output/'native.bin').write_bytes(native.stdout);(output/'native.stderr.log').write_bytes(native.stderr)
         manifest.update(native_sha256=hashlib.sha256(args.native.read_bytes()).hexdigest(),native_returncode=native.returncode,exact_bytes=native.returncode==0 and bytes(expected)==native.stdout)
     (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     if args.native:raise SystemExit(0 if manifest['exact_bytes'] else 1)

@@ -57,12 +57,24 @@ critical flow, match every bit. The tests cover five table types, explicit
 slopes, three scales, interval endpoints, and the special zero-depth rule.
 The fixtures are in [`tests/reference/section_energy/`](tests/reference/section_energy/).
 
-The culvert `RGF3` root solver matches **423 original-executable cases**, including
-every bracket field, failure flag, callback count, and trial argument. The tests
-cover convergence thresholds, wide residuals, repeated-endpoint damping, all
-four return flags, the 101-evaluation limit, three numerical scales, and
-callbacks that adjust the trial argument. The fixtures are in
-[`tests/reference/root_solver/`](tests/reference/root_solver/).
+The `REGFLT`, `RGF`, `RGF3` and `RGF5` root solvers each match **434
+original-executable cases**, including every bracket field, failure flag,
+callback count, and trial argument. Each routine retains its own convergence
+ordering, endpoint selection, damping, and failure outputs. The tests cover
+threshold equality, the `RGF5` tolerance floor, wide residuals, all four return
+flags, the 101-evaluation limit, three numerical scales, and callbacks that
+adjust the trial argument. The same fixtures separately verify the adapter's
+original argument addresses. See [`src/root_solver.cpp`](src/root_solver.cpp)
+and [`tests/reference/root_solver/`](tests/reference/root_solver/).
+
+The subcritical and supercritical energy residuals match **840 cases against
+both original functions**, for 1,680 original calls. These include all five
+section-table types and depths above the barrel-height lookup limit. Velocity,
+energy, eddy losses and the returned residual retain the original wide
+arithmetic. The energy term uses the requested depth even when the section
+lookup uses a lower barrel height. See
+[`src/steady_residual.cpp`](src/steady_residual.cpp) and
+[`tests/reference/steady_residual/`](tests/reference/steady_residual/).
 
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,

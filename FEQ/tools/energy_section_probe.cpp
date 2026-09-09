@@ -1,6 +1,7 @@
 // Direct original-executable fixtures for energy section.
 // Work: Astra. Sponsor: Rainstar. Foundation: Hashem. MIT licensed.
 #include <feq/section_energy.hpp>
+#include <feq/steady_residual.hpp>
 #include <bit>
 #include <cstdint>
 #include <cstring>
@@ -29,6 +30,11 @@ void write_word(std::uint32_t word) {
     std::cout.write(reinterpret_cast<const char*>(bytes),4);
  }
 void write_float(float value) { write_word(std::bit_cast<std::uint32_t>(value)); }
+void write_double(double value) {
+    const std::uint64_t bits = std::bit_cast<std::uint64_t>(value);
+    write_word(static_cast<std::uint32_t>(bits));
+    write_word(static_cast<std::uint32_t>(bits >> 32));
+}
 
 feq::EnergySectionRow read_row() {
     feq::EnergySectionRow row{};
@@ -55,12 +61,27 @@ int main(int argc, char** argv) {
 #endif
     try {
         const bool critical_only = argc == 2 && std::strcmp(argv[1],"--critical-flow") == 0;
+        const bool steady = argc == 2 && std::strcmp(argv[1],"--steady") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
             const std::uint32_t table_type = read_word();
             const float depth = std::bit_cast<float>(read_word());
             const feq::EnergySectionRow lower = read_row();
             const feq::EnergySectionRow upper = read_row();
             const feq::EnergySectionRow following = read_row();
+            if (steady) {
+                float fields[11]{};
+                for (int i = 0; i < 11; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const float lookup_depth = depth < fields[0] ? depth : fields[0];
+                const feq::EnergySectionProperties properties = feq::interpolate_energy_section(
+                    lookup_depth,lower,upper,table_type == 32 || table_type == 35,&following);
+                const feq::SteadyResidualInput input{depth,properties.section.area,properties.section.conveyance,
+                    properties.energy_factor,fields[2],fields[3],fields[4],fields[5],fields[6],fields[1],
+                    fields[7],fields[8],fields[9],fields[10]};
+                write_double(feq::steady_subcritical_residual(input));
+                write_double(feq::steady_supercritical_residual(input));
+                write_float(depth);
+                continue;
+            }
             if (critical_only) {
                 const feq::EnergySectionRow& low = lower.section.depth == 0.0F ? upper : lower;
                 const feq::EnergySectionRow& high = lower.section.depth == 0.0F ? following : upper;

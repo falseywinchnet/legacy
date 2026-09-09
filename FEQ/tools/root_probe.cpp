@@ -1,4 +1,4 @@
-// Direct original-executable fixtures for RGF3.
+// Direct original-executable fixtures for REGFLT, RGF, RGF3 and RGF5.
 // Work: Astra. Sponsor: Rainstar. Foundation: Hashem. MIT licensed.
 #include <feq/root_solver.hpp>
 #include <bit>
@@ -13,6 +13,7 @@
 #endif
 
 extern "C" void feq_root3(float,float,double(*)(float*),float*,float*,float*,float*,float*,int*);
+extern "C" void feq_root_variant(int,float,float,double(*)(float*),float*,float*,float*,float*,float*,int*);
 
 namespace {
 std::uint32_t read_word() {
@@ -66,7 +67,16 @@ int main(int argc, char** argv) {
     _setmode(_fileno(stdout),_O_BINARY);
 #endif
     try {
-        const bool adapter = argc == 2 && std::strcmp(argv[1],"--adapter") == 0;
+        bool adapter = false;
+        feq::RootMethod method = feq::RootMethod::rgf3;
+        for (int i = 1; i < argc; ++i) {
+            if (std::strcmp(argv[i],"--adapter") == 0) { adapter = true; }
+            else if (std::strcmp(argv[i],"--regflt") == 0) { method = feq::RootMethod::regflt; }
+            else if (std::strcmp(argv[i],"--rgf") == 0) { method = feq::RootMethod::rgf; }
+            else if (std::strcmp(argv[i],"--rgf3") == 0) { method = feq::RootMethod::rgf3; }
+            else if (std::strcmp(argv[i],"--rgf5") == 0) { method = feq::RootMethod::rgf5; }
+            else { throw std::runtime_error("Unknown root probe option."); }
+        }
         while (std::cin.peek() != std::char_traits<char>::eof()) {
             Callback callback{};
             callback.kind = read_word();
@@ -85,10 +95,10 @@ int main(int argc, char** argv) {
             if (adapter) {
                 active_callback = &callback;
                 expected_argument = &bracket.trial;
-                feq_root3(epsx,epsf,historical,&bracket.left,&bracket.right,
+                feq_root_variant(static_cast<int>(method),epsx,epsf,historical,&bracket.left,&bracket.right,
                     &bracket.left_residual,&bracket.right_residual,&bracket.trial,&bracket.flag);
             } else {
-                feq::solve_root3(epsx,epsf,evaluate,&callback,bracket);
+                feq::solve_root(method,epsx,epsf,evaluate,&callback,bracket);
             }
             write_float(bracket.left);
             write_float(bracket.right);

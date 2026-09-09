@@ -339,16 +339,45 @@ def integrate_weir_drop_fractions(data):
     return b'#include <feq/power.hpp>\n'+edit_text(data,[(statement.start_byte,statement.end_byte,replacement)])
 
 
-def integrate_root3(data):
-    targets = [function for function in functions(data)
-               if content(identifier(function.child_by_field_name('declarator')),data) == 'rgf3_']
-    if len(targets) != 1:
-        raise ValueError('Expected one RGF3 definition.')
-    body = targets[0].child_by_field_name('body')
-    replacement = ('{\n    // Original-verified bracket updates, wide residuals and convergence ordering.\n'
-        '    feq_root3(*epsx,*epsf,f,a,b,fl,fr,xm,feq_gen_flag_d_);\n    return 0;\n}')
-    declaration = 'extern "C" void feq_root3(float,float,double(*)(float*),float*,float*,float*,float*,float*,int*);\n'
-    return declaration.encode()+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
+def integrate_roots(data):
+    methods = {'regflt_':0,'rgf_':1,'rgf3_':2,'rgf5_':3}
+    edits = []
+    for function in functions(data):
+        name = content(identifier(function.child_by_field_name('declarator')),data)
+        if name not in methods:continue
+        body = function.child_by_field_name('body')
+        replacement = ('{\n    // Original-verified bracket updates, wide residuals and convergence ordering.\n'
+            f'    feq_root_variant({methods[name]},*epsx,*epsf,f,a,b,fl,fr,xm,feq_gen_flag_d_);\n    return 0;\n}}')
+        edits.append((body.start_byte,body.end_byte,replacement))
+    if len(edits) != len(methods):raise ValueError('Expected all four verified root definitions.')
+    declaration = 'extern "C" void feq_root_variant(int,float,float,double(*)(float*),float*,float*,float*,float*,float*,int*);\n'
+    return declaration.encode()+edit_text(data,edits)
+
+
+def integrate_steady_residuals(data):
+    edits = []
+    for function in functions(data):
+        name = content(identifier(function.child_by_field_name('declarator')),data)
+        if name not in ('sber_','sper_'):continue
+        subcritical = name == 'sber_'
+        common = 'sberc_1' if subcritical else 'sperc_1'
+        adr,flow,neighbor_flow,conveyance,area = ('adrs','qt','qt','kr','ar') if subcritical else ('adr','qr','ql','kl','al')
+        method = 'steady_subcritical_residual' if subcritical else 'steady_supercritical_residual'
+        body = function.child_by_field_name('body')
+        replacement = f"""{{
+    float yt = *y < {common}.feq_gen_d_d_ ? *y : {common}.feq_gen_d_d_;
+    float a,t,dt,j,k,dk,bet,dbet,alp,dalp;
+    extern int xlktal_(int*,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*);
+    xlktal_(&{common}.{adr},&yt,&a,&t,&dt,&j,&k,&dk,&bet,&dbet,&alp,&dalp);
+    // Lookup clamps the section depth, while energy uses the original Y.
+    const feq::SteadyResidualInput input{{*y,a,k,alp,{common}.{flow},{common}.{neighbor_flow},
+        {common}.{conveyance},{common}.dx,{common}.se,{common}.rhs,{common}.kacc,{common}.kdec,
+        {common}.{area},grvcom_1.grav2}};
+    return feq::{method}(input);
+}}"""
+        edits.append((body.start_byte,body.end_byte,replacement))
+    if len(edits) != 2:raise ValueError('Expected SBER and SPER definitions.')
+    return b'#include <feq/steady_residual.hpp>\n'+edit_text(data,edits)
 
 
 def integrate_culvert_losses(data):
@@ -441,12 +470,13 @@ def main():
         elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
         elif path.name == 'fqshrftb.cpp':data = integrate_scalar_lookup(integrate_section_lookup(data))
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
-        elif path.name == 'rootfind.cpp':data = integrate_root3(data)
+        elif path.name == 'rootfind.cpp':data = integrate_roots(data)
+        elif path.name == 'culvertc.cpp':data = integrate_steady_residuals(data)
         elif path.name == 'culvertd.cpp':data = integrate_culvert_losses(data)
-        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertd.cpp'):
+        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp'):
             integrated_files.add(path.name)
         (output/path.name).write_bytes(data)
-    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertd.cpp'}:
+    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp'}:
         raise ValueError('Prepared utility sources are missing required integration files.')
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
@@ -483,9 +513,13 @@ def main():
                 {'file':'embank.cpp','function':'sbfemb_',
                  'scope':'Retained Simpson width/flow registers and original REAL reciprocal of six.',
                  'evidence':'recovery/assembly/fequtl/_sbfemb_.asm, VA 0x42ff92..0x42ffb5.'},
-                {'file':'rootfind.cpp','function':'rgf3_','component':'src/root_solver.cpp',
+                {'file':'rootfind.cpp','functions':['regflt_','rgf_','rgf3_','rgf5_'],'component':'src/root_solver.cpp',
                  'scope':'Modified false position, wide callback results, mutable trial arguments and exact failure outputs.',
-                 'verification':'tests/reference/root_solver/manifest.json'},
+                 'verification':['tests/reference/root_solver/manifest.json','tests/reference/root_solver_regflt/manifest.json',
+                     'tests/reference/root_solver_rgf/manifest.json','tests/reference/root_solver_rgf5/manifest.json']},
+                {'file':'culvertc.cpp','functions':['sber_','sper_'],'component':'src/steady_residual.cpp',
+                 'scope':'Wide velocity, energy, eddy loss and normalized residuals after original section lookup.',
+                 'verification':'tests/reference/steady_residual/manifest.json'},
                 {'file':'culvertd.cpp','functions':['degcon_','rqvstw_','fcd123_'],'component':'src/culvert_loss.cpp',
                  'scope':'Discharge curves, contraction adjustment and RQVSTW velocity head loss.',
                  'verification':['tests/reference/culvert_loss/manifest.json','tests/reference/culvert_coefficient/manifest.json']},
