@@ -57,6 +57,15 @@ environment and reproduce the publisher's captured examples.
 
 ## Earlier source and embedded snapshot
 
+The original runtime startup has also been measured directly. A disposable copy
+of each executable runs its original initialization and captures the x87 control
+word at PROGRAM entry. Both produce `0x027f`: 53-bit significand precision and
+round-to-nearest, with solver precision code 1 (Single). The exact eight-byte
+records and original executable hashes are in [`startup-state.json`](startup-state.json).
+`tools/probe_startup.py` reproduces this measurement. This establishes startup
+state; individual expression rounding and runtime mathematical routines still
+require their own comparisons.
+
 The official project site still supplies the earlier **FEQ 9.98 / FEQUTL 5.46**
 archive. [`source-analysis.json`](source-analysis.json) compares Fortran source,
 includes, parameters, and build-identity files outside compiler staging and SVN

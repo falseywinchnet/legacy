@@ -1,0 +1,22 @@
+[
+  {
+    "program": "feq",
+    "binary_sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399",
+    "capture_point": "PROGRAM entry after original runtime initialization",
+    "x87_control_word_hex": "0x27f",
+    "precision_control_bits": 2,
+    "rounding_control_bits": 0,
+    "solver_precision_code": 1,
+    "raw_record_hex": "7f02000001000000"
+  },
+  {
+    "program": "fequtl",
+    "binary_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+    "capture_point": "PROGRAM entry after original runtime initialization",
+    "x87_control_word_hex": "0x27f",
+    "precision_control_bits": 2,
+    "rounding_control_bits": 0,
+    "solver_precision_code": 1,
+    "raw_record_hex": "7f02000001000000"
+  }
+]

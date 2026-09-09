@@ -39,9 +39,8 @@ def stage(program, destination, precision='single'):
     select(SOURCE / 'SVN_REPORT/svn_reportdmy.for', 'svn_report.for')
     excluded = ['locsubux.for', 'timer90.for', 'getsvn_lx_g95.for', 'getsvn_lx_lf95.for', 'getsvn_msw_g95.for', 'pwd_lx_g95.for', 'pwd_lx_lf95.for', 'pwd_msw_g95.for']
     if program == 'feq':
-        if precision == 'double':
-            select(SOURCE / 'FEQ/double/linsys.for')
-            select(SOURCE / 'FEQ/double/matcom.cmn')
+        select(SOURCE / 'FEQ' / precision / 'linsys.for')
+        select(SOURCE / 'FEQ' / precision / 'matcom.cmn')
         select(SOURCE / 'FEQ/mkdir_fun_msw_lf95.for', 'mkdir_fun.for')
         excluded += ['hecdss.for', 'mkdir_fun_msw_lf95.for', 'mkdir_fun_msw_g95.for', 'mkdir_fun_lx_lf95.for', 'mkdir_fun_lx_g95.for']
     else:
