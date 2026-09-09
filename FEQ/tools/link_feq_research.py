@@ -65,7 +65,8 @@ def main():
              '-I',str(ROOT/'include'),'-iquote',str(directory),'-iquote',str(runtime)]
     if args.matrix_trace:
         flags.append('-DFEQ_RESEARCH_MATRIX_TRACE')
-    sources = ['src/decimal.cpp','tools/decimal_compat.cpp','src/md5.cpp','tools/probe_support.cpp']
+    sources = ['src/decimal.cpp','tools/decimal_compat.cpp','src/md5.cpp','tools/probe_support.cpp',
+               'src/section_energy.cpp','tools/energy_section_compat.cpp']
     if args.program == 'feq':
         sources.extend(['src/profile_matrix.cpp','src/section_interpolation.cpp','src/table_interpolation.cpp',
                         'tools/profile_compat.cpp','tools/section_compat.cpp','tools/table_compat.cpp'])

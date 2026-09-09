@@ -15,7 +15,8 @@ import shutil
 from prepare_cpp_probe import content, edit_text, functions, identifier, nodes
 
 ROOT = Path(__file__).resolve().parents[1]
-DECLARATION = ('extern "C" void feq_interpolate_section_interval(int,int,int,float,'
+DECLARATION = ('extern "C" void feq_interpolate_energy_section_interval(int,int,int,int,float,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*);\n'
+               'extern "C" void feq_interpolate_section_interval(int,int,int,float,'
                'float*,float*,float*,float*,float*,float*,float*);\n'
                'extern "C" void feq_interpolate_section_interval_moment(int,int,int,float,'
                'float*,float*,float*,float*,float*,float*,float*,float*);\n'
@@ -232,6 +233,7 @@ def main():
     for path in source.glob('*.hpp'):
         shutil.copy2(path,output/path.name)
     changes = []
+    energy_definitions = 0
     for path in sorted(source.glob('*.cpp')):
         data = path.read_bytes()
         edits = []
@@ -248,6 +250,15 @@ def main():
                 needs_declaration = True
                 changes.append({'file':path.name,'function':name,'component':'src/section_interpolation.cpp',
                                 'verification':'Original-executable fixture replay; see tests/reference/section_interpolation and section_first_moment.'})
+            elif name == 'xlkt22_':
+                begin = body.index('/*     FETCH VALUES FROM FTAB */')
+                end = body.rindex('    return 0;')
+                call = 'feq_interpolate_energy_section_interval(l,l+xoff,doff,feq_gen_type_d_,*ya,a,t,dt,j,k,dk,b,db,alp,dalp,qc);'
+                body = body[:begin]+'    // All eleven properties verified against both released executables.\n    '+call+'\n'+body[end:]
+                needs_declaration = True
+                energy_definitions += 1
+                changes.append({'file':path.name,'function':name,'component':'src/section_energy.cpp',
+                                'verification':'tests/reference/section_energy/manifest.json and feq-manifest.json'})
             elif name == 'lktab_':
                 begin = body.index('L2:')
                 end = body.index('L5:',begin)
@@ -292,6 +303,8 @@ def main():
         if args.traced_register_stores and path.name == 'brnmat.cpp':
             result = b'#include <cmath>\n'+result
         (output/path.name).write_bytes(result)
+    if energy_definitions != 1:
+        raise ValueError('Expected exactly one XLKT22 definition in the FEQ translation.')
     manifest = {'status':'Research integration; passing component fixtures does not establish whole-engine acceptance.',
                 'changes':changes,'source_files':[{'name':path.name,'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
                                                 for path in sorted(source.glob('*.cpp'))]}

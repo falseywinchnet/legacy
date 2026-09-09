@@ -50,6 +50,13 @@ points accompany [`src/section_interpolation.cpp`](src/section_interpolation.cpp
 The captured fixtures are in
 [`tests/reference/section_interpolation/`](tests/reference/section_interpolation/).
 
+The energy-section lookup matches **840 intervals against both `XLKT22` and
+`XLKTAL` in both released programs**, for 3,360 original calls. All eleven
+properties, including energy coefficients and logarithmically interpolated
+critical flow, match every bit. The tests cover five table types, explicit
+slopes, three scales, interval endpoints, and the special zero-depth rule.
+The fixtures are in [`tests/reference/section_energy/`](tests/reference/section_energy/).
+
 The independent section-boundary geometry also matches **every geometric output
 bit in 363 direct FEQUTL tests**. These cover dry, partially submerged, and fully
 submerged boundaries, multiple subsections, three scales, vertical/horizontal

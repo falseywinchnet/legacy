@@ -366,3 +366,39 @@ original `RHMAK` zero-divide diagnostic. With this integration, the combined
 conduit geometry differences in the supplied utility example are resolved;
 the first remaining report difference is in culvert flow at line 1,731. This
 is component and example evidence; complete application acceptance remains open.
+
+
+## Energy-section and critical-flow lookup
+
+`probe_energy_section_original.py` captures `XLKT22` and its `XLKTAL` wrapper
+from either released program. All 840 controlled intervals agree across both
+executables and with the independent C++ implementation. Each capture checks
+that all ten wrapper outputs agree with the corresponding `XLKT22` outputs;
+the latter also supplies the eleventh output, critical flow. Table types 12,
+22, 25, 32 and 35 cover linear and cubic Hermite coefficient interpolation,
+three depth scales, seven interval fractions and zero-depth lower rows.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_energy_section_original.py \
+  --program fequtl --native FEQ/build/core/feq_energy_section_probe \
+  --output FEQ/build/energy-section-recapture
+FEQ/build/python312/bin/python FEQ/tools/probe_energy_section_original.py \
+  --program feq --native FEQ/build/core/feq_energy_section_probe \
+  --output FEQ/build/energy-section-feq-recapture
+```
+
+Each input contains the little-endian 32-bit table type, binary32 depth and
+three rows of eleven binary32 values. Row order is depth, width, area,
+square root of conveyance, beta, first moment, alpha, critical flow,
+square-root-conveyance slope, beta slope and alpha slope. The driver places
+the alpha derivative in the distinct type-32 and type-35 table columns.
+Each output is eleven binary32 words in the original argument order:
+A, T, DT, J, K, DK, B, DB, ALP, DALP, QC.
+
+`section_energy.cpp` retains direct division where `XLKT20/21` use a reciprocal.
+Its width and area stores retain wider registers, while first moment reloads
+stored width. The three logarithm results, combined exponent and exponential
+result each store REAL. Ratios supplied to the logarithms remain wide. A
+zero-depth lower row selects the upper and following rows for critical flow
+without changing the geometric interpolation interval. The integration retains
+the original table selection, cached pointers, clamping and diagnostics.

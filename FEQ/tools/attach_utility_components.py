@@ -234,19 +234,22 @@ def integrate_section_lookup(data):
     found = set()
     for function in functions(data):
         name = content(identifier(function.child_by_field_name('declarator')),data)
-        if name not in ('xlkt20_','xlkt21_'):
+        if name not in ('xlkt20_','xlkt21_','xlkt22_'):
             continue
         body = content(function,data)
         begin = body.index('/*     FETCH VALUES FROM FTAB */')
         end = body.rindex('    return 0;')
         call = ('feq_interpolate_section_interval_moment(l,l+xoff,doff,*ya,a,t,dt,j,k,dk,b,db);'
                 if name == 'xlkt21_' else 'feq_interpolate_section_interval(l,l+xoff,doff,*ya,a,t,dt,k,dk,b,db);')
+        if name == 'xlkt22_':
+            call = 'feq_interpolate_energy_section_interval(l,l+xoff,doff,feq_gen_type_d_,*ya,a,t,dt,j,k,dk,b,db,alp,dalp,qc);'
         body = body[:begin]+'    // Directly verified against both FEQ and FEQUTL releases.\n    '+call+'\n'+body[end:]
         edits.append((function.start_byte,function.end_byte,body))
         found.add(name)
-    if found != {'xlkt20_','xlkt21_'}:
-        raise ValueError('Expected both section lookup routines.')
-    declaration = ('extern "C" void feq_interpolate_section_interval(int,int,int,float,float*,float*,float*,float*,float*,float*,float*);\n'
+    if found != {'xlkt20_','xlkt21_','xlkt22_'}:
+        raise ValueError('Expected all three section lookup routines.')
+    declaration = ('extern "C" void feq_interpolate_energy_section_interval(int,int,int,int,float,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*);\n'
+                   'extern "C" void feq_interpolate_section_interval(int,int,int,float,float*,float*,float*,float*,float*,float*,float*);\n'
                    'extern "C" void feq_interpolate_section_interval_moment(int,int,int,float,float*,float*,float*,float*,float*,float*,float*,float*);\n')
     return declaration.encode()+edit_text(data,edits)
 
@@ -374,6 +377,9 @@ def main():
                 {'file':'fqshrftb.cpp','functions':['xlkt20_','xlkt21_'],'component':'src/section_interpolation.cpp',
                  'verification':['tests/reference/section_interpolation/fequtl-manifest.json',
                                  'tests/reference/section_first_moment/fequtl-manifest.json']},
+                {'file':'fqshrftb.cpp','function':'xlkt22_','component':'src/section_energy.cpp',
+                 'scope':'All eleven properties including logarithmic critical flow; XLKTAL delegates to this routine.',
+                 'verification':'tests/reference/section_energy/manifest.json'},
                 {'file':'fqshrftb.cpp','function':'lktab_','component':'src/table_interpolation.cpp',
                  'scope':'Scalar table types 2, 3 and 4.',
                  'verification':'tests/reference/function_tables/fequtl-manifest.json'},
