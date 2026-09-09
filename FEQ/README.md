@@ -4,8 +4,9 @@ This project is bringing **USGS FEQ 10.61** and **FEQUTL 5.80** to modern,
 portable C++. FEQ solves one-dimensional unsteady flow in channel networks and
 control structures. FEQUTL produces the hydraulic function tables used by FEQ.
 
-**Both complete engines now build as native C++20 programs.** The desktop
-launcher and installation packages are still in development. The build requires
+**Both complete engines now build as native C++20 programs.** FEQ Workbench
+provides a native desktop interface; its installation packages are undergoing
+Windows, macOS, and Linux verification. The build requires
 no Fortran compiler, source translator, Wine installation, or runtime download.
 It includes the independently verified numerical library and the preserved
 engine implementation, with defined C++ storage and native file handling.
@@ -366,6 +367,36 @@ comparison exposed three Ritter accumulator differences that did not change
 the printed reports; those differences are now corrected. The trace hooks,
 build provenance and report checks are recorded in
 [`recovery/utility-state-trajectories.json`](recovery/utility-state-trajectories.json).
+
+## Desktop application
+
+FEQ Workbench includes both programs, six supplied models, the original PDF
+manuals, saved run history, and a report viewer. Select **Examples**, choose a
+model, click **Use selected example**, then **Run model**. Each run has its own
+folder containing the copied model, results, console log, and a JSON record of
+input and output hashes. The workflow tests compare all 17 desktop-generated
+reports with the original results and verify failure/cancellation behavior.
+
+Choose a main input file to run an existing model. **Model folders** lets you set
+the complete source folder and the working folder used for relative references.
+Absolute paths inside the selected model are redirected into the copy; references
+outside it are rejected. The command-line engines retain unrestricted native
+file access when launched without the desktop's run environment.
+
+The fourth supplied FEQ example reaches normal completion while printing an
+`ERR:174` diagnostic followed by `ERR/WRN:234`. Workbench reports the completed
+run and both diagnostic counts. It preserves the original model and outputs;
+it does not silently amend the hydraulic input.
+
+To build the desktop, install Qt 6.11.2 (Widgets and Concurrent) and pass
+`-DFEQ_BUILD_DESKTOP=ON -DCMAKE_PREFIX_PATH=/path/to/Qt` to CMake. For distributable
+packages, first run `python tools/prepare_qt_bundle.py --output build/qt-licenses
+--cache build/qt-sources` and configure with
+`-DFEQ_QT_LICENSE_DIR=/absolute/path/to/build/qt-licenses`. The helper verifies
+pinned source checksums and includes the complete matching Qt source archives
+and notices in the package. Qt is dynamically linked under LGPL version 3;
+new FEQ project work remains MIT licensed. Run `cpack` using the generated
+`build/desktop/CPackConfig.cmake` to create platform installers.
 
 ## Build and run the native programs
 

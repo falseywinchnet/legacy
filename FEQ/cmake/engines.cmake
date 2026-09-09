@@ -47,6 +47,9 @@ foreach(program feq fequtl)
 endforeach()
 
 include(GNUInstallDirs)
+if(MSVC)
+    include(InstallRequiredSystemLibraries)
+endif()
 install(TARGETS feq fequtl RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES LICENSE NOTICE.md engines/runtime/NOTICE.txt
     DESTINATION ${CMAKE_INSTALL_DATADIR}/feq/licenses)
@@ -57,6 +60,11 @@ if(BUILD_TESTING)
     target_link_libraries(feq_runtime_io_test PRIVATE feq_runtime feq_numerics)
     feq_checks(feq_runtime_io_test)
     add_test(NAME runtime_io_storage COMMAND feq_runtime_io_test)
+    add_executable(feq_native_path_test tests/native_path_test.cpp engines/support/paths.cpp)
+    target_include_directories(feq_native_path_test PRIVATE engines/runtime)
+    target_compile_features(feq_native_path_test PRIVATE cxx_std_20)
+    feq_checks(feq_native_path_test)
+    add_test(NAME native_path_compatibility COMMAND feq_native_path_test)
     add_test(NAME complete_engine_examples COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_engine_examples.py
         --feq $<TARGET_FILE:feq> --fequtl $<TARGET_FILE:fequtl>

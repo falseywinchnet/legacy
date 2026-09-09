@@ -6,7 +6,7 @@ import re
 root = Path(__file__).resolve().parents[1]
 ignore = re.compile(r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'',re.S)
 errors = []
-for directory in ('src','include','tests','tools','engines'):
+for directory in ('src','include','tests','tools','engines','app'):
     for path in (root/directory).rglob('*'):
         if path.suffix not in ('.cpp','.hpp'):
             continue

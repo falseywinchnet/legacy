@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=FEQ Workbench
+Comment=Run FEQ flow models and build FEQUTL hydraulic tables
+Exec=feq-workbench
+Icon=feq-workbench
+Terminal=false
+Categories=Science;Engineering;
+StartupNotify=true

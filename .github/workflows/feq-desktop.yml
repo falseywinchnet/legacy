@@ -1,0 +1,62 @@
+name: FEQ desktop packages
+on:
+  push:
+    paths: ['FEQ/**', '.github/workflows/feq-desktop.yml']
+  pull_request:
+    paths: ['FEQ/**', '.github/workflows/feq-desktop.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            qt_arch: linux_gcc_64
+          - os: macos-latest
+            qt_arch: clang_64
+          - os: windows-latest
+            qt_arch: win64_msvc2022_64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.11.2'
+          arch: ${{ matrix.qt_arch }}
+          cache: true
+          setup-python: false
+      - name: Prepare matching Qt source archives and license notices
+        run: python FEQ/tools/prepare_qt_bundle.py --output FEQ/build/qt-licenses --cache FEQ/build/qt-sources
+      - name: Configure
+        run: cmake -S FEQ -B FEQ/build/desktop -DCMAKE_BUILD_TYPE=Release -DFEQ_BUILD_DESKTOP=ON -DFEQ_QT_LICENSE_DIR=${{ github.workspace }}/FEQ/build/qt-licenses
+      - name: Build
+        run: cmake --build FEQ/build/desktop --config Release --parallel 2
+      - name: Verify numerical results and the desktop workflow
+        run: ctest --test-dir FEQ/build/desktop -C Release --output-on-failure
+      - name: Install application and dependencies
+        run: cmake --install FEQ/build/desktop --config Release --prefix FEQ/build/desktop-package
+      - name: Create installers
+        run: cpack --config FEQ/build/desktop/CPackConfig.cmake -C Release -B FEQ/build/installers
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FEQ-Workbench-${{ runner.os }}-${{ runner.arch }}
+          path: |
+            FEQ/build/installers/*.dmg
+            FEQ/build/installers/*.exe
+            FEQ/build/installers/*.zip
+            FEQ/build/installers/*.deb
+            FEQ/build/installers/*.tar.gz
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: FEQ-Desktop-verification-${{ runner.os }}-${{ runner.arch }}
+          path: |
+            FEQ/build/desktop/Testing/Temporary/LastTest.log
+            FEQ/build/desktop/desktop-verification
+            FEQ/build/desktop/example-verification

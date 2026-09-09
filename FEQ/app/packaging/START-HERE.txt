@@ -1,0 +1,36 @@
+FEQ WORKBENCH
+=============
+
+Open FEQ Workbench from your applications menu, or double-click its application
+in this folder. Windows portable download: use Start-FEQ.cmd. Linux portable
+download: use Start-FEQ.sh.
+
+FIRST RUN
+1. Open Examples.
+2. Select a model and click Use selected example.
+3. Click Run model.
+4. Read the completion message and select an output under Results.
+
+Every run gets a new folder. Open run folder shows all files. Open full report
+opens the complete text report. Recent runs lets you return to earlier results.
+The Help menu opens the original FEQ or FEQUTL manual.
+
+YOUR MODEL
+Choose your main input file. Select Flow simulation (FEQ) or Hydraulic tables
+(FEQUTL), name the run, and select a results folder. If the model uses sibling
+folders, expand Model folders. Set Model folder to the common folder containing
+all model files, and Working folder to the directory from which relative input
+paths are interpreted. The results folder must be outside the model folder.
+
+The application copies the model before running. Absolute paths pointing into
+the original model are redirected into the copy; paths outside the complete
+model folder are rejected with a message. The command-line engines remain
+available in bin for existing workflows.
+
+An engine's normal completion can still include model diagnostics. Read the
+status and report before using the results. Stop run saves partial results and
+the engine log. A completed run's run.json records inputs, outputs and hashes.
+
+Work: Astra. Sponsor: Rainstar. Foundation: Hashem.
+New project work: MIT license. Historical and third-party notices are included
+under share/feq/licenses, or inside the macOS app's Contents/Resources/licenses.
