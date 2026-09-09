@@ -1,6 +1,6 @@
 {
   "release": "FEQ Workbench 0.1.0",
-  "status": "All native, desktop and actual installer checks passed.",
+  "status": "Published. All native, desktop and actual installer checks passed; all eight public release assets returned HTTP 200 and their recorded digests agree with the published checksum manifest.",
   "tested_source_commit": "dd78e004ea3c14a6974fa007c04e02e61eb56d8f",
   "native_workflow": "https://github.com/falseywinchnet/legacy/actions/runs/34381997444",
   "desktop_workflow": "https://github.com/falseywinchnet/legacy/actions/runs/34381997409",
@@ -398,5 +398,71 @@
     "sponsor": "Rainstar",
     "foundation": "Hashem"
   },
-  "licensing": "MIT applies to new project work. Historical FEQ/FEQUTL, Netlib and Qt notices are preserved."
+  "licensing": "MIT applies to new project work. Historical FEQ/FEQUTL, Netlib and Qt notices are preserved.",
+  "publication": {
+    "published_at": "2026-09-09T17:25:25Z",
+    "release_tag": "FEQ-v0.1.0",
+    "release_tag_commit": "1990685c990a202d5cc2a466d311d38d757aeebc",
+    "publisher_workflow": "https://github.com/falseywinchnet/legacy/actions/runs/34382721790",
+    "tested_source_commit": "dd78e004ea3c14a6974fa007c04e02e61eb56d8f",
+    "documentation_changes_after_build": [
+      ".github/workflows/feq-release.yml",
+      "FEQ/README.md",
+      "FEQ/docs/release-v0.1.0.md",
+      "FEQ/docs/workbench-results.png",
+      "FEQ/recovery/desktop-release.json",
+      "FEQ/recovery/native-engine-build.json",
+      "README.md"
+    ],
+    "assets": [
+      {
+        "name": "FEQ-release.json",
+        "bytes": 1775,
+        "sha256": "dc2550a9d7e4d6b8696ea210e3d930f413c1ceba4f16f6b9fa514c655a85c31f",
+        "url": "https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-release.json"
+      },
+      {
+        "name": "FEQ-verification.zip",
+        "bytes": 69289199,
+        "sha256": "7fb94847d5302fa31b7430f405b668a9fb73054dbf789e869fcab842576dfecf",
+        "url": "https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-verification.zip"
+      },
+      {
+        "name": "FEQ-Workbench-0.1.0-Darwin-arm64.dmg",
+        "bytes": 78652330,
+        "sha256": "52e078aa7b899c0dc6ec118891985c758c21ce3c49fc29e2080af69a93c43d9f",
+        "url": "https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-Workbench-0.1.0-Darwin-arm64.dmg"
+      },
+      {
+        "name": "FEQ-Workbench-0.1.0-Linux-x86_64.deb",
+        "bytes": 88349716,
+        "sha256": "a8cec148442a8f682ec905280107e95ffa56998c038e3d018769f9cd285994db",
+        "url": "https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-Workbench-0.1.0-Linux-x86_64.deb"
+      },
+      {
+        "name": "FEQ-Workbench-0.1.0-Linux-x86_64.tar.gz",
+        "bytes": 88344680,
+        "sha256": "ea5c34933377c4c5574e3a093c8f1b2d65a6115782d0a278920bcd40e6f17971",
+        "url": "https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-Workbench-0.1.0-Linux-x86_64.tar.gz"
+      },
+      {
+        "name": "FEQ-Workbench-0.1.0-Windows-AMD64.exe",
+        "bytes": 74481975,
+        "sha256": "ac761d8062d1c08745824ecdf638b3204b82dbfd7019c3880b82f4b75bd289a9",
+        "url": "https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-Workbench-0.1.0-Windows-AMD64.exe"
+      },
+      {
+        "name": "FEQ-Workbench-0.1.0-Windows-AMD64.zip",
+        "bytes": 81165047,
+        "sha256": "c2bd2801344405dd66b60ae1af561f32e2712000d94933eea55c7f5f76d106c9",
+        "url": "https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-Workbench-0.1.0-Windows-AMD64.zip"
+      },
+      {
+        "name": "SHA256SUMS.txt",
+        "bytes": 690,
+        "sha256": "a9af1e05a0033b1889cb46daa15158b93f672eb679095ceff0dc74d932e63cde",
+        "url": "https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/SHA256SUMS.txt"
+      }
+    ]
+  }
 }
