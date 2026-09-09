@@ -3,7 +3,7 @@ project(FEQNumerics VERSION 0.0.1 LANGUAGES CXX)
 
 option(FEQ_SANITIZERS "Check authored C++ for invalid memory and undefined behavior" OFF)
 
-add_library(feq_numerics STATIC src/section_flux.cpp src/power.cpp src/section_geometry.cpp src/decimal.cpp src/md5.cpp src/profile_matrix.cpp src/section_interpolation.cpp src/table_interpolation.cpp)
+add_library(feq_numerics STATIC src/elevation_arguments.cpp src/section_properties.cpp src/section_flux.cpp src/power.cpp src/section_geometry.cpp src/decimal.cpp src/md5.cpp src/profile_matrix.cpp src/section_interpolation.cpp src/table_interpolation.cpp)
 target_include_directories(feq_numerics PUBLIC include)
 target_compile_features(feq_numerics PUBLIC cxx_std_20)
 set_target_properties(feq_numerics PROPERTIES CXX_EXTENSIONS OFF)
@@ -72,6 +72,18 @@ if(BUILD_TESTING)
     feq_checks(feq_flux_probe)
     add_test(NAME flux_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_flux_fixture.py $<TARGET_FILE:feq_flux_probe>)
+
+    add_executable(feq_properties_probe tools/properties_probe.cpp)
+    target_link_libraries(feq_properties_probe PRIVATE feq_numerics)
+    feq_checks(feq_properties_probe)
+    add_test(NAME properties_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_properties_fixture.py $<TARGET_FILE:feq_properties_probe>)
+
+    add_executable(feq_elevation_probe tools/elevation_probe.cpp)
+    target_link_libraries(feq_elevation_probe PRIVATE feq_numerics)
+    feq_checks(feq_elevation_probe)
+    add_test(NAME elevation_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_elevation_fixture.py $<TARGET_FILE:feq_elevation_probe>)
 
     add_executable(feq_decimal_probe tools/decimal_probe.cpp)
     target_link_libraries(feq_decimal_probe PRIVATE feq_numerics)

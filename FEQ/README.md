@@ -71,6 +71,15 @@ Their fixtures are in [`tests/reference/section_flux/`](tests/reference/section_
 and [`tests/reference/power/`](tests/reference/power/). Piecewise linear
 sinuosity uses a separate Gaussian integration path that remains to be verified.
 
+Section-property aggregation matches **415 direct original-executable cases**,
+including old and new flux coefficients, critical-flow selection, averaged
+roughness, USGS coefficients, and retained slot conveyance. The independent
+elevation-argument generator matches **201 original-executable cases**, including
+near-zero insertion, subdivision spacing, duplicate removal, and exhausted
+capacity. Both preserve the original mixed precision and in-place updates.
+Their fixtures are in [`tests/reference/section_properties/`](tests/reference/section_properties/)
+and [`tests/reference/elevation_arguments/`](tests/reference/elevation_arguments/).
+
 The independent single precision decimal converter matches **all 2,360 direct
 original-executable cases**, including every finite exponent field, subnormals,
 signed zeros, halfway values and their adjacent floats, infinities, and NaNs.

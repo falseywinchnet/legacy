@@ -335,3 +335,41 @@ The first NEWBETA table now has the original beta/alpha values. Conveyance,
 critical-flow, spline, and later utility differences remain; no numerical
 comparison mask or tolerance was added. Thirteen component checks pass in both
 the local release build and the address/undefined-behavior sanitizer build.
+
+## Section properties and elevation arguments
+
+`src/section_properties.cpp` implements COMPEL's aggregation after FBASEL.
+All 415 direct original calls match every output bit and preserve updates to
+roughness, previous conveyance, and previous top width. Cases cover three
+scales, multiple subsections, old and new beta/alpha methods, momentum/energy
+critical-flow selection, USGS coefficients, averaged roughness, and slot
+conveyance retention. Nineteen cases use the exact rectangle elevations
+captured from the original complete UTLEXM model.
+
+Area and first-moment totals round after each REAL accumulation. Conveyance
+retains a wider intermediate after sinuosity adjustment, including through the
+slot comparison and total. The alpha sum rounds to REAL per subsection, while
+the beta sum stays wider. Original power and square-root stores, coefficient
+normalization, critical-flow denominators, and the section-wide n-value are
+specified beside the equations. The original diagnostic formats remain in the
+integration adapter. Piecewise linear sinuosity aggregation exists but awaits
+verification together with its separate Gaussian integration path.
+
+`src/elevation_arguments.cpp` implements CHKARG and its SORT/RDUP operations.
+All 201 original-executable fixtures match the returned count and every byte
+of the supplied array, including its unused tail and capacity-exhaustion cases.
+The original keeps the gap, subdivision increment, and running elevation in
+53-bit registers. Only the stored elevation rounds to REAL. The near-zero
+point, stable insertion order, reciprocal duplicate threshold, zero-scale
+unordered comparison, and original loop bound after removal are preserved.
+Machine instructions for all three routines are retained under
+`recovery/assembly/fequtl/`.
+
+With both components integrated, the first UTLEXM report difference moves to
+line 566, in the critical-flow table; the first culvert difference is line 408,
+in the generated section's bottom elevation. The comparison still passes
+13 of 17 complete outputs. A fresh build and complete trace rerun preserve
+all twelve FEQ reports and every word of all 2,092 active matrices. Later
+utility flow tables, generated section geometry, Gaussian integration, and
+end-user packaging remain unfinished. No tolerance or numerical masking has
+been introduced.

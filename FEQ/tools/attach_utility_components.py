@@ -53,6 +53,90 @@ def integrate_geometry(data):
         (stop[0].end_byte,stop[0].end_byte,flux)])
 
 
+PROPERTY_DECLARATION = ('extern "C" int feq_section_properties(int,int,int,const char*,float,float,float,int,int,int*,'
+    'const float*,const float*,const double*,const double*,const float*,const float*,const float*,const float*,'
+    'double,double,double,double,double,double,double,double,float*,float*,float*,int*,int*,float*);\n')
+
+
+def integrate_properties(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'compel_']
+    if len(targets) != 1:
+        raise ValueError('Expected one COMPEL function definition.')
+    body = targets[0].child_by_field_name('body')
+    statements = [node for node in body.named_children if node.type != 'comment']
+    calls = [node for node in statements if node.type == 'expression_statement' and content(node,data).startswith('fbasel_(')]
+    returns = [node for node in statements if node.type == 'return_statement']
+    if len(calls) != 1 or len(returns) != 1 or content(returns[0],data) != 'return 0;':
+        raise ValueError('Expected the original COMPEL call and return boundaries.')
+    replacement = r"""
+    // COMPEL totals: independently verified original arithmetic and state updates.
+    int feq_diagnostic_kind[401];
+    int feq_diagnostic_subsection[401];
+    float feq_diagnostic_percentage[401];
+    const int feq_diagnostic_count = feq_section_properties(*nsub,*navm,*snflg,betopt,*nfac,
+        grvcom_1.grav,nrdzcm_1.slot,nrdzcm_1.iusgs,nrdzcm_1.nocm,wrn557,
+        ts,ps,as,ybs,&n[1],sbsn,qs,ks,sumq,sumfm,sumfe,sumdq,sumdfm,sumdfe,summa,summq,
+        &kold[1],&tsold[1],&xsv[1],feq_diagnostic_kind,feq_diagnostic_subsection,feq_diagnostic_percentage);
+    for (int feq_event = 0; feq_event < feq_diagnostic_count; ++feq_event) {
+        j = feq_diagnostic_subsection[feq_event];
+        if (feq_diagnostic_kind[feq_event] == 1) {
+            feq_gen_io_d__362.ciunit = xscom_1.lout;
+            s_wsfe(&feq_gen_io_d__362);
+            do_fio(&feq_gen_c_d_1, reinterpret_cast<char*>(zi), static_cast<ftnlen>(sizeof(real)));
+            do_fio(&feq_gen_c_d_1, reinterpret_cast<char*>(&j), static_cast<ftnlen>(sizeof(integer)));
+            e_wsfe();
+            xscom_1.eflag = 1;
+        } else if (feq_diagnostic_kind[feq_event] == 2) {
+            feq_gen_io_d__363.ciunit = xscom_1.lout;
+            s_wsfe(&feq_gen_io_d__363);
+            do_fio(&feq_gen_c_d_1, reinterpret_cast<char*>(zi), static_cast<ftnlen>(sizeof(real)));
+            do_fio(&feq_gen_c_d_1, reinterpret_cast<char*>(&j), static_cast<ftnlen>(sizeof(integer)));
+            e_wsfe();
+            feq_gen_io_d__364.ciunit = xscom_1.lout;
+            s_wsfe(&feq_gen_io_d__364);
+            e_wsfe();
+        } else if (feq_diagnostic_kind[feq_event] == 3) {
+            feq_gen_io_d__372.ciunit = feq_gen_stdun_com_d_1.std6;
+            s_wsfe(&feq_gen_io_d__372);
+            do_fio(&feq_gen_c_d_1, reinterpret_cast<char*>(&j), static_cast<ftnlen>(sizeof(integer)));
+            do_fio(&feq_gen_c_d_1, reinterpret_cast<char*>(zi), static_cast<ftnlen>(sizeof(real)));
+            do_fio(&feq_gen_c_d_1, reinterpret_cast<char*>(&feq_diagnostic_percentage[feq_event]), static_cast<ftnlen>(sizeof(real)));
+            e_wsfe();
+        } else if (feq_diagnostic_kind[feq_event] == 4) {
+            feq_gen_io_d__374.ciunit = feq_gen_stdun_com_d_1.std6;
+            s_wsle(&feq_gen_io_d__374);
+            do_lio(&feq_gen_c_d_9,&feq_gen_c_d_1,const_cast<char*>(" *ERR:615* NEWBETA FAILURE. VALUE < 1"),static_cast<ftnlen>(37));
+            e_wsle();
+        }
+    }
+    """
+    return PROPERTY_DECLARATION.encode()+edit_text(data,[(calls[0].end_byte,returns[0].start_byte,replacement)])
+
+
+def integrate_elevations(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'chkarg_']
+    if len(targets) != 1:
+        raise ValueError('Expected one CHKARG function definition.')
+    statements = [node for node in targets[0].child_by_field_name('body').named_children if node.type != 'comment']
+    starts = [node for node in statements if node.type == 'expression_statement' and content(node,data) == 'n = *ndep;']
+    returns = [node for node in statements if node.type == 'return_statement']
+    if len(starts) != 1 or len(returns) != 1:
+        raise ValueError('Expected CHKARG executable boundaries.')
+    replacement = r"""
+    // Original-verified CHKARG register precision, stable sort, and RDUP.
+    const int feq_exhausted = feq_elevation_arguments(*mxndep,ndep,*nrzero,*dzlim,*added,&feq_gen_z_d_[1]);
+    for (int feq_event = 0; feq_event < feq_exhausted; ++feq_event) {
+        feq_gen_io_d__151.ciunit = *stdout;
+        s_wsfe(&feq_gen_io_d__151);
+        e_wsfe();
+    }
+    """
+    return b'extern "C" int feq_elevation_arguments(int,int*,float,float,int,float*);\n'+edit_text(
+        data,[(starts[0].start_byte,returns[0].start_byte,replacement)])
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('source',type=Path);parser.add_argument('output',type=Path)
@@ -63,14 +147,18 @@ def main():
     sources = []
     for path in sorted(source.glob('*.cpp')):
         data = path.read_bytes();sources.append({'name':path.name,'sha256':hashlib.sha256(data).hexdigest()})
-        (output/path.name).write_bytes(integrate_geometry(data) if path.name == 'xsection.cpp' else data)
+        (output/path.name).write_bytes(integrate_elevations(integrate_properties(integrate_geometry(data))) if path.name == 'xsection.cpp' else data)
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
                 'component':'src/section_geometry.cpp','scope':'First pass: geometric accumulation and line roughness weights.'},
                 {'file':'xsection.cpp','function':'fbasel_','component':'src/section_flux.cpp',
-                 'scope':'Analytical NEWBETA second pass; preserve the separate piecewise linear Gaussian path.'}]}
+                 'scope':'Analytical NEWBETA second pass; preserve the separate piecewise linear Gaussian path.'},
+                {'file':'xsection.cpp','function':'compel_','component':'src/section_properties.cpp',
+                 'scope':'Section aggregation, conveyance, coefficients, critical flows and KOLD/TSOLD updates; retain original diagnostic formats.'},
+                {'file':'xsection.cpp','function':'chkarg_','component':'src/elevation_arguments.cpp',
+                 'scope':'Elevation spacing, near-zero insertion, stable sort and duplicate removal; retain ERR:525 formatting.'}]}
     (output/'verified-components.json').write_text(json.dumps(manifest,indent=2)+'\n')
-    print('Integrated independent section geometry and analytical flux into FEQUTL FBASEL.')
+    print('Integrated independent FBASEL geometry/analytical flux, COMPEL properties and CHKARG spacing.')
 
 
 if __name__ == '__main__':main()

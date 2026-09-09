@@ -112,17 +112,34 @@ def patch(original, pe, symbols, hooks):
         record_size = 0
         for capture in hook['captures']:
             size = capture['bytes']
-            if 'stack_offset' in capture or capture.get('fpu'):
+            if 'stack_offset' in capture or 'frame_offset' in capture or capture.get('fpu'):
                 if capture.get('fpu'):
                     if size != 108:
                         raise ValueError('The full x87 save record is 108 bytes.')
                     driver.emit('89e6')             # mov esi,esp (saved x87 record)
+                elif 'frame_offset' in capture:
+                    displacement = capture['frame_offset']
+                    if abs(displacement) > 100000 or size <= 0 or size > 100000:
+                        raise ValueError('Invalid frame capture extent.')
+                    driver.emit('8b742474')         # saved EBP from PUSHAD
+                    driver.emit('81c6')
+                    driver.code.extend(struct.pack('<i',displacement))
                 else:
                     if capture['stack_offset'] < 0 or size <= 0 or capture['stack_offset']+size > 100000:
                         raise ValueError('Invalid stack capture extent.')
                     driver.emit('8b742478')         # saved ESP from PUSHAD (before pushfd adjustment)
                     driver.emit('81c6')
                     driver.code.extend(struct.pack('<I',capture['stack_offset']+4))
+                if capture.get('dereference'):
+                    if capture.get('fpu'):
+                        raise ValueError('Cannot dereference an x87 save record.')
+                    driver.emit('8b36')             # mov esi,[esi]: original argument pointer
+                    displacement = capture.get('pointer_offset',0)
+                    if displacement < 0 or displacement > 100000:
+                        raise ValueError('Invalid pointer capture offset.')
+                    if displacement:
+                        driver.emit('81c6')
+                        driver.code.extend(struct.pack('<I',displacement))
                 driver.push(0)
                 driver.push(written)
                 driver.push(size)
