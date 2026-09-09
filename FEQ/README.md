@@ -120,6 +120,13 @@ reciprocal, the REAL power argument and result, and the REAL square root stored
 in a DOUBLE PRECISION table. See
 [`tests/reference/tailwater_spacing/`](tests/reference/tailwater_spacing/).
 
+Channel-rating elevations, free-drop subtraction, normal flow and partial-drop
+spacing match **3,072 original-executable cases**. The original CHNTAB power
+loop runs in place; both FRFCHN free-flow exits retain the upstream and
+downstream elevations until their final subtraction. See
+[`src/channel_rating.cpp`](src/channel_rating.cpp) and
+[`tests/reference/channel_rating/`](tests/reference/channel_rating/).
+
 The standalone conveyance lookup matches **2,688 calls to the complete original
 LKTK routine**, covering all fourteen accepted section table types, three
 scales, interval endpoints, and increasing or decreasing conveyance. Its
@@ -310,9 +317,9 @@ Complete translated research engines execute all six examples. **All twelve
 FEQ report files now match**, masking only execution clocks; all four FEQ
 water-level and discharge histories match raw bytes. Every numerical value,
 diagnostic, convergence location, and other report byte is included. Across
-both programs, the strict comparison passes 14 of 17 files. The UTLEXM function
-table also matches with only its timestamp masked. Three FEQUTL reports and
-tables still have numerical differences.
+both programs, the strict comparison passes 16 of 17 files. Both CULVERT outputs
+and the UTLEXM function table match with only their timestamps masked. The
+UTLEXM report still has numerical differences.
 [`recovery/cpp-research-status.json`](recovery/cpp-research-status.json) records
 the actual binaries, runtime changes, and all comparisons. These research
 engines are not application releases, and example coverage does not establish

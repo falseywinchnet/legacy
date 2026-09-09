@@ -7,6 +7,7 @@
 #include <feq/power_spacing.hpp>
 #include <feq/full_barrel.hpp>
 #include <feq/tailwater_residual.hpp>
+#include <feq/channel_rating.hpp>
 #include <array>
 #include <bit>
 #include <cstdint>
@@ -82,7 +83,23 @@ int main(int argc, char** argv) {
         const bool departure_energy = argc == 2 && std::strcmp(argv[1],"--departure-energy") == 0;
         const bool tailwater_momentum = argc == 2 && std::strcmp(argv[1],"--tailwater-momentum") == 0;
         const bool tailwater_spacing = argc == 2 && std::strcmp(argv[1],"--tailwater-spacing") == 0;
+        const bool channel_rating = argc == 2 && std::strcmp(argv[1],"--channel-rating") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (channel_rating) {
+                float fields[8]{};
+                for (int i = 0; i < 8; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const int count = std::bit_cast<std::int32_t>(read_word());
+                const int index = std::bit_cast<std::int32_t>(read_word());
+                const double upstream = feq::channel_upstream_elevation(fields[0],fields[1]);
+                write_double(upstream);
+                write_float(static_cast<float>(upstream-fields[2]));
+                const float drop = feq::channel_free_drop(upstream,fields[4],fields[3]);
+                write_float(drop);
+                write_float(drop);
+                write_float(static_cast<float>(feq::steady_normal_flow(fields[5],fields[6])));
+                write_float(feq::channel_partial_free_drop(index,count,fields[7]));
+                continue;
+            }
             if (tailwater_spacing) {
                 const float free_level = std::bit_cast<float>(read_word());
                 const float upstream = std::bit_cast<float>(read_word());

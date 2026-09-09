@@ -27,3 +27,4 @@
 #include <feq/weir_flow.hpp>
 #include <feq/full_barrel.hpp>
 #include <feq/tailwater_residual.hpp>
+#include <feq/channel_rating.hpp>

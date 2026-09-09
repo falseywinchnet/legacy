@@ -843,6 +843,38 @@ def integrate_normal_flow_residual(data):
     return b'#include <feq/steady_residual.hpp>\n'+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
 
 
+def integrate_channel_rating(data):
+    edits = [];counts = {'zl-declaration':0,'zl':0,'drop':0,'normal':0,'partial-drop':0}
+    for function in functions(data):
+        name = content(identifier(function.child_by_field_name('declarator')),data)
+        if name not in ('frfchn_','chntab_'):continue
+        for node in nodes(function):
+            if name == 'frfchn_' and node.type == 'declaration' and content(node.child_by_field_name('type'),data) == 'real':
+                declarators = node.children_by_field_name('declarator')
+                if any(item.type != 'identifier' for item in declarators):continue
+                names = [content(item,data) for item in declarators]
+                if 'zl' not in names:continue
+                narrow = [item for item in names if item != 'zl']
+                edits.append((node.start_byte,node.end_byte,
+                    ('real '+', '.join(narrow)+';\n    ' if narrow else '')+'double zl;'))
+                counts['zl-declaration'] += 1
+            if node.type != 'expression_statement':continue
+            text = content(node,data)
+            if name == 'frfchn_' and text.startswith('zl = '):
+                replacement = 'zl = feq::channel_upstream_elevation(*hup,*hdatum);';key = 'zl'
+            elif name == 'frfchn_' and text.startswith('*fdrop = '):
+                replacement = '*fdrop = feq::channel_free_drop(zl,chncom_1.yr,*zbotr);';key = 'drop'
+            elif name == 'frfchn_' and text == 'chncom_1.qn = k * sqrt(chncom_1.sbot);':
+                replacement = 'chncom_1.qn = feq::steady_normal_flow(k,chncom_1.sbot);';key = 'normal'
+            elif name == 'chntab_' and text.startswith('pfdvec[feq_gen_i_d_ - 1] = pow_dd('):
+                replacement = 'pfdvec[feq_gen_i_d_ - 1] = feq::channel_partial_free_drop(feq_gen_i_d_,nfrac,power);';key = 'partial-drop'
+            else:continue
+            edits.append((node.start_byte,node.end_byte,replacement));counts[key] += 1
+    if counts != {'zl-declaration':1,'zl':1,'drop':2,'normal':1,'partial-drop':1}:
+        raise ValueError('Expected channel elevation, both free-flow exits, normal flow and partial-drop sequence.')
+    return b'#include <feq/channel_rating.hpp>\n#include <feq/steady_residual.hpp>\n'+edit_text(data,edits)
+
+
 def integrate_tailwater_spacing(data):
     targets = [function for function in functions(data)
                if content(identifier(function.child_by_field_name('declarator')),data) == 'qvstw_']
@@ -1051,14 +1083,15 @@ def main():
         elif path.name == 'tablook.cpp':data = integrate_scalar_moment(integrate_scalar_conveyance(data))
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
+        elif path.name == 'chanrat.cpp':data = integrate_channel_rating(data)
         elif path.name == 'culverta.cpp':data = integrate_tailwater_spacing(integrate_tailwater_momentum(data))
         elif path.name == 'culvertc.cpp':data = integrate_full_barrel(integrate_steady_profile(integrate_steady_residuals(data)))
         elif path.name == 'culvertd.cpp':data = integrate_departure_energy(integrate_normal_flow_residual(integrate_approach_residual(integrate_culvert_losses(data))))
         elif path.name == 'numrmath.cpp':data = integrate_gaussian_rule(data)
-        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'):
+        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','chanrat.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'):
             integrated_files.add(path.name)
         (output/path.name).write_bytes(data)
-    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'}:
+    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','chanrat.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'}:
         raise ValueError('Prepared utility sources are missing required integration files.')
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
@@ -1146,6 +1179,9 @@ def main():
                 {'file':'culverta.cpp','function':'qvstw_','component':'src/tailwater_residual.cpp',
                  'scope':'Tailwater spacing with wide reciprocal and head difference, REAL power and REAL square-root table stores.',
                  'verification':'tests/reference/tailwater_spacing/manifest.json'},
+                {'file':'chanrat.cpp','functions':['frfchn_','chntab_'],'component':'src/channel_rating.cpp',
+                 'scope':'Retained upstream elevation, wide free-drop subtraction, stored REAL normal flow and partial-drop power sequence.',
+                 'verification':'tests/reference/channel_rating/manifest.json'},
                 {'file':'culvertc.cpp','functions':['sber_','sper_','sfpsbe_'],'component':'src/steady_residual.cpp',
                  'scope':'Wide velocity, energy, eddy loss and normalized residuals after original section lookup.',
                  'verification':['tests/reference/steady_residual/manifest.json','tests/reference/steady_profile/manifest.json']},

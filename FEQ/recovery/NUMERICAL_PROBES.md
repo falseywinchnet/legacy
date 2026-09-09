@@ -1118,3 +1118,39 @@ are masked. Channel-rating recovery and application release work continue.
 FEQ/build/python312/bin/python FEQ/tools/probe_tailwater_spacing_original.py \
   --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/tailwater-spacing-recapture
 ```
+
+## Channel-rating elevations and power spacing
+
+`probe_channel_rating_original.py` captures 3,072 cases against the original
+FRFCHN elevation and normal-flow instruction sequences and CHNTAB's complete
+power loop. The latter executes at its original address, with a temporary RET
+at the first instruction following the loop. The arithmetic and power calls
+remain unchanged. Cases cover three elevation scales, ten sequence sizes from
+2 through 151, eleven powers, both endpoints and interior fractions.
+
+Each 40-byte input contains eight floats (head, datum, upstream bed,
+downstream bed, downstream depth, conveyance, slope, power), followed by count
+and one-based index integers. The 28-byte output contains the retained
+upstream elevation as a double, then five floats: upstream depth, free drop
+from each of the two exit sequences, normal flow and partial-drop fraction.
+Every output bit matches.
+
+FRFCHN retains `ZL=Hup+Hdatum` through the upstream-depth subtraction and
+subsequent calls. Both exits retain `ZR=Yr+ZbotR` through `FDROP=ZL-ZR` before
+storing REAL. Normal flow stores the square root as REAL before multiplying
+by conveyance and storing QN. CHNTAB stores the reciprocal-product fraction
+as REAL and calls the REAL power routine. The adapter uses these verified
+expressions while preserving the original section lookups, root solver,
+branch structure and diagnostics.
+
+The integrated candidate passes all 59 release and sanitizer checks. Both
+CULVERT output files now match after masking only execution clocks, bringing
+the full example result to 16/17. UTLEXM still differs in 38 lines; the first
+is in the expansion/contraction calculation. Every active word in the four
+FEQ matrix traces and every gate residual entry continue to be checked
+separately. Application release work remains incomplete.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_channel_rating_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/channel-rating-recapture
+```
