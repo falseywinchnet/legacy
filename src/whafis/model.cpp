@@ -30,6 +30,16 @@ Report calculate(std::string_view input, const Options &options) {
         report.error = error.what();
     }
     report.text = e.io.content(6);
+    if (report.error.empty()) {
+        auto failure = report.text.find("JOB DUMPED");
+        if (failure == std::string::npos) failure = report.text.find("JOB  DUMPED");
+        if (failure != std::string::npos) {
+            auto begin = report.text.rfind("\n", failure);
+            auto end = report.text.find("\r\n", failure);
+            report.error = report.text.substr(begin == std::string::npos ? 0 : begin + 1,
+                end == std::string::npos ? std::string::npos : end - (begin == std::string::npos ? 0 : begin + 1));
+        }
+    }
     report.transects = std::move(e.transects);
     std::string executed_on = options.executed_on;
     if (executed_on.empty()) {

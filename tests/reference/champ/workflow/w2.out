@@ -1,0 +1,258 @@
+ WAVE HEIGHT COMPUTATIONS FOR FLOOD INSURANCE STUDIES (WHAFIS VERSION 4.0G, 08_2007)
+ Executed on: Tue Sep  8 20:05:18 2026
+ Input file:  Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-s5akq2n3\INPUT.DAT                                  
+ Output file: Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-s5akq2n3\OUTPUT.OUT                                 
+
+
+
+                                                    Sample Data - Transect: 2                                                       
+                                                     THIS IS A 100-YEAR CASE
+
+                                                             PART1 INPUT
+
+          IE      0.000      0.000     75.000      6.600     12.400     44.800     12.700      0.000      0.067      0.000
+          IF     75.000      5.000      0.000     12.400      0.000      0.000      0.000      0.000      0.032      0.000
+          IF    302.800      9.556      6.600     12.400      0.000      0.000      0.000      0.000      0.009      0.000
+          VH    400.000      8.000      2.000      1.000      0.000      1.000      0.000     12.303      0.000      0.000
+          MG       SPAT      0.100      0.000      0.850    327.000      0.000      0.000      0.000      0.000      0.000
+          VH   2303.000      9.500      2.000      1.000      0.000      1.000      6.600     10.400      0.001      0.000
+          MG       SPAT      0.100      0.000      0.850    327.000      0.000      0.000      0.000      0.000      0.000
+          VH   3500.000     10.400      2.000      1.000      0.000      1.000      0.000     10.400      0.001      0.000
+          MG       SPAT      0.100      0.000      0.850    327.000      0.000      0.000      0.000      0.000      0.000
+          ET      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000
+1
+
+
+            END        END      FETCH SURGE ELEV SURGE ELEV    INITIAL    INITIAL                BOTTOM    AVERAGE
+        STATION  ELEVATION     LENGTH    10-YEAR   100-YEAR WAVE HEIGHT  W. PERIOD                SLOPE    A-ZONES
+  IE      0.000      0.000     75.000      6.600     12.400     44.800     12.700      0.000      0.067      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF     75.000      5.000      0.000     12.400      0.000      0.000      0.000      0.000      0.032      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    302.800      9.556      6.600     12.400      0.000      0.000      0.000      0.000      0.009      0.000
+
+
+            END        END              REGION 1                NO. OF  NEW SURGE  NEW SURGE     BOTTOM    AVERAGE
+        STATION  ELEVATION   REGION 1     WEIGHT   REGION 2 PLANT TYPES   10-YEAR   100-YEAR      SLOPE    A-ZONES
+  VH    400.000      8.000      2.000      1.000      0.000      1.000      0.000     12.303      0.000      0.000
+
+
+          PLANT       DRAG   COVERAGE  AVG. STEM     NUMBER  BASE STEM   MID STEM   TOP STEM   LEAF-STEM
+           TYPE     COEFF.      RATIO     HEIGHT    DENSITY   DIAMETER   DIAMETER   DIAMETER  AREA RATIO
+  MG       SPAT      0.100      0.000      0.850    327.000      0.000      0.000      0.000      0.000      0.000
+
+
+  ----------------------------------------------------------------------------------------------------------------
+                          PLANT CHARACTERISTICS INCLUDING VALUES SUPPLIED BY THE PROGRAM
+
+
+          PLANT       DRAG   COVERAGE  AVG. STEM     NUMBER  BASE STEM   MID STEM   TOP STEM   LEAF-STEM
+           TYPE     COEFF.      RATIO     HEIGHT    DENSITY   DIAMETER   DIAMETER   DIAMETER  AREA RATIO
+           SPAT      0.100      1.000      0.850    327.000      0.024      0.012      0.012      1.380
+
+
+  ----------------------------------------------------------------------------------------------------------------
+
+
+            END        END              REGION 1                NO. OF  NEW SURGE  NEW SURGE     BOTTOM    AVERAGE
+        STATION  ELEVATION   REGION 1     WEIGHT   REGION 2 PLANT TYPES   10-YEAR   100-YEAR      SLOPE    A-ZONES
+  VH   2303.000      9.500      2.000      1.000      0.000      1.000      6.600     10.400      0.001      0.000
+
+
+          PLANT       DRAG   COVERAGE  AVG. STEM     NUMBER  BASE STEM   MID STEM   TOP STEM   LEAF-STEM
+           TYPE     COEFF.      RATIO     HEIGHT    DENSITY   DIAMETER   DIAMETER   DIAMETER  AREA RATIO
+  MG       SPAT      0.100      0.000      0.850    327.000      0.000      0.000      0.000      0.000      0.000
+
+
+  ----------------------------------------------------------------------------------------------------------------
+                          PLANT CHARACTERISTICS INCLUDING VALUES SUPPLIED BY THE PROGRAM
+
+
+          PLANT       DRAG   COVERAGE  AVG. STEM     NUMBER  BASE STEM   MID STEM   TOP STEM   LEAF-STEM
+           TYPE     COEFF.      RATIO     HEIGHT    DENSITY   DIAMETER   DIAMETER   DIAMETER  AREA RATIO
+           SPAT      0.100      1.000      0.850    327.000      0.024      0.012      0.012      1.380
+
+
+  ----------------------------------------------------------------------------------------------------------------
+
+
+            END        END              REGION 1                NO. OF  NEW SURGE  NEW SURGE     BOTTOM    AVERAGE
+        STATION  ELEVATION   REGION 1     WEIGHT   REGION 2 PLANT TYPES   10-YEAR   100-YEAR      SLOPE    A-ZONES
+  VH   3500.000     10.400      2.000      1.000      0.000      1.000      0.000     10.400      0.001      0.000
+
+
+          PLANT       DRAG   COVERAGE  AVG. STEM     NUMBER  BASE STEM   MID STEM   TOP STEM   LEAF-STEM
+           TYPE     COEFF.      RATIO     HEIGHT    DENSITY   DIAMETER   DIAMETER   DIAMETER  AREA RATIO
+  MG       SPAT      0.100      0.000      0.850    327.000      0.000      0.000      0.000      0.000      0.000
+
+
+  ----------------------------------------------------------------------------------------------------------------
+                          PLANT CHARACTERISTICS INCLUDING VALUES SUPPLIED BY THE PROGRAM
+
+
+          PLANT       DRAG   COVERAGE  AVG. STEM     NUMBER  BASE STEM   MID STEM   TOP STEM   LEAF-STEM
+           TYPE     COEFF.      RATIO     HEIGHT    DENSITY   DIAMETER   DIAMETER   DIAMETER  AREA RATIO
+           SPAT      0.100      1.000      0.850    327.000      0.024      0.012      0.012      1.380
+
+
+  ----------------------------------------------------------------------------------------------------------------
+
+
+  ------------------------------------------------END OF TRANSECT-------------------------------------------------
+
+
+  NOTE:
+
+  SURGE ELEVATION INCLUDES CONTRIBUTIONS FROM ASTRONOMICAL AND STORM TIDES.
+1
+
+
+
+                                                PART2: CONTROLLING WAVE HEIGHTS, SPECTRAL 
+                                                       PEAK WAVE PERIOD, AND WAVE CREST ELEVATIONS
+
+                                          LOCATION        CONTROLLING  SPECTRAL PEAK   WAVE CREST
+                                                          WAVE HEIGHT  WAVE PERIOD     ELEVATION 
+
+                                        IE       0.00         9.45        12.70        19.01
+
+                                        IF      75.00         5.69        12.70        16.38
+
+                                               177.51         4.13        12.70        15.29
+
+                                               280.02         2.56        12.70        14.19
+
+                                        IF     302.80         2.21        12.70        13.94
+
+                                        VH     400.00         2.29        12.70        13.91
+
+                                               550.00         2.20        12.70        13.69
+
+                                               710.00         2.10        12.70        13.46
+
+                                              1030.00         1.90        12.70        13.01
+
+                                              1350.00         1.71        12.70        12.55
+
+                                              1670.00         1.49        12.70        12.08
+
+                                              1990.00         1.14        12.70        11.51
+
+                                              2150.00         0.91        12.70        11.19
+
+                                        VH    2303.00         0.70        12.70        10.89
+
+                                              2453.00         0.61        12.70        10.83
+
+                                              2613.00         0.52        12.70        10.76
+
+                                              2933.00         0.33        12.70        10.63
+
+                                              3253.00         0.14        12.70        10.50
+
+                                        VH    3500.00         0.01        12.70        10.41
+
+
+
+                                        PART3 LOCATION OF AREAS ABOVE 100-YEAR SURGE
+
+                                        NO AREAS ABOVE 100-YEAR SURGE IN THIS TRANSECT
+
+
+
+                                                  PART4 LOCATION OF SURGE CHANGES
+
+                                        STATION          10-YEAR SURGE          100-YEAR SURGE
+
+                                        400.00                 6.60                12.30
+
+                                       2303.00                 6.60                10.40
+
+
+
+                                                       PART5  LOCATION OF V ZONES
+
+                                             STATION OF GUTTER          LOCATION OF ZONE
+
+                                                      251.19               WINDWARD
+
+
+
+                                                   PART6 NUMBERED A ZONES AND V ZONES
+
+                                        STATION OF GUTTER  ELEVATION  ZONE DESIGNATION   FHF
+
+
+                                               0.00          19.01
+
+                                                                          V18  EL=19      90
+
+                                              14.65          18.50
+
+                                                                          V18  EL=18      90
+
+                                              43.17          17.50
+
+                                                                          V18  EL=17      90
+
+                                              71.69          16.50
+
+                                                                          V18  EL=16      90
+
+                                             157.94          15.50
+
+                                                                          V18  EL=15      90
+
+                                             251.19          14.50
+
+                                                                          V18  EL=15      90
+
+                                             251.19          14.50
+
+                                                                          A11  EL=14      55
+
+                                             302.80          13.94
+
+                                                                          A11  EL=14      55
+
+                                             400.00          13.91
+
+                                                                          A11  EL=14      55
+
+                                             682.73          13.50
+
+                                                                          A11  EL=13      55
+
+                                            1382.58          12.50
+
+                                                                          A11  EL=12      55
+
+                                            1993.95          11.50
+
+                                                                          A11  EL=11      55
+
+                                            2303.00          10.89
+
+                                                                          A11  EL=11      55
+
+                                            3256.51          10.50
+
+                                                                          A11  EL=10      55
+
+                                            3500.00          10.41
+
+
+
+                                                  ZONE TERMINATED AT END OF TRANSECT
+
+
+
+                                                  PART 7   POSTSCRIPT NOTES
+
+

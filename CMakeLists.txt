@@ -4,7 +4,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(legacy_champ src/champ/access.cpp src/champ/geometry.cpp)
+add_library(legacy_champ src/champ/access.cpp src/champ/geometry.cpp
+  src/champ/project.cpp src/champ/erosion.cpp src/champ/workflow.cpp)
 target_include_directories(legacy_champ PUBLIC include third_party)
 if(MSVC)
   target_compile_options(legacy_champ PRIVATE /W4 /fp:strict)
@@ -39,8 +40,12 @@ endif()
 add_executable(whafis src/whafis/main.cpp)
 target_link_libraries(whafis PRIVATE legacy_whafis)
 
+target_link_libraries(legacy_champ PUBLIC legacy_runup legacy_whafis)
+
 include(CTest)
 if(BUILD_TESTING)
+  add_executable(project_probe tests/project_probe.cpp)
+  target_link_libraries(project_probe PRIVATE legacy_champ)
   add_executable(access_probe tests/access_probe.cpp)
   target_link_libraries(access_probe PRIVATE legacy_champ)
   add_executable(champ_math_probe tests/champ_math_probe.cpp)
@@ -57,6 +62,9 @@ endif()
 
 if(BUILD_TESTING)
   find_package(Python3 COMPONENTS Interpreter REQUIRED)
+  add_test(NAME champ_project_workflow
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_project_reference.py
+      $<TARGET_FILE:project_probe> ${CMAKE_CURRENT_SOURCE_DIR})
   add_test(NAME champ_original_geometry
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_champ_reference.py
       $<TARGET_FILE:champ_math_probe> ${CMAKE_CURRENT_SOURCE_DIR})

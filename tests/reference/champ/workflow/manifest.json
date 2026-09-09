@@ -1,0 +1,92 @@
+{
+  "cases": [
+    {
+      "program": "runup",
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "12b88a6e974bf7dd05e98c2e8c944edf9a419c2576d4ecd68ebbc3e0da9dbf54",
+      "output_sha256": "fb30f8623c5498719a7efc85ad0cb8bfae1705d492e387b5071e869225a3652b",
+      "output_bytes": 3662,
+      "floating_point": "original software emulator",
+      "name": "r1",
+      "input": "r1.dat",
+      "output": "r1.out"
+    },
+    {
+      "program": "runup",
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "9bfd7c3e8a03c9a94921af278a9ee89cd8b2bca5149789fb9cf4ff3eddc7fd17",
+      "output_sha256": "1ba98f631068e1556e295cd9ee4425f5bf5b2e11fa550e76b3c20b8a6bbd1ff6",
+      "output_bytes": 3290,
+      "floating_point": "original software emulator",
+      "name": "r2",
+      "input": "r2.dat",
+      "output": "r2.out"
+    },
+    {
+      "program": "runup",
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "25173acf7321dbf71d15af8f894966db4d72490e98f4aa2be9257e3c06abd7d8",
+      "output_sha256": "6f7b54efd815c7fef115f35fc6135d4912584c78731cb9564644e136ceea7c26",
+      "output_bytes": 3941,
+      "floating_point": "original software emulator",
+      "name": "r3",
+      "input": "r3.dat",
+      "output": "r3.out"
+    },
+    {
+      "program": "runup",
+      "binary_sha256": "e0e2b2df60b898d831c5321c9d8a09aa6c9add8333d510d88a396f2e3c2239c8",
+      "input_sha256": "bbefc1038c312ce53cb3963e0f38616b49a82b4a94a742aac784b8dcfb620394",
+      "output_sha256": "226b4b33815ae8078d30dc08d7230b61aac5417f5e930ac342e7e2a6a40a0b4a",
+      "output_bytes": 3383,
+      "floating_point": "original software emulator",
+      "name": "r4",
+      "input": "r4.dat",
+      "output": "r4.out"
+    },
+    {
+      "program": "whafis4",
+      "binary_sha256": "041aaf91a59fb61e7e74ed7e17fca44695fa059eb0e0771b9e6b119902fead5c",
+      "input_sha256": "f313fac87aa3a26f3de55d8abfb64b53e05286387208c7bd29e722b39711a579",
+      "output_sha256": "25ed6c7f2e41b143f5c4d7dd7b0f5d0f3992922ffb436fa32a88ac05e21584be",
+      "output_bytes": 12589,
+      "floating_point": "original Windows runtime",
+      "name": "w1",
+      "input": "w1.dat",
+      "output": "w1.out"
+    },
+    {
+      "program": "whafis4",
+      "binary_sha256": "041aaf91a59fb61e7e74ed7e17fca44695fa059eb0e0771b9e6b119902fead5c",
+      "input_sha256": "fcfcc7fb25e8bafe53918bbdeea484d4baff609a1e25285025ebeef63b18f3d8",
+      "output_sha256": "af6f5512017141c12bbe33ed8ec110fe625a527779a127502e61588043326aad",
+      "output_bytes": 13036,
+      "floating_point": "original Windows runtime",
+      "name": "w2",
+      "input": "w2.dat",
+      "output": "w2.out"
+    },
+    {
+      "program": "whafis4",
+      "binary_sha256": "041aaf91a59fb61e7e74ed7e17fca44695fa059eb0e0771b9e6b119902fead5c",
+      "input_sha256": "53597e0f65a1548244e2b5470cc52269eeca4f218e822063d1b7321c94084195",
+      "output_sha256": "79f76191c000741c2a14cecc49a345a2f7faa6d22634f93ccaf5eb8deed6c1e4",
+      "output_bytes": 28459,
+      "floating_point": "original Windows runtime",
+      "name": "w3",
+      "input": "w3.dat",
+      "output": "w3.out"
+    },
+    {
+      "program": "whafis4",
+      "binary_sha256": "041aaf91a59fb61e7e74ed7e17fca44695fa059eb0e0771b9e6b119902fead5c",
+      "input_sha256": "96db81bfb79f405491bca7c7c499a43a294586866ef5d3eae21e507cfd61a463",
+      "output_sha256": "87bb25f9b8e8630e1ae681475b3ae777addf530ea26ad0bc2fd2a2fe5071fc68",
+      "output_bytes": 13169,
+      "floating_point": "original Windows runtime",
+      "name": "w4",
+      "input": "w4.dat",
+      "output": "w4.out"
+    }
+  ]
+}

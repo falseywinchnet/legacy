@@ -123,6 +123,11 @@ std::string decimal_field(double value, int width, int precision) {
     s.imbue(std::locale::classic());
     s << std::fixed << std::setprecision(precision) << value;
     std::string result = s.str();
+    // The original Compaq runtime suppresses the sign when rounding an F
+    // field to zero, including small negative slopes in CHAMP-generated decks.
+    if (result.starts_with('-') &&
+        result.find_first_not_of("0.", 1) == std::string::npos)
+        result.erase(0, 1);
     if (static_cast<int>(result.size()) > width)
         return std::string(width, '*');
     return std::string(width - result.size(), ' ') + result;

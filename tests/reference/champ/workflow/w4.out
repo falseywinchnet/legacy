@@ -1,0 +1,242 @@
+ WAVE HEIGHT COMPUTATIONS FOR FLOOD INSURANCE STUDIES (WHAFIS VERSION 4.0G, 08_2007)
+ Executed on: Tue Sep  8 20:05:19 2026
+ Input file:  Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-fmdexhox\INPUT.DAT                                  
+ Output file: Z:\private\var\folders\7_\98nk8q255lxf2kbxm92j37rh0000gn\T\legacy-reference-fmdexhox\OUTPUT.OUT                                 
+
+
+
+                                                    Sample Data - Transect: 4                                                       
+                                                     THIS IS A 100-YEAR CASE
+
+                                                             PART1 INPUT
+
+          IE    -67.000      0.000     75.000      6.600     12.500     48.800     11.700      0.000      0.088      0.000
+          IF     -3.600      5.600      0.000     12.500      0.000      0.000      0.000      0.000      0.048      0.000
+          IF    106.600      8.353      0.000     12.500      0.000      0.000      0.000      0.000      0.025      0.000
+          IF    188.400     10.400      0.000     12.500      0.000      0.000      0.000      0.000      0.049      0.000
+          IF    191.000     12.500      6.600     12.500      0.000      0.000      0.000      0.000      0.808      0.000
+          AS    630.000      7.000      6.600      7.000      0.000      0.000      0.000      0.000     -0.133      0.000
+          IF    639.000      5.800      0.000      7.000      0.000      0.000      0.000      0.000     -0.025      0.000
+          IF    736.000      4.300      0.000      7.000      0.000      0.000      0.000      0.000     -0.011      0.000
+          IF    824.000      3.700      0.000      7.000      0.000      0.000      0.000      0.000      0.004      0.000
+          IF    897.000      5.000      0.000      7.000      0.000      0.000      0.000      0.000      0.023      0.000
+          IF    966.000      7.000      0.000      7.000      0.000      0.000      0.000      0.000      0.029      0.000
+          AS   1182.000      7.000      6.600      7.000      0.000      0.000      0.000      0.000     -0.014      0.000
+          VE   1219.000      6.500      1.300     10.000     20.000      1.000      0.000      7.000     -0.017      0.000
+          VE   1302.000      5.000      1.300     10.000     20.000      1.000      0.000      7.000     -0.017      0.000
+          VE   1610.000      0.000      1.300     10.000     20.000      1.000      0.000      7.000     -0.016      0.000
+          ET      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000
+1
+
+
+            END        END      FETCH SURGE ELEV SURGE ELEV    INITIAL    INITIAL                BOTTOM    AVERAGE
+        STATION  ELEVATION     LENGTH    10-YEAR   100-YEAR WAVE HEIGHT  W. PERIOD                SLOPE    A-ZONES
+  IE    -67.000      0.000     75.000      6.600     12.500     48.800     11.700      0.000      0.088      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF     -3.600      5.600      0.000     12.500      0.000      0.000      0.000      0.000      0.048      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    106.600      8.353      0.000     12.500      0.000      0.000      0.000      0.000      0.025      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    188.400     10.400      0.000     12.500      0.000      0.000      0.000      0.000      0.049      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    191.000     12.500      6.600     12.500      0.000      0.000      0.000      0.000      0.808      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  AS    630.000      7.000      6.600      7.000      0.000      0.000      0.000      0.000     -0.133      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    639.000      5.800      0.000      7.000      0.000      0.000      0.000      0.000     -0.025      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    736.000      4.300      0.000      7.000      0.000      0.000      0.000      0.000     -0.011      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    824.000      3.700      0.000      7.000      0.000      0.000      0.000      0.000      0.004      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    897.000      5.000      0.000      7.000      0.000      0.000      0.000      0.000      0.023      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  IF    966.000      7.000      0.000      7.000      0.000      0.000      0.000      0.000      0.029      0.000
+
+
+            END        END  NEW SURGE  NEW SURGE                                                 BOTTOM    AVERAGE
+        STATION  ELEVATION    10-YEAR   100-YEAR                                                  SLOPE    A-ZONES
+  AS   1182.000      7.000      6.600      7.000      0.000      0.000      0.000      0.000     -0.014      0.000
+
+
+            END        END    AVERAGE    AVERAGE    AVERAGE       DRAG  NEW SURGE  NEW SURGE     BOTTOM    AVERAGE
+        STATION  ELEVATION   DIAMETER     HEIGHT    SPACING     COEFF.    10-YEAR   100-YEAR      SLOPE    A-ZONES
+  VE   1219.000      6.500      1.300     10.000     20.000      1.000      0.000      7.000     -0.017      0.000
+
+
+            END        END    AVERAGE    AVERAGE    AVERAGE       DRAG  NEW SURGE  NEW SURGE     BOTTOM    AVERAGE
+        STATION  ELEVATION   DIAMETER     HEIGHT    SPACING     COEFF.    10-YEAR   100-YEAR      SLOPE    A-ZONES
+  VE   1302.000      5.000      1.300     10.000     20.000      1.000      0.000      7.000     -0.017      0.000
+
+
+            END        END    AVERAGE    AVERAGE    AVERAGE       DRAG  NEW SURGE  NEW SURGE     BOTTOM    AVERAGE
+        STATION  ELEVATION   DIAMETER     HEIGHT    SPACING     COEFF.    10-YEAR   100-YEAR      SLOPE    A-ZONES
+  VE   1610.000      0.000      1.300     10.000     20.000      1.000      0.000      7.000     -0.016      0.000
+
+
+  ------------------------------------------------END OF TRANSECT-------------------------------------------------
+
+
+  NOTE:
+
+  SURGE ELEVATION INCLUDES CONTRIBUTIONS FROM ASTRONOMICAL AND STORM TIDES.
+1
+
+
+
+                                                PART2: CONTROLLING WAVE HEIGHTS, SPECTRAL 
+                                                       PEAK WAVE PERIOD, AND WAVE CREST ELEVATIONS
+
+                                          LOCATION        CONTROLLING  SPECTRAL PEAK   WAVE CREST
+                                                          WAVE HEIGHT  WAVE PERIOD     ELEVATION 
+
+                                        IE     -67.00         9.48        11.70        19.14
+
+                                        IF      -3.60         5.30        11.70        16.21
+
+                                               101.09         3.31        11.70        14.82
+
+                                        IF     106.60         3.20        11.70        14.74
+
+                                        IF     188.40         1.63        11.70        13.64
+
+                                        IF     191.00         0.01        11.70        12.51
+
+                                        AS     630.00         0.00         0.00         7.00
+
+                                        IF     639.00         0.07         0.30         7.05
+
+                                        IF     736.00         0.34         0.68         7.24
+
+                                        IF     824.00         0.51         0.83         7.36
+
+                                        IF     897.00         0.62         0.93         7.43
+
+                                        IF     966.00         0.01         1.00         7.01
+
+                                        AS    1182.00         0.00         0.00         7.00
+
+                                        VE    1219.00         0.00         0.00         7.00
+
+                                        VE    1302.00         0.00         0.00         7.00
+
+                                        VE    1610.00         0.00         0.00         7.00
+
+
+
+                                        PART3 LOCATION OF AREAS ABOVE 100-YEAR SURGE
+
+                                             BETWEEN    191.00 AND    630.00
+
+                                             BETWEEN    966.00 AND   1182.00
+
+
+
+                                                  PART4 LOCATION OF SURGE CHANGES
+
+                                        STATION          10-YEAR SURGE          100-YEAR SURGE
+
+                                        630.00                 6.60                 7.00
+
+
+
+                                                       PART5  LOCATION OF V ZONES
+
+                                             STATION OF GUTTER          LOCATION OF ZONE
+
+                                                      117.24               WINDWARD
+
+
+
+                                                   PART6 NUMBERED A ZONES AND V ZONES
+
+                                        STATION OF GUTTER  ELEVATION  ZONE DESIGNATION   FHF
+
+
+                                             -67.00          19.14
+
+                                                                          V18  EL=19      90
+
+                                             -53.18          18.50
+
+                                                                          V18  EL=18      90
+
+                                             -31.53          17.50
+
+                                                                          V18  EL=17      90
+
+                                              -9.88          16.50
+
+                                                                          V18  EL=16      90
+
+                                              49.75          15.50
+
+                                                                          V18  EL=15      90
+
+                                             117.24          14.60
+
+                                                                          A 2  EL=15      10
+
+                                             124.66          14.50
+
+                                                                          A 2  EL=14      10
+
+                                             188.72          13.50
+
+                                                                          A 2  EL=13      10
+
+                                             191.00          12.51
+
+
+                                             630.00           7.00
+
+                                                                          A 2  EL= 7      10
+
+                                             966.00           7.01
+
+
+                                            1182.00           7.00
+
+                                                                          A 2  EL= 7      10
+
+                                            1610.00           7.00
+
+
+
+                                                  ZONE TERMINATED AT END OF TRANSECT
+
+
+
+                                                  PART 7   POSTSCRIPT NOTES
+
+
