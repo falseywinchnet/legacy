@@ -33,13 +33,13 @@ def main():
         raise AssertionError('Desktop workflow failed; see '+str(destination))
     if before != hashes(args.resources):
         raise AssertionError('Desktop changed an installed model or resource')
-    runs = json.loads((destination/'desktop-runs.json').read_text())
+    runs = json.loads((destination/'desktop-runs.json').read_text(encoding='utf-8'))
     records = []
     for run, (case, program, arguments) in zip(runs, CASES, strict=True):
         names = [case+'.out', case+'.out.spi', case+'.out.wsq'] if program == 'feq' else [case+'.out', case+'.tab']
         if case == 'utlexm':
             names.append('utlexm.chx')
-        ledger = json.loads((Path(run['folder'])/'run.json').read_text())
+        ledger = json.loads((Path(run['folder'])/'run.json').read_text(encoding='utf-8'))
         assert ledger['status'] == 'completed'
         assert ledger['arguments'] == arguments
         for entry in ledger['outputs']:

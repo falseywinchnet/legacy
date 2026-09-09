@@ -423,7 +423,7 @@ void MainWindow::showOutput() {
     if (!file.open(QIODevice::ReadOnly)) { preview_->setPlainText(QStringLiteral("This output file is no longer available.")); return; }
     const QByteArray bytes = file.read(2*1024*1024);
     if (bytes.contains('\0')) { preview_->setPlainText(QStringLiteral("This is a binary output. It is saved in the run folder.")); return; }
-    QString text = QString::fromLatin1(bytes);
+    QString text = bytes.isValidUtf8() ? QString::fromUtf8(bytes) : QString::fromLatin1(bytes);
     if (!file.atEnd()) text += QStringLiteral("\n\n[Preview limited to 2 MiB. Open the full report to read the complete file.]");
     preview_->setPlainText(text);
 }

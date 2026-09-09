@@ -68,6 +68,7 @@ jobs:
         run: |
           mkdir -p FEQ/build/installer-verification
           docker run --rm -v "$PWD/FEQ:/work:ro" -v "$PWD/FEQ/build/installer-verification:/evidence" ubuntu:24.04 bash -c 'set -e; apt-get update -qq; DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /work/build/installers/*.deb python3 xvfb xauth fonts-dejavu-core; xvfb-run -a python3 /work/tests/check_installed_app.py --package /opt/feq-workbench --output /evidence; test -L /usr/share/applications/feq-workbench.desktop; apt-get remove -y -qq feq-workbench; test ! -e /usr/share/applications/feq-workbench.desktop'
+          sudo chown -R "$(id -u):$(id -g)" FEQ/build/installer-verification
       - uses: actions/upload-artifact@v4
         with:
           name: FEQ-Workbench-${{ runner.os }}-${{ runner.arch }}

@@ -49,7 +49,7 @@ def main():
     for name in ('feq.pdf', 'fequtl.pdf'):
         assert (resources/'manuals'/name).stat().st_size > 10000
     assert (resources/'licenses/LICENSE').is_file()
-    sources = json.loads((resources/'licenses/qt/sources.json').read_text())
+    sources = json.loads((resources/'licenses/qt/sources.json').read_text(encoding='utf-8'))
     assert len(sources) == 3
     for source in sources:
         archive = resources/'licenses/qt/sources'/Path(source['url']).name
@@ -68,12 +68,12 @@ def main():
     (output/'application.log').write_bytes(process.stdout)
     print(process.stdout.decode(errors='replace'))
     assert process.returncode == 0, 'Installed application failed; see '+str(output)
-    receipt = json.loads((verification/'installation.json').read_text())
+    receipt = json.loads((verification/'installation.json').read_text(encoding='utf-8'))
     assert Path(receipt['resources']).resolve() == resources.resolve(), 'Application used external development resources'
     assert before == hashes(resources/'examples'), 'Application modified installed examples'
     reports = []
     for run, (case, program, arguments) in zip(receipt['runs'], CASES, strict=True):
-        ledger = json.loads((Path(run['folder'])/'run.json').read_text())
+        ledger = json.loads((Path(run['folder'])/'run.json').read_text(encoding='utf-8'))
         assert ledger['status'] == 'completed' and ledger['arguments'] == arguments
         executable = engines/(program+('.exe' if system == 'Windows' else ''))
         assert ledger['engine_sha256'] == hashlib.sha256(executable.read_bytes()).hexdigest()
