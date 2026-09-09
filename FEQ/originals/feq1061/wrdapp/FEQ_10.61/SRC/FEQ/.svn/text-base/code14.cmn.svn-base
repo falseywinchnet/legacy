@@ -1,0 +1,8 @@
+C     Flag to signal that there are code 14 instructions in the 
+C     network-matrix-control input.
+
+      INTEGER CODE14_PRESENT
+
+      COMMON /CODE14/ CODE14_PRESENT
+
+      SAVE /CODE14/

@@ -1,0 +1,60 @@
+C     Contains items used to control irrigation withdrawals from
+C     a LPR or branch to simulate use of near-surface water supplies
+C     for irrigation. 
+
+      INTEGER IRRIG_KNT
+
+      INTEGER IRRIG_TRIBA_ROW(MXN_IRRIG),
+     A        IRRIG_LUI_APPLY(MXN_IRRIG),
+     B        IRRIG_LUI_COMPUTE(MXN_IRRIG),
+     C        IRRIG_SOURCE(MXN_IRRIG),
+     D        IRRIG_CONTROL_TAB(MXN_IRRIG)
+
+
+      COMMON/IRRIG/ IRRIG_KNT, IRRIG_TRIBA_ROW, IRRIG_LUI_APPLY,
+     A        IRRIG_LUI_COMPUTE, IRRIG_SOURCE, IRRIG_CONTROL_TAB
+
+
+C     IRRIG_KNT-  number of tributary area units subject to 
+C                  dual-source irrigation.
+
+C     IRRIG_TRIBA(*)- points to the row in TRIBA(*,*) that
+C                     contains the land use areas for
+C                     the tributary area unit.  The tributary
+C                     area unit is that attached to a LPR
+C                     or an entire branch.  The input will
+C                     be in terms of the branch number or
+C                     the free node number for the reservoir.
+C                     This will then define the value of the
+C                     TRIBA row. 
+
+C     IRRIG_LUI_APPLY(*) - land-use index number of the 
+C                    land use being irrigated.  This give
+C                    area of land being irrigated. 
+
+C     IRRIG_LUI_COMPUTE(*) - land-use index number of the
+C                     land use that will be used to compute
+C                     the irrigation withdrawal.  The user
+C                     must provide an additional landuse index
+C                     for computing the irrigation withdrawal. 
+
+C     IRRIG_SOURCE(*) - gives the exterior node that represents
+C                     the source of the irrigation water. 
+C                     The water-surface elevation at this node
+C                     will be used as the argument to the 
+C                     irrigation control table to determine 
+C                     what fraction of the area will be irrigated
+C                     from near-surface sources.  The remainder
+C                     the area will be irrigated from deep ground
+C                     water sources or from water imported from
+C                     outside the area being simulated. 
+
+C     IRRIG_CONTROL_TAB(*) - function-table of type 2, 3, or 4 that
+C                     taken from near-surface sources as a function
+C                     of water-surface elevation at the source
+C                     exterior node.  Typically, if the water-surface
+C                     elevation at the source node is too low, then
+C                     near-surface sources have been exhausted and
+C                     sources of water external to the area being
+C                     modeled or pumping from deep ground water
+C                     will supply the irrigation demand. 

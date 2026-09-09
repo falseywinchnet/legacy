@@ -1,0 +1,5 @@
+
+This directory contains source files that are used
+in both FEQ and FEQUTL.  Thus a change made here 
+will require recompilation of both FEQ and FEQUTL if
+the change is to take effect in both.  

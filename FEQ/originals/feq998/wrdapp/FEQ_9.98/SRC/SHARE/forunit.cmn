@@ -1,0 +1,18 @@
+C     Data structure for tracking which Fortran I/O units are
+C     in use, which should never be used, and which are 
+C     available.
+
+      INTEGER MAX_UNIT, DIM_UNIT, FORTRAN_IO, HECDSS_IO
+      PARAMETER (MAX_UNIT=1022, DIM_UNIT=MAX_UNIT+2, FORTRAN_IO=1,
+     A           HECDSS_IO=2)
+
+      INTEGER UNIT_STATUS(DIM_UNIT), UNIT_KNT
+
+      COMMON/UNIT_COM/ UNIT_KNT, UNIT_STATUS
+
+      SAVE /UNIT_COM/
+
+C     Note: There appears to be a limit in the software at 
+C     some point that requires keeing DIM_UNIT at 1024 or 
+C     less.  August 9, 2002.  Should be large enough for 
+C     most models!

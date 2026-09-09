@@ -1,0 +1,28 @@
+C     Common block for the names for gates.  Includes the
+C     information needed to place the flow class and the current 
+C     gate opening in the special output file.  Start the GOPEN and
+C     FCLASS at 0 to provide space for gates/pumps without a name.
+C     We can then avoid an IF statement to see if we should store
+C     something.  If no name is given the data goes into slot
+C     zero and is never used!  FCLASS_CODE gives a unique numerical
+C     code for each flow class string given in FCLASS.
+
+C     Use slot MNGATE+1 for the McHenry gates.
+
+      INTEGER NGATE
+
+      REAL GOPEN(0:MNGATE+1)
+
+      INTEGER FCLASS_CODE(0:MNGATE+1)
+
+      CHARACTER GNAME(MNGATE+1)*16, FCLASS(0:MNGATE+1)*8
+
+
+C     FCLASS gives the flow class of the gate.  The meaning of this field 
+C     depends on the gate type and the kinds of flow that FEQ can report.
+
+      COMMON/GATE1/ NGATE, GOPEN, FCLASS_CODE
+      COMMON/GATE2/ GNAME, FCLASS
+
+      SAVE /GATE1/, /GATE2/
+    

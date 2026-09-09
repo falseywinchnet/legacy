@@ -1,0 +1,551 @@
+--- 9.98/feq/chkinput.for
++++ 10.61/feq/chkinput.for
+@@ -113,7 +113,7 @@
+       EXTERNAL  GETTYP, GET_TABID
+ C     ************************Formats***********************************
+ 50    FORMAT(/,' *ERR:321* Operation Block Table Id=',A,' is invalid.')
+-52    FORMAT(/,' *ERR:322* Expected table of type 2 or 7 but found',
++52    FORMAT(/,' *ERR:322* Expected table of type 7 but found',
+      A        ' type ',I5)
+ 56    FORMAT(/,' *ERR:323* Operation Block#=',I5,' from Table Id=',A,
+      A        ' is out of range.')
+@@ -150,18 +150,18 @@
+         ENDIF
+       ELSE
+ C       If the value given is greater than MFTNUM+1 , we assume that it is
+-C       a time series table of type 2.  Thus we must verify that the
+-C       table exists and that it is of type 2.  Once these tests
++C       a time series table of type 7.  Thus we must verify that the
++C       table exists and that it is a time-series table..  Once these tests
+ C       are passed, then we scan the body of the time-series table
+ C       and process all operation control blocks that are given.
+ C       Compute the actual number.  
+         TABLE_ADRS = BLK_NUMBER - MFTNUM - 1
+         CALL CHKTAB
+-     I             (2, STDOUT, FTPNT, MFTNUM,
++     I             (7, STDOUT, FTPNT, MFTNUM,
+      M              TABLE_ADRS,
+      O              EFLAG)
+         IF(EFLAG.EQ.0) THEN
+-          IF(GETTYP(TABLE_ADRS).NE.2) THEN
++          IF(GETTYP(TABLE_ADRS).NE.7) THEN
+             WRITE(STDOUT,52) GETTYP(TABLE_ADRS)
+             EFLAG = 1
+           ENDIF
+@@ -171,9 +171,9 @@
+           STOP 'Abnormal stop: errors found.'
+         ENDIF
+ 
+-C       At this point the table exists and is of type 2.  Set the
++C       At this point the table exists and is of type 7.  Set the
+ C       address points for the table.
+-        LOW_ADRS = TABLE_ADRS + 5
++        LOW_ADRS = (TABLE_ADRS + OFF234)/2
+         HIGH_ADRS = ITAB(TABLE_ADRS)
+         BODY_INC = 2
+ 
+@@ -181,7 +181,7 @@
+ C         Round the table value to the nearest integer and treat
+ C         it like a block number.  It must be in valid block number
+ C         range. 
+-          TS_BLK_NUMBER = INT(FTAB(I+1)+0.5)
++          TS_BLK_NUMBER = INT(DTAB(I+1)+0.5)
+           IF(TS_BLK_NUMBER.LT.1.OR.TS_BLK_NUMBER.GT.MNBLK) THEN
+             WRITE(STDOUT,56) TS_BLK_NUMBER, 
+      A                    GET_TABID(BLK_NUMBER - MFTNUM -1)
+@@ -584,7 +584,7 @@
+  72   FORMAT(/,' *ERR:66* Table type mismatch. Table Ids:',A,
+      A       ' and',A,' must be type 14.')
+  74   FORMAT(/,' *ERR:67* Table type mismatch. Table Ids:',A,
+-     A       ' and',A,' must be type 6 OR 13.')
++     A       ' and ',A,' must be type 6, 13, or 43.')
+ C 75   FORMAT('/, *ERR:88* Expected',I5,' operation block references.',
+ C     A '  Only',I5,' found.')
+  78   FORMAT('/, *ERR:120* Only one flow path permitted between node ',
+@@ -604,13 +604,14 @@
+      A       ' not the',/,10X,' upstream node on its branch.')
+  90   FORMAT(/,' *ERR:235* Outlet loss coef. not 1.0 at zero',
+      A  ' submergence in Table Id=',A)
+-91    FORMAT(/,' *ERR:326* Boundary node=',A5,' has both tributary area',
+-     A         ' and a non-constant flow source.')
++91    FORMAT(/,' *ERR:326* Boundary node=',A5,
++     A       ' has both tributary area',
++     B         ' and a non-constant flow source.')
+ 92    FORMAT(/'*ERR:88* Number of links > NEX=',I6)
+  94   FORMAT(
+      A/,' *ERR/WRN:234* A cross section function table for Code',
+      A        I3,' between',/,10X,' nodes ',A5,' and ',A5,' has',
+-     A        ' wrong type.',/,10X,' Should be Type 22 or 25. Please'
++     A        ' wrong type.',/,10X,' Should be Type 22 or 25. Please',
+      A        ' update your model for best performance!')
+ C***********************************************************************
+ C     Clear the counter for links to other node for Code 5 Type 6.
+@@ -1001,6 +1002,7 @@
+           ENDIF
+           DO 5061 I=1,EMC(J+6)
+ C           REPLACE TABLE NUMBERS WITH TABLE ADDRESS IN EMC(*)
++      
+             ITUD = EMC(J+7+IOFF)
+             ITDU = EMC(J+8+IOFF)
+             CALL CHKTAB
+@@ -1028,18 +1030,41 @@
+      I                  (ITDU, STDOUT,
+      O                   EFLAG)
+             ELSE
+-              IF(ITAB(ITUD+2).NE.6.AND.ITAB(ITUD+2).NE.13.OR.
+-     A           ITAB(ITDU+2).NE.6.AND.ITAB(ITDU+2).NE.13) THEN
++              IF(ITAB(ITUD+2).NE.6.AND.ITAB(ITUD+2).NE.13
++     a            .AND.ITAB(ITUD+2).NE.43.OR.
++     b           ITAB(ITDU+2).NE.6.AND.ITAB(ITDU+2).NE.13
++     c              .AND.ITAB(ITDU+2).NE.43) THEN
+ C               INVALID TABLE TYPE MIX
+                 WRITE(STDOUT,74) GET_TABID(GETTBN(ITUD)), 
+      A                  GET_TABID(GETTBN(ITDU))
+                 EFLAG = 1
+               ENDIF
+             ENDIF
+-            CALL CHKTAB
+-     I                 (2, STDOUT, FTPNT, MFT,
+-     M                  EMC(J+9+IOFF),
+-     O                  EFLAG)
++c           11 Dec 2006 ddf: Changes made.  We may have an operation 
++c           block number here as well as a table number.  Each must be 
++c           processed.
++            if(emc(j+9+ioff) < 0) then
++c             We have a time-series table number. 
++              emc(j+9+ioff) = -emc(j+9+ioff) 
++              CALL CHKTAB
++     I                   (2, STDOUT, FTPNT, MFT,
++     M                    EMC(J+9+IOFF),
++     O                    EFLAG)
++c             Set the address to negative as a signal
++              emc(j+9+ioff) = -emc(j+9+ioff) 
++            elseif(emc(j+9+ioff) > 0) then
++c             This is an operation-block number
++              IT = emc(j+9+ioff) 
++              CALL PROCESS_OPER_BLK(STDOUT, J, 13+ioff, 9+ioff,
++     I                           IT, OPBLK, NBLK, EPT,
++     M                           EMC, EFLAG)
++
++            else
++c             Case of zero we do nothing because a zero value correctly 
++c             signals that we have neither an operation-block number nor
++c             a time-series id! 
++            endif
++
+             CALL CHKTAB
+      I                 (2, STDOUT, FTPNT, MFT,
+      M                  EMC(J+10+IOFF),
+@@ -1456,7 +1481,8 @@
+ C           Set the type flag in EMC to signal availability of
+ C           tabulated values of ALPHA.
+             TYPE = GETTYP(ADRS)
+-            IF(TYPE.EQ.22.OR.TYPE.EQ.25) THEN
++            IF(TYPE.EQ.22.OR.TYPE.EQ.25.OR.
++     a         type.eq.32.or.TYPE.EQ.35) THEN
+               EMC(J+4) = 1
+             ELSE
+               EMC(J+4) = 0
+@@ -1821,7 +1847,7 @@
+  1000 CONTINUE
+  
+       WRITE(STDOUT,58)
+-      STOP 'Normal stop'
++      STOP 'Normal stop in CHKGEO'
+       END
+ C
+ C
+@@ -2237,10 +2263,11 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER ADRS, CODE, DNN, FRFLOW, I, IADR, IDUM, IOFF, ITYPE, J, K,
+-     A        LSTARG, N, NQSGN, NTAB, NUM, UPN
++     A        LSTARG, N, NQSGN, NTAB, NUM, UPN, null, qnode, tabadrs, ii
+       REAL AB, ABMAX, ABSSUM, AD, B, CD, CDFL, CON, DB, DCON, DTAP,
+      A     DTOP, EMAX, FLOSS, HBASE, HDATUM, PDV, QN, QTMP, RAT, RDUM,
+      B     SUM, TEMP, TOP, YB, YBTAB, YD
++      real*8 easting, northing, dnull
+       CHARACTER NOTEA*10, NOTEB*10
+  
+ C     + + + EQUIVALENCES + + +
+@@ -2256,16 +2283,19 @@
+  
+ C     + + + EXTERNAL NAMES + + +
+       EXTERNAL GETHDD, GETTBN, GETUSN, LKTAB, NOTE, XLKT20,
+-     A         GET_TABID
+- 
++     A         GET_TABID, put_location_1dtab, put_location_2dtab,
++     b          get_east_north, put_east_north
++ 
++      data dnull/-33d6/, null/-2147483647/
++
+ C     + + + OUTPUT FORMATS + + +
+ 50    FORMAT(/,' Starting final check of Network Matrix Instructions')
+ 51    FORMAT(/,' End of final check of Network Matrix Instructions')
+- 52   FORMAT(/,' *WRN:17* CONTINUITY ERROR OF',F10.1,
+-     A       ' IN INITIAL CONDITIONS AT NODES:')
++ 52   FORMAT(/,' *WRN:17* Continuity error of',F10.1,
++     A       ' in initial conditions at nodes:')
+  53   FORMAT(10X,A5,' ',A10)
+- 54   FORMAT(/,' *WRN:18* WS ELEV DIF BTWN',
+-     A       ' NODE ',A5,' ',A10,' & NODE ',A5,' ',A10,' :',F6.2)
++ 54   FORMAT(/,' *WRN:18* WS elev dif btwn',
++     A       ' node ',A5,' ',A10,' & node ',A5,' ',A10,' :',F6.2)
+  56   FORMAT('/, *WRN:19* POSS. FLOW DISCON. AT FULL FLOW AT',
+      A /,3X, ' BRIDGE BETWEEN NODES ',A5,' ',A10,' AND ',A5,' ',A10)
+  58   FORMAT(10X,' FREE FLOW LOSS COEF. = ',F6.3,' FROM TABLE# = ',I5,
+@@ -2357,11 +2387,134 @@
+             GOTO 1500
+  4       CONTINUE
+  
+-         GOTO 1500
++           QNODE = EMC(J+4)                         
++C          BRANCH ON TYPE                           
++                                                    
++           ITYPE = EMC(J+1)                          
++           GOTO(401, 402, 403, 404, 405, 406), ITYPE 
++                                                    
++ 401       CONTINUE                                 
++c            check for flow node having a location.
++             if(exnodt(6,qnode) /= null) then
++c              we have a location.  Extract it and store 
++c              in the function tables if the table contains
++c              the default null value.
++               tabadrs = emc(j + 5) 
++               call get_east_north(
++     i                      stdout, tabadrs,
++     o                      easting, northing)
++
++               if(easting <= dnull) then
++c                replace with the values found in FEQ
++                 easting = dble(exnodt(6,qnode))/100.d0
++                 northing = dble(exnodt(7,qnode))/100.d0
++                 call put_east_north(
++     i                      stdout, tabadrs, 
++     i                      easting, northing)
++               endif
++             endif
++             GOTO 499                               
++ 402       CONTINUE                                 
++c            check for flow node having a location.
++             if(exnodt(6,qnode) /= null) then
++c              we have a location.  Extract it and store 
++c              in the function tables if the table contains
++c              the default null value.
++               tabadrs = emc(j + 5) 
++               call get_east_north(
++     i                      stdout, tabadrs,
++     o                      easting, northing)
++
++               if(easting <= dnull) then
++c                replace with the values found in FEQ
++                 easting = dble(exnodt(6,qnode))/100.d0
++                 northing = dble(exnodt(7,qnode))/100.d0
++                 call put_east_north(
++     i                      stdout, tabadrs, 
++     i                      easting, northing)
++               endif
++             endif
++             GOTO 499                               
++ 403       CONTINUE                                 
++             GOTO 499                               
++ 404       CONTINUE                                 
++c            check for flow node having a location.
++             if(exnodt(6,qnode) /= null) then
++c              we have a location.  Extract it and store 
++c              in the function tables if the table contains
++c              the default null value.
++               do i=5,6  
++                 tabadrs = emc(j + i) ! Get the next function-table address
++                 call get_east_north(
++     i                        stdout, tabadrs,
++     o                        easting, northing)
++
++                 if(easting <= dnull) then
++c                  replace with the values found in FEQ
++                   easting = dble(exnodt(6,qnode))/100.d0
++                   northing = dble(exnodt(7,qnode))/100.d0
++                   call put_east_north(
++     i                        stdout, tabadrs, 
++     i                        easting, northing)
++                 endif
++               end do
++             endif
++             GOTO 499                               
++ 405       CONTINUE                                 
++c            check for flow node having a location.
++             if(exnodt(6,qnode) /= null) then
++c              we have a location.  Extract it and store 
++c              in the function tables if the table contains
++c              the default null value.
++               tabadrs = emc(j + 5) 
++               call get_east_north(
++     i                      stdout, tabadrs,
++     o                      easting, northing)
++
++               if(easting <= dnull) then
++c                replace with the values found in FEQ
++                 easting = dble(exnodt(6,qnode))/100.d0
++                 northing = dble(exnodt(7,qnode))/100.d0
++                 call put_east_north(
++     i                      stdout, tabadrs, 
++     i                      easting, northing)
++               endif
++             endif
++             GOTO 499                               
++ 406       CONTINUE                                 
++c            check for flow node having a location.
++             if(exnodt(6,qnode) /= null) then
++c              we have a location.  Extract it and store  
++c              in the function tables if the table contains
++c              the default null value.
++               do i=5,7  
++                 tabadrs = emc(j + i) ! Get the next function-table address
++                 if(tabadrs > 0 ) then
++                   call get_east_north(
++     i                        stdout, tabadrs, 
++     o                        easting, northing)
++
++                   if(easting <= dnull) then
++c                    replace with the values found in FEQ
++                     easting = dble(exnodt(6,qnode))/100.d0
++                     northing = dble(exnodt(7,qnode))/100.d0
++                     call put_east_north(
++     i                        stdout, tabadrs,
++     i                        easting, northing)
++                   endif
++                 endif
++               end do
++             endif
++             GOTO 499                               
++                                                    
++ 499       CONTINUE                                 
++                                                    
++           GOTO 1500                                
+  5       CONTINUE
+            ITYPE = EMC(J+1)
+            UPN = EMC(J+2)
+            DNN = EMC(J+3)
++           qnode = emc(j+4)
+            GOTO(501, 502, 503, 504, 505, 506, 507, 508, 509), ITYPE
+              WRITE(STDOUT,*) ' *BUG:21* INVALID CODE=5 TYPE IN FINCHK.',
+      A                 ' TYPE=', ITYPE
+@@ -2370,10 +2523,55 @@
+              J = J + CD5TY1
+              GOTO 599
+  502       CONTINUE
++c            check for flow node having a location.
++             if(exnodt(6,qnode) /= null) then
++c              we have a location.  Extract it and store 
++c              in the function tables if the table contains
++c              the default null value.
++               do i=6,9  
++                 tabadrs = emc(j + i) ! Get the next function-table address
++                 call get_east_north(
++     i                        stdout, tabadrs, 
++     o                        easting, northing)
++
++                 if(easting <= dnull) then
++c                  replace with the values found in FEQ
++                   easting = dble(exnodt(6,qnode))/100.d0
++                   northing = dble(exnodt(7,qnode))/100.d0
++                   call put_east_north(
++     i                        stdout, tabadrs,
++     i                        easting, northing)
++                 endif
++               end do
++             endif
++
+              J = J + CD5TY2
+              GOTO 599
+  
+  503       CONTINUE
++c            check for flow node having a location.
++             if(exnodt(6,qnode) /= null) then
++c              we have a location.  Extract it and store  
++c              in the function tables if the table contains
++c              the default null value.
++               do i=7,9  
++                 tabadrs = emc(j + i) ! Get the next function-table address
++                 if(tabadrs > 0 ) then
++                   call get_east_north(
++     i                        stdout, tabadrs, 
++     o                        easting, northing)
++
++                   if(easting <= dnull) then
++c                    replace with the values found in FEQ
++                     easting = dble(exnodt(6,qnode))/100.d0
++                     northing = dble(exnodt(7,qnode))/100.d0
++                     call put_east_north(
++     i                        stdout, tabadrs, 
++     i                        easting, northing)
++                   endif
++                 endif
++               end do
++             endif
+  
+              J = J + CD5TY3
+              GOTO 599
+@@ -2530,9 +2728,68 @@
+                ENDIF
+                IOFF = IOFF + CD5TY6
+  5069        CONTINUE
++             ioff = 0
++             do ii=1,n
++c              check for flow node having a location.                   
++               if(exnodt(6,qnode) /= null) then                         
++c                we have a location.  Extract it and store              
++c                in the function tables if the table contains           
++c                the default null value.                                
++                 do i=7,10                                              
++                   tabadrs = emc(j + ioff + i) ! Get the next function-table address
++                   if(i==9) then   ! Special case for this table:)
++                     if(tabadrs < 0) then
++                       tabadrs = abs(tabadrs)
++                     else
++                       tabadrs = 0
++                     endif
++                   endif                                                     
++                   if(tabadrs > 0 ) then                                
++                     call get_east_north(                               
++     i                          stdout, tabadrs,       
++     o                          easting, northing)                      
++                                                                        
++                     if(easting <= dnull) then                          
++c                      replace with the values found in FEQ
++                       easting = dble(exnodt(6,qnode))/100.d0           
++                       northing = dble(exnodt(7,qnode))/100.d0          
++                       call put_east_north(                             
++     i                          stdout, tabadrs,       
++     i                          easting, northing)                      
++                     endif                                              
++                   endif                                                
++                 end do                                                 
++               endif                                                    
++               ioff = ioff + CD5TY6                                                         
++             end do
++
+              J = J + 1 + ABS(EMC(J+6))*CD5TY6
+              GOTO 599
+  507       CONTINUE
++c            check for flow node having a location.
++             if(exnodt(6,qnode) /= null) then
++c              we have a location.  Extract it and store  
++c              in the function tables if the table contains
++c              the default null value.
++               do i=7,10  
++                 tabadrs = emc(j + i) ! Get the next function-table address
++                 if(tabadrs > 0 ) then
++                   call get_east_north(
++     i                        stdout, tabadrs, 
++     o                        easting, northing)
++
++                   if(easting <= dnull) then
++c                    replace with the values found in FEQ
++                     easting = dble(exnodt(6,qnode))/100.d0
++                     northing = dble(exnodt(7,qnode))/100.d0
++                     call put_east_north(
++     i                        stdout, tabadrs, 
++     i                        easting, northing)
++                   endif
++                 endif
++               end do
++             endif
++ 
+              J = J + CD5TY7
+              GOTO 599
+  508       CONTINUE
+@@ -2560,9 +2817,50 @@
+                QE1(EMC(J+2)) = RDUM
+              ENDIF
+            ENDIF
++c          check for boundary node having a location.
++           qnode = emc(j+2)
++           if(exnodt(6,qnode) /= null) then
++c            we have a location.  Extract it and store  
++c            in the function tables if the table contains
++c            the default null value.
++             do i=4,10,6  
++               tabadrs = emc(j + i) ! Get the next function-table address
++               if(tabadrs > 0 ) then
++                 call get_east_north(
++     i                      stdout, tabadrs, 
++     o                      easting, northing)
++
++                 if(easting <= dnull) then
++c                  replace with the values found in FEQ
++                   easting = dble(exnodt(6,qnode))/100.d0
++                   northing = dble(exnodt(7,qnode))/100.d0
++                   call put_east_north(
++     i                      stdout, tabadrs, 
++     i                      easting, northing)
++                 endif
++               endif
++             end do
++           endif
++
+            GOTO 1500
+  
+  7       CONTINUE
++           qnode = emc(j+1)
++           if(exnodt(6,qnode) /= null) then
++             tabadrs = emc(j+2)                          
++             call get_east_north(                         
++     i                  stdout, tabadrs,  
++     o                  easting, northing)                
++                                                          
++             if(easting <= dnull) then                    
++c              replace with the values found in FEQ       
++               easting = dble(exnodt(6,qnode))/100.d0     
++               northing = dble(exnodt(7,qnode))/100.d0    
++               call put_east_north(                       
++     i                  stdout, tabadrs,  
++     i                  easting, northing)                
++             endif                                        
++           endif
+            GOTO 1500
+  8       CONTINUE
+             GOTO 1500
+@@ -2593,7 +2891,32 @@
+      A                    GET_TABID(GETTBN(EMC(J+5)))
+              ENDIF
+            ENDIF
+-           GOTO 1500
++c          check for middle node having a location.
++           qnode = emc(j+3)
++           if(exnodt(6,qnode) /= null) then
++c            we have a location.  Extract it and store  
++c            in the function tables if the table contains
++c            the default null value.
++             do i=4,7  
++               tabadrs = emc(j + i) ! Get the next function-table address
++               if(tabadrs > 0 ) then
++                 call get_east_north(
++     i                      stdout, tabadrs,
++     o                      easting, northing)
++
++                 if(easting <= dnull) then
++c                  replace with the values found in FEQ
++                   easting = dble(exnodt(6,qnode))/100.d0
++                   northing = dble(exnodt(7,qnode))/100.d0
++                   call put_east_north(
++     i                      stdout, tabadrs,
++     i                      easting, northing)
++                 endif
++               endif
++             end do
++           endif
++
++           GOTO 1500        
+  1500 CONTINUE
+         J = J + EMC(CODE+1)
+       GOTO 1000
+@@ -2923,7 +3246,7 @@
+                 IF(EFLAG.EQ.0) THEN
+ C                 Selection table exists.  Check its contents to make sure
+ C                 the tables referenced in it also exist!
+-                  LOW_ADRS = TAB_NUMBER + 5
++                  LOW_ADRS = TAB_NUMBER + OFF234
+                   HIGH_ADRS = ITAB(TAB_NUMBER)
+                   BODY_INC = 2
+ 

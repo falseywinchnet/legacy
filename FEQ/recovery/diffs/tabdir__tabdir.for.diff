@@ -1,0 +1,118 @@
+--- 9.98/tabdir/tabdir.for
++++ 10.61/tabdir/tabdir.for
+@@ -103,8 +103,9 @@
+ C       NO MORE SEGMENTS REMAIN, THE ARRAY IS COMPLETELY SORTED.
+ C 
+ C 
+-      INTEGER N, A(N), AI(N), AII(N)
+-      INTEGER LT(32), UT(32), I, J, K, M, P, Q, T, TI, TII, X, XI
++      INTEGER N, AI(N), AII(N)
++      INTEGER LT(32), UT(32), I, J, K, M, P, Q, TI, TII, XI
++      CHARACTER*16 A(N), T, X
+ C       THE DIMENSIONS FOR LT AND UT HAVE TO BE AT LEAST LOG  N.
+ C                                                           2
+ C       32 WAS CHOSEN TO HANDLE N <4,294,967,297.  This should
+@@ -222,27 +223,29 @@
+       LOGICAL THERE
+   
+       INTEGER  MAXTAB, MAXFILE, MORG
+-      PARAMETER (MAXTAB=5000, MAXFILE=500, MORG=1)
++      PARAMETER (MAXTAB=10000, MAXFILE=500, MORG=1)
+   
+       INTEGER NUMBER_OF_TABLES, NUMBER_OF_FILES, NARG, IARGC,
+-     A        IN, LOUT, NXT, IOFLAG, I, IDSN, NUMBER, TYPE, LP, FP
+-  
+-      INTEGER TABLE_NUMBER(MAXTAB), FILE_NAME_POINTER(MAXTAB),
++     A        IN, LOUT, NXT, IOFLAG, I, IDSN, TYPE, LP, FP,
++     B        TAB_FLAG
++  
++      INTEGER  FILE_NAME_POINTER(MAXTAB),
+      A        TABLE_TYPE(MAXTAB), LABEL_POINTER(MAXTAB)
+   
++      CHARACTER*16 TABLE_ID(MAXTAB), TABID
+       CHARACTER*80 TABLE_LABEL(MAXTAB)
+   
+       CHARACTER*112 LINE
+ 
+-      CHARACTER*64 FILE_NAME(MAXFILE), INPUT_NAME, DIRECTORY_NAME
++      CHARACTER*128 FILE_NAME(MAXFILE), INPUT_NAME, DIRECTORY_NAME
+ 
+ 
+       INTEGER LENSTR     
+-      EXTERNAL LENSTR     
++      EXTERNAL LENSTR, STRIP_L_BLANKS     
+   
+ C     **************************FORMATS********************************
+-50    FORMAT(' TABLE#   TYPE  File name/table label')
+-52    FORMAT(1X,I6,1X,I6,2X,A,/,17X,A)
++50    FORMAT(' TABLE ID          TYPE  File name/table label')
++52    FORMAT(1X,A16,1X,I6,2X,A,/,27X,A)
+ C**********************************************************************
+ C
+ C     strings for Unix what command
+@@ -268,8 +271,8 @@
+ C     PROCESS COMMAND LINE ARGUMENTS
+   
+       NARG = 0
+-      NXT = 1
+       NARG = IARGC()
++C      WRITE(*,*) ' NARG=',NARG
+       IF(NARG-MORG.LT.2) THEN
+         WRITE(*,*) 'TOO FEW ARGUMENTS'
+         WRITE(*,*) ' GIVE THE INPUT FILE NAME AND THE OUTPUT FILE NAME'
+@@ -347,15 +350,24 @@
+ 200     CONTINUE
+           CALL INL112(IDSN, LINE)
+           IF(LINE.EQ.'ENDFILE') GOTO 210
++          TAB_FLAG = 0
+           IF(LINE(1:6).EQ.'TABLE#') THEN
+-            READ(LINE(8:12),'(I5)',ERR=999) NUMBER
+-
+-            IF(NUMBER.LE.0) GOTO 200
++            READ(LINE(8:),'(A)',ERR=999) TABID
++            TAB_FLAG = 1
++          ELSEIF(LINE(1:5).EQ.'TABID') THEN
++            READ(LINE(7:),'(A)',ERR=999) TABID
++            TAB_FLAG = 1
++          ENDIF
++          IF(TAB_FLAG.EQ.1) THEN
++            CALL STRIP_L_BLANKS(
++     M                          TABID)
++
++            IF(TABID(1:1).EQ.'-') GOTO 200
+ 
+             NUMBER_OF_TABLES = NUMBER_OF_TABLES + 1
+             IF(NUMBER_OF_TABLES.GT.MAXTAB) THEN
+               WRITE(LOUT,*) ' Too many tables.'
+-              STOP
++              STOP 'Abnormal stop.  Errors found.'
+             ENDIF
+ C           Get the table type next.   
+             CALL INL112(IDSN, LINE)
+@@ -369,7 +381,7 @@
+             TYPE = ABS(TYPE)
+             LABEL_POINTER(NUMBER_OF_TABLES) = NUMBER_OF_TABLES
+             TABLE_TYPE(NUMBER_OF_TABLES) = TYPE
+-            TABLE_NUMBER(NUMBER_OF_TABLES) = NUMBER
++            TABLE_ID(NUMBER_OF_TABLES) = TABID
+             FILE_NAME_POINTER(NUMBER_OF_TABLES) = I
+ C           Try to get a label for the table.
+             IF(TYPE.GE.2.AND.TYPE.LE.4.OR.
+@@ -405,7 +417,7 @@
+ C     Sort on the table number moving the file-name pointer and the
+ C     label pointer at the same time.
+   
+-      CALL QSRTIA(TABLE_NUMBER, FILE_NAME_POINTER, LABEL_POINTER,
++      CALL QSRTIA(TABLE_ID, FILE_NAME_POINTER, LABEL_POINTER,
+      A            NUMBER_OF_TABLES)
+   
+       WRITE(LOUT,50)
+@@ -415,7 +427,7 @@
+         LLP = LENSTR(TABLE_LABEL(LP))
+         FP = FILE_NAME_POINTER(I)
+         LFP = LENSTR(FILE_NAME(FP))
+-        WRITE(LOUT,52) TABLE_NUMBER(I), TABLE_TYPE(LP),
++        WRITE(LOUT,52) TABLE_ID(I), TABLE_TYPE(LP),
+      A          FILE_NAME(FP)(1:LFP), TABLE_LABEL(LP)(1:LLP)
+   
+ 600   CONTINUE

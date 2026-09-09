@@ -1,0 +1,110 @@
+--- 9.98/feq/ntwmxstr.for
++++ 10.61/feq/ntwmxstr.for
+@@ -329,13 +329,20 @@
+       INTEGER STDOUT, EFLAG, N(10)
+       CHARACTER NC_LONG(10)*16
+ 
++      include 'arsize.prm'
++      include 'gatcom.cmn'
++
+ C     External names
+       INTEGER FNDNUM, NONBLANK_NONZERO
+-      EXTERNAL FNDNUM, NONBLANK_NONZERO
++      EXTERNAL FNDNUM, NONBLANK_NONZERO, LSATAB
+ 
+ C     Local
+ 
+-      INTEGER I
++      INTEGER I, NGTMP
++      character*16 tmpstrng
++*******************************Formats**********************************
++ 50   FORMAT(/,' *ERR:XXX* Conversion error in capacity field:',a)
++ 89   FORMAT(/,' *ERR:257* Gate or pump name=',A16,' already in use.')
+ C***********************************************************************
+       
+       DO 561 I=5,6
+@@ -345,10 +352,25 @@
+      O                               N(I))
+  561  CONTINUE
+       IF(NONBLANK_NONZERO(NC_LONG(7)).GT.0) THEN
+-        CALL GET_INTERNAL_TAB_NUMBER
+-     I                              (STDOUT, NC_LONG(7),
+-     M                               EFLAG,
+-     O                               N(7))
++c       11 Dec 2006-ddf: This field is now changdd to include the 
++c       following options:
++c       If blank we have no control block nor a time-series table
++c       If first character is a minus sign, '-', then we have a 
++c       time series table.
++c       otherwise we have a control block number
++        if(nc_long(7)(1:1) .eq. '-') then
++c         This is a table id with prefixed minus sign.  Strip the sign
++          tmpstrng = nc_long(7)(2:)
++          CALL GET_INTERNAL_TAB_NUMBER
++     I                                (STDOUT, tmpstrng,
++     M                                 EFLAG,
++     O                                 N(7))
++c         Make internal table number  negative as a signal that it is an address
++          n(7) = -n(7)
++        else
++c         No prefixed minus sign.  We assume we have an integer.
++          read(nc_long(7),'(i10)', err=999) n(7)
++        endif
+       ELSE
+        N(7) = 0
+       ENDIF
+@@ -362,8 +384,32 @@
+        N(8) = 0
+       ENDIF
+ 
++c     Process a possible structure name for use in special output
++      n(9) = 0
++      if(NONBLANK_NONZERO(NC_LONG(9)).GT.0) THEN
++c       We have a name for a variable geometry structure. 
++c       Add this name to the gate table and if already there
++c       signal an error. 
++C       Check if gate name is already in the table. If it is
++C       in the table it is an error otherwise add it to the table.
++        NGTMP = NGATE
++        CALL LSATAB
++     I             (STDOUT, nc_long(9), MNGATE,
++     M              GNAME, NGATE,
++     O              n(9), EFLAG)
++        IF(NGATE.EQ.NGTMP) THEN
++C         The new name did not increase the size of the table.
++C         Therefore the name was in the table and is not new!
++          WRITE(STDOUT,89) nc_long(9)
++          EFLAG = 1
++        ENDIF
++      endif
++
+       N(10) = FNDNUM(NC_LONG(10)(1:5))
+       RETURN
++999   continue
++      write(stdout,50) nc_long(7)
++      STOP 'Abnormal stop: errors found.'
+       END
+ C
+ C
+@@ -2559,7 +2605,11 @@
+       INCLUDE 'arsize.prm'
+       INCLUDE 'inusnb.cmn'
+ C***********************************************************************
+-      GETUSB = INBRUS(IBN)
++      if(ibn > 0) then
++        GETUSB = INBRUS(IBN)
++      else
++        getusb = 0
++      endif
+       RETURN
+       END
+ C
+@@ -4283,7 +4333,7 @@
+       INTEGER CODE, DNN, EQLEN, EQOFF, EQSTR, I, IENTRY, IPNT, ITMP,
+      A        IVAR, J, NBR, ND, NEQ, NEXP, NND, NUM, PDAPNT, TYPE, UNN
+       INTEGER JEQ(20)
+-      REAL ELMKNT
++      INTEGER ELMKNT
+       
+ C      CHARACTER*1 CMAT(1013,1013)
+  

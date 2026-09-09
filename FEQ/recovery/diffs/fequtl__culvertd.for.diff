@@ -1,0 +1,12 @@
+--- 9.98/fequtl/culvertd.for
++++ 10.61/fequtl/culvertd.for
+@@ -2088,6 +2088,9 @@
+         ENDIF
+       ENDIF
+  
++c     25 August 2004:  Supply an initial value.
++
++      ROVD= 0.5*(RBMIN + RBMAX)
+       RB = ROVD
+  
+       FL = 0.0

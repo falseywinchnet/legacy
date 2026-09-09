@@ -1,0 +1,11 @@
+C**********************************************************************
+
+      COMMON/ENELEM/ AE1, AE2, MYE, MQE, QE1, QE2, QE3, YE1, YE2,
+     1               YE3, ZE, TE1, TE2
+
+      REAL AE1(MNEX), AE2(MNEX), MYE(MNEX), MQE(MNEX), QE1(MNEX),
+     1     QE2(MNEX), QE3(MNEX), YE1(MNEX), YE2(MNEX), YE3(MNEX), 
+     2     ZE(MNEX), TE1(MNEX), TE2(MNEX)
+
+C**********************************************************************
+

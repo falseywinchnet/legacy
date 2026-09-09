@@ -1,0 +1,5 @@
+C     Values of local and global home directory names
+      CHARACTER*64 HOME, GHOME
+      COMMON /HOMEC/ HOME, GHOME
+      SAVE /HOMEC/
+

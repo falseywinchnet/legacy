@@ -1,0 +1,123 @@
+#
+# Lahey makefile for TABDIR
+# Last modified 06/05/98, rsregan
+
+# pathname of local source code directory
+LOCDIR = I:\feq_8.92\src\tabdir
+
+# Usage:
+# make [BINDIR=path_to_install_to] [install]
+#
+# Examples of values for path_to_install_to are:
+#    make BINDIR=C:\models\bin
+#    make BINDIR=C:\bin
+#
+# If BINDIR is specified, the executables are copied to the specified
+# directory.  The default value of BINDIR is ..\..\bin.  Note, the installer
+# must have sufficient access rights to delete and then copy files into
+# the directory that BINDIR is set to.  If 'install' is specified only the
+# copies are made (executables must already exist in the sutra\bin
+# directory).  If  'install' is not specified, the source is recompiled
+# according to the make dependency rules in this file.
+
+# Compiler flags for production code:
+# (default options as spec'd. in f77l3.fig are appropriate for development)
+# /nB  - no Bounds checking
+# /nI  - do not check subprogram Interface
+# /nS  - do not generate SOLD (source on-line debugger) information files
+# /Z1  - perform production code optimiZations
+# /n0  - FORTRAN 77 Standard implicit typing in effect
+FC = f77l3
+FFLAGS = /nB /nI /nS /Z1 /n0
+
+# re-define suffix rules to include pathnames for src, obj and debugger files--
+# necessary so SOLD can find files it needs since executable resides in a
+# different directory from where .for and .sld files are located
+.for.obj:
+	$(FC) $(LOCDIR)\$*.for, $(LOCDIR)\$*.obj, $(LOCDIR)\$*.sld $(FFLAGS)
+
+# Linker flags:
+# MAXData - maximum _extra_ bytes of memory allocated at load time
+#           (above the min. virtual memory requirements of the program)
+# NOMap   - don't produce a map file
+# PACK    - compress the executable file
+LINKER = 386link
+LNKFLGS = -MAXData 0 -NOMap -PACK
+# Note:  -SYMBOLS flag adds symbol table required by debugger to the executable;
+#        uncomment line below, comment out FFLAGS, and run SOLD3VM.EXE to debug
+#LNKFLGS = -MAXData 0 -NOMap -PACK -SYMBOLS
+
+#*******************************************************************
+#***** You should not need to modify anything below this line. *****
+#*******************************************************************
+
+MAKEFILE = makefile
+PGM    = tabdir.exe
+ShDir  = ..\share
+SHROBJS = $(ShDir)\fqshrstr.obj $(ShDir)\fqshrarg.obj $(ShDir)\locsubs.obj 
+Share   = clcom.com
+OBJS    = tabdir.obj
+
+# Default location to link executables on installation
+BINDIR = ..\..\bin
+BDir   = ..\..\bin
+EXE    = $(BDir)\$(PGM)
+BIN    = $(BINDIR)\$(PGM)
+Exes   = $(EXE)
+Bins   = $(BIN)
+
+# Rules
+all: chkdir $(Exes) install
+	@echo
+	@echo Done making TABDIR, files are now up-to-date.
+
+$(EXE): $(OBJS)
+	$(LINKER) $(OBJS) $(SHROBJS) $(HECLIB) -EXE $@ $(LNKFLGS) -STUB runb,vmmb
+
+chkdir:
+# Create ..\..\bin directory, if necessary
+	!if ! -d $(BDir)
+	    @mkdir $(BDir)
+	    @echo
+	    @echo Created directory $(BDir)
+	!endif
+
+install:
+# Create directory for binary file, if necessary
+	!if ! -d $(BINDIR)
+	   @mkdir $(BINDIR)
+	   @echo Created directory $(BINDIR)
+	!endif
+# Copy executable to BINDIR if installing elsewhere
+	!if (! -e $(EXE)) || (-z $(EXE))
+	   @echo program $(EXE) does not exist,
+	   @echo use one of the following commands to generate it:
+	   @echo      make
+	   @echo      make all
+	!else
+	  !if $(BINDIR) != $(BDir)
+	     !if -e $(BIN)
+		 @del $(BIN)
+	     !endif
+	     @copy $(EXE) $(BIN)
+	     @echo Executable $(BIN) has been updated.
+	     @echo Be sure directory $(BINDIR) is in your PATH.
+	  !endif
+	!endif
+  
+clean:
+	!if $(BINDIR) != $(BDir)
+	  !if -e $(BIN)
+	    del $(BIN)
+	  !endif
+	!endif
+	!if -e *.obj
+	  del $(OBJS)
+	!endif
+	!if -e $(EXE)
+	  del $(EXE)
+	!endif
+	@echo Make generated files have been deleted
+
+# Define object code dependencies
+tabdir.obj:  tabdir.for  

@@ -1,0 +1,7 @@
+C     Parameter defintion for time-series management in FEQ
+
+      INTEGER LPR_EVAP, LPR_RAIN, FORCED_BDY, BRA_EVAP, BRA_RAIN,
+     A        TS_FROM_FILE, TS_FROM_TABLE
+      PARAMETER (LPR_EVAP=1000, FORCED_BDY=1001, BRA_EVAP=1002, 
+     A           TS_FROM_FILE=1003, TS_FROM_TABLE=1004,
+     B           LPR_RAIN=1005, BRA_RAIN=1006)

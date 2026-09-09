@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>FEQ Full Equations Model</title>
+<link rel="stylesheet" href="/stylesheets/2008/common.css">
+<link rel="stylesheet" href="/stylesheets/2008/custom.css">
+<link rel="stylesheet" href="/stylesheets/2008/custom.feq.css">
+
+<meta name="Author" content="Illinois Water Science Center, Audrey Ishii, Terry Ortel">
+<meta name="keywords" content="unsteady flow, one-dimensional flow, streamflow simulation">
+<meta name="Description" content="Documentation updates for FEQ and FEQUTL">
+</head>
+
+<!-- BEGIN USGS Header Template -->
+<div style="height: 81px; background-color: rgb(0, 38, 76);">
+  <a href="https://www.usgs.gov/index.html">
+     <img style="margin: 8px 0px 8px 8px;" alt="Home" src="/images/usgs_vi.png" />
+  </a>
+</div>
+
+<div id="usgstitle">
+	<p>Water Resources Surface Water Software: Full Equations (FEQ) Model Web Resources</p>
+</div>
+<br />
+<!-- END USGS Header Template -->
+
+ 
+<h2>
+<a href="http://il.water.usgs.gov/proj/feq/software/release_feq1061.txt">FEQ 10.61 and FEQUTL 5.80 Release Notes</a>
+</h2>
+<br>
+<p>These notices are superseded by the release.txt distributed with the subsequent released
+versions of FEQ. User notices and bug reports (if any) for subsequent releases of FEQ and
+FEQUTL may also apply to this version.</p>
+<hr>
+<h3>FEQ: Full Equations model</h3>
+  <br>
+  <b>User warning for FEQ--all versions</b><br>
+  <br>
+  <b>Secondary relative convergence criterion in Run-Control Block</b>
+  <div>
+  <p class="indented">
+  NUMGT, the number of nodes at which the secondary relative convergence criterion may 
+  replace the primary relative convergence criteria, EPSSYS, should be set to 
+  zero for the final output. The use of NUMGT greater than zero was found to be a cause 
+  of an obviously invalid result in three models. The secondary relative convergence
+  criterion is defined by a factor, EPSFAC, times EPSSYS. EPSFAC defaults to 2.0 unless the
+  user assigns a value greater than 1.0. Values less than or equal to 1.0 are overwritten
+  to 2.0. Therefore, do not input any value less than or equal to 1.0 for EPSFAC (or FAC 
+  in version 8.92).</p> 
+  <p>The discussion of NUMGT in 
+  <a href="http://pubs.usgs.gov/wri/1996/4240/report.pdf">Franz and Melching (1997)</a>, 
+  p. 104, suggests that the use of the secondary relative convergence criteria has
+  only small effects on the final results. Although there have been no other reported 
+  issues with the use of non-zero NUMGT since the 1997 report, caution is indicated.
+  NUMGT can be helpful for obtaining diagnostic output in intermediate runs.</p>
+  <p>Posted: July 27, 2016</p>
+  <br>
+  </div>
+  <b>Bug report for FEQ--version 10.61</b><br>
+  <br>
+  <b>Side-weir time-defined multiplying factor error</b>
+  <div>
+  <p class="indented">
+  This affects only models using a side-weir instruction, code=14, where an optional
+  time-series table is used to define a time-dependent factor on the discharge. Fac is 
+  erroneously applied as a constant value of 1 instead of referencing the time-series table.
+  This bug was introduced in version 10.0, corrected in 10.72 (neither released here) and 
+  will be corrected in the next release or upon request.
+  </p> 
+  <p>The purpose of this factor is to simulate a side-weir failure of partial length.</p>
+  <p>Posted: November 13, 2015</p>
+  <br>
+  </div>
+  <b>Reference Cited</b>
+  <div>
+  <p><i>Franz, D.D., and Melching, C.S., 1997, Full Equations (FEQ) model for the solution
+  of the full, dynamic equations of motion for one-dimensional unsteady flow in open channels 
+  and through control structures: U.S. Geological Survey Water-Resources Investigations 
+  Report 96-4240, 258 p.</i></p>
+  <br>
+  </div>
+  <hr>
+
+<!-- BEGIN USGS Footer Template -->
+<div id="usgsfooter">
+	<p id="usgsfooterbar">
+		<a href="http://www.usgs.gov/laws/accessibility.html" title="Accessibility Policy (Section 508)">Accessibility</a>
+		<a href="http://www.usgs.gov/foia/" title="Freedom of Information Act">FOIA</a>
+		<a href="http://www.usgs.gov/laws/privacy.html" title="Privacy policies of the U.S. Geological Survey.">Privacy</a>
+		<a href="http://www.usgs.gov/laws/policies_notices.html" title="Policies and notices that govern information posted on USGS Web sites.">Policies and Notices</a>
+	</p>
+	
+	<p id="usgsfootertext">
+		<a href="http://www.takepride.gov/"><img src="/images/footer_graphic_takePride.jpg" alt="Take Pride in America logo" title="Take Pride in America Home Page" width="60" height="58" /></a>
+		<a href="http://usa.gov/"><img src="/images/footer_graphic_usagov.jpg" alt="USA.gov logo" title="USAGov: Government Made Easy" width="90" height="26" /></a>
+		<a href="http://www.doi.gov/">U.S. Department of the Interior</a> |
+		<a href="http://www.usgs.gov/">U.S. Geological Survey</a> |
+                <a href="http://il.water.usgs.gov/">Illinois Water Science Center</a><br />
+		URL: http://cm.water.usgs.gov/proj/feq/bug_notice3.html <br />
+		Page Contact Information: <A href="/cdn-cgi/l/email-protection#74001b0600111834010713075a131b02">USGS FEQ support</A> <br />
+		Page Last Modified: 
+                Thursday, July 28, 2016 
+	</p>
+</div>
+<!-- END USGS Footer Template -->
+
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="application/javascript" src="http://www.usgs.gov/scripts/analytics/usgs-analytics.js"></script>
+
+</body></html>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a382c5a02d3b47a6',t:'MTc4ODkyMTAzNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>

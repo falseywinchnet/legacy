@@ -1,0 +1,527 @@
+C
+C
+C
+      SUBROUTINE   GET14_FREE
+     I                  (STDOUT, ADR, ZTAB, ZD, Q, JT,
+     M                   HDATUM,
+     O                   TABN, QMX, HMAX, FREE, WSPRO, ROVER,
+     O                    QF)
+ 
+C     + + + PURPOSE + + +
+C     Find needed values for table of type 14 in a Code 5 Type 6 
+C     instruction to check table state.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ADR, FREE, STDOUT, TABN, WSPRO, ZTAB
+      REAL HDATUM, HMAX, Q, QF, QMX, ROVER, ZD
+      REAL*8 JT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - unit number for standatd output
+C     ADR    - address of the function table in FTAB/ITAB
+C     ZTAB   - address of table giving variable datum level
+C     ZD     - elevation at downstream node
+C     Q      - flow through the structure
+C     JT     - julian time
+C     HDATUM - datum for heads
+C     HEAD   - maximum simulated head for this table
+C     TABN   - table number
+C     QMX    - maximum tabulated free flow in the table
+C     HMAX   - maximum head tabulated in the table
+C     FREE   - table state: 1--free flow, 0--submerged flow
+C     WSPRO  - source of table: 1--from WSPRO; 0--otherwise
+C     ROVER  - relative amount that QARG is over free flow.
+C     QF     - free flow
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'bnrslt.cmn'
+      INCLUDE 'enrslt.cmn'
+      INCLUDE 'julian.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER  NTAB, TABTYP
+      REAL HU, PDV, QARG, QFREE, TI
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL LKTAB
+C***********************************************************************
+      QARG = Q
+      TABN = ITAB(ADR+1)
+      TABTYP = ITAB(ADR+2)
+      QMX = FTAB(ADR+9)
+      HMAX = FTAB(ADR+5)
+      WSPRO = ITAB(ADR+7)
+      IF(ZTAB.GT.0) THEN
+        TI = 86400.*(JT - SJTIME)
+        CALL LKTAB
+     I            (ZTAB, TI, 1,
+     O             HDATUM, NTAB, PDV)
+      ENDIF
+ 
+
+      CALL TDLK14_CHK
+     I           (STDOUT, ADR, TABTYP, ZD, HDATUM,
+     M            QARG,
+     O            HU, QFREE, FREE)
+
+      ROVER = (QARG - QFREE)/QFREE
+      QF = QFREE 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   GET613_FREE
+     I                   (STDOUT, ADR, ZTAB, ZU, ZD, JT,
+     M                    HDATUM, 
+     O                    TABN, TABTYP, HMAX, FREE)
+ 
+C     + + + PURPOSE + + +
+C     Get needed items from tables of type 6 or 13 in a Code 5 Type 6 
+C     instruction to check the table state.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ADR, FREE, STDOUT, TABN, TABTYP, ZTAB
+      REAL HDATUM, HMAX, ZD, ZU
+      REAL*8 JT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - unit number for standatd output
+C     ADR    - address of the function table in FTAB/ITAB
+C     ZTAB   - address of table giving variable datum level
+C     ZU     - upstream elevation
+C     ZD     - downstream elevation
+C     JT     - modified julian time of max. elev.
+C     HDATUM - datum for heads
+C     TABN   - table number
+C     TABTYP - table type
+C     HMAX   - maximum head tabulated in the table
+C     FREE   - state of table: 1--free flow; 0--submerged
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'bnrslt.cmn'
+      INCLUDE 'enrslt.cmn'
+      INCLUDE 'julian.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER  MTAB, NTAB
+      REAL PDV, Q, DQED, DQEU, TI, TIME
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL LKTAB
+C***********************************************************************
+C     The optional time-serie table giving a factor on the flows in the
+C     2-D table is ignored here.  We only want the table state.
+      MTAB = 0
+
+C     Time is also ignored
+      TIME = 0.0
+      TABN = ITAB(ADR+1)
+      TABTYP = ITAB(ADR+2)
+      HMAX = FTAB(ADR+9)
+      IF(ZTAB.GT.0) THEN
+        TI = 86400.*(JT - SJTIME)
+        CALL LKTAB
+     I            (ZTAB, TI, 1,
+     O             HDATUM, NTAB, PDV)
+      ENDIF
+      IF(TABTYP.EQ.6) THEN
+
+        CALL TDLK6
+     I            (STDOUT, ADR, 6, MTAB, TIME, ZD, ZU, HDATUM,
+     O             Q, DQED, DQEU, FREE)
+      ELSEIF(TABTYP.EQ.13) THEN
+        CALL TDLK13
+     I             (STDOUT, ADR, 13, MTAB, TIME, ZD, ZU, HDATUM,
+     O              Q, DQED, DQEU, FREE)
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   TDTCHK_FREE
+     I                   (STDOUT, EXNODT, NEX, EMC)
+
+C     + + + PURPOSE + + +
+C     Check two-D tables appearing in Code 5 Type 6 to check the
+C     table state: free or submerged and list a table of these
+C     states.  Count the number of tables in free state 
+C     and issue a warning message if any are in that state.
+C     
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER STDOUT, NEX
+      INTEGER EMC(MREMC), EXNODT(9,NEX)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - unit number for standatd output
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     NEX    - number of exterior nodes in the model
+C     EMC    - vector containing coded form of the Matrix Control Input
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'bnrslt.cmn'
+      INCLUDE 'enrslt.cmn'
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'inusnb.cmn'
+      INCLUDE 'matcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, DNN, DUADR, FREE, FREE_KNT, HOUT, I, IENTRY, IOFF, 
+     A        IPNT, IT, NPAIR, SYSGN, TABN, TABTYP, TYPE, UDADR,
+     B        UNN, WSPRO, ZTAB, SORT(MNEX), SORT_PNT(MNEX), OUT_KNT
+      REAL FLOW_RATIO, HDATUM, HMAX, QATMAX, QFREE, QMX, ROVER, ZD,
+     A     ZU, ZDATMAX, ZUATMAX, QTEMP
+C     Note: ZU is maximum elevation at upstream node.  ZDATMAX is
+C     the elevation at the downstream node at the same time. 
+C     ZD is the maximum elevation at the downstream node. 
+C     ZUATMAX is the elevation at the upstream node at the 
+C     same time. 
+
+      REAL*8 JT 
+ 
+      CHARACTER TABID*16, TAB_STATE*6, LIST54(MNEX)*54, FLAG*1
+
+C     + + + EXTERNAL NAMES + + +
+      CHARACTER GET_TABID*16
+      EXTERNAL GET14_FREE, GET613_FREE, GET_TABID
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,'  Two-D table states for Code 5 Type 6:',/,
+     A  ' Head-  Tail-   Table            Table   Flow    Flow ',/,
+     B  ' water  water    id              Type    state   Ratio',/,
+     C  ' node   node                                          ',/,
+     D  ' -----  -----  ----------------  -----  ------  ------')
+ 52   FORMAT(A6,1X,A6,2X,A16,2X,I5,2X,A6,F7.2)
+56    FORMAT(' *ERR:382* Table state in preceding line is invalid.',/,
+     A     11X,'Flow exceeds max flow in WSPRO computations by more',
+     B     ' than 5 percent.')
+C***********************************************************************
+C     Clear the heading flag.  Used to signal that a heading has been
+C     written.  We only want one heading and we are in a loop searching
+C     for items that may not appear. 
+      HOUT = 0
+
+C     Clear count of tables in free state
+      FREE_KNT = 0
+
+C     Clear the count of output lines
+      OUT_KNT = 0
+
+C     Start search
+      IENTRY = 0
+      TYPE = 6
+ 100  CONTINUE
+        IENTRY = IENTRY + 1
+        IPNT = ADD(IENTRY)
+        CODE = EMC(IPNT)
+C        WRITE(STDOUT,*) ' CODE=',CODE
+        IF(CODE.EQ.5) THEN
+C         CODE = 5.  Check for type.
+C          WRITE(STDOUT,*) ' CODE=',CODE,' TYPE=',EMC(IPNT+1)
+          IF(TYPE.EQ.EMC(IPNT+1)) THEN
+C           Found type 6.  Get the node numbers and the system sign.
+            UNN = EMC(IPNT+2)
+            DNN = EMC(IPNT+3)
+            SYSGN = EMC(IPNT+5)
+C            WRITE(STDOUT,*) ' TDTCHK_FREE: UNN=',INENUS(UNN),
+C     A                      ' DNN=',INENUS(DNN),' SYSGN=',SYSGN
+
+C           We need to check both directions because a structure could
+C           experience large reverse flows in some models.  The flows
+C           we check here may not be the maximum or minimum flow for 
+C           the structure--they are the flows that were present 
+C           at the time of the maximum head at the node being 
+C           checked. The flows have the proper sign for the 
+C           flow node.  We adjust using SYSGN to get the sign
+C           that denotes the direction of flow between the ups
+C           and dns nodes for this structure as given by the user. 
+
+C           Output the heading if not already done.
+            IF(HOUT.EQ.0) THEN
+              WRITE(STDOUT,50)
+              HOUT = 1
+            ENDIF
+            
+C           Check the ups node. 
+            IT = TOSTORE(UNN)
+C           Get the values for table lookup
+            QATMAX = QSTORE(IT)
+            IF(SYSGN.LT.0) THEN
+              QATMAX = -QATMAX
+            ENDIF
+C            WRITE(STDOUT,*) ' TDTCHK_FREE: Chk ups node: QATMAX=',QATMAX
+            ZDATMAX = ZSTORE(IT)
+C           Find the max. elev. and its time at the upstream node.  
+            IT = EXNODT(3,UNN)
+            IF(IT.LE.0) THEN
+              JT = FTZMAX(UNN)
+              ZU = FNZMAX(UNN)
+            ELSE
+              IT = EXNODT(2,UNN)
+              JT = TZMAX(IT)
+              ZU = ZMAX(IT)
+            ENDIF
+C            WRITE(STDOUT,*) ' ZU=',ZU,' ZDATMAX=',ZDATMAX
+C           If the number of flow paths is negative
+C           then  tables of type 14 are involved.
+            NPAIR = EMC(IPNT+6)
+            IF(NPAIR.LT.0) THEN
+C             Tables are type 14.  At most two tables appear.
+              UDADR = EMC(IPNT+7)
+              ZTAB = EMC(IPNT+10)
+              ITMP = EMC(IPNT+11)
+              HDATUM = RTMP
+
+              IF(QATMAX.GT.0.0) THEN
+C               We have flow from ups node to dns node.  If the flow
+C               is zero we skip since we are not interested.  If the
+C               flow is negative we have flow from dns to ups.  This
+C               means the head water is at the dns node.  The dns node
+C               is checked below.
+
+        
+                CALL GET14_FREE
+     I                    (STDOUT, UDADR, ZTAB, ZDATMAX, QATMAX, JT,
+     M                     HDATUM,
+     O                     TABN, QMX, HMAX, FREE, WSPRO, ROVER, QFREE)
+                IF(FREE.EQ.1) THEN
+                  TAB_STATE = ' Free '
+                  FREE_KNT = FREE_KNT + 1
+                  IF(WSPRO.EQ.1) THEN
+                    FLOW_RATIO = QATMAX/QFREE
+                    IF(ROVER.GT.0.05) THEN
+                      FLAG = '-'
+         
+                    ELSEIF(ROVER.GT.0.0) THEN
+                      FLAG = '*'
+                    ELSE
+                      FLAG = ' '
+                    ENDIF
+                  ENDIF
+                ELSE
+                  TAB_STATE = ' Sub. '
+                  IF(WSPRO.EQ.1) THEN
+                    FLOW_RATIO = QATMAX/QFREE
+                    FLAG = '+'
+                  ELSE
+                    FLAG = ' '
+                  ENDIF
+                ENDIF
+                TABID = GET_TABID(TABN)
+C                WRITE(TABID,'(I6,10X)') TABN
+
+                OUT_KNT = OUT_KNT + 1
+                SORT(OUT_KNT) = TABN
+                SORT_PNT(OUT_KNT) = OUT_KNT
+                IF(WSPRO.EQ.1) THEN
+                  WRITE(LIST54(OUT_KNT),52) INENUS(UNN), INENUS(DNN),
+     A                                      TABID, 14, TAB_STATE,
+     B                                      FLOW_RATIO
+                  LIST54(OUT_KNT)(54:54) = FLAG
+                ELSE
+                  WRITE(LIST54(OUT_KNT),52) INENUS(UNN), INENUS(DNN),
+     A                                      TABID, 14, TAB_STATE
+                ENDIF
+ 
+              ENDIF
+            ELSE
+
+              IF(ZU.GE.ZDATMAX) THEN
+C               Tables of type 6 or 13 may appear and there may be
+C               multiple pairs.
+                IOFF = 0
+                DO 200 I=1,NPAIR
+                  UDADR = EMC(IPNT+IOFF+7)
+                  ZTAB = EMC(IPNT+IOFF+10)
+ 
+                  ITMP = EMC(IPNT+IOFF+11)
+                  HDATUM = RTMP
+                  IF(QATMAX.GT.0.0) THEN
+C                   Flow was from ups to dns. 
+                    CALL GET613_FREE
+     I                         (STDOUT, UDADR, ZTAB, ZU, ZDATMAX, JT,
+     M                          HDATUM, 
+     O                          TABN, TABTYP, HMAX, FREE)
+                
+               
+                    IF(FREE.EQ.1) THEN
+                      TAB_STATE = ' Free '
+                      FREE_KNT = FREE_KNT + 1
+                    ELSE
+                      TAB_STATE = ' Sub. '
+                    ENDIF
+                    TABID = GET_TABID(TABN)
+C                    WRITE(TABID,'(I6,10X)') TABN
+              
+                    OUT_KNT = OUT_KNT + 1
+                    SORT(OUT_KNT) = TABN
+                    SORT_PNT(OUT_KNT) = OUT_KNT
+                    WRITE(LIST54(OUT_KNT),52) INENUS(UNN), INENUS(DNN),
+     A                                       TABID, TABTYP, TAB_STATE
+               
+                  ENDIF
+                  IOFF = IOFF + CD5TY6
+200             CONTINUE
+              ENDIF
+            ENDIF
+
+C           Check the dns node. 
+            IT = TOSTORE(DNN)
+C           Get the values for table lookup
+            QATMAX = QSTORE(IT)
+            IF(SYSGN.LT.0) THEN
+              QATMAX = -QATMAX
+            ENDIF
+C            WRITE(STDOUT,*) ' TDTCHK_FREE: Chk dns node: QATMAX=',QATMAX
+            ZUATMAX = ZSTORE(IT)
+C           Find the max. elev. and its time at the down stream node.  
+            IT = EXNODT(3,DNN)
+            IF(IT.LE.0) THEN
+              JT = FTZMAX(DNN)
+              ZD = FNZMAX(DNN)
+            ELSE
+              IT = EXNODT(2,DNN)
+              JT = TZMAX(IT)
+              ZD = ZMAX(IT)
+            ENDIF
+C            WRITE(STDOUT,*) ' ZD=',ZD,' ZUATMAX=',ZUATMAX
+
+C           If the number of flow paths is negative
+C           then  tables of type 14 are involved.
+            NPAIR = EMC(IPNT+6)
+            IF(NPAIR.LT.0) THEN
+C             Tables are type 14.  At most two tables appear.
+              DUADR = EMC(IPNT+8)
+              ZTAB = EMC(IPNT+10)
+              ITMP = EMC(IPNT+11)
+              HDATUM = RTMP
+
+              IF(QATMAX.LT.0.0) THEN
+C               We have flow from dns node to ups node.  If the flow
+C               is zero we skip since we are not interested.  If the
+C               flow is negative we have flow from dns to ups. 
+
+                QTEMP = ABS(QATMAX)
+                CALL GET14_FREE
+     I                (STDOUT, DUADR, ZTAB, ZUATMAX, QTEMP, JT,
+     M                 HDATUM,
+     O                 TABN, QMX, HMAX, FREE, WSPRO, ROVER, QFREE)
+
+                FLOW_RATIO = ABS(QATMAX)/QFREE
+                IF(FREE.EQ.1) THEN
+                  FREE_KNT = FREE_KNT + 1
+                  TAB_STATE = ' Free '
+                  IF(WSPRO.EQ.1) THEN
+                    IF(ROVER.GT.0.05) THEN
+                      FLAG = '-'
+                    ELSEIF(ROVER.GT.0.0) THEN
+                      FLAG = '*'
+                    ELSE
+                      FLAG = ' '
+                    ENDIF
+                  ENDIF
+                ELSE
+                  TAB_STATE = ' Sub. '
+                  IF(WSPRO.EQ.1) THEN
+                    FLAG = '+'
+                  ELSE
+                    FLAG = ' '
+                  ENDIF
+                ENDIF
+                TABID = GET_TABID(TABN)
+C                WRITE(TABID,'(I6,10X)') TABN
+
+                OUT_KNT = OUT_KNT + 1
+                SORT(OUT_KNT) = TABN
+                SORT_PNT(OUT_KNT) = OUT_KNT
+                WRITE(LIST54(OUT_KNT),52) INENUS(DNN), INENUS(UNN),
+     A                                      TABID, 14, TAB_STATE,
+     B                                      FLOW_RATIO
+                LIST54(OUT_KNT)(54:54) = FLAG
+              ENDIF
+            ELSE
+
+              IF(ZD.GE.ZUATMAX) THEN
+C               Tables of type 6 or 13 may appear and there may be multiple pairs.
+                IOFF = 0
+                DO 210 I=1,NPAIR
+                  DUADR = EMC(IPNT+IOFF+8)
+                  ZTAB = EMC(IPNT+IOFF+10)
+ 
+                  ITMP = EMC(IPNT+IOFF+11)
+                  HDATUM = RTMP
+                  IF(QATMAX.LT.0.0) THEN
+C                   Flow was from dns to ups. 
+                    CALL GET613_FREE
+     I                         (STDOUT, DUADR, ZTAB, ZD, ZUATMAX, JT,
+     M                          HDATUM, 
+     O                          TABN, TABTYP, HMAX, FREE)
+                
+                    IF(FREE.EQ.1) THEN
+                      TAB_STATE = ' Free '
+                      FREE_KNT = FREE_KNT + 1
+                    ELSE
+                      TAB_STATE = ' Sub. '
+                    ENDIF
+                    TABID = GET_TABID(TABN)
+C                    WRITE(TABID,'(I6,10X)') TABN
+              
+                    OUT_KNT = OUT_KNT + 1
+                    SORT(OUT_KNT) = TABN
+                    SORT_PNT(OUT_KNT) = OUT_KNT
+                    WRITE(LIST54(OUT_KNT),52) INENUS(DNN), INENUS(UNN),
+     A                                     TABID, TABTYP, TAB_STATE
+                  ENDIF
+                  IOFF = IOFF + CD5TY6
+ 210            CONTINUE
+              ENDIF
+            ENDIF
+
+          ENDIF
+        ENDIF
+        IF(CODE.GT.0) THEN
+C         Continue the search.
+          GOTO 100
+        ENDIF
+
+C     Sort on table number.
+      CALL SORT2I
+     I           (OUT_KNT,
+     M            SORT, SORT_PNT)
+C     Output the lines.
+      DO 300 I=1,OUT_KNT
+        WRITE(STDOUT,'(A54)') LIST54(SORT_PNT(I))
+        IF(LIST54(SORT_PNT(I))(54:54).EQ.'-') THEN
+          WRITE(STDOUT,56) 
+          WRITE(STDOUT,*) ' '
+        ENDIF
+300   CONTINUE
+
+      RETURN
+      END

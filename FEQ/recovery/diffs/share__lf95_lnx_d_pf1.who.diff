@@ -1,0 +1,35 @@
+--- 9.98/share/lf95_lnx_d_pf1.who
++++ 10.61/share/lf95_lnx_d_pf1.who
+@@ -2,9 +2,9 @@
+ C     that will report the compiler and the operating
+ C     system.  Also include a routine that will 
+ C     report the operating system when called at runtime. 
+-C     Fortran has not builtin means for reporting this 
++C     Fortran has no builtin means for reporting this 
+ C     info so we create a system at compile time 
+-C     that will do that.  A file file like this one
++C     that will do that.  A file like this one
+ C     will exist for each compiler-os supported.  The
+ C     script or batch file used to compile will then 
+ C     select the correct one to include. 
+@@ -89,16 +89,16 @@
+       INTEGER OS, COMPILER, PRECISION, PREFETCH
+ 
+       CHARACTER*40 OS_NAME(2), COMPILER_NAME(6), PRECISION_NAME(2)
+-      CHARACTER*60 PREFETCH_NAME(3)
++      CHARACTER*70 PREFETCH_NAME(3)
+ 
+ C     Called routines
+       INTEGER WHAT_OS, WHAT_COMPILER, WHAT_PREFETCH, WHAT_PRECISION
+ 
+       DATA OS_NAME/'MS Windows', 'Linux'/
+-      DATA COMPILER_NAME/'Lahey F90-V 4.5i','Lahey F95-V 5.70b',
+-     A   'Lahey F95-V 6.10d','PGI F90 4.0','Intel 6.0','GNU77'/
++      DATA COMPILER_NAME/'Lahey F90-V 4.5i','Lahey F95-V 5.70f',
++     A   'Lahey F95-V 6.20d','PGI F90 4.0','Intel 6.0','GNU77'/
+       DATA PREFETCH_NAME/
+-     A 'No prefetch. For Pentium II and greater and clones.',
++     A 'No prefetch. For Pentium II and greater. Athlon 64, Pentium 4.',
+      B    'Prefetch level 1. For Pentium III, Athlon. Not Pentium 4.',
+      C    'Prefetch level 2. For Pentium III, Athlon. Not Pentium 4.'/
+       DATA PRECISION_NAME/

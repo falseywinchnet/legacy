@@ -1,0 +1,244 @@
+Unsteady Flow --Example 2
+THREE BRANCH SYSTEM
+July 14, 1994
+RUN CONTROL BLOCK
+NBRA=00003
+NEX=00006
+SOPER=NO
+POINT=NO
+DIFFUS=NO  
+WIND=NO
+UNDERFLOW=NO
+ZL=0.0
+STIME=1990/01/01:0.00
+ETIME=1990/01/01:24.0
+GRAV=32.2
+NODEID=YES
+SSEPS=0.1
+PAGE=   22
+;     Example of more complex convergence criterion.  In addition to the
+;     relative correction value given by EPSSYS, we can request that FEQ
+;     declare convergence at a node if the change in depth is less than
+;     0.010 feet in absolute value.
+EPSSYS= 0.010
+ABSTOL= 0.010
+;     The number following the MKNT value is the NUMGT limit.  For the
+;     example here, FEQ will declare converge for the system as
+;     a whole if at most one variable falls outside the relative
+;     correction criterion and that variable does not exceed twice
+;     the limiting relative correction.
+MKNT=    5
+NUMGT=    1
+PRTINT=    1
+GEQOPT=STDX
+EPSB=0.000005
+MAXIT=   30
+SFAC=5280.
+QSMALL=     1.000
+IFRZ=    1  1800.0
+MAXDT=   450.0  MINDT=     1.0  AUTO= 0.70  SITER=  2.8  HIGH= 3.20  LOW= 3.00  HFAC= 2.00  LFAC= 0.50
+MRE=    0.20
+FAC=    0.50
+DWT=0.1
+BWT=0.55
+CHKGEO=NO
+ISTYLE=NEW
+EXTTOL= 0.0
+SQREPS=1.E30
+BRANCH DESCRIPTION TABLES
+BNUM=    1
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+  100 UPSTREAM  5000       0.0     101.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+      DNSTREAM  5000       1.0     100.0
+   -1
+BNUM=    2
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+  200 UPSTREAM  5000       0.0     101.
+  201
+  202
+  203
+  204
+;     Here is an example of providing explicit node numbers.  They must
+;     be given in order.
+  205
+  206
+  207
+  208
+  209
+  210 DNSTREAM  5000       1.0     100.0
+   -1
+BNUM=    3
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+  300 UPSTREAM  4990       0.0     100.
+                   -
+                   -
+                   -
+;     Here is an example of requesting interpolation between two
+;     cross section tables on a branch.  The - in the last column for
+;     the cross section number requests that FEQ find an unused table
+;     number and compute the table using linear variation at constant depth
+;     from the two existing tables.
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      DNSTREAM  5000       1.0     101.
+   -1
+NEW NETWORK-MATRIX CONTROL INPUT
+ CODE  N1  N2  N3  N4  N5  N6  N7  N8  N9  N10    F1     F2     F3     F4     F5
+    6    1   U1    1  100                                        '
+    1    1                                                       '
+    1    2                                                       '
+    6    1   U2    1  102                                        '
+;     Codes 2 and 3 in combination represent a simple junction.
+    3   D1   U3                                                  '
+    2    3   D1   D2   U3                                        '
+    3   D2   U3                                                  '
+    1    3                                                       '
+    4    1   D3   -1   D3  110                          103.0   32.0     '
+   -1                                                            '
+BNODE=
+SPECIAL OUTPUT LOCATIONS
+UNIT=    3feqex2.wsq
+  BRA NODE
+    0   D1 EXNOD D1
+    0   D2 EXNOD D2
+    0   U3 EXNOD U3
+   -1
+INPUT FILE SPECIFICATION
+ UNIT NAME
+   -1
+OUTPUT FILE SPECIFICATION
+ UNIT  BRA NODE ITEM TYPE NAME------------------------------------------------------------
+   -1
+FUNCTION TABLES
+TABID=   100
+TYPE=   -7
+REFL=0.0        FAC=1.0
+YEAR MN DY      HOUR DISCHARGE  INFLOW HYDROGRAPH AT UPSTREAM END
+1990 01 01       0.0        9.
+                 1.0       32.
+                 2.0      100.
+                 3.0      151.
+                 4.0       94.
+                 5.0      145.
+                 6.0      220.
+                 7.0      178.
+                 8.0      104.
+                 9.0       77.
+                10.0       57.
+                11.0       38.
+                12.0       28
+                13.0       19.
+                14.0       10.
+        02      24.0       10.
+                23.0
+TABID=   102
+TYPE=   -7
+REFL=0.0        FAC=2.0
+YEAR MN DY      HOUR DISCHARGE  INFLOW HYDROGRAPH AT UPSTREAM END
+1990 01 01       0.0        9.
+                 1.0       32.
+                 2.0      100.
+                 3.0      151.
+                 4.0       94.
+                 5.0      145.
+                 6.0      220.
+                 7.0      178.
+                 8.0      104.
+                 9.0       77.
+                10.0       57.
+                11.0       38.
+                12.0       28
+                13.0       19.
+                14.0       10.
+        02      24.0       10.
+                23.0
+TABID=   110
+TYPE=   -2
+REFL=0.0
+      HEAD WEIR COEF
+       0.0       3.2
+      50.0       3.2
+      -1.0
+TABID=  4990
+TYPE=   -1
+STATION= 2.41200E+00
+ELEVATION= 0.00000E+00                  EXT=00.00      FAC=1.000
+     DEPTH TOP WIDTH         AREA   SQRT(CONV)      BETA        YBARA
+      .000    40.000  0.00000E+00  0.00000E+00    1.0000  0.00000E+00
+      .080    40.960  3.23840E+00  5.96209E+00    1.0000  1.29024E-01
+     1.875    62.500  9.60937E+01  8.72018E+01    1.0000  8.34961E+01
+     3.750    85.000  2.34375E+02  1.65332E+02    1.0000  3.86719E+02
+     5.625   107.500  4.14844E+02  2.45929E+02    1.0000  9.88770E+02
+     7.500   130.000  6.37500E+02  3.30116E+02    1.0000  1.96875E+03
+     9.375   152.500  9.02344E+02  4.18033E+02    1.0000  3.40576E+03
+    11.250   175.000  1.20938E+03  5.09580E+02    1.0000  5.37891E+03
+    13.125   197.500  1.55859E+03  6.04590E+02    1.0000  7.96728E+03
+    15.000   220.000  1.95000E+03  7.02889E+02    1.0000  1.12500E+04
+    16.667   240.000  2.33333E+03  7.92889E+02    1.0000  1.48148E+04
+    18.333   260.000  2.75000E+03  8.85244E+02    1.0000  1.90463E+04
+    20.000   280.000  3.20000E+03  9.79852E+02    1.0000  2.40000E+04
+    21.667   300.000  3.68333E+03  1.07662E+03    1.0000  2.97315E+04
+    23.333   320.000  4.20000E+03  1.17547E+03    1.0000  3.62963E+04
+    25.000   340.000  4.75000E+03  1.27631E+03    1.0000  4.37500E+04
+    -1.000      .000  0.00000E+00  0.00000E+00     .0000  0.00000E+00
+TABID=  5000
+TYPE=   -1
+STATION= 2.41200E+00
+ELEVATION= 0.00000E+00                  EXT=00.00      FAC=1.000
+     DEPTH TOP WIDTH         AREA   SQRT(CONV)      BETA        YBARA
+      .000    20.000  0.00000E+00  0.00000E+00    1.0000  0.00000E+00
+      .080    20.480  1.61920E+00  4.21451E+00    1.0000  6.45120E-02
+      .938    25.625  2.13867E+01  3.34821E+01    1.0000  9.61304E+00
+     1.875    31.250  4.80469E+01  6.13671E+01    1.0000  4.17480E+01
+     2.812    36.875  7.99805E+01  8.86460E+01    1.0000  1.01349E+02
+     3.750    42.500  1.17188E+02  1.16093E+02    1.0000  1.93359E+02
+     4.688    48.125  1.59668E+02  1.43993E+02    1.0000  3.22723E+02
+     5.625    53.750  2.07422E+02  1.72467E+02    1.0000  4.94385E+02
+     6.563    59.375  2.60449E+02  2.01568E+02    1.0000  7.13287E+02
+     7.500    65.000  3.18750E+02  2.31316E+02    1.0000  9.84375E+02
+     8.437    70.625  3.82324E+02  2.61712E+02    1.0000  1.31259E+03
+     9.375    76.250  4.51172E+02  2.92750E+02    1.0000  1.70288E+03
+    10.312    81.875  5.25293E+02  3.24420E+02    1.0000  2.16019E+03
+    11.250    87.500  6.04687E+02  3.56707E+02    1.0000  2.68945E+03
+    12.187    93.125  6.89355E+02  3.89597E+02    1.0000  3.29562E+03
+    13.125    98.750  7.79297E+02  4.23074E+02    1.0000  3.98364E+03
+    14.062   104.375  8.74512E+02  4.57123E+02    1.0000  4.75845E+03
+    15.000   110.000  9.75000E+02  4.91730E+02    1.0000  5.62500E+03
+    15.909   115.455  1.07748E+03  5.25807E+02    1.0000  6.55757E+03
+    16.818   120.909  1.18492E+03  5.60383E+02    1.0000  7.58556E+03
+    17.727   126.364  1.29731E+03  5.95444E+02    1.0000  8.71347E+03
+    18.636   131.818  1.41467E+03  6.30980E+02    1.0000  9.94581E+03
+    19.545   137.273  1.53698E+03  6.66980E+02    1.0000  1.12871E+04
+    20.455   142.727  1.66426E+03  7.03433E+02    1.0000  1.27418E+04
+    21.364   148.182  1.79649E+03  7.40329E+02    1.0000  1.43145E+04
+    22.273   153.636  1.93368E+03  7.77659E+02    1.0000  1.60097E+04
+    23.182   159.091  2.07583E+03  8.15414E+02    1.0000  1.78318E+04
+    24.091   164.545  2.22293E+03  8.53584E+02    1.0000  1.97854E+04
+    25.000   170.000  2.37500E+03  8.92162E+02    1.0000  2.18750E+04
+    -1.000      .000  0.00000E+00  0.00000E+00     .0000  0.00000E+00
+TABID=    -1
+BACKWATER ANALYSIS
+BRANCH NUMBER=   -1
+DISCHARGE=  9.0
+BRANCH NUMBER=   -2
+DISCHARGE= 18.0
+BRANCH NUMBER=   -3
+DISCHARGE= 27.0
+  BRA CODE ELEVATION EXN#
+    3    3     103.1
+    1    0             U3
+    2    0             U3
+   -1

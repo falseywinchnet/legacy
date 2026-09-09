@@ -1,0 +1,4797 @@
+C Routines used in initialization of the run                                    
+
+C
+C
+C
+      SUBROUTINE SET_INITIAL_OPER_BLK(NBLK, OPBLK, JTIME, EPT, 
+     M                                EMC)
+
+C     Set the initial block value for control structures
+C     that use more than one operation block
+
+      IMPLICIT NONE
+      INCLUDE 'arsize.prm'
+
+      INTEGER EPT, NBLK, OPBLK(NBLK), EMC(EPT)
+
+      REAL*8 JTIME
+
+      INCLUDE 'ftable.cmn'
+
+C     Local
+
+      INTEGER I, BLK_ADRS, EMC_PNT, TABLE_ADRS, NTAB,
+     A        TS_BLK_NUMBER
+
+      REAL VAL, PDV
+
+C     Called subprograms
+      EXTERNAL LKTAB
+C***********************************************************************
+      
+      DO 100 I=1,NBLK
+        BLK_ADRS = OPBLK(I)
+        TABLE_ADRS = ITAB(BLK_ADRS+7)
+        IF(TABLE_ADRS.GT.0) THEN
+
+C         Find the block number at this time from the table.
+          CALL LKTSTAB
+     I              (TABLE_ADRS, JTIME,
+     O               VAL, NTAB, PDV)
+          TS_BLK_NUMBER = INT(VAL+0.5)
+          IF(TS_BLK_NUMBER.EQ.I) THEN
+C           We have a match.  Set the block number into
+C           EMC to signal which block is currently active.
+C           Get the pointer into EMC
+            EMC_PNT = ITAB(BLK_ADRS+8)
+
+            EMC(EMC_PNT) = I
+          ENDIF
+        ENDIF
+100   CONTINUE
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   ADJ234
+     I                   (ADRS,
+     O                    ZBOT, FLAG)
+ 
+C     + + + PURPOSE + + +
+C     Adjust the arguments to tables of types 2, 3, or 4 such that
+C     they are maximum depth, relative to the first argument in the
+C     table on entry.  Return the first argument in ZBOT and set
+C     FLAG to 1 if an adjustment is allowed.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ADRS, FLAG
+      REAL ZBOT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     ADRS   - address of the function table in FTAB/ITAB
+C     ZBOT   - bottom elevation
+C     FLAG   - flag for adjustment
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER FA, I, LA, OFF, TYPE
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER GETTYP
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETTYP
+C***********************************************************************
+C     Get the first argument in the table.  If it is 0.0 then no
+C     adjustment is made.  Otherwise, FEQ assumes that an adjustment
+C     is to be made to the argument sequence.
+      ZBOT = FTAB(ADRS+OFF234)
+      IF(ZBOT.EQ.0.0) THEN
+        FLAG = 0
+      ELSE
+        FLAG = 1
+C       Make the adjustment.  Get the type.
+        TYPE = GETTYP(ADRS)
+        IF(TYPE.EQ.2) THEN
+          OFF = 2
+        ELSE
+          OFF = 3
+        ENDIF
+        FA = ADRS + OFF234
+        LA = ITAB(ADRS)
+        DO 100 I=FA,LA,OFF
+          FTAB(I) = FTAB(I) - ZBOT
+ 100    CONTINUE
+      ENDIF
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   BCKWTR
+     I                   (EPSB, GRAV, IN, STDOUT, MAXIT, NBRA, NBN, NEX,
+     I                    OUTPUT, JTIME, SFAC, BRPT, EMC, QEPS, EPT,
+     i                    dz_for_output,
+     M                    EXNODT,
+     O                    EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     This subroutine takes specified initial discharges
+C     and initial downstream depth and computes initial
+C     depths by steady flow analysis restrictions:
+C     i)  Only applicable to dendritic networks
+C     ii) Many network matrix relationships are ignored.
+C     iii) Initial point and diffuse loading ignored
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, IN, STDOUT, MAXIT, NBN, NBRA, NEX, OUTPUT, EPT
+      INTEGER BRPT(8,NBRA), EMC(EPT), EXNODT(9,NEX)
+      REAL EPSB, GRAV, QEPS, SFAC, dz_for_output
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     EPSB   - convergence limit for steady flow computations
+C     GRAV   - value of acceleration due to gravity
+C     IN     - unit number for the user input file
+C     STDOUT   - Fortran unit number for user output and messages
+C     MAXIT  - maximum number of iterations at a node for finding
+C               steady flow profile
+C     NBRA   - number of branches in the model
+C     NBN    - total number on nodes on branches in the model
+C     NEX    - number of exterior nodes in the model
+C     OUTPUT - output level for diagnostic work
+C     TIME   - elapsed time in seconds from start of run
+C     SFAC   - conversion factor from user stations to internal stations
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     QEPS   - value of flow to prevent zero divide when computing
+C               relative correction
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'bnothr.cmn'
+      INCLUDE 'enelem.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADRS, DEXN, DN, FN, GEQ, I, ICODE, IDUM, IPNT, J, LN, NB,
+     A        NBR, NTAB, SNODE, UEXN, UPSNOD, USNB, YE1KNOWN(MNEX),
+     B        OTHER_NODE
+      REAL A, AK, ARG, B, CHAR(20), DB, DISCH, DK, DMA, DMQ, DT, MA,
+     A     MQT, PDV, QR, RDUM, SELEV, T, VOL, Y, YL, YR, YT, ZI
+      CHARACTER LINE*80, USCODE*5, USNBC*5, USNODE*5
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE(IDUM,RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC IABS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER GETUSB
+C      CHARACTER GET_TABID*16
+      CHARACTER GETTOK*5, GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL CD4QY, CD56QY, FND5, FNDCD, GETINB, GETINN, GETTOK,
+     A         inline, LKTAB, SFPSBM, XLKT23, GETUSB, GETUSN
+ 
+C     + + + INPUT FORMATS + + +
+c 1000 FORMAT(20A4)
+ 1010 FORMAT(14X,I5)
+ 1060 FORMAT(A5,A5,F10.0,A5)
+ 1070 FORMAT(10X,F10.0)
+ 
+C     + + + OUTPUT FORMATS + + +
+ 2000 FORMAT(' ',A80)
+ 2001 FORMAT(/,' ',A80)
+ 2010 FORMAT(/,' BRANCH NUMBER = ',I5)
+ 2110 FORMAT(/,' *ERR:94* Downstream depth missing ',
+     A     'for branch',I5)
+ 2120 FORMAT(1X,A5,A5,F10.2,A5)
+ 2160 FORMAT(/,' *ERR:96* Fatal errors encountered.')
+ 2170 FORMAT(/,' Backwater analysis for branch#', I5, /
+     A      ,1X,' STATION',1X,'IT',5X,'YL',6X,'QL',6X, 'AL',5X,
+     B 'TL',5X, 'DZ',5X,'DX',5X,'ELEV',6X,'RES','  FR',
+     C ' Tabid-----------')
+ 2190 FORMAT(1X,'*ERR:97* Elevation undefined at',
+     1        '  EXN = ',A5)
+ 2200 FORMAT(' Discharge = ',F10.3)
+ 2210 FORMAT(' *ERR:105* Value for branch node already present.',
+     A       ' Check node number= ',A5,/,11X,' in CODE column.')
+ 2214 FORMAT(/,'*ERR:248* CODE field must be non-zero if BRA field',
+     A       ' is zero or blank.')
+ 2216 FORMAT(/,'*ERR:249* CODE=',I5,' invalid option.')
+ 2218 FORMAT(' *ERR:250* Branch=',I5,' previously processed.')
+ 3001 FORMAT(/,' *ERR:99* Invalid exterior node. EXN = ',A5)
+ 3003 FORMAT(/,'*ERR:102* Invalid exterior node given when BRA=0',
+     1        ' EXN = ',A5)
+ 3004 FORMAT(/,'*ERR:100* EXN# with BRA = 0 and ICODE = -3',
+     1         ' is not a free node. EXN# = ',A5)
+3005  FORMAT(/,
+     A     '*ERR:404* Branch=',I5,' not computed in BACKWATER input')
+3006  FORMAT(/,
+     A' Starting final check for unknown free nodes on dummy branches.')
+3008  FORMAT(/,' Final check for unknown free nodes on dummy',
+     A' branches completed.')
+3010  FORMAT(/,' *ERR:405* One or more free nodes given in the list',
+     A ' above have unknown elevations.',/,9X,'  Please make sure',
+     B ' that elevations are assigned to these free nodes in the',
+     C ' BACKWATER block.')
+C***********************************************************************
+C     SET YE1(*) FOR ERROR CHECKS
+      DO 300 J=1,NEX
+        IF(EXNODT(3,J).LT.0) THEN
+C         We have a reservoir node.  Leave YE1 at the input value because
+C         it might be needed below. 
+ 
+        ELSEIF(EXNODT(3,J).EQ.0) THEN
+C         We have a node on a dummy branch or an inflow node to a LPR
+          IF(EXNODT(4,J).EQ.0) THEN
+C           We have an inflow node to an LPR.  Force its depth
+C           to match the reservoir node.
+            OTHER_NODE = EXNODT(2,J)
+            YE1(J) = YE1(OTHER_NODE) + ZE(OTHER_NODE) - ZE(J)
+          ELSE
+C           This is node on a dummy branch.  It could
+C           be involved in a code 6 type 2 and then 
+C           the initial value is to be kept. 
+            IF(EXNODT(9,J).EQ.62) THEN
+C             We have a hit.  Get the other node
+C             and if its flag is NOT set to 62,
+C             transfer the depth and set its flag.
+              IF(EXNODT(9,EXNODT(4,J)).EQ.0) THEN
+C               Make the changes. 
+                YE1(EXNODT(4,J)) = YE1(J) + ZE(J) - ZE(EXNODT(4,J))
+                EXNODT(9,EXNODT(4,J)) = 62
+              ENDIF
+            ELSE
+              YE1(J) = -1.E20
+            ENDIF
+          ENDIF
+        ELSE
+C        Exterior nodes on branches here
+          YE1(J) = -1.E20
+        ENDIF            
+ 300    CONTINUE
+ 
+C     SET Y1(*) FOR ERROR CHECK
+      DO 310 J=1,NBN
+        Y1(J) = -1.E20
+ 310    CONTINUE
+ 
+C     READ TITLE CARD
+      CALL inline
+     I          (IN, STDOUT,
+     O           LINE)
+      WRITE(STDOUT,2000) line
+ 
+C     BRANCH LOOP
+ 
+      EFLAG = 0
+      DO 100 NB=1,NBRA
+        CALL inline
+     I            (IN, STDOUT,
+     O             LINE)
+        READ(LINE,1010,ERR=991) NBR
+        IF(NBR.GT.0) GOTO 7
+         NBR = IABS(NBR)
+         WRITE(STDOUT,2010) NBR
+C         NBR = GETINB(NBR, EFLAG)
+         CALL GETINB
+     M              (NBR,
+     O               EFLAG, NBR)
+         CALL inline
+     I             (IN, STDOUT,
+     O              LINE)
+         READ(LINE,1070, ERR=991) DISCH
+          WRITE(STDOUT,2200) DISCH
+          FN = BRPT(3,NBR)
+          LN = BRPT(4,NBR)
+            DO 5 J=FN,LN
+            Q1(J) = DISCH
+            Q2(J) = DISCH
+    5       CONTINUE
+          QE1(BRPT(5,NBR)) = Q1(FN)
+          QE1(BRPT(6,NBR)) = Q1(LN)
+          GOTO 100
+    7   CONTINUE
+        WRITE(STDOUT,*) ' DO NOT USE THIS BACKWATER OPTION.'
+        WRITE(STDOUT,*) ' ALWAYS USE NEGATIVE BRANCH NUMBERS.'
+        STOP 'Abnormal stop: errors found.'
+ 100  CONTINUE
+ 
+      CALL inline
+     I          (IN, STDOUT,
+     O           LINE)
+      WRITE(STDOUT,2001) line
+ 
+ 
+C     NOW START COMPUTATION LOOP
+ 
+C     START LOOP FOR BACKWATER ANALYSIS: Read the next instruction.
+ 
+ 160  CONTINUE
+        CALL inline
+     I            (IN, STDOUT,
+     O             LINE)
+        READ(LINE,1060,ERR=991) USNBC, USCODE, SELEV, USNODE
+C       Decode USNBC.  It can be a branch number, it can be
+C       a new style exterior node number or it can be the negative
+C       of an old style exterior node number or it can be a -1
+C       with nothing else on the line.
+C       Strip leading blanks from USNBC
+        USNBC = GETTOK(USNBC)
+        IF(USNBC(1:1).EQ.'U'.OR.USNBC(1:1).EQ.'D'.OR.
+     A     USNBC(1:1).EQ.'F') THEN
+C          The item is a new style exterior node label.  Convert it
+C          to internal form.
+           CALL GETINN
+     M                (USNBC,
+     O                 EFLAG, UPSNOD)
+C          Set the internal branch number to zero.
+           NB = 0
+           USNB = 0
+        ELSE
+C          The item is a number of some sort.   Read it as such.
+           READ(USNBC,'(I5)',ERR=991) USNB
+C          Check if it is a branch number.
+           IF(USNB.GE.0) THEN
+C            Convert it to internal form.  GETINB can handle a zero
+C            value for the branch number.
+             CALL GETINB
+     M                  (USNB,
+     O                   EFLAG, NB)
+             UPSNOD = 0
+           ELSE
+C            Check for it being an end of input flag.
+             IF(USCODE.EQ.' '.AND.SELEV.EQ.0.0.AND.USNODE.EQ.' ') THEN
+C              Nothing else on the line.  Take it to be end of input
+C              flag.
+               GOTO 200
+             ELSE
+C             Take it to be an exterior node number in the old
+C             style.  Remove the unary minus from the number.
+              USNBC(1:1) = ' '
+              CALL GETINN
+     M                   (USNBC,
+     O                    EFLAG, UPSNOD)
+              NB = 0
+              USNB = 0
+            ENDIF
+          ENDIF
+        ENDIF
+        WRITE(STDOUT,2120) USNBC, USCODE, SELEV, USNODE
+ 
+C       CONVERT USCODE AND USNODE. STRIP BLANKS FROM USCODE
+        USCODE = GETTOK(USCODE)
+        IF(UPSNOD.EQ.0) THEN
+          IF(NB.EQ.0) THEN
+            IF(USCODE(1:1).EQ.'-') THEN
+C             NUMERICAL CODE.  READ IT.
+              READ(USCODE,'(I5)',ERR=991) ICODE
+            ELSE
+C             SHOULD BE A NODE. CONVERT IT TO INTERNAL FORM.
+              CALL GETINN
+     M                   (USCODE,
+     O                    EFLAG, ICODE)
+            ENDIF
+          ELSE
+C           NUMERICAL CODE
+            READ(USCODE,'(I5)',ERR=991) ICODE
+          ENDIF
+        ELSE
+C         CODE is a numerical value denoting an action and
+C         not a node label.
+          READ(USCODE,'(I5)',ERR=991) ICODE
+        ENDIF
+ 
+        IF(USNODE.EQ.'     ') THEN
+          SNODE = 0
+        ELSE
+C         SHOULD BE AN EXTERIOR NODE
+          CALL GETINN
+     M               (USNODE,
+     O                EFLAG, SNODE)
+        ENDIF
+ 
+C        WRITE(STDOUT,*) ' UPSNOD=',UPSNOD,' NB=',NB,' ICODE=',ICODE
+        IF(UPSNOD.EQ.0) THEN
+C         2-D relationship with a free node is not involved.
+          IF(NB.EQ.0) THEN
+C           User supplied a zero or a blank in the BRA column.
+            IF(ICODE.GT.0) THEN
+C             ICODE contains an exterior node number giving the
+C             node to receive an elevation.  SNODE gives the exterior
+C             node number from which the elevation is taken.
+              IF(SNODE.LE.0.OR.SNODE.GT.NEX) THEN
+C               SNODE is invalid.
+                WRITE(STDOUT,3003) USNODE
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+              IF(YE1(SNODE).LE.0.0) THEN
+C               Value not known at the source node.
+                WRITE(STDOUT,2190) USNODE
+                STOP 'Abnormal stop: errors found.'
+              ELSE
+C               Value at source node is known.  Transfer it to the
+C               destination node.
+                YE1(ICODE) = YE1(SNODE) + ZE(SNODE) - ZE(ICODE)
+     A                        + SELEV
+                YE1KNOWN(ICODE) = 1
+                IF(EXNODT(3,ICODE).GT.0) THEN
+C                 Destination node is on a branch.  Get pointer into
+C                 the branch vectors.
+                  I = EXNODT(2,ICODE)
+                  IF(Y1(I).GT.0.0) THEN
+C                   Branch vector already has a value.
+                    WRITE(STDOUT,2210) USCODE
+                    STOP 'Abnormal stop: errors found.'
+                  ELSE
+C                   Make the depth the same in the branch
+C                   vectors.
+                    Y1(I) = YE1(ICODE)
+                  ENDIF
+                ENDIF
+              ENDIF
+            ELSEIF(ICODE.EQ.0) THEN
+C             Code field must be non-zero if the BRA field is zero.
+              WRITE(STDOUT,2214)
+              STOP 'Abnormal stop: errors found.'
+            ELSE
+C             CODE field gives an action to follow.  -3 only action
+C             currently supported.
+              IF(ICODE.EQ.-3) THEN
+C               Compute the stage at a free node given that there
+C               is a Code 4 specified at the node.
+                IF(EXNODT(3,SNODE).GT.0) THEN
+                  WRITE(STDOUT,3004) USNODE
+                  STOP 'Abnormal stop: errors found.'
+                ELSE
+                  YR = YE1(SNODE)
+                  CALL CD4QY
+     I                      (STDOUT, NB, SNODE, NBRA, NEX, NBN, JTIME,
+     I                       BRPT, EXNODT, EMC, MAXIT, EPSB, OUTPUT,
+     I                       EPT,
+     M                       YR)
+C                 On return YR contains the depth at the node.  The
+C                 value is also stored in YE1(SNODE).
+                  YE1KNOWN(SNODE) = 1
+                ENDIF
+              ELSE
+                WRITE(STDOUT,2216) ICODE
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+            ENDIF
+          ELSE
+C           Branch is to be processed.  Set limits for this branch.
+            LN = BRPT(4,NB)
+            FN = BRPT(3,NB)
+            DN = BRPT(2,NB)
+            DEXN = BRPT(6,NB)
+            UEXN = BRPT(5,NB)
+            ADRS = NSEC(LN)
+            QR = QE1(DEXN)
+ 
+C           Establish downstream conditions.  Check if branch has
+C           already been processed.
+            IF(Y1(LN).GT.0.0) THEN
+C             BRANCH NODE ALREADY HAS A VALUE.
+C             DESTINATION NODE NUMBER.
+              WRITE(STDOUT,2218) USNB
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+ 
+            ZI = ZIVEC(NB)
+ 
+            IF(ICODE.EQ.0) THEN
+C             Water-surface elevation given by sum of SELEV and the
+C             elevation of the node given in SNODE.  The resulting
+C             depth is then placed in the branch vector and in the
+C             exterior-node  vector.
+              IF(SNODE.LE.0.OR.SNODE.GT.NEX) THEN
+                WRITE(STDOUT,3001) USNODE
+                STOP 'Abnormal stop: errors found.'
+              ELSE
+C               SNODE valid here.
+                IF(YE1(SNODE).GT.0.0) THEN
+C                 Value is known at exterior node
+                  YE1(DEXN) = YE1(SNODE) + ZE(SNODE) - ZE(DEXN) +
+     A                        SELEV
+                  YE1KNOWN(DEXN) = 1
+                  Y1(LN) = YE1(DEXN)
+                  YR = YE1(DEXN)
+                ELSE
+C                 Value unknown at exterior node.
+                  WRITE(STDOUT,2190) USNODE
+                  STOP 'Abnormal stop: errors found.'
+                ENDIF
+              ENDIF
+            ELSEIF(ICODE.EQ.1) THEN
+C             Water-surface elevation given directly by SELEV
+              YR = SELEV - ZE(DEXN)
+              Y1(LN) = YR
+              YE1(DEXN) = YR
+              YE1KNOWN(DEXN) = 1
+            ELSEIF(ICODE.EQ.2.OR.ICODE.EQ.5) THEN
+C             Find critical depth.
+ 
+              YR = SELEV - ZE(DEXN)
+              IF(YR.LE.0.0) THEN
+                WRITE(STDOUT,2110) USNB
+                STOP 'Abnormal stop: errors found.'
+              ELSE
+C                WRITE(STDOUT,*) ' CALLING FNDCD: YR=',YR,' QR=',QR
+                CALL FNDCD
+     I                    (STDOUT, ADRS, GRAV, EPSB, QR,
+     M                     YR,
+     O                     EFLAG)
+C                WRITE(STDOUT,*) ' RETURN FROM FNDCD: YR=',YR
+                IF(EFLAG.NE.0) STOP 'Abnormal stop: errors found.'
+                YE1(DEXN) = YR
+                YE1KNOWN(DEXN) = 1
+                Y1(LN) = YR
+                IF(ICODE.EQ.5) THEN
+C                 Check for drowning from  SNODE
+                  IF(SNODE.LE.0.OR.SNODE.GT.NEX) THEN
+                    WRITE(STDOUT,3001) USNODE
+                    STOP 'Abnormal stop: errors found.'
+                  ELSE
+C                   SNODE valid here.
+                    IF(YE1(SNODE).GT.0.0) THEN
+C                     Value is known at exterior node
+                      YT = YE1(SNODE) + ZE(SNODE)
+                      IF(YT.GT.YR+ZE(DEXN)) THEN
+                        YR = YT - ZE(DEXN)
+                        YE1(DEXN) = YR
+                        YE1KNOWN(DEXN) = 1
+                        Y1(LN) = YR
+                      ENDIF
+                    ELSE
+C                     Value unknown at exterior node.
+                      WRITE(STDOUT,2190) USNODE
+                      STOP 'Abnormal stop: errors found.'
+                    ENDIF
+                  ENDIF
+                ENDIF
+              ENDIF
+ 
+            ELSEIF(ICODE.EQ.3) THEN
+C             Compute the depth from a rating curve given by
+C             Code 4 types 1, 2, or 3.
+              YR = SELEV - ZE(DEXN)
+              IF(YR.LE.0.0) THEN
+                WRITE(STDOUT,2110) USNB
+                STOP 'Abnormal stop: errors found.'
+              ELSE
+                CALL CD4QY
+     I                   (STDOUT, NB, DEXN, NBRA, NEX, NBN, JTIME, BRPT,
+     I                     EXNODT, EMC, MAXIT, EPSB, OUTPUT, EPT,
+     M                     YR)
+C                On return YR contains the depth at the node.  The
+C                value is also stored in YE1(DEXN).
+                 YE1KNOWN(DEXN) = 1
+              ENDIF
+            ELSEIF(ICODE.EQ.6) THEN
+C             2-D table given with a branch.  DEXN is the
+C             upstream node for the control structure and
+C             SNODE is the downstream node.
+              IF(SNODE.LE.0.OR.SNODE.GT.NEX) THEN
+                WRITE(STDOUT,3001) USNODE
+                STOP 'Abnormal stop: errors found.'
+              ELSE
+C               SNODE valid here.
+                IF(YE1(SNODE).GT.0.0) THEN
+C                 Find the entry in EMC.
+                  CALL FND5
+     I                     (STDOUT, 6, DEXN, SNODE, EMC, EPT,
+     O                      IPNT)
+ 
+                  YL = SELEV - ZE(DEXN)
+                  YR = YE1(SNODE)
+                  CALL CD56QY
+     I                  (STDOUT, IPNT, NEX, JTIME, EMC, MAXIT, YR, EPSB,
+     I                    QEPS, EPT,
+     M                    YL)
+ 
+                  YR = YE2(DEXN)
+                  YE1(DEXN) = YR
+                  YE1KNOWN(DEXN) = 1
+                ELSE
+C                 Value unknown at exterior node.
+                  WRITE(STDOUT,2190) USNODE
+                  STOP 'Abnormal stop: errors found.'
+                ENDIF
+              ENDIF
+            ELSE
+              WRITE(STDOUT,2216) ICODE
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+ 
+ 
+C          Initial condition at downstream end of branch is known.
+C          Compute the steady-flow water-surface profile in the
+C          branch.
+ 
+            WRITE(STDOUT,2170) USNB
+ 
+            CALL SFPSBM
+     I                 (STDOUT, USNB, FN, LN, DN, UEXN, SFAC, GRAV, 
+     I                  EPSB, YR, MAXIT, ZI, dz_for_output,
+     O                  EFLAG)
+            IF(EFLAG.NE.0) STOP 'Abnormal stop: errors found.'
+          ENDIF
+        ELSE
+C         2-D table is involved in defining water-surface elevation
+C         at a free node.
+ 
+          IF(ICODE.EQ.6) THEN
+C           Find the stage for given flow in a 2-D table.
+            IF(SNODE.LE.0.OR.SNODE.GT.NEX) THEN
+              WRITE(STDOUT,3001) USNODE
+              STOP 'Abnormal stop: errors found.'
+            ELSE
+C             SNODE valid here.
+              IF(YE1(SNODE).GT.0.0) THEN
+C               Value is known at exterior node
+                DEXN = UPSNOD
+                CALL FND5
+     I                   (STDOUT, 6, DEXN, SNODE, EMC, EPT,
+     O                    IPNT)
+ 
+                YL = SELEV - ZE(DEXN)
+                YR = YE1(SNODE)
+                CALL CD56QY
+     I                 (STDOUT, IPNT, NEX, JTIME, EMC, MAXIT, YR, EPSB,
+     I                  QEPS, EPT,
+     M                  YL)
+ 
+                YE1(DEXN) = YE2(DEXN)
+                YE1KNOWN(DEXN) = 1
+              ELSE
+C               Value unknown at exterior node.
+                WRITE(STDOUT,2190) USNODE
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+ 
+            ENDIF
+ 
+          ELSE
+            WRITE(STDOUT,2216) ICODE
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+        ENDIF
+ 
+ 
+        GOTO 160
+ 
+ 200  CONTINUE
+ 
+C     ASSIGN VARIABLES FOR EXTERIOR NODES
+ 
+      DO 500 I= 1,NBRA
+        IF(Y1(BRPT(3,I)).LT.0.0) THEN
+          EFLAG = 1
+          WRITE(STDOUT,3005) GETUSB(I)
+          GOTO 500
+         ENDIF
+
+        YE1(BRPT(5,I)) = Y1(BRPT(3,I))
+        YE1(BRPT(6,I)) = Y1(BRPT(4,I))
+        TE1(BRPT(5,I)) = T1(BRPT(3,I))
+        TE2(BRPT(6,I)) = T1(BRPT(4,I))
+        AE1(BRPT(5,I)) = A1(BRPT(3,I))
+        AE1(BRPT(6,I)) = A1(BRPT(4,I))
+ 500  CONTINUE
+ 
+      IF(EFLAG.GT.0) THEN
+        WRITE(STDOUT,2160)
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+C     GET INITIAL VOLUMES FOR RESERVIORS
+ 
+      DO 505 I=1,NEX
+        IF(EXNODT(3,I).EQ.-1) THEN
+          ADRS = EXNODT(4,I)
+          ARG = YE1(I)
+          CALL LKTAB
+     I              (ADRS, ARG, 0,
+     O               VOL, NTAB, PDV)
+          AE1(I) = -VOL
+C         STORE THE SURFACE AREA IN TE1. 
+          TE1(I) = PDV
+        ELSE IF(EXNODT(3,I).EQ.0) THEN
+C         Clear all values to avoid errors when checking 
+C         for undefined variables
+          AE1(I) = 0.0
+          AE2(I) = 0.0
+          TE1(I) = 0.0
+          TE2(I) = 0.0
+        ENDIF
+ 505  CONTINUE
+ 
+ 
+      DO 510 I= 1,NEX
+        YE2(I) =  YE1(I)
+        AE2(I) =  AE1(I)
+        QE2(I) =  QE1(I)
+ 510  CONTINUE
+ 
+ 
+C     COMPUTE CURVILINEAR ELEMENTS FOR THOSE BRANCHES NEEDING THEM.
+C     Set the others to the value of 1.0 to avoid errors when
+C     checking for undefined variables. 
+ 
+ 
+      DO 514 I=1, NBRA
+        FN = BRPT(3,I)
+        LN = BRPT(4,I)
+        GEQ = GEQVEC(I)
+        IF(GEQ.EQ.3.OR.GEQ.EQ.4) THEN
+          DO 512 J=FN,LN
+            Y = Y2(J)
+            ADRS = NSEC(J)
+            CALL XLKT23
+     I                 (ADRS,
+     M                  Y,
+     O                  A, T, DT, AK, DK, B, DB, MA, DMA, MQT, DMQ)
+            MA1(J) = MA
+            MA2(J) = MA
+            MQ1(J) = MQT
+            MQ2(J) = MQT
+ 512      CONTINUE
+        ELSE
+          DO 513 J=FN,LN
+            MA1(J) = 1.0
+            MA2(J) = 1.0
+            MQ1(J) = 1.0
+            MQ2(J) = 1.0
+ 513      CONTINUE
+          
+        ENDIF
+ 514  CONTINUE
+ 
+
+C     Check for a branch having values that are not set.  Y1(*) was set 
+C     to a large negative value at start.  
+      DO 950 NBR=1,NBRA
+        FN = BRPT(3,NBR)
+        LN = BRPT(4,NBR)
+        DO 945 J=FN,LN
+          IF(Y1(J).LT.0.0) THEN
+            EFLAG = 1
+            WRITE(STDOUT,3005) GETUSB(NBR)
+            GOTO 950
+          ENDIF
+945     CONTINUE
+950   CONTINUE
+
+C     Now scan the network matrix control vector for EqZ instructions
+C     and make the assignments if one of the nodes is unknown.  This
+C     should make assignments to free nodes only since all 
+C     exterior nodes on a branch should be computed in the initial
+C     conditions computations. 
+
+      IF(EFLAG.EQ.0) THEN
+C       Update YE1KNOWN to reflect any values that have been set
+C       in the course of the branch and LPR computations.  Some 
+C       dummy branches may have values set as well as needed
+C       in computing other information.
+        DO 955 J=1,NEX
+          IF(YE1(J).GT.-1.E10) THEN
+            YE1KNOWN(J) = 1
+          ELSE
+            YE1KNOWN(J) = 0
+          ENDIF
+ 955    CONTINUE
+
+        CALL DOEQZ(STDOUT, NBRA, NBN, NEX, EXNODT, EMC, EPT,
+     M             YE1KNOWN,
+     O             EFLAG)
+      ENDIF
+ 
+C     Check for unknown values that remain and must be set in the initial
+C     conditions block
+      WRITE(STDOUT,3006)
+      IDUM = 0
+      DO 960 J=1,NEX
+        IF(YE1KNOWN(J).EQ.0) THEN
+C         Check if the other end is known. 
+          IF(EXNODT(3,J).EQ.0) THEN
+            IF(EXNODT(4,J).GT.0) THEN
+C             We have a node on a dummy branch.
+              IF(YE1KNOWN(EXNODT(4,J)).EQ.1) THEN
+C               Other end is known. 
+                YE1(J) = YE1(EXNODT(4,J)) + ZE(EXNODT(4,J)) - ZE(J)
+              ELSE
+                IDUM = 1
+                WRITE(STDOUT,*) ' Node: ',GETUSN(J),' is unknown'
+              ENDIF
+            ENDIF
+          ENDIF
+        ENDIF
+960   CONTINUE
+      IF(IDUM.GT.0) THEN
+        WRITE(STDOUT,3010) 
+          STOP 'Adjust initial conditions for free nodes.'
+      ENDIF
+      WRITE(STDOUT,3008)   
+
+
+      IF(EFLAG.EQ.0) GOTO 520
+        WRITE(STDOUT,2160)
+        STOP 'Abnormal stop: errors found.'
+ 520  CONTINUE
+ 
+      RETURN
+ 
+ 991  CONTINUE
+        WRITE(STDOUT,*) ' *ERR:500* Conversion error in line:'
+        WRITE(STDOUT,*) LINE
+        STOP 'Abnormal stop: errors found.'
+      END
+C
+C
+C
+      SUBROUTINE   BFINIT(DT)
+ 
+C     + + + PURPOSE + + +
+C     Initialize the TSF buffer system and initialize the
+C     time as given in the TSF.
+ 
+      IMPLICIT NONE
+
+      real*8 DT
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'tsfcom.cmn'
+      INCLUDE 'julian.cmn'
+      INCLUDE 'difcom.cmn'
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER DYT, I, J, MNT, YRT, fsyr, fsmn, fsdy, wyr
+      REAL RUNOFF(MNDIFA)
+      REAL*8 DUMMY, DYF, RI(MNDIFA), TSFDT, fsfrac
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE(DUMMY, RUNOFF(1))
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC DABS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER IWYR, LPYEAR
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL IWYR, LPYEAR, LKTSF
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *BUG:04* INVALID JTIME FOR TSF RECORD JTIME = ',
+     1     1PD25.16)
+52    format(/,
+     a    'Forecasting with DTSF: Start time NOT reset to event start')
+54    format(' Skipping event with start jtime=',f17.10,
+     a      ' and end jtime=',f17.10,/,5x,
+     b ' that does not contain the current run start jtime=',f17.10,'.')
+C***********************************************************************
+C     DEFINE NUMBER OF BUFFERS
+ 
+      NBUFF = MNDBUF
+ 
+C     GET FIRST DATA RECORD FROM THE TSF-DOCUMENTATION RECORDS
+C     HAVE BEEN READ PREVIOUSLY
+ 
+ 90   CONTINUE
+ 
+        READ(TSFDSN, rec=dtsf_rec) 
+     a               BJTIME(1), fSFRAC, fSYR, fSMN, fSDY,
+     1               (RUNOFF(J), J=1,NDFVAL)
+        dtsf_rec = dtsf_rec + 1
+        DO 105 J=1,NDFVAL
+          TSFBUF(1,J) = RUNOFF(J)
+ 105    CONTINUE
+ 
+        IF(LAGTSF.GT.0) THEN
+C         INITIALIZE TSFRAT TO STANDARD VALUE OF 0.0
+          DO 107 J=1,NDFVAL
+            TSFRAT(1,J) = 0.0
+ 107      CONTINUE
+        ENDIF
+ 
+        IF(BJTIME(1).LT.0.D0) GOTO 100
+ 
+          IF(BJTIME(1).EQ.0.D0) THEN
+            RESET = -1
+            RETURN
+          ENDIF
+          WRITE(STD6,50) BJTIME(1)
+          STOP 'Abnormal stop: errors found.'
+ 100    CONTINUE
+ 
+C       SET THE END TIME FOR THIS SEGMENT(FRAME) AND CLEAR BUFFER ENTRY
+        EJTIME = DUMMY
+        TSFBUF(1,1) = 0.D0
+
+        LEAP = LPYEAR(YR)
+ 
+C       MAKE SURE THAT END OF THIS SEGMENT DOES NOT EXTEND BEYOND
+C       END OF RUN
+ 
+        IF(EJTIME.GT.VJTIME) THEN
+          EJTIME = VJTIME
+        ENDIF
+ 
+        BJTIME(1) = DABS(BJTIME(1))
+c       See if we can get a start time later than the start time
+c       of the event when we have only one event in the DTSF
+        if(frcst == 1) then
+          write(std6,52)
+          
+        else
+          SJTIME = BJTIME(1)
+          sfrac = fsfrac
+          dyfrac = sfrac
+          syr = fsyr
+          smn = fsmn
+          sdy = fsdy
+        endif
+
+C       CHECK IF THE START TIME OF THIS EVENT IS AFTER THE ENDING
+C       TIME SET FOR THE RUN
+        IF(SJTIME.GE.VJTIME) THEN
+          RESET = -1
+          RETURN
+        ENDIF
+        if(frcst == 0) then
+          IF(SJTIME.LT.UJTIME.AND.SYR.NE.DMYEAR) THEN
+C           SKIP THIS EVENT
+ 110        CONTINUE
+              READ(TSFDSN,rec=dtsf_rec) BJTIME(1), DYF, YRT, MNT, DYT,
+     1                     (RUNOFF(J), J=1,NDFVAL)
+              dtsf_rec = dtsf_rec + 1
+              IF(BJTIME(1).NE.EJTIME) THEN
+                GOTO 110
+              ELSE
+                GOTO 90
+              ENDIF
+          ENDIF
+        else
+c         Here we skip over events until we find the one containing
+c         the value of sjtime and we assume that this will be the single
+c         event involved. 
+c          IF(SJTIME.LT.UJTIME.AND.SYR.NE.DMYEAR) THEN
+          IF(.not.(sjtime <= ejtime .and. sjtime >= bjtime(1))) THEN
+C           SKIP THIS EVENT
+            write(std6,54) bjtime(1), ejtime, sjtime 
+ 120        CONTINUE
+              READ(TSFDSN,rec=dtsf_rec) BJTIME(1), DYF, YRT, MNT, DYT,
+     1                     (RUNOFF(J), J=1,NDFVAL)
+              dtsf_rec = dtsf_rec + 1
+              IF(BJTIME(1).NE.EJTIME) THEN
+                GOTO 120
+              ELSE
+                GOTO 90
+              ENDIF
+          ENDIF
+       endif   
+
+ 
+      BWYR(1) = IWYR(SYR,SMN)
+ 
+C     FILL THE REMAINDER OF THE BUFFER SET
+ 
+      DO 200 I=2,NBUFF
+ 
+        READ(TSFDSN, rec=dtsf_rec) BJTIME(I), DYF, YRT, MNT, DYT,
+     1               (RUNOFF(J), J=1,NDFVAL)
+        dtsf_rec = dtsf_rec + 1
+        DO 106 J=1,NDFVAL
+          RI(J) = RUNOFF(J)
+ 106    CONTINUE
+ 
+        BWYR(I) = IWYR(YRT,MNT)
+ 
+C       COMPUTE CUMULATIVE VALUES
+ 
+        TSFDT = 86400.E0*(BJTIME(I) - BJTIME(I-1))
+        IF(LAGTSF.EQ.0) THEN
+          DO 150 J=1,NDFVAL
+            TSFBUF(I,J) = TSFBUF(I-1,J) + TSFDT*RI(J)
+ 150      CONTINUE
+        ELSE
+          TSFDT = 0.5*TSFDT
+          DO 160 J=1,NDFVAL
+            TSFRAT(I,J) = RI(J)
+            TSFBUF(I,J) = TSFBUF(I-1,J) + TSFDT*
+     A                               (RI(J) + TSFRAT(I-1,J))
+ 160      CONTINUE
+        ENDIF
+C       Added to try to handle the buffer being larger than an event.
+C       December 4, 1996.
+        IF(BJTIME(I).GE.EJTIME) THEN
+C         WE HAVE REACHED THE END OF THE EVENT BEFORE THE END OF THE
+C         BUFFER.  STOP AT THIS POINT AND LEAVE THE BUFFER ONLY
+C         PARTIALLY FULL.
+          GOTO 210
+        ENDIF
+ 200  CONTINUE
+ 
+ 210  CONTINUE
+ 
+C     SET DEFAULT LAST ENTRY
+ 
+      LENTRY = 1
+      LHEAD = 1
+ 
+C     SET VALUE OF THE  DIFFUSE FLOW BUFFER
+      CALL LKTSF
+     I          (STD6, sjtime, DT,
+     O           CLSR1, WYR)
+
+ 
+c      DO 300 I=1,NLUSE
+c        CLSR1(I) = 0.D0
+c 300  CONTINUE
+ 
+      RETURN
+ 
+      END
+C
+C
+C
+      SUBROUTINE   BFINIT_DSS()
+ 
+C     + + + PURPOSE + + +
+C     Initialize the diffuse flows buffer system  when the source is
+C     one or more HECDSS files.
+ 
+      IMPLICIT NONE
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'tsfcom.cmn'
+      INCLUDE 'julian.cmn'
+      INCLUDE 'difcom.cmn'
+      INCLUDE 'dssdif.cmn'
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER  I, J, GOT, NEED
+      REAL*8 CON_FAC, JT
+ 
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER IWYR
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL IWYR
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *BUG:XXX* Times do not match for runoff in ',
+     A               'BFINT_DSS.')
+C***********************************************************************
+C     DEFINE NUMBER OF BUFFERS
+ 
+      NBUFF = MNDBUF
+ 
+C     Set the first row of the buffer to zeros and the time to the
+C     start time of the run.  The buffer will contain cumulative
+C     values so that the runoff in any time interval can be
+C     computed by subtraction.
+      DO 990 J=1,NLUSE
+        TSFBUF(1,J) = 0.D0
+        TSFRAT(1,J) = 0.0
+990   CONTINUE
+      BJTIME(1) = SJTIME
+ 
+C     Set 0.75 of the time interval in the diffuse buffer.
+C     Units are days.  Used to access data from HECDSS to
+C     avoid getting the same value twice.
+      BUF_DT = 0.75*DBLE(TIME_STEP_DIFF(1))/1440.D0
+ 
+C     Compute conversion factor from inches per interval to
+C     feet per second(english unit system).  Note: Time step
+C     is in minutes and is the same for all diffuse runoff
+C     series.  
+      CON_FAC = 1.0D0/(720.D0*DBLE(TIME_STEP_DIFF(1)))
+ 
+      DO 1000 J=1,NLUSE
+C       The run starts at julian time, SJTIME.  However, we do not
+C       need the value of the starting time point because the
+C       runoff intensity files are given in terms of depth units
+C       per interval.   Increment the start time slightly
+C       to hopefully get the correct  values from the DSS.
+        JT = SJTIME + 0.75D0/1440.D0
+        NEED = NBUFF - 1
+        CALL GET_HECDSS_BLOCK(STD6, PATH_NAME_DIFF(J),
+     A        DSS_INDEX_DIFF(J), TIME_STEP_DIFF(J), 'PER-CUM ',
+     B        JT, NEED, GOT, JTVEC, TMPVEC, NBUFF + 1)
+ 
+        IF(J.EQ.1) THEN
+C         Store both the times and the values.
+          DO 100 I=1,GOT
+            TSFBUF(I+1,J) = TMPVEC(I)
+            BJTIME(I+1) = JTVEC(I)
+100       CONTINUE
+        ELSE
+C         Store the values and compare the times.
+          DO 200 I=1,GOT
+            TSFBUF(I+1,J) = TMPVEC(I)
+            IF(ABS(BJTIME(I+1) - JTVEC(I)).GT.1.D-5) THEN
+C             Problem in time steps.
+              WRITE(STD6,50)
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+200       CONTINUE
+        ENDIF
+1000  CONTINUE
+ 
+      BWYR(1) = IWYR(SYR,SMN)
+
+C     Form the factors that include unit conversion AND the
+C     time step.  60.D0 converts from time step in minutes
+C     to time step in seconds.  
+      TSFDT_DSS = CON_FAC*60.D0*DBLE(TIME_STEP_DIFF(1))
+      HALF_TSFDT_DSS = 0.5D0*TSFDT_DSS
+      DO 300 I=2,NBUFF
+        BWYR(I) = BWYR(1)
+ 
+C       COMPUTE CUMULATIVE VALUES
+ 
+        IF(LAGTSF.EQ.0) THEN
+          DO 250 J=1,NDFVAL
+            TSFBUF(I,J) = TSFBUF(I-1,J) + TSFDT_DSS*TSFBUF(I,J)
+ 250      CONTINUE
+        ELSE
+          DO 260 J=1,NDFVAL
+            TSFRAT(I,J) = TSFBUF(I,J)
+            TSFBUF(I,J) = TSFBUF(I-1,J) + HALF_TSFDT_DSS*
+     A                               (TSFBUF(I,J) + TSFRAT(I-1,J))
+ 260      CONTINUE
+        ENDIF
+ 300  CONTINUE
+ 
+C     SET DEFAULT LAST ENTRY
+ 
+      LENTRY = 1
+      LHEAD = 1
+ 
+C     SET VALUE OF THE  DIFFUSE FLOW BUFFER
+ 
+      DO 400 J=1,NLUSE
+        CLSR1(J) = 0.D0
+ 400  CONTINUE
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   BWGET
+     I                  (BWFDSN, NBRA, NBN, NEX, MBLK, NBLK, OPBLK,
+     m                   bwrec,
+     O                   WT)
+ 
+C     + + + PURPOSE + + +
+C     Get the state of the system from the dataset given by BWFDSN.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER BWFDSN, bwrec, MBLK, NBLK, NBN, NBRA, NEX
+      INTEGER OPBLK(MBLK)
+      REAL WT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     BWFDSN - unit number for the initial conditions file
+C     NBRA   - number of branches in the model
+C     NBN    - total number on nodes on branches in the model
+C     NEX    - number of exterior nodes in the model
+C     MBLK   - maximum number of operation blocks permitted
+C     NBLK   - number of operation blocks
+C     OPBLK  - pointer into the function table storage(FTAB/ITAB) for
+C               each operation block.
+C     WT     - weight factor for approximating time integrals
+c     bwrec  - record pointer for storing information
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'bnpond.cmn'
+      INCLUDE 'enelem.cmn'
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'tam.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      integer  i, it, control_node_state_offset, control_node_state, 
+     a          old_lev_offset
+      real  old_lev                       
+C***********************************************************************
+c      READ(BWFDSN) WT
+c      DO 100 I=1,NBN
+c 
+c        READ(BWFDSN) Q1(I), Y1(I), T1(I), A1(I), K1(I), B1(I), WXVEC(I),
+c     A      POND1(I), DXVEC(I), DZVEC(I), MY(I), MQ(I), MA1(I), MQ1(I)
+c 
+c 100  CONTINUE
+
+      read(bwfdsn, rec=bwrec) wt
+      bwrec = bwrec + 1
+      DO 100 I=1,NBN
+        read(bwfdsn, rec=bwrec) Q1(I), Y1(I)
+        bwrec = bwrec + 1
+        read(bwfdsn, rec=bwrec) T1(I), A1(I)
+        bwrec = bwrec + 1
+        read(bwfdsn, rec=bwrec)  K1(I),B1(I)
+        bwrec = bwrec + 1
+        read(bwfdsn, rec=bwrec) WXVEC(I), POND1(I)
+        bwrec = bwrec + 1
+        read(bwfdsn, rec=bwrec) DXVEC(I), DZVEC(I)
+        bwrec = bwrec + 1
+        read(bwfdsn, rec=bwrec) MY(I), MQ(I)
+        bwrec = bwrec + 1
+        read(bwfdsn, rec=bwrec) MA1(I), MQ1(I)
+        bwrec = bwrec + 1
+
+ 100  CONTINUE
+
+ 
+c      DO 200 I=1,NEX
+c        READ(BWFDSN) QE1(I), YE1(I), AE1(I), MYE(I), MQE(I), TE1(I)
+c 200  CONTINUE
+
+      DO 200 I=1,NEX
+c        WRITE(BWFDSN) QE1(I), YE1(I), AE1(I), MYE(I), MQE(I), TE1(I)
+        read(bwfdsn, rec=bwrec) QE1(I), YE1(I)
+        bwrec = bwrec + 1        
+        read(bwfdsn, rec=bwrec)  AE1(I), MYE(I)
+        bwrec = bwrec + 1        
+        read(bwfdsn, rec=bwrec)  MQE(I), TE1(I)
+        bwrec = bwrec + 1        
+
+ 200  CONTINUE
+
+ 
+C     RESETTING EMC CAUSES PROBLEMS WITH FORECASTING.  TRY TO
+C     GET BY WITHOUT IT AND SETTING THE STATE LIKE WE DO WHEN
+C     STARTING FROM BACKWATER COMPUTATIONS.
+ 
+C      READ(BWFDSN) EMC
+ 
+C     COPY TO THE COMPANION SET.
+ 
+      DO 300 I=1,NBN
+        Q2(I) = Q1(I)
+        Y2(I) = Y1(I)
+        A2(I) = A1(I)
+        K2(I) = K1(I)
+        B2(I) = B1(I)
+        T2(I) = T1(I)
+        MA2(I) = MA1(I)
+        MQ2(I) = MQ1(I)
+ 300    CONTINUE
+ 
+      DO 400 I=1,NEX
+        QE2(I) = QE1(I)
+        YE2(I) = YE1(I)
+        AE2(I) = AE1(I)
+        TE2(I) = TE1(I)
+ 400    CONTINUE
+ 
+c      DO 500 I=1,NBLK
+c        IT = OPBLK(I) + 1
+c        READ(BWFDSN) FTAB(IT), FTAB(IT+1)
+c 500  CONTINUE
+c 
+c 
+c      READ(BWFDSN) (BPOND(I), I=1,NBRA)
+c
+c      IF(DLAY_KNT.GT.0) READ(BWFDSN) (DLAY_Q1(I),I=1,DLAY_KNT)
+c
+c      DO 600  I=1,DTEN_KNT
+c        READ(BWFDSN) DTEN_S1(I), DTEN_Q1(I), DTEN_Q1P(I)
+c600   CONTINUE
+
+      DO  I=1,NBLK
+        IT = OPBLK(I) 
+        read(BWFDSN, rec=bwrec) FTAB(IT+1), FTAB(IT+2)
+        bwrec = bwrec + 1        
+        read(BWFDSN, rec=bwrec) FTAB(IT+5)
+        bwrec = bwrec + 1 
+c       Blocks of type 3, GATETABL, have values for each control point
+c       that need to be remembered as well.  
+        if(itab(it+3) == 3) then 
+c         Restore the  value for old level and  the control-node state. 
+500       continue
+            read(bwfdsn, rec=bwrec) old_lev_offset, old_lev
+            bwrec = bwrec + 1
+            if(old_lev_offset > 0) then
+              ftab(it+old_lev_offset) = old_lev
+              read(bwfdsn, rec=bwrec) 
+     a                   control_node_state_offset, control_node_state
+              bwrec = bwrec + 1
+              itab(it+control_node_state_offset) = control_node_state
+
+              goto 500
+            endif                                                            
+        endif                                                                
+       
+      enddo
+
+      do i=1,nbra
+        read(bwfdsn,rec=bwrec) bpond(i)
+        bwrec = bwrec + 1        
+      enddo
+      do i=1,dlay_knt
+        read(BWFDSN, rec=bwrec) DLAY_Q1(I)
+        bwrec = bwrec + 1        
+      enddo
+
+      DO  I=1,DTEN_KNT
+        read(bwfdsn, rec=bwrec) dten_s1(i)
+        bwrec = bwrec + 1        
+        read(bwfdsn, rec=bwrec) dten_q1(i)
+        bwrec = bwrec + 1        
+        read(bwfdsn, rec=bwrec) dten_q1p(i)
+        bwrec = bwrec + 1        
+      enddo
+
+
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CD4QY
+     I                 (STDOUT, NB, HDNODE, NBRA, NEX, NBN, JTIME, BRPT,
+     I                   EXNODT, EMC, MAXIT, EPSB, OUTPUT, EPT,
+     M                   YR)
+ 
+C     + + + PURPOSE + + +
+C     Find the stage(depth) at a Code 4 stage-discharge relationship
+C     for computing a steady-flow water-surface profile.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER HDNODE, STDOUT, MAXIT, NB, NBN, NBRA, NEX, OUTPUT, EPT
+      INTEGER BRPT(8,NBRA), EMC(EPT), EXNODT(9,NEX)
+      REAL EPSB, YR
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     NB     - branch number
+C     HDNODE - head node
+C     NBRA   - number of branches in the model
+C     NEX    - number of exterior nodes in the model
+C     NBN    - total number on nodes on branches in the model
+C     TIME   - elapsed time in seconds from start of run
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     MAXIT  - maximum number of interations
+C     EPSB   - convergence limit for steady flow computations
+C     OUTPUT - output level for diagnostic work
+C     YR     - depth being sought
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'misccon.cmn'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'enelem.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER IPNT, IT, LN, QNODE
+      REAL DISCH, F, PDV, QBASE, YTA
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL CONTRL, FND4, GETUSN
+ 
+C     + + + OUTPUT FORMATS + + +
+ 2130 FORMAT(/,' *ERR:95* Maximum iterations exceeded for ',
+     A     'Backwater Analysis')
+ 2140 FORMAT(/,' CODE 4 Inversion Head Node=',A5,/,
+     A 4X,'IT',4X,'    Depth',5X,'Residual',
+     B 3X,'Derivative', 4X,'Discharge')
+ 2150 FORMAT(1X,I5,4(1PE13.5))
+ 2212 FORMAT(' *ERR:160* Zero divide. Check that ELEVATION >',
+     A       ' crest elevation',/,11X,' at exterior node: ',A5)
+C***********************************************************************
+C     Find the pointer into the Network-Matrix Control structure for
+C     the current node.
+      CALL FND4
+     I         (STDOUT, HDNODE, EMC, EPT,
+     O          IPNT)
+ 
+      IT = 0
+ 
+C     Place values in the locations needed by subroutine CONTRL.
+ 
+      YE2(HDNODE) = YR
+      IF(NB.GT.0) THEN
+C       Must deal with a branch.  May require evaluation of water-
+C       surface slope at previous time step.  Make it same as bottom
+C       slope.
+ 
+        LN = BRPT(4,NB)
+        Y1(LN) = YR
+        Y1(LN-1) = YR
+        DXVEC(LN) = ABS(XVEC(LN)-XVEC(LN-1))
+      ENDIF
+ 
+C     Get the discharge defining the stage.
+      QNODE = EMC(IPNT+4)
+      QBASE = QE1(QNODE)
+ 
+      IF(QBASE.EQ.0) THEN
+        WRITE(STDOUT,*) ' FLOW IS ZERO IN BRANCH OR AT FREE NODE'
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      WRITE(STDOUT,2140) GETUSN(HDNODE)
+ 
+ 135  CONTINUE
+ 
+C       FIND DISCHARGE AT THE INPUT ELEVATION.
+ 
+        CALL CONTRL
+     I             (IPNT, STDOUT, NBN, NEX, OUTPUT, JTIME, EXNODT, EMC,
+     I              Y1, ZVEC, DXVEC, EPT,
+     O              PDV, DISCH)
+        IF(PDV.EQ.0.0) THEN
+          WRITE(STDOUT,2212) GETUSN(HDNODE)
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+C       Compute the residual for the rating.
+        F = DISCH - QBASE
+        WRITE(STDOUT,2150) IT, YR, F, PDV, QBASE
+        IF(ABS(F/QBASE).GT.EPSB.AND.ABS(F/PDV).GT.EPSB2) THEN
+C         Compute the next estimate
+          YTA = YR - F/PDV
+          IF(YTA.LE.0.0) YTA = 0.5*YR
+          YR = YTA
+          YE2(HDNODE) = YR
+          IT = IT + 1
+          IF(IT.GT.MAXIT) THEN
+C           Iteration count exhausted.
+            WRITE(STDOUT,2130)
+            STOP 'Abnormal stop: errors found.'
+          ELSE
+            GOTO 135
+          ENDIF
+        ELSE
+          YE1(HDNODE) = YR
+        ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CD56QY
+     I                  (STDOUT, IPNT, NEX, JTIME, EMC, MAXIT, YR, EPSB,
+     I                    QEPS, EPT,
+     M                    YL)
+ 
+C     + + + PURPOSE + + +
+C     Find the stage(depth) at the upstream node of a 2-D control
+C     structure for initial conditions.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EPT, IPNT, STDOUT, MAXIT, NEX
+      INTEGER EMC(EPT)
+      REAL EPSB, QEPS, YL, YR
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     IPNT   - pointer into EMC for description of control structure
+C     NEX    - number of exterior nodes in the model
+C     TIME   - elapsed time in seconds from start of run
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     MAXIT  - maximum number of interations
+C     YR     - downstream depth
+C     EPSB   - convergence limit for steady flow computations
+C     QEPS   - value of flow to prevent zero divide when computing
+C               relative correction
+C     YL     - upstream depth
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'enelem.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADRS, DEXN, DNODE, FREE, FSGN, IDUM, IT, NPATH, NTAB,
+     A        QNODE, SYSGN, UEXN, UNODE, ZTAB
+      REAL DHUED, DHUQ, DY, ED, FAC, FLOW, HBASE, HU, PDV, PQL, PQR,
+     A     PYL, PYR, RDUM, RES, RESOLD, TP, YLT, YOLD
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM,RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETUSN, LKTAB, TDLK14, TWOD6
+ 
+C     + + + OUTPUT FORMATS + + +
+ 2130 FORMAT(/,' *ERR:95* Maximum iterations exceeded for ',
+     A     'Backwater Analysis')
+ 2140 FORMAT(/,' CODE 5 Inversion: Head Nodes=',A5,1X,A5,/,
+     A 4X,'IT',4X,'    Depth',5X,'Residual',
+     B 3X,'Derivative', 4X,'Discharge')
+ 2145 FORMAT(/,' CODE 5 Lookup: Head Nodes=', 2A5,/,
+     A  ' Dns Depth=',F10.3,' Flow=',F10.1,' Ups Depth=',F10.3)
+ 2150 FORMAT(1X,I5,4(1PE13.5))
+ 2160 FORMAT(/,'*ERR:246* Flow at flow node for Code 5 Type 6 is zero.',
+     A       '  Unable to continue.')
+ 2170 FORMAT(/,'*WRN:50* Flow direction and head difference',
+     A ' inconsistent. Adjusting',10X,/,' upstream water level and ',
+     B 'attempting to continue.')
+ 2180 FORMAT(/,'*ERR:247* At depth=',F10.3,' and  flow=',F10.1,
+     A ' rate of',10X,/,'change of flow with respect to upstream head',
+     B ' is zero',10X,/,'for Code 5 Type 6.  Cannot continue.')
+C***********************************************************************
+C     This routine assumes that the flow is non-zero.  Its sign
+C     will be consistent with the way the two-node control structure
+C     is placed between the two exterior nodes.  The upstream, UEXN,
+C     and downstream, DEXN, exterior nodes are nominal only.
+C     However, the input values of depth at the downstream node, YR,
+C     and at the upstream node, YL, are true, that is the flow is
+C     physically moving from the upstream node to the downstream node.
+ 
+C     A flow of zero is excluded because in that case the user
+C     will know the elevations and must supply them explicitly in
+C     the initial condition portion of the input to FEQ.
+ 
+ 
+      UEXN = EMC(IPNT+2)
+      DEXN = EMC(IPNT+3)
+      QNODE = EMC(IPNT+4)
+      SYSGN = EMC(IPNT+5)
+      NPATH = EMC(IPNT+6)
+      FLOW = QE1(QNODE)
+      QE2(QNODE) = FLOW
+ 
+      IF(FLOW.EQ.0.0) THEN
+        WRITE(STDOUT,2160)
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+      IF(FLOW.LT.0.0) THEN
+        FSGN = -SYSGN
+      ELSE
+        FSGN = SYSGN
+      ENDIF
+ 
+      IF(FSGN.GE.0) THEN
+C       Flow is physically from nominal upstream node to
+C       nominal downstream node.
+        YE2(UEXN) = YL
+        YE2(DEXN) = YR
+        UNODE = UEXN
+        DNODE = DEXN
+        WRITE(STDOUT,*) ' FLOW U -> D'
+      ELSE
+        YE2(DEXN) = YL
+        YE2(UEXN) = YR
+        UNODE = DEXN
+        DNODE = UEXN
+        WRITE(STDOUT,*) ' FLOW D -> U'
+      ENDIF
+ 
+      IF(NPATH.GT.0) THEN
+C       Tables are of type 6 or type 13.  Solution is iterative.
+C       First estimate is already in the vectors for exterior nodes.
+        IF(YE2(UNODE) + ZE(UNODE).LE.
+     A     YE2(DNODE) + ZE(DNODE)) THEN
+C         Head difference does not agree with the flow direction.
+          WRITE(STDOUT,2170)
+C         Make the average depth .02 greater upstream
+C         than downstream.
+          YE2(UNODE) = 1.02*YE2(DNODE) + 1.01*(ZE(DNODE) - ZE(UNODE))
+        ENDIF
+        IT = 0
+        RESOLD = 0.0
+        FAC = 0.01
+        WRITE(STDOUT,2140) GETUSN(UEXN), GETUSN(DEXN)
+ 100    CONTINUE
+          CALL TWOD6
+     I              (IPNT, STDOUT, JTIME, NEX, EPT, EMC, QE2, YE2, ZE,
+     O               RES, PYL, PQL, PYR, PQR)
+ 
+C         RES gives the residual between the known flow at the
+C         flow node and the flow defined by the upstream and
+C         and downstream elevations.  PYL gives the rate of change
+C         of the residual with respect to changes at the upstream
+C         node.
+ 
+          WRITE(STDOUT,2150) IT, YL, RES, PYL, FLOW
+ 
+          IF(PYL.EQ.0.0) THEN
+            WRITE(STDOUT,2180) YL, FLOW
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+          DY = RES/PYL
+          IF(ABS(RES/(ABS(FLOW) + QEPS)).GT.EPSB.AND.
+     A           ABS(DY/YL).GT.EPSB) THEN
+            IF(IT.GT.5.AND.RES*RESOLD.LT.0.0) THEN
+C             We have a sign change and the iteration count is getting
+C             large.  Make next estimate on linear fit to last
+C             two residuals.
+ 
+              YOLD = YL
+              YL = YOLD - RESOLD*(YL - YOLD)/(RES - RESOLD)
+              RESOLD = RES
+              IT = IT + 1
+              YE2(UNODE) = YL
+            ELSE
+              RESOLD = RES
+              YOLD = YL
+C             Make correction to the current depth value.
+              YLT = YL - DY
+ 
+              IT = IT + 1
+              YL = YLT
+              YE2(UNODE) = YL
+              IF(YE2(UNODE) + ZE(UNODE).LE.
+     A           YE2(DNODE) + ZE(DNODE)) THEN
+C               Head difference does not agree with the flow direction.
+C               Make the average depth FAC greater upstream
+C               than downstream.
+                YL = (1. + FAC)*YE2(DNODE) + (1. + .5*FAC)*(ZE(DNODE) -
+     A                         ZE(UNODE))
+                YE2(UNODE) = YL
+                FAC = .5*FAC
+              ENDIF
+              IF(IT.GT.MAXIT) THEN
+                WRITE(STDOUT,2130)
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+            ENDIF
+            GOTO 100
+          ENDIF
+C       Solution here.  Stored in YE2(UNODE)
+      ELSE
+C       Table of type 14.
+ 
+        ZTAB = EMC(IPNT+10)
+        IF(ZTAB.GT.0) THEN
+C         Time variable head datum.  Find head datum for current time.
+          CALL LKTSTAB
+     I              (ZTAB, JTIME,
+     O               HBASE, NTAB, PDV)
+        ELSE
+          IDUM = EMC(IPNT+11)
+          HBASE = RDUM
+        ENDIF
+ 
+        IF(FSGN.GE.0) THEN
+          ADRS = EMC(IPNT+7)
+        ELSE
+          ADRS = EMC(IPNT+8)
+        ENDIF
+ 
+        ED = YR + ZE(DNODE)
+ 
+        TP = ABS(FLOW)
+        CALL TDLK14
+     I             (STDOUT, ADRS, 14, ED, HBASE,
+     M              TP,
+     O              HU, DHUED, DHUQ, FREE)
+        YE2(UNODE) = HU + HBASE - ZE(UNODE)
+        WRITE(STDOUT,2145) GETUSN(UEXN), GETUSN(DEXN), YR,
+     A                   FLOW, YE2(UNODE)
+ 
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C 
+      SUBROUTINE READ_FREE_NODE_ITEMS(
+     I            STDOUT, LINE, NITEM, ITEM_START,
+     I            ITEM_END,
+     M            EFLAG,
+     O            USNODE, NAME, DEPTH, DISCHARGE, ELEV_OF_DATUM,
+     O            BASE_NODE, XOFFSTRING, YOFFSTRING, CSTATION)
+
+C     Get the items of data from a line of input to Free-Node Table
+
+      IMPLICIT NONE
+      INTEGER STDOUT, NITEM, ITEM_START(NITEM), ITEM_END(NITEM),
+     A         EFLAG
+      REAL DEPTH, DISCHARGE, ELEV_OF_DATUM
+      CHARACTER LINE*(*), USNODE*5, NAME*16, BASE_NODE*5,
+     A          XOFFSTRING*15, YOFFSTRING*15, CSTATION*10
+
+C     Local
+
+      INTEGER IE, IS, N
+      CHARACTER TPC*20
+
+C     Called program units
+     
+      EXTERNAL STRIP_L_BLANKS, STRIP_BLANKS_AND_ZEROS
+
+C     ***********************FORMATS************************************
+50    FORMAT(/,' *ERR:381* ',I3,' items given in a FREE-NODE',
+     A ' INITIAL CONDITIONS BLOCK  line.  Need exactly 5 or 9 items.')
+C***********************************************************************
+      IF(NITEM.NE.5.AND.NITEM.NE.9) THEN
+        WRITE(STDOUT,50) NITEM
+        STOP 'Abnormal stop.  Errors found.'
+      ENDIF
+
+      N = 1
+C     Process the node field
+      IS = ITEM_START(N)
+      IE = ITEM_END(N)
+      TPC = LINE(IS:IE)
+      CALL STRIP_L_BLANKS(
+     M                    TPC)
+      USNODE = TPC
+
+C     Process the node id field
+      N = 2
+      IS = ITEM_START(N)
+      IE = ITEM_END(N)
+      TPC = LINE(IS:IE)
+      CALL STRIP_L_BLANKS(
+     M                    TPC)
+      NAME = TPC
+
+C     Process the initial depth
+      N = 3
+      IS = ITEM_START(N)
+      IE = ITEM_END(N)
+      TPC = LINE(IS:IE)
+      CALL STRIP_BLANKS_AND_ZEROS(
+     M                            TPC)
+      READ(TPC,'(f20.0)',ERR=991) DEPTH
+
+C     Process the discharge
+      N = 4
+      IS = ITEM_START(N)
+      IE = ITEM_END(N)
+      TPC = LINE(IS:IE)
+      CALL STRIP_BLANKS_AND_ZEROS(
+     M                            TPC)
+      READ(TPC,'(f20.0)',ERR=991) DISCHARGE
+
+C     Process the datum elevation
+      N = 5
+      IS = ITEM_START(N)
+      IE = ITEM_END(N)
+      TPC = LINE(IS:IE)
+      CALL STRIP_BLANKS_AND_ZEROS(
+     M                    TPC)
+      READ(TPC,'(F12.0)',ERR=991) ELEV_OF_DATUM
+
+C     There are old inputs that will still have the column for the
+C     node sign present.  That will make the heading count 6.  However, 
+C     we want to ignore that column.  The optional items, if present
+C     must all be present.  Thus the item count will be 9 when the 
+C     optional items are present. 
+      IF(NITEM.EQ.9) THEN
+C       Optional inputs are present. 
+
+        N = 6
+C       Process the base-node value
+        IS = ITEM_START(N)
+        IE = ITEM_END(N)
+        TPC = LINE(IS:IE)
+        CALL STRIP_L_BLANKS(
+     M                      TPC)
+        BASE_NODE = TPC
+
+        N = 7
+C       Process the x-location information
+        IS = ITEM_START(N)
+        IE = ITEM_END(N)
+        TPC = LINE(IS:IE)
+        CALL STRIP_L_BLANKS(
+     M                      TPC)
+        XOFFSTRING = TPC
+
+        N = 8
+C       Process the y-location information
+        IS = ITEM_START(N)
+        IE = ITEM_END(N)
+        TPC = LINE(IS:IE)
+        CALL STRIP_L_BLANKS(
+     M                      TPC)
+        YOFFSTRING = TPC
+
+        N = 9
+C       Process the node-station information
+        IS = ITEM_START(N)
+        IE = ITEM_END(N)
+        TPC = LINE(IS:IE)
+        CALL STRIP_L_BLANKS(
+     M                      TPC)
+        CSTATION = TPC
+
+      ENDIF
+      RETURN
+991   CONTINUE
+      WRITE(STDOUT,52) TPC
+52    FORMAT(/,' *ERR:500* Conversion error in: ',A)
+      EFLAG = 1
+      RETURN
+
+      END
+C
+C
+C
+      SUBROUTINE   EXINIT
+     I                   (IN, STDOUT, NEX, NBRA, MREMC, EMC,
+     M                    EXNODT,
+     O                    EFLAG, NFREE, YE1, ZE, QE1, ENODID,
+     O                    BASE_NODE_VEC)
+ 
+C     + + + PURPOSE + + +
+C     Input initial conditions for exterior nodes not on a
+C     branch.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, IN, STDOUT, NBRA, NEX, NFREE, MREMC
+      INTEGER EXNODT(9,NEX), BASE_NODE_VEC(NEX), EMC(MREMC)
+      REAL QE1(NEX), YE1(NEX), ZE(NEX)
+      CHARACTER ENODID(NEX)*16
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IN     - unit number for the user input file
+C     STDOUT   - Fortran unit number for user output and messages
+C     NEX    - number of exterior nodes in the model
+C     NBRA   - number of branches in the model
+C     MREMC  - maximum length of EMC(*)
+C     EMC    - network-matrix control vector. 
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch, 
+C                    pointer to the other node if on a level-pool reservoir,
+C                    0 if on a dummy branch.
+C               3    descriptive code: if -1 then a reservoir node;
+C                    if  0 then not on a branch and not a reservoir node;
+C                    if > 0 then a branch number.  The inflow node
+C                    to a reservoir has the value of 0.  The way it is
+C                    distinguished from a free node on a dummy branch
+C                    is that EXNODT(4, ) is zero for a reservoir-inflow
+C                    node but is positive for a free node on a dummy 
+C                    branch. 
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch, 0 if the inflow node to a reservoir.
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C               6    X location of the node in a cartesian coordinate system
+C               7    Y location of the node in a cartesian coordinate system. 
+C                   The (X,Y) are scaled upward by 100.  That is 
+C                   a coordinate value of 1234.51 becomes then integer
+C                   123451.  If the coordinate value is -(2**31 -1) it
+C                   indicates that no value for a coordinate exists. 
+C                   The scaling permits a maximum value of 2**31/100 
+C                   distance units.  When the length unit is feet the 
+C                   maximum coordinate is 21,474,836.48 feet or
+C                   about 4067 miles.  This appears to be adequate 
+C                   for any reasonable purpose!
+C                8  Contains the station for the free node.  These
+C                   stations are assigned by the user.  The utility
+C                   program OVERFLOW, used to compute outflows/inflows
+C                   between adjacent flow paths, assigns the station
+C                   of the source location to the upstream node
+C                   and the station of the sink to the downstream 
+C                   node, if either exist.  If neither exists it 
+C                   assigns -(2**31 - 1).  The station is 
+C                   multiplied by 10,000 and rounded before 
+C                   being placed in the integer location.  This
+C                   gives a maximum station of at least 40 miles
+C                   if feet are being used for the stations.  This
+C                   should be adequate because using feet for stationing
+C                   over such a distance would be unusual. 
+
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+C     NFREE  - number of free nodes
+C     YE1    - depths at exterior nodes at start of time step
+C     ZE     - elevation of datum for depth at exterior node
+C     QE1    - flow at exterior nodes at start of time step
+C     ENODID - exterior node identification string given by user
+C     BASE_NODE_VEC - value of base node to use in defining the 
+C                     location of the node 
+C             
+C     + + + LOCAL VARIABLES + + +
+      INTEGER MXITEM
+      PARAMETER (MXITEM=9)
+      INTEGER I, INODE, NB, NODE, ITEM_START(MXITEM), 
+     A        ITEM_END(MXITEM), NITEM, BASE_NODE_NUMBER
+      REAL DEPTH, DISCH, ELV
+      CHARACTER LINE*120, NAME*16, USNODE*5, JUST*5, 
+     A          BASE_NODE*5, XOFFSTRING*15, YOFFSTRING*15,
+     B          CSTATION*10
+      REAL*8 XOFFSET, YOFFSET, DSTATION
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER GETUSB
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETINN, GETUSB, GETUSN, inline, READ_FREE_NODE_ITEMS,
+     A         GET_ITEM_LIMITS, FIND_CODE7
+ 
+C     + + + INPUT FORMATS + + +
+C 1000 FORMAT(20A4)
+C 1030 FORMAT(A5,3F10.0,I5)
+C 1032 FORMAT(A5,1X,A16,1X,3F10.0,I5)
+ 
+C     + + + OUTPUT FORMATS + + +
+50    FORMAT(/,' *ERR:365* Free node table appears to be missing.',
+     A  ' Make sure that',/,5X,'input block heading starts with',
+     B  ' FREE')
+ 2030 FORMAT(//,1X,A)
+ 2042 FORMAT(1X,A5,1X,A16,1X,3F10.2)
+ 2043 FORMAT(1X,A5,1X,A16,1X,3F10.2,1X,A6,1X,A14,A15)
+ 2050 FORMAT(/,' *ERR:125* Invalid node number ',A5)
+ 2070 FORMAT(/,' *ERR:126* Invalid initial depth ',F10.2,
+     A      /,1X,'Depth must be positive non-zero ')
+ 2075 FORMAT(/,' *WRN:57* Initial depth=',F10.2,' < 0.  Value is',
+     A   ' only valid if node is an inflow node to an LPR.')
+ 2080 FORMAT(/,' *ERR:127* Number of exterior nodes given',
+     A           ' by branches exceeds expected number of ',I5)
+ 2090 FORMAT(/,' *ERR:128* Exterior node ',A5,' previously ',
+     A           'initialized to ',F10.2,
+     B      /,1X,'Check Branch-Exterior Node Table')
+ 2095 FORMAT(/,' *ERR:129* Exterior node ',A5,' is not free.',
+     1       '  It is on branch#',I5)
+ 2114 FORMAT(1X,' Node Node Id_________      Depth Discharge  DatumElv')
+ 2115 FORMAT(1X,' Node Node Id_________      Depth Discharge  DatumElv',
+     A' Bnode   X or Xoffset   Y or Yoffset   Station')
+2120  FORMAT(/,' *ERR:397 Node= ',A5,' is missing Yoffset value.')
+C***********************************************************************
+C     Set justification for the heading-dependent format
+      JUST = 'RIGHT'
+C     CHECK FOR EXTERIOR NODES NOT ON A BRANCH
+ 
+      NFREE = NEX - 2*NBRA
+      IF(NFREE.GE.0) GOTO 105
+        WRITE(STDOUT,2080) NEX
+        EFLAG = 1
+ 
+ 105  CONTINUE
+      IF(NFREE.LE.0) GOTO 210
+ 
+C     SET YE1 TO ZERO FOR USE IN LATER CHECKING OF INPUT
+C     Clear BASE_NODE_VEC to pass over nodes on branches
+C     in later processing. 
+ 
+      DO 107 I=1,NEX
+        YE1(I) = 0.0
+        BASE_NODE_VEC(I) = 0
+ 107  CONTINUE
+ 
+C     HEADINGS FOR EXTERIOR NODES NOT ON  A BRANCH
+ 
+      CALL inline
+     I          (IN, STDOUT,
+     O           LINE)
+      IF(LINE(1:4).NE.'FREE') THEN
+C       Missing lines of input or input out of order.
+        WRITE(STDOUT,50)
+        STOP 'Abnormal stop: errors found.'
+      ENDIF  
+      WRITE(STDOUT,2030) LINE
+      CALL inline
+     I          (IN, STDOUT,
+     O           LINE)
+C     Define the limits for the items on a line.
+      CALL GET_ITEM_LIMITS(
+     I                     STDOUT, LINE, MXITEM, JUST,
+     O                     NITEM, ITEM_START, ITEM_END)
+
+C     Output standard heading in place of user's heading
+      IF(NITEM.LE.6) THEN
+        WRITE(STDOUT,2114) 
+      ELSE
+        WRITE(STDOUT,2115)
+      ENDIF
+ 
+      DO 200 NB=1,NFREE
+        CALL inline
+     I            (IN, STDOUT,
+     O             LINE)
+         CALL READ_FREE_NODE_ITEMS(
+     I          STDOUT, LINE, NITEM, ITEM_START,
+     I          ITEM_END,
+     M          EFLAG,
+     O          USNODE, NAME, DEPTH, DISCH, ELV,
+     O          BASE_NODE, XOFFSTRING, YOFFSTRING, CSTATION)
+        IF(NITEM.LE.6) THEN
+          WRITE(STDOUT,2042) USNODE, NAME, DEPTH, DISCH, ELV
+        ELSE
+          WRITE(STDOUT,2043) USNODE, NAME, DEPTH, DISCH, ELV,
+     A                    BASE_NODE, XOFFSTRING, YOFFSTRING,
+     B                    CSTATION
+        ENDIF
+          
+        CALL GETINN
+     M             (USNODE,
+     O              EFLAG, NODE)
+        IF(NODE.LE.0) THEN
+          WRITE(STDOUT,2050) '-'//GETUSN(-NODE)
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+ 
+C       CHECK FOR DUPLICATION OF NODE NUMBERING
+ 
+ 110    IF(YE1(NODE).EQ.0.) GOTO 120
+        WRITE(STDOUT,2090) GETUSN(NODE), YE1(NODE)
+        EFLAG = 1
+ 
+C       IS GIVEN NODE A FREE NODE?
+ 
+ 120    CONTINUE
+        IF(EXNODT(3,NODE).LE.0) GOTO 125
+          WRITE(STDOUT,2095) GETUSN(NODE), GETUSB(EXNODT(3,NODE))
+          EFLAG = 1
+ 125    CONTINUE
+        IF( DEPTH.GT.0.) GOTO 130
+C       If the node is a reservoir node or an inflow node to a reservoir,
+C       then a negative depth is really an elevation if the depth datum
+C       for the node is 0.0.  At this point there is no sure way of establishing
+C       that a node is an inflow node because when we see the inflow node 
+C       there is no flag that says so.  Changing EXNODT(3,*) is complex 
+C       because it is heavily used in the development of the solution matrices. 
+C       We do the following: 1. if the node is a reservoir node-no message
+C       if the depth datum is 0.0. 2. for other nodes issue a warning
+C       if depth is less than 0.0 and the depth datum is zero.  3.
+C       Issue an error message in other cases. 
+        IF(EXNODT(3,NODE).NE.-1) THEN
+          IF(ELV.NE.0.0) THEN        
+            WRITE(STDOUT,2070) DEPTH
+            EFLAG = 1
+          ELSE
+            WRITE(STDOUT,2075) DEPTH
+          ENDIF
+        ENDIF
+ 
+ 130    YE1(NODE) = DEPTH
+        QE1(NODE) = DISCH
+        ZE(NODE) = ELV
+        ENODID(NODE) = NAME
+
+C       Process optional items if present. 
+        IF(NITEM.EQ.9) THEN
+C         Optional input here.  We can only process partially here
+C         because the standard linkage to the cross-section function
+C         tables does not yet exist.  If the BASE_NODE is non-blank
+C         convert to the internal number and store for later processing
+          IF(BASE_NODE.NE.' ') THEN
+            CALL GETINN
+     M                 (BASE_NODE,
+     O                  EFLAG, BASE_NODE_NUMBER)
+
+            BASE_NODE_VEC(NODE) = BASE_NODE_NUMBER
+          ELSE
+            BASE_NODE_VEC(NODE) = 0
+          ENDIF
+C         The headings for the offsets may be present even when no
+C         values are given.  Thus it is possible that a blank could
+C         exist in all fields as the model is being developed.  
+C         We only convert non-blank fields to numbers.  All values
+C         have been set to null in subroutine BRIN so that we 
+C         can assume that the null values are present. 
+          IF(XOFFSTRING.NE.' ') THEN
+C           Use LINE so that the standard error message will work.
+            LINE = XOFFSTRING
+            READ(LINE(1:15),'(F15.0)',ERR=991) XOFFSET
+            EXNODT(6,NODE) = NINT(XOFFSET*100.D0)
+            IF(YOFFSTRING.EQ.' ') THEN
+              WRITE(STDOUT,2120) USNODE
+              EFLAG = 1
+            ELSE
+              LINE = YOFFSTRING
+              READ(LINE(1:15),'(F15.0)',ERR=991) YOFFSET
+              EXNODT(7,NODE) = NINT(YOFFSET*100.D0)
+            ENDIF
+          ENDIF
+
+          IF(CSTATION.NE.' ') THEN
+            LINE = CSTATION
+            READ(LINE(1:10),'(F10.0)',ERR=991) DSTATION
+            EXNODT(8,NODE) = NINT(DSTATION*1.D4)
+          ENDIF
+        ENDIF  
+C         
+C       
+      
+C       Catch the LPR nodes, that is, the dns free node of an LPR, and
+C       set EXNODT(2,*) so that the dns node entry points to the upstream
+C       node and the upstream node (inflow node) points to the dns node. 
+
+        IF(EXNODT(3,NODE).EQ.0) THEN
+C         Node is not an LPR node.  Either on a dummy branch or
+C         inflow node to a LPR.  
+          IF(EXNODT(4,NODE).GT.0) THEN
+C           It is on a dummy branch.  We then clear EXNODT(2,*)    
+C           Clear the pointer in slot 2.  Used earlier in
+C           constructing the pattern in the solution matrix. May 
+C           cause problems later if non-zero.  A check has been made
+C           to try to catch all occurences of use but clear to be 
+C           sure.
+            EXNODT(2,NODE) = 0
+          ENDIF
+        ELSE
+C         Here the node is an LPR node.  We only see free nodes in this routine. 
+C         If EXNODT(3,NODE) is not zero, then it must by -1, because if
+C         EXNODT(3,NODE) is positive, then NODE is on a branch.
+C         However, the user might be confused and we may have reported an error
+C         above so we must check here as well to protect against further errors 
+C         being generated.
+          IF(EXNODT(3,NODE).EQ.-1) THEN
+C           We don't know the inflow node.  The two nodes are stored in EMC. 
+C           We cannot set EXNODT(2,*) in EXIN because there that slot is used
+C           for a pointer into EMC so that the matrix formation routines can find
+C           there information.  Thus, we must set the values here to avoid 
+C           conflict.  The evolution of a software product adds to its complexity!
+C           Thus we search EMC for a code 7 with the NODE as the LPR node.
+
+            CALL FIND_CODE7(STDOUT, NODE, MREMC, EMC,
+     O                      INODE)
+C           Now have the two nodes on the LPR point to each other.
+            EXNODT(2,NODE) = INODE
+            EXNODT(2,INODE) = NODE
+          ENDIF
+        ENDIF  
+ 
+ 200  CONTINUE
+ 
+ 210  RETURN
+ 991  CONTINUE
+        WRITE(STDOUT,*) ' *ERR:500* Conversion error in line:'
+        WRITE(STDOUT,*) LINE
+        STOP 'Abnormal stop: errors found.'
+      END
+C
+C
+C
+      SUBROUTINE   FNDCD
+     I                  (STDOUT, ADRS, GRAV, EPSB, QR,
+     M                   YR,
+     O                   EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Find critical depth in the cross section given by ADRS and
+C     for the flow given by QR.  Computed ignoring non-uniform
+C     velocity distribution to be compatible with past usage
+C     in BCKWTR.  Used only for initial conditions.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ADRS, EFLAG, STDOUT
+      REAL EPSB, GRAV, QR, YR
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     ADRS   - address of the function table in FTAB/ITAB
+C     GRAV   - value of acceleration due to gravity
+C     EPSB   - convergence limit for steady flow computations
+C     QR     - flow
+C     YR     - critical depth estimate and final value
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER IFLAG, IT
+      REAL AR, BR, DBR, DF, DKR, DTR, F, KR, QRSQR, TR, YRSAVE, YTA
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL XLKT20
+ 
+C     + + + OUTPUT FORMATS + + +
+ 2130 FORMAT(/,' *ERR:95* Maximum iterations exceeded for ',
+     A     'Backwater Analysis')
+ 2140 FORMAT(/,' Critical depth Debug: ',/,
+     A 4X,'IT',4X,'New Depth',4X,'Old Depth',5X,'Residual',
+     B 3X,'Derivative', 4X,'Discharge')
+ 2150 FORMAT(1X,I5,5(1PE13.5))
+C***********************************************************************
+C      WRITE(STDOUT,*) ' ENTERING FNDCD: YR=',YR
+C     Find the elements at the initial estimate, YR.
+      CALL XLKT20
+     I           (ADRS,
+     M            YR,
+     O            AR, TR, DTR, KR, DKR, BR, DBR)
+ 
+C     Save the initial estimate for debugging dump
+      YRSAVE = YR
+      IFLAG = 0
+      IT = 0
+      QRSQR = QR*QR
+ 125  CONTINUE
+        F = QRSQR - GRAV*AR**3/TR
+C        WRITE(STDOUT,*) ' F=',F
+        IF(ABS(F)/QRSQR.GT.EPSB) THEN
+          DF = -GRAV*AR**2*(3.0 - AR*DTR/TR**2)
+          YTA = YR - F/DF
+          IF(IFLAG.EQ.1) WRITE(STDOUT,2150) IT, YTA, YR, F, DF
+          IF(YTA.LT.0.0) YTA = 0.5*YR
+          YR = YTA
+          CALL XLKT20
+     I               (ADRS,
+     M                YR,
+     O                AR, TR, DTR, KR, DKR, BR, DBR)
+          IT = IT + 1
+          IF(IT.GT.100) THEN
+            EFLAG = 1
+            IF(IFLAG.EQ.0) THEN
+              WRITE(STDOUT,2130)
+              WRITE(STDOUT,2140)
+              IFLAG = 1
+              IT = 0
+              YR = YRSAVE
+              CALL XLKT20
+     I                   (ADRS,
+     M                    YR,
+     O                    AR, TR, DTR, KR, DKR, BR, DBR)
+              GOTO 125
+            ENDIF
+          ELSE
+            GOTO 125
+          ENDIF
+        ENDIF
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   GETIC
+     I                  (STDOUT, GETDSN, NAME, NBRA, NBN, NEX, JTIME,
+     I                   NBLK, OPBLK, BNODE,
+     O                   WT, SITER, DT, EXNODT)
+ 
+C     + + + PURPOSE + + +
+C     Get current state of system from dataset given by GETDSN.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER BNODE, GETDSN, NBLK, NBN, NBRA, NEX, STDOUT
+      INTEGER EXNODT(9,NEX), OPBLK(MNBLK)
+      REAL SITER, WT
+      REAL*8 DT, JTIME
+      CHARACTER NAME*256
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - standard output unit for user messages
+C     GETDSN - unit number for reading initial conditions
+C     NAME   - name of the file containing the initial conditions
+C     NBRA   - number of branches in the model
+C     NBN    - total number on nodes on branches in the model
+C     NEX    - number of exterior nodes in the model
+C     JTIME  - current modified julian time in the model
+C     NBLK   - number of operation blocks
+C     OPBLK  - pointer into the function table storage(FTAB/ITAB) for
+C               each operation block.
+C     BNODE  - boundary node number at which to start defining the
+C               coefficient matrix
+C
+C     WT     - weight factor for approximating time integrals
+C     SITER  - weighted sum of iterations to convergence
+C     DT     - time step in seconds
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER FBNODE, FLAG, FNBN, FNBRA, FNEX, bwrec, dummy, it
+      REAL*8 FJTIME
+      LOGICAL THERE
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL BWGET, GETUSN, FREE_UNIT
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(' *ERR:199* Expected ',I4,' branches but found ',I4,
+     A      ' in GETIC file:'/,11X,A)
+ 52   FORMAT(' *ERR:200* Expected ',I4,' exterior nodes but found ',I4,
+     A      ' in GETIC file:'/,11X,A)
+ 54   FORMAT(' *ERR:201* Expected ',I4,' nodes on branches but ',
+     A       'found ',I4,' in GETIC file:'/,11X,A)
+ 56   FORMAT(' *ERR:202* Unable to continue because model in GETIC',
+     A ' file differs',/,11X,' from current model.')
+ 58   FORMAT(' *WRN:45* Start time leads time in GETIC file',
+     A        ' by ',1PE10.3,' seconds.')
+ 60   FORMAT(/,' Initial conditions read at JTIME=',F20.10)
+ 62   FORMAT(' *ERR:216* Expected BNODE=',A5,' but ',
+     A       'found BNODE=',A5,' in GETIC file:'/,11X,A)
+C***********************************************************************
+      IF(NAME.EQ.' ') THEN
+        OPEN(GETDSN, FILE='GETD', FORM='UNFORMATTED', STATUS='OLD',
+     a    access='direct', recl=8)
+      ELSE
+        INQUIRE(FILE=NAME, EXIST=THERE)
+        IF(THERE) THEN
+          OPEN(GETDSN, FILE=NAME, FORM='UNFORMATTED', STATUS='OLD',
+     a       access='direct', recl=8)
+        ELSE
+          it = len_trim(name)
+          WRITE(STDOUT,*) ' FILE NAMED:', NAME(1:it),' NOT FOUND.'
+          WRITE(STDOUT,*) ' CHECK SPELLING OF GETIC FILE.'
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+      ENDIF
+ 
+C     READ THE FIRST BLOCK OF DATA FOR CHECKING
+ 
+c      READ(GETDSN) FNBRA, FNBN, FNEX, FJTIME, SITER, DT, FBNODE
+      bwrec = 1
+      read(getdsn, rec=bwrec) fnbra, fnbn
+      bwrec = bwrec + 1
+      read(getdsn, rec=bwrec) fnex, siter
+      bwrec = bwrec + 1
+      read(getdsn, rec=bwrec) fbnode, dummy
+      bwrec = bwrec + 1
+      read(getdsn, rec=bwrec) fjtime
+      bwrec = bwrec + 1
+      read(getdsn, rec=bwrec) dt
+      bwrec = bwrec + 1
+
+      FLAG = 0
+      IF(FNBRA.NE.NBRA) THEN
+        WRITE(STDOUT,50) NBRA, FNBRA, NAME
+        FLAG = 1
+      ENDIF
+      IF(FNEX.NE.NEX) THEN
+        WRITE(STDOUT,52) NEX, FNEX, NAME
+        FLAG = 1
+      ENDIF
+      IF(FNBN.NE.NBN) THEN
+        WRITE(STDOUT,54) NBN, FNBN, NAME
+        FLAG = 1
+      ENDIF
+      IF(FBNODE.NE.BNODE) THEN
+        WRITE(STDOUT,62) GETUSN(BNODE), GETUSN(FBNODE), NAME
+        FLAG = 1
+      ENDIF
+      IF(FLAG.NE.0) THEN
+        WRITE(STDOUT,56)
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      IF(ABS(JTIME - FJTIME).GT.2.E-4) THEN
+C       TIME MISMATCH BETWEEN THE TIME OF INITIAL CONDITIONS IN THE
+C       GETIC FILE AND THE TIME OF START OF THE RUN
+        WRITE(STDOUT,58) 86400.*(JTIME - FJTIME)
+      ENDIF
+ 
+      CALL BWGET
+     I          (GETDSN, NBRA, NBN, NEX, MNBLK, NBLK, OPBLK,
+     m           bwrec,
+     O           WT)
+ 
+      CALL FREE_UNIT(STDOUT, GETDSN)
+      WRITE(STDOUT,60) JTIME
+      RETURN
+      END
+ 
+C  ***********************************************************************
+C  *  Warning:  This program is large and complex and  extensive         *
+C  *  knowledge of its design, purpose, and limitations is required      *
+C  *  in order to apply it properly.  Application of this program by an  *
+C  *  unqualified user for any other purpose than an educational one is  *
+C  *  not only unwise but is also unethical.  The user of this           *
+C  *  program is totally responsible for its use and application and for *
+C  *  any actions or events which follow therefrom.  Any user of this    *
+C  *  program  holds the developer of the program harmless from          *
+C  *  damages of any kind.                                               *
+C  *                                                                     *
+C  *  The developer has used reasonable care in the construction and     *
+C  *  testing of the program.  However, in a program of this size and    *
+C  *  complexity, it is impossible to verify more than a minute number of*
+C  *  possible options or applications.  The developer is continuing to  *
+C  *  modify and use the program and is interested in information on     *
+C  *  operational problems encountered in its application.  However, the *
+C  *  developer gives no assurance that the problem can or will be       *
+C  *  rectified.                                                         *
+C  *                                                                     *
+C  *  This program is not to be sold in any form modified or otherwise.  *
+C  ***********************************************************************
+ 
+ 
+C
+C
+C
+      SUBROUTINE   MKQCTB
+     I                   (STDOUT,
+     M                    TABN, FTP, FTKNT,
+     O                    EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Make a critical flow table if a cross section table has been
+C     provided.  Otherwise process the table number like in CHKTAB.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, FTKNT, FTP, STDOUT, TABN
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     TABN   - table number
+C     FTP    - next open location in the function table storage
+C     FTKNT  - function table counter
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADRS, I, NDEP, NEWTAB, OLDTAB, TYPE
+C      REAL A, ALP, B, DALP, DB, DK, DT, FJ, FK, PDV, QCNEW, QCOLD,
+C     A     QCTRUE, RERRNW, RERROD, T, YT
+      REAL*8 LGY(MNDEP), M(MNDEP), QC(MNDEP), Y(MNDEP)
+ 
+C      REAL*8 DY, P(0:4)
+C     + + + INTRINSICS + + +
+      INTRINSIC LOG, SQRT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GET_TABID*16
+      INTEGER GETTYP, NEXTN
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETTYP, GETYQC, LKTAB, NEXTN, STRTY5, XLKT22, GET_TABID
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:81* TABLE Id=',A,' does not exist.')
+ 51   FORMAT(/,' *ERR:173* TABLE Id=',A,' and TYPE=',I5,' does not ',
+     A  ' have critical flow.')
+ 60   FORMAT(' Checking TABLE Id=',A, ' taken from TABLE Id=',A)
+ 61   FORMAT(1X,'     DEPTH    LDEPTH         FLOW        DERIV')
+ 62   FORMAT(1X,2F10.5,1PE13.5,1PE13.5)
+ 63   FORMAT(1X,F10.5,1PE13.5,1PE13.5,1PE13.5, 1PE13.5,1PE13.5)
+ 64   FORMAT(1X,'     DEPTH        QCNEW        QCOLD       RERRNW',
+     A '       RERROD          PDV')
+C***********************************************************************
+C     Table number already checked for valid range.  Does the table
+C     exist?
+      ADRS = FTPNT(TABN)
+      IF(ADRS.LE.0) THEN
+C       Table missing
+        EFLAG = 1
+        WRITE(STDOUT, 50) GET_TABID(TABN)
+      ELSE
+C       Branch on table type
+        TYPE = GETTYP(ADRS)
+        IF(TYPE.LE.4.AND.TYPE.GE.2) THEN
+C         Proper table already supplied.  Put table address in
+C         table number.
+ 
+          TABN = ADRS
+        ELSEIF(TYPE.EQ.22.OR.TYPE.EQ.25) THEN
+C         Cross section table containing critical flow values given.
+C         Extract the depth and the critical flow.  Also determine if
+C         cross section represents a closed conduit or an open channel
+C         with EXT different from zero.
+ 
+          CALL GETYQC
+     I               (ADRS, TYPE,
+     O                NDEP, Y, QC)
+ 
+C         Compute logarithms of the values
+ 
+          DO 90 I=2,NDEP
+            LGY(I) = LOG(Y(I))
+            QC(I) = LOG(QC(I))
+ 90       CONTINUE
+          LGY(1) = LOG(1.E-8)
+          QC(1) = LOG(1.E-7)
+ 
+C         Compute the slope of the logarithms and store at the lower
+C         point for each panel.  First panel has no slope.
+          DO 92 I=2,NDEP-1
+            M(I) = (QC(I+1) - QC(I))/(LGY(I+1) - LGY(I))
+ 92       CONTINUE
+          M(1) = 0.D0
+          M(NDEP) = 0.D0
+ 
+ 
+C         Store a new table of type 5 in FTAB.  Get a table number for
+C         the table.
+ 
+          NEWTAB = NEXTN()
+ 
+          CALL STRTY5
+     I               (NEWTAB, NDEP, LGY, QC, M,
+     M                FTP, FTKNT, EFLAG)
+ 
+C         Put the table address into the table number
+ 
+C          OLDTAB = TABN
+          TABN = FTPNT(NEWTAB)
+ 
+CC         Output the table for checking.
+C          WRITE(STDOUT,*) ' '
+C          WRITE(STDOUT,60) GET_TABID(ITAB(TABN+1)), GET_TABID(OLDTAB)
+C          WRITE(STDOUT,61)
+C 
+C          DO 100 I=1,NDEP
+C            WRITE(STDOUT,62) Y(I), LGY(I), QC(I), M(I)
+C 100      CONTINUE
+CC         Now compare the values obtained by LKTAB and XLKT22.  Do
+CC         five intermediate values.
+C          P(0) = 1.D-2
+C          P(1) = 0.25D0
+C          P(2) = 0.50D0
+C          P(3) = 0.75D0
+C          P(4) = 0.99D0
+C          WRITE(STDOUT,*) ' NDEP=',NDEP
+C          WRITE(STDOUT,64)
+C          DO 110 I=1,NDEP-1
+C            DY = Y(I+1) - Y(I)
+C            DO 105 J=0,4
+C              YT = Y(I) +  P(J)*DY
+CC             Get the value from the new table.
+C              CALL LKTAB
+C     I                  (TABN, YT, 1,
+C     O                   QCNEW, NTAB, PDV)
+C 
+CC             Get value from the cross section table
+C              CALL XLKT22
+C     I                   (FTPNT(OLDTAB),
+C     M                    YT,
+C     O                    A, T, DT, FJ, FK, DK, B, DB, ALP, DALP, QCOLD)
+C              QCTRUE = A*SQRT(32.2*A/T)
+C              IF(QCTRUE.GT.0.0) THEN
+C                RERRNW = (QCNEW - QCTRUE)/QCTRUE
+C                RERROD = (QCOLD - QCTRUE)/QCTRUE
+C              ELSE
+C                RERRNW = 0.0
+C                RERROD = 0.0
+C              ENDIF
+C              WRITE(STDOUT,63) YT, QCNEW, QCOLD, RERRNW, RERROD, PDV
+C 105        CONTINUE
+C 110      CONTINUE
+ 
+ 
+        ELSE
+C         Invalid table type for critical flow.
+          EFLAG = 1
+          WRITE(STDOUT,51) GET_TABID(TABN), TYPE
+        ENDIF
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   OPINIT
+     I                   (NBLK, OPBLK)
+ 
+C     + + + PURPOSE + + +
+C     Initialize the dynamically varied control structures. Set the
+C     sensed level values if at least the minimum time has elapsed.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER NBLK
+      INTEGER OPBLK(NBLK)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NBLK   - number of operation blocks
+C     OPBLK  - pointer into the function table storage(FTAB/ITAB) for
+C               each operation block.
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'enelem.cmn'
+      INCLUDE 'ftable.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I, IPT, KEY, ND, NODE, BLOCK_TYPE
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+C***********************************************************************
+      DO 500 I=1,NBLK
+        IPT = OPBLK(I)
+        BLOCK_TYPE = ITAB(IPT+3)
+C       WRITE(STD6,1) IPT
+C1       FORMAT(' IPT = ',I5)
+        IF(FTAB(IPT+5).LT.FTAB(IPT+4)) THEN
+C         Minimum time not yet elapsed.  Levels unchanged.
+          GOTO 500
+        ENDIF
+C       Change the levels.  Also must clear elapsed time.
+        FTAB(IPT+5) = 0.0
+        IPT = IPT + 12
+ 90     CONTINUE
+          NODE = ITAB(IPT)
+          IF(NODE.EQ.0) GOTO 500
+          KEY = ITAB(IPT+1)
+          IF(NODE.LT.0) GOTO 200
+ 
+C         INTERIOR NODE
+ 
+            IF(KEY.EQ.1) GOTO 100
+C             ELEVATION
+              FTAB(IPT+4) = Y1(NODE) + ZVEC(NODE)
+              GOTO 110
+ 100        CONTINUE
+C             FLOW RATE
+              FTAB(IPT+4) = Q1(NODE)
+              GOTO 110
+ 110        GOTO 210
+ 200      CONTINUE
+ 
+C         EXTERIOR NODE
+ 
+          NODE = ABS(NODE)
+          IF(KEY.GE.1) GOTO 150
+C           ELEVATION or elevation difference
+            IF(KEY.EQ.0) THEN
+C             Elevation.
+              FTAB(IPT+4) = YE1(NODE) + ZE(NODE)
+            ELSE
+              ND = ABS(KEY)
+C             Elevation difference.
+              FTAB(IPT+4) = YE1(NODE) + ZE(NODE) -
+     A                     (YE1(ND) + ZE(ND))
+            ENDIF  
+
+            GOTO 160
+ 150      CONTINUE
+C           FLOW
+            FTAB(IPT+4) = QE1(NODE)
+C           IF VARIABLE NULL ZONE, CHANGE INCREMENT.  NULL ZONE LIMITS
+C           ARE RECOMPUTED DYNAMICALLY IN OPER IN THIS CASE
+            IF(KEY.EQ.2) THEN
+              ITMP = ITAB(IPT+14)
+C             Set the new offset value so that when 17 is added to it
+C             that the increment will be 15 + 2*ITMP.
+              IPT = IPT - 2 + 2*ITMP
+            ENDIF
+            GOTO 160
+ 160      CONTINUE
+ 210      CONTINUE
+          IPT = IPT + 17
+          GOTO 90
+ 500  CONTINUE
+      RETURN
+      END
+C     ***********
+C     *         *
+C     * CHK_TS_FILE_REFERENCES
+C     *         *
+C     ***********
+
+      SUBROUTINE CHK_TS_FILE_REFERENCES(STDOUT, 
+     O                      EFLAG)
+
+C     Establish the source addresses for the time-series 
+C     references in the time-series management system.
+
+      IMPLICIT NONE
+      INTEGER STDOUT, EFLAG
+
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ts_mngt.prm'
+      INCLUDE 'rdcom.cmn'
+      INCLUDE 'ts_mngt.cmn'
+      INCLUDE 'ftable.cmn'
+
+C     Local
+      INTEGER I, IP, TAB
+C     *******************************Formats****************************
+50    FORMAT(/,' *ERR:299* Time-series id ',A,' refers to a file',
+     A    /,5X,'but the file name is not found in the INPUT FILES',
+     B     ' BLOCK.')
+C***********************************************************************
+C     Scan all time series references with a file given as its source
+C     and make sure that the time-series id appears in the list
+C     of ids found in the time-series file input block.
+
+      DO 100 I=1,NUM_TS
+        IF(SOURCE_CAT(I).EQ.TS_FROM_FILE) THEN
+
+          CALL LSTAB
+     I              (TS_ID(I), TS_ID_FOR_FILE_TABLE, ID_KNT,
+     O              IP)
+          IF(IP.EQ.0) THEN
+C           Time-series id for a time-series stored in
+C           a file not found in the list of time-series
+C           files from the input-files block. 
+            WRITE(STDOUT,50) TS_ID(I)
+            EFLAG = 1
+          ELSE
+C           Source address is the row number in the time-series
+C           file table. This gives access to the unit number if
+C           it is not a HECDSS file and to the items needed
+C           for HECDSS file access as well as the control values
+C           for the read buffers. 
+            SOURCE_ADDRESS(I) = IP
+          ENDIF            
+        ELSE
+C         Check for existence of the time-series table and
+C         its correct type. 
+          TAB = SOURCE_ADDRESS(I)
+          CALL CHKTAB
+     I               (2, STDOUT, FTPNT, MFTNUM,
+     M                TAB,
+     O                EFLAG)
+          IF(EFLAG.EQ.0) THEN
+            SOURCE_ADDRESS(I) = TAB
+          ENDIF
+        ENDIF
+100   CONTINUE
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   RDINIT
+     I                   (STDOUT)
+ 
+C     + + + PURPOSE + + +
+C     Initialize the fields, pointers, and buffers to be used
+C     for time series input.  Must be called after all input
+C     is processed and checked.
+ 
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER STDOUT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     EMC    - vector containing coded form of the Matrix Control Input
+
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ts_mngt.prm'
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'rdcom.cmn'
+      INCLUDE 'ts_mngt.cmn'
+      INCLUDE 'julian.cmn'
+      INCLUDE 'endrun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      integer (kind=2) :: file_version
+      INTEGER EACH, EFLAG, I, J, MINR, UN, NEED, GOT, TMPVEC_SIZE,
+     a    rd_rec_len, first_ts_pnt, it, n1, n2, n3, n4, n5
+      REAL*8 JT, START_TIME
+      character :: what*1, unused*1, c12*12, 
+     a  program_name*12, program_version*12, version_date*12,
+     b  date_of_run*12, time_of_run*12
+      LOGICAL THERE
+ 
+C     + + + OUTPUT FORMATS + + +
+C 50   FORMAT('0*ERR:151* File number in input list not in forced',
+C     A       ' boundary list. UNIT=',I4)
+ 51   FORMAT('0*ERR:152* Input file',I4,' has a start time=',1PD20.13,
+     A       ' > run start time=',1PD20.13)
+C 52   FORMAT('0*ERR:153* File number in forced boundary not in',
+C     A       ' input list. UNIT=',I4)
+C 54   FORMAT('0*ERR:193* Number of input files=',I3,' not same as',
+C     A  ' number of file requests=',I4)
+ 56   FORMAT(' Opening time-series Id=',A,
+     A       ' and filling buffer number=',I4,/,
+     B       ' from file or path with name=',
+     C        5X,A)
+57    FORMAT(' Path name=',/,1X,A)
+58    FORMAT(/,' *ERR:259* Input file with unit=',I4,' and path name=',
+     A /,1X,A,/,1X,'has no data at start time of run.')
+59    FORMAT(/,' File named:', A,/,11X,' not found.  Check spelling',
+     A         ' of an input time-series file.')
+60    format(36x,'Written by: ',a,' version: ',a,' dated: ',a,' on ',
+     a       a,' at ',a)          
+C***********************************************************************
+C     Compute the end time of the run in terms of HECDSS
+      JDE_RUN = INT(EJTIME)
+      MOFF_END_RUN =  INT((EJTIME - DBLE(JDE_RUN))*1440.D0 + 0.5)
+      JDE_RUN = JDE_RUN - 15019
+      IF(MOFF_END_RUN.EQ.0) THEN
+C       HECDSS treats the boundary between days as belonging only
+C       to the previous day when retrieving data.
+        MOFF_END_RUN = 1440
+        JDE_RUN = JDE_RUN - 1
+      ENDIF
+ 
+ 
+      TMPVEC_SIZE = MRRBUF + 5
+ 
+      EFLAG = 0
+
+C     Check that all time-series references exist and 
+C     establish addresses for their sources.
+      CALL CHK_TS_FILE_REFERENCES(STDOUT,
+     O                            EFLAG)
+      IF(EFLAG.NE.0) THEN
+        STOP 'Abnormal stop: errors found.'
+      ENDIF        
+
+      IF(NUM_TS_F.GT.0) THEN
+c       Clear the delete on close list
+        delete_list = 0
+C       ALLOCATE THE AVAILABLE BUFFER SPACE AMOMG THE INPUT FILES         
+                                                                        
+        EACH = MRRBUF/NUM_TS_F        
+                                                                        
+        MINR = 1                                                        
+        DO 500 I=1,NUM_TS_F                                                 
+                                                                        
+          WRITE(STDOUT,56) TS_ID_FOR_FILE_TABLE(I), I, NAMIN(I)                              
+          IF(EFLAG.EQ.1) STOP 'Abnormal stop: errors found.'            
+          IF(DSS_INDEX_IN(I).EQ.0) THEN                                 
+C           This is a traditional time-series file.                     
+            INQUIRE(FILE=NAMIN(I), EXIST=THERE)                         
+            UN = UNIN(I)
+
+            IF(THERE) THEN                                              
+              OPEN(UN, FILE=NAMIN(I), FORM = 'UNFORMATTED',
+     A             STATUS = 'OLD', access='direct', recl=4)
+c             Get the record length of the file.  First 4 bytes
+c             of record number 1.
+              read(un, rec=1) rd_rec_len
+              close(un)
+              OPEN(UN, FILE=NAMIN(I), FORM = 'UNFORMATTED',
+     A             STATUS = 'OLD', access='direct', recl=rd_rec_len)
+            ELSE                                                        
+              WRITE(STDOUT,59) NAMIN(I)                                 
+              STOP 'Abnormal stop: errors found.'                       
+            ENDIF  
+
+c           Check if user has requested delete on close
+            it = index(namin(i),'._doc_')
+            if(it > 0) then
+c             signal delete on close for this file
+              delete_list(i) = 1
+            endif                                               
+                                                                        
+C           Get the first record number with time-series data
+c           and get the code for the values stored.   
+            read(un, rec=1) 
+     a        rd_rec_len, file_version, what, unused, first_ts_pnt
+c           Output information on the creating program, etc. 
+c           We read the information, strip trailing blanks and
+c           output.  Detials of what these fields contain is 
+c           in subroutine wropen() for feq.  
+ 
+
+            read(un,rec=9)  program_name
+            n1 = len_trim(program_name)
+            read(un,rec=10) program_version
+            n2 = len_trim(program_version)
+            read(un,rec=11) version_date
+            n3 = len_trim(version_date)
+            read(un,rec=12) date_of_run
+            n4 = len_trim(date_of_run)
+            read(un,rec=13) time_of_run
+            n5 = len_trim(time_of_run)
+            write(stdout,60) program_name(1:n1),
+     a                      program_version(1:n2),
+     b                      version_date(1:n3),
+     c                      date_of_run(1:n4),
+     d                      time_of_run(1:n5)
+
+
+c           Set rd_rec to the first record
+            rd_rec(i) = first_ts_pnt
+           
+          ENDIF                                                         
+C         INITIALIZE THE CIRCULAR BUFFER CONTROL VALUES                 
+                                                                        
+          LSTHD(I) = MINR                                               
+          LTRY(I) = MINR                                                
+          MINROW(I) = MINR                                              
+          MAXROW(I) = MINR + EACH - 1                                   
+          MINR = MINR + EACH                                            
+                                                                        
+C         FILL THE CURRENT BUFFER FROM THE FILE                         
+                                                                        
+          IF(DSS_INDEX_IN(I).EQ.0) THEN                                 
+            DO 150 J=MINROW(I),MAXROW(I)                                
+              READ(UN, rec=rd_rec(i)) JT, VALAIN(J)
+              rd_rec(i) = rd_rec(i) + 1
+
+C             Check for end of file.                                    
+              IF(JT.EQ.0.D0) GOTO 160                                   
+              JTIN(J) = JT                                              
+ 150        CONTINUE                                                    
+            J = MAXROW(I)                                               
+ 160        CONTINUE                                                    
+C           Reset the list head so that it always points to the         
+C           first invalid value when traversing the buffer clockwise.   
+C           If buffer is full the first invalid value is the first      
+C           value in the buffer.  However, if the buffer is not         
+C           full, then the first invalid value is the value next        
+C           after the last value.                                       
+            J = J + 1                                                   
+            IF(J.GT.MAXROW(I)) J = MINROW(I)                            
+            LSTHD(I) = J                                                
+                                                                        
+          ELSE                                                          
+C           Fill the buffer from the HECDSS path name.                  
+            JT = SJTIME                                                 
+            CALL CHK_HECDSS_RECORD(STDOUT, NAMIN(I), DSS_INDEX_IN(I),   
+     A                             TIME_STEP_IN(I), 'INST-VAL', JT,     
+     B                             START_TIME, EFLAG)                   
+                                                                        
+            IF(EFLAG.EQ.1) THEN                                         
+              WRITE(STDOUT,51) UNIN(I), START_TIME, SJTIME              
+              WRITE(STDOUT,57) NAMIN(I)                                 
+              STOP 'Abnormal stop: errors found.'                       
+            ELSEIF(EFLAG.EQ.2) THEN                                     
+              WRITE(STDOUT,58) UNIN(I), NAMIN(I)                        
+              STOP 'Abnormal stop: errors found.'                       
+            ENDIF                                                       
+            NEED = MAXROW(I) - MINROW(I) + 1                            
+            JT = START_TIME                                             
+            CALL GET_HECDSS_BLOCK(STDOUT, NAMIN(I), DSS_INDEX_IN(I),    
+     A                      TIME_STEP_IN(I), 'INST-VAL', JT, NEED,      
+     B                      GOT, JTVEC, TMPVEC, TMPVEC_SIZE)            
+                                                                        
+            DO 170 J=1,GOT                                              
+              JTIN(MINROW(I) + J - 1) = JTVEC(J)                        
+              VALAIN(MINROW(I) + J -1) = TMPVEC(J)                      
+170         CONTINUE                                                    
+C           Reset the list head so that it always points to the         
+C           first invalid value when traversing the buffer clockwise.   
+C           If buffer is full the first invalid value is the first      
+C           value in the buffer.  However, if the buffer is not         
+C           full, then the first invalid value is the value next        
+C           after the last value.                                       
+            J = MINROW(I) + GOT - 1                                     
+            J = J + 1                                                   
+            IF(J.GT.MAXROW(I)) J = MINROW(I)                            
+            LSTHD(I) = J                                                
+                                                                        
+          ENDIF                                                         
+                                                                        
+C         MAKE SURE THAT THE START TIME FOR EACH INPUT FILE IS AT OR    
+C         BEFORE THE START TIME OF THE RUN.                             
+                                                                        
+          IF(SJTIME.LT.JTIN(MINROW(I))) THEN                            
+            WRITE(STDOUT,51) UNIN(I), JTIN(MINROW(I)), SJTIME           
+            STOP 'Abnormal stop: errors found.'                         
+          ENDIF                                                         
+                                                                        
+ 500    CONTINUE                                                        
+ 
+      ENDIF
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   READOC()
+ 
+C     + + + PURPOSE + + +
+C     Read documentation information from header of TSFDSN.
+ 
+      IMPLICIT NONE
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'tsfcom.cmn'
+      INCLUDE 'xscom.cmn'
+      INCLUDE 'namcom.cmn'
+      INCLUDE 'stdun.cmn'
+ 
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I, J, LIMIT
+      INTEGER A(7+mndifa), TEMP(10)
+      character c(7+mndifa)*4
+
+   
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC MIN
+ 
+C     + + + OUTPUT FORMATS + + +
+ 10   FORMAT(/,'This TSF was created on ',
+     1I4,'/',I2,'/',I2,' AT ',I4,' and has ',I3,
+     2' LSRO values.')
+ 11   FORMAT(' ','Simulation for the ',
+     1'runoff values began on ',I4,'/',
+     2I2,'/',I2,' and ended on ',I4,'/',I2,'/',I2,'.')
+ 14   FORMAT(/,32A4)
+ 16   FORMAT(4X,'LSRO# ',I2,':',20A4)
+ 20   FORMAT(/,'*************************************************')
+ 50   FORMAT(/,'*ERR:154* There are',I3,' values in each record of',/,
+     A '       the diffuse TSF but only',I3,' values allowed in FEQ.')
+ 60   FORMAT(/,'*ERR:155* There are',I3,' diffuse flows in the',/,
+     A '       diffuse flow file but ',I3,' land uses in FEQ.')
+C***********************************************************************
+      WRITE(STD6,20)
+ 
+C     READ THE FIRST PART OF THE second RECORD TO ESTABLISH THE FORMAT OF
+C     THE DTSF
+ 
+      READ(TSFDSN,rec=dtsf_rec) (A(I), I=1,7)
+      dtsf_rec = dtsf_rec + 1
+      
+C      NREC = A(5)
+      NDFVAL = A(6)
+      TSFTYP = A(7)
+ 
+ 
+c      IF(TSFTYP.EQ.0) THEN
+c        WRITE(STD6,*) ' '
+c        WRITE(STD6,*) ' TSF uses 8 bytes per runoff value'
+c      ELSE
+c        WRITE(STD6,*) ' '
+c        WRITE(STD6,*) ' TSF uses 4 bytes per runoff value'
+c      ENDIF
+ 
+      IF(NDFVAL.GT.MNDIFA) THEN
+        WRITE(STD6,50) NDFVAL, MNDIFA
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      IF(NDFVAL.NE.NLUSE) THEN
+        WRITE(STDOUT,60) NDFVAL, NLUSE
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      LIMIT = 7 + NLUSE
+ 
+      dtsf_rec = 2
+      READ(TSFDSN, rec=dtsf_rec) (A(I), I=1,LIMIT)
+      dtsf_rec = dtsf_rec + 1
+ 
+      DO 12 I=1,4
+        TEMP(I) = A(I)
+ 12   CONTINUE
+ 
+      READ(TSFDSN,rec=dtsf_rec) (A(I), I=1,LIMIT)
+      dtsf_rec = dtsf_rec + 1
+      DO 13 I=5,10
+        TEMP(I) = A(I-4)
+ 13   CONTINUE
+ 
+      READ(TSFDSN, rec=dtsf_rec) (c(I), I=1,LIMIT)
+      dtsf_rec = dtsf_rec + 1
+      WRITE(STD6,14) (c(I), I=1,MIN(32,LIMIT))
+      WRITE(STD6,10) (TEMP(I), I=1,4), NDFVAL
+      WRITE(STD6,11) (TEMP(I), I=5,10)
+ 
+      DO 15 I=1,NDFVAL
+        READ(TSFDSN,rec=dtsf_rec) (c(J), J=1,LIMIT)
+        dtsf_rec = dtsf_rec + 1
+        WRITE(STD6,16) I, (c(J), J=1,MIN(20,LIMIT))
+ 15   CONTINUE
+ 
+      WRITE(STD6,20)
+ 
+ 
+      RETURN
+
+      END
+C
+C
+C
+      SUBROUTINE   RTBADJ
+     I                   (STDOUT, NEX, EXNODT, MREMC, EMC, FTKNT, FTPNT,
+     M                    ZE, YE1)
+ 
+C     + + + PURPOSE + + +
+C     Adjust the reservoir storage table to allow the user to select
+C     treating reservoirs like cross sections.  That is, the argument
+C     to the table is depth, and the minimum point in the reservoir
+C     is the point of zero depth.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER FTKNT, STDOUT, MREMC, NEX
+      INTEGER EMC(MREMC), EXNODT(9,NEX), FTPNT(FTKNT)
+      REAL YE1(NEX), ZE(NEX)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NEX    - number of exterior nodes in the model
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     MREMC  - maximum length of EMC(*). Same as LEMC
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     FTKNT  - count of number of function tables currently in the 
+C              function-table system
+C     FTPNT  - vector of addresses(indices) into function-table system
+C              for a given internal table number.
+C     ZE     - elevation of datum for depth at exterior node
+C     YE1    - depths at exterior nodes at start of time step
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADRS, FLAG, I, INODE, NFLAG, RNODE
+      REAL ZBOT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER GETTBN
+      CHARACTER GETUSN*5, GET_TABID*16
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL ADJ234, FND7, GETTBN, GETUSN, GET_TABID
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' Adjustment of table argument for Level-Pool ',
+     A    'Reservoirs',/,5X,' Elevation transformed to maximum depth',
+     B   /,' LPR Node TableId_________  Base Elev')
+ 52   FORMAT(4X,A5,1X,A16,1X,F10.3)
+ 54   FORMAT(' No level-pool reservoirs found to adjust.')
+C***********************************************************************
+C     Scan for level-pool reservoirs.  May not be any.
+      NFLAG = 0
+      WRITE(STDOUT,50)
+      DO 500 I=1,NEX
+        IF(EXNODT(3,I).LT.0) THEN
+C         We have a level-pool reservoir.  Find the other values
+C         from EMC
+          RNODE = I
+          CALL FND7
+     I             (STDOUT, RNODE, EMC, MREMC,
+     O              INODE, ADRS)
+ 
+C         Convert an internal table number to the address
+C         for that table.  Subroutine CHKEX makes the conversion 
+C         in EMC(*) but this routine is now called before CHKEX!
+          ADRS = FTPNT(ADRS)
+          IF(ZE(RNODE).EQ.0.0.AND.ZE(INODE).EQ.0.0) THEN
+C           Possible request for adustment of the table and
+C           value output for depth for level-pool reservoirs.
+            CALL ADJ234
+     I                 (ADRS,
+     O                  ZBOT, FLAG)
+            IF(FLAG.GT.0) THEN
+C             We have an adjustment request.  The table has already
+C             been adjusted.  Adjust the values for depth and
+C             bottom elevation.
+              NFLAG = 1
+              ZE(RNODE) = ZBOT
+              ZE(INODE) = ZBOT
+              YE1(RNODE) = YE1(RNODE) - ZBOT
+              YE1(INODE) = YE1(INODE) - ZBOT
+              WRITE(STDOUT,52) GETUSN(RNODE), GET_TABID(GETTBN(ADRS)),
+     A                          ZBOT
+            ENDIF
+          ENDIF
+        ENDIF
+ 500  CONTINUE
+      IF(NFLAG.EQ.0) THEN
+        WRITE(STDOUT,54)
+      ENDIF
+      RETURN
+      END
+C     ***********
+C     *         *
+C     * SET_NDFVAL  *
+C     *         *
+C     ***********
+ 
+      SUBROUTINE SET_NDFVAL(N)
+ 
+C     Set the value of NDFVAL in its common block when the diffuse
+C     flows come from a HECDSS.
+ 
+      IMPLICIT NONE
+      INTEGER N
+ 
+      INCLUDE 'arsize.prm'
+      INCLUDE 'tsfcom.cmn'
+C***********************************************************************
+      NDFVAL = N
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   SETCON
+     I                   (NEX, EMC, EXNODT,
+     O                    BDYNUM, RESNUM)
+ 
+C     + + + PURPOSE + + +
+C     Establish the values needed for checking the system
+C     wide conservation of water volume.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER BDYNUM, NEX, RESNUM
+      INTEGER EMC(MREMC), EXNODT(9,NEX)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NEX    - number of exterior nodes in the model
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     BDYNUM - number of boundary nodes in the model
+C     RESNUM - number of level-pool reservoirs
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'enothr.cmn'
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, J, K, N, NODE
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL IASORT
+C***********************************************************************
+C     USE RESVEC FOR WORK SPACE INITIALLY
+ 
+      DO 100 J=1,NEX
+ 
+C       NODES APPEAR AT MOST ONCE IN CODE 2.  TO BE CONNECTED TO THE
+C       SYSTEM A NODE MUST APPEAR IN CODE 2, OTHERWISE THE NODE
+C       IS A BOUNDARY NODE.
+        RESVEC(J) = 1
+ 100  CONTINUE
+ 
+C     START LOOP OVER ENTRIES IN NETWORK-MATRIX CONTROL
+C     DELETE ALL NODES OCCURING IN THE NODE LISTS FOR CODE 2.
+C     ONLY ONE INFLOW NODE WILL BE ALLOWED FOR A RESERVOIR.
+C     IF IT DOES NOT APPEAR IN CODE 2 IT IS A BOUNDARY NODE.
+      J = EMC(1)
+ 1000   CONTINUE
+        CODE = EMC(J)
+        IF(CODE.EQ.-1) GOTO 2000
+        GOTO(1500,2,1500,1500, 500,1500,1500,1500,1500,1500, 1500,
+     A       1500, 1500, 1500,1500),CODE
+         WRITE(STD6,*) ' *BUG:15* INVALID EMC CODE IN SETCON. CODE=',
+     A               CODE
+         STOP 'Abnormal stop: errors found.'
+ 
+ 2        CONTINUE
+ 
+            N = EMC(J+1)
+            DO 200 K=1,N
+              NODE = ABS(EMC(J+1+K))
+              RESVEC(NODE) = 0
+ 200          CONTINUE
+            J = J + EMC(J+1)
+            GOTO 1500
+ 
+ 500      CONTINUE
+            GOTO (10, 20, 30, 40, 50, 60, 70, 80, 90), EMC(J+1)
+            WRITE(STD6,*) ' *BUG:40* INVALID CODE 5 TYPE IN SETCON.',
+     A       ' TYPE=', EMC(J+1)
+            STOP 'Abnormal stop: errors found.'
+ 10         CONTINUE
+              J = J + CD5TY1
+              GOTO 1500
+ 20         CONTINUE
+              J = J + CD5TY2
+              GOTO 1500
+ 30         CONTINUE
+              J = J + CD5TY3
+              GOTO 1500
+ 40         CONTINUE
+              J = J + CD5TY4
+              GOTO 1500
+ 50         CONTINUE
+              J = J + CD5TY5
+              GOTO 1500
+ 60         CONTINUE
+              J = J + 1 + ABS(EMC(J+6))*CD5TY6
+              GOTO 1500
+ 70         CONTINUE
+              J = J + CD5TY7
+              GOTO 1500
+ 80         CONTINUE
+              J = J + CD5TY8
+              GOTO 1500
+ 90         CONTINUE
+              J = J + CD5TY9
+              GOTO 1500
+ 
+ 1500     CONTINUE
+            J = J+EMC(CODE+1)
+            GOTO 1000
+ 
+ 2000 CONTINUE
+ 
+C     ESTABLISH LIST OF NODES ON THE BOUNDARY OF THE SYSTEM
+ 
+C      WRITE(STD6,*) ' LIST OF BOUNDARY NODES'
+C      WRITE(STD6,'(A)') ' NUM NODE'
+      BDYNUM = 0
+      DO 2100 J=1,NEX
+        IF(RESVEC(J).GT.0) THEN
+          BDYNUM = BDYNUM + 1
+          BDYVEC(BDYNUM) = J
+C          WRITE(STD6,'(I5,1X,A4)') BDYNUM, GETUSN(J)
+        ENDIF
+ 2100 CONTINUE
+ 
+ 
+ 
+C     ESTABLISH CORRECT VALUES IN RESVEC
+ 
+      RESNUM = 0
+      DO 2200 J=1,NEX
+        IF(EXNODT(3,J).GE.0) GOTO 2200
+          RESNUM = RESNUM+1
+          RESVEC(RESNUM) = J
+ 2200   CONTINUE
+ 
+C     SORT RESERVOIR NODE LIST INTO ASCENDING ORDER
+ 
+      IF(RESNUM.GT.0) CALL IASORT
+     I                           (RESNUM,
+     M                            RESVEC)
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   SFPSBM
+     I                   (STDOUT, USNB, FN, LN, DN, UEXN, SFAC, GRAV,
+     I                    EPSB, YD, MAXIT, ZI, dz_for_output,
+     O                    EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Compute steady-flow water-surface profile in a branch.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER DN, EFLAG, FN, LN, STDOUT, MAXIT, UEXN, USNB
+      REAL EPSB, GRAV, SFAC, YD, ZI, dz_for_output
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     USNB   - user branch number
+C     FN     - first node on the branch
+C     LN     - last node on the branch
+C     DN     - downstream user node number
+C     UEXN   - upstream exterior node
+C     SFAC   - conversion factor from user stations to internal stations
+C     GRAV   - value of acceleration due to gravity
+C     EPSB   - convergence limit for steady flow computations
+C     YD     - depth at downstream section
+C     MAXIT  - maximum number of interations
+C     ZI     - inertia factor
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'bnothr.cmn'
+      INCLUDE 'enelem.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADRS, ID, IFLAG, IT, ITA, ITAB, K, LN1, NAD, ND, NN, NTAB
+      REAL AL, AM, AR, BL, BR, CK, D, DBL, DBR, DEM, DG, DIV, DKHL, DKL,
+     A     DKR, DTL, DTR, DVM, DX, DY, DZ, ELEV, F, FAC, KHL, KL, KM,
+     B     KR, QL, QM, QR, RES, SFM, SGNDV, ST, TL, TR, VL, VR, WX, XL,
+     C     XR, YL, YM, YR, YTA, ZL, ZR, zout
+      CHARACTER CY*7, CQ*8, TABID*16
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL NAMES + + +
+      INTEGER GETTBN
+      CHARACTER GET_TABID*16
+      EXTERNAL LKTAB, XLKT20, VAR_DECIMAL, GET_TABID, GETTBN
+ 
+C     + + + OUTPUT FORMATS + + +
+ 2110 FORMAT(/,' *ERR:94* Downstream depth missing ',
+     A     'for branch',I5)
+ 2130 FORMAT(/,' *ERR:95* Maximum iterations exceeded for ',
+     A     'Backwater Analysis')
+ 2140 FORMAT(/,' Backwater Analysis Debug: Branch',I5,
+     A' NODE',I7 /,4X,'IT',11X,'Y3',11X,'YL',10X,'RES',11X,'DG',
+     B       10X,'DIV')
+ 2150 FORMAT(1X,I5,5(1PE13.5))
+14000 FORMAT(1X,F8.0,I3,A7,A8,F8.1,F7.1,F7.3,F7.1,
+     A       F9.3,1PE9.1,0PF4.1,1X,A)
+14100 FORMAT(1X,F8.1,I3,A7,A8,F8.1,F7.1,F7.3,F7.1,
+     A       F9.3,1PE9.1,0PF4.1,1X,A)
+14200 FORMAT(1X,F8.2,I3,A7,A8,F8.1,F7.1,F7.3,F7.1,
+     A       F9.3,1PE9.1,0PF4.1,1X,A)
+14300 FORMAT(1X,F8.3,I3,A7,A8,F8.1,F7.1,F7.3,F7.1,
+     A       F9.3,1PE9.1,0PF4.1,1X,A)
+14400 FORMAT(1X,F8.4,I3,A7,A8,F8.1,F7.1,F7.3,F7.1,
+     A       F9.3,1PE9.1,0PF4.1,1X,A)
+C***********************************************************************
+C     Compute the format selection index
+      ID = NINT( LOG10(SFAC))
+
+ 
+      YR = YD
+      ADRS = NSEC(LN)
+      TABID = GET_TABID(GETTBN(ADRS))
+      XR = XVEC(LN)
+      ZR = ZVEC(LN)
+      IF(YR.LE.0) THEN
+        WRITE(STDOUT,2110) USNB
+        EFLAG =  1
+        RETURN
+      ENDIF
+      QR =  Q1(LN)
+      Q2(LN) =  QR
+      Y1(LN) =  YR
+ 
+      CALL XLKT20
+     I           (ADRS,
+     M            YR,
+     O            AR, TR, DTR, KR, DKR, BR, DBR)
+ 
+      Y1(LN) = YR
+      Y2(LN) = YR
+      A1(LN) = AR
+      A2(LN) = AR
+      VR = QR/AR
+      T1(LN) = TR
+      T2(LN) = TR
+      K1(LN) = KR
+      K2(LN) = KR
+      B1(LN) = BR
+      B2(LN) = BR
+      ELEV =  YR + ZR
+      IT =  0
+      DX = 0.0
+      DZ = 0.0
+      ST = XR/SFAC
+      F = QR**2*TR/(GRAV*AR**3)
+      D = 0.0
+      CALL VAR_DECIMAL(YR,
+     O                   CY)
+      CALL VAR_DECIMAL(QR,
+     O                   CQ)
+
+      zout = elev + dz_for_output
+      SELECT CASE(ID)
+        CASE(0)
+          WRITE(STDOUT,14000) ST, IT, CY, CQ, AR, TR,
+     A                     DZ, DX, zout, D, F, TABID
+        CASE(1)
+          WRITE(STDOUT,14100) ST, IT, CY, CQ, AR, TR,
+     A                     DZ, DX, zout, D, F, TABID
+        CASE(2)
+          WRITE(STDOUT,14200) ST, IT, CY, CQ, AR, TR,
+     A                     DZ, DX, zout, D, F, TABID
+        CASE(3)
+          WRITE(STDOUT,14300) ST, IT, CY, CQ, AR, TR,
+     A                     DZ, DX, zout, D, F, TABID
+        CASE DEFAULT
+          WRITE(STDOUT,14400) ST, IT, CY, CQ, AR, TR,
+     A                     DZ, DX, zout, D, F, TABID
+      END SELECT
+
+ 
+C     SETUP FOR ESTIMATE OF UPSTREAM DEPTH
+ 
+      ND =  LN
+      LN1 = LN-1
+ 
+C     INTERIOR LOOP FOR BRANCH
+ 
+      DO 150 NAD=FN,LN1
+        K = ND
+        ND = ND - 1
+        NN = DN - NAD + FN - 1
+        ADRS = NSEC(ND)
+        TABID = GET_TABID(GETTBN(ADRS))
+        ITAB = HLTAB(K)
+        XL = XVEC(ND)
+        ZL = ZVEC(ND)
+        DX = ABS(XL-XR)
+        DXVEC(K) =  DX
+        DZ = ZR - ZL
+        DZVEC(K) =  DZ
+        IFLAG = 0
+ 
+C       ESTIMATE DEPTH AT NEXT UPSTREAM NODE
+ 
+ 60     CONTINUE
+          FAC = 1.0
+          IF(IFLAG.EQ.1) WRITE(STDOUT,2140) USNB, NN
+          YL = YR
+          QL = Q1(ND)
+          Q2(ND) = QL
+          IT = 1
+ 
+C         START ITERATIVE LOOP FOR BACKWATER
+ 
+ 70       CONTINUE
+            CALL XLKT20
+     I                 (ADRS,
+     M                  YL,
+     O                  AL, TL, DTL, KL, DKL, BL, DBL)
+ 
+C           COMPUTE RESIDUAL FOR MOMENTUM EQUATION
+ 
+C           LOOKUP POINT VELOCITY-HEAD LOSS COEF.
+ 
+            IF(ITAB.GT.0) THEN
+              YM = 0.5*(YL + YR)
+              CALL LKTAB
+     I                  (ITAB, YM, 0,
+     O                   KHL, NTAB, DKHL)
+            ELSE
+              KHL = 0.0
+              DKHL = 0.0
+            ENDIF
+            VL = QL/AL
+            QM = QL + 0.5*(QR - QL)
+C           SELECT NEW VALUE OF WX.
+            KM = 0.5*(KL + KR)
+            IF(GEQOPT.GE.1) THEN
+              IF(QM.GE.0.0) THEN
+C               FLOW IS FROM LEFT TO RIGHT. UPSTREAM END IS ON LEFT.
+                IF(DKR*(-(YR - YL) - DZ) - KM.GE.0.0) THEN
+C                 SHIFT TO UPSTREAM CONVEYANCE.
+                  WX = 0.4*KL/(DKR*(-(YR - YL) - DZ) - 0.5*(KR - KL))
+                  KM = KL +WX*(KR - KL)
+                ELSE
+                  WX = 0.5
+                ENDIF
+              ELSE
+C               FLOW IS FROM RIGHT TO LEFT. UPSTREAM END IS ON RIGHT.
+                IF(DKL*(YR - YL + DZ) - KM.GE.0.0) THEN
+C                 SHIFT TO UPSTREAM CONVEYANCE
+                  WX = 1.0
+                  KM = KR
+                ELSE
+                  WX = 0.5
+                ENDIF
+              ENDIF
+              WXVEC(K) = WX
+            ELSE
+              WX = 0.5
+            ENDIF
+            DVM = VR - VL
+            SGNDV = 1.
+            CK = KA(K)
+            IF(DVM.LE.0.0) THEN
+              SGNDV = -1.
+              CK = KD(K)
+              DVM = ABS(DVM)
+            ENDIF
+            AM = AL + 0.5*(AR - AL)
+ 
+            DEM = YR - YL + DZ
+            SFM = QM*ABS(QM)/KM**2
+            DIV = ZI*BR*QR**2/AR + GRAV*AM*(YR + DX*SFM)
+            RES = ZI*(BR*QR**2/AR - BL*QL*VL) + GRAV*AM*(DEM + DX*SFM) +
+     A           CK*DVM*QM + 0.5*KHL*QM*ABS(QM)/AM
+            DG = ZI*(VL**2*(BL*TL - AL*DBL)) + GRAV*(0.5*TL*
+     A           (DEM + DX*SFM) - AM*(1. + 2.*(1.- WX)*DX*SFM*DKL/KM))
+     B           + CK*QM*SGNDV*QL*TL/AL**2
+     C           + 0.25*QM*ABS(QM)*(DKHL - KHL*TL/AM)/AM
+ 
+            IF(DG.GE.0.0) THEN
+C             SEARCH FOR YL WHICH YIELDS DG < 0.
+ 
+              YTA = YL*1.05
+              FAC = 0.5*FAC
+              IT = IT + 1
+              ITA = -IT
+              IF(IFLAG.EQ.1) WRITE(STDOUT,2150) ITA, YTA, YL, RES, DG, 
+     A                                          DIV
+              YL = YTA
+              IF(IT.GT.MAXIT) THEN
+                WRITE(STDOUT,2130)
+                EFLAG = 1
+                IF(IFLAG.EQ.1) RETURN
+                IFLAG = 1
+                GOTO 60
+              ENDIF
+              GOTO 70
+            ENDIF
+ 
+C           CORRECT THE DEPTH VALUE
+ 
+            DY =  FAC*RES/DG
+            IF(ABS(RES/DIV).LE.EPSB.OR.ABS(DY/YL).LE.EPSB) GOTO 80
+            IF(IT.GT.MAXIT) THEN
+              WRITE(STDOUT,2130)
+              EFLAG = 1
+              IF(IFLAG.EQ.1) RETURN
+              IFLAG = 1
+ 
+C             REPEAT RUN WITH DETAILED OUTPUT
+ 
+             GOTO 60
+            ENDIF
+ 
+          YTA =  YL - DY
+          IF(IFLAG.EQ.1) WRITE(STDOUT,2150) IT, YTA, YL, RES, DG, DIV
+          IF(YTA.LE.0.) YTA =  0.5*YL
+          YL =  YTA
+          IT =  IT+1
+          GOTO 70
+ 
+C       CONVERGENCE O.K.
+C       ASSIGN VALUES TO VECTORS
+ 80     CONTINUE
+        Y1(ND) = YL
+        Y2(ND) = YL
+        A1(ND) = AL
+        A2(ND) = AL
+        T1(ND) = TL
+        T2(ND) = TL
+        K1(ND) = KL
+        K2(ND) = KL
+        B1(ND) = BL
+        B2(ND) = BL
+ 
+ 
+C       TRANSFER VALUES
+        QR = QL
+        YR = YL
+        AR = AL
+        TR = TL
+        ZR = ZL
+        XR = XL
+        VR = VL
+        KR = KL
+        DKR = DKL
+        BR = BL
+        ELEV = ZL + YL
+ 
+C       OUTPUT
+ 
+        ST = XL/SFAC
+        F = QL**2*TL/(GRAV*AL**3)
+        CALL VAR_DECIMAL(YL,
+     O                     CY)
+        CALL VAR_DECIMAL(QL,
+     O                     CQ)
+        zout = elev + dz_for_output
+        SELECT CASE(ID)
+          CASE(0)
+            WRITE(STDOUT,14000) ST, IT, CY, CQ, AL, TL,
+     A                       DZ, DX, zout, RES, F, TABID
+          CASE(1)
+            WRITE(STDOUT,14100) ST, IT, CY, CQ, AL, TL,
+     A                       DZ, DX, zout, RES, F, TABID
+          CASE(2)
+            WRITE(STDOUT,14200) ST, IT, CY, CQ, AL, TL,
+     A                       DZ, DX, zout, RES, F, TABID
+          CASE(3)
+            WRITE(STDOUT,14300) ST, IT, CY, CQ, AL, TL,
+     A                       DZ, DX, zout, RES, F, TABID
+          CASE DEFAULT
+            WRITE(STDOUT,14400) ST, IT, CY, CQ, AL, TL,
+     A                       DZ, DX, zout, RES, F, TABID
+        END SELECT
+ 
+ 150  CONTINUE
+ 
+C     Set the depth in the exterior node at the upstream end of
+C     this branch.
+      YE1(UEXN) = YL
+ 
+      DXVEC(ND) =  0.
+      DZVEC(ND) =  0.
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   STEXAG
+     I                   (NBRA, NEX, BRPT, EXNODT)
+ 
+C     + + + PURPOSE + + +
+C     Set the extreme argument values.  For a branch this is the
+C     maximum argument value because the minimum is always zero.
+C     For a reservoir node there is both the maximum and the minimum.
+C     For remaining free nodes set the max and the minimum by
+C     convention.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER NBRA, NEX
+      INTEGER BRPT(8,NBRA), EXNODT(9,NEX)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NBRA   - number of branches in the model
+C     NEX    - number of exterior nodes in the model
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'bnothr.cmn'
+      INCLUDE 'enothr.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I, J, JE, JS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      REAL FMNARG, FMXARG
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL FMNARG, FMXARG
+C***********************************************************************
+C     FIND THE MAXIMUM VALID DEPTH VALUE FOR NODES ON BRANCHES
+ 
+      DO 200 I=1,NBRA
+        JS = BRPT(3,I)
+        JE = BRPT(4,I)
+        DO 100 J=JS,JE
+          BNMAXY(J) = FMXARG(NSEC(J))
+ 100    CONTINUE
+        ENMAXY(BRPT(5,I)) = BNMAXY(JS)
+        ENMAXY(BRPT(6,I)) = BNMAXY(JE)
+        ENMINY(BRPT(5,I)) = 0.0
+        ENMINY(BRPT(6,I)) = 0.0
+ 200  CONTINUE
+ 
+C     FIND THE MAXIMUM AND MINIMUM VALID  VALUE FOR RESERVOIR NODES AND
+C     SET NON-RESERVOIR FREE NODES TO LARGE POSITIVE VALUE
+ 
+      DO 300 I=1,NEX
+        IF(EXNODT(3,I).EQ.-1) THEN
+C         RESERVOIR NODE
+            ENMAXY(I) = FMXARG(EXNODT(4,I))
+            ENMINY(I) = FMNARG(EXNODT(4,I))
+        ELSEIF(EXNODT(3,I).EQ.0) THEN
+C         NON-RESERVOIR FREE NODE. SET TO MAX ELEVATION ON EARTH'S
+C         SURFACE IN FEET.
+          ENMAXY(I) = 35000.
+ 
+C         SET THE MINIMUM TO ZERO
+          ENMINY(I) = 0.0
+        ENDIF
+ 300  CONTINUE
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   STINT
+     I                  (TSFDSN, STDOUT, NBRA, NEX, BRPT, EXNODT, EFLAG,
+     I                  EPSB, GRAV, IN, MAXIT, NBN, OUTPUT, JTIME, SFAC,
+     I                   NBLK, OPBLK, BWFDSN, FFFDSN, DIFFUS, UNDERF,
+     I                   IFRZ, DT, GETDSN, putdsn, UJTIME,
+     I                   EPT, BNODE, QEPS, dz_for_output,
+     M                   EMC, dtsf_rec,
+     O                   WT, SITER)
+ 
+C     + + + PURPOSE + + +
+C     Do static(one per run) initializations.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER BNODE, BWFDSN, EFLAG, EPT, FFFDSN, GETDSN, IFRZ, IN, 
+     A        STDOUT, MAXIT, NBLK, NBN, NBRA, NEX, OUTPUT, TSFDSN,
+     b        dtsf_rec, putdsn
+      INTEGER BRPT(8,NBRA), EMC(EPT), EXNODT(9,NEX),
+     A        OPBLK(MNBLK)
+      REAL EPSB, GRAV, QEPS, SFAC, SITER, WT, dz_for_output
+      REAL*8 DT, UJTIME, JTIME
+      CHARACTER DIFFUS*4, UNDERF*4
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     TSFDSN - unit number for the time series file
+C     STDOUT   - Fortran unit number for user output and messages
+C     NBRA   - number of branches in the model
+C     NEX    - number of exterior nodes in the model
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+C     EPSB   - convergence limit for steady flow computations
+C     GRAV   - value of acceleration due to gravity
+C     IN     - unit number for the user input file
+C     MAXIT  - maximum number of iterations at a node for finding
+C               steady flow profile
+C     NBN    - total number on nodes on branches in the model
+C     OUTPUT - output level for diagnostic work
+C     JTIME   - julian time in days
+C     SFAC   - conversion factor from user stations to internal stations
+C     NBLK   - number of operation blocks
+C     OPBLK  - pointer into the function table storage(FTAB/ITAB) for
+C               each operation block.
+C     BWFDSN - unit number for the initial conditions file
+C     FFFDSN - unit number for output of the flood frequency file
+C     DIFFUS - indicator if tributary area is present.  YES if so
+C     UNDERF - underflow flag
+C     IFRZ   - count of frozen time steps
+C     DT     - time step in seconds
+C     GETDSN - unit number for reading initial conditions
+C     UJTIME - modified julian time for the start of the time period
+C              of simulation.
+C     EPT    - current length of EMC(*)
+C     BNODE  - boundary node number at which to start defining the
+C               coefficient matrix
+C
+C     QEPS   - value of flow to prevent zero divide when computing
+C               relative correction
+C     EMC    - vector containing coded form of the Matrix Control Input
+c     dtsf_rec - record number for the single dtsf file used when DIFFUS='YES'
+C     WT     - weight factor for approximating time integrals
+C     SITER  - weighted sum of iterations to convergence
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'rdcom.cmn'
+      INCLUDE 'wrcom.cmn'
+      INCLUDE 'namcom.cmn'
+      INCLUDE 'ts_mngt.cmn'
+ 
+C     + + + SAVED VALUES + + +
+      CHARACTER OFF*4, YES*4
+      SAVE OFF, YES
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER IOFLAG, record_len, bwrec
+      LOGICAL THERE
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL BCKWTR, BFINIT, BWPUT, CHKIC, GETIC, OPINIT, RDINIT,
+     A         READOC, SETSTA, WROPEN, FREE_UNIT
+ 
+C     + + + DATA INITIALIZATIONS + + +
+      DATA YES/'YES'/, OFF/'OFF'/
+C***********************************************************************
+C     SET ERROR HANDLING FOR UNDERFLOW PROBLEMS
+ 
+      IF(UNDERF.NE.OFF) GOTO 4
+ 4    CONTINUE
+ 
+ 
+C     INITIALIZE ANY INPUT FILES. MUST BE DONE HERE TO AVOID CONFLICT
+C     IF GETDSN > 0.
+ 
+      IF(NUM_TS_F.GT.0.OR.NUM_TS.GT.0) THEN
+        CALL RDINIT
+     I             (STDOUT)
+      ENDIF
+ 
+      IF(GETDSN.GT.0) THEN
+C       READ THE INITIAL CONDITIONS FROM A FILE.
+        CALL GETIC
+     I            (STDOUT, GETDSN, GETNAM, NBRA, NBN, NEX, UJTIME, NBLK,
+     I             OPBLK, BNODE,
+     O             WT, SITER, DT, EXNODT)
+ 
+C       CHECK THE INITIAL CONDITION FOR AGREEMENT WITH THE BOTTOM
+C       PROFILE AND THE STATIONING.
+ 
+        CALL CHKIC
+     I            (STDOUT, NBRA, BRPT)
+ 
+        CALL SETSTA
+     I             (STDOUT, NEX, GRAV, EXNODT, EPT,
+     M              EMC)
+ 
+      ELSE
+C       PERFORM BACKWATER CALCS FOR INITIAL CONDITIONS
+ 
+        CALL BCKWTR
+     I             (EPSB, GRAV, IN, STDOUT, MAXIT, NBRA, NBN, NEX,   
+     I              OUTPUT, JTIME, SFAC, BRPT, EMC, QEPS, EPT, 
+     i              dz_for_output,
+     M              EXNODT,
+     O              EFLAG)
+ 
+        IF(EFLAG.NE.0) STOP 'Abnormal stop: errors found.'
+ 
+ 
+C       SET THE STATES IN EMC WHICH DEPEND ON INITIAL CONDITIONS
+ 
+         CALL SETSTA
+     I              (STDOUT, NEX, GRAV, EXNODT, EPT,
+     M               EMC)
+      ENDIF
+ 
+C     Close the user input file
+      CALL FREE_UNIT(STDOUT, IN)
+
+      IF(NBLK.GT.0) THEN
+        CALL OPINIT(NBLK, OPBLK)
+        CALL SET_INITIAL_OPER_BLK(NBLK, OPBLK, JTIME, EPT,
+     M                            EMC)
+      ENDIF 
+      IF(DIFFUS.EQ.YES) THEN
+        INQUIRE(FILE=TSFNAM, EXIST=THERE)
+        IF(THERE) THEN
+          OPEN(TSFDSN, FILE=TSFNAM, FORM='UNFORMATTED', STATUS='OLD',
+     a         access='direct', recl=4)
+          dtsf_rec = 1
+          read(tsfdsn,rec=1) record_len
+          close(tsfdsn)
+          OPEN(TSFDSN, FILE=TSFNAM, FORM='UNFORMATTED', STATUS='OLD',
+     a         access='direct', recl=record_len)
+c         update record pointer to point to second record
+          dtsf_rec = dtsf_rec + 1
+        ELSE
+          WRITE(STDOUT,*) ' FILE NAMED:', TSFNAM,' NOT FOUND.'
+          WRITE(STDOUT,*) ' CHECK SPELLING OF TSF FILE.'
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+        IF(BWFNAM.EQ.' ') THEN
+          OPEN(BWFDSN, FILE='BWFD', FORM='UNFORMATTED', 
+     a        STATUS='UNKNOWN', access='direct', recl=8)
+        ELSE
+          OPEN(BWFDSN, FILE=BWFNAM, FORM='UNFORMATTED',
+     A            STATUS='UNKNOWN', IOSTAT=IOFLAG,
+     b           access='direct', recl=8)
+ 
+          IF(IOFLAG.NE.0) THEN
+            WRITE(STDOUT,*) ' PROBLEM IN OPENING FILE: ',BWFNAM
+            WRITE(STDOUT,*) ' CHECK PATH FOR BACKWATER FILE.'
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+ 
+        ENDIF
+        IF(FFFDSN.GT.0) THEN
+          IF(FFFNAM.EQ.' ')  THEN
+            OPEN(FFFDSN, FILE='FFFD', FORM='FORMATTED', STATUS='NEW')
+          ELSE
+            OPEN(FFFDSN, FILE=FFFNAM, FORM='FORMATTED',
+     A                    STATUS='UNKNOWN', IOSTAT=IOFLAG)
+ 
+            IF(IOFLAG.NE.0) THEN
+              WRITE(STDOUT,*) ' PROBLEM IN OPENING FILE: ',FFFNAM
+              WRITE(STDOUT,*) ' IOFLAG=',IOFLAG
+              WRITE(STDOUT,*) ' CHECK PATH FOR EXTREME VALUE FILE.'
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+ 
+          ENDIF
+        ENDIF
+        CALL READOC
+        CALL BFINIT(DT)
+      ELSEIF(DIFFUS.EQ.'DSS') THEN
+C       Initialize the buffer for unit-area runoff intensities when
+C       a HECDSS is used as the source.
+        CALL BFINIT_DSS
+      ENDIF
+ 
+C     INITIALIZE ANY OUTPUT FILES
+ 
+      IF(NFOUT.GT.0) THEN
+        CALL WROPEN(
+     i              STDOUT, nbra, BRPT)
+      ENDIF
+ 
+C     SAVE STATE OF THE SYSTEM.
+      IF(IFRZ.EQ.0.AND.DIFFUS.EQ.YES) THEN
+        if(getdsn+putdsn == 0)  then
+          bwrec = 1
+          CALL BWPUT
+     I              (BWFDSN, WT, NBRA, NBN, NEX, NBLK, OPBLK,
+     m               bwrec)
+          WRITE(STDOUT,*) ' BWF BEING WRITTEN. STINT'
+        endif
+      ENDIF
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   TABRC
+     I                  (STDOUT)
+ 
+C     + + + PURPOSE + + +
+C     Recompute values in tables.  Two cases:  cross section tables
+C     and tables of type 3 using numerical integration via the trapezoidal
+C     rule.  In both cases the computed values replace the ones read
+C     with the tables.
+ 
+C     Recompute all top-width dependent values using double precision
+C     replacing the values read from the tables.  This forces
+C     maximum consistency and takes into account the truncation of
+C     the top width when stored in the table.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER STDOUT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'offcom.cmn'
+ 
+C     + + + SAVED VALUES + + +
+      INTEGER CXTYPE(55)
+      SAVE CXTYPE
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADRS, HA, I, J, LA, TYPE, XOFF
+      REAL YL, YR
+      REAL*8 AL, AR, H, HH, JL, JR, TL, TR
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS, MAX
+
+C     Called program units
+      CHARACTER*16 GET_TABID
+ 
+      EXTERNAL GET_TABID
+C     + + + DATA INITIALIZATIONS + + +
+      DATA CXTYPE/19*0,6*1,30*0/
+ 
+C     + + + OUTPUT FORMATS + + +
+ 52   FORMAT(' *BUG:XXX* Internal tab#=',I10,' EXPECTED IN TABRC BUT ',
+     A       I10,' FOUND.')
+ 54   FORMAT(' *ERR:63* X-sect table area relative error > .02',
+     A                   ' TabId=',A,' Depth=',F10.4)
+ 56   FORMAT(' *WRN:46* Type 3 table integral relative error > .02',
+     A        /,11X,' TABID=',A,' argument=',F12.4,
+     B              '.  Computed integral used.')
+C***********************************************************************
+C     SCAN THE TABLE POINTER FOR CROSS SECTION TABLES
+C     AND TYPE = 3 TABLES.
+ 
+      DO 500 I=1,MFTNUM
+        ADRS = FTPNT(I)
+        IF(ADRS.GT.0) THEN
+          TYPE = ITAB(ADRS+2)
+          IF(CXTYPE(TYPE).EQ.1) THEN
+            XOFF = OFFVEC(TYPE)
+            IF(ITAB(ADRS+1).NE.I) THEN
+              WRITE(STDOUT,52) I, ITAB(ADRS+1)
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+C           FOUND A CROSS SECTION TABLE
+C           EXTRACT THE CONTROLLING ADDRESSES
+ 
+            LA = ADRS + XTIOFF
+            HA = ITAB(ADRS)
+ 
+            GOTO(120, 121, 121, 120, 121, 121) TYPE - 19
+ 
+              WRITE(STDOUT,*) ' *BUG:XXX INVALID TYPE IN TABRC.'
+              STOP 'Abnormal stop: errors found.'
+ 
+ 120        CONTINUE
+C             TABLES THAT DO NOT CONTAIN THE FIRST MOMENT OF AREA
+ 
+C             GET THE FIRST ENTRIES IN THE TABLE.  THESE WILL BE
+C             ZERO BUT BE EXPLICIT TO COVER THE GENERAL CASE
+ 
+              YL = FTAB(LA)
+              TL = FTAB(LA+1)
+              AL = FTAB(LA+2)
+ 
+              DO 300 J=LA+XOFF,HA,XOFF
+                YR = FTAB(J)
+                TR = FTAB(J+1)
+                H = YR - YL
+                HH = 0.5*H
+                AR = AL + HH*(TL + TR)
+ 
+                IF(ABS(AR - FTAB(J+2))/AR.GT.0.02.AND.
+     A                   AR.GT.0.1) THEN
+                  WRITE(STDOUT,54) GET_TABID(I), YR
+C                  EFLAG = 1
+                ENDIF
+ 
+                FTAB(J+2) = AR
+                YL = YR
+                TL = TR
+                AL = AR
+ 300          CONTINUE
+ 
+              GOTO 150
+ 
+ 121        CONTINUE
+C             TABLES THAT DO CONTAIN THE FIRST MOMENT OF AREA
+ 
+C             GET THE FIRST ENTRIES IN THE TABLE.  THESE WILL BE
+C             ZERO BUT BE EXPLICIT TO COVER THE GENERAL CASE
+ 
+              YL = FTAB(LA)
+              TL = FTAB(LA+1)
+              AL = FTAB(LA+2)
+              JL = FTAB(LA+5)
+ 
+              DO 400 J=LA+XOFF,HA,XOFF
+                YR = FTAB(J)
+                TR = FTAB(J+1)
+                H = YR - YL
+                HH = 0.5*H
+                AR = AL + HH*(TL + TR)
+                JR = JL + HH*(AR + AL - H*(TR - TL)/6.D0)
+ 
+                IF(ABS(AR - FTAB(J+2))/AR.GT.0.02.AND.
+     A                   AR.GT.0.1) THEN
+                  WRITE(STDOUT,54) GET_TABID(I), YR
+C                  EFLAG = 1
+                ENDIF
+ 
+                FTAB(J+2) = AR
+                FTAB(J+5) = JR
+                YL = YR
+                TL = TR
+                AL = AR
+                JL = JR
+ 400          CONTINUE
+              GOTO 150
+ 
+ 150        CONTINUE
+          ELSEIF(TYPE.EQ.3) THEN
+C           RECOMPUTE THE VALUES WHICH DEPEND ON THE DERIVATIVE.
+ 
+            IF(ITAB(ADRS+1).NE.I) THEN
+              WRITE(STDOUT,52) GET_TABID(I), GET_TABID(ITAB(ADRS+1))
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+ 
+            LA = ADRS + OFF234
+            HA = ITAB(ADRS)
+ 
+            XOFF = 3
+ 
+C           GET THE FIRST ENTRIES IN THE TABLE.  THE VALUE OF THE
+C           INTEGRAND AND THE INITIAL VALUE OF THE INTEGRAL ARE
+C           TAKEN AS CORRECT.
+ 
+            YL = FTAB(LA)
+            TL = FTAB(LA+2)
+            AL = FTAB(LA+1)
+ 
+            DO 410 J=LA+XOFF,HA,XOFF
+              YR = FTAB(J)
+              TR = FTAB(J+2)
+              H = YR - YL
+              AR = AL + .5*H*(TL + TR)
+ 
+              IF(ABS(AR - FTAB(J+1))/MAX(ABS(AR),.1D0).GT.0.02.AND.
+     A                 AR.GT.0.1.AND.FTAB(J+1).NE.0.0) THEN
+                WRITE(STDOUT,56) GET_TABID(I), YR
+              ENDIF
+ 
+              FTAB(J+1) = AR
+              YL = YR
+              TL = TR
+              AL = AR
+ 410        CONTINUE
+          ENDIF
+ 
+        ENDIF
+ 500  CONTINUE
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   ADJ_CONVEY_IN_TABLE
+     I                                (STDOUT, ADRS, KADJ)
+ 
+C     + + + PURPOSE + + +
+C     Adjust the conveyance in the cross-section function table given
+C     by ITAB
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER STDOUT, ADRS
+      REAL KADJ
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     ADRS     - address of the cross-section function table
+C     KADJ     - factor on conveyance.
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'offcom.cmn'
+ 
+C     + + + SAVED VALUES + + +
+      INTEGER CXTYPE(55)
+      SAVE CXTYPE
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER doff, HA, J, LA, TYPE, XOFF
+      REAL FAC
+      CHARACTER NAME*16
+ 
+C     Called program units
+      CHARACTER*16 GET_STRING_FROM_FT
+ 
+      EXTERNAL GET_STRING_FROM_FT
+
+C     + + + DATA INITIALIZATIONS + + +
+      DATA CXTYPE/19*0,6*1,4*0,6*1,20*0/
+ 
+C     + + + OUTPUT FORMATS + + +
+50    FORMAT(/,' *BUG* Expected TABID= ',A,' to be cross section',
+     A         ' table in ADJ_CONVEY_IN_TABLE.')
+52    FORMAT('  Tabid= ',A16,' has its conveyance',
+     A       ' adjusted by factor=',F10.3)
+54    FORMAT('  Tabid= ',A16,' adjusted earlier.  Adjustment',
+     A       ' NOT made.  Check for duplicate table use.')
+C***********************************************************************
+      TYPE = ITAB(ADRS+2)
+      IF(CXTYPE(TYPE).EQ.1) THEN
+C       We have a cross section table.  Note that 
+C       conveyance is always stored at offset 3 at each
+C       depth level.   We also must have some indicator that a table
+C       has been adjusted.  It is possible to reuse tables and we
+C       must allow only one adjustment.  We will use the address of
+C       the last level accessed  to do this.  This address is set to the 
+C       first level in the table when the table is input or 
+C       is created by interpolation.  If we adjust the conveyance
+C       in the table, we will set this value to the second level 
+C       in the table.  Thus only tables that have the address to 
+C       the last level accessed point to the first level can 
+C       be adjusted. 
+
+        XOFF = OFFVEC(TYPE)
+C       EXTRACT THE CONTROLLING ADDRESSES
+ 
+        LA = ADRS + XTIOFF
+        HA = ITAB(ADRS)
+        doff = itab(adrs+21)
+        IF(ITAB(ADRS+3).EQ.LA) THEN
+C         We can adjust this table. 
+          FAC = SQRT(KADJ)
+          DO 300 J=LA,HA,XOFF
+            FTAB(J+3) = FAC*FTAB(J+3)
+            if(doff.gt.0) then
+c             adjust the derivative of the sqrt(conveyance)
+              ftab(j+doff) = fac*ftab(j+doff)
+            endif
+ 300      CONTINUE
+C         Change the address for last access to the 2nd level
+          ITAB(ADRS+3) = LA + XOFF
+          NAME = GET_STRING_FROM_FT(ADRS+16)
+          WRITE(STDOUT,52) NAME,  KADJ
+        ELSE
+          NAME = GET_STRING_FROM_FT(ADRS+16)
+          WRITE(STDOUT,54) NAME
+        ENDIF
+      ELSE
+        NAME = GET_STRING_FROM_FT(ADRS+16)
+        WRITE(STDOUT,50) NAME
+        STOP 'Abnormal stop.  Bug found.'
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE  ADJ_CONVEY
+     I                 (STDOUT, NBRA, NBN, BRPT, NSEC, KADJVEC,
+     M                  EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Scan the branch tables to find requests for adjustment of 
+C     conveyance and adjust the conveyance.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, STDOUT, NBN, NBRA
+      INTEGER BRPT(8,NBRA), NSEC(NBN)
+      REAL KADJVEC(NBN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     NBRA   - number of branches in the model
+C     NBN    - total number on nodes on branches in the model
+C               function table number
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     NSEC   - number and also address of cross section table at a node
+C               on a branch
+C     KADJVEC - conveyacne adjustment factor.
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER FN, IB, ADRS, LN, ND, OUTFLAG      
+
+      REAL KADJ
+ 
+C     + + + OUTPUT FORMATS + + +
+50    FORMAT(/,' Adjusting conveyance in the following tables:')
+  
+C***********************************************************************
+C     Clear the output flag to signal that the informational heading
+C     HAS NOT been output.
+      OUTFLAG = 0
+
+      DO 200 IB=1,NBRA
+        FN = BRPT(3,IB)
+        LN = BRPT(4,IB)
+ 
+        DO 100 ND=FN,LN
+          KADJ = KADJVEC(ND)
+          IF(KADJ.NE.1.0) THEN
+            IF(OUTFLAG.EQ.0) THEN
+C             Output the heading
+              WRITE(STDOUT,50) 
+              OUTFLAG = 1
+            ENDIF
+C           Adjust the conveyance for the current cross-section 
+C           function table. 
+            ADRS = NSEC(ND)
+            CALL ADJ_CONVEY_IN_TABLE(STDOUT, ADRS, KADJ)
+          ENDIF
+  100   CONTINUE
+  200 CONTINUE
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   WRINIT
+     I                   (JTIME)
+ 
+C     + + + PURPOSE + + +
+C     Write initial record for current time frame(segment).
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      REAL*8 JTIME
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     JTIME  - current modified julian time in the model
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'wrcom.cmn'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'enelem.cmn'
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+C     Create parameters for coding ACTION
+      INTEGER OUTA, OUTS, ADD, SUB, YES, NO, QUAD
+      PARAMETER (OUTA=1, OUTS=2, ADD=3, SUB=4, YES=5, NO=6, QUAD=7)
+
+      INTEGER I, IS_SUM_GOOD
+      REAL VAL
+      REAL*8 SUM 
+
+C     + + + OUTPUT FORMATS + + +
+ 1    FORMAT('0*BUG:XXX* INVALID FILE CODE=',I5,' IN WRINIT.')
+C***********************************************************************
+      CALL INITIALIZE_DSSOUT_JTIME(JTIME)
+      
+C     Set sum to no good
+      IS_SUM_GOOD = NO
+C     Note: We will process elevations as if they can be added and subtracted
+C     to keep the same pattern for all.  However, the addition and subtraction
+C     of elevations will not produce much of value.  But who knows there may 
+C     be an application that can be used- such as plotting the elevation 
+C     difference between two points! 
+
+      DO 500 I=1,NFOUT
+        IF(ACTOUT(I).NE.QUAD) THEN
+          IF(BRAOUT(I).GT.0) THEN
+            GOTO(10, 20), ICDOUT(I)/2
+              WRITE(STD6,1) ICDOUT(I)
+              STOP 'Abnormal stop: errors found.'
+ 
+ 10         CONTINUE
+C             NEW FORM OF POINT VALUE OUTPUT FOR ELEVATION
+              VAL = Y1(NODOUT(I)) + ZVEC(NODOUT(I))
+              GOTO 490
+ 20         CONTINUE
+C             NEW FORM OF POINT VALUE OUTPUT FOR FLOW RATE
+              VAL = Q1(NODOUT(I))
+              GOTO 490
+          ELSE
+            GOTO(100, 200), ICDOUT(I)/2
+              WRITE(STD6,1) ICDOUT(I)
+              STOP 'Abnormal stop: errors found.'
+ 100        CONTINUE
+C             NEW FORM OF POINT VALUE OUTPUT FOR ELEVATION
+ 
+              VAL = YE1(NODOUT(I)) + ZE(NODOUT(I))
+              GOTO 490
+ 200        CONTINUE
+C             NEW FORM OF POINT VALUE OUTPUT FOR FLOW RATE
+              VAL = QE1(NODOUT(I))
+              GOTO 490
+          ENDIF
+490       CONTINUE
+        ENDIF
+        IF(UNOUT(I).LT.1000) THEN
+C         Traditional connection file
+          IF(ACTOUT(I).EQ.ADD.OR.ACTOUT(I).EQ.OUTA) THEN
+            IF(IS_SUM_GOOD.EQ.NO) THEN
+C             Initialize SUM
+              SUM = DBLE(VAL) 
+              IS_SUM_GOOD = YES
+            ELSE
+              SUM = SUM + DBLE(VAL)
+            ENDIF
+          ELSEIF(ACTOUT(I).EQ.SUB.OR.ACTOUT(I).EQ.OUTS) THEN
+            IF(IS_SUM_GOOD.EQ.NO) THEN
+C             Initialize SUM
+              SUM = -DBLE(VAL) 
+              IS_SUM_GOOD = YES
+            ELSE
+              SUM = SUM - DBLE(VAL)
+            ENDIF
+          ENDIF
+          IF(ACTOUT(I).EQ.OUTA.OR.ACTOUT(I).EQ.OUTS) THEN 
+            VAL = SNGL(SUM)
+            WRITE(UNOUT(I), rec=wr_rec(i)) JTIME, VAL
+            wr_rec(i) = wr_rec(i) + 1
+            IS_SUM_GOOD = NO
+          ELSEIF(ACTOUT(I).EQ.QUAD) THEN
+C           Clear the running quadrature value
+            RUNQUAD(I) = 0.D0
+            
+C           Save the initial function value
+            OLDF(I) = SUM
+
+C           Write the initial value of zero
+            VAL = 0.0
+            WRITE(UNOUT(I), rec=wr_rec(i)) JTIME, VAL
+            wr_rec(i) = wr_rec(i) + 1
+          ENDIF
+        ELSE
+C         Output to a HECDSS dataset
+          CALL INITIALIZE_DSSOUT_BUFFER(DSS_BUFFER_COLUMN(I), VAL)
+        ENDIF
+ 
+ 500  CONTINUE
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   WROPEN(
+     i                    STDOUT, nbra, BRPT)
+ 
+C     + + + PURPOSE + + +
+C     Open the output files and write headers to each.
+ 
+      IMPLICIT NONE
+      INTEGER :: nbra, STDOUT, BRPT(8,NBRA)
+
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'wrcom.cmn'  
+      include 'datetime.cmn'
+      include 'svn.cmn'
+
+c     Called routines
+      integer :: GETUSB
+      character :: GETUSN*5
+
+      EXTERNAL GETUSB, GETUSN
+ 
+C     + + + LOCAL VARIABLES + + +
+      integer (kind=2) :: file_structure_version
+      INTEGER I, IOFLAG, j, n, record_length,  usr_bran_number
+      character :: what*1, unused*1, usr_nodeid*8, s72*72, c12*12
+C     ******************************FORMATS*****************************
+50    FORMAT(/,' *ERR:300* Cannot open file named:',/,5X,A,/,5X,
+     A        ' Check path for file used for time-series output.')
+52    FORMAT(' Writing header to PTSF:',A)
+54    format(/,'***BUG*** WROPEN: record count wrong at end of header')
+C***********************************************************************
+c     The standard header consists of the following as of version 10.40
+c     December 2006:
+c     Note: Fortran counts records from 1 and also character positions 
+c           from 1.  We do the same here. 
+c 
+c     Record     byte   Date            Contents
+c       #       range   type
+c     ------    -----  -----    ----------------------------------------------
+c       1        1:4   I*4      Record length. Currently 12 bytes
+c                5:6   I*2      File structure version
+c                7:7   C*1      Z-elevation vs. time. Q-flow vs. time
+c                8:8   C*1      Unused-currently set to a blank (space)
+c                9:12  I*4      Record number of the first time series point
+c                               in the file. 
+c       2        1:4   I*4      User branch number: if zero denotes that
+c                               user node id is an exterior node.
+c                5:12  C*8      User node id: if user branch number > 0
+c                                contains user node number on a branch,
+c                                else contains the exterior node id string
+c                                Unnnn, Dnnnn, or Fnnnn, where the number
+c                                of digits may range from 1 through 4.
+c       3:8      1:12  C*12      Up to 72 characters for the file name. 
+c                                No path info is stored.  If the name is
+c                                shorter, blanks are appended at the end.
+c                                If the name is longer, it is truncated!
+c        9       1:12  C*12      Name of program creating the file
+c   
+c       10       1:12  C*12      Version number/id of creating program
+c       
+c       11       1:12  C*12      Date string for the version of the creating program
+c 
+c       12       1:2   C*12      Date string for the run of the program creating the file
+c 
+c       13       1:12  C*12      hh.mm.ss.ttt  Time of run to nearest millisecond!
+c                                hh - 24-hour clock value of hour
+c                                mm - minute 
+c                                ss - seconds
+c                                ttt - millisconds. 
+c       
+c       14      1:12   c*12      Revision number of source code for FEQ
+c       15      1:4    I*4       Revision number for working files
+c               5:8    i*4       ==1 local working files are modified
+c                                ==0 local working files are fully committed to repository
+c               9:12   c*4       'work'
+      WRITE(STDOUT,*) ' '
+      record_length = 12
+      file_structure_version = 1
+      unused = ' '
+      DO 500 I=1,NFOUT
+c       Open each file and create the header record for it. 
+        IF(UNOUT(I).LT.1000.AND.UNOUT(I).GT.0) THEN
+          OPEN(UNOUT(I), FILE = NAMOUT(I), FORM = 'UNFORMATTED',
+     A       STATUS = 'UNKNOWN', IOSTAT=IOFLAG, access='direct',
+     b       recl=record_length)
+          IF(IOFLAG.NE.0) THEN
+            WRITE(STDOUT,50) NAMOUT(I)
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+          if(icdout(i) == 2) then
+            what = 'Z'
+          else
+             what = 'Q'
+          endif
+          write(unout(i),rec=wr_rec(i)) record_length, 
+     a       file_structure_version, what, unused,
+     b       DPTSF_REC_AT_FRST_TS_PNT 
+
+c         Point to the next open record for writing time-series data.
+          wr_rec(i) = wr_rec(i) + 1
+
+c         Now set the details used to describe the data to the
+c         user during review of the results. 
+          usr_bran_number = getusb(braout(i))
+          if(usr_bran_number == 0) then
+c           This is an exterior node id
+            usr_nodeid = getusn(nodout(i))
+          else
+c           This is a node number on a branch.  Make a char string.
+            write(usr_nodeid,'(i8)') 
+     a                nodout(i) + brpt(1,braout(i)) - brpt(3,braout(i)) 
+          endif
+
+          write(unout(i), rec=wr_rec(i)) usr_bran_number, usr_nodeid
+          wr_rec(i) = wr_rec(i) + 1
+
+c         Find the last path name divider (/ or \) in the name for the 
+c         file. 
+          n = len_trim(namout(i))
+          do j=n-1,1,-1
+            if(namout(i)(j:j) == '/' .or.
+     a         namout(i)(j:j) == '\') then
+                exit
+            endif
+          end do
+c         Drop through is valid.  It means that no part of the path
+c         name was given.  The name beyond 72 chars in length is 
+c         discarded.  User has to be terse in selecting names!
+          s72 = namout(i)(j+1:n)
+          do j=0,5
+            write(unout(i), rec=wr_rec(i)) s72(j*12+1:12*(j+1))
+            wr_rec(i) = wr_rec(i) + 1
+          end do
+
+          write(unout(i),rec=wr_rec(i))  'Feq', '         '
+          wr_rec(i) = wr_rec(i) + 1
+
+c         Parse the version/run date/time string and store parts
+c         in the header to identify the version, version date, 
+c         and the date/time of the run used to create this 
+c         file. Store the version number
+          write(unout(i),rec=wr_rec(i))  
+     a                 version_run_date_time_string(10:16), '     '
+c          read(unout(i),rec=wr_rec(i)) c12
+c          write(stdout,*) 'In WROPEN: c12a=',c12,'rec=',wr_rec(i)
+c         store the date of the version
+          wr_rec(i) = wr_rec(i) + 1
+          write(unout(i),rec=wr_rec(i)) 
+     a                      version_run_date_time_string(32:37), ' ',
+     a                      version_run_date_time_string(44:47), ' '
+c          read(unout(i),rec=wr_rec(i)) c12
+c          write(stdout,*) 'In WROPEN: c12b=',c12,'rec=',wr_rec(i)
+          wr_rec(i) = wr_rec(i) + 1
+c         store the date of the run
+          write(unout(i),rec=wr_rec(i))  
+     a                         version_run_date_time_string(72:81), '  '
+c          read(unout(i),rec=wr_rec(i)) c12
+c          write(stdout,*) 'In WROPEN: c12c=',c12,'rec=',wr_rec(i)
+c         store the time of the run
+          wr_rec(i) = wr_rec(i) + 1
+          write(unout(i),rec=wr_rec(i)) 
+     a                            version_run_date_time_string(84:95)
+c          read(unout(i),rec=wr_rec(i)) c12
+c          write(stdout,*) 'In WROPEN: c12d=',c12,'rec=',wr_rec(i)
+          wr_rec(i) = wr_rec(i) + 1
+          write(unout(i),rec=wr_rec(i)) revision(1:12)  !Software revision
+    
+          wr_rec(i) = wr_rec(i) + 1
+          write(unout(i),rec=wr_rec(i)) svn_rev, svn_mod, 'work'  !Working copy revision
+
+          wr_rec(i) = wr_rec(i) + 1
+          
+          if(wr_rec(i) /= DPTSF_REC_AT_LKUP_TAB_START) then
+            write(stdout, 54) namout(i)
+            STOP 'Abnormal stop: bug found.'
+           endif 
+
+c         Fill missing records with blanks
+          do j=wr_rec(i), DPTSF_REC_AT_FRST_TS_PNT - 1
+            write(unout(i), rec=j) '            '
+          end do
+
+c         Update pointer to the record for the first time-series value
+          wr_rec(i) = DPTSF_REC_AT_FRST_TS_PNT
+          
+
+c         Tell the user about the successful open. 
+          WRITE(STDOUT,52) NAMOUT(I)
+        ENDIF
+ 500  CONTINUE
+ 
+      RETURN
+      END

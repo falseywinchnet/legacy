@@ -1,0 +1,126 @@
+{
+  "archive": "originals/archives/FEQ-GDI.zip",
+  "sha256": "0bf7f4f83a4586b0f4b948756782edcfe76b75104dcf4e1e20f57155e5108165",
+  "members": [
+    {
+      "member": "FEQ-GDI/FEQ-GDI.jar",
+      "path": "originals/feq-gdi/FEQ-GDI/FEQ-GDI.jar",
+      "size": 1754914,
+      "sha256": "d6b152dfd9718db134cccec983fdb9088a645f7d0723328b7872d6e7881744d4",
+      "zip_crc32": "e553653d",
+      "zip_date_time": [
+        2016,
+        3,
+        22,
+        13,
+        51,
+        18
+      ]
+    },
+    {
+      "member": "FEQ-GDI/README.txt",
+      "path": "originals/feq-gdi/FEQ-GDI/README.txt",
+      "size": 770,
+      "sha256": "a2e9726a46d47acdc79fb2d7dc0b89f7c3c7fee7fc40c6f594567fe40fb5bc0f",
+      "zip_crc32": "f7f37f84",
+      "zip_date_time": [
+        2019,
+        8,
+        15,
+        11,
+        33,
+        28
+      ]
+    },
+    {
+      "member": "FEQ-GDI/sample files/culvert_example.ftl",
+      "path": "originals/feq-gdi/FEQ-GDI/sample files/culvert_example.ftl",
+      "size": 11848,
+      "sha256": "21ee31c3cf1bfb4ca7f8bd18c8c0e8e34581fff96f54ea4af1c4956ccab296fa",
+      "zip_crc32": "a07e44bc",
+      "zip_date_time": [
+        2019,
+        8,
+        6,
+        15,
+        17,
+        16
+      ]
+    },
+    {
+      "member": "FEQ-GDI/sample files/culvert_example.tab",
+      "path": "originals/feq-gdi/FEQ-GDI/sample files/culvert_example.tab",
+      "size": 18312,
+      "sha256": "b2cec29c216750739b1ae93accb5fb8070b9cd9aa8d8968ea3446d1b1fcc2b32",
+      "zip_crc32": "9ecb6708",
+      "zip_date_time": [
+        2019,
+        8,
+        6,
+        14,
+        0,
+        8
+      ]
+    },
+    {
+      "member": "FEQ-GDI/sample files/feqx_example.ftl",
+      "path": "originals/feq-gdi/FEQ-GDI/sample files/feqx_example.ftl",
+      "size": 1407,
+      "sha256": "328bc2891fbb1c201a7c91c4786edc079082f31056bdcc6812b84cbbdcac5232",
+      "zip_crc32": "0839db6e",
+      "zip_date_time": [
+        2019,
+        8,
+        6,
+        13,
+        46,
+        40
+      ]
+    },
+    {
+      "member": "FEQ-GDI/sample files/feqx_example.tab",
+      "path": "originals/feq-gdi/FEQ-GDI/sample files/feqx_example.tab",
+      "size": 7542,
+      "sha256": "40f5a40339163897e6b03a03d8beb4a9cbfda04891cd3b54981368e85516b92f",
+      "zip_crc32": "24d6dc40",
+      "zip_date_time": [
+        2019,
+        8,
+        6,
+        13,
+        46,
+        32
+      ]
+    },
+    {
+      "member": "FEQ-GDI/sample files/feq_example.feq",
+      "path": "originals/feq-gdi/FEQ-GDI/sample files/feq_example.feq",
+      "size": 69942,
+      "sha256": "c79822744d34ea447eeccb789d37cafe02f5852b257a5288e93046b13dbd743b",
+      "zip_crc32": "8aad03db",
+      "zip_date_time": [
+        2019,
+        8,
+        6,
+        15,
+        8,
+        52
+      ]
+    },
+    {
+      "member": "FEQ-GDI/sample files/mulcon_culvert_ex.ftl",
+      "path": "originals/feq-gdi/FEQ-GDI/sample files/mulcon_culvert_ex.ftl",
+      "size": 9220,
+      "sha256": "96ded42af5097ab054a0512d897a553aff12aa0648647c8f619a361afecc6264",
+      "zip_crc32": "621644d9",
+      "zip_date_time": [
+        2019,
+        8,
+        6,
+        16,
+        27,
+        22
+      ]
+    }
+  ]
+}

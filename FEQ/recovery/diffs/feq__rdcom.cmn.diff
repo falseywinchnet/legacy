@@ -1,0 +1,27 @@
+--- 9.98/feq/rdcom.cmn
++++ 10.61/feq/rdcom.cmn
+@@ -1,18 +1,19 @@
+ C***********************************************************************
+       COMMON/RDCOM/ JTIN, JTVEC, VALBIN, OLD_CUM, NEW_CUM, VALAIN, 
+-     A              NUM_TS_F, UNIN, ICDIN, LSTHD, LTRY, MINROW, MAXROW,
++     A              NUM_TS_F, UNIN, rd_rec, LSTHD, LTRY, MINROW, MAXROW,
+      B              DSS_INDEX_IN, TIME_STEP_IN, TMPVEC, 
+-     C              TS_CONVERSION_FACTOR, ID_KNT
++     C              TS_CONVERSION_FACTOR, ID_KNT, delete_list
+ 
+       COMMON/RDCOMC/ NAMIN, TS_ID_FOR_FILE_TABLE
+ 
+-      CHARACTER NAMIN(MXN_TS_F)*80, TS_ID_FOR_FILE_TABLE(MXN_TS)*16
++      CHARACTER NAMIN(MXN_TS_F)*256, TS_ID_FOR_FILE_TABLE(MXN_TS)*16
+ 
+       INTEGER NUM_TS_F, ID_KNT
+ 
+-      INTEGER UNIN(MXN_TS_F), ICDIN(MXN_TS_F), LSTHD(MXN_TS_F), 
++      INTEGER UNIN(MXN_TS_F), rd_rec(MXN_TS_F), LSTHD(MXN_TS_F), 
+      A        LTRY(MXN_TS_F), MINROW(MXN_TS_F), MAXROW(MXN_TS_F), 
+-     B        DSS_INDEX_IN(MXN_TS_F), TIME_STEP_IN(MXN_TS_F)
++     B        DSS_INDEX_IN(MXN_TS_F), TIME_STEP_IN(MXN_TS_F),
++     C        delete_list(MXN_TS_F)
+ 
+       REAL VALAIN(MRRBUF), TMPVEC(MRRBUF+5), 
+      A     TS_CONVERSION_FACTOR(MXN_TS)

@@ -1,0 +1,230 @@
+--- 9.98/share/fqshrtdl.for
++++ 10.61/share/fqshrtdl.for
+@@ -162,7 +162,7 @@
+ C
+ C
+       SUBROUTINE   TDLK13
+-     I                   (STDOUT, IP, PTYPE, MFTAB, TIME, EDA, EUA,
++     I                   (STDOUT, IP, PTYPE, MFTAB, JTIME, EDA, EUA,
+      I                    HBASE,
+      O                    Q, DQED, DQEU, FREE)
+  
+@@ -171,7 +171,8 @@
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER FREE, IP, STDOUT, MFTAB, PTYPE
+-      REAL DQED, DQEU, EDA, EUA, HBASE, Q, TIME
++      REAL DQED, DQEU, EDA, EUA, HBASE, Q
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT   - Fortran unit number for user output and messages
+@@ -205,14 +206,14 @@
+  
+ C     + + + EXTERNAL NAMES + + +
+       CHARACTER*16 GET_TABID
+-      EXTERNAL GET_TABID, LKTAB
++      EXTERNAL GET_TABID, LKTSTAB
+  
+ C     + + + OUTPUT FORMATS + + +
+  50   FORMAT('*ERR:72* EU < ED in two-D TABID=',A,' EU=',
+      A       F10.2,' ED=',F10.2)
+  52   FORMAT('*WRN:04* HU > HMAX in two-D TABID=',A,' HU=',
+      A       F10.2,' HMAX=',F10.2)
+- 54   FORMAT('*ERR:73* Unexpected type in two-D TABID',A,
++ 54   FORMAT('*ERR:73* Unexpected type in two-D TABID= ',A,
+      A       ' Type=',I5,' expected Type=',I5)
+ C***********************************************************************
+ C     GET VALUES FROM HEADER-  MUST BE INITIALIZED ON INPUT SO THAT
+@@ -392,18 +393,6 @@
+       FREE = 0
+  
+  9000 CONTINUE
+-C     CHECK FOR FINAL ADJUSMENT
+-      IF(MFTAB.GT.0) THEN
+-C       FIND ADJUSTMENT FACTOR AND APPLY TO THE FLOW AND DERIVATIVES
+- 
+-        CALL LKTAB
+-     I            (MFTAB, TIME, 1,
+-     O             FAC, NTAB, PDV)
+- 
+-        Q = Q*FAC
+-        DQED = DQED*FAC
+-        DQEU = DQEU*FAC
+-      ENDIF
+  
+       RETURN
+  
+@@ -446,9 +435,9 @@
+      A            F10.2,' 2-D Table Id=',A,' is missing.')
+  54   FORMAT(/,'*ERR:242* In Table Id=',A,' of type 15 at argument=',
+      A        F10.2,' 2-D Table Id=',A,' is Type=',I5,'.  Type must',
+-     B        ' be 6 or 13.')
++     B        ' be 6, 13, or 43.')
+ C***********************************************************************
+-      LOW = TABADR + 5
++      LOW = TABADR + OFF234
+ C     Added July 29,1996.
+       IF(ITAB(TABADR+3).LT.0) THEN
+ C       Table has already been processed.
+@@ -482,7 +471,7 @@
+ C         Table number is valid and the table exists.  Is it the
+ C         correct type?
+           TYPE = ITAB(ITAB(I+1)+2)
+-          IF(TYPE.NE.6.AND.TYPE.NE.13) THEN
++          IF(TYPE.NE.6.AND.TYPE.NE.13.and.type.ne.43) THEN
+ C           Not the right type.
+             WRITE(STDOUT,54) GET_TABID(ITAB(TABADR+1)), FTAB(I), 
+      A                   GET_TABID(TAB), TYPE
+@@ -499,7 +488,7 @@
+ C
+ C
+       SUBROUTINE   TDLK15
+-     I                   (STDOUT, IP, MFTAB, TIME, EDA, EUA, HG, HBASE,
++     I                   (STDOUT, IP, MFTAB, JTIME, EDA, EUA, HG, HBASE,
+      O                    Q, DQED, DQEU, NEWHG, FTYPE, FTYPE_CODE)
+  
+ C     + + + PURPOSE + + +
+@@ -508,7 +497,8 @@
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IP, MFTAB, STDOUT, FTYPE_CODE
+-      REAL DQED, DQEU, EDA, EUA, HBASE, HG, NEWHG, Q, TIME
++      REAL DQED, DQEU, EDA, EUA, HBASE, HG, NEWHG, Q
++      real*8 jtime
+       CHARACTER FTYPE*8
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -516,7 +506,7 @@
+ C     IP     - address of the table
+ C     MFTAB  - table number and later table address of the function
+ C               table that supplies an adjustment factor for flows
+-C     TIME   - elapsed time in seconds from start of run
++C     JTIME   - julian time in days
+ C     EDA    - water surface elevation at downstream node
+ C     EUA    - elevation of water surface at upstream node
+ C     HG     - underflow gate opening
+@@ -533,7 +523,7 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER FLAG, FLAGL, FLAGR, FREE, FREEL, FREER, HIGH, LOW, LSTADR,
+-     A        TAB, TAB2DL, TAB2DR
++     A        TAB, TAB2DL, TAB2DR, type
+       REAL DQEDL, DQEDR, DQEUL, DQEUR, H1, H1FAC, H1FW, H1FWL, H1FWR,
+      A     H1FWRL, H1FWRR, H1L, H1R, H4, H4FAC, H4FW, H4FWL, H4FWR,
+      B     H4FWRL, H4FWRR, H4L, H4R, H4SW, H4SWL, H4SWR, H4SWRL, H4SWRR,
+@@ -554,7 +544,7 @@
+       TAB = ITAB(IP+1)
+       LSTADR = ITAB(IP+4)
+       HIGH = ITAB(IP)
+-      LOW = IP + 5
++      LOW = IP + OFF234
+  
+ C     Compute the heads and eliminate the simple cases.
+       H1 = EUA - HBASE
+@@ -632,7 +622,11 @@
+         H4SWR = HGR*H4SWRR
+       ENDIF
+  
++c     set type for 2-d lookup
++      type = itab(tab2dr+2)
++
+ C      WRITE(STDOUT,*) ' TDLK15: HGL=',HGL,' HG=',HG,' HGR=',HGR
++
+       MGATE = (HG - HGL)/(HGR - HGL)
+  
+ C      WRITE(STDOUT,*) ' TDLK15: TAB2DL=',ITAB(TAB2DL+1),
+@@ -654,9 +648,16 @@
+ C       The flow is weir flow.  Lookup in the right-hand table because
+ C       it should have weir flow high enough for any intermediate
+ C       point.
+-        CALL TDLK13
+-     I             (STDOUT, TAB2DR, 13, MFTAB, TIME, EDA, EUA, HBASE,
++        if(type.eq.13) then
++          CALL TDLK13
++     I             (STDOUT, TAB2DR, 13, MFTAB, JTIME, EDA, EUA, HBASE,
+      O              Q, DQED, DQEU, FREE)
++        else
++          call tdlk43
++     i             (STDOUT, tab2dr, 43, MFTAB, JTIME, EDA, EUA, HBASE,
++     O              Q, DQED, DQEU, FREE)
++        endif
++
+ C        WRITE(STDOUT,*) ' Q=',Q,' DQED=',DQED,' DQEU=',DQEU
+         IF(FREE.EQ.1) THEN
+           FTYPE = '      FW'
+@@ -675,9 +676,16 @@
+      O              FLAG)
+         IF(FLAG.EQ.0) THEN
+ C         The flow is weir flow.
+-          CALL TDLK13
+-     I               (STDOUT, TAB2DR, 13, MFTAB, TIME, EDA, EUA, HBASE,
++          if(type.eq.13) then
++            CALL TDLK13
++     I               (STDOUT, TAB2DR, 13, MFTAB, JTIME, EDA, EUA, HBASE,
+      O                Q, DQED, DQEU, FREE)
++          else
++            call tdlk43
++     i             (STDOUT, tab2dr, 43, MFTAB, JTIME, EDA, EUA, HBASE,
++     O              Q, DQED, DQEU, FREE)
++          endif
++
+ C          WRITE(STDOUT,*) ' Q=',Q,' DQED=',DQED,' DQEU=',DQEU
+           IF(FREE.EQ.1) THEN
+             FTYPE = '      FW'
+@@ -702,10 +710,16 @@
+ C       The gate opening is between 0.0 and the first table.
+ C       We assume that all values at Hg=0.0 are zero.
+  
+- 
+-        CALL TDLK13
+-     I             (STDOUT, TAB2DR, 13, MFTAB, TIME, EDA, EUA, HBASE,
++        if(type.eq.13) then
++          CALL TDLK13
++     I             (STDOUT, TAB2DR, 13, MFTAB, JTIME, EDA, EUA, HBASE,
+      O              QR, DQEDR, DQEUR, FREER)
++        else
++          call tdlk43
++     i             (STDOUT, tab2dr, 43, MFTAB, JTIME, EDA, EUA, HBASE,
++     O              Qr, DQEDR, DQEUR, FREER)
++        endif
++
+  
+         Q =   HG*QR/HGR
+         DQED =  HG*DQEDR/HGR
+@@ -750,16 +764,31 @@
+         H1R = H1FAC*HGR
+         H4R = H4FAC*HGR
+  
+-        CALL TDLK13
+-     I             (STDOUT, TAB2DL, 13, MFTAB, TIME, H4L+HBASE,
++        if(type.eq.13) then
++          CALL TDLK13
++     I             (STDOUT, TAB2DL, 13, MFTAB, JTIME, H4L+HBASE,
+      I              H1L+HBASE, HBASE,
+      O              QL, DQEDL, DQEUL, FREEL)
++        else
++          call tdlk43
++     i             (STDOUT, tab2dl, 43, MFTAB, JTIME, H4L+HBASE,
++     i              H1L+HBASE, HBASE,
++     O              QL, DQEDL, DQEUL, FREEL)
++        endif
++
+ C        WRITE(STDOUT,*) ' H1L=',H1L,' H4L=',H4L
+ C        WRITE(STDOUT,*) ' QL=',QL,' DQEUL=',DQEUL,' DQEDL=',DQEDL
+-        CALL TDLK13
+-     I             (STDOUT, TAB2DR, 13, MFTAB, TIME, H4R+HBASE,
++        if(type.eq.13) then
++          CALL TDLK13
++     I             (STDOUT, TAB2DR, 13, MFTAB, JTIME, H4R+HBASE,
+      I              H1R+HBASE, HBASE,
+      O              QR, DQEDR, DQEUR, FREER)
++        else
++          call tdlk43
++     I             (STDOUT, TAB2DR, 43, MFTAB, JTIME, H4R+HBASE,
++     I              H1R+HBASE, HBASE,
++     O              QR, DQEDR, DQEUR, FREER)
++        endif      
+ C        WRITE(STDOUT,*) ' H1R=',H1R,' H4R=',H4R
+ C        WRITE(STDOUT,*) ' QR=',QR,' DQEUR=',DQEUR,' DQEDR=',DQEDR
+  

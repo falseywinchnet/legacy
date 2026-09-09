@@ -1,0 +1,29 @@
+C**********************************************************************
+
+      COMMON/INFCOM/ FTP, LEXT, LPNT,
+     D          NBN, NBRA, NBRA2, NBLK, NEX, EPT, 
+     F          SFAC, BRPT, EMC, EXNODT, MF, PFPNT, POUT, NOUT,
+     H          UNIT, OPBLK, EPSB, EPSSYS, EPSSY2, MAXIT, MKNT,
+     I          PRTINT, QEPS, QCHOP, IFRZ, DTVEC, TAUFAC,
+     L          MRE, FAC, BWFDSN, FFFDSN, ZI, LAPD, GETDSN, PUTDSN
+
+      COMMON/INFCMC/ DIFFUS, POINT, WIND, SOPER, UNDERF
+
+      CHARACTER*4 DIFFUS, POINT, WIND, SOPER, UNDERF
+
+      INTEGER  FTP, LEXT,  LPNT, NBN, NBRA,
+     A        NBRA2, NBLK, NEX, EPT, NOUT, UNIT,
+     B        MAXIT, MKNT, PRTINT, 
+     C        IFRZ, BWFDSN, FFFDSN, LAPD, GETDSN, PUTDSN
+
+      INTEGER BRPT(8, MNBRA), EMC(MREMC), EXNODT(9, MNEX),
+     A        POUT(MNSOUT), OPBLK(MNBLK), PFPNT(MRPFPT, MCPFPT)
+
+      REAL EPSB, EPSSYS, EPSSY2, QEPS, QCHOP, MRE, 
+     A     FAC, ZI, SFAC, TAUFAC
+
+      REAL MF(MCPFPT), DTVEC(MNFRDT)
+
+      SAVE /INFCOM/
+C**********************************************************************
+

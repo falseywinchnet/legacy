@@ -1,0 +1,59 @@
+C     Program units used in plane geometry computations.
+
+C
+C
+C
+      SUBROUTINE FIND_LINE_COEF(X1, Y1, X2, Y2,
+     O               A, B, C)
+
+C     Find the coefficients for the straight line passing through
+C     the points (X1,Y1) and (X2,Y2). In this context straight lines
+C     are unlimited in extent.
+
+      IMPLICIT NONE
+
+      REAL*8 A, B, C, X1, Y1, X2, Y2
+C***********************************************************************
+      A = Y2 - Y1
+      B = X1 - X2
+      C = -X1*(Y2 - Y1) + Y1*(X2 - X1)
+C     To avoid zero divide messages, replace zero values for 
+C     A and B with small positive values.  Make sure that 
+C     the inverse of the square of the number is much less than
+C     10**300
+      IF(A.EQ.0.D0) THEN
+        A = 1.D-20
+      ENDIF
+      IF(B.EQ.0.D0) THEN
+        B = 1.D-20
+      ENDIF
+      RETURN
+      END
+
+C
+C
+C
+      SUBROUTINE FIND_PERPENDICULAR(X1, Y1, A, B, C,
+     O                              AP, BP, CP)
+
+C     Find the coef. for the line perpendicular to the line with 
+C     coefficients A, B, C and passing through the point X1, Y1. 
+C     Note: X1, Y1 need not be on the line: (A, B, C).  In this
+C     context straight lines are unlimited in extent.  
+
+      IMPLICIT NONE
+      REAL*8 A, B, C, AP, BP, CP, X1, Y1
+C***********************************************************************
+      AP = B
+      BP = -A
+      CP = -AP*X1 - BP*Y1
+C     Replace zero values of AP and BP with small positive values to
+C     avoid zero divides
+      IF(AP.EQ.0.D0) THEN
+        AP = 1.D-20
+      ENDIF
+      IF(BP.EQ.0.D0) THEN
+        BP = 1.D-20
+      ENDIF
+      RETURN
+      END

@@ -1,0 +1,59 @@
+c
+c 
+c 
+      subroutine mkdir(stdout,dirname)
+
+c     The system subroutine as implemented in lf95
+c     for msw, gives not return code.  Therefore, we cannot check
+c     if a directory already exists.  However, we can create
+c     the directory, as if it does not exist, and if it does,
+c     we send the error message to the NUL device.  If it
+c     does not exist, it is created. 
+c 
+      implicit none
+
+      integer stdout
+
+      character*(*) dirname
+
+      integer get_unit
+      external get_unit
+
+c     Local
+
+      integer it, stdun, i
+
+      character dummy*5
+c     **********************Formats*************************************
+50    format(/,' Using existing directory: ',a)
+52    format(/,' Creating directory: ',a)
+c***********************************************************************
+      it = len_trim(dirname)
+      call system('mkdir '//dirname(1:it)//' > temp.zxcv_ 2>&1')
+      stdun = get_unit(stdout)
+      open(unit=stdun,file='temp.zxcv_',status='old')
+      i = 0
+      do
+        read(stdun,'(a)', end=100) dummy
+        i = i+ 1
+
+      enddo
+100   continue
+c     These statements may not be reliable.  By default, msw 
+c     creates all parts of the path that do not exist.  Turning
+c     that off is a system-level action.  Thus if part of the path
+c     does not exist, it will be created.
+
+      if( i == 0) then
+        write(stdout,52) dirname
+      else
+        write(stdout,50) dirname
+      endif
+      
+      close(stdun)
+      call system('del \q temp.zxcv_ > NUL 2>&1')
+      return
+      end
+        
+
+

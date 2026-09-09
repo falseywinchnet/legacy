@@ -1,0 +1,17 @@
+C     Values used to keep track of a bottom slot in a cross section.
+
+      INTEGER SLOT_PRESENT
+
+      REAL NSLOT, WSLOT, ESLOT, YSLOT
+
+      COMMON/ABSLOT/ SLOT_PRESENT, NSLOT, WSLOT, ESLOT, YSLOT
+
+      SAVE /ABSLOT/
+
+C     SLOT_PRESENT: 0 no slot. 1 slot.
+C     NSLOT:  Manning's n for the slot
+C     WSLOT: width of the slot at the invert elevation of the cross section.
+C     ESLOT: elevation of the invert of the slot.
+C     YSLOT: distance from slot invert to the cross section invert.
+
+C     Only one of ESLOT or YSLOT is used. 

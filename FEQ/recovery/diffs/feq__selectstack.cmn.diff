@@ -1,0 +1,12 @@
+--- 9.98/feq/selectstack.cmn
++++ 10.61/feq/selectstack.cmn
+@@ -5,6 +5,9 @@
+ 
+       INTEGER SELECT_STACK(3,MAX_TOP), TOP
+ 
++	character select_stack_line(max_top)*196
++
+       COMMON /SELECT_CMN/ SELECT_STACK, TOP
++	common /SELECT_CMNC/ select_stack_line
+ 
+-      SAVE /SELECT_CMN/+      SAVE /SELECT_CMN/, /SELECT_CMNC/

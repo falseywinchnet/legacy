@@ -1,0 +1,15 @@
+C**********************************************************************
+
+      COMMON/JULIAN/ JTIME, DYFRAC, SFRAC, SJTIME, EFRAC, EJTIME,
+     A               UJTIME, VJTIME, PRTIME, JTEWYR, TAB_789_JTBASE,
+     B               YR, MN, DY, SYR, SMN, SDY, 
+     C               EYR, EMN, EDY, RESET, LEAP, DMYEAR, DMMN
+
+      INTEGER YR, MN, DY, SYR, SMN, SDY, EYR, EMN, EDY, RESET, LEAP,
+     A        DMYEAR, DMMN
+      DOUBLE PRECISION JTIME, DYFRAC, SFRAC, SJTIME, EFRAC, EJTIME,
+     A                 UJTIME, VJTIME, PRTIME, JTEWYR, TAB_789_JTBASE
+
+C**********************************************************************
+
+

@@ -1,0 +1,277 @@
+--- 9.98/fequtl/pumpitem.for
++++ 10.61/fequtl/pumpitem.for
+@@ -609,7 +609,7 @@
+  
+ C     + + + PURPOSE + + +
+ C     Function to convert a real number into a special compact
+-C     form of output to retain 7 significant figures for
++C     form of output to retain 6 significant figures for
+ C     numbers in the range  x < 1e10. 
+  
+       IMPLICIT NONE
+@@ -623,6 +623,41 @@
+ C     + + + LOCAL VARIABLES + + +
+       CHARACTER RESULT*10, WORK*12
+ C***********************************************************************
++      IF(ABS(X).LE.1.01E-9) X = 0.0
++      WRITE(WORK,'(1PE12.5)') X
++      IF(WORK(10:10).EQ.'+'.AND.WORK(11:11).NE.'0') THEN
++        RESULT = ' *********'
++      ELSE
++        RESULT(1:8) = WORK(1:8)
++        RESULT(9:9) = WORK(10:10)
++        RESULT(10:10) = WORK(12:12)
++      ENDIF
++      PUT10 = RESULT
++      RETURN
++      END
++C
++C
++C
++      CHARACTER*10 FUNCTION   PUT10D
++     I                           (X)
++ 
++C     + + + PURPOSE + + +
++C     Function to convert a real*8 number into a special compact
++C     form of output to retain 7 significant figures for
++C     numbers in the range  x < 1e10. 
++ 
++      IMPLICIT NONE
++
++C     + + + DUMMY ARGUMENTS + + +
++      REAL*8 X
++ 
++C     + + +DUMMY ARGUMENT DEFINITIONS + + +
++C     X      - value to format
++ 
++C     + + + LOCAL VARIABLES + + +
++      CHARACTER RESULT*10, WORK*12
++C***********************************************************************
++      IF(ABS(X).LE.1.01E-9) X = 0.D0
+       WRITE(WORK,'(1PE12.6)') X
+       IF(WORK(10:10).EQ.'+'.AND.WORK(11:11).NE.'0') THEN
+ C       OVERFLOW
+@@ -632,49 +667,18 @@
+         RESULT(9:9) = WORK(10:10)
+         RESULT(10:10) = WORK(12:12)
+       ENDIF
+-      PUT10 = RESULT
+-      RETURN
+-      END
+-C
+-C
+-C
+-      CHARACTER*10 FUNCTION   PUT10D
+-     I                           (X)
+- 
+-C     + + + PURPOSE + + +
+-C     Function to convert a real*8 number into a special compact
+-C     form of output to retain 7 significant figures for
+-C     numbers in the range  x < 1e10. 
+- 
+-      IMPLICIT NONE
+-
+-C     + + + DUMMY ARGUMENTS + + +
+-      REAL*8 X
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     X      - value to format
+- 
+-C     + + + LOCAL VARIABLES + + +
+-      CHARACTER RESULT*10, WORK*12
+-C***********************************************************************
+-      WRITE(WORK,'(1PE12.6)') X
+-      IF(WORK(10:10).EQ.'+'.AND.WORK(11:11).NE.'0') THEN
+-C       OVERFLOW
+-        RESULT = ' *********'
+-      ELSE
+-        RESULT(1:8) = WORK(1:8)
+-        RESULT(9:9) = WORK(10:10)
+-        RESULT(10:10) = WORK(12:12)
+-      ENDIF
+       PUT10D = RESULT
+       RETURN
+       END
++
+ C
+ C
+ C
+       SUBROUTINE  OUTPUT_TYPE_234
+      I                   (STDOUT, STDTAB, N, TAB, TYPE, FACTOR, 
+-     I                    HEAD, LABEL, X, F1, F2)
++     I                    HEAD, LABEL, X, F1, F2,
++     i                    zone, hgrid, vdatum, unitsys, basis,
++     i                    easting, northing)
+  
+ C     + + + PURPOSE + + +
+ C     Output a function table of type 2, 3, or 4.
+@@ -683,14 +687,17 @@
+ 
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER N, STDOUT, STDTAB, TAB, TYPE
+-      CHARACTER LABEL*50, HEAD*30
++      CHARACTER LABEL*50, HEAD*30, zone*8, hgrid*8, vdatum*8, 
++     a        unitsys*8, basis*8
+       REAL FACTOR, F1(N), F2(N), X(N)
+- 
++      real*8 easting, northing
++ 
++
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT - Fortran unit number for user output and messages
+ C     STDTAB - Fortran unit number for output of function tables
+ C     N      - Number of tabulated levels in the table
+-C     TAB    - Table number
++C     TAB    - Internal table number
+ C     TYPE   - type of the table, 2, 3, or 4
+ C     FACTOR - Factor to put in the FAC position
+ C     HEAD   - heading to put on the body of the table
+@@ -702,14 +709,14 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER J, HEAD_LENGTH, LABEL_LENGTH, L
++      real term
+       CHARACTER ARG_OUT*10, F1_OUT*10, F2_OUT*10, TABID*16
+  
+ C     External functions
+-      INTEGER LENSTR
+       CHARACTER PUT10*10, GET_TABID*16
+ 
+ C     External names
+-      EXTERNAL LENSTR, VAR_DECIMAL, PUT10, GET_TABID
++      EXTERNAL VAR_DECIMAL, PUT10, GET_TABID, chk_vdatum_unitsys
+             
+ C     + + + OUTPUT FORMATS + + +
+  1    FORMAT(' TABID=',A)
+@@ -722,14 +729,24 @@
+  8    FORMAT(A, 1X,A)
+  9    FORMAT(' ',A10,A10,A10)
+  10   FORMAT(A10,A10,A10)
++ 60   format('ZONE=',a8,' HGRID=',a8,' VDATUM=',a8,' UNITSYS=',a8,
++     a ' BASIS=',a8,/, 'EASTING=',0PF15.3,' NORTHING=',F15.3)
+ C***********************************************************************
++      call chk_vdatum_unitsys(stdout, vdatum, unitsys, 
++     a          ' during output of type 2, 3, or 4 table')
++c 
+       TABID = GET_TABID(TAB)
+-      L = LENSTR(TABID)      
++      L = len_trim(TABID)      
+       WRITE(STDOUT,1) TABID(1:L)
+       WRITE(STDTAB,2) TABID(1:L)
+  
+       WRITE(STDOUT,3) TYPE
+       WRITE(STDTAB,4) -TYPE
++      if(zone /= 'NONE')  then
++c       Output the location information.
++        write(stdtab, 60) zone, hgrid, vdatum, unitsys, basis, easting, 
++     a        northing
++      endif
+ 
+       ARG_OUT = PUT10(FACTOR)
+       WRITE(STDOUT,5) 0.0, ARG_OUT
+@@ -741,7 +758,7 @@
+         HEAD_LENGTH = 30
+       ENDIF 
+ 
+-      LABEL_LENGTH = LENSTR(LABEL) 
++      LABEL_LENGTH = len_trim(LABEL) 
+       IF(LABEL_LENGTH.EQ.0) LABEL_LENGTH = 1
+       WRITE(STDOUT,7) HEAD(1:HEAD_LENGTH), LABEL(1:LABEL_LENGTH)
+       WRITE(STDTAB,8) HEAD(1:HEAD_LENGTH), LABEL(1:LABEL_LENGTH)
+@@ -763,7 +780,12 @@
+         ENDIF
+         
+  100  CONTINUE
+-      WRITE(STDTAB,'(F10.1)') -1.0 
++      if(x(n) > 0.0) then
++        term = -1.0
++      else
++        term = x(n)  - 1.0
++      endif
++      WRITE(STDTAB,'(F10.1)') term 
+       RETURN
+       END
+ 
+@@ -829,8 +851,11 @@
+      D     FACTOR, AXIAL_H_REL(17),
+      E     AXIAL_Q_REL(17)
+ 
++      real*8 easting,northing
++
+       CHARACTER LABEL*50, LINE*120, HEAD(NHEAD)*120, BODY_HEAD*30,
+-     A          FLOW_UNITS*5, EXIT_AREA*7, JUST*5, TABID*16
++     A          FLOW_UNITS*5, EXIT_AREA*7, JUST*5, TABID*16,
++     b          zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+ 
+ C     External Functions
+       INTEGER LENSTR
+@@ -838,7 +863,7 @@
+       CHARACTER PUT7*7, GET_TABID*16
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL INL120, OUTPUT_TYPE_234, PUT7, LENSTR, GET_TABID,
++      EXTERNAL inline, OUTPUT_TYPE_234, PUT7, LENSTR, GET_TABID,
+      A         READ_AXIALPUMP_ITEMS, WRITE_AXIALPUMP_ITEMS
+ 
+ C     Data initializations
+@@ -879,10 +904,20 @@
+         FLOW_UNITS ='f^3/s'
+       ENDIF
+ 
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  Global values for zone, hgrid, vdatum, and
++c     unitsys are handled in subroutine TABOUT
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++
+       JUST = 'RIGHT'
+ 
+ C     Get the size of the user's flow unit in the input for flows.
+-      CALL INL120
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+             
+@@ -897,7 +932,7 @@
+ 
+ C     Read the heading lines. 
+       DO 100 I=1,NHEAD
+-        CALL INL120
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             HEAD(I))
+         HEAD_LEN(I) = LENSTR(HEAD(I))
+@@ -909,7 +944,7 @@
+ 
+ 
+ 200   CONTINUE
+-        CALL INL120
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+ 
+@@ -1122,7 +1157,7 @@
+ C         as a function of head across the pump.  However, when
+ C         we compute the effect of the losses in the conduits and
+ C         at the inlet conduit entrance, we will treat the 
+-C         relationship as the head across the pump being a funciton
++C         relationship as the head across the pump being a functioin
+ C         of flow.  
+ 
+ C         Fill the vectors in the order required by FEQ for
+@@ -1147,7 +1182,10 @@
+         WRITE(STDOUT,*) ' '
+         CALL OUTPUT_TYPE_234
+      I                   (STDOUT, STDTAB, N, M, TYPE, FACTOR, 
+-     I                    BODY_HEAD, LABEL, ARG, F1, F2)
++     I                    BODY_HEAD, LABEL, ARG, F1, F2,
++     i                    zone, hgrid, vdatum, unitsys, basis,
++     i                    easting, northing)
++
+ 
+         GOTO 200
+ 

@@ -1,0 +1,15 @@
+C**********************************************************************
+
+      COMMON/ENOTHR/ BDYVEC, RESVEC, ENCORQ, ENCORY, ENMAXY, ENMINY,
+     A               NON_CONV_ENODE
+
+      COMMON/ENOTHC/ ENODID
+
+      CHARACTER*16 ENODID(MNEX)
+
+      INTEGER BDYVEC(MNEX), RESVEC(MNEX), NON_CONV_ENODE(MNEX)
+
+      REAL ENCORQ(MNEX), ENCORY(MNEX), ENMAXY(MNEX), ENMINY(MNEX)
+
+C**********************************************************************
+

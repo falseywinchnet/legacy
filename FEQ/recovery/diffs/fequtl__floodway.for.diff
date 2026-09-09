@@ -1,0 +1,34 @@
+--- 9.98/fequtl/floodway.for
++++ 10.61/fequtl/floodway.for
+@@ -123,8 +123,8 @@
+ 
+ 
+ c     Process the optional item for flow.  Used to compute velocity in the 
+-c     floodway. 
+-      flow = 0.0
++c     floodway.
++      flow = 0.0 
+       if(nitem.eq.8) then
+         n = 8
+         IS = ITEM_START(N)
+@@ -190,7 +190,7 @@
+  
+ C     + + + EXTERNAL NAMES + + +
+       CHARACTER GET_TABID*16
+-      EXTERNAL INLINE, GET_TABID
++      EXTERNAL INLINE, GET_TABID, os_file_style
+  
+ C     + + + DATA INITIALIZATIONS + + +
+       DATA BLANK/'    '/
+@@ -219,6 +219,11 @@
+      O           LINE)
+       READ(LINE,'(5X,A)',ERR=991) FILNAM
+       IF(FILNAM.NE.' ') THEN
++        CALL MAYBE_ADD_HOME(
++     M                      filnam)
++
++        call os_file_style(
++     m                              filnam)
+         WRITE(STDOUT,'('' FLOODWAY TABLE FILE IS:'',A)') FILNAM
+         INQUIRE(FILE=FILNAM, EXIST=THERE)
+         IF(THERE) THEN

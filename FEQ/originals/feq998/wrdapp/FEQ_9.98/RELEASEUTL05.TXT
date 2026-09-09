@@ -1,0 +1,1952 @@
+See release.txt packaged with FEQ 8.92 for notes on earlier versions.
+Also available at http://il.water.usgs.gov/proj/feq/software/releaseold.txt
+
+
+Version 4.70
+
+July 7, 1997
+
+--Added the GIS id string to the values stored with cross section
+tables.  If no GIS id string is given the value is stored as 
+blanks.
+
+--Added the location of the invert of a cross section in a 
+coordinate system in the plane.  One coordinate is called EASTING
+and the other at right angles to it is called NORTHING.  If not
+given the values are stored as 0.0.
+
+--Changed the processing of the cross section header for the 
+FEQX and FEQXEXT commands.  The header is the information 
+from the line after the FEQX or FEQXEXT command through the 
+roughness values.  In previous versions these values were required
+to fit within prespecified fields on each line.  This has been 
+changed to allow greater freedom in entering the values.   Here 
+is an example taken from a cross section input to FEQUTL.  The 
+line numbers are not part of the input but are used for reference 
+in this discussion.
+
+01 FEQX
+02 TABLE#=  153  SAVE22  OUT22 MONOTONE
+03 STATION= 1.E4   
+04 NAVM=    0 
+05 NSUB    3      0.08     0.055      0.09
+06     OFFSET ELEVATION SUBS    
+07     -750.     720.      1
+
+The header is lines 2 through 5 in this example.  As shown, the header is
+suitable for all versions of FEQUTL.  The order and position of the 
+values can be changed to anything the user desires with the following
+rules:
+
+1. All values must be spelled as shown in the input description.  This was
+not true in the past.  The only requirement was that the values appear in the
+correct columns on the correct line of input.  
+
+2. Any value followed by an equal sign must have its response, that is
+the value following the equal sign, must appear on the same line.  For example
+
+   STATION   =     1000.0
+
+is valid.  However, 
+
+      STATION = 
+    1000.0
+
+is invalid.
+
+3. The roughness values must always be last in the items entered. 
+The roughness values serve as the end-of-header indicator.  
+
+4. The other values in the header can be entered in any order and at any 
+point on the line.  The line may be  as long as 120 characters.  
+
+5. Values needed by FEQUTL but not appearing in the header will be 
+assigned default values.  Here are the defaults:
+
+      TABLE#=    0  NOSAVE OUT21 OLDBETA
+      LEFT = 1.E30
+      RIGHT = -1.E30
+      SCALE = 1.0
+      VSCALE = 1.0
+      SHIFT = 0.0
+      HSHIFT = 0.0
+      NAVM = 0
+      VARN= NCON
+      STATION = 0.0
+      EASTING = 0.D0
+      NORTHING = 0.D0
+
+Values for the table number, the station, and the roughness options should
+always be given because their defaults will not be reasonable in most
+cases. 
+
+6. The roughness values must always be the last given in the header for
+the cross section.  The keyword, NSUB should appear on a line by itself.
+
+7. A blank will not be taken as zero.  If some value is to be zero you
+must explicitly give the value as 0 or 0.0 depending on the nature of
+the item. 
+
+Here is an example of a header that FEQUTL can now process:
+
+ TABLE#=  153  SAVE22  OUT22 MONOTONE STATION= 1.E4   NAVM=    0 
+    NSUB    3      0.08     0.055      0.09
+
+Notice that the various values are separated by one or more spaces.  
+If more than one line of input is required for the roughness values
+they should appear in order following the line containing NSUB. 
+Here is an example taken from an existing input.   
+
+NSUB   11     0.015     0.030     0.015     0.030     0.015     0.030 
+              0.015     0.030     0.015     0.030     0.015
+
+This could be given as 
+
+NSUB 11  0.015 0.030 0.015 0.030 0.015 0.030 0.015 0.030 0.015 0.030 0.015
+
+with all values appearing on one line.  
+
+FEQUTL will count the number of subsections if the count value is 
+left out.  For example
+
+NSUB  0.015 0.030 0.015 0.030 0.015 0.030 0.015 0.030 0.015 0.030 0.015
+
+If there are too many values to fit on one line and the count value is left
+out, then a continuation signal must be given to tell FEQUTL that the
+values continue on the next line.  If the count value is given, this 
+continuation signal is not needed and must not be given.  
+
+Here is multiline input when the count of subsections is left out:
+
+NSUB  0.015 0.030     0.015 0.030  0.015     0.030 /
+       0.015     0.030     0.015     0.030     0.015
+
+The continuation signal is a single slash following after every line of 
+roughness input but the last.  
+
+FEQUTL will count the number of subsections if the count is left out. 
+
+The GIS id string is given at any point in the header just as any of the other 
+values.  It must be identified with the variable GISID in a manner analogous to
+the other variables assigned values using the equal sign.   The same rule 
+applies to the coordinate location of the cross section invert, given by the 
+optional inputs EASTING and NORTHING.  
+
+Here is an example with these three values added to an existing FEQX command:
+
+FEQX
+TABLE#=  938 EXTEND SAVE22 NEWBETA NOOUT GISID=291APVQ0938
+STATION=    11.290 EASTING=1868573.55  NORTHING=569013.79
+NAVM=    0
+NSUB    5     0.100     0.120     0.030     0.080     0.032
+X-SEC 38  60 FT. U/S OF THE BNRR (DEL TO LEFT & RIGHT OF TOP OF BERMS) RERAN W/ DZLIM=.10 FOR CONTRACTION
+    -73.00    666.6     1     1868587.65 569085.42  TOB  13A
+    -49.10    665.8     2     1868583.04 569061.97  TOB   13
+    -25.40    655.0     3     1868578.46 569038.71  WEO   12
+    -21.90    654.6     3     1868577.78 569035.28  CHP   11
+      0.00    653.9     3     1868573.55 569013.79  CFL   10
+      8.20    654.4     3     1868571.96 569005.75  CHP    9
+     11.10    655.0     4     1868571.40 569002.90  WED    8
+     15.00    658.3     4     1868570.65 568999.08  TOB    7
+     33.90    663.63    5     1868567.00 568980.53  CLP    6
+     44.60    666.0    -1     1868564.93 568970.03  TOB    5
+
+The GISID may not contain blanks and should not contain any character other than
+the digits 0 through 9 and the alpha characters A through Z. Lower case alpha will
+also be accepted but may not function in other software that analyzes the 
+GISID.  FEQUTL only reads the GISID and places it in the resulting cross-section
+function table.  
+
+The items need not be in the order shown so the GISID, EASTING, and 
+NORTHING can appear on any line between the line containing FEQX and
+the line containing NSUB.  Thus, the follow order is also valid:
+
+FEQX
+TABLE#=  938 EXTEND SAVE22 NEWBETA NOOUT 
+  GISID=291APVQ0938  EASTING=1868573.55  NORTHING=569013.79
+  EASTING=1868573.55  NORTHING=569013.79
+  STATION=    11.290 
+  NAVM=    0
+  NSUB  0.100  0.120  0.030  0.080 0.032
+
+This gives considerable flexibility in designing the pattern to follow in the 
+input to make the information clearer or easier to modify. 
+
+--The location of the information message for interpolated cross-section
+function tables has been changed to a comment to avoid interfering with
+the processing of the options as outlined here.  Old interpolated 
+cross sections can be retained if FEQ version 9.03 or later is used
+because they will be detected.  If earlier versions of FEQ are used
+the interpolation message will cause an error in processing the 
+cross-section function table.
+
+Version 4.72
+
+November 5, 1997
+
+--Discovered problem in CULVERT in computing a type 2 limit when the 
+return flag from one routine was not properly tested in the calling 
+program unit.  This created nonsense values that caused a 
+BUG message to be issued.  
+
+--Discovered problems in CULVERT in computing the type 2 limit which sometimes
+exists above the type 1 limit.  That is at low flows the flow type is
+type 2, as the flow increases the flow type shifts to type 1 and remains
+there until some upper limit is reached and the flow type again shifts
+to type 2.  The initial estimate of the local elevation at section 1
+was set so that the root-finding scheme concluded that no upper type 2 
+limit existed.  This then caused problems later as the upper limit
+of type 1 flow was surpassed but the limits for type 5 or type 6 flow
+had not been reached yet.  This change may allow culverts to be computed
+that failed in previous versions.  It may also cause some culverts to
+fail that computed with previous versions.  
+
+Version 4.73
+
+November 10, 1997
+
+--CULVERT got confused in a case of type 1 flow detection.  CULVERT finds
+all matches between the bottom slope of the culvert and the critical slope
+to seek boundaries for type 1 flow.  If there is only one match and the
+match is greater then the maximum depth allowed at section 2, then type 1
+flow is rejected even though a match is found.  This is done because 
+the critical slope for a closed conduit approaches infinity as the water
+level in the conduit approaches the soffit of the conduit.  This means
+that some matches of the bottom slope with the critical slope may
+occur essentially at the soffit.  Thus, it is unlikely that type 1 flow will
+prevail.  The default limit for the depth at section 2 is 0.95 of the
+vertical diameter of the culvert.  
+
+There may be more than one match between bottom slope and critical slope
+in the culvert.  This may mean that the low-head flow starts as type 2
+and then changes to type 1 as the smallest depth for a match is
+encountered.  The flow type will remain at type 1 until the upper
+match for type 1 flow is encountered.  CULVERT tries to find both 
+limits.  If there is more than one match CULVERT assumed, incorrectly,
+that the lower match would be less than the depth limit for the
+culvert.   CULVERT now checks to make sure that the smallest depth
+for a match of slopes is less than the depth limit before it 
+concludes that type 1 flow prevails.
+
+Version 4.75
+
+November 11, 1997
+
+--Problems with CULVERT in computing the submerged flow part of 
+flow type 51 were uncovered.  The submerged flow computations would
+fail with the message:
+
+FRFT7: Minimum depth= ffff at section 43 found seeking a negative residual.
+
+where ffff was some real number.   Flow type 51 is a transitional type between
+the upper limit of type 1 and the lower limit of type 5.  As such various
+coefficients are set to force close matches at each end of the transition.
+In order to match at both ends of the transition these coefficients must
+be given values that sometimes are non-physical, that is, they would never
+be found from a measurement.  The momentum-flux coefficient was not
+properly computed in the submerged flow computations when the free flow
+type was 51.  Since type 51 is a transition between types 1 and 5 its
+submerged flow computations must transition between these types.  That
+is, at the lower limit, near type 1, the submergence levels should
+be close to those for the upper limit of type 1.  In the same way,
+when the flow is close to the lower limit of type 5, the submergence
+computations should be similar in their result to that obtained 
+from the type 5 computations.  The free flow computations must also
+match at the two limits.  
+
+The approach taken in CULVERT is to force the high-head free flow 
+equation, in this case type 5, to match the flow conditions at the
+low-head, in this case type 1, upper limit.  This also means that
+the submergence limit must be matched.  In order to do this
+a special value of the momentum-flux coefficient must be used
+with the type 5 free-flow equation when it is pushed to the 
+upper limit of type 1 flow equation.  The coefficients for 
+intermediate type 51 flow are computed linearly between the
+two limits of type 1 and type 5.    
+
+Now when type 5 flow is drowned by tailwater, CULVERT assumes that the
+submerged flow type becomes type 4.  Thus, to be consistent and to produce
+a smooth transition, the submergence of type 51 over its range 
+must be by type 4 flow.  Thus, the exit of the culvert is
+assumed to be flowing full for all submergence computations involving
+type 51 flow.  At the limit of free-flow, that is, at the initiation
+of submerged flow, CULVERT computes a special value of the momentum-flux
+coefficient so that the momentum flux exiting the culvert barrel
+assuming a full barrel will match the value that exited the 
+barrel during the free-flow submergence computations.  The barrel
+may have been part full for the free flow computation and there might have
+been the complication of a hydraulic jump at the barrel exit as well.
+
+This special momentum-flux coefficient only applies at the limit 
+of free flow.  Previous versions assumed that the tailwater 
+at the free-flow limit would be below the exit soffit of the culvert
+barrel.  Then, if a special momentum-flux coefficient were present, 
+the momentum-flux coefficient would be interpolated between 
+the special value and the true full-barrel value based on the
+tailwater level between the free-flow limit tailwater and the 
+soffit of the barrel at the exit.  However, submergence of type 1 
+flow can require submergence of the barrel exit.  Type 5 flow 
+may be submerged with the barrel only part full at the exit.  
+Thus, there are cases in which the transitional flow type 51 will
+have a free-flow limit tailwater above the soffit of the barrel exit. 
+Thus, the special momentum-flux coefficient was not used because
+the rule for interpolation only applied for tailwater levels below
+the soffit of the barrel exit.  Thus, the true full-barrel value of 
+the momentum-flux coefficient was used and the simple momentum
+balance could not be balanced because the momentum flux computed
+for the culvert barrel was incorrect.  
+
+An additional interpolation rule for special values of momentum-flux
+coefficient was added to the submerged flow computations.  
+This rule comes into play if there is a special momentum-flux 
+coefficient from the free-flow limit computations and if
+the free-flow limit tailwater is above the exit soffit of the
+culvert.  The momentum-flux coefficient under this rule is
+interpolated linearly from its free-flow limit value at
+the free-flow limit tailwater to the true full-barrel value
+at 0.25 of the distance to the tailwater that causes zero flow
+for the culvert.  
+
+The effect on pre-existing culvert computations is hard to 
+evaluate.   The failure to converge occurred at 
+upstream heads close to the type 1 upper limit.  If the 
+upstream head were close to the type 5 lower limit, then
+the computations for submerged flow for type 51 would
+complete.  Version 4.75 will probably give different 
+answers in this region than did early versions.  However,
+the head range between the type 1 and type 5 limits is
+generally a small part of the range of either type.  
+
+A search of the CULVERT code shows that special values
+of momentum-flux and related coefficients are used
+for flow types 5, 51, 52, and 62.  These flows could
+be affected in some cases by the correction made in 
+Version 4.75.
+
+Version 4.76
+
+January 15, 1998
+
+--Found an error in the value of submerged orifice flow shown in the 
+user output file.  The correct value was placed in the table file. 
+This error in the user output file appears to have entered at version 4.68
+when a statement was converted to a comment in error.  Apparently 
+usage of the new version and for UFGATE is small so that no one 
+reported the error. 
+
+Version 4.77
+
+January 28, 1998
+
+--Changed root finding routine RGF5 so that complete suppression
+of argument collapse convergence is impossible.  Forced a local 
+minimum of a relative difference of 0.5*10^-6 for argument collapse
+convergence.  This was done because an instance of failure to 
+converge on critical depth occurred with the residual function 
+nearly converged but the two arguments still differed slightly. 
+This problem can occur in cases where the residual function
+is increasing rapidly near the root.  Then roundoff in the
+computation of the intermediate argument is such that
+the residual function does not fall within the residual-function
+convergence tolerance. 
+
+This change in the computation of critical depth may result
+in slight differences in flow at some points.  However, the
+differences should be on the order of the cumulative roundoff
+and truncation error.  These errors appear to be on the
+order of 1 part out of 10,000 to 1 part out of 100,000.
+
+Version 4.80
+
+April 27, 1998
+
+--A new command has been added to FEQUTL to assist in developing 
+tables to control underflow gates using the GATETABL option
+in Operation Control Block.  This command is named INV_GATE because 
+it inverts an underflow gate rating and creates the skeleton of
+a control table.  The basic problem with the GATETABL option is that
+it is so flexible that it is difficult to establish the values in 
+the control table.  INV_GATE will help the process.  However, the
+process still takes considerable patience and skill. The approach taken
+is as follows:
+
+1. Add a fixed level overflow weir to the model at the site of the
+proposed overflow gate.  
+
+2. Run this model writing output files, on the FEQ connection file
+option is supported at this time.  HECDSS may be added later if there
+is demand for it.  These output files should be as follows:
+
+   2.1  A file contains the times series of water-surface elevation 
+        at the control node for GATETABL.  
+
+   2.2  A file containing the times series of water-surface elevation
+        at the upstream node of the sluice gate.  If this is the 
+        same location as the control node, then this file is 
+        not needed.
+
+   2.3  A file containing the time series of water-surface elevation
+        at the downstream node of the sluice gate.
+
+   2.4  A file containing the time series of flow over the weir.
+
+3. These files are then used in the INV_GATE command together with 
+the rating tables for the underflow gate to develop an initial 
+control table for the GATETABL option.  The INV_GATE command 
+does the following:
+
+   3.1  Reads the rating tables for the underflow gate and a collection
+        parameters used to control what is done. 
+
+   3.2  At each time step in the time series compute what the gate opening
+        would have had to be in order to match the flow over the weir 
+        using the sluice gate with exactly the same upstream and downstream
+        water-surface elevation.  In some cases no solution is possible because
+        the weir is not as subject to tailwater as is the sluice gate. 
+        In this case the gate is set to its maximum setting and a flag 
+        is set internally to note that no solution is possible. 
+
+   3.3  Keep a record of the gate opening and the appropriate range
+        of head difference as well as the flood stage at the
+        control node. 
+
+The input values for INV_GATE are as follows:
+
+     UD_TABLE      table number giving the type 15 rating table for the
+                   gate for flow from the upstream node to the downstream
+                   node.
+     DU_TABLE      table number giving the type 15 rating table for
+                   the gate for flow from the downstream node to the 
+                   upstream node. 
+     CPNT_ELEV_TS  file name for the time series of elevation at the
+                   control point for the structure.  The control
+                   is the exterior node giving the elevation 
+                   defining the operation of the gate.
+     UPS_ELEV_TS   file name for the time series of elevation at the
+                   node upstream of the gate.  Upstream is defined
+                   by the user with the rule that the flow, given
+                   in another time series, must always be positive
+                   for flow from the upstream node to the downstream
+                   node.  Given only when the control-point location
+                   is different than the upstream-node location.  
+     DNS_ELEV_TS   file name for the time series of elevation at the 
+                   node downstream of the gate. 
+     GATE_FLOW_TS  file name for the time series of flows through the gate.
+
+     FLOOD_ELEV    the elevation at the control point that defines
+                   the zero point on the sequence of arguments for
+                   rows of the control table.  This is the elevation
+                   at the control point that often signals flood 
+                   hazard at some point downstream.  
+     FLOOD_FLOW    the flow at the control point when the elevation
+                   is at FLOOD_ELEV.  Used to estimate the gate
+                   operation for draining of the reservoir. The
+                   difference between the FLOOD_FLOW and the current
+                   flow at the control point gives the maximum 
+                   flow release possible. 
+     CONTROL_TAB   the table number for the control table computed
+                   by the GATE_INV command.
+     COL_BDYS      the sequence of boundary values defining  the cells  
+                   for the columns of the type 10 table.  The midpoint of the
+                   cell will become the argument value in the table.     
+     ROW_BDYS      the sequence of boundary values defining  the cells 
+                   for the rows of the type 10 table.  The midpoint of the
+                   cell will become the argument value in the table. 
+
+               See the description of the GATETABL option above for more
+               details on the arguments for the type 10 table.
+
+     DRAIN_LOC     the location defining the node that represents the
+                   reservoir to be drained.  Has two values UPS or
+                   DNS.
+
+     MIN_FLOW      all flows less than this value are treated as zero flow.
+                 
+     OUTPUT_LEVEL user control on output level:  MIN gives the minimum
+                  level with the summary tables only.  MAX gives the 
+                  results for each flow greater than MIN_FLOW.
+     REVERSE_FLOW if YES, reverse flows are included.  If NO reverse
+                  flows are excluded.  If YES, MIN_FLOW refers to the
+                  absolute value of the flow. 
+ 
+An example input follows:  
+
+INV_GATE
+CONTROL_TAB= 125
+UD_TABLE=530  DU_TABLE= 630   FLOOD_ELEV= 673.50   FLOOD_FLOW = 1234.
+MIN_FLOW= 1.0
+DRAIN_LOC = F13
+.
+.
+.
+CPNT_ELEV=F:\WDIT\D19ELEV
+DNS_ELEV=F:\WDIT\F32ELEV
+GATE_FLOW=F:\WDIT\F32FLOW
+.
+.
+.
+COL_BDYS= /
+ -6.0 0.0  0.2 0.4  0.6 0.8 1.0 1.5 2.0 4.0  6.0  50.
+
+ROW_BDYS= -5.0 0.0 0.2 0.4 0.6 0.8 1.0 1.25 1.50 1.75 2.0  2.25 2.50 2.75 3.0 3.25 3.5 3.75 4.0 4.25 4.50 4.75 /
+           5.0 
+
+END INV_GATE
+
+In this example all of the input is defined by a keyword followed by an equal
+sign and followed by one or more items of information.  The keywords MUST be 
+spelled as shown. Any deviation will be flagged as an error.  Note that the 
+COL_BDYS and ROW_BDYS keywords take more than one item.  The forward slash, 
+always set off from other items by one or more spaces, is a continuation
+signal.  If a continuation signal is not given, the input processing software
+expects to find all responses to the keyword to appear on a single line of input.  
+For this command a line of input is limited to 120 space per line. 
+
+The command is ended with an explicit END command, followed by the command name.
+
+This example, taken from Salt Creek in DuPage County Illinois created 
+the following skeleton for the type 10 table for the GATETABL option:
+
+TABLE#=  125
+TYPE=  -10 '( 12A6)' '(1X, 12A6)' '(F6.0)' '( 12F6.0)' '(1X,F6.1, 11F6.2)' 
+HDATUM=   673.500
+LABEL= Replace with desired value                       
+Fstage -3.00  0.10  0.30  0.50  0.70  0.90  1.25  1.75  3.00  5.00 28.00
+ -2.50   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  0.10   0.0 0.091   0.0   0.0   0.0   0.0 0.007   0.0 0.006   0.0 0.006
+  0.30   0.0 0.168 0.087   0.0   0.0   0.0 0.045 0.032 0.022   0.0 0.021
+  0.50   0.0 0.289 0.151 0.126 0.108 0.109 0.080 0.059 0.055   0.0 0.047
+  0.70   0.0 0.390 0.280 0.197 0.137 0.126 0.117 0.115 0.089 0.084 0.080
+  0.90   0.0 0.451 0.362 0.276 0.265 0.234 0.199 0.159 0.129 0.113 0.119
+  1.13   0.0 0.531 0.473 0.420 0.353 0.317 0.279 0.239 0.175 0.178 0.178
+  1.38   0.0 0.608 0.523 0.518 0.495 0.450 0.364 0.306 0.272 0.248 0.246
+  1.63   0.0 0.604 0.652   0.0 0.543   0.0 0.463 0.417 0.353 0.346 0.339
+  1.88   0.0 0.638   0.0 0.671   0.0 0.562 0.555 0.530 0.458 0.417 0.449
+  2.13   0.0 0.692   0.0 0.760 0.691 0.647 0.600 0.588 0.584 0.586 0.570
+  2.38   0.0 0.730   0.0   0.0   0.0   0.0   0.0   0.0   0.0 0.627 0.636
+  2.63   0.0 0.758   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  2.88   0.0 0.786   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  3.13   0.0 0.833   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  3.38   0.0 0.886   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  3.63   0.0 0.945   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  3.88   0.0 0.971   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  4.13   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  4.38   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  4.63   0.0 0.997   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  4.88   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  -1.0
+
+Note the many zero entries.  This shows that no water levels occurred in 
+those parts of the table.  Since the values in the table are relative
+gate openings, this table, used as produced would keep the gate closed
+in those regions.  Also, note that the precision of output is far greater
+then the accuracy of the output.  Some of the cells in the table only
+had one observation.  The significance of each cells average value 
+can be judged from the detailed output from the command.  This follows
+this example:
+
+ Summary of Results
+ Cell    Type   -6.0   0.0   0.2   0.4   0.6   0.8   1.0   1.5   2.0   4.0   6.0
+ Bdys            0.0   0.2   0.4   0.6   0.8   1.0   1.5   2.0   4.0   6.0  50.0
+  -5.00  AvrP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+   0.00  MinP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         MaxP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         N   :     0     0     0     0     0     0     0     0     0     0     0
+ 
+   0.00  AvrP:   0.0 0.091   0.0   0.0   0.0   0.0 0.007   0.0 0.006   0.0 0.006
+   0.20  MinP:   0.0  0.02   0.0   0.0   0.0   0.0  0.00   0.0  0.00   0.0  0.00
+         MaxP:   0.0  0.19   0.0   0.0   0.0   0.0  0.01   0.0  0.01   0.0  0.01
+         N   :     0    60     0     0     0     0    35     0    34     0   766
+ 
+   0.20  AvrP:   0.0 0.168 0.087   0.0   0.0   0.0 0.045 0.032 0.022   0.0 0.021
+   0.40  MinP:   0.0  0.05  0.05   0.0   0.0   0.0  0.02  0.02  0.01   0.0  0.01
+         MaxP:   0.0  0.27  0.12   0.0   0.0   0.0  0.06  0.05  0.03   0.0  0.03
+         N   :     0   199    40     0     0     0     4    31    12     0  1128
+ 
+   0.40  AvrP:   0.0 0.289 0.151 0.126 0.108 0.109 0.080 0.059 0.055   0.0 0.047
+   0.60  MinP:   0.0  0.14  0.10  0.09  0.09  0.09  0.05  0.04  0.03   0.0  0.03
+         MaxP:   0.0  0.39  0.21  0.16  0.13  0.12  0.11  0.09  0.07   0.0  0.06
+         N   :     0   196    21    18    10    10    38    15    28     0  1194
+ 
+   0.60  AvrP:   0.0 0.390 0.280 0.197 0.137 0.126 0.117 0.115 0.089 0.084 0.080
+   0.80  MinP:   0.0  0.33  0.22  0.15  0.13  0.13  0.11  0.09  0.07  0.06  0.06
+         MaxP:   0.0  0.46  0.33  0.23  0.14  0.13  0.12  0.13  0.13  0.10  0.10
+         N   :     0   129    14    13     3     1     9    15    42    20  1221
+ 
+   0.80  AvrP:   0.0 0.451 0.362 0.276 0.265 0.234 0.199 0.159 0.129 0.113 0.119
+   1.00  MinP:   0.0  0.37  0.28  0.24  0.24  0.22  0.18  0.13  0.10  0.10  0.10
+         MaxP:   0.0  0.49  0.45  0.34  0.28  0.25  0.23  0.19  0.18  0.14  0.14
+         N   :     0   165    17    19     3     4    15    51    55    50  1201
+ 
+   1.00  AvrP:   0.0 0.531 0.473 0.420 0.353 0.317 0.279 0.239 0.175 0.178 0.178
+   1.25  MinP:   0.0  0.44  0.40  0.32  0.32  0.27  0.23  0.20  0.14  0.15  0.14
+         MaxP:   0.0  0.64  0.51  0.49  0.39  0.37  0.34  0.29  0.22  0.21  0.21
+         N   :     0   180     9    20     4     5    11    28    38    75  1243
+ 
+   1.25  AvrP:   0.0 0.608 0.523 0.518 0.495 0.450 0.364 0.306 0.272 0.248 0.246
+   1.50  MinP:   0.0  0.50  0.50  0.49  0.41  0.39  0.30  0.28  0.24  0.21  0.21
+         MaxP:   0.0  0.80  0.58  0.53  0.52  0.48  0.45  0.33  0.31  0.29  0.29
+         N   :     0   164     9     4     8     5    19    10    27    16  1320
+ 
+   1.50  AvrP:   0.0 0.604 0.652   0.0 0.543   0.0 0.463 0.417 0.353 0.346 0.339
+   1.75  MinP:   0.0  0.53  0.56   0.0  0.53   0.0  0.41  0.38  0.29  0.30  0.29
+         MaxP:   0.0  0.87  0.76   0.0  0.56   0.0  0.51  0.46  0.41  0.40  0.40
+         N   :     0   198     7     0     3     0     5     4    26    45   853
+ 
+   1.75  AvrP:   0.0 0.638   0.0 0.671   0.0 0.562 0.555 0.530 0.458 0.417 0.449
+   2.00  MinP:   0.0  0.56   0.0  0.64   0.0  0.56  0.53  0.50  0.41  0.40  0.40
+         MaxP:   0.0  0.90   0.0  0.70   0.0  0.56  0.58  0.57  0.50  0.44  0.52
+         N   :     0   215     0     2     0     2     5     6    23    18   683
+ 
+   2.00  AvrP:   0.0 0.692   0.0 0.760 0.691 0.647 0.600 0.588 0.584 0.586 0.570
+   2.25  MinP:   0.0  0.59   0.0  0.72  0.66  0.60  0.58  0.57  0.52  0.52  0.51
+         MaxP:   0.0  0.94   0.0  0.79  0.73  0.69  0.61  0.61  0.62  0.62  0.62
+         N   :     0   182     0     3     4     3    11     9    34    28   556
+ 
+   2.25  AvrP:   0.0 0.729   0.0   0.0   0.0   0.0   0.0   0.0   0.0 0.627 0.636
+   2.50  MinP:   0.0  0.62   0.0   0.0   0.0   0.0   0.0   0.0   0.0  0.62  0.62
+         MaxP:   0.0  0.98   0.0   0.0   0.0   0.0   0.0   0.0   0.0  0.63  1.00
+         N   :     0   197     0     0     0     0     0     0     0     6    46
+ 
+   2.50  AvrP:   0.0 0.758   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+   2.75  MinP:   0.0  0.66   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         MaxP:   0.0  1.00   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         N   :     0   140     0     0     0     0     0     0     0     0     0
+ 
+   2.75  AvrP:   0.0 0.786   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+   3.00  MinP:   0.0  0.73   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         MaxP:   0.0  0.99   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         N   :     0   119     0     0     0     0     0     0     0     0     0
+ 
+   3.00  AvrP:   0.0 0.834   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+   3.25  MinP:   0.0  0.77   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         MaxP:   0.0  0.99   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         N   :     0   126     0     0     0     0     0     0     0     0     0
+ 
+   3.25  AvrP:   0.0 0.887   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+   3.50  MinP:   0.0  0.83   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         MaxP:   0.0  1.00   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         N   :     0    81     0     0     0     0     0     0     0     0     0
+ 
+   3.50  AvrP:   0.0 0.945   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+   3.75  MinP:   0.0  0.86   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         MaxP:   0.0  0.99   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         N   :     0    51     0     0     0     0     0     0     0     0     0
+ 
+   3.75  AvrP:   0.0 0.971   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+   4.00  MinP:   0.0  0.80   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         MaxP:   0.0  1.00   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         N   :     0    30     0     0     0     0     0     0     0     0     0
+ 
+   4.00  AvrP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+   4.25  MinP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         MaxP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         N   :     0     0     0     0     0     0     0     0     0     0     0
+ 
+   4.25  AvrP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+   4.50  MinP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         MaxP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         N   :     0     0     0     0     0     0     0     0     0     0     0
+ 
+   4.50  AvrP:   0.0 0.997   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+   4.75  MinP:   0.0  1.00   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         MaxP:   0.0  1.00   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         N   :     0     1     0     0     0     0     0     0     0     0     0
+ 
+   4.75  AvrP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+   5.00  MinP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         MaxP:   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+         N   :     0     0     0     0     0     0     0     0     0     0     0
+
+Each cell has four values printed per row.  The first value is the average value
+of the relative gate opening, P.  The second value, on the second row, is the 
+minimum value of P found.  The third value is the maximum value of P found,
+and the last value is the number of cases occurring in that cell.  
+
+The cell boundaries for columns are given in two rows at the top of the table.
+Each column is headed by the cell boundaries for that column.  Adjacent 
+columns share a boundary in common.  Each row has its cell boundary given
+as well and again adjacent rows share a common cell boundary. 
+
+As an example, if the flood stage at the control point was between 3.75 and 
+4.00 feet and if the difference: elevation at upstream node minus elevation
+at downstream node was between 0 and 0.2 feet, then there were 30 cases.
+The average gate setting was 0.971,  the minimum gate setting was 0.80 and
+the maximum was 1.0.  
+
+The type 10 table given above was modified manually to read as follows:
+
+; Modification of the table created by the INV_GATE command in FEQUTL.
+; Control table for the low-level gates
+TABLE#= 5300
+TYPE=  -10 '( 13A6)' '(1X, 13A6)' '(F6.0)' '( 13F6.0)' '(1X,F6.1, 12F6.2)' 
+HDATUM=   673.500
+LABEL= Control by Salt Creek Level at the gate.
+Fstage-9999.  0.00  0.10  0.30  0.50  0.70  0.90  1.25  1.75  3.00  5.00 50.00
+-9999.   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  0.0    0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0   0.0
+  0.10   0.0   0.0 0.091 0.047 0.040 0.034 0.034 0.007 0.006 0.006 0.006 0.006
+  0.30   0.0   0.0 0.168 0.087 0.073 0.063 0.063 0.045 0.032 0.022 0.022 0.022
+  0.50   0.0   0.0 0.289 0.151 0.126 0.108 0.109 0.080 0.059 0.055 0.050 0.050
+  0.70   0.0   0.0 0.390 0.280 0.197 0.137 0.126 0.117 0.115 0.089 0.084 0.084
+  0.90   0.0   0.0 0.451 0.362 0.276 0.265 0.234 0.199 0.159 0.129 0.113 0.113
+  1.13   0.0   0.0 0.531 0.473 0.420 0.353 0.317 0.279 0.239 0.175 0.175 0.175
+  1.38   0.0   0.0 0.608 0.523 0.518 0.495 0.450 0.364 0.306 0.272 0.248 0.248
+  1.63   0.0   0.0 0.604 0.652 0.635 0.543 0.532 0.463 0.417 0.353 0.339 0.339
+  1.88   0.0   0.0 0.638 0.689 0.671 0.574 0.562 0.555 0.530 0.458 0.417 0.417
+  2.13   0.0   0.0 0.692 0.747 0.760 0.691 0.647 0.600 0.588 0.584 0.584 0.584
+  2.38   0.0   0.0 0.730 0.788 0.802 0.729 0.683 0.633 0.620 0.616 0.616 0.616
+  2.63   0.0   0.0 0.758 0.818 0.833 0.757 0.709 0.660 0.644 0.640 0.640 0.640
+  2.88   0.0   0.0 0.786 0.848 0.864 0.758 0.735 0.684 0.668 0.664 0.664 0.664
+  3.13   0.0   0.0 0.833 0.899 0.916 0.803 0.779 0.725 0.708 0.704 0.704 0.704
+  3.38   0.0   0.0 0.886 0.956 0.974 0.854 0.829 0.771 0.753 0.749 0.749 0.749
+  3.63   0.0   0.0 0.945 1.000 1.000 0.911 0.884 0.822 0.803 0.799 0.799 0.799
+  3.88   0.0   0.0 0.971 1.000 1.000 0.936 0.908 0.845 0.825 0.821 0.821 0.821
+  4.13   0.0   0.0 0.981 1.000 1.000 0.946 0.917 0.854 0.833 0.829 0.829 0.829
+  4.38   0.0   0.0 0.990 1.000 1.000 0.955 0.925 0.862 0.841 0.837 0.837 0.837
+  4.63   0.0   0.0 1.000 1.000 1.000 0.965 0.934 0.871 0.849 0.845 0.845 0.845
+ 10.00   0.0   0.0 1.000 1.000 1.000 0.965 0.934 0.871 0.849 0.845 0.845 0.845
+  -1.0
+
+Note that the region for the gate being closed was enlarged.  During test
+runs the Salt Creek model had some rather erratic values that went below
+the ranges in the original table.  Thus, they were extended to larger
+negative values.  The rough rule of thumb for filling in the values 
+was as follows:
+
+1. In table 125, the one produced by the INV_GATE command, each row
+appears to decline to a nearly constant value.  
+
+2.  The zero entries will filled in using ratio between non-zero values
+in adjacent rows that were to the left of a missing value or values. 
+For example the row with argument 0.30 has a string of missing values
+following 0.087.  The row below it, with argument 0.5, has values in 
+each of the columns that contain a zero in the row above.  Thus,
+the first missing value in the row with argument 0.30 was estimated
+as follows:
+
+            0.087
+            ------ x  0.126 = 0.073
+            0.151
+
+This pattern was followed in nearly all cases.   If the computed ratio
+was greater then 1.0 it was set to 1.0.  Previously computed values 
+were used as needed to fill in missing values as well.  In this manner
+crude estimates of values could be defined for each cell in the table. 
+
+This process does not define an optimum table for any purpose; all it does
+is define a valid table.  However, the parts of the table based on the
+performance of the overflow weir will produce results that are similar
+to those produced by the overflow weir.  As test runs are made with the
+sluice gate, performance of the operation will probably be not quite what
+was desired.  One can then find the general range of the deficiency in
+performance in terms of flood stage and the difference in water-surface 
+elevations upstream and downstream of the gate.  Once this is found 
+appropriate  adjustment can be made to the gate setting in that region.  
+Thus, with multiple test runs an improved gate operation rule can be 
+developed. 
+
+Note: The INV_GATE command has only been tested with the inputs shown in
+the example.  Other input options are generally not supported yet.  
+It possible, however, to have input of all four time series when the
+control node differs form the upstream node.  That option is supported
+in the code but has not been tested yet.  
+
+Also, the number of cells for columns has a limit of 19.  Increasing tha
+can be done if needed.  The number of rows is currently set at 40.  
+Changing the number of rows only requires changing the parameter value,
+MRDT10 in the file arsize.prm.  Increasing the limit for columns
+above 19 has broad implication.  Formats need to be changed and the 
+line length of the process of input of type 10 function tables must be
+changed to increase that limit.  
+
+Version 4.81
+
+May 22, 1998
+
+--Modified output of cross-section tables to the standard user output
+to include the average value of Manning's n at each depth in the 
+cross section.  This can be helpful in checking on variation of Manning's
+n with changes in depth. 
+
+Version 4.85
+
+June 18, 1998
+
+--A number of changes were made in the way the various source files
+are arranged:
+
+1. The COMPROG directory was changed to SHARE
+
+2. COMPROG.FOR was broken into many smaller units
+
+3. ARSIZE.PRM for FEQ and FEQUTL were combined into one file
+
+4. Several .COM files between FEQ and FEQUTL were the same or 
+   nearly so.  These were adjusted to be the same and moved
+   to the SHARE directory to be used by both FEQ and FEQUTL.
+
+5. One bug was found in FEQ that occurred on a SG computer. 
+   All other compilers did not encounter the problem. 
+
+These tasks were done by RS Regan, USGS, Reston.  I have made
+check runs of the modified code and have found no differences.
+However, there may be options not tested that could cause 
+problems. 
+
+Version 4.86
+
+July 21, 1998
+
+--Found and corrected error in CHANNEL command when stationing in 
+the sinuosity definition table was decreasing.  Apparently no one 
+had ever used this option here to for. 
+
+Version 4.90
+
+September 8, 1998
+
+-Modified routines for finding critical and normal depth to improve
+the search for an interval containing a root.  May change results
+slightly since the improved search now locates a smaller interval
+before the final solution is sought. 
+
+--Modified the lower limit for the high-head flows in CULVERT to
+be  (TY1HTD +0.1001)*D.  If TY1HTD is kept at its default of 1.4
+the results will be the same as in previous versions.
+
+--Modified the limit used for calling the low-head routines in
+CULVERT to use the computed limit if either type 1 or type 2 have
+a limit set.  In previous versions both type 1 and type 2 had to
+have a limit set before the computed limits were used in 
+the decision of calling the low-head or high-head routines. 
+Might change some flows close to the boundary between high-head 
+and low-head flows. 
+
+--Added a new command, UFGCULV, that models a sluice gate on the
+upstream face of a box culvert.  There are many restrictions on this
+command as it is implemented:
+ 1. The barrel of the box culvert must not have an adverse slope.
+
+ 2. The sill elevation must match the invert of the box culvert at
+    its upstream end.  There is currently no provision for a drop
+    from the sill into the culvert. 
+
+ 3. The barrel of the box culvert must be prismatic: constant shape,
+    roughness, and slope.
+
+ 4. The departure reach must be horizontal and prismatic.  
+
+In order to support this new command, the CULVERT command was also 
+modified.  Flows through the culvert not in contact with the lip of
+the sluice gate, are computed in a  CULVERT command.  The results 
+of the CULVERT command computations are stored internal to FEQUTL
+when the user gives two options following the table number for the
+CULVERT command.  An input fragment is:
+
+CULVERT
+TABLE#= 128  PUTQ= 976 PUTY2= 977  
+TYPE=   13
+LABEL=SIMPLE CULVERT EXAMPLE
+  .
+  .
+  .
+
+The two options must appear on the same line as TABLE# but they can be in any 
+order and spacing.  The equal signs must also appear and BE sure the names are 
+spelled exactly as shown.  PUTQ gives a table number to be used to store the
+flows for the culvert in a table of type 13 and PUTY2 gives the table number
+for storing the depth of flow at the entrance to the culvert, section 2, 
+in another table of type 13.  These tables do not appear in the function-table
+file.  They are stored in the function-table storage system within FEQUTL. 
+The CULVERT command must appear before the UFGCULV command so that these 
+two tables are known.  The CULVERT command must use the same tables for
+approach and departure sections as the UFGCULV command as well.  The barrel
+description must match and there can be NO flow over the roadway.  Any flow
+over the roadway must be modeled using a separate EMBANKQ command. 
+
+The input for UFGCULV is a slightly modified form of the input for UFGATE.
+An example follows:
+
+UFGCULV
+TABLE#= 580 GETQ=  976 GETY2=  977
+LABEL= Sluice gate on culvert
+APPTAB=    4
+DEPTAB=    5
+SILLELEV=  50.
+GATEWIDTH= 30.
+CD= 0.98
+CCTAB=200 
+FWFOTRAN= 0.1
+MAXHEAD= 25.0
+MINHEAD= 0.2
+PRECISION= 0.02
+   Opening 2-D Table  Cc Value Lip Angle 
+      0.2       5801             
+   0.2645       5802             
+   0.3497       5803             
+   0.4625       5804             
+   0.6116       5805             
+   0.8087       5806             
+   1.0694       5807             
+   1.4142       5808             
+   1.8701       5809     
+   2.4730       5816     
+   3.2702       5819     
+   4.3245       5818
+   5.7186       5810     
+   7.5621       5817     
+  10.0000       5811     
+      -1.0
+
+SFAC= 1.0
+ NODE   NODEID  XNUM   STATION ELEVATION
+  100 TESTCLVU   999      0.00     50.00
+      TESTCLVD   999    100.00     50.00
+   -1
+Partial free drop parameters
+MINPFD= 0.01  
+BRKPFD= 0.5
+LIMPFD= 0.99
+FINPOW= 2.0
+
+Two new options follow the table number input: GETQ and GETY2.  These are
+the counterparts to PUTQ and GETY2 in the CULVERT command.  The same rules
+apply as in the CULVERT command.  The table numbers obviously must match those
+used in the CULVERT command.  The other input is the same.  Currently the 
+input for CD is required but UFGCULV does not use the value.  The lip angle
+options for tainter gates is not currently supported.  It may be added in
+the future if a tainter gate is placed on a box culvert entrance.
+
+The barrel description follows the end of the gate opening table.  It follows
+a format similar to that used in the CULVERT command.  However, special 
+losses are not supported at this time.  Since the barrel must be prismatic
+only two points on the barrel can be given:  the barrel 
+entrance and the barrel exit.  You must be sure that the length, cross section
+description and the invert elevations match those used in the CULVERT command. 
+
+
+The contraction coefficient for the gate can vary with the gate opening 
+relative to the head at section 1.  Head is always measured from the 
+entrance invert of the culvert which must match the sill elevation for the 
+gate.  The invert elevation for the approach cross section and the departure
+cross section comes from the cross section tables. Also, the distance between
+the approach cross section and the culvert entrance is determined from the 
+difference between the station at the entrance and the station of the 
+approach cross section.  Currently the stations along the barrel must increase
+from entrance to exit.  In the above example, the station of the approach
+cross section would be negative to yield a positive distance when the 
+difference is computed. 
+
+Some special problems have been encountered in convergence of the iterations
+for the non-linear system of equations.  This appears to arise because the 
+tables for the UFGCULV command are not at smooth as those for the UFGATE command.
+In the UFGATE command it proved possible to force continuity at all of the 
+transitions between flow types or patterns.  It has not proved possible to do 
+the same in UFGCULV because the flow in the barrel complicates the flow 
+patterns.  Thus, some transitions are rather abrupt, especially in the changes 
+that take place in the first derivatives used in the solution of the non-linear 
+equation system.  It has proved necessary to use the SQREPS option.  This 
+option is usually set to 1E25 or so that it does not have an effect on the 
+solution. The value to set will depend on the nature of the model and the 
+nature of the convergence failure.  In the small model used for testing, the 
+failure was clearly located at upstream and downstream exterior nodes involved 
+in the specification of the underflow gate.  The table for the UFGCULV command 
+is used just as if it came from the UFGATE command.  The pattern in the 
+iteration log was that the maximum relative correction stayed about the same 
+size iteration after iteration.  An example is:
+
+ SIMULATION ending at  1990/ 1/ 2/ 20.501 with time step of        3.5 sec
+ ITER RCORECT  BRA  NODE   MXRES  LOC  SUMSQR NUMGT
+    1 1.5E-01    1   117 3.0E+02   35 1.1E+05     3
+    2 1.4E-01    2   201 3.6E+02   35 1.3E+05     3
+    3 1.7E-01    1   117 3.2E+02   35 1.0E+05     3
+    4 1.4E-01    1   117 3.6E+02   35 1.3E+05     3
+    5 1.7E-01    2   201 3.2E+02   35 1.0E+05     3
+
+The control structure was located between the dns end of branch 1 (node 117)
+and the ups node of branch 2 (node 201).  Note that the relative correction
+(RCORECT column heading) is nearly constant.  The maximum residual (MXRES 
+column heading) was also nearly constant, and the location of the maximum 
+residual wasconstant.  The column headed by SUMSQR is the key to the selection 
+of the value of SQREPS value to try to force convergence.  In the current 
+example a value of 1E4 was used for the value.  This forced a few partial 
+Newton corrections and the computations converged quickly and the times 
+step was only reduced for a short time.  The value may be much larger in a 
+larger model.  If the value for SQREPS is made too small, there will be 
+too frequent partial Newton corrections and the time step may again 
+become small enough to abort the run.  If it is picked too large, no
+partial Newton corrections will be forced, and the run will fail.  
+In the current test model, a value of SQREPS of 1E3 worked and a value
+of 5E4 worked.  However, a value of 1E5 failed since it is essentially the
+same as the values reported in the iteration log. 
+
+There are some special problems that arise when the gate is fully open
+to the vertical diameter of the box.   The default parameters for type 1
+flow may cause the flow type in the CULVERT computations to change from type 1
+too soon.  The default parameters are now set for both pipe and box conduits.
+For a box culvert the values can be increased so that the depth at section
+1 is nearly the same as the vertical diameter before the flow type switches 
+from type 1.  This discussion is assuming that the barrel of the culvert is 
+steep so that type 1 flow will exist until the entrance is submerged leading 
+to type 5 flow in most cases.  Optional parameters exist in the CULVERT 
+command to change the default limits for type 1 flow.  The  input fragment
+from a CULVERT command example shows the position, names, and approximate
+values for the parameters that have worked.  TY1YTD gives the ratio of 
+depth at section 2 to vertical diameter, D, of culvert at the type 1 upper
+limit.  TY1HTD gives the ration of head at section 1 to the vertical
+diameter of the culvert at the upper limit for type 1. The former limit
+often determines a limit that is smaller than the latter limit.  
+For example, the initial output from CULVERT showed that the upper
+limit at section 1 for Type 1 flow was 1.549D as defined by the
+section 2 value.  Making the section 2 value closer to D , that is, 1.00,
+will yield larger values for the head to diameter ratio.  However, care
+must be used. If TY1YTD is made too close to 1.00, we will be computing 
+critical flow in the slot.  Thus, the value of TY1YTD should be such 
+that the top width at that level from the cross section table produced 
+by the BOX option in MULCON will still be  the width of the box and not 
+the smaller widths as vertical diameter is approached.  The BOX option 
+puts a small slope on the top of the  BOX to avoid a discontinuity in the 
+top width.  The maximum value for TY1YTD should be at or below this level. 
+
+  .
+  .
+  .
+TYPE 5 PARAMETERS
+RBVALUE= 0.00
+BVANGLE= 0.00
+WWANGLE= 0.00
+LPOVERD= 0.00
+TYPE5SBF= 0.75
+TYPE 1 PARAMETERS
+TY1YTD=0.997
+TY1HTD=1.59
+Roadway Description
+  .
+  .                                           
+  .
+
+There are also some special output messages that may appear in the tables 
+written to the user output file.  In some cases submergence of a FW flow
+by the tailwater will lead to an submerged orifice (SO) flow based on the 
+relations among the headwater, tailwater and gate opening.  However, 
+computation assuming that the gate is submerged will show that it is 
+not quite submerged.  If such is the case, a message "SO FLOW is not SO!" 
+will be given.  In some cases a flow value will be followed by an asterisk,
+(*), indicating that the assumption of SO flow lead to critical depth at 
+the culvert exit.  The former message would normally appear for steep 
+culvert slopes, and the * may appear for mild slope or horizontal 
+culvert barrels.  In the former case, the flow is given the free-flow 
+value and the computations continue.  In the later case the flow computed 
+assuming critical depth at the culvert exit is reported and the 
+computations continue.  
+
+The UFGCULV command does not include the effect of gravity on the 
+momentum balances used in the sloping culvert barrel.  This may 
+distort the results, especially for steep barrels.  Experimentation 
+with the adjustments for the effect of barrel slope will indicate whether
+the results are reasonable.  
+
+The hydraulic jumps are assumed to have zero length.  In some cases,
+especially with submerged jumps, the high-velocity jet of water persists
+from some distance downstream often exceeding the length of a free
+jump.  This means that the momentum flux in the culvert barrel is 
+not well defined.  
+
+The error estimation and control for the UFGCULV command is not
+as well developed as for the UFGATE command.  Therefore, the additional points
+in the computation that are used to estimate the errors are retained 
+in the output of the table, which generally results in error estimates that 
+are too large.  The UFGCULV computation takes more run time, therefore, 
+intermediate output is printed to the user terminal during execution.
+
+Version 4.91
+
+October 28 ,1998
+
+--Found error in UFGCULV in which SFAC was not applied to the station
+found at the approach section.  If SFAC > 1, this caused problems. 
+
+--Found a case at low heads at which a zero flow was 
+computed when the drop was small.  This caused a failure during the 
+computation of the local power, P, involving logarithms.  Made 
+a quick fix.  Must check latter why the flow was computed as zero
+when it should have been slightly greater than zero.  However, this
+portion of the table is unlikely to be used and the error in any case
+is small. 
+
+Version 4.92
+
+January 27, 1999
+
+--Modified various commands that output 2-D tables to place a source
+string after the head datum value.  This is used to check tables 
+created from WSPRO data in FEQ.  Other source values were added
+in case they prove useful . 
+
+Version 4.93
+
+4 February 1999
+
+--Added source flag for cross-section function tables.  If flag is 0,
+the table was input to FEQUTL, and if the flag is 1, the table
+was interpolated within FEQUTL.  Caused change of XTIOFF to 21 
+in arsize.prm.  
+
+Version 5.00
+
+30 July 1999
+
+--The change to using a function-table id rather than a table number
+requires that many references to tables in the input to FEQUTL be
+changed. In some cases, no change is needed if the standard headings
+have been used.  In some cases the standard headings must be modified
+to give the correct result.  
+
+FEQ and FEQUTL currently use a variety of input formats.  Here is a brief
+summary of the various formats and their definition and distinctions.
+
+Format name           Description
+------------------    ----------------------------------------------------
+fixed format          response items MUST fall within predefined fixed ranges
+                      of columns.  This was the only format in the
+                      early versions of these programs.   This format has
+                      a fixed order for the items AND a fixed set of columns 
+                      for each item.  It is the most rigid and has no user 
+                      control available.  
+
+heading-dependent     This is the name given to a format in which items 
+                      are given in a fixed order and each must appear
+                      in a given range of columns but the user defines
+                      the range of columns by giving a heading for each
+                      item.  The heading must not have any spaces in it.
+                      The range of columns for an item is from the last 
+                      character in its heading to the column following
+                      the last character in the heading for the preceding
+                      item (using left to right order)  If there is no 
+                      preceding item, the first column for the item is 
+                      column 1 on the line.  This option has greater 
+                      flexibility than the fixed format in that the 
+                      range of columns for each item is under user control 
+                      even though the order of items remains fixed.  
+                      However, the user must make sure that each item 
+                      falls inside its valid column range. 
+
+column-independent    Column-independent input is still has a fixed 
+                      order that cannot be changed but now the items
+                      need only be separated by one or more spaces 
+                      or by a single comma.  This gives the 
+                      greater flexibility but blank fields do not exist
+                      so that no item can be skipped in the sequence. 
+                      Either a value must be given or a place holder,
+                      the asterisk in our case, must be given.  In some
+                      cases the context cannot make sense of an asterisk
+                      a value must be given for each item, even if the item
+                      is to default to zero.  
+
+named-item            Named-item input has the most flexibility because 
+                      items can be in any order or can even be left out
+                      if the default value is suitable.  However, the 
+                      penalty for this additional flexibility is that 
+                      each item's name, a predefined identifier, must
+                      be given with the item.  All previous forms 
+                      use an implied item by virtue of the order of the
+                      input.  Now that the order is under user control,
+                      the name of the item must be given so that the 
+                      software can associate the value with its proper
+                      internal variable.  
+                      
+The following commands have had changes in their input processing.  In some
+cases the old inputs will be processed properly without change.  In other
+cases the old inputs must be changed because they are incompatible with
+the new method of processing the input.                       
+
+                      
+
+CULVERT
+
+The culvert barrel description must use NODEID=YES.  The NO option is
+no longer supported.  In addition, the input of the barrel is now
+taken to be in heading-dependent format.  The standard headings, if
+used should be suitable.  The DEPTAB specification may have to be changed
+if you gave a value for BEGTAB or RMFFAC.  If either of these two optional
+values have been given, you must use named-item input.  That is each of the
+three items must have the standard name followed by an equal sign followed
+by the value.  For example,
+
+DEPTAB=  568   BEGTAB=570  RMFFAC= 0.8
+
+Default value for BEGTAB is 0 and for RMFFAC is 1.0.  
+
+EXPCON
+
+The standard input will work without change but the left justified heading for 
+the column that contains the label for each table will result in the label being 
+truncated to five characters.  The heading for that column should be extended
+to the right so that the heading for the label column has 50 or more characters
+in it.  Dashes, underlines, or any other printing character on the keyboard will
+probably work.  Dashes and underlines have been tested.  Of course digits and 
+letters will work. 
+
+AXIALPUMP and PUMPLOSS
+
+These inputs have been changed to heading-dependent format.  These commands 
+have four lines in each heading; three lines of descriptive text with a fourth
+line of intermittent dashes.  The line of dashes above each column of the input 
+is taken to be the heading for that column.  Therefore, the standard headings 
+will work without change.  
+
+ORIFICE
+
+This input has been changed to heading-dependent format.   The standard headings
+will work because none of them contains spaces.  
+
+UFGATE
+
+The standard headings for the sequence of gate openings DO NOT work because 
+they have spaces in them.  The space should be replaced by a dash or an 
+underline.
+
+XSINTERP
+
+The input for XSINTERP actually uses the barrel input routine for the CULVERT
+command.  Consequently XSINTERP now requires that NODEID=YES.  NODEID=NO is
+not supported.  Thus, this input must have a column for the node id added.  The
+contents of this column may be blank. 
+
+FEQX, FEQXLIST, FEQXEXT
+
+The input for the header block, that is, all input that precedes the
+specification
+of the points on the boundary, has been named-item since version 4.70.  However,
+most users have probably not taken advantage of all of the flexibility this
+offers.  Complications have been found in some cases for the STATION and for
+the information following NSUB.  If the STATION response is a left blank,
+interpreted
+as 0.0 in versions before 4.70, the newer versions will complain that an input
+item
+is missing.  Recall from the definition above that a blank response does not
+exist
+in named-item input because one or more spaces are used to separate the various
+items and their responses.  The default value for STATION is 0.0.  However,
+there
+are cases, such as the old bridge routine, in the bridge-opening table, where
+the STATION has been left blank.  That will now cause an error and the STATION
+may not be able to be left out.  I have not tested that option since the old
+bridge routine is not actively supported at this time. 
+
+The problem with NSUB occurs when more values of Manning's n are given than the
+number of subsections.  This will cause failure with the new code.  The
+correction
+is to delete the extra values of n or increase the count or leave out the count
+of subsections completely.  In the latter case, remember to use the slash, /, at
+the end
+of each line if additional values of n appear on the following line.
+
+EMBANKQ
+
+The newest code will fail in processing the line of input that gives the table
+number(id) for the command if the optional TYPE, HLCRIT, or HLMAX are given.  
+FEQUTL used to treat these as fixed-format input.  FEQUTL now treats the line 
+as being named-item input.  The TYPE defaults to 13 and can be omitted if that 
+is your desired type.  HLCRIT and HLMAX normally only appear if some non-
+embankment weir flow is being computed.  Any items that appear on this line 
+must be in the named-item format.
+
+A program, CONVERTUTL, is available to convert existing input to the new form. 
+This program reads all the lines of the input and detects the cases that need
+changing and makes the changes in its output file.  The program assumes that 
+headings have been used and that they are in the proper position on the line.  
+Deviations from this assumption may cause the program to fail or to produce an 
+output that will cause an error when FEQUTL processes the new input.  Some 
+problems may have to be fixed manually as the new version of FEQUTL is run.
+
+--Error messages.  In processing table ids, FEQUTL assigns an internal table
+number to each table.  This internal number is then used everywhere like the 
+id for the table.  When an error message is given that contains a table number, 
+FEQUTL is supposed to convert the internal table number to the external table 
+id in the message.  It is probable that some error messages have not been 
+corrected and will give the internal table number and not the table id.  
+FEQUTL reports the internal table number assigned to each table the is read 
+from an input file.  If an error message appears with a table number that 
+does not exist or does not make sense, scan the output file for the section 
+where the function tables are input. The reported number may be an internal 
+number that was not converted.  Also, make a note of the error message number 
+and report the problem so that the message can be corrected.
+
+--The first three lines of the header block for an FEQUTL input can be deleted. 
+These lines have not been used for some time and now FEQUTL has been changed to
+recognize their absence.  Again the ability of FEQUTL to do this depends on the standard
+names being used, that is, the first line MUST start in column 1 with UNITS=.
+
+--The option to specify exact or nearly exact values for the Manning's n
+factor NFAC,and for GRAV, the acceleration due to gravity, has been enhanced a bit.  These
+specifications occur as options after the UNITS= options.  Note that this input looks like
+named-item input but it is fixed-format input.  The  input
+
+UNITS=  ENGLISH
+
+will get a value of NFAC=1.49 and GRAV=32.2.  If the metric system is requested
+by the option
+
+UNITS=   METRIC
+
+FEQUTL will use NFAC= 1.0 and GRAV=9.8146.  The value for NFAC for the metric
+system is exact but its value for the English system is approximate.  Thus, 
+if we try to make a comparison between the results obtained with FEQUTL for 
+the same geometry in the English and in the metric system of units, we will 
+find small differences from this source alone.  Consequently, the option to 
+get exact or nearly exact values for NFAC and GRAV was implemented.
+
+In order to define GRAV, which technically varies from point to point on the
+surface of the earth, we require an input of the latitude and elevation.
+These values can be some mean value for the area being modeled.  This 
+definition of GRAV is, of course, optional since the variation of 
+gravity at the elevations normally encountered for unsteady-flow simulation 
+is a fraction of one percent.  The latitude is given in degrees and the 
+elevation in feet(meters) above the sea-level datum.  To request these values 
+we give the line
+
+UNITS=   METRIC    EXACT      45.0       0.0
+
+The first number given is the latitude and the last is the elevation.  Thus,  
+here we are requesting the value of GRAV at latitude 45 degrees and elevation 
+0.0 meters.
+The resulting value is GRAV=9.8062.  If we change to the English system we use
+
+UNITS=  ENGLISH    EXACT      45.0       0.0
+
+and get NFAC=1.485919 and GRAV=32.1726.  
+
+In order to show the proper location of the responses the, example file
+for FEQUTL, FEQUTL.EXM, contains the following line
+
+UNITS=  ENGLISH  NOMINAL      45.0       0.0
+
+which gives the same values when UNITS=  ENGLISH is used alone.  
+
+--FEQUTL now reports the version number, the version date, and the date/time of 
+the run at the start of the user output file.  The time is given in the format: 
+ hour.minutes.seconds.milliseconds.
+
+Version 5.01
+
+17 November 1999
+
+--Found a problem in subroutine RDUP when the range being used included
+negative values that were small enough that the arithmetic average of
+the minimum value and maximum value was negative.  Changed the code
+to take the arithmetic average of the absolute value of the minimum and
+maximum value of the range as the basis for comparison.  This should not
+affect the decision for eliminating duplicates from a list of elevations.
+
+Version 5.03
+
+15 December 1999
+
+--Bottom-slot depth is now included in the cross-section function tables 
+so that the depth relative to the original invert can be reported in
+FEQ.  If no slot was added the bottom-slot depth is 0.0.
+
+--Added interpolation of bottom-slot depth, Easting, and Northing 
+for interpolated cross sections. 
+
+--Modified the initial root interval definition in SBFCHN, the routine used
+to define the submerged flows for CHANRAT.  The previous root interval
+definition sometimes caused false root-finding failures.  The new
+method, however, may fail in yet other cases.  Decreases in critical flow
+with increases in maximum flow depth MAY cause failure or strange results.
+
+Version 5.04
+
+5 January 2000
+
+--Modified CHANNEL command to allow setting and clearing of the bottom slot
+within the command.  The presence of the slot will affect the curvilinear
+elements slightly but the effect should be small if the slot is small relative
+to the cross section. 
+
+Version 5.05
+
+13 January 2000
+
+--Found minor bugs: 1. Dummy argument length and actual argument length
+did not agree in processing input for cross section headers.  Could have caused 
+problems if a cross had more than 98 subsections.  2. If the interpolation accuracy 
+tables were missing, CHANRAT would enter an endless loop and not report the error.  
+The run is now stopped if the tables are missing. 
+
+Version 5.06
+
+18 January 2000
+
+--Roughness factor greater than 0.60 in CULVERT command will cause failure
+of a table lookup.  Warning message is issued and the factor is limited to 0.60.
+
+--Found bug in the default values in the EMBANKQ command.  CSHIFT was 
+defaulted to 1.0 when it should have been defaulted to 0.0.  This resulted in 
+an increase of crest elevation for the embankment of 1.0 feet. 
+
+--Changed warning 557 for cross-section computation so that it appears
+the first time it applies and then is suppressed.  Typically a vertical wall
+extensions that is a single subsection will cause ten or more nearly 
+identical messages to be issued.  Now only one will be issued.
+
+--Changed behavior of EMBANKQ and CHANRAT with automatic assignment of 
+breakpoints to avoid a system error when the max number of breakpoints
+was found.  FEQUTL now halts instead of trying to continue. 
+ 
+Version 5.07
+
+4 February 2000
+
+--Found problems with CHANRAT using the modified root-interval finding
+method in 5.03.  Replaced with the original method.  Added a root
+interval search to check the results of the old method.  Tested on 
+about 75 CHANRAT commands.  With positive slopes there were some
+cases where the detailed search did not find a root interval
+but the original method converged to a value that appeared to 
+make sense with regard to the adjacent values.  The convergence
+would be obtained with argument collapse, that is, the 
+arguments at the ends of the interval that is thought to contain
+a root are so close together that they it no long makes sense
+to continue the computations.  The root finding routine
+issues a warning if the residual at argument collapse is 
+more than twice the relative function tolerance, EPSF.  
+
+Version 5.09
+
+18 February 2000
+
+--Corrected a bug in tracking internal accounting of function tables.
+Added internal generation of tabids to correct the problem in FEQUTL.
+The bug would sometimes cause failure of a run with a spurious 
+duplicate function-table number message.  
+
+The internal tabids have been generated in a form that is invalid
+as an external table id.  Thus, they will never conflict with a 
+user table id.  The internal table ids can appear in error messages
+about an interpolated table.  The internal table ids contain a 
+sequence number that is unique for each id.  The interpolation
+routine adds the starting and ending internal tabid number to its
+output.  Thus,  it is possible to locate which table is the 
+source of the error even though the table was generated from 
+a request for interpolation with the minus sign in the tabid field.
+
+Version 5.10
+
+13 March 2000
+
+--Added new command, MKWSPRO,  to create a WSPRO cross section from
+an FEQ cross section.  Does not support Manning's n varying with 
+water level. 
+
+An example command is:
+
+MKWSPRO
+NAME=EXIT
+FEQXEXT
+  .
+  .
+  .
+  
+
+where the triple dots following FEQXEXT indicate the remainder of the 
+FEQXEXT command input.   The name filed gives a name to the WSPRO cross 
+section.  This must be chosen to match the names needed in the WSPRO runs and 
+their subsequent analysis using the WSPRO set of commands in FEQUTL. 
+
+--Fixed a minor bug detected by the LF95 compiler when running with the 
+chk option turned on.   This did not affect any results and only 
+appeared because the chk option highlights things that might cause problems. 
+
+--Add a command to create the EMBANKQ embankment crest description from 
+the (x,y,z) trace of the crest and the approach taken from a digital
+terrain model or from ground survey.  See the example input file
+for the format details. 
+
+Version 5.11
+
+14 April 2000
+
+--Increased the length allowed for fully qualified file name in FTABIN command
+to 128 characters.  Previous limit was 64 characters.  
+
+
+
+Version 5.2
+
+11 July 2000
+
+--Added option to XSINTERP for definition of the coordinate location
+of the intersection of the cross sections with the river-mile defining
+flow line.  This means that the river-mile defining flow line must
+be given to the XSINTERP command!  This flow line must be the exact flow
+line used in defining the stations for the cross sections used in 
+XSINTERP command as the basis for the interpolation.  
+
+Example input with optional flow line data provided:
+
+XSINTERP
+SFAC= 5280.
+NODEID=YES
+FLNAME=RAFLMM
+FLFILE=\nooksack\lower\futl\r1\xsec\flbnk.xy
+ NODE   NODEID -----------TABID   STATION ELEVATION 
+  100          RAXSAB_M.93         4.6189   TAB
+  101          -RAABBK_M.1              -
+  102          -RAABBK_M.2              -
+  103          -RAABBK_M.3              -
+  104          RAXSBK_M.93         4.4781   TAB
+  .
+  .
+  .
+
+Two additional lines are inserted after the NODEID-option input line. 
+The first line gives the six-character name for the flow line.  This name
+must appear in the file given by the following line of input.  This file
+will contain one or more flow lines used by the RMASSIGN program.  A fragment
+of this file is:
+  .
+  .
+  .
+RAFLMM
+;This is the main river-mile flow line
+10
+ RM_ORIGIN S_ATRMORG RM_FACTOR   S_BEGIN
+    1.3554 5413.95      5280.0      0.0
+RAFLMM1000   1215725.3561  653637.4225       0.00 PI                            
+RAFLMM1001   1216036.9169  653932.5854       0.00 PI                            
+RAFLMM1002   1216209.0953  654260.5441       0.00 PI                            
+RAFLMM1003   1216323.8809  654449.1204       0.00 PI                            
+RAFLMM1004   1216479.6613  654596.7019       0.00 PI                            
+RAFLMM1005   1216774.8242  654711.4875       0.00 PI                            
+  .
+  .
+  .
+END
+
+The river-mile defining line is used to define the (x,y) location of
+the interpolated cross sections.  These data are needed for drawing a
+geographic schematic of the model.  If these items of information are 
+missing, the schematic cannot be produced.
+
+Version 5.21
+
+5 August 2000
+
+--Found a bug in error detection for non-increasing offset in the 
+roadway-profile-description-input routine for EMBANKQ.  Statements
+existed for checking for non-increasing offset but one statement
+was missing so that non-increasing offsets would not be detected.
+Such offsets are in error and sometimes cause enigmatic failures
+later in the computations.   The additional statement was added
+to the code so that EMBANKQ inputs that did have non-increasing
+offsets will no longer complete successfully. 
+ 
+Version 5.23
+
+6 September 2000
+
+--Modified the input to CHANRAT so that a response of TAB or tab 
+for the middle elevation value will find the invert elevation from
+the cross section table defining the rating.  This option was
+added to save time in defining the input for the command.  Otherwise
+one has to search for the minimum elevation when the cross-section
+function table is being computed and does not already exist. 
+
+Version 5.25
+
+3 October 2000
+
+--XSINTERP did not output the slot depth value for interpolated sections
+even though the depth was calculated.  Added output of slot depth
+based on linear interpolation. 
+
+Version 5.30
+
+30 October 2000
+
+--Added new command LPRFIT to compute estimates of surface area for a
+level-pool reservoir when only the storage capacity is known.  
+The following example outlines the pattern of the input.  The line 
+numbers in the first two columns are NOT part of the input.  Column
+1 is given by the starting character in LPRFIT. 
+
+01 LPRFIT
+02 TABID=  LPR1
+03 FIT_WITH = VLSPLINE
+04 CHK_OPTION =NATURAL
+05 LEFT_SLOPE= 0.002
+06 RIGHT_SLOPE = PARABOLIC
+07 INFAC = 27.0 ' Input values are in cubic yards.
+08 OUTFAC = 43560. ' We want the output values to be in acre-feet
+09 
+10  Elevation      Storage
+11     57.00  0.00      
+12      58.00  15.96     
+13      59.00  357.20    
+14      60.00  2153.56   
+15      61.00  10858.47  
+16      62.00  31139.85  
+17      63.00  65670.90  
+18      64.00  109513.92 
+19      65.00  161828.04 
+20      66.00  223869.39 
+21      67.00  294804.77 
+22      68.00  373155.19 
+23      69.00  457841.99 
+24      70.00  548079.82 
+25      -1.0
+
+The items of input in lines 2 through 8 are named-item.  TABID gives the table 
+id of the table of type 4 created by LPRFIT.  FIT_WITH gives the fitting option 
+used to estimate the missing values of surface area.  The options are: 
+CSPLINE-use a cubic spline fit to the elevation and storage data and compute 
+the slope at each point as an estimate of the surface area; 
+VLSPLINE-use a variation limited cubic spline fit where the slopes computed 
+using a cubic spline are adjusted to force the storage to be a monotone 
+variation function between tabulated points; and PCHERMITE- estimate areas 
+by using three-point derivative estimates at each tabulated value using the 
+central of the three points at  locations away from the boundary.  The most 
+reliable methods appears to be a VLSPLINE because that yields at least 
+increasing values of storage if the  given data is also increasing. 
+
+CHK_OPTION gives the checking that is to be done on the results.  The options
+are: NATURAL- assumes a natural LPR in which the storage and surface area
+always increase with an increase in water-surface elevation; CONSTRUCTED-
+in which only the storage is known to increase with elevation; and 
+NONE- no checking of either storage or area is done.  
+
+LEFT_SLOPE gives the initial area at the first argument in the data series. 
+The options are: LINEAR-compute the slope (area) from the first two points in
+the data series and impose it at the left end; PARABOLIC- compute the slope
+from the first three points in the data series and impose it at the left end;
+and numeric where the user gives an actual numeric value for the slope.
+The slope is given in the proper units as they exist in the final table. 
+
+RIGHT_SLOPE gives the final area at the last argument in the data series and
+has the same options as LEFT_SLOPE.
+
+INFAC is a conversion factor for the values of storage as input.  In this
+example the storage values are in cubic yards.  Thus, INFAC will convert the 
+storage to cubic feet on input.  OUTFAC is a conversion factor to use on 
+output of the values.  In this case we want acre-feet tabulated in the final
+table and Thus, OUTFAC=43560.  
+
+ARGFAC, not used, is a conversion factor on output of the argument sequence. 
+It can be used to convert units in the argument sequence. 
+
+All of the named-item options have default values.  Some are designed so that
+their use will cause an error.  This is to prevent invalid dependence on 
+default values.  The defaults are:
+
+  TABID=    that is blanks-using this will cause an error.
+  FIT_WITH = VLSPLINE
+  CHK_OPTION = NATURAL
+  LEFT_SLOPE = LINEAR
+  RIGHT_SLOPE = LINEAR
+  ARGFAC = 1.0
+  INFAC = 27.0
+  OUTFAC = 43560.
+
+You may have to adjust the LEFT_SLOPE and RIGHT_SLOPE to get valid variation of
+area if the CHK_OPTION is NATURAL.  It may not be possible to get valid 
+variation of area in this case given the data and the tabulation interval.  
+If the decrease in surface area is small relative to the area, then allowing 
+decreases in surface area will probably not distort the results greatly.  
+Generally the best way to get a valid variation of the surface area is to 
+retain the zero storage point and delete intermediate points that have small 
+storage.  These small storage are often uncertain in any case.  The minimum 
+non-zero storage in the input should be one acre-foot or more for maximum 
+capacities on the order of a few hundred to a few thousand acre-feet. 
+
+Version 5.31
+
+21 December 2000
+
+--The low-head weir coefficient in EMBANKQ and in flow over the road in 
+CULVERT was improperly allowed to vary with the submerged total head as
+an argument in computing submerged weir flow.  The argument should have been
+held fixed at the free-flow total head value.  Limited testing shows
+that the effect is generally smaller than 0.05 percent of the flow.  
+Some submerged flows less than 10 cfs, appear to to affected by less than
+0.5 percent.  The only values affected are those in which a significant
+approach velocity head is present.   The flows are unaffected if the 
+velocity head is negligible. 
+
+
+Version 5.32
+
+22 January 2001
+
+--An erroneous error message was printed if UFGATE had less than two 
+gate openings given.  The correct message was added. 
+
+--An error existed in computing LEFT and RIGHT options for cross sections
+whenever either or both points of intersection did not match an existing
+point on the cross section.   A check for consistency of elements in the
+cross-section function table before it was output should have caught
+any of these errors that caused significant differences in the computed
+elements.  
+
+--Additional screening code was added to FEQUTL to make transfer of a
+project to UNIX/LINUX easier.  FEQUTL has been modified to 
+change any end-of-line carriage-return character to a space. 
+
+--Relaxed the tolerance in CHKTAJ when checking  the consistency 
+of area and top width.  Small changes in area would cause a reported
+bug when the differences were clearly roundoff noise.  
+
+Version 5.35
+
+9 February 2001
+
+--Discovered that interpolation for intermediate cross sections
+when a bottom slot was present did not work well.  The slot was 
+sometimes greatly distorted at interpolated sections.  The 
+interpolation process was revised to take into account a bottom
+slot.  In order to make this process reliable, a slot must be
+present at both sections bounding the interpolation interval if
+any slot is present at all.  That is, two cases are valid for
+interpolation:  no slot in either section, and a slot at both
+sections.  An error is reported and execution halts if only 
+one of the sections bounding the interpolation interval have
+a bottom slot. 
+
+--EMBANKQ now defines the minimum head for automatic argument
+defintion using a MINQ input in the standard header.  If 
+omitted, MINQ is set to 0.2 cfs and its equivalent in cms for
+SI units.  You must still give a minimum head and it is used
+in defining the new minimum head.  This was done because 
+having too large a minimum head when flow over the 
+structure begins has led to computational problems.  This is
+especially true of surfaces that cause the initial flow to 
+increase at approx the 2.5 power of the head.  
+
+The global value of MINQ can be overridden in the input to 
+EMBANKQ by giving the value of MINQ=<desired value>.
+The angle braces should be replaced by your desired value.
+For example, MINQ= 0.5.    This must be given on the same
+line as TABID.
+
+
+Version 5.36
+
+15 March 2001
+
+--Changed precision of alpha and beta printout in Type 25 cross-section
+function tables.  Also, changed the output to standard output for 
+FEQUTL for computation of estimates of critical flow. 
+
+--CHANRAT now defines the minimum head for automatic argument
+definition using a MINQ input in the standard header.  If left
+out a value of 0.2 cfs or its metric equivalent are assigned. 
+No override of the global value is allowed in CHANRAT.  
+Version 5.38
+
+3 October 2001
+
+--Added FHWA option for computing discharge coefficient for Type 5 
+flow in culverts. 
+
+--Changed message in LPRFIT when user declined validity checking.
+
+Version 5.39
+
+4 February 2002
+
+--Added EQK option to FLOODWAY and updated input of the table to be 
+heading-dependent so that table ids are supported.  Further changes 
+to FLOODWAY for an EQA option are underway.  Note that it appears
+that the implementation of FLOODWAY requires that the FLOODWAY
+command be the only command in the input followed only by the 
+cross-section processing commands required for it.  
+ 
+Version 5.40
+
+8 May 2002
+
+--Added output of GISID to the final summary for the FLOODWAY command.
+In order for the GISID to be found, you must request that every cross section
+be saved using one of the SAVE options, such as SAVE20.  If this is
+not done the GISID column entry will be blank.   Note that FLOODWAY should
+be run as the only command with only the cross-section processing 
+commands required for it.   It may also work if the FLOODWAY command 
+and the related cross-section commands are first in the input. 
+
+--Modified the command-line argument processing so that a single 
+argument will be taken to be the user-input file.  The remaining
+two file names will be formed from the user-input file name by 
+stripping off the extension (the last one if there is more than
+one dot(.) in the name), and appending 'out' for the user-output
+file and 'tab' for the function-table file.  For example, if 
+FEQUTL is invoked as:
+
+fequtl culvert.in
+
+the output file name will be: culvert.out, and the function-table 
+file name will be: culvert.tab.
+
+
+Version 5.41
+
+17 May 2002
+
+--Added additional checking of the command-line arguments.  This 
+has been done in the hope of avoiding cryptic operating-system
+messages.  
+
+--Checked for matches among the three command-line arguments.
+All must be unique to avoid destruction of either the user-input
+file or confusion in the output as the O/S writes to one file
+as if it were two files. 
+
+--The HOME directory option is available in FTABIN.  Details for 
+this option are available in the release notes for FEQ.  Briefly, 
+HOME allows you to give a character string that is prepended to
+every file name that follows it in the FTABIN block.  It is assumed 
+that prepending this string to the subsequent names will create a 
+valid file name with either a partial or complete path that 
+is correct for the operating system you are using.  This will make 
+it easier to transfer projects from one system to another but only 
+if one follows a standard pattern in creating the input to FEQ
+and FEQUTL.  For example, if the project files are all located
+on one drive, say, D, then leaving D: off the names and 
+placing HOME=D: at the start of the FTABIN block, will then 
+give the correct drive.  Later if the project is transferred
+to another computer and the project files are now on 
+the G drive, only a few instances of HOME have to be changed 
+to make the transfer.   
+
+Version 5.42
+
+3 July 2002
+
+--Found some annoying problems with arithmetic precision when computing
+cross-section table elements in a slotted section.  Differences in optimiation
+or compilers would produce slightly different results.  In some cases
+the checking of the top width (T), area (A), and first-moment of area (J),
+would flag a potential BUG because the check showed differences in the
+incremental values that exceeded the preset tolerance.  The tolerances 
+have been increased and the compilers have had the ap flag added.  This 
+forces the compiler to store intermediate results so that we are more likely 
+to get consistent results.  This does slow the computations because intermediate 
+results could otherwise be held in registers.  Registers are both faster and 
+offer greater precision.  However, the order of computations varies and in 
+some cases the greater precision later caused problems in the slot. 
+
+Using the ap flag on the compiler also appears to have solved a problem just
+recently discovered in CULVERT when optimization level 1 failed with an 
+error message but optimization level 0 did not fail.  A small difference in 
+the numerical computations can sometimes cause a large difference in 
+the final result.  This can happen when automated decisions must be made 
+to determine the conditions of flow. Such decision happen frequently in the 
+CULVERT command.
+
+The solution to some of these problems will need to wait until I can find the
+time to change some values to double precision.  At least the problems with 
+the slot will be eliminated or reduced with that change. 
+
+--Added output of water-surface elevation to the user-output file results for
+additional two-D tables.  This made it easier to check and compare results and
+to also prepare manual tables that made use of free-flow values only.
+
+
+Version 5.43
+
+21 October 2002
+
+--If GISID is blank then FEQUTL will set it to the value of TABID.  THis proves
+useful in being able to see the TABID when explicit labels are given to a node
+on a branch.  
+
+Version 5.44
+
+17 March 2003
+
+--Modified FLOODWAY command:  1. added flow as an optional input following all
+others on a line.  Just add a proper heading and place the flows under the 
+columns defined by the heading as for any other heading-dependent input.  
+2. The flow was added to the input in order to produce a velocity in the 
+floodway.  Thus, the output table for this command has had the flow area and 
+the velocity added to it. 
+Example floodway file:
+
+Floodway Specification for the Trib 2 Mainstem
+Conveyance Loss= 0.05
+Elevation Loss= 0.1
+TABID          OPTN    ELEV  FEQBOT   LEFT    RIGHT   LOSS   Flow
+  100          EQK   695.42  692.20                          1200.
+  101          EQK   698.68  696.25                          1200.
+  102          EQK   701.7   698.68                          1200.
+  103          EQK   704.94  699.20                          1200.
+  104          EQK   705.13  701.73                          1200.
+  105          EQK   706.75  702.58                          1200.
+  106          EQK   709.44  702.70                          1200.
+  107          EQK   709.59  704.18                          1200.
+  108          EQK   709.9   705.28           2.7            1200.
+  109          EQK   713.66  707.80                          1200.
+  110          EQK   713.85  709.17                          1200.
+  111          EQK   716.96  710.34                          1200.
+  112          EQK   716.72  711.16                          1200.
+  113          EQK   716.75  712.07                          1200.
+  114          EQK   719.96  712.35                          1200.
+  115          EQK   720.03  717.23                          120.
+  116          EQK   722.65  716.63                          1200.
+  117          EQK   722.82  719.40                          1200.
+  118          EQK   722.67  719.50                          1200.
+  119          EQK   722.93  720.30                          1200.
+   -1
+
+Note that the flows have been pulled from "thin air" do to speak--they do not 
+relate to any real system.  The summary table from this floodway specification 
+file looks like this:
+
+  Summary of Floodway Computation results
+
+ Table Id-------- GISID-----------  FldOpt BF Elevation  FEQ Invert Left----- Right---- Loss----- FldwyArea FldwyVel-
+ 100                                  EQK        695.42      692.20    -259.8      74.2     0.058     457.2      2.62
+ 101              001EBE20101         EQK        698.68      696.25    -208.9      72.9     0.077     285.2      4.21
+ 102              001EBE20102         EQK        701.70      698.68    -171.9      -1.0     0.073     225.0      5.33
+ 103              001EBE20103         EQK        704.94      699.20    -101.1     439.1     0.039     878.1      1.37
+ 104              001EBE20104         EQK        705.13      701.73     -95.2      10.4     0.039     217.8      5.51
+ 105              001EBE20105         EQK        706.75      702.58     -33.2      24.3     0.037     139.6      8.59
+ 106              001EBE20106         EQK        709.44      702.70     -87.9      49.2     0.025     502.6      2.39
+ 107              001EBE20107         EQK        709.59      704.18     -94.0      17.4     0.030     317.9      3.77
+ 108              001EBE20108         EQK        709.90      705.28     -54.5       2.7     0.009     220.4      5.44
+ 109              001EBE20109         EQK        713.66      707.80     -53.7      34.4     0.024     308.4      3.89
+ 110              001EBE20110         EQK        713.85      709.17     -25.0      27.2     0.021     197.4      6.08
+ 111              001EBE20111         EQK        716.96      710.34     -53.1     101.9     0.022     740.2      1.62
+ 112              001EBE20112         EQK        716.72      711.16     -45.5      93.7     0.027     494.3      2.43
+ 113              001EBE20113         EQK        716.75      712.07     -71.0      20.5     0.030     277.4      4.33
+ 114              001EBE20114         EQK        719.96      712.35    -120.5      17.7     0.015     573.0      2.09
+ 115              001EBE20115         EQK        720.03      717.23     -17.7       7.0     0.052      46.7      2.57
+ 116              001EBE20116         EQK        722.65      716.63     -51.6      50.9     0.045     251.1      4.78
+ 117              001EBE20117         EQK        722.82      719.40     -75.2      45.8     0.040     257.6      4.66
+ 118              001EBE20118         EQK        722.67      719.50    -109.7      26.7     0.057     226.0      5.31
+ 119              001EBE20119         EQK        722.93      720.30    -153.1      25.9     0.056     292.6      4.10
+
+If no flow is given, the flood-way velocity will be given as zero.   
+
+Version 5.46
+
+21 April 2003
+
+---A change was made in imposing variation-limitation to a fitted cubic spline. 
+Currently this option is used in CULVERT and in LPRFIT.  In cases in which 
+the computed derivative was negative and the local trend of the data showed 
+a positive slope, the variation-limitation code would force a zero derivative 
+value.  This has been changed to fit a positive slope based on the local 
+behavior of the function as defined by the data points closest to the point in 
+question.  The derivative approximation is weighted such that it yields 
+the correct derivative if the function is a parabola and the points are 
+equally spaced. 
+
+---An error in computing the bottom-slot insertion point was discovered.  This
+resulted in a slot one-half the width of the requested width.  It was 
+discovered in cross sections having a vertical boundary at the minimum point 
+of the cross section.  It may have occurred in other situations as well.  After
+ corection the insertion point was located correctly in all of the 
+ test cases used.
+

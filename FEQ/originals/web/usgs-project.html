@@ -1,0 +1,232 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html>
+<head>
+  <!--BEGIN EDIT: PAGE TITLE -->
+  <title>FEQ Full Equations Model</title>
+  <!--END EDIT -->
+  <link rel="stylesheet" href="/stylesheets/2008/common.css" />
+  <link rel="stylesheet" href="/stylesheets/2008/custom.css" />
+  <link rel="stylesheet" href="/stylesheets/2008/custom.feq.css" />
+
+  <META name="Author" content="Central Midwest Water Science Center" />
+  <META name="keywords" content="unsteady flow, one-dimensional flow, streamflow simulation" />
+  <META name="Description" content="Documentation updates for FEQ and FEQUTL" />
+
+  <META http-equiv=Content-Type content="text/html; charset=windows-1252">
+  <META content="Full Equations (FEQ) Model Web Resources" name=description>
+  <META content="Franz, D.D., and Melching, C.S." name=author>
+  <META content="FEQ,FEQUTL,unsteady flow,simulation, open channel flow, &#10;   distributed routing, hydraulic routing, St. Venant Equations, dam break, floodplain, &#10;   stormwater, streamflow model, dynamic wave, streamflow routing, one-dimensional, &#10;   river hydraulics, hydraulic modelling, transport modelling, hydraulic modeling,&#10;   transport modeling, FEQ, flood wave" name=keywords>
+  <META content="USGS-U.S. Geological Survey" name=publisher>
+  <META content="Information and publications for the Full Equations (FEQ)&#10;   model for one-dimensional unsteady flow in open channels and the Full Equations Utilities&#10;   (FEQUTL) model for the approximation of hydraulic characteristics of channel systems are listed.&#10;   The Internet URL is linked where available." name=abstract>
+  <META content=19970801 name=created>
+  <META content="MSHTML 6.00.2800.1561" name=GENERATOR></HEAD>
+
+<div style="height: 81px; background-color: rgb(0, 38, 76);">
+  <a href="https://www.usgs.gov/index.html">
+     <img style="margin: 8px 0px 8px 8px;" alt="Home" src="/images/usgs_vi.png" />
+  </a>
+</div>
+<br>
+
+</head>
+
+<BODY bgColor=#ffffff>
+FEQ is a computer model for 
+simulation of one-dimensional unsteady flow in open channels and through control 
+structures. The structure of the program is designed to follow the structure of 
+a stream system and provide maximum generality and flexibility. FEQ can be 
+applied to simulate a wide range of stream configurations including loops and 
+lateral-inflow conditions. Special features such as culverts, weirs, and sluice 
+gates are included in coordination with the Full Equations Utilities package 
+(FEQUTL). Boundary conditions can be water-surface elevation, discharge, or the 
+stage-discharge relation at a node. Wind-stress, rainfall, evaporation, and 
+irrigation terms are supported. The effects of lateral inflows also can be 
+simulated in FEQ when given local runoff intensity data. 
+<BR>
+<BR>
+
+<!--
+
+<TABLE cellPadding=1 border=0>
+  <TBODY>
+  <TR align=left>
+    <TD>
+      <P class=MsoNormal><SPAN style="COLOR: blue"><A 
+      href="http://il.water.usgs.gov/proj/feq/listserv.shtml"><SPAN 
+      style="TEXT-DECORATION: none; text-underline: none"><IMG id=_x0000_i1026 
+      height=32 alt="List Serve Icon" 
+      src="comments.gif" width=32 
+      align=center border=0></SPAN></A></SPAN>
+      <SPAN style="mso-tab-count: 1">&nbsp;&nbsp;&nbsp; </SPAN>
+      <B><A href="http://il.water.usgs.gov/proj/feq/listserv.html">Sign up for the FEQ listserv</A>
+      </B>
+      &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;
+      <B><A href="http://il.water.usgs.gov/proj/feq/bug_notice3.html">Check the most recent FEQ 
+      user notice</A></B>
+      </P>
+    </TD>
+  </TR>
+  </TBODY>
+</TABLE>
+
+-->
+
+<FONT SIZE=1>Some links on this page are presented in Portable Document Format (PDF); the latest version of Adobe Reader or similar software is required to view it. <a href="https://get.adobe.com/reader/">Download the latest version of Adobe Reader, free of charge.</a></FONT><P>
+
+
+<TABLE cellPadding=1 border=1>
+  <TBODY>
+  <TR>
+    <TD vAlign=top width=130 bgColor=#ffffff>FEQ Model <BR>Documentation 
+      <BR>Online Version</TD>
+    <TD bgColor=#ffffff>
+      <UL>
+        <LI> 
+        <A href="./feqdoc/contents_1.html">Full 
+        Equations (FEQ) Model For One-Dimensional Unsteady Flow in Open Channels 
+        -- USGS Water-Resources Investigations Report 96-4240 (HTML)</A>;  
+        <A href="https://pubs.er.usgs.gov/publication/wri964240">(PDF)</A>
+        <LI>
+        <A href="./fequtl/fequtl.toc_1.html">Full 
+        Equations Utilities (FEQUTL) Model for the Approximation of Hydraulic 
+        Characteristics of Channel Systems --USGS Water-Resources Investigations 
+        Report 97-4037 (HTML)</A>; 
+        <A href="https://pubs.er.usgs.gov/publication/wri974037">(PDF)</A>
+        <LI>
+        <A href="./software/release_feq.txt">
+        FEQ and FEQUTL comprehensive release notes (text)</A> 
+        <LI>
+        <A href="./bug_notice3.html">Check the most recent FEQ
+        user notice</A>
+      </UL>
+    </TD>
+  </TR>
+  <TR>
+    <TD>Search Engine <BR>Index Tool</TD>
+    <TD>
+      <UL>
+        <LI>Search the FEQ and FEQUTL documentation reports and web site for words or phrases: 
+          <!-- FEQ Search Box starts -->
+          <form accept-charset="UTF-8" action="https://search.usa.gov/search" id="search_form"  method="get">
+          <div style="margin:0;padding:0;display:inline">
+            <input name="utf8" type="hidden" value="&#x2713;" />
+          </div>
+          <input id="affiliate" name="affiliate" type="hidden" value="usgs" />
+          <input type="hidden" name="sitelimit" id="sitelimit" value="cm.water.usgs.gov/proj/feq" scope="cm.water.usgs.gov/proj/feq" />
+          <input autocomplete="off" class="usagov-search-autocomplete" id="query" name="query" type="text" maxlength="255" title="Enter your search" placeholder="Search..." size="20" />
+          <!-- <input type="hidden" name="scope" value="cm.water.usgs.gov/proj/feq" /> -->
+          <input name="commit" id="submit-button" type="submit" value="Search" />
+          </form>
+          <!-- FEQ Search Box ends -->
+        </LI>
+      </UL>
+    </TD>
+   </TR>
+   <TR>
+    <TD vAlign=top bgColor=#ffffff>Download the <BR>2009 FEQ <BR>and FEQUTL</TD>
+    <TD vAlign=top bgColor=#ffffff>
+      <UL>
+        <LI><A href="https://water.usgs.gov/software/feq/">FEQ 
+        10.61 and FEQUTL 5.80</A>
+        <LI><A 
+        href="./software/history2.shtml">Summary 
+        of version history </A>
+        <LI><A href="./impt_notice.shtml">
+        Important user notices when upgrading previous model versions</A>
+        <LI><A href="./bug_notice3.html">Summary of 
+        user notices and bugs for the 2009 version</A></LI></UL></TD></TR>
+  <TR>
+    <TD vAlign=top bgColor=#ffffff>Download the <BR>2005 FEQ <BR>and FEQUTL</TD>
+    <TD vAlign=top bgColor=#ffffff>
+      <UL>
+        <LI><A href="./software/feq.html">FEQ 
+        9.98 and FEQUTL 5.46 </A>
+        <LI><A 
+        href="./software/history.html">Summary 
+        of version history </A>
+        <LI><A 
+        href="./bug_notice2.shtml">Summary of 
+        user notices and bugs for the 2005 and earlier versions</A></LI></UL></TD></TR>
+  <TR>
+    <TD vAlign=top bgColor=#ffffff>Download the <BR>1999 FEQ <BR>and FEQUTL</TD>
+    <TD bgColor=#ffffff>
+      <UL>
+        <LI><A href="https://water.usgs.gov/software/feq.html">FEQ 8.92 and 
+        FEQUTL 4.68 </A>
+        <LI><A 
+        href="./feq98.i2h/APPENDIX.html">Enhancements 
+        and modifications to the FEQ model to 1999</A> 
+        <LI><A 
+        href="./fequtl98.i2h/APPENDIX.htm">Enhancements 
+        and modifications to the FEQUTL model to 1999</A> 
+        <LI><A href="./bug_notice.html">Summary 
+        of user notices and bugs for the 1999 and earlier versions</A></LI></UL></TD></TR>
+  <TR>
+    <TD vAlign=top bgColor=#ffffff>Online Help</TD>
+    <TD bgColor=#ffffff>
+      <UL>
+        <LI><A href="./FEMAGuide.pdf">Review 
+        Guidance for FEQ model applications (non-USGS report prepared by 
+        Dewberry &amp; Davis LLC for the Federal Emergency Management 
+        Agency)</A> 
+        <LI><A 
+        href="./feqdoc/flowchar_01.gif">FEQ 
+        Simulation Flow Chart</A> 
+        <LI><A 
+        href="./appendix_a/trouble.html">Diagnosing 
+        Computational Problems in FEQ</A> 
+        <LI><A 
+        href="./appendix_b/gloss.html">FEQ 
+        Glossary</A> </LI></UL></TD></TR>
+  <TR>
+    <TD vAlign=top bgColor=#ffffff>Resources and Training 
+      <P>&nbsp;</P></TD>
+    <TD bgColor=#ffffff>
+      <UL>
+        <LI><A href="./software/feqinput">
+        FEQinput -- line editor for FEQ and FEQUTL input files</A>
+        <LI><A href="./software/feqgdi">
+        FEQ-GDI -- viewer for geometric and hydraulic data in FEQ and FEQUTL input files</A>
+        <LI><A href="./training/IAFSM_Announcement_FEQ2008.pdf">
+        Information on a previous FEQ course sponsored by IAFSM 
+        (November 18-21, 2008)</A> 
+      </UL>
+    </TD>
+  </TR>
+  <TR>
+    <TD vAlign=top bgColor=#ffffff>References</TD>
+    <TD bgColor=#ffffff>
+      <UL>
+        <LI><A href="./feqbib.shtml">Selected 
+        publications related to FEQ </A></LI>
+        <LI><A href="https://ec.dupageco.org/">DuPage County, Illinois web site with links to recent simulation results using HSPF and FEQ (link to a non-USGS external site)</A></LI>
+        <LI><A href="https://www.dupagecounty.gov/government/departments/stormwater_management/floodplain_mapping/watershed_planning_and_modeling.php">DuPage County, Illinois web site on watershed planning and modeling using HSPF and FEQ (link to a non-USGS external site)</A></LI>
+        <!-- <LI><A href="http://www.iqdotdt.com/">Delbert D. Franz FEQ web site 
+        (link to a non-USGS external site)</A></LI> -->
+      </UL>
+    </TD>
+  </TR>
+</TBODY></TABLE>
+<HR>
+
+<div style="height: 81px; color: rgb(255, 255, 255); background-color: rgb(0, 38, 76);">
+  <br>
+  <a style="color:white"; href="https://www.doi.gov/privacy" target="_blank">DOI Privacy Policy</a> |
+  <a style="color:white"; href="https://www.usgs.gov/laws/policies_notices.html" target="_blank">Legal</a> |
+  <a style="color:white"; href="https://www2.usgs.gov/laws/accessibility.html" target="_blank">Accessibility</a> |
+  <a style="color:white"; href="https://www.usgs.gov/sitemap.html" target="_blank">Site Map</a> |
+  <a style="color:white"; href="https://answers.usgs.gov/" target="_blank"</a>
+  <br>
+  <br>
+  <a style="color:white"; href="https://www.doi.gov/" target="_blank">U.S. Department of the Interior</a> |
+  <a style="color:white"; href="https://www.doioig.gov/" target="_blank">DOI Inspector General</a> |
+  <a style="color:white"; href="https://www.whitehouse.gov/" target="_blank">White House</a> |
+  <a style="color:white"; href="https://www.doi.gov/pmb/eeo/no-fear-act" target="_blank">No Fear Act</a> |
+  <a style="color:white"; href="https://www2.usgs.gov/foia" target="_blank">FOIA</a>
+  <br>
+</div>
+
+<script type="application/javascript" src="https://www.usgs.gov/scripts/analytics/usgs-analytics.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a382c27d09c169ba',t:'MTc4ODkyMDkwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

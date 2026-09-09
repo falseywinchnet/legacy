@@ -1,0 +1,2015 @@
+STDIN=      5
+STDOUT=     6
+STDTAB=     7
+UNITS=  ENGLISH
+NCMD=      27
+FEQX        1
+FLOODWAY    2
+BRIDGE      3
+CULVERT     4
+FINISH      5
+SAME        6
+FEQXLST     8
+ROADFLOW    9
+SEWER      10
+MULPIPES   11
+FTABIN     12
+EMBANKQ    13
+JUMP       14
+CRITQ      15
+GRITTER    16
+MULCON     18
+CHANRAT    19
+EXPCON     20
+HEC2X      21
+QCLIMIT    22
+XSINTERP   23
+FEQXEXT    25
+CHANNEL    26
+WSPROX     27
+WSPROQZ    28
+WSPROT14   29
+UFGATE     30
+;     The lines above this one are part of what is called the standard
+;     header.  The standard header defines the names for the commands.
+;     Each of these commands has an internal number.  For example,
+;     the CHANRAT command has internal number 19.  This number
+;     does not change as new commands are added.  The name, `CHANRAT'
+;     however, can be changed if you do not like the name.  Changing
+;     the name in the standard header gives the command a new name.
+;     Of course, you must then use the new name if you want FEQUTL
+;     to find the command.
+;
+;     DZLIM gives the minimum depth increment in a table of cross sectional
+;     elements.  The smaller is DZLIM the more precisely the conveyance
+;     and the velocity distribution correction coefficients will be
+;     interpolated from the table.
+DZLIM= 2.5
+;     NRZERO gives a near zero depth so that interpolation for conveyance
+;     at small depths will have less error.
+NRZERO= 0.08
+;     USGSBETA should be NO in most cases.  See the input manual for FEQUTL.
+USGSBETA=NO
+;     EPSARG and EPSF are convergence criteria used in seeking a root.
+;     EPSARG gives the difference between two successive approximations
+;     to a root relative to the estimated root below which FEQUTL decides
+;     that the root has been found.  When the absolute value of the function
+;     defining the root is less than EPSF, FEQUTL also decides a root has
+;     been found.
+EPSARG=5.E-5
+EPSF=1.E-4
+;     EXTEND=NO means that the low side of a cross section will not be
+;     extended to match the higher side.  EXTEND=YES means that the
+;     low side of a cross section will be extended with a vertical
+;     frictionless wall to match the higher side.
+EXTEND=NO
+ 
+        Example file for FEQUTL illustrating many of its features.
+ 
+ 
+*       With version 3.51 and later of FEQUTL, you may place comments
+*       with an asterisk in column one of the line at any point in the
+*       input.  Comments with an asterisk will be written in the
+*       output file.  A line beginning with a semi-colon in column
+*       one is not written in the output file.  It is only seen in
+*       the input.
+ 
+        Old style comments, like this one, beginning on or after
+        column nine may still be used but this style comment can only
+        appear between commands but NEVER within the body of a command.
+ 
+ 
+ 
+        Example of table in FEQX format illustrating the
+        propagation of subsection numbers into blank fields.
+ 
+FEQX
+TABLE#=  153 NOOUT SAVE22
+STATION=     1.070
+NAVM=    0
+NSUB    3     0.140     0.050     0.140
+    OFFSET ELEVATION SUBS
+    -750.     720.      1
+    -400.     710.
+*     Note that the missing subsection numbers will propagate from above
+*     when using FEQX.  The numbers need only fall somewhere within the
+*     assigned field width.  I prefer to place the numbers in columns
+*     if I use FEQX to make checking input easier.  However, for my own
+*     use I prefer FEQXLST because it allows me to type the numbers
+*     more quickly.
+    -100.     704.08
+     -47.     704.08    2
+     -20.     695.08
+       0.0    695.08
+      20.     695.08
+      47.     704.08    3
+     100.     704.08
+*     The line segment ending at (100, 704.08) is horizontal but it is
+*     not at the  minimum point in the cross section.  This represents a berm
+*     in the cross section.  Such a horizontal line above the bottom of
+*     the cross section is invalid in FEQUTL because it creates a
+*     discontinuous function.  The top width at elevation 704.08 is
+*     undefined.  In order to force a defined top width we put a small
+*     transverse slope on the berm.  Clearly a strictly horizontal berm
+*     is a figment of some designer's desire.  There will always be some
+*     slope on the berm.  The increment, 0.053, was picked years ago to
+*     be small, and an odd size so that such increments could be recognized
+*     in the tables if needed.  You may give an increment of your choice
+*     by changing the elevation in the input directly.
+     300.     710.
+     700.     719.     -1
+ 
+ 
+ 
+        Example of cross section table in FEQXLST format.
+        Shows example of checking that the offsets never
+        decrease to help check for errors when keying in natural
+        channel cross sections and also shows a request to save
+        the resulting cross section table in the memory of FEQUTL
+        so that we can refer to this table later.
+ 
+ 
+ 
+FEQXLST
+TABLE#=   18 MONOTONE SAVE20 NOOUT
+*     A whole series of options can follow the table number.  These
+*     options are read from left to right and the most recent option,
+*     should any conflict, encountered is the one used.
+STATION= 2.412
+NAVM=0     SCALE=1.0
+*     The scale factor above is a multiplier on the offsets.  It does not
+*     affect the elevations.
+NSUB    1     0.030
+    OFFSET ELEVATION  SUB
+;     FEQXLST requires that the subsection number be typed for each point
+;     so that there are always 3 numbers on each line.  Only a single space
+;     is required to separate the numbers on a line.  Commas may also be
+;     used to separate the numbers on a line.
+0.0  40.0  1
+0.0 0.0   1
+100.0 0.0   1
+100.0 40.0 -1
+ 
+        Shows example of multiple subsections.  Note that the subsection
+        number is given at the start of the line segment because the
+        last subsection number is used to terminate the input.
+        That is, the line segment from offset 663 to 664 is in
+        subsection 1.  The line segment from 659.2 to 661.2 is in
+        subsection 2 and  the line segment from 661.2 to 665 is in
+        subsection 3.  Finally the subsection value of -1 at offset
+        674 signals the end of the cross section.
+ 
+FEQXLST
+TABLE#=    4  SAVE12  NEWBETA  OUT12
+STATION= 2.095
+NAVM=0     SCALE=50.0
+*     The value of scale is used here to correct for map scale.  The
+*     offsets are in inches from a topographic map and the scale factor
+*     converts inches to feet on the ground.
+NSUB    3     0.080     0.055     0.090
+HEADING
+0.0 674.0 1
+0.6 670.0 1
+2.3 664.0 1
+4.0 663.8 1
+5.4 664.0 1
+5.7 666.0 1
+6.4 667.0 1
+7.2 667.3 1
+7.8 667.0 1
+8.5 666.0 1
+9.0 666.1 1
+10.8 668.0 1
+11.6 670.0 1
+12.2 670.1 1
+13.0 668.0 1
+15.0 668.1 1
+16.0 667.0 1
+25.6 667.1 1
+25.7 666.0 1
+28.8 665.0 1
+32.5 665.1 1
+33.2 664.0 1
+33.6 663.0 1
+33.8 664.0 2
+34.7 658.6 2
+35.1 657.8 2
+35.8 658.1 2
+36.1 658.6 2
+36.4 659.2 2
+36.9 661.2 3
+38.3 665.0 3
+38.4 666.0 3
+39.2 667.0 3
+39.8 673.5 -1
+ 
+ 
+        Shows use of scale option to adjust the horizontal scale
+        of the cross section.
+        Also shows how we can ask to save the cross section without
+        requesting monotonicity checking and at the same time suppress
+        output to the table file.   We have added additional points
+        to improve the GRITTER computations.
+ 
+FEQXLST
+TABLE#=   19 SAVE NOOUT
+STATION= 2.412
+NAVM=0     SCALE=0.8
+NSUB    1     0.030
+    OFFSET ELEVATION  SUB
+0.0  20.0  1
+0.0  19.0  1
+0.0  18.0  1
+0.0  17.0  1
+0.0  16.0  1
+0.0  15.0 1
+0.0  14.0 1
+0.0  13.0 1
+0.0  12.0 1
+0.0  11.0 1
+0.0  10.0 1
+0.0  9.0 1
+0.0  8.0 1
+0.0  7.0 1
+0.0  6.0 1
+0.0  5.0 1
+;0.0  4.0 1
+;0.0  3.0 1
+;0.0  2.0 1
+;0.0 1.0 1
+;0.0 0.0   1
+100.0 5.0   1
+100.0 20.0 -1
+ 
+        Example of the FEQXEXT command.  It permits optional
+        variation of Manning's n in the vertical in each subsection.
+        In the example shown here subsections 1 and 2 have request
+        such variation.  The * in the column headed N0 selects
+        the n value given for the subsection on the line labeled
+        with NSUB as the roughness to use at zero depth in the
+        subsection.  Thus in subsection 1 the Manning's n is
+        0.140 at zero depth and varies linearly with water
+        depth until a depth is 1.0.  Above that level the
+        n value is constant.  The choice of depth is given
+        on the VARN line.  MAXY uses the maximum depth in the
+        subsection as the variable to which variation of n is
+        related.  Another options in HYDY, hydraulic depth in
+        the subsection.   Comments for each boundary point
+        can be given but they must be prefixed by a single
+        quote.
+ 
+        Subsection 3 shows an example of having the n
+        value on the boundary vary from one line segment
+        to the next.  FEQXEXT computes a perimeter-weighted
+        value of Manning's n in this case.  The * is needed
+        to signal that the subsection number is to take
+        the default value.  The default for a subsection number is
+        always the most recent subsection number encountered.
+ 
+ 
+ 
+FEQXEXT
+TABID=   154 OUT22 OLDBETA
+STATION=     1.25
+VARN=MAXY
+NSUB    3      .140      .050      .140
+    OFFSET ELEVATION SUBS    N0   Y1    N1   Y2  N2  Y3  N3  Y4  N4
+    -750.     720.      1     *  1.0   .08
+    -400.     710.
+    -130.     704.1
+     -47.     704.5     2     *   4.0   0.04  'Banks are smoother.
+     -20.     695.
+       0.0    694.
+      20.     695.
+      47.     704.1     3   0.06
+     130.     704.5     *    0.10
+     300.     710.      *    0.15
+     700.     719.     -1
+ 
+        Example of computing a critical flow table using the just
+        computed cross section tables.  We also request saving of
+        the critical flow table so we can use it later in the input.
+ 
+ 
+CRITQ
+TABID=    50 SAVE
+APPTAB#=   18
+CONTAB#=   19
+DISCOEF=  0.98
+TEST OF CRITICAL FLOW TABLE
+ 
+        Example of use of the just computed critical flow table
+        for the generalized Ritter solution to the classical
+        dam break problem.
+ 
+GRITTER
+APPTAB#=   18
+CONTAB#=   50
+;BRCHHGT=   0.0
+     DEPTH DISCHARGE   TEST OF GRITTER SOLUTION
+       15.       0.0
+       15.     100.0
+       15.     200.0
+       15.0    500.0
+      -1.0
+ 
+ 
+        Example of input of tables either created manually or
+        computed by FEQUTL in a previous run for subsequent
+        use.  These tables are the standard tables for the
+        computation of flow over embankment shaped weirs.
+        They must be entered before the EMBANKQ command is
+        used.
+ 
+        Please note that tables for which TYPE is negative
+        have only their header information echoed to the output
+        file.  This is often a convenient way to reduce the size
+        of the output.
+ 
+FTABIN
+TABLE#= 9994
+TYPE=   -2
+REFL=0.0
+      HEAD WEIR COEF  PAVED LOW HEAD WEIR COEFFICIENT
+       0.0      2.83
+       0.1      2.93
+       0.2      2.97
+       0.3      2.99
+       0.4      3.01
+       0.5      3.02
+       0.7      3.03
+       1.0     3.035
+       2.0      3.04
+       4.0      3.05
+      10.0      3.05
+-1.0
+TABLE#= 9995
+TYPE=   -2
+REFL=0.0
+      HEAD WEIR COEF GRAVEL LOW HEAD WEIR COEFFICIENT
+       0.0      2.50
+       0.3      2.61
+       0.6      2.68
+       0.9      2.80
+       1.2      2.87
+       1.5      2.92
+       2.0      2.98
+       2.5      3.02
+       3.0      3.04
+       3.2     3.046
+       4.0      3.05
+      10.0      3.05
+-1.0
+TABLE#= 9996
+TYPE=   -2
+REFL=0.0
+     RATIO WEIR COEF PAVED HIGH HEAD WEIR COEFFICIENT
+      0.15      3.05
+      0.17     3.062
+      0.19     3.071
+      0.22     3.081
+      0.26     3.088
+      0.28     3.090
+     10.00     3.090
+-1.0
+TABLE#= 9997
+TYPE=   -2
+REFL=0.0
+     RATIO WEIR COEF GRAVEL HIGH HEAD WEIR COEFFICIENT
+      0.15      2.95
+      0.26     3.072
+      0.28     3.078
+      0.30     3.088
+      0.31     3.09
+     10.0      3.09
+-1.0
+TABLE#= 9998
+TYPE=   -2
+REFL=0.0
+     RATIO  FRACTION  PAVED SUBMERGENCE REDUCTION FACTOR
+       0.0       1.0
+       0.8       1.0
+      0.82     0.997
+      0.84     0.987
+      0.86     0.975
+      0.88     0.956
+      0.90     0.928
+      0.92     0.887
+      0.94     0.820
+      0.96     0.720
+      0.98     0.57
+     0.984     0.50
+       1.0       0.0
+-1.0
+TABLE#= 9999
+TYPE=   -2
+REFL=0.0
+     RATIO  FRACTION  GRAVELED SUBMERGENCE REDUCTION FACTOR
+       0.0       1.0
+       0.7       1.0
+      0.74     0.998
+      0.78     0.992
+      0.84      0.96
+      0.86      0.94
+      0.88     0.915
+      0.90      0.88
+      0.92      0.82
+      0.94     0.732
+      0.96     0.612
+     0.975     0.500
+       1.0       0.0
+-1.0
+FILE= ../data/type5.tab
+TABLE#=   -1
+ 
+ 
+ 
+        Example of flow over an embankment shaped weir.
+        The table will not be echoed to the output file.
+ 
+EMBANKQ
+TABID=   500 CSHIFT= 0.00      
+;     The tables referenced here must have been input prior to the
+;     EMBANKQ command.  By creating the proper tables you can use
+;     EMBANKQ to compute the flow over sloping weirs that are other
+;     than embankment shaped.  See example later in this input.
+PLCWTB= 9994
+GLCWTB= 9995
+PHCWTB= 9996
+GHCWTB= 9997
+*     If the entries for the next two tables are left blank, FEQUTL
+*     will produce a table of type 2 because it cannot compute
+*     submergence.  Such a table would be used as a downstream boundary
+*     condition if you were satisfied that nothing downstream would cause
+*     submerged flow over the weir or embankment.
+PSUBTB= 9998
+GSUBTB= 9999
+LABEL= MTPPOOL TO PENPOOL
+;     Labels for tables are highly recommended.
+    OFFSET     CREST     WIDTH  APPROACH SURFACE
+      0.0       11.8       25.       9.0 PAVED
+    235.0       11.4                 8.9
+    630.0       11.3                 8.7
+    995.0       11.3                 8.4
+   1410.0       11.7                 8.2
+   1780.0       11.7                 8.0 END
+UPSTREAM HEADS TO USE IN COMPUTING THE TABLE
+0.01
+0.05
+0.10
+0.15
+0.20
+0.30
+0.40
+0.75
+1.0
+-1.
+ 
+ 
+        Example of SEWER option.  SEWER produces a cross section table
+        complete with top slot for a round conduit.
+ 
+SEWER
+TABID=   636  NOOUT
+DIAMETER= 3.0
+NSIDES=  30
+WSLOT= 0.01
+HSLOT=1.0
+N= 0.020
+ 
+ 
+        Example of MULPIPES option.  MULPIPES produces a cross section
+        table for multiple round conduits.
+        The BOTT option permits the pipes to be a slightly different
+        elevations.  Be wary of computing a single table for use in the
+        CULVERT command if the pipes elevations differ by a large fraction
+        of the smaller diameter.  In this case, the flow type may differ for
+        each pipe and aggregating the pipes into one table may
+        misrepresent the flow details.
+ 
+MULPIPES
+;     A positive table number requests that FEQUTL force the conveyance
+;     in the pipes to be monotone increasing.  This means that the maximum
+;     conveyance propagates to the higher depths.  This may or may not
+;     be realistic.
+;
+;     If the slot is small enough, FEQUTL will put a standard slot
+;     height of 500 feet on each table of closed conduit.  This is
+;     after the table has been computed.  Thus the slot height given
+;     in HSLOT need only be high enough to go over the top of the
+;     largest conduit.  The same rules apply to SEWER and MULCON.
+;
+TABID=   650
+NSIDES=  20
+WSLOT= 0.01
+HSLOT= 1.0
+NPIPES=    3
+DIAM=       3.5       4.0       3.5
+BOTT=       0.5       0.0       0.5
+ROUG=     0.020     0.020     0.020
+        Example of MULCON option.  The MULCON option is a generalization
+        of the MULPIPES option and therefore can do all that MULPIPES can
+        do and more.
+ 
+        RCPA - reinforced concrete pipe arch
+        NHE - nominal horizontal elliptical
+        NVE - nominal vertical elliptical
+        TE - true elliptical
+        CIRC - circular
+ 
+MULCON
+;     Negative table number forces FEQUTL to compute the conveyance
+;     for the conduit including any decrease as the water surface
+;     approaches the top of the conduit.  Messages about a decrease
+;     in conveyance will be issued at each point which represents
+;     a decrease as the depth increases.
+TABID=  -107  OUT1
+WSLOT= 0.01
+HSLOT= 15.0
+NPIPES=    5
+TYPE:      RCPA      NHE        NVE      CIRC        TE
+SPAN:                         12.00     12.00      3.15
+RISE:      2.00     12.00                2.00     12.00
+BOTT:       1.0       2.0       0.0       0.4       0.8
+ROUG:      0.02      0.02      0.02      0.02      0.02
+ 
+        Example of MULCON computing a cross section table for
+        a box culvert.
+ 
+MULCON
+TABID=  -999 SAVE12  NOOUT
+WSLOT= 0.01
+HSLOT= 25.0
+NPIPES=    1
+TYPE:       BOX
+SPAN:        3.
+RISE:        3.
+BOTT:       0.0
+ROUG:     0.018
+ 
+ 
+        Example of computing a bridge loss table.
+        The following cross section is downstream of the bridge and
+        must be given first.
+ 
+FEQX
+TABLE#=  800 NOOUT
+STATION= 0.00
+NAVM    0
+NSUB    3     0.080     0.065     0.080
+RJS SEGMENT NO. LS1417, D.S. OF CERMAK ROAD
+   -900.00    659.00    1
+   -850.00    658.00    1
+   -700.00    656.00    1
+       .00    654.40    1
+     50.00    655.10    1
+    100.00    655.40    1
+    113.00    657.40    1
+    120.00    657.50    1
+    135.00    657.10    1
+    140.00    656.00    1
+    147.00    654.90    2
+    160.00    648.00    2
+    165.00    646.10    2
+    170.00    644.80    2
+    180.00    644.20    2
+    190.00    644.50    2
+    200.00    644.90    2
+    210.00    644.60    2
+    215.00    645.60    2
+    218.00    648.00    2
+    221.00    650.90    3
+    271.00    656.90    3
+    321.00    662.00    3
+    370.00    664.40   -1
+ 
+        The following cross section is upstream of the bridge and is
+        given next.
+FEQX
+TABLE#=  804 NOOUT
+STATION= 0.00
+NAVM    0
+NSUB    3     0.100     0.060     0.100
+RJS SEGMENT NO. LS1420, U.S. OF CERMAK ROAD
+     50.00    652.80    1
+     78.00    651.90
+    103.00    651.50
+    125.00    650.90    2
+    133.00    647.80
+    142.00    646.80
+    150.00    645.70
+    160.00    645.20
+    170.00    643.60
+    175.00    645.60
+    179.00    647.80
+    185.00    650.00    3
+    204.00    657.20
+    219.00    658.40
+    223.00    661.40
+    283.00    664.00   -1
+ 
+        The request for computation of a bridge table is next.
+        This command is old and predates the feature for saving tables
+        internally or of reading precomputed tables from a file.
+ 
+BRIDGE
+CERMAK ROAD
+TYPE=RDFLOW
+BASE CURVE#=00001
+ABUTMENT ALIGNMENT=0
+BRIDGE SKEW=0.0
+ADJUSTMENT FACTOR=1.0
+UPSTREAM OFFSET=170.0
+DOWNSTREAM OFFSET=180.0
+PIER TYPE=    2
+PIER LENGTH= 00.0
+PIER SKEW= 00.0
+PIER TABLE
+ELEV       PNUM PWITH
+0.00          1   3.0
+0.01          1   3.0
+5.69          1   3.0
+5.70          2   3.0
+42.00         2   3.0
+42.00         1  -1.0
+TABID=   801
+STATION=  0.0
+NAVM=   0
+NSUB    1 0.024
+ OFFSET    ELEVATION  SUB  CERMAK ROAD BRIDGE OPENING
+      0.      660.80    1
+      0.      651.30    1
+     52.      649.20    1
+     62.      647.80    1
+    105.      643.50    1
+    156.      649.00    1
+    156.      661.00    1
+      0.      660.80   -1
+HLCOEF TABLE NUMBER
+TABID=   802
+ 
+ 
+        Example of a simple culvert.  FEQUTL can create tables of
+        type 13 and FEQ in Versions 6.2 and later can use them.
+        Type 13 tables are more compact than type 6 and are more
+        easily read by a human.  They also take less space to
+        store in FEQ.
+ 
+CULVERT
+TABLE#= 128
+TYPE=   13
+LABEL=SIMPLE CULVERT EXAMPLE
+;     The approach section is the cross section upstream of the culvert
+;     describing the flow conditions upstream of the culvert entrance.
+;
+Approach Section Data
+APPTAB#=   4
+APPELV=  100.
+APPLEN=  4.0
+APPLOS= 0.0
+APPEXP= 0.5
+Culvert Description
+NODEID=YES
+SFAC= 1.0
+;     Description of the culvert barrel or barrels.  Uses format similar
+;     to that used for a branch in FEQ.
+ NODE   NODEID  XNUM   STATION ELEVATION   KA   KD HTAB
+  100 TESTCLVU   999      0.00     100.0  0.0  0.0    0
+ 
+ 
+ 
+ 
+ 
+ 
+      TESTCLVD   999     50.00     099.9  0.0  0.0
+   -1
+CULCLS=BOX
+;     The departure section is a description of the stream channel
+;     downstream of the culvert exit.  Used to approximate the exit
+;     losses from the culvert.  In this case the culvert is placed
+;     in a prismatic channel so that the approach and departure
+;     sections are given by the same table.
+Departure Section Data
+DEPTAB=    4 
+DEPELV= 99.5
+LOSOPT=MOMENTUM
+Discharge Coefficient Data
+KRB= 0.0
+KWING= 0.0
+KPROJ= 0.0
+C46= 0.0
+TYPE 5 PARAMETERS
+RBVALUE= 0.00
+BVANGLE= 0.00
+WWANGLE= 0.00
+LPOVERD= 0.00
+TYPE5SBF= 0.75
+Roadway Description
+PLCWTB= 9994
+GLCWTB= 9995
+PHCWTB= 9996
+GHCWTB= 9997
+PSUBTB= 9998
+GSUBTB= 9999
+;     Describes the roadway profile using the same format as  EMBANKQ
+    OFFSET     CREST     WIDTH  APPROACH SURFACE
+      0.0     105.30       12. -999999.0 PAVED
+     50.0     105.00                     END
+Head Sequence Definition
+;     NFRAC gives the number of partial free drops to use in the table.
+;     A partial free drop and the total free drop are always included in
+;     the value of NFRAC.  Thus NFRAC = 11 means that there are 10 non-zero
+;     partial free drops.  The largest one is a partial free drop of 1.0
+;     that gives the free drop.
+NFRAC= 11
+;     POWER is used to distribute the partial free drops in a non-uniform
+;     manner to improve interpolation accuracy.
+POWER= 2.5
+0.5
+1.0
+2.0
+3.0
+4.0
+5.0
+5.5
+6.0
+7.0
+8.0
+9.0
+-1.
+ 
+        Example of computing a table for use in the CHANRAT command.
+        This if for one of the over banks of a cross section.  Note that
+        the EXTEND option has been added to the list of options.
+        If this is not done,  the global EXTEND=NO option at the
+        start of the input would prevent this table from being
+        computed.  Notice that one end of the cross section stops
+        at an elevation of zero.  If automatic extension of the ends
+        of cross sections is enabled, FEQUTL will extend the low
+        end of the cross section with a vertical frictionless wall
+        to enable computation of the table.  If automatic extension
+        is suppressed then FEQUTL will not extend the low end and
+        the table argument, depth, will be limited to the value
+        defined by the end of the cross section with minimum elevation.
+ 
+        If automatic extension is used and if one side of the cross section
+        is lower than the other and if the water level in FEQ rises above
+        the low end then FEQ ISSUES NO WARNING.   Therefore automatic
+        extension should be used with care.
+ 
+FEQXLST
+TABLE#=  100 MONOTONE  SAVE12 NEWBETA EXTEND
+STATION= 0.0
+NAVM=    0
+NSUB    1     0.025
+ OFFSET ELEVATION SUB
+    0.0     19.0    1
+    24.0    1.5     1
+    25.      0.0    1
+   90.0     0.00   -1
+ 
+        CHANRAT- computes a channel rating for a short prismatic channel
+        assuming steady flow.  The bottom slope must always result in
+        subcritical flow.  Should super critical flow result, FEQUTL will
+        signal an error and go to the next command.  Note that
+        bottom slopes less than or equal to zero compute more quickly.
+        Very small slopes greater than zero compute  slowly and
+        computations may break down.  Thus the best choice if the slope
+        is small is to use zero.  The difference between a slope of
+        1 in 10,000 and 0 on the table is small.
+ 
+        CHANRAT computes a 2-D table of either type 6 or 13.
+        Tables of type 13 take less space and are easier to
+        read.  The head is always measured from the high point of
+        the channel.  If BOTSLP > 0 then the datum for head is the
+        upstream end of the channel otherwise the datum for head is
+        the downstream end of the channel.
+ 
+ 
+ 
+CHANRAT
+TABID=   600
+TYPE=   13
+LABEL=TEST OF CHANRAT
+XSTAB#= 100
+BOTSLP=0.003
+LENGTH=000000030. MIDELEV= 25.7
+HEAD SEQUENCE FOR TABLE
+NFRAC= 21
+POWER= 2.5
+0.25
+0.5
+1.0
+1.5
+2.5
+3.0
+4.0
+6.0
+8.0
+10.0
+-1.0
+ 
+        Cross section tables to use in example of computing a
+        table for an expansion-contraction.  Taken from an
+        actual project in DuPage County.  Shows an example
+        of using the heading for the input as a label and also
+        of using the space remaining after the subsection number
+        for more comments.
+ 
+FEQX
+TABLE#=  938 EXTEND SAVE12 NEWBETA NOOUT
+STATION=    11.290
+NAVM=    0
+NSUB    5     0.100     0.120     0.030     0.080     0.032
+X-SEC 38  60 FT. U/S OF THE BNRR (DEL TO LEFT & RIGHT OF TOP OF BERMS) RERAN W/ DZLIM=.10 FOR CONTRACTION
+    -73.00    666.6     1     1868587.65 569085.42  TOB  13A
+    -49.10    665.8     2     1868583.04 569061.97  TOB   13
+    -25.40    655.0     3     1868578.46 569038.71  WEO   12
+    -21.90    654.6     3     1868577.78 569035.28  CHP   11
+      0.00    653.9     3     1868573.55 569013.79  CFL   10
+      8.20    654.4     3     1868571.96 569005.75  CHP    9
+     11.10    655.0     4     1868571.40 569002.90  WED    8
+     15.00    658.3     4     1868570.65 568999.08  TOB    7
+     33.90    663.63    5     1868567.00 568980.53  CLP    6
+     44.60    666.0    -1     1868564.93 568970.03  TOB    5
+ 
+ 
+FEQX
+TABLE#=  940 EXTEND SAVE12 NEWBETA NOOUT
+STATION=    11.254
+NAVM=    0
+NSUB    5     0.095     0.080     0.030     0.080     0.095
+X-SEC 40  135 FT. D/S OF THE BNRR (DEL TO LEFT AND RIGHT OF TOP OF BERM) N VALUES FIXED 1-23-91
+    -76.0     670.0     1     VERTICAL EXTENSION
+    -75.50    665.4     1     1868353.47 569149.53  TOB   16
+    -62.80    663.0     1     1868350.96 569137.08  BIS   15
+    -52.80    662.9     2     1868348.97 569127.28  TOB   14
+    -33.30    654.4     3     1868345.11 569108.16  WED   13
+    -27.10    653.3     3     1868343.88 569102.09  CHP   12
+      0.00    652.7     3     1868338.51 569075.52  CFL   11
+      6.00    653.6     3     1868337.32 569069.64  CHP   10
+      8.40    654.4     4     1868336.84 569067.29  WED    9
+     23.80    661.0     5     1868333.79 569052.20  TOB    5
+    114.40    660.2    -1     1868315.82 568963.40  TOB    4
+ 
+ 
+        Example of computing a table for an expansion-contraction.
+        The table type is always 14 and therefore is not an input
+        item.  Two tables are produced.  One for flow from
+        upstream to downstream and one for downstream to upstream.
+        The lines UP, DN, UD, DU must always appear in the order
+        given.  If reverse flow will not occur, leave the table number
+        in the reverse direction blank.  Then only one table will be
+        computed.    The distance between the sections can be given
+        as zero.  In this case FEQUTL ignores the boundary friction
+        losses.
+ 
+EXPCON
+CROSS SECTION TABLES
+ LOC TAB# DIST     DATUM
+  UP  938  0.0     653.9
+  DN  940 121.     652.7
+COEFFICIENTS AND OUTPUT TABLES
+ DIR TAB#   KA   KD LABLABEL---------------------------------------------
+  UD  300  0.2  0.5 TEST OF THE EXPCON FEQUTL CODE: UD
+  DU  301  0.2  0.5 TEST OF THE EXPCON FEQUTL CODE: DU
+SMOOTH=0.1
+GMEAN= 0.5
+DOWNSTREAM HEAD SEQUENCE FOR THE TABLE
+NFRAC= 11
+POWER= 2.5
+0.25
+0.50
+1.0
+1.5
+2.0
+3.0
+4.0
+5.0
+7.0
+10.0
+-1.0
+ 
+ 
+ 
+        Example of using EMBANKQ to compute flows for non-embankment
+        shaped weirs.  EMBANKQ does not really know what the weir looks
+        like.  All it knows is the following:
+ 
+         1. When the ratio of the approach piezometric head to the
+            width of the weir crest is less than HLCRIT then the
+            flow is considered to be low head flow.   Then EMBANKQ
+            uses the low head tables to define the weir coefficients
+            using as an argument the total head of the approach
+            flow.
+ 
+         2. When the ratio of the approach piezometric head to the
+            width of the weir crest is greater or equal to HLCRIT then
+            the flow is considered to be high head flow.  Then EMBANKQ
+            uses the high head tables to define the weir coefficients
+            using as an argument the piezometric head to width
+            ratio.
+ 
+         3. EMBANKQ always uses the total head(piezometric head
+            plus velocity head) in the weir flow equation.  If the
+            APPROACH elevation is made large and negative the
+            velocity head is negligible.  Thus you have control over
+            the use of velocity head by adjusting the approach
+            elevation.
+ 
+          4. The designations of GRAVEL and PAVED are only used to
+             distinguish between two sets of tables.  Again
+             EMBANKQ does not know the nature of the surface and the
+             only effect of the nature of the surface is to change
+             tables used to define the weir coefficients and the
+             submergence.
+ 
+        Thus it is possible to select the correct tables and width to
+        make EMBANKQ compute a table for many different weir shapes.
+ 
+        The following example computes the flow over a weir with a
+        crest that is 6. inches wide with both its faces
+        vertical.  This is a classical example of a weir which at
+        low head  behaves as a broad crested weir and
+        at higher heads behaves as a sharp crested weir.
+        In this case the weir coefficient
+        was a function of the ratio of the piezometric head  to the
+        width.  Thus I set HLCRIT to 0.0 so that all flows are high
+        head flows.  Thus the low head tables, although input, would
+        not be used by EMBANKQ.  The weir coefficients have been
+        taken from Table 5-3, p. 5-40 of Handbook of Hydraulics.
+        6th edition, by Brater and King.  It is unclear from that
+        source if the coefficients were based on the inclusion or
+        exclusion of the approach velocity head. Because they seem
+        to be independent of weir height, I assumed that the
+        total head is to be used in the computation.  Therefore
+        the APPROACH is set to yield an approach velocity.
+ 
+        I also set HLMAX to a large number so I do not get warning
+        messages that the ratio of head to width exceeds that established
+        by experiment.
+ 
+        Submergence for weirs like this is difficult.  The problem
+        arises in that the weir behaves differently at different heads
+        and EMBANKQ does not try to be that precise about submergence.
+        Since the weir will behave like a sharp crested weir at moderate
+        heads,  I elected to treat submergence like that for a sharp
+        crested weir.   Equation 5-50 from Brater and King, 6-th Ed.
+        was used with n=1.5
+ 
+ 
+        If the weir coefficient is not a function of the ratio of
+        the approach piezometric head to the crest width but is
+        a function of the approach piezometric head, then set the
+        crest width to 1.0 so that the head and the ratio are
+        the same.  Also set HLCRIT to 0.0 so that the high head
+        tables will be used.  Then place the proper coefficients in
+        the high head tables.
+ 
+        If the weir coefficient should be a function of the approach
+        total head, then set HLCRIT to a large value so that only
+        the low head table will be used.  Then place the proper
+        coefficients in the low head tables.
+ 
+FTABIN
+TABLE#= 8994
+TYPE=    2
+REFL=0.0
+      HEAD WEIR COEF  low head coefficient. smooth(PAVED)
+       0.0      2.65
+      10.0      2.65
+-1.0
+TABLE#= 8995
+TYPE=    2
+REFL=0.0
+      HEAD WEIR COEF  low head coeff.  rough(GRAVEL)
+       0.0      2.65
+      10.0      2.65
+-1.0
+TABLE#= 8996
+TYPE=    2
+REFL=0.0
+     RATIO WEIR COEF PAVED HIGH HEAD Table 5-3 Brater and King
+       0.0     2.80
+       0.2     2.80
+       0.4     2.92
+       0.6     3.08
+       0.8     3.30
+       1.0     3.32
+     999.0     3.32
+-1.0
+TABLE#= 8997
+TYPE=    2
+REFL=0.0
+     RATIO WEIR COEF GRAVEL HIGH HEAD Table 5-3 Brater and King
+       0.0     2.80
+       0.2     2.80
+       0.4     2.92
+       0.6     3.08
+       0.8     3.30
+       1.0     3.32
+     999.0     3.32
+-1.0
+TABLE#= 8998
+TYPE=   -2
+REFL=0.0
+     RATIO  FRACTION  APPROX. SUBMERGENCE FOR SHARP CRESTED WEIR
+       0.0       1.0
+       0.1     0.988
+       0.2     0.965
+       0.3     0.933
+       0.4     0.894
+       0.5     0.845
+       0.6     0.786
+       0.7     0.712
+      0.75     0.668
+      0.80     0.615
+      0.85     0.555
+      0.90     0.477
+      0.95     0.367
+       1.0       0.0
+-1.0
+TABLE#= 8999
+TYPE=   -2
+REFL=0.0
+     RATIO  FRACTION  APPROX. SUBMERGENCE FOR SHARP CRESTED WEIR
+       0.0       1.0
+       0.1     0.988
+       0.2     0.965
+       0.3     0.933
+       0.4     0.894
+       0.5     0.845
+       0.6     0.786
+       0.7     0.712
+      0.75     0.668
+      0.80     0.615
+      0.85     0.555
+      0.90     0.477
+      0.95     0.367
+       1.0       0.0
+-1.0
+TABLE#=   -1
+ 
+ 
+        The weir is trapezoidal and has a thickness of
+        6 inches.
+ 
+ 
+        The weir crest in this case is trapezoidal with side slopes of
+        1:1.  Four points would define the crest but I have placed extra
+        points on the sloping part of the crest to improve the
+        numerical integration accuracy.  EMBANKQ approximates the
+        integral of a unit length weir equation using Simpson's rule
+        on each interval defined by the points along the crest.
+ 
+        FEQUTL also assumes that the width to use for the weir is
+        the width in the opening at the upstream piezometric surface.
+        This width is wider than the actual wetted width.  However,
+        limited testing using observations reported for triangular weirs
+        supports this assumption.
+ 
+EMBANKQ
+TABID=   200 HLCRIT=      0.00 HLMAX=    999.00 CSHIFT= 0.00      
+PLCWTB= 8994
+GLCWTB= 8995
+PHCWTB= 8996
+GHCWTB= 8997
+PSUBTB= 8998
+GSUBTB= 8999
+LABEL=TRAPEZOIDAL CREST- 3 FT 1:1 SLOPES. 6 IN WIDE
+    OFFSET     CREST     WIDTH  APPROACH SURFACE
+     -3.0       20.0      0.50      6.00 PAVED
+      0.0       17.0
+      1.0       16.0
+      2.0       15.0
+      3.0       14.0
+      4.0       13.0
+      5.0       12.0
+      6.0       11.0
+      7.0       10.0
+     10.0       10.0
+     11.0       11.0
+     12.0       12.0
+     13.0       13.0
+     14.0       14.0
+     15.0       15.0
+     16.0       16.0
+     17.0       17.0
+     20.0       20.0                     END
+UPSTREAM HEADS TO USE IN COMPUTING THE TABLE
+0.05
+0.10
+0.20
+0.35
+0.50
+1.0
+2.00
+4.0
+6.0
+8.0
+-1.
+ 
+ 
+;Table for discharge of storm sewer
+ 
+FEQXLST
+TABLE#= 9000 SAVE12 NOOUT
+STATION=0.0
+NAVM=0     SCALE=1.0
+NSUB    1     0.035
+ OFFSET    ELEVATION  SUB SECTION FOR DOWNSTREAM OF SEWER PIPE DISCHARGES
+     0.0        50.0    1
+     0.0        0.00    1
+    40.0        0.00    1
+    40.0        50.0   -1
+ 
+ 
+SEWER
+TABID=  1057 MONOTONE SAVE12 NOOUT
+DIAMETER= 3.5
+NSIDES= 30
+WSLOT= 0.01
+HSLOT= 50.0
+N=0.024
+ 
+ 
+; Example of use of qclimit for EXPCON
+ 
+QCLIMIT
+TABID=  1057
+FACTOR=1.0
+ 
+EXPCON
+CROSS SECTION TABLES
+ LOC TAB# DIST     DATUM
+  UP 1057  0.0       4.3
+  DN 9000  0.0       0.2
+COEFFICIENTS AND OUTPUT TABLES
+ DIR TAB#   KA   KD LABLABEL---------------------------------------------
+  UD  328  0.4  1.0 S15 OUTFLOW
+  DU  330  0.4  1.0 S15 BACKFLOW
+SMOOTH=0.1
+GMEAN= 0.5
+DOWNSTREAM HEAD SEQUENCE FOR THE TABLE
+NFRAC= 11
+POWER= 2.
+0.25
+0.50
+1.0
+1.5
+2.0
+2.5
+3.0
+3.25
+3.35
+3.5
+4.0
+4.5
+5.0
+6.0
+7.0
+8.0
+9.0
+10.0
+11.0
+12.0
+-1.0
+ 
+ 
+        Example of interpolating for cross section tables that
+        will be output and that will be used in FEQ
+        All of the tables that are used to interpolate from
+        must have already been created and saved in this run
+        or they must have been input using FTABIN
+ 
+XSINTERP
+SFAC= 5280.
+NODEID=YES
+ NODE NODEID  XNUM   STATION ELEVATION   KA   KD
+   31          153     1.992  657.75
+;      A negative table number tells FEQUTL that you want to interpolate
+;      a table.  If you leave station and elevation blank FEQUTL will
+;      divide the distance into equal parts and will interpolate
+;      linearly for the elevation.
+              -810
+                 4     2.089  657.74
+              -812
+;              FEQUTL will use the station and elevation given here as
+;              being measured.  Thus the elevation at cross section
+;              18 will be interpolated from this value also.
+              -813     2.300  657.00
+              9000     2.398
+;       If you use only a - in the right-most column of the field for
+;       the cross section table number, then FEQUTL will assign the
+;       next available number based on the tables it is currently
+;       retaining in memory.  This could conflict with a table number
+;       that you will input later!
+                 -
+              -817
+                 -
+                19     2.862  656.96
+   -1
+ 
+ 
+ 
+ 
+*     Example of the command to process HEC2 input files and extract
+*     the basic, unmodified cross sections as defined by the
+*     NC, NH, X1, X4, and GR cards.  No other cards are recognized by this
+*     initial version of HEC2X.  Over time, the command may be
+*     generalized to recognize some of the modification cards that
+*     HEC2 uses.
+ 
+ 
+HEC2X
+;     There are two modes: DIRECT and INDIRECT.  In the DIRECT mode
+;     FEQUTL computes a cross section table from the HEC2 cross section.
+;     In the INDIRECT mode, FEQUTL computes the input for the FEQX
+;     command and places the cross sections in a file.  These cross
+;     sections can then be modified before computing the cross section
+;     tables in another run of FEQUTL.
+MODE=DIRECT
+;     INFILE is where you give the name of the file containing the
+;     HEC2 format input.  The entire input to HEC2 can exist in the
+;     file and HEC2X will search and find the cards it needs.
+INFILE=../data/model01.inp
+;     OUTFILE gives the name of the file used for the output of the
+;     FEQX format cross sections when MODE=INDIRECT.  OUTFILE must
+;     still appear if MODE=DIRECT but the name can be left blank.
+OUTFILE=HECFEQX
+;     OPTIONS gives the save, output, extend, and checking options to use
+;     on each cross section in the file given in INFILE.  These options
+;     are the same as for FEQX.  These options are appended at the proper
+;     location for each cross section written to OUTFILE when MODE=INDIRECT.
+OPTIONS: OUT20 MONOTONE NEWBETA
+;     Each table in FEQ and FEQUTL must have a number.  To assign numbers
+;     to tables from the HEC2 input, BEGTAB gives the starting table number
+;     followed by a table number increment. Five columns are allocated
+;     for each number so watch the spacing.  The first valid cross section
+;     found in the file given in INFILE is assigned the initial number.
+;     The table number then has the increment added to it to yield the
+;     next table number.  Thus the tables are numbered in the sequence
+;     in which they are encountered in the HEC2 input.  Each cross section
+;     in INFILE is considered to be a new cross section.
+BEGTAB#= 1100  -2
+;     BEGSTAT gives the beginning station for the first cross section.
+;     Following the beginning station is the sign(+1 or -1) to use
+;     in adding the inter-section distance along the channel.  Thus
+;     you can select to have the stations increase or decrease as the
+;     file named in INFILE is processed.  Note that 10 columns are
+;     allocated to each number.   The number can appear anywhere in the
+;     field so long as it is in the correct field.
+BEGSTAT=00000000.0   1
+;     SFAC gives the conversion factor from the units used in HEC2 for the
+;     distance between cross sections to the units you want in the
+;     stationing in your unsteady flow model.  SFAC is a divisor on the
+;     distances used in HEC2.  If the distances in HEC2 are feet, as they
+;     are in most cases, then SFAC=5280 will produce stations along the
+;     the channel in miles.
+SFAC= 5280.
+ 
+ 
+ 
+;     Example of MUCON using a mud line and roughness in the pipes.
+;     You must supply a mudline and roughness for each pipe if you
+;     have mud in only one pipe.  The other pipes would have
+;     a mud line of 0.0
+;
+ 
+MULCON
+TABID=  -108      OUT22
+WSLOT= 0.005
+HSLOT= 24.0
+NPIPES=    5
+TYPE:      RCPA      NHE        NVE      CIRC        TE
+SPAN:                         12.00     12.00      3.15
+RISE:      2.00     12.00                2.00     12.00
+BOTT:       1.0       2.0       0.0       0.4       0.8
+ROUG:      0.02      0.02      0.02      0.02      0.02
+MUDL:      0.25      0.5       2.0       0.2       5.0
+ROUG:     0.028     0.029     0.030     0.031     0.032
+ 
+ 
+;     A mud line can be given in MULPIPES and SEWER also.
+;     This is an example of two of the pipes not having
+;     mud but they must still have a non-zero roughness
+;     value and a zero value for MUDL.
+ 
+MULPIPES
+TABID=  -651 OUT22
+NSIDES=  50  0.02
+WSLOT= 0.01
+HSLOT= 5.0
+NPIPES=    3
+DIAM=       3.5       4.0       3.5
+BOTT=       0.5       0.0       0.5
+ROUG=     0.020     0.020     0.020
+MUDL=       4.0       0.0       0.0
+ROUG=     0.025     0.035     0.028
+ 
+ 
+ 
+SEWER
+TABID=   637 OUT22
+DIAMETER= 3.0
+NSIDES=  30
+WSLOT= 0.001
+HSLOT=5.0
+N= 0.020
+MUDL= 1.05
+MUDN=0.03
+ 
+ 
+ 
+;     FEQUTL can generate a CHANNEL command from HEC-2 input stream.
+;     Mode must be channel and it will always create an outfile.
+;     If you omit the name of the OUTFILE, HEC2X will store the
+;     channel command in a file named: CHANNEL.  To complete
+;     processing you must copy the contents of the OUTFILE, after
+;     you have checked it for validity, into an input stream for
+;     FEQUTL.  An example is given below this example.
+ 
+ 
+HEC2X
+MODE=CHANNEL
+INFILE=../data/model01.inp
+OUTFILE=utlexm.chx
+OPTIONS: OUT22  NEWBETA
+BEGTAB#= 1200  -2
+BEGSTAT=00000000.0   1
+SFAC=5280.
+ 
+ 
+;     Here is an example of a CHANNEL command computed from a HEC-2
+;     input stream using HEC2X.  In this example we have three flow
+;     lines: one on the left overbank, one on the distance axis,
+;     and one on the right overbank.  FEQUTL assumes that you
+;     want to treat the sinuosity as piecewise constant because
+;     only two offsets appear and there are three flow lines.
+;     FEQUTL will compute the sinuosity from the stationing
+;     using a cubic spline fit.  No end conditions are given
+;     so FEQUTL will use the assumption that the second derivative
+;     of the flowline distance with respect to the axis distance
+;     is zero at each end.
+ 
+ 
+ 
+ 
+CHANNEL
+SINDEF=CUBIC
+HEAD      LOB                AXIS                 ROB
+ 
+STAT 0.0000000           0.0000000           0.0000000
+OFFS               75.00              153.00
+ 
+STAT 0.0606061           0.0700758           0.0833333
+OFFS              138.30              164.20
+ 
+STAT 0.1496212           0.1553030           0.1666667
+OFFS               92.70              168.70
+ 
+STAT 0.1560606           0.1617424           0.1731061
+OFFS              103.40              236.40
+ 
+STAT 0.1655303           0.1712121           0.1825758
+OFFS              142.80              210.80
+ 
+STAT 0.3037879           0.3170455           0.3303030
+OFFS               93.90              109.50
+ 
+STAT 0.3918561           0.4051136           0.4183712
+OFFS               93.90              109.50
+ 
+STAT 0.4827651           0.4931818           0.5035985
+OFFS               10.00               21.01
+ 
+STAT 0.5198864           0.5303030           0.5407197
+OFFS               10.00               21.01
+ 
+STAT 0.5350379           0.5492424           0.5634470
+OFFS              158.00              183.50
+ 
+STAT 0.5558712           0.5691288           0.5823864
+OFFS              138.90              178.10
+ 
+STAT 0.5643939           0.5776515           0.5909091
+OFFS              112.50              146.20
+ 
+STAT 0.5729167           0.5861742           0.5994318
+OFFS              108.90              167.80
+ 
+STAT 0.6164773           0.6278409           0.6392046
+OFFS               91.30              119.60
+ 
+STAT 0.6505682           0.6657197           0.6827651
+OFFS               41.00               64.80
+END
+ 
+;     After defining the sinuousity at each cross section
+;     location, the CHANNEL command expects to find cross
+;     section definitions using either FEQX, FEQXLST, or FEQXEXT.
+;     Table types 23, 24, and 25 include the adjustment factors
+;     on area and flow rate, MA and MQ.
+ 
+FEQX
+TABLE#=  700  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.0000000
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1  0.01
+      0.00     16.00    1
+     35.00     14.00    1
+     42.00     12.00    1
+     49.00     10.00    1
+     55.00      8.00    1
+     75.00      8.00    2
+     83.00      6.00    2
+     90.00      4.00    2
+     95.00      2.00    2
+    102.00      0.00    2
+    111.00      0.00    2
+    117.00      2.00    2
+    137.00      2.00    2
+    142.00      4.00    2
+    147.00      6.00    2
+    153.00      8.00    3
+    159.00     10.00    3
+    167.00     12.00    3
+    187.00     14.00    3
+    495.00     16.00   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  698  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.0700758
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1  370.
+      0.00     20.50    1
+     13.60     15.50    1
+     24.20     14.70    1
+     37.80      8.90    1
+     56.90      8.20    1
+     71.40      5.90    1
+    114.30      5.00    1
+    138.30      4.30    2
+    140.50      0.50    2
+    157.00      0.10    2
+    162.10      1.30    2
+    164.20      6.90    3
+    177.40     14.60    3
+    192.00     15.40    3
+    235.40     15.30    3
+    290.90     15.00   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  696  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.1553030
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1  820.
+      0.00     21.60    1
+     42.00     18.90    1
+     71.10      9.20    1
+     92.70      7.30    2
+     99.30      2.90    2
+    101.60      1.90    2
+    112.10      1.20    2
+    126.50      1.50    2
+    131.00      2.80    2
+    164.20      4.20    2
+    168.70      6.80    3
+    193.00     12.90    3
+    206.50     17.00    3
+    269.70     16.20    3
+    321.10     15.90   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  694  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.1617424
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1  854.
+      0.00     19.40    1
+     46.60     20.00    1
+     87.20     18.70    1
+    103.40     17.00    2
+    134.35      1.20    2
+    196.25      1.20    2
+    236.40     17.00    3
+    251.80     17.00    3
+    308.20     16.10    3
+    354.20     15.40   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  692  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.1712121
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1  904.
+      0.00     19.40    1
+     46.60     20.00    1
+     87.20     18.70    1
+    101.30     13.70    1
+    116.70      8.20    1
+    142.80      6.20    2
+    148.30      0.80    2
+    160.10      1.60    2
+    173.40      2.20    2
+    190.40      2.70    2
+    198.60      4.70    2
+    210.80      9.20    3
+    251.80     17.00    3
+    308.20     16.10    3
+    354.20     15.40   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  690  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.3170455
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1 1674.
+      0.00     28.70    1
+     27.10     19.50    1
+     43.00     14.60    1
+     58.90      9.10    1
+     93.90      6.10    2
+     99.70      3.40    2
+    105.10      3.20    2
+    109.50      4.90    3
+    142.50      5.10    3
+    171.50     13.60    3
+    275.20     16.80   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  688  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.4051136
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1 2139.
+      0.00     28.70    1
+      1.00     25.00    1
+      1.20     24.30    1
+     27.10     19.50    1
+     43.00     14.60    1
+     58.90      9.10    1
+     90.00     10.00    1
+     93.90      6.10    2
+     99.70      3.40    2
+    105.10      3.20    2
+    109.50      4.90    3
+    142.50      5.10    3
+    150.00     20.00    3
+    171.50     13.60    3
+    200.00     25.00    3
+    275.20     16.80   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  686  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.4931818
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1 2604.
+      0.00     18.00    1
+     10.00     18.00    2
+     10.01      3.32    2
+     21.00      3.32    2
+     21.01     18.00    3
+     31.00     18.00   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  684  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.5303030
+NAVM=0
+NSUB    3     0.050     0.011     0.050
+    OFFSET ELEVATION SUBS  X1 2800.
+      0.00     18.00    1
+     10.00     18.00    2
+     10.01      3.45    2
+     21.00      3.45    2
+     21.01     18.00    3
+     31.00     18.00   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  682  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.5492424
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1 2900.
+      0.00     19.90    1
+     72.20     17.40    1
+    133.80     14.90    1
+    140.40     11.90    1
+    158.00      6.20    2
+    159.20      2.60    2
+    173.10      2.60    2
+    182.00      3.30    2
+    183.50      6.40    3
+    202.00     12.10    3
+    219.80     13.40    3
+    230.10     14.00    3
+    296.90     15.40    3
+    378.50     17.60   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  680  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.5691288
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1 3005.
+      0.00     26.00    1
+     11.00     24.20    1
+     34.20     15.90    1
+     40.50     15.30    1
+     40.51     30.00    1
+     42.00     30.00    1
+     42.01     15.30    1
+     51.40     15.20    1
+     91.40     15.30    1
+     91.41     30.00    1
+     92.90     30.00    1
+     92.91     15.30    1
+    123.40     14.90    1
+    123.41     30.00    1
+    124.90     30.00    1
+    124.91     14.90    1
+    138.90     14.00    2
+    144.40      5.10    2
+    147.20      2.70    2
+    157.80      2.70    2
+    171.50      3.80    2
+    174.00      5.00    2
+    174.80      7.10    2
+    174.81     30.00    2
+    176.30     30.00    2
+    176.31      7.10    2
+    178.10      8.30    3
+    206.50     21.20    3
+    213.20     22.30    3
+    215.00     25.10    3
+    226.60     24.50   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  678  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.5776515
+NAVM=0
+NSUB    6     0.050     0.040     0.030     0.020     0.025     0.010
+    OFFSET ELEVATION SUBS  X1 3050.
+      0.00     24.60    1
+      1.00     25.00    1
+      1.20     24.30    1
+      5.70     23.60    1
+     28.10     16.20    2
+     35.10     15.40    2
+     35.11     30.00    2
+     36.60     30.00    3
+     36.61     15.40    3
+     44.30     15.20    4
+     85.00     14.60    5
+     85.01     30.00    5
+     86.50     30.00    5
+     86.51     14.60    5
+     90.00     10.00    5
+     96.20     14.30    5
+    112.50      8.00    5
+    116.50      4.00    5
+    116.51     30.00    5
+    118.00     30.00    6
+    118.01      4.00    6
+    123.00      3.00    6
+    131.60      4.60    6
+    144.60      3.80    6
+    146.20      5.80    6
+    150.00     20.00    6
+    152.80      6.50    6
+    158.50      6.80    6
+    165.70     11.50    6
+    167.80     12.00    6
+    167.81     30.00    6
+    169.30     30.00    6
+    169.31     12.00    6
+    189.10     23.00    6
+    200.00     25.00    6
+    203.10     24.60   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  676  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.5861742
+NAVM=0
+NSUB    3     0.060     0.050     0.060
+    OFFSET ELEVATION SUBS  X1 3095.
+      0.00     22.50    1
+      4.80     21.50    1
+     18.50     16.20    1
+     36.60     15.70    1
+     36.61     30.00    1
+     38.10     30.00    1
+     38.11     15.70    1
+     83.70     14.80    1
+     83.71     30.00    1
+     85.20     30.00    1
+     85.21     14.80    1
+    108.90     14.50    2
+    117.00      6.00    2
+    117.01     30.00    2
+    118.50     30.00    2
+    118.51      6.00    2
+    121.40      3.40    2
+    129.90      2.10    2
+    143.10      5.50    2
+    144.60      5.90    2
+    152.50      7.50    2
+    165.60      7.80    2
+    167.80     11.40    3
+    167.81     30.00    3
+    169.30     30.00    3
+    169.31     11.40    3
+    176.40     14.80    3
+    195.40     22.30    3
+    204.40     23.20   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  674  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.6278409
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1 3315.
+      0.00     15.60    1
+     67.00     15.40    1
+     83.70      9.20    1
+     91.30      6.40    2
+     92.40      5.00    2
+     96.70      3.00    2
+    103.10      2.60    2
+    110.30      3.10    2
+    114.10      5.00    2
+    119.60      7.70    3
+    143.60     15.40    3
+    165.80     15.70    3
+    211.10     15.30   -1
+ 
+ 
+ 
+FEQX
+TABLE#=  672  MONOTONE NEWBETA  NOSAVE   OUT23
+STATION= 0.6657197
+NAVM=0
+NSUB    3     0.050     0.035     0.050
+    OFFSET ELEVATION SUBS  X1 3515.
+      0.00     17.10    1
+     34.60     16.70    1
+     35.30     10.80    1
+     41.00      8.90    2
+     43.30      5.50    2
+     46.60      4.70    2
+     56.20      4.20    2
+     60.70      4.60    2
+     64.80      5.50    3
+     66.30      6.70    3
+     71.80      7.60    3
+     79.80     12.00    3
+     80.20     16.80    3
+    116.40     17.30    3
+    147.40     17.20   -1
+ 
+ 
+ 
+ENDCHAN
+ 
+ 
+*     Test of channel with symmetrical triangular channel with
+*     large values of constant and linearly varying sinuousity.
+*     Note that the value of MA is always 1.0 in a symmetrical
+*     channel with the distace axis on the line of symmetry.
+*     MQ is not 1.0 because our assumption that the decline in
+*     the total energy line is constant between two sections
+*     entails that the friction slope is no longer constant.
+*     This causes an asymmetry in the distribution
+*     of flow with more flow taking the shorter path.  Thus
+*     MQ will be slightly less than 1.0 in a sinuous symmetrical
+*     channel.
+ 
+CHANNEL
+SINDEF=LINEAR
+HEAD     LFB    AXIS     RFB
+ 
+STAT   0.000   0.000   0.000
+OFFS    0.00   10.00   20.00
+ 
+STAT   1.500   1.000   0.500
+OFFS    0.00   10.00   20.00
+ 
+STAT   3.000   2.000   1.000
+OFFS    0.00   10.00   20.00
+ 
+END
+ 
+FEQX
+TABLE#=  900  MONOTONE NEWBETA  NOSAVE   OUT25
+STATION=0.00
+NAVM=0
+NSUB    1     0.050
+    OFFSET ELEVATION SUBS  X1  0.01
+      0.00     10.00    1
+     10.00      0.0     1
+     20.00     10.0    -1
+ 
+ 
+FEQX
+TABLE#=  902  MONOTONE NEWBETA  NOSAVE   OUT25
+STATION=1.000
+NAVM=0
+NSUB    1     0.050
+    OFFSET ELEVATION SUBS  X1  0.01
+      0.00     10.00    1
+     10.00      0.0     1
+     20.00     10.0    -1
+ 
+FEQX
+TABLE#=  904  MONOTONE NEWBETA  NOSAVE   OUT25
+STATION=2.000
+NAVM=0
+NSUB    1     0.050
+    OFFSET ELEVATION SUBS  X1  0.01
+      0.00     10.00    1
+     10.00      0.0     1
+     20.00     10.0    -1
+ 
+ENDCHAN
+ 
+ 
+*     Test of channel with symmetrical rectangular channel
+*     for which we can compute the value of Mq by analytical
+*     integration.  When we do this and evaluate the
+*     resulting integrals at their limits we find that
+*     MQ = 0.95534.
+ 
+ 
+CHANNEL
+SINDEF=PARABOLA
+HEAD     LFB    AXIS     RFB
+ 
+STAT   0.000   0.000   0.000
+OFFS    0.00   10.00   20.00
+ 
+STAT   1.500   1.000   0.500
+OFFS    0.00   10.00   20.00
+ 
+STAT   3.000   2.000   1.000
+OFFS    0.00   10.00   20.00
+ 
+END
+ 
+FEQX
+TABLE#= 7801  MONOTONE OLDBETA  NOSAVE   OUT25
+STATION=0.00
+NAVM=0
+NSUB    1     0.050
+    OFFSET ELEVATION SUBS  X1  0.01
+      0.00     10.00    1
+      0.00      0.00
+     20.00      0.0     1
+     20.00     10.0    -1
+ 
+ 
+FEQX
+TABLE#= 7802  MONOTONE OLDBETA  NOSAVE   OUT25
+STATION=1.000
+NAVM=0
+NSUB    1     0.050
+    OFFSET ELEVATION SUBS  X1  0.01
+      0.00     10.00    1
+      0.00      0.00
+     20.00      0.0     1
+     20.00     10.0    -1
+ 
+FEQX
+TABLE#= 7804  MONOTONE OLDBETA  NOSAVE   OUT25
+STATION=2.000
+NAVM=0
+NSUB    1     0.050
+    OFFSET ELEVATION SUBS  X1  0.01
+      0.00     10.00    1
+      0.00      0.00
+     20.00      0.0     1
+     20.00     10.0    -1
+ 
+ENDCHAN
+ 
+ 
+        Example of an underflow gate table computation.
+ 
+FTABIN
+TABLE#=  200
+TYPE=   -2
+REFL=0.0
+     ANLGE        Cc   Tainter gate- Henderson Eq. 6-46
+       0.0     1.000
+      10.0     0.921
+      20.0     0.851
+      30.0     0.790
+      40.0     0.738
+      50.0     0.694
+      60.0     0.660
+      70.0     0.634
+      80.0     0.618
+      90.0     0.611
+; Extend from log-log fit to von Mises b/B=0 data in Rouse,
+;  Elementary Fluid Mechanics, p. 57
+    100.0      0.591
+    110.0      0.573
+    120.0      0.558
+    130.0      0.543
+    135.0      0.537
+     -1.0
+TABLE#=  -1
+ 
+;  Approach cross section for the example underflow gate command.
+ 
+FEQX
+TABLE#= 1000 OUT22 SAVE22
+STATION=     1.00
+NAVM=    0
+NSUB    1     0.024
+    OFFSET ELEVATION SUBS
+      0.0      650.0    1
+      0.0      449.0
+   1200.0      449.0
+   1200.0      650.0   -1
+ 
+; Departure section for the example underflow gate command.
+ 
+FEQX
+TABLE#= 1002 OUT22 SAVE22
+STATION=     1.00
+NAVM=    0
+NSUB    1     0.024
+    OFFSET ELEVATION SUBS
+      0.0      650.0    1
+      0.0      446.0
+   1200.0      446.0
+   1200.0      650.0   -1
+ 
+ 
+;     Example of an underflow gate computation.
+ 
+UFGATE
+TABID=  590
+LABEL= Tainter gates at Lock and Dam 21.
+APPTAB= 1000
+DEPTAB= 1002
+SILLELEV= 450.0
+GATEWIDTH= 642.0
+CD= 0.98
+CCTAB= 200
+FWFOTRAN= 0.2
+MAXHEAD= 60.0
+MINHEAD= 2.0
+PRECISION= 0.02
+   Opening 2-D_Table  Cc_Value Lip_Angle
+      0.5       5901                39.4
+      1.0       5902                40.7
+      2.0       5903                43.3
+      4.0       5904                48.2
+      8.0       5905                56.9
+     12.0       5906                64.9
+     16.0       5907                72.4
+     24.0       5908                86.5
+     26.0       5909                90.0
+     32.0       5910               100.4
+      -1.0
+Partial free drop parameters
+MINPFD= 0.005
+BRKPFD= 0.5
+LIMPFD= 0.99
+FINPOW= 2.0
+ 
+ 
+FINISH
+ 
+ 

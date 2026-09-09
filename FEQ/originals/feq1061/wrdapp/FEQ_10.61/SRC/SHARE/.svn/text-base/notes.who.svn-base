@@ -1,0 +1,10 @@
+The *.who files are used in FEQ to report to the user the
+following items:
+
+1.  The operating system being used: MS or Linux/Unix
+
+2. The compiler being used.
+
+3. The prefetch options used: level 1, level 2, or none
+
+

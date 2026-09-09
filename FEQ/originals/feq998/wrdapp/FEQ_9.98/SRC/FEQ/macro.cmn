@@ -1,0 +1,70 @@
+C     Variables for macro instruction processing in the 
+C     Network-Matrix Control Input.
+
+      INTEGER MAX_MACRO, MAX_BODY, MAX_ARG,
+     A        MAX_STACK
+
+      PARAMETER (MAX_MACRO=200, MAX_BODY=600,
+     A           MAX_ARG=600, MAX_STACK=100)
+
+      CHARACTER MACRO_BODY(MAX_BODY)*196,
+     A          MACRO_ARG(MAX_ARG)*16,
+     B          MACRO_STACK(MAX_STACK)*196
+
+      INTEGER MACRO_STACK_TOP, LAST_MACRO,
+     A        LAST_BODY, LAST_ARG,
+     A        MACRO_BODY_PNT(MAX_MACRO),
+     B        MACRO_BODY_KNT(MAX_MACRO),
+     C        MACRO_ARG_PNT(MAX_MACRO),
+     D        MACRO_ARG_KNT(MAX_MACRO),
+     E        MACRO_ARG_LEN(MAX_ARG),
+     F        MACRO_LINE_LEN(MAX_BODY)
+
+
+      COMMON/MACRO_C/ MACRO_BODY, MACRO_STACK, MACRO_ARG
+      COMMON/MACRO_I/ MACRO_STACK_TOP, LAST_MACRO,
+     A        LAST_BODY, LAST_ARG, MACRO_BODY_PNT,
+     B        MACRO_BODY_KNT, MACRO_ARG_PNT, MACRO_ARG_KNT,
+     C        MACRO_ARG_LEN, MACRO_LINE_LEN
+
+      SAVE /MACRO_C/, /MACRO_I/
+
+C     Definitions
+
+C     MACRO_BODY_PNT(I) - points to the first line of the 
+C                             macro body.  The value of I is
+C                             stored in the global symbol list.
+C                             Thus the macro name is found in the
+C                             global symbol list, it points into
+C                             the macro_body_pointer, and that
+C                             points to the row contining the first
+C                             line of the macro body.
+
+C     MACRO_BODY_KNT(I)  - number of lines in the macro body
+
+C     MACRO_ARG_PNT(I) -  points to the first argument in the 
+C                         MACRO-ARG(*).
+C     MACRO_ARG_KNT(I) -  gives the number of arguments for this macro
+
+C     MACRO_ARG(J) -   macro argument identifiers.
+
+C     MACRO_ARG_LEN(J)  - length of the macro dummy argment.
+
+C     MACRO_BODY(K) - contains the macro body.  Pointed to by 
+C                     MACRO_BODY_POINTER
+
+C     MACRO_LINE_LEN(K) - length of the line in the macro body.
+
+C     MACRO_STACK_TOP - pointer to the currently filled top of stack.
+C                       Zero means that stack is empty.  Increment
+C                       adds to the stack, decrement deletes from
+C                       stack. 
+
+C     LAST_MACRO  - Pointer to the last used location in the macro
+C                   table.  Starts at 0.
+
+C     LAST_BODY  - Pointer to the last used location in the 
+C                  macro body table.  Starts at 0.
+
+C     LAST_ARG  - pointer to the last used location in the
+C                 macro argument table.  Starts at 0.

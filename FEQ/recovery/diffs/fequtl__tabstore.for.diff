@@ -1,0 +1,990 @@
+--- 9.98/fequtl/tabstore.for
++++ 10.61/fequtl/tabstore.for
+@@ -483,7 +483,9 @@
+       SUBROUTINE   TWDOUT
+      I                   (STDOUT, STDTAB, TABLE, LABEL, NHU, NFRAC,
+      I                    HUVEC, FDROP, PFDVEC, Q, HDATUM,
+-     I                    TYPE, SOURCE,
++     I                    TYPE, SOURCE, zrhufd,
++     i                    zone, hgrid, vdatum, unitsys, basis,
++     i                    easting, northing,
+      O                    EFLAG)
+  
+ C     + + + PURPOSE + + +
+@@ -498,8 +500,10 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER EFLAG, NFRAC, NHU, STDOUT, STDTAB, TABLE, TYPE
+       REAL FDROP(PMXNHU), HDATUM, HUVEC(PMXNHU), PFDVEC(PMXFRC),
+-     A     Q(PMXNHU,PMXFRC)
+-      CHARACTER LABEL*50, SOURCE*8
++     A     Q(PMXNHU,PMXFRC), zrhufd
++      real*8 easting, northing
++      CHARACTER LABEL*50, SOURCE*8,
++     a  zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT - Fortran unit number for user output and messages
+@@ -512,6 +516,16 @@
+ C     FDROP  - Free drop values
+ C     PFDVEC - Partial free drop vector
+ C     Q      - Flowrate
++c     zrhufd - gives the drop to free flow at zero upstram head. 
++c              Currently is zero for CULVERT, ORIFICE, EMBANKQ, 
++c              and may be positive for CHANRAT if the flow surface
++c              has a downward slope (sustaining slope).  It is zero
++c              in this case also if the slope is zero or retarding. 
++c              Only used for fitting cubic splines to the table. 
++c              We may add non-zero free drops for other cases if it
++c              proves useful. The value is written such that if 
++c              it is left out it will be taken as 0.0, the current 
++c              value for the drop to free flow when the ups head is zero.
+ C     HDATUM - Datum for measuring head
+ C     TYPE   - Table type.
+ C     SOURCE - source for the table.
+@@ -523,6 +537,7 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER I, J, K, L, KNT, LIM
++      real*8 hdat
+       CHARACTER DUMMY*7, LINE(10)*7, TABID*16
+  
+ C     + + + INTRINSICS + + +
+@@ -539,8 +554,9 @@
+       DATA IOFF/10/
+  
+ C     + + + OUTPUT FORMATS + + +
++ 21   FORMAT('TYPE=',I5,' HDATUM=',F10.3,1X,A8)
+  22   FORMAT('TABID= ',A)
+- 23   FORMAT('TYPE=',I5,' HDATUM=',F10.3,1X,A8)
++ 23   FORMAT('TYPE=',I5,' HDATUM=',F10.3,1X,A8,1x,'zrhufd=',f10.4)
+  24   FORMAT('    HEADUP  FREEDROP',1X,A50)
+  25   FORMAT(F10.3,F10.5)
+  26   FORMAT('    -1.0')
+@@ -559,7 +575,16 @@
+  56   FORMAT(A7,10A7)
+  57   FORMAT('   PFQ',10X,'Ups heads for HDN and Proportion of QFREE')
+  58   FORMAT(' *ERR:592* TYPE=',I5, ' INVALID FOR 2-D FLOW TABLES.')
++ 60   format('ZONE=',a8,' HGRID=',a8,' VDATUM=',a8,' UNITSYS=',a8,
++     a ' BASIS=',a8,/,'EASTING=',0PF15.3,' NORTHING=',F15.3)
+ C***********************************************************************
++      call chk_vdatum_unitsys(stdout, vdatum, unitsys, 
++     a          ' during output of type 6, 13, or 14 table')
++
++c     Apply the global vertical datum shift.  Default must be 0.0
++      hdat = hdatum
++c      hdat = hdat + g_vdatum_shift
++
+       TABID = GET_TABID(TABLE)
+       L = LENSTR(TABID)
+        WRITE(STDTAB,22)  TABID(1:L)
+@@ -567,7 +592,7 @@
+       IF(TYPE.EQ.6) THEN
+ C       OUTPUT THE OLD FORMAT FOR TWO-D FLOW TABLES
+  
+-        WRITE(STDTAB,23)  -TYPE, HDATUM, SOURCE
++        WRITE(STDTAB,23)  -TYPE, HDAT, SOURCE, zrhufd
+         WRITE(STDTAB,24) LABEL
+  
+ C       PUT IN THE ZERO HEAD POINT
+@@ -588,7 +613,16 @@
+ C       OUTPUT TWO-D FLOW TABLE IN THE RECTANGULAR FORMAT
+  
+  
+-        WRITE(STDTAB,23)  -TYPE, HDATUM, SOURCE
++        if(type.eq.13) then
++          WRITE(STDTAB,23)  -TYPE, HDAT, SOURCE, zrhufd
++        else
++          WRITE(STDTAB,21)  -TYPE, HDAT, SOURCE
++        endif
++        if(zone /= 'NONE')  then
++c         Output the location information.
++          write(stdtab, 60) zone, hgrid, vdatum, unitsys, basis, 
++     a             easting,  northing
++        endif
+         WRITE(STDTAB,30) LABEL
+         IF(TYPE.EQ.13) THEN
+           WRITE(STDTAB,32) NHU
+@@ -655,7 +689,9 @@
+ C
+       SUBROUTINE   TABOUT
+      I                   (STDOUT, STDTAB, TAB, STAT, ZMIN, MESG, SAVOPT,
+-     I                    OUTOPT, BETOPT,
++     I                    OUTOPT, BETOPT, zone, hgrid, vdatum, unitsys, 
++     I                    basis, khflag, alphaflag, betaflag, maflag, 
++     i                    mqflag,
+      M                    NDEP, XST, FTP)
+  
+ C     + + + PURPOSE + + +
+@@ -667,7 +703,10 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER FTP, MESG, NDEP, STDOUT, STDTAB, TAB
+       REAL STAT, XST(PMXPNT,PMXELM), ZMIN
+-      CHARACTER BETOPT*8, OUTOPT*8, SAVOPT*8
++      CHARACTER BETOPT*8, OUTOPT*8, SAVOPT*8,
++     a khflag(pmxpnt)*1, alphaflag(pmxpnt)*1, betaflag(pmxpnt)*1,
++     b     maflag(pmxpnt)*1, mqflag(pmxpnt)*1,
++     c   zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT - Fortran unit number for user output and messages
+@@ -688,61 +727,111 @@
+       INCLUDE 'ftable.cmn'
+       INCLUDE 'grvcom.cmn'
+       INCLUDE 'xtadd.cmn'
++      INCLUDE 'offcom.cmn'
+  
+ C     + + + LOCAL PARAMETERS + + +
+       INTEGER NSAVE
+-      PARAMETER(NSAVE=8)
++      PARAMETER(NSAVE=14)
+  
+ C     + + + SAVED VALUES + + +
+       INTEGER SOVAL(NSAVE), TYPVEC(NSAVE)
+-      CHARACTER SOTAB(NSAVE)*8
++      CHARACTER SOTAB(NSAVE)*8, OUTOTAB(NSAVE)*8
+       SAVE SOTAB, SOVAL, TYPVEC
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER FLAG, I, IT, J, L, N, NSTORE, TYPE, EFLAG
+-      REAL DROP, MONE, OLDK, MXSLOT
+-
+-      CHARACTER ACHR*8, JCHR*8, KCHR*8, QCCHR*8, TCHR*8
++      INTEGER FLAG, I, IT, J, L, N, NSTORE, TYPE, EFLAG,
++     a   iy
++      REAL DROP, MONE, OLDK, MXSLOT,
++     a    yarg,   topf, areaf, jf, kf, betaf,  dkf, dbetaf,
++     b       alpf, dalpf, maf, dmaf, mqf, dmqf, dtf, qcf,
++     c       kl, km, kr, dkl, dkm, dkr, bl, bm, br, 
++     d       dbl, dbm, dbr, alpl, alpm, alpr, dalpl, dalpm, dalpr,
++     e       mal, mam, mar, dmal, dmam, dmar, mql, mqm, mqr,
++     f       dmql, dmqm, dmqr, max_arg, zmin_out
++
++
++      CHARACTER ACHR*8, JCHR*8, KCHR*8, QCCHR*8, TCHR*8,
++     A          TOPOUT*10, DEPTHOUT*10, AOUT*13,
++     B          KHOUT*13, JOUT*13, QCOUT*13,
++     c          dkhout*10, dbetaout*10, dalphaout*10, 
++     d          dmaout*10, dmqout*10
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS
+  
+ C     + + + EXTERNAL FUNCTIONS + + +
+       INTEGER LENSTR
+-      CHARACTER PUT8*8, GET_TABID*16
++      CHARACTER PUT8*8, GET_TABID*16, PUT10*10
+  
+ C     + + + EXTERNAL NAMES + + +
+       EXTERNAL BINSER, CHKTAJ, CUTTAB, PUT8, PUT_STRING_IN_FT,
+-     A         PUT_DP_IN_FT, GET_TABID, LENSTR
++     A         PUT_DP_IN_FT, GET_TABID, LENSTR, var_decimal,
++     B         PUT10
+  
+ C     + + + DATA INITIALIZATIONS + + +
+       DATA
+      1SOTAB /'SAVE1   ','SAVE12  ','SAVE20  ','SAVE21  ','SAVE22  ',
+-     A       'SAVE23  ','SAVE24  ','SAVE25  '/
++     A       'SAVE23  ','SAVE24  ','SAVE25  ','SAVE30  ','SAVE31  ',
++     B       'SAVE32  ','SAVE33  ','SAVE34  ','SAVE35  '/
+       DATA
+-     1SOVAL /         6,         8,         5,         6,         8,
+-     A                7,         8,        10/
++     1OUTOTAB 
++     2   /  'OUT1   ','OUT12  ','OUT20  ','OUT21  ','OUT22  ',
++     A       'OUT23  ','OUT24  ','OUT25  ','OUT30  ','OUT31  ',
++     B       'OUT32  ','OUT33  ','OUT34  ','OUT35  '/
+       DATA
+-     1TYPVEC/        21,         22,         20,         21,         22,
+-     A               23,        24,        25/
+- 
++     1SOVAL /      6,         8,         5,         6,         8,
++     A             7,         8,        10,         7,         8,
++     B            11,        11,        12,        15  /
++      DATA
++     1TYPVEC/     21,        22,        20,        21,         22,
++     A            23,        24,        25,        30,         31,
++     B            32,        33,        34,        35 /
++ 
++
+ C     + + + OUTPUT FORMATS + + +
++ 40   FORMAT(A10,A10,2a13,F10.6,2a10)
++ 41   FORMAT(A10,A10,2a13,F10.6,A13,2a10)
++ 42   FORMAT(A10,A10,2a13,F10.6,A13,F10.6,A13,3a10)
++
++ 43   FORMAT(A10,A10,2a13,F10.6,2f10.7,4a10)
++ 44   FORMAT(A10,A10,2a13,F10.6,A13,2F10.7,4a10)
++ 45   FORMAT(A10,A10,2a13,F10.6,A13,F10.6,A13,2F10.7,5a10)
+  50   FORMAT(/,' *BUG:XXX* Save option=',A8,' unknown in TABOUT.')
+- 51   FORMAT(/,' ELEMENTS FOR SECTION ID: ',A)
++ 51   FORMAT(/,' Elements for section ID: ',A)
+  52   FORMAT(/,' TABID= ',A,/,1X,'TYPE=',I5,/,1X,'STATION=',1PE12.5,
+      1        /,1X,'ELEVATION=',1PE12.5)
+- 53   FORMAT('TABID= ',A,/,'TYPE=',I5,/,'STATION=',1PE12.5,
+-     A         ' GISID=',A,' EASTING=',0PF15.2,' NORTHING=',F15.2,
+-     2        /,'ELEVATION=',1PE12.5,
+-     3    17X,' EXT=-99.900000',' FAC=1.000 SLOT=',0PF10.3)
+-531   FORMAT('TABID= ',A,/,'TYPE=',I5,/,'STATION=', 1PE12.5,
+-     A        ' GISID=',A,' EASTING=',0PF15.3,' NORTHING=',F15.3,
+-     2        /,'ELEVATION=',1PE12.5,
+-     3    17X,' EXT=-30.449520',' FAC=1.000 SLOT=',0PF10.4)
+- 54   FORMAT(/,3X,'DEPTH TOP WID',4X,'AREA',' SQR(CV)',3X,
+-     1       'BETA',7X,'J',2X,'ALPHA',3X,'CRITQ',5X,'MA',
+-     2       5X,'MQ','  AVER n')
+- 56   FORMAT(' ',F7.3,3A8,F7.3,A8,F7.3,A8,2F7.3,F8.4)
++c     English unit system without zone, etc and with zone
++ 530   FORMAT('TABID= ',A,/,'TYPE=',I5,/,
++     2         'STATION=',1PE12.5,
++     3         ' GISID=',A,' EASTING=',0PF15.2,' NORTHING=',F15.2,
++     4        /,'ELEVATION=',1PE12.5,
++     5    17X,' EXT=-99.900000',' FAC=1.000 SLOT=',0PF10.3)
++531   FORMAT('TABID= ',A,/,'TYPE=',I5,/,
++     1 'ZONE=',a8,' HGRID=',a8,' VDATUM=',a8,' UNITSYS=',a8,
++     2 ' BASIS=',a8,/, 'STATION=', 1PE12.5,
++     3        ' GISID=',A,' EASTING=',0PF15.3,' NORTHING=',F15.3,
++     4        /,'ELEVATION=',1PE12.5,
++     5    17X,' EXT=-99.900000',' FAC=1.000 SLOT=',0PF10.4)
++
++c     Metric unit system without zone, etc and with zone
++ 532   FORMAT('TABID= ',A,/,'TYPE=',I5,/,
++     2         'STATION=',1PE12.5,
++     3         ' GISID=',A,' EASTING=',0PF15.2,' NORTHING=',F15.2,
++     4        /,'ELEVATION=',1PE12.5,
++     5    17X,' EXT=-30.449520',' FAC=1.000 SLOT=',0PF10.3)
++533   FORMAT('TABID= ',A,/,'TYPE=',I5,/,
++     1 'ZONE=',a8,' HGRID=',a8,' VDATUM=',a8,' UNITSYS=',a8,
++     2 ' BASIS=',a8,/, 'STATION=', 1PE12.5,
++     3        ' GISID=',A,' EASTING=',0PF15.3,' NORTHING=',F15.3,
++     4        /,'ELEVATION=',1PE12.5,
++     5    17X,' EXT=-30.449520',' FAC=1.000 SLOT=',0PF10.4)
++ 54   FORMAT(/,3X,'Depth Top Wid',4X,'Area',' Sqr(Cv)',3X,
++     1       'Beta',7X,'J',2X,'Alpha',3X,'CritQ',5X,'Ma',
++     2       5X,'Mq','  AVER n',
++     3 '   dkh/dy  dbta/dy  dalp/dy   dma/dy   dmq/dy')
++ 55   FORMAT(/,' *BUG:XXX* Out option=',A8,' unknown in TABOUT.')
++ 56   FORMAT(' ',F7.3,3A8,F7.3,A8,F7.3,A8,2F7.3,F8.4,
++     a         f8.3,a1,4(f8.4,a1))
+  57   FORMAT(F10.0)
+  58   FORMAT(/,' *WRN:506* Conveyance non-increasing at depth=',
+      A  F10.2,/,11X,' decrease=',F6.1,' per cent')
+@@ -754,28 +843,54 @@
+  62   FORMAT(' ','     Depth      Beta   dBetadY     Alpha  DAlphadY',
+      A'     Qbeta    Qalpha     Qcrit')
+  64   FORMAT(1X,F10.5,4F10.6,3F10.1)
+- 80   FORMAT(5X,'DEPTH TOP WIDTH',9X,'AREA   SQRT(CONV)',6X,'BETA')
+- 81   FORMAT(5X,'DEPTH TOP WIDTH',9X,'AREA   SQRT(CONV)',
+-     1       6X,'BETA FIRST MOMENT')
+- 82   FORMAT(5X,'DEPTH TOP WIDTH',9X,'AREA   SQRT(CONV)',
+-     1       6X,'BETA FIRST MOMENT',5X,'ALPHA',8X,'CRITQ')
+- 83   FORMAT(5X,'DEPTH TOP WIDTH',9X,'AREA   SQRT(CONV)',
+-     1       6X,'BETA',8X,'MA',8X,'MQ')
+- 84   FORMAT(5X,'DEPTH TOP WIDTH',9X,'AREA   SQRT(CONV)',
+-     1       6X,'BETA FIRST MOMENT',8X,'MA',8X,'MQ')
+- 85   FORMAT(5X,'DEPTH TOP WIDTH',9X,'AREA   SQRT(CONV)',
+-     1       6X,'BETA FIRST MOMENT',5X,'ALPHA',8X,'CRITQ',
+-     2       8X,'MA',8X,'MQ')
+- 90   FORMAT(F10.5,F10.3,1P2E13.5,0PF10.4)
+- 91   FORMAT(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5)
+- 92   FORMAT(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5)
+- 93   FORMAT(F10.5,F10.3,1P2E13.5,0P3F10.4)
+- 94   FORMAT(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0P2F10.4)
+- 95   FORMAT(F10.5,F10.3,1P2E13.5,0PF10.6,1PE13.5,0PF10.6,1PE13.5,
+-     A       0P2F10.6)
++
++
++ 70   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',6x,
++     a       'Beta    dkh/dy  dbeta/dy')
++ 71   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment    dkh/dy  dbeta/dy')
++ 72   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment',5x,'Alpha',8x,
++     b          'Critq    dkh/dy  dbeta/dy dalpha/dy')
++ 73   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta',8x,'Ma',8x,
++     a       'Mq    dkh/dy  dbeta/dy    dma/dy    dmq/dy')
++ 74   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment',8x,'Ma',8x,
++     A    'Mq    dkh/dy  dbeta/dy    dma/dy    dmq/dy')
++ 75   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment',5x,'Alpha',8x,'Critq',
++     2       8x,'Ma',8x,
++     a    'Mq    dkh/dy  dbeta/dy    dma/dy    dmq/dy dalpha/dy')
++
++ 80   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',6x,'Beta')
++ 81   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment')
++ 82   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment',5x,'Alpha',8x,'Critq')
++ 83   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta',8x,'Ma',8x,'Mq')
++ 84   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment',8x,'Ma',8x,'Mq')
++ 85   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment',5x,'Alpha',8x,'Critq',
++     2       8x,'Ma',8x,'Mq')
++ 90   FORMAT(A10,A10,2a13,F10.6)
++ 91   FORMAT(A10,A10,2a13,F10.6,A13)
++ 92   FORMAT(A10,A10,2a13,F10.6,A13,F10.6,A13)
++
++ 93   FORMAT(A10,A10,2a13,F10.6,2f10.7)
++ 94   FORMAT(A10,A10,2a13,F10.6,A13,2F10.7)
++ 95   FORMAT(A10,A10,2a13,F10.6,A13,F10.6,A13,2F10.7)
++
++ 98   format(/,' Note: A caret (^) following a derivative indicates',
++     a' imposition of variation limitation at that point.  Continuity',
++     b' of',/,7x,' second derivative is lost at these points.',
++     c'  Otherwise both the first and second derivative is continuous.')
+ 99    FORMAT(/,' Saving TabId= ',A,'  Internal table number=',I5)
+ C***********************************************************************
+       EFLAG = 0
++
+       IF(GRAV.GT.15.0) THEN
+         MXSLOT = 0.07
+       ELSE
+@@ -797,39 +912,50 @@
+      O            FLAG)
+ 
+  
+-      IF(OUTOPT.EQ.'OUT1') THEN
+-        TYPE = -21
+-      ELSEIF(OUTOPT.EQ.'OUT12') THEN
+-        TYPE = -22
+-      ELSEIF(OUTOPT.EQ.'OUT20') THEN
+-        TYPE = -20
+-      ELSEIF(OUTOPT.EQ.'OUT21') THEN
+-        TYPE = -21
+-      ELSEIF(OUTOPT.EQ.'OUT22') THEN
+-        TYPE = -22
+-      ELSEIF(OUTOPT.EQ.'OUT23') THEN
+-        TYPE = -23
+-      ELSEIF(OUTOPT.EQ.'OUT24') THEN
+-        TYPE = -24
+-      ELSEIF(OUTOPT.EQ.'OUT25') THEN
+-        TYPE = -25
+-      ELSE
+-        TYPE = -25
+-      ENDIF
++      if(outopt.eq.' ') then
++        type = -25
++      elseif(outopt.eq.'NOOUT') then
++        type = -25
++      else
++        CALL BINSER
++     I             (OUTOPT, NSAVE, OUTOTAB,
++     O              IT)
++      
++        IF(IT.EQ.0) THEN
++          WRITE(STDOUT,55) OUTOPT
++          STOP 'Abnormal stop. Errors found.'
++        else
++          type = -typvec(it)
++        endif
++      endif
+  
+       IF(GISID.EQ.' ') THEN
+         GISID = TABID
+       ENDIF
+-      WRITE(STDOUT,52) TABID(1:L), TYPE, STAT, ZMIN
++      WRITE(STDOUT,52) TABID(1:L), TYPE, STAT, zmin
+       IF(OUTOPT.NE.'NOOUT'.AND.FLAG.EQ.0) THEN
+         IF(GRAV.GT.15.0) THEN
+-           WRITE(STDTAB,53) TABID(1:L), TYPE,  
+-     A                      STAT, GISID, EASTING, NORTHING, ZMIN,
++          if(zone =='NONE') then
++            WRITE(STDTAB,530) TABID(1:L), TYPE,
++     A                      STAT, GISID, EASTING, NORTHING, zmin,
+      B                      SLOT_DEPTH
++          else
++            WRITE(STDTAB,531) TABID(1:L), TYPE,
++     1                      zone, hgrid, vdatum, unitsys, basis,  
++     A                      STAT, GISID, EASTING, NORTHING, zmin,
++     B                      SLOT_DEPTH
++          endif
+         ELSE
+-           WRITE(STDTAB,531) TABID(1:L), TYPE,                          
+-     A                       STAT, GISID, EASTING, NORTHING, ZMIN,
++          if(zone == 'NONE') then
++            WRITE(STDTAB,532) TABID(1:L), TYPE,                          
++     A                       STAT, GISID, EASTING, NORTHING, zmin,
+      B                       SLOT_DEPTH
++          else
++            WRITE(STDTAB,533) TABID(1:L), TYPE,                          
++     1                       zone, hgrid, vdatum, unitsys, basis,  
++     A                       STAT, GISID, EASTING, NORTHING, zmin,
++     B                       SLOT_DEPTH
++          endif
+         ENDIF
+       ENDIF
+  
+@@ -847,18 +973,28 @@
+           WRITE(STDTAB,84)
+         ELSEIF(OUTOPT.EQ.'OUT25') THEN
+           WRITE(STDTAB,85)
++        elseIF(OUTOPT.EQ.'OUT30') THEN
++          WRITE(STDTAB,70)
++        ELSEIF(OUTOPT.EQ.'OUT31') THEN
++          WRITE(STDTAB,71)
++        ELSEIF(OUTOPT.EQ.'OUT32') THEN
++          WRITE(STDTAB,72)
++        ELSEIF(OUTOPT.EQ.'OUT33') THEN
++          WRITE(STDTAB,73)
++        ELSEIF(OUTOPT.EQ.'OUT34') THEN
++          WRITE(STDTAB,74)
++        ELSEIF(OUTOPT.EQ.'OUT35') THEN
++          WRITE(STDTAB,75)
+         ENDIF
+       ENDIF
++
++      call chk_vdatum_unitsys(stdout, vdatum, unitsys, 
++     a          ' during output/store of a cross-section table')
++
++
+  
+       OLDK=-1.0
+       DO 100 J=1,NDEP
+-C       FILL IN THE VELOCITY DISTRIBUTION COEFFICIENTS AT DEPTH 0.0
+-C       AND CRITICAL FLOW AT ZERO DEPTH.
+-        IF(J.EQ.1) THEN
+-          XST(J,6) = XST(J+1,6)
+-          XST(J,7) = XST(J+1,7)
+-          XST(J,13) = 0.0
+-        ENDIF
+  
+ C       OUTPUT ALL VALUES TO STDOUT EVEN THOUGH NOT REQUESTED FOR THE
+ C       TABLE TO BE OUTPUT TO STDTAB OR TO BE STORED.
+@@ -868,48 +1004,93 @@
+         KCHR = PUT8(XST(J,5))
+         JCHR = PUT8(XST(J,4))
+         QCCHR = PUT8(XST(J,13))
+-C        IF(J.LE.2) THEN
+-C          POWERK_VS_J = 0.0
+-C          POWERQC_VS_J = 0.0
+-C          POWERK_VS_A = 0.0
+-C          POWERQC_VS_A = 0.0
+-C        ELSE
+-C          POWERK_VS_J = LOG(XST(J,5)**2/(XST(J-1,5)**2))/
+-C     A                    LOG(XST(J,4)/XST(J-1,4))
+-C          POWERQC_VS_J = LOG(XST(J,13)/(XST(J-1,13)))/
+-C     A                    LOG(XST(J,4)/XST(J-1,4))
+-C          POWERK_VS_A = LOG(XST(J,5)**2/(XST(J-1,5)**2))/
+-C     A                    LOG(XST(J,3)/XST(J-1,3))
+-C          POWERQC_VS_A = LOG(XST(J,13)/(XST(J-1,13)))/
+-C     A                    LOG(XST(J,3)/XST(J-1,3))
+-C        ENDIF
++
+         WRITE(STDOUT,56) XST(J,1), TCHR, ACHR, KCHR,XST(J,6),
+      A               JCHR, XST(J,7), QCCHR, XST(J,14), XST(J,15),
+-     B               XST(J,17)
++     B               XST(J,17), 
++     c               xst(j,18), khflag(j),
++     c               xst(j,20), betaflag(j),
++     c               xst(j,19), alphaflag(j),
++     c               xst(j,21), maflag(j),
++     c               xst(j,22), mqflag(j)
++     c                    
+ C     B               POWERK_VS_J, POWERQC_VS_J, POWERK_VS_A,
+ C     C               POWERQC_VS_A
+  
+- 
+         IF(FLAG.EQ.0) THEN
++          call var_decimal(xst(j,1),
++     o                        depthout)
++          call var_decimal(xst(j,2),
++     o                        topout)
++          call var_decimal(xst(j,3),
++     o                        aout)
++          call var_decimal(xst(j,4),
++     o                        jout)
++          call var_decimal(xst(j,5),
++     o                        khout)
++          call var_decimal(xst(j,13),
++     o                        qcout)
++C
++C          call var_decimal(xst(j,18),
++C     o                        dkhout)
++C          call var_decimal(xst(j,19),
++C     o                        dalphaout)
++C          call var_decimal(xst(j,20),
++C     o                        dbetaout)
++C          call var_decimal(xst(j,21),
++C     o                        dmaout)
++C          call var_decimal(xst(j,22),
++C     o                        dmqout)
++          
++           dkhout     =  put10(xst(j,18))
++           dalphaout  =  put10(xst(j,19))
++           dbetaout   =  put10(xst(j,20))
++           dmaout     =  put10(xst(j,21))
++           dmqout     =  put10(xst(j,22))
++                      
++
+           IF(OUTOPT.EQ.'OUT20') THEN
+-            WRITE(STDTAB,90) XST(J,1),XST(J,2),XST(J,3),XST(J,5),
++            WRITE(STDTAB,90) depthout,topout,aout,khout,
+      1                     XST(J,6)
+           ELSEIF(OUTOPT.EQ.'OUT21'.OR.OUTOPT.EQ.'OUT1') THEN
+-            WRITE(STDTAB,91) XST(J,1),XST(J,2),XST(J,3),XST(J,5),
+-     1                     XST(J,6),XST(J,4)
++            WRITE(STDTAB,91) depthout,topout,aout,khout,
++     1                     XST(J,6),jout
+           ELSEIF(OUTOPT.EQ.'OUT22'.OR.OUTOPT.EQ.'OUT12') THEN
+-            WRITE(STDTAB,92) XST(J,1),XST(J,2),XST(J,3),XST(J,5),
+-     1                     XST(J,6),XST(J,4), XST(J,7), XST(J,13)
++            WRITE(STDTAB,92) depthout,topout,aout,khout,
++     1                     XST(J,6),jout, XST(J,7), qcout
+           ELSEIF(OUTOPT.EQ.'OUT23') THEN
+-            WRITE(STDTAB,93) XST(J,1),XST(J,2),XST(J,3),XST(J,5),
++            WRITE(STDTAB,93) depthout,topout,aout,khout,
+      1                     XST(J,6), XST(J,14), XST(J,15)
+           ELSEIF(OUTOPT.EQ.'OUT24') THEN
+-            WRITE(STDTAB,94) XST(J,1),XST(J,2),XST(J,3),XST(J,5),
+-     1                     XST(J,6),XST(J,4), XST(J,14), XST(J,15)
++            WRITE(STDTAB,94) depthout,topout,aout,khout,
++     1                     XST(J,6),jout, XST(J,14), XST(J,15)
+           ELSEIF(OUTOPT.EQ.'OUT25') THEN
+-            WRITE(STDTAB,95) XST(J,1),XST(J,2),XST(J,3),XST(J,5),
+-     1                     XST(J,6),XST(J,4), XST(J,7), XST(J,13),
++            WRITE(STDTAB,95) depthout,topout,aout,khout,
++     1                     XST(J,6),jout, XST(J,7), qcout,
+      2                     XST(J,14), XST(J,15)
++          elseIF(OUTOPT.EQ.'OUT30') THEN
++            WRITE(STDTAB,40) depthout,topout,aout,khout,
++     1                     XST(J,6), dkhout, dbetaout
++          ELSEIF(OUTOPT.EQ.'OUT31') THEN
++            WRITE(STDTAB,41) depthout,topout,aout,khout,
++     1                     XST(J,6),jout, dkhout, dbetaout
++          ELSEIF(OUTOPT.EQ.'OUT32') THEN
++            WRITE(STDTAB,42) depthout,topout,aout,khout,
++     1                     XST(J,6),jout, XST(J,7), qcout,
++     a                     dkhout, dbetaout, dalphaout
++          ELSEIF(OUTOPT.EQ.'OUT33') THEN
++            WRITE(STDTAB,43) depthout,topout,aout,khout,
++     1                     XST(J,6), XST(J,14), XST(J,15),
++     a                    dkhout, dbetaout, dmaout, dmqout
++          ELSEIF(OUTOPT.EQ.'OUT34') THEN
++            WRITE(STDTAB,44) depthout,topout,aout,khout,
++     1                     XST(J,6),jout, XST(J,14), XST(J,15),
++     a                    dkhout, dbetaout, dmaout, dmqout
++          ELSEIF(OUTOPT.EQ.'OUT35') THEN
++            WRITE(STDTAB,45) depthout,topout,aout,khout,
++     1                     XST(J,6),jout, XST(J,7), qcout,
++     2                     XST(J,14), XST(J,15),
++     a                    dkhout, dbetaout, dmaout, dmqout, dalphaout
+           ENDIF
+         ENDIF
+  
+@@ -929,6 +1110,7 @@
+         WRITE(STDTAB,57) MONE
+       ENDIF
+  
++      write(stdout, 98)
+  
+       IF(SAVOPT.NE.'NOSAVE'.AND.FLAG.EQ.0) THEN
+ C       WE HAVE A SAVE OPERATION TO COMPLETE.  FIND THE NUMBER OF
+@@ -943,6 +1125,7 @@
+         ELSE
+           NSTORE = SOVAL(IT)
+           TYPE = TYPVEC(IT)
++   
+ C         IS THERE ENOUGH ROOM IN FTAB/ITAB FOR THE TABLE?
+  
+           N = XTIOFF + NDEP*NSTORE
+@@ -961,98 +1144,96 @@
+             STOP 'Abnormal stop. Error found.' 
+           ENDIF
+  
+-          FTPNT(TAB) = FTP
+-          ITAB(FTP+1) = TAB
+-          ITAB(FTP+2) = TYPE
+-          ITAB(FTP+3) = FTP + XTIOFF
+-          FTAB(FTP+4) = STAT
+-          FTAB(FTP+5) = ZMIN
+-C         Store the maximum unextrapolated argument in the
+-C         cross-section function table.
+-          FTAB(FTP+6) = XST(NDEP,1)
+-C         Put the slot depth into the table--Note: SLOT_DEPTH <=0.0
+-          FTAB(FTP+7) = SLOT_DEPTH
+-C         Put the easting coordinate value in the table.
+-          CALL PUT_DP_IN_FT(FTP+8, EASTING)
+-C         Put the northing coordinate value in the table
+-          CALL PUT_DP_IN_FT(FTP+10, NORTHING)
+-
+-C         Store the GIS identifier string.  May be blank. 
+-          CALL PUT_STRING_IN_FT(FTP+12, GISID)
+-C         Store the table name in the table. 
+-          CALL PUT_STRING_IN_FT(FTP+16, TABID)
+-
+-          I = FTP + XTIOFF
+-          DO 200 J=1, NDEP
+-            FTAB(I+0) = XST(J,1)
+-            FTAB(I+1) = XST(J,2)
+-            FTAB(I+2) = XST(J,3)
+-            FTAB(I+3) = XST(J,5)
+-            FTAB(I+4) = XST(J,6)
+- 
+-C           REMAINDER OF THE TABLE DEPENDS ON THE TYPE.  BRANCH ON
+-C           IT TO FILL IN THE REST
+-            GOTO(21, 22, 20, 21, 22, 23, 24, 25), IT
+-              WRITE(STDOUT,59) IT
+-              STOP 'Abnormal stop. Errors found.'
+- 
+- 20         CONTINUE
+-C             TABLE TYPE 20.  EVERYTHING ALREADY STORED
+-              GOTO 49
+- 
+- 21         CONTINUE
+-C             TABLE TYPE 1 AND 21.  ADD STORAGE OF THE FIRST MOMENT OF
+-C             AREA ABOUT THE WATER SURFACE.
+-              FTAB(I+5) = XST(J,4)
+-              GOTO 49
+- 
+- 22         CONTINUE
+-C             TABLE TYPE 12 AND 22.  ADD FIRST MOMENT, ALPHA, AND
+-C             CRITICAL FLOW
+-              FTAB(I+5) = XST(J,4)
+-              FTAB(I+6) = XST(J,7)
+-              FTAB(I+7) = XST(J,13)
+-              GOTO 49
+- 
+- 23         CONTINUE
+-C             TABLE TYPE 23.  ADD THE CURVILINEAR ELEMENTS: MA AND MQ
+-              FTAB(I+5) = XST(J,14)
+-              FTAB(I+6) = XST(J,15)
+-              GOTO 49
+- 
+- 24         CONTINUE
+-C             TABLE TYPE 24.  ADD FIRST MOMENT, MA, AND MQ
+-              FTAB(I+5) = XST(J,4)
+-              FTAB(I+6) = XST(J,14)
+-              FTAB(I+7) = XST(J,15)
+-              GOTO 49
+- 
+- 25         CONTINUE
+-C             TABLE TYPE 25. ADD FIRST MOMENT, ALPHA, CRITICAL FLOW, MA,
+-C             AND MQ.
+-              FTAB(I+5) = XST(J,4)
+-              FTAB(I+6) = XST(J,7)
+-              FTAB(I+7) = XST(J,13)
+-              FTAB(I+8) = XST(J,14)
+-              FTAB(I+9) = XST(J,15)
+-              GOTO 49
+- 
+- 49         CONTINUE
+- 
+-            I = I + NSTORE
+- 200      CONTINUE
+-          ITAB(FTP) = I - NSTORE
+-          FTP = I
++c         Store the table for subsequent use in this run of FEQUTL.
++          max_arg = xst(ndep,1)
++          call store_xsec_tab(stdout, ndep, type, tabid, tab,
++     i               stat, zmin, slot_depth, gisid, easting, northing,
++     i               xst, max_arg, zone, hgrid, vdatum, unitsys, basis,
++     m               ftp) 
++
++
++c         Add test of the lookup in types 30-35.
++          if(type.eq.9999) then
++            write(stdout,*) ' '
++            write(stdout,*) ' Testing lookup for types: 30-35'
++
++
++            call XLKT25
++     I                 (FTPNT(TAB),
++     M                  xst(1,1),
++     O    areaf, topf, dtf,jf, kl, dkl, bl, dbl, alpl, dalpl, 
++     o    qcf, mal, dmal, mql, dmql)
++
++            do iy=2,ndep 
++              yarg = 0.5*(xst(iy-1,1) + xst(iy,1))
++
++              call XLKT25
++     I                   (FTPNT(TAB),
++     M                    yarg,
++     O    areaf, topf, dtf, jf, km, dkm, bm, dbm, alpm, dalpm, 
++     o    qcf, mam, dmam, mqm, dmqm)
++
++              call XLKT25
++     I                   (FTPNT(TAB),
++     M                    xst(iy,1),
++     O    areaf, topf, dtf, jf, kr, dkr, br, dbr, alpr, dalpr, 
++     o    qcf, mar, dmar, mqr, dmqr)
++
++              write(stdout,9124) xst(iy,1),
++     a((xst(iy,1) - xst(iy-1,1))*(dkl + 4.*dkm + dkr)/6. - (kr - kl))/
++     a     max(abs(kr-kl), 0.01),
++     b((xst(iy,1) - xst(iy-1,1))*(dbl + 4.*dbm + dbr)/6. - (br - bl))/
++     b    max(abs(br-bl),0.002),
++     b((xst(iy,1) - xst(iy-1,1))*(dalpl + 4.*dalpm + dalpr)/6. - 
++     b (alpr - alpl))/max(abs(alpr-alpl),0.002),
++     b((xst(iy,1) - xst(iy-1,1))*(dmal + 4.*dmam + dmar)/6. -
++     c   (mar - mal))/max(abs(mar-mal),0.002),
++     b((xst(iy,1) - xst(iy-1,1))*(dmql + 4.*dmqm + dmqr)/6. -
++     c   (mqr - mql))/max(abs(mqr-mql),0.002)
++
++9124  format(f10.4, 6(1pe12.4))
++              
++
++                kl = kr
++                dkl = dkr
++                bl = br
++                dbl = dbr
++                alpl = alpr
++                dalpl = dalpr
++                mal = mar
++                dmal = dmar
++                mql = mqr
++                dmql = dmqr
++               write(stdout,9123) xst(iy,1), topf - xst(iy,2),
++     a           areaf - xst(iy,3),
++     a           jf - xst(iy,4),
++     a           kr - xst(iy,5)**2,
++     b           dkr - 2.*xst(iy,5)*xst(iy,18),
++     b           qcf - xst(iy,13),
++     c           br - xst(iy,6), dbr - xst(iy,20),
++     c           alpr - xst(iy,7), dalpr - xst(iy,19),
++     d           mar - xst(iy,14), dmar - xst(iy,21),
++     d           mqr - xst(iy,15), dmqr - xst(iy,22)
++
++9123  format(f10.4,15(1pe12.4))
++
++            end do
++          endif
++
++
++
+         ENDIF
+       ENDIF
+  
+ C     Added May 22, 1998: definition of XSV(*) contents
++c     Extended 13 March 2003
++
+ C     Offset    Value
+ C     1         Maximum depth-y
+ C     2         Top width
+ C     3         Area
+ C     4         First moment of area about water surface
+-C     5         Square root of conveyance
++C     5         Square root of conveyance- kh
+ C     6         Beta
+ C     7         Alpha
+ C     8         dBeta/dy
+@@ -1065,6 +1246,12 @@
+ C     15        MQ- correction of momentum for sinuosity
+ C     16        Total wetted perimeter- added May 22, 1998
+ C     17        Average Manning's n value for the cross section
++c     18        dkh/dy computed by cubic-spline fit
++c     19        dalpha/dy computed by cubic-spline fit
++c     20        dbeta/dy computed by cubic-spline fit
++c     21        dma/dy computed by cubic-spline fit
++c     22        dmq/dy computed by cubic-spline fit
++
+ 
+       IF(BETOPT(1:7).EQ.'NEWBETA'.AND.FLAG.EQ.0) THEN
+         WRITE(STDOUT,*) ' '
+@@ -1176,9 +1363,10 @@
+       INCLUDE 'offcom.cmn'
+       INCLUDE 'grvcom.cmn'
+       INCLUDE 'flowline.cmn'
++      include 'grid_datum.cmn'
+ 
+ C     + + + SAVED VALUES + + +
+-      CHARACTER PRFORM(6)*63
++      CHARACTER PRFORM(12)*80
+       SAVE PRFORM
+  
+ C     + + + LOCAL VARIABLES + + +
+@@ -1189,20 +1377,31 @@
+       REAL*8 EASTING, NORTHING, RM
+ 
+       CHARACTER*16 TABID, BEGTABID, ENDTABID, GISID
++      character*8 zone, hgrid, vdatum, unitsys, basis
+ 
+ C     Called program units
+       INTEGER LENSTR
+-      CHARACTER GET_TABID*16
+-      EXTERNAL LENSTR, GET_TABID, GET_XS_LOCATION
++      CHARACTER GET_TABID*16, get_chr8_from_ft*8
++      EXTERNAL LENSTR, GET_TABID, GET_XS_LOCATION,
++     a    get_chr8_from_ft
+ 
+ C     + + + DATA INITIALIZATIONS + + +
+       DATA PRFORM/
+-     1'(F10.5,F10.3,1P2E13.5,0PF10.4)',
+-     2'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5)',
+-     3'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5)',
+-     4'(F10.5,F10.3,1P2E13.5,0P3F10.4)',
+-     5'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0P2F10.4)',
+-     6'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5,0P2F10.4)'/
++     1'(F10.5,F10.3,1P,2E13.5,0PF10.4)',
++     2'(F10.5,F10.3,1P,2E13.5,0PF10.4,1PE13.5)',
++     3'(F10.5,F10.3,1P,2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5)',
++     4'(F10.5,F10.3,1P,2E13.5,0P3F10.4)',
++     5'(F10.5,F10.3,1P,2E13.5,0PF10.4,1PE13.5,0P2F10.4)',
++     6'(F10.5,F10.3,1P,2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5,0P2F10.4)'
++     b,
++     7'(F10.5,F10.3,1P,2E13.5,0PF10.4,2(1pe10.4e1))',
++     8'(F10.5,F10.3,1P,2E13.5,0PF10.4,1PE13.5,2(1pe10.4e1))',
++     9'(F10.5,F10.3,1P,2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5,3(1pe10.4e
++     *1))',            
++     a'(F10.5,F10.3,1P,2E13.5,0P3F10.4,4(1pe10.4e1))',
++     b'(F10.5,F10.3,1P,2E13.5,0PF10.4,1PE13.5,0P2F10.4,4(1pe10.4e1))',
++     c'(F10.5,F10.3,1P,2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5,0P2F10.4,5
++     *(1pe10.4e1))'/
+  
+ C     + + + OUTPUT FORMATS + + +
+  52   FORMAT('TABID= ',A,/,'TYPE=',I5,/,'STATION=',1PE12.5,
+@@ -1215,6 +1414,41 @@
+      B       /,';', 5X,'Interpolated between tables: ',A,' and ',A,
+      C        /,'ELEVATION=',1PE12.5,
+      D    17X,' EXT=-30.449520',' FAC=1.000 SLOT=',0PF10.3)
++
++ 53   FORMAT('TABID= ',A,/,'TYPE=',I5,/,
++     1 'ZONE=',a8,' HGRID=',a8,' VDATUM=',a8,' UNITSYS=',a8,
++     2    ' BASIS=',a8,/, 'STATION=',1PE12.5,
++     A         ' GISID=',A,' EASTING=',0PF15.2,' NORTHING=',F15.2,
++     B       /,';', 5X,'Interpolated between tables: ',A,' and ',A,
++     C        /,'ELEVATION=',1PE12.5,
++     D    17X,' EXT=-99.900000',' FAC=1.000 SLOT=',0PF10.3)
++531   FORMAT('TABID= ',A,/,'TYPE=',I5,/,
++     1 'ZONE=',a8,' HGRID=',a8,' VDATUM=',a8,' UNITSYS=',a8,
++     2 ' BASIS=',a8,/, 'STATION=',1PE12.5,
++     A         ' GISID=',A,' EASTING=',0PF15.2,' NORTHING=',F15.2,
++     B       /,';', 5X,'Interpolated between tables: ',A,' and ',A,
++     C        /,'ELEVATION=',1PE12.5,
++     D    17X,' EXT=-30.449520',' FAC=1.000 SLOT=',0PF10.3)
++
++ 70   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',6x,
++     a       'Beta    dkh/dy  dbeta/dy')
++ 71   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment    dkh/dy  dbeta/dy')
++ 72   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment',5x,'Alpha',8x,
++     b          'Critq    dkh/dy  dbeta/dy dalpha/dy')
++ 73   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta',8x,'Ma',8x,
++     a       'Mq    dkh/dy  dbeta/dy    dma/dy    dmq/dy')
++ 74   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment',8x,'Ma',8x,
++     A    'Mq    dkh/dy  dbeta/dy    dma/dy    dmq/dy')
++ 75   format(5x,'Depth Top_width',9x,'Area   Sqrt(Conv)',
++     1       6x,'Beta First_moment',5x,'Alpha',8x,'Critq',
++     2       8x,'Ma',8x,
++     a    'Mq    dkh/dy  dbeta/dy dalpha/dy    dma/dy    dmq/dy')
++
++
+  80   FORMAT(5X,'DEPTH TOP WIDTH',9X,'AREA   SQRT(CONV)',6X,'BETA')
+  81   FORMAT(5X,'DEPTH TOP WIDTH',9X,'AREA   SQRT(CONV)',
+      1       6X,'BETA FIRST MOMENT')
+@@ -1237,6 +1471,15 @@
+       STAT = FTAB(ADRS+4)
+       ELEV = FTAB(ADRS+5)
+ 
++c     30 October 2007:  NO, NO, NO do not apply the datum shift
++c     when interpolating cross sections.  If the datum shift is applied
++c     to all cross sections when they are input to fequtl.  Therefore
++c     applying it to interpolated sections is incorrect.  The datum shift
++c     requested by the user is already present in the invert elevations
++c     of the cross sections used as the basis for interpolation!
++c     Apply the datum shift to the datum for depth
++c      elev = elev + g_vdatum_shift
++
+       TABID = GET_TABID(TABN)
+       GISID = TABID
+       LTAB = LENSTR(TABID)
+@@ -1244,6 +1487,15 @@
+       LBEG = LENSTR(BEGTABID)
+       ENDTABID = GET_TABID(ENDTAB)
+       LEND = LENSTR(ENDTABID)
++
++c     Get the location values (other than easting and northing),
++c     from the ADRS. 
++      zone = get_chr8_from_ft(adrs+22)
++      hgrid = get_chr8_from_ft(adrs+24)
++      vdatum = get_chr8_from_ft(adrs+26)
++      unitsys = get_chr8_from_ft(adrs+28)
++      basis = get_chr8_from_ft(adrs+30)
++
+ 
+       IF(FL_PRESENT.EQ.1) THEN
+ C       We have a defining flow line.  Compute the location for the 
+@@ -1256,21 +1508,40 @@
+         NORTHING = 0.D0
+       ENDIF
+  
+-      IF(GRAV.GT.15.0) THEN
+-        WRITE(STDTAB,52) TABID(1:LTAB), -TYPE, STAT,
+-     A         GISID, EASTING, NORTHING, BEGTABID(1:LBEG), 
+-     B                       ENDTABID(1:LEND), ELEV,
+-     C                       FTAB(ADRS+7)
+-      ELSE
+-        WRITE(STDTAB,521) TABID(1:LTAB), -TYPE, STAT,
+-     A         GISID, EASTING, NORTHING, BEGTABID(1:LBEG), 
+-     B                       ENDTABID(1:LEND), ELEV,
+-     C                       FTAB(ADRS+7)
+-      ENDIF
++      if(zone == 'NONE') then
++        IF(GRAV.GT.15.0) THEN
++          WRITE(STDTAB,52) TABID(1:LTAB), -TYPE, STAT,
++     A           GISID, EASTING, NORTHING, BEGTABID(1:LBEG), 
++     B                         ENDTABID(1:LEND), ELEV,
++     C                         FTAB(ADRS+7)
++        ELSE
++          WRITE(STDTAB,521) TABID(1:LTAB), -TYPE, STAT,
++     A           GISID, EASTING, NORTHING, BEGTABID(1:LBEG), 
++     B                         ENDTABID(1:LEND), ELEV,
++     C                         FTAB(ADRS+7)
++        ENDIF
++      else
++        IF(GRAV.GT.15.0) THEN
++          WRITE(STDTAB,53) TABID(1:LTAB), -TYPE,
++     a      zone, hgrid, vdatum, unitsys, basis, STAT,
++     A           GISID, EASTING, NORTHING, BEGTABID(1:LBEG), 
++     B                         ENDTABID(1:LEND), ELEV,
++     C                         FTAB(ADRS+7)
++        ELSE
++          WRITE(STDTAB,531) TABID(1:LTAB), -TYPE, 
++     a      zone, hgrid, vdatum, unitsys, basis, STAT,
++     A           GISID, EASTING, NORTHING, BEGTABID(1:LBEG), 
++     B                         ENDTABID(1:LEND), ELEV,
++     C                         FTAB(ADRS+7)
++        ENDIF
++      endif
+       
+       XOFF = OFFVEC(TYPE)
+  
+-      GOTO(20, 21, 22, 23, 24, 25), TYPE-19
++      if(type.ge.30) then
++         type = type - 4
++      endif
++      GOTO(20, 21, 22, 23, 24, 25, 30, 31, 32, 33, 34, 35), TYPE-19
+  
+  20   CONTINUE
+         WRITE(STDTAB,80)
+@@ -1290,6 +1561,27 @@
+  25   CONTINUE
+         WRITE(STDTAB,85)
+         GOTO 40
++
++ 30   CONTINUE
++        WRITE(STDTAB,70)
++        GOTO 40
++ 31   CONTINUE
++        WRITE(STDTAB,71)
++        GOTO 40
++ 32   CONTINUE
++        WRITE(STDTAB,72)
++        GOTO 40
++ 33   CONTINUE
++        WRITE(STDTAB,73)
++        GOTO 40
++ 34   CONTINUE
++        WRITE(STDTAB,74)
++        GOTO 40
++ 35   CONTINUE
++        WRITE(STDTAB,75)
++        GOTO 40
++
++
+  40   CONTINUE
+  
+  

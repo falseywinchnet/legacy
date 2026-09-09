@@ -1,0 +1,158 @@
+--- 9.98/fequtl/orifice.for
++++ 10.61/fequtl/orifice.for
+@@ -658,13 +658,13 @@
+ C     ***********
+ 
+       SUBROUTINE   ORIFICE(GRAV, STDIN, STDOUT, STDTAB,
+-     M                    EFLAG, TABDIR)
++     M                    EFLAG, TABDIR, FTP)
+  
+ C     Compute a 2-D table of type 13 for a vertical orifice.
+  
+       IMPLICIT NONE
+ C     Dummy arguments
+-      INTEGER EFLAG, STDIN, STDOUT, STDTAB
++      INTEGER EFLAG, STDIN, STDOUT, STDTAB, FTP
+       INTEGER TABDIR(*)
+       REAL GRAV
+  
+@@ -680,6 +680,7 @@
+       INCLUDE 'ftable.cmn'
+       INCLUDE 'epscom.cmn'
+       INCLUDE 'orfshape.cmn' 
++      INCLUDE 'tabupgrade.cmn' 
+ 
+ C     Local
+       INTEGER MAXN
+@@ -687,21 +688,23 @@
+       INTEGER  I, IHUP, IPFD, J,JBASE, NFRAC, NHUP, N_GLOBAL, TAB,
+      A         TABLT, TABGT, NN, APPTAB, ORITAB, IT, NITEM,
+      B         ITEM_START(MAXN), ITEM_END(MAXN), L, W1, W2, 
+-     C         NUMBER, IDLENA, IDLENB, W1A, W2A
++     C         NUMBER, IDLENA, IDLENB, W1A, W2A, ftpup, verbose
+ 
+       REAL  BIGERR, DROP,  FDROP, FDVEC(PMXNHU), HEAD_DATUM,
+      A     HUPVEC(PMXNHU), LIMPFD, MAXZUP, LIPREC,  MAXHUP, MINHUP,
+      B     MINPFD, PFDTMP(PMXFRC), PFDVEC(PMXFRC), POW,  QFREE, QHAT, 
+      C     QMAT(PMXNHU,PMXFRC), RERR, RMS_GLOBAL, WORK(PMXFRC), 
+-     D     XBRK(PMXNHU), TWE, TWF, FNUMBER, HTEMP, INVERT,
++     D     XBRK(PMXFRC), TWE, TWF, FNUMBER, HTEMP, INVERT,
+      E     HW_REL, TW_REL, HW, TW, CE, CW, CD, ORIFICE_LIMIT,
+      F     SQRT_OF_2G, QSUB, APPZB, YA, APPA, HW_RELT, W, D,
+-     G     OFFSET, HWE, TWF_REL, TWEF, TWF_RELT, PFD, HERR
+-
+-      DOUBLE PRECISION FUN_CIRC, FUN_RECT, FUN_TRI, FUN_ODD
++     G     OFFSET, HWE, TWF_REL, TWEF, TWF_RELT, PFD, HERR, zrhufd
++
++      real*8 FUN_CIRC, FUN_RECT, FUN_TRI, FUN_ODD,
++     a         easting, northing
+       CHARACTER LABEL*50, LINE*80, SHAPE*6, EDGE*6, NATURE*2,
+      A          CQ*8, JUST*5, TABID*16, APPTABID*16, ORITABID*16,
+-     B          TEMPA*25, TEMPB*25, KEY*16
++     B          TEMPA*25, TEMPB*25, KEY*16,
++     c   zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     Intrinsics
+       INTRINSIC ABS, FLOAT, LOG, SQRT
+@@ -710,7 +713,7 @@
+ C     External names
+       CHARACTER*16 GET_TABID
+       INTEGER LENSTR
+-      EXTERNAL CHKTAB, INL80, LSTOPF, TABCHK, TWDOUT, 
++      EXTERNAL CHKTAB, inline, LSTOPF, TABCHK, TWDOUT, 
+      A         FUN_CIRC, FUN_RECT, FUN_TRI, FUN_ODD, VAR_DECIMAL,
+      B         GET_INTERNAL_TAB_NUMBER, READ_TABID, LENSTR
+ C     ************************************FORMATS**********************
+@@ -772,7 +775,8 @@
+       CALL GRULE(ORF_NUM,
+      O                   ORF_X, ORF_W)
+ 
+-      CALL INL80(STDIN, STDOUT,
++
++      CALL inline(STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+      I               (STDOUT, LINE, 'TAB',
+@@ -784,13 +788,22 @@
+       CALL TABCHK(STDOUT, PMXTAB,
+      M            TAB, TABDIR, EFLAG)
+  
+-      CALL INL80(STDIN, STDOUT,
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++
++      CALL inline(STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2,ERR=991) LABEL
+       WRITE(STDOUT,52) LABEL
+  
+ C     Get the heading line.
+-      CALL INL80(STDIN, STDOUT,
++      CALL inline(STDIN, STDOUT,
+      O           LINE)
+ C      WRITE(STDOUT,54) LINE
+       
+@@ -798,7 +811,7 @@
+      I                     STDOUT, LINE, MAXN, JUST,
+      O                     NITEM, ITEM_START, ITEM_END)
+ 
+-      CALL INL80(STDIN, STDOUT,
++      CALL inline(STDIN, STDOUT,
+      O           LINE)
+ 
+ C      READ(LINE,4,ERR=991) NUMBER, SHAPE, EDGE, D, W, INVERT, CD, CW
+@@ -833,14 +846,14 @@
+       ENDIF
+       FNUMBER = NUMBER
+ C     Get the heading line.
+-      CALL INL80(STDIN, STDOUT,
++      CALL inline(STDIN, STDOUT,
+      O           LINE)
+ C      WRITE(STDOUT,54) LINE
+       CALL GET_ITEM_LIMITS(
+      I                     STDOUT, LINE, MAXN, JUST,
+      O                     NITEM, ITEM_START, ITEM_END)
+ 
+-      CALL INL80(STDIN, STDOUT,
++      CALL inline(STDIN, STDOUT,
+      O           LINE)
+ C      READ(LINE,6,ERR=991) APPTAB, ORITAB, MAXZUP, MINHUP,
+ C     A       LIMPFD, MINPFD, LIPREC
+@@ -1095,9 +1108,12 @@
+  910    CONTINUE
+         PFDTMP(JBASE) = PFDVEC(NFRAC)
+  
++        zrhufd = 0.0
+         CALL TWDOUT(STDOUT, STDTAB, TAB, LABEL, NHUP, JBASE,
+      I              HUPVEC, FDVEC, PFDTMP, QMAT, HEAD_DATUM,
+-     I              13, ' ORIFICE',
++     I              13, ' ORIFICE', zrhufd,
++     i              zone, hgrid, vdatum, unitsys, basis,
++     i              easting, northing,
+      O              EFLAG)
+  
+       WRITE(STDOUT,86) BIGERR, HERR,
+@@ -1106,6 +1122,17 @@
+       RMS_GLOBAL = SQRT(RMS_GLOBAL/FLOAT(N_GLOBAL))
+       WRITE(STDOUT,88) RMS_GLOBAL, N_GLOBAL
+  
++      if(twod_cubic_out.eq.'YES') then
++        verbose = 1
++        CALL twodfit
++     I           (STDOUT, TAB, NHUP, JBASE, 
++     I            HUPVEC, FDVEC,
++     I            PFDTMP, QMAT, HEAD_DATUM,
++     I            13, ' ORIFICE', zrhufd, verbose,
++     M            FTP,
++     O            EFLAG, ftpup)
++      endif
++
+       RETURN
+  991  CONTINUE
+         WRITE(STDOUT,*) ' *ERR:500* Conversion error in line:'

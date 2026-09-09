@@ -1,0 +1,324 @@
+STDIN=      5      The values on these
+STDOUT=     6      three line are no longer used but
+STDTAB=     7      the lines must be present.
+UNITS=  ENGLISH
+NCMD=      27
+FEQX        1
+FLOODWAY    2
+BRIDGE      3
+CULVERT     4
+FINISH      5
+SAME        6
+FEQXLST     8
+ROADFLOW    9
+SEWER      10
+MULPIPES   11
+FTABIN     12
+EMBANKQ    13
+JUMP       14
+CRITQ      15
+GRITTER    16
+MULCON     18
+CHANRAT    19
+EXPCON     20
+HEC2X      21
+QCLIMIT    22
+XSINTERP   23
+FEQXEXT    25
+CHANNEL    26
+WSPROX     27
+WSPROQZ    28
+WSPROT14   29
+UFGATE     30
+DZLIM= 0.5
+NRZERO= 0.08
+USGSBETA=NO
+EPSARG=5.E-5
+EPSF=1.E-4
+EXTEND=NO
+ 
+ 
+FTABIN
+FILE= ../data/weirtabs
+FILE= ../data/type5.tab
+TABLE#=   -1
+ 
+ 
+ 
+; Compute the tables for the culvert and roadway for the U of I
+; E-W Access Road crossing Lacey Creek.
+ 
+ 
+;  Table 7009 represents the departure section for the
+;  flow through the culvert and over the roadway above the
+;  culvert.  The offsets at the limits were taken to be
+;  those that are close to OR slightly beyond the limits
+;  of the offsets for flow over the roadway in the CULVERT
+;  command below.  It should be no surprise that setting
+;  these boundaries is subject to some uncertainty!
+ 
+FEQX
+TABLE#= 7009 SAVE22 NEWBETAM NOOUT EXTEND
+STATION=     0.897
+NAVM=0
+NSUB    4     0.090     0.069     0.090     0.090
+X-SEC 55  AT EXIT OF 66" X 42" ARCH MP THRU ARBORETUM ACCESS RD
+;    -164.0     683.8    1                           OVB   13
+;    -102.0     677.0    1                           OVB   12
+;     -75.0     678.6    1                           OVB   11
+;     -17.0     680.1    1                           CLP   10
+      -8.0     679.7    1                           TOB    9
+      -3.0     675.6    2                           CHP    8
+       0.0     675.4    2                           INV    7
+       2.0     676.0    2                           CFL    6
+       5.0     677.9    3                           CHP    5
+      14.3     679.8    4                           TOB    4
+      14.3     690.0   -1
+;      39.0     680.6    4                           OVB    3
+;     197.0     685.0    4                           BIS    2
+;     317.0     681.1    4                           TOS    1
+;     469.0     687.8   -1                           BIS    2
+ 
+ 
+;  Table 7010 represents the approach section to the culvert.
+;  Note the notation TOB, Top of Bank at the limits of the cross
+;  section.  Note the extension at the last point of the cross
+;  section to an elevation of 690 feet.  This is a vertical
+;  wall and it is the only line segemtn in section 4.
+;  FEQUTL will treat it as a frictionless wall because
+;  the subsection has no area.  The EXTEND option in
+;  the TABLE line will extend the other end of the section
+;  to match.  This extension will also be a frictionless
+;  wall.
+ 
+FEQX
+TABLE#= 7010 SAVE22 NEWBETAM NOOUT EXTEND
+STATION=     0.906
+NAVM=0
+NSUB    4     0.080     0.064     0.080     0.001
+X-SEC 53  AT ENT TO 66" X 42" ARCH MP THRU ARBORETUM ACCESS RD
+      -7.0     678.7    1                           TOB   11
+      -3.0     675.9    2                           CHP   10
+      -1.0     676.1    2                           INV    9
+       0.0     675.6    2                           CFL    8
+       3.0     675.9    3                           CHP    7
+       7.0     679.7    4                           TOB    6
+       7.0     690.    -1
+ 
+; Here we compute top width, area, conveyance, first moment of
+; area, and so forth for the culvert-barrel cross section and
+; ask FEQUTL to save the resulting table, TABLE 1001, for later use
+; in the CULVERT command.
+;
+; Corrugated metal products changed their standard sizes
+; in 1980.  That means there are two different sets of
+; standard sizes depending on when the conduit was
+; manufactured.  Sometimes we do not know when the conduit
+; was manufactered.  Furthermore, field measurements of
+; the span and rise sometimes do not match any of the
+; standard sizes.  This may happen for several reasons:
+; 1. The field measurements were not made properly.
+; 2. The conduit has deformed slightly under the loads
+;    in the field or from faulty installation procedures.
+; 3. The conduit is a non-standard shape from some unknown
+;    source.
+;
+; As an example the field measurements here indicate that the conduit
+; in this case is a 66 by 42 inch arch  metal pipe.  If we
+; scan the standard sizes for pre-1980 no such size is listed.
+; The closest match is a 65 by 40 arch.  Scanning the standard
+; sizes for the post-1980 again shows no such size.   The
+; closest match is a 64 by 43 arch.  We have two options:
+; take the closest match of a standard size or use the
+; span and rise as given and let FEQUTL interpolate between
+; standard sizes to define a non-standard size.
+ 
+; In this case we elect to take a post-1980 standard size
+; of 64 by 43 and assume that the measurements in the
+; field deviate from this because of deformation of the
+; conduit and the inaccuracy of measurements.  The standard
+; sizes are also subject to manufacturing tolerances.  However,
+; handbooks at my disposal only much the existence of
+; tolerances but do not give any values for them.
+;
+ 
+MULCON
+;  A negative table number forces FEQUTL to compute the conveyance
+;  for the conduit including any decrease as the water surface
+;  approaches the top of the conduit.  Messages about a decrease
+;  in conveyance will be issued at each point which represents
+;  a decrease as the depth increases.
+TABID= -1001  SAVE22  NOOUT
+WSLOT= 0.01
+HSLOT= 15.0
+NPIPES=    1
+TYPE:      CMPA
+SPAN:      5.33
+RISE:      3.58
+BOTT:       0.0
+ROUG:     0.024
+ 
+ 
+ 
+ 
+CULVERT
+TABLE#=  502
+TYPE=   13
+LABEL=U of I E-W access road
+APPROACH SECTION DATA
+APPTAB#= 7010
+APPELV=    675.6
+APPLEN=  5.4
+APPLOS= 0.0
+APPEXP= 0.0
+CULVERT DESCRIPTION
+NODEID=YES
+SFAC=1.0
+ NODE NODENAME  XTAB   STATION ELEVATION
+    1 UPSTREAM  1001     40.25    676.1
+      DNSTREAM  1001       0.0    675.9
+   -1
+CULCLS=PIPE
+DEPARTURE SECTION DATA
+DEPTAB= 7009
+DEPELV=    675.4
+LOSOPT=MOMENTUM
+DISCHARGE COEFFICIENT DATA
+KRB=0.0
+KWING=0.0
+KPROJ=0.0
+C46=0.0
+TYPE 5 PARAMETERS
+RBVALUE= 0.015
+BVANGLE= 0.00
+WWANGLE= 0.00
+LPOVERD= 0.7
+TYPE5SBF= 0.75
+ROADWAY DESCRIPTION
+PLCWTB= 9994
+GLCWTB= 9995
+PHCWTB= 9996
+GHCWTB= 9997
+PSUBTB= 9998
+GSUBTB= 9999
+    OFFSET     CREST     WIDTH  APPROACH SURFACE
+    -7.000   679.430     20.00   678.700 GRAVEL
+    -3.000   679.413             675.900
+    -1.000   679.404             676.100
+      .000   679.400             675.600
+     3.000   679.412             675.900
+     5.68    679.422             678.446 END
+HEAD SEQUENCE DEFINITION
+NFRAC=   11
+POWER=1.5
+0.25
+0.5
+0.75
+1.0
+1.25
+1.5
+1.75
+2.0
+2.5
+3.0
+3.5
+4.0
+4.5
+5.0
+5.5
+6.0
+6.5
+7.0
+7.5
+8.0
+9.0
+-1
+ 
+; U of I access road.  Flow path on right bank.
+ 
+FEQX
+TABLE#= 1003 NEWBETAM SAVE22 NOOUT EXTEND
+STATION=     0.000
+NAVM=0
+NSUB    1     0.080
+ OVERLAND FLOW, R.B.
+      5.68    679.42    1 RD
+      7.0     679.7     1 AP
+     17.0     680.2     1 AP
+    116.0     683.1     1 AP
+    200.0     685.0     1 AP
+    320.0     681.1     1 AP
+    472.0     687.8    -1 AP
+ 
+ 
+ 
+CHANRAT
+TABID=   503
+TYPE=   13
+LABEL=U OF I E-W ACCESS ROAD, RB
+XSTAB#= 1003
+BOTSLP= 0.000
+LENGTH=     51.00 MIDELEV=    679.42
+HEAD SEQUENCE DEFINITION
+NFRAC=   11
+POWER=1.5
+0.25
+0.5
+0.75
+1.0
+1.25
+1.5
+1.75
+2.0
+2.5
+3.0
+3.5
+4.0
+4.5
+5.0
+6.0
+    -1
+ 
+; U of I E-W access road.  Flow path on left bank.
+ 
+FEQX
+TABLE#= 1004 NEWBETAM SAVE22 NOOUT EXTEND
+STATION=     0.000
+NAVM=0
+NSUB    1     0.080
+ OVERLAND FLOW, L.B.
+   -450.      684.     1
+   -300.      682.     1
+   -217.0     680.4    1
+   -207.0     679.7    1 RD
+    -23.0     679.5    1 RD
+     -7.0     679.43  -1 RD
+ 
+ 
+CHANRAT
+TABID=  504
+TYPE=   13
+LABEL=OVERLAND U OF I E-W ACCESS ROAD, LB
+XSTAB#= 1004
+BOTSLP= 0.000
+LENGTH=     51.00 MIDELEV=    679.43
+HEAD SEQUENCE DEFINITION
+NFRAC=   11
+POWER=1.5
+0.25
+0.5
+0.75
+1.0
+1.25
+1.5
+1.75
+2.0
+2.5
+3.0
+3.5
+4.0
+    -1
+ 
+ 
+ 
+FINISH

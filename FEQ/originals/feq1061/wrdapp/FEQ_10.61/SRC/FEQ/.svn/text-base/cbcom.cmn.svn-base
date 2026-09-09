@@ -1,0 +1,9 @@
+C     Common for subroutine CBFLOW
+
+      INTEGER SGN
+ 
+      REAL  YBMAX, KSUB, KFREE, DKFREE, TB, AB, MAXAB, QRF, DQRF, SBC,
+     A      DSBC, HR, HS
+      COMMON/CB/ YBMAX, KSUB, KFREE, DKFREE, TB, AB, MAXAB, QRF, DQRF,
+     A           SBC, DSBC, SGN, HR, HS
+

@@ -1,0 +1,882 @@
+--- 9.98/fequtl/fequtl.for
++++ 10.61/fequtl/fequtl.for
+@@ -129,13 +129,15 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER J
+-      INTEGER DVEC(XSCOML)
++      INTEGER DVEC(XSCOML), UVEC(XSCOML)
+  
+ C     + + + EQUIVALENCES + + +
+-      EQUIVALENCE (NPNTD,DVEC(1))
++      EQUIVALENCE (NPNTD,DVEC(1)), (NPNTU,UVEC(1))
+ C***********************************************************************
++c     zero come common blocks
+       DO 100 J=1,XSCOML
+         DVEC(J)=0
++        UVEC(j) = 0 !added  5 Sept 2007 to avoid uninitialized var errors 
+  100    CONTINUE
+       MAXNFT=20
+       MXPNTU=PMXPNT
+@@ -146,6 +148,10 @@
+ C     SET FLOODWAY FLAG TO OFF. MUST BE TURNED ON BY USER TO
+ C     BE ACTIVE
+       FLOOD = 0
++c     Zero lsnu and lsnd to avoid failures when debugging with
++c     full checking turned on using LF95
++      lsnu = 0.0
++      lsnd = 0.0
+       RETURN
+       END
+ C
+@@ -299,7 +305,7 @@
+ C     EFLAG  - Error flag: EFLAG=0-no errors; else one or more errors
+  
+ C     + + + OUTPUT FORMATS + + +
+- 52   FORMAT('0*ERR:510* Duplicate table number.')
++ 52   FORMAT('0*ERR:510* Duplicate table id.')
+ C***********************************************************************
+       IF(TABDIR(TAB).EQ.0) GOTO 110
+         WRITE(STDOUT,52)
+@@ -321,7 +327,8 @@
+       INCLUDE 'offcom.cmn'
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA OFFVEC/6,10*0,8,7*0,5, 6, 8, 7, 8, 10/
++      DATA OFFVEC/6,10*0,8,7*0,5, 6, 8, 7, 8, 10,
++     A      4*0, 7, 8, 11, 11, 12, 15/
+ C***********************************************************************
+       END
+ C
+@@ -354,15 +361,14 @@
+       INCLUDE 'offcom.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER HA, IOFF, TYPE, XOFF
++      INTEGER HA, IOFF, TYPE, XOFF, doff, dtype
+       REAL A, C, P, Q, QOLD, T, Y, MXSLOT
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, SQRT
+  
+ C     + + + OUTPUT FORMATS + + +
+- 50   FORMAT(' *WRN:520* CELERITY DECREASES BY ',F7.2,' PER CENT AT',
+-     A   ' DEPTH=',F10.3)
++ 50   FORMAT(' *BUG:XXX.  Invalid type in CHKCFC') 
+  52   FORMAT(' *WRN:521* Critical flow decreases by ',F7.2,
+      A  ' per cent at depth=',F10.3)
+  54   FORMAT(' Table tests OK.')
+@@ -375,10 +381,17 @@
+       TYPE = ITAB(ADRS+2)
+       XOFF = OFFVEC(TYPE)
+       HA = ITAB(ADRS)
+- 
++      doff = itab(adrs+21)
++      if(doff.gt.0) then
++        dtype = 10
++      else
++        dtype = 0
++      endif
++ 
++      type = type - dtype
+       IF(TYPE.LT.20.OR.TYPE.GT.25) THEN
+-        WRITE(STDOUT,50) TYPE
+-        STOP 'Abnormal stop. Errors found.'
++        WRITE(STDOUT,50) TYPE + dtype
++        STOP 'Abnormal stop. Bug found.'
+       ENDIF
+       IF(TYPE.EQ.20.OR.TYPE.EQ.21.OR.TYPE.EQ.23.OR.TYPE.EQ.24) THEN
+ C       IOFF GIVES THE OFFSET FROM THE TABLE ADDRESS TO THE FIRST
+@@ -492,7 +505,7 @@
+       CHARACTER CARD(10)*8, LINE*80
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL BINSER, INL80
++      EXTERNAL BINSER, inline
+  
+ C     + + + DATA INITIALIZATIONS + + +
+       DATA BLANK/'        '/
+@@ -505,7 +518,7 @@
+  52   FORMAT(/,' End of file before FINISH found.  FINISH supplied.')
+ C***********************************************************************
+  100  CONTINUE
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+         READ(LINE,1) CARD
+@@ -668,7 +681,7 @@
+       CHARACTER GETTOK*8
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL GETTOK, GRULE, SORT2, STRIP_L_BLANKS, INL80
++      EXTERNAL GETTOK, GRULE, SORT2, STRIP_L_BLANKS, inline
+  
+ C     + + + DATA INITIALIZATIONS + + +
+       DATA METRIC/'METRIC'/,ENGL/'ENGLISH'/
+@@ -692,23 +705,23 @@
+ C***********************************************************************
+ C     SKIP THE NEXT THREE CARDS OF INFORMATION
+ 
+-      CALL INL80
++      CALL inline
+      I          (STDSYS, STDOUT,
+      O           LINE)
+ 
+       IF(LINE(1:5).EQ.'STDIN') THEN
+ C       Read two more lines to skip over obselete information
+-        CALL INL80
++        CALL inline
+      I            (STDSYS, STDOUT,
+      O             LINE)
+-        CALL INL80
++        CALL inline
+      I            (STDSYS, STDOUT,
+      O             LINE)
+       ELSE
+          BACKSPACE(STDSYS)
+       ENDIF
+  
+-      CALL INL80
++      CALL inline
+      I          (STDSYS, STDOUT,
+      O           LINE)
+       READ(LINE,4) UNITS, NFAC_FLAG, LATITUDE, ELEVATION
+@@ -751,7 +764,7 @@
+       ELSE
+         WRITE(STDOUT,58) LATITUDE*57.29578, ELEVATION
+       ENDIF
+-      CALL INL80
++      CALL inline
+      I          (STDSYS, STDOUT,
+      O           LINE)
+       READ(LINE,1) NCMD, NGS
+@@ -763,7 +776,7 @@
+  90   CONTINUE
+  
+       DO 100 J=1,NCMD
+-        CALL INL80
++        CALL inline
+      I            (STDSYS, STDOUT,
+      O             LINE)
+         READ(LINE,2) CMDTAB(J),CMDVAL(J)
+@@ -787,6 +800,41 @@
+  
+       RETURN
+       END
++c
++c 
++c 
++      subroutine get_single_named_item(stdout, line,
++     o                                 name, item, eflag)
++
++c     Get a single named item on the line 
++
++      implicit none
++
++      integer stdout, eflag
++
++      character*(*) line, name, item
++
++c     Local
++      integer ieq, iend
++
++c     ***************************formats********************************
++50    format(/,'*ERR:XXX* Equal sign missing after name=',a)
++c***********************************************************************
++      ieq = index(line, '=')
++      if(ieq == 0) then
++c       Missing delimiter
++        name = adjustl(line)
++        iend = len_trim(name)
++        write(stdout,50) name(1:iend)
++        eflag = 1
++      else
++        name = adjustl(line(1:ieq-1))
++        item = adjustl(line(ieq+1:))
++      endif
++
++      return
++      end
++
+ C
+ C
+ C
+@@ -797,8 +845,8 @@
+ 
+       INCLUDE 'version.cmn'
+ C***********************************************************************
+-      VERSION_NUMBER = 5.46
+-      VERSION_DATE = '21 April 2003'
++      VERSION_NUMBER = 5.80
++      VERSION_DATE = '6 October 2008'
+       RETURN
+       END
+ C
+@@ -824,35 +872,43 @@
+       INCLUDE 'julian.cmn'
+       INCLUDE 'tabid.cmn'
+       INCLUDE 'version.cmn'
+-
++      include 'tabupgrade.cmn'
++      include 'home.cmn'
++      include 'whatos.cmn'
++      include 'datetime.cmn'
++      include 'grid_datum.cmn'
++      include 'maketabindex.cmn'
++      include 'svn.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER CFLAG, FTKNT, FTP, GFLAG, IS, ITABA, J, MAXKNT, MODE,
+      A        NCMD, NEXT, STDFLD, STDIN, STDSYS, STDTAB, TABLE,
+-     B        STDEXT_OPTION, N, IOS
++     B        STDEXT_OPTION, N, IOS, conf_flag, ieq, stdscr
++   
+       INTEGER CMDVAL(MAXCMD), TABDIR(PMXTAB+5), VALUES(8)
+       REAL EPS, HSLOT, NFAC, MINQ, velocity
+       CHARACTER BOT*8, CMDTAB(MAXCMD)*8, FHEAD*91, FNAME*64, LEFT*8,
+      A          LINE*80, NXTNAM*128, REPLY*3, RIGHT*8, UNITS*8,
+      B          DATE*8, ZEIT*10, ZONE*5, TABID*16, FNAME2*64,
+-     C          FNAME3*64, GISID*16
+-
+-      LOGICAL THERE
++     C          FNAME3*64, GISID*16, cmd_line_args(0:10)*64,
++     d          conf_file*64, item_name*8, current_file*128
++
++      LOGICAL THERE, trk_files
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC IABS, SQRT
+  
+ C     + + + EXTERNAL FUNCTIONS + + +
+-      INTEGER IARGC, GET_UNIT
++      INTEGER IARGC, GET_UNIT, what_os
+       CHARACTER*16 GET_TABID, GET_GISID
+  
+ C     + + + EXTERNAL NAMES + + +
+       EXTERNAL CHANEL, CHNTAB, CRITQ, CULVRT, EMBANK, EXPCON, FEQX,
+-     A         FLDIN, FQXE, FTABIN, GETARG, HEC2X, IARGC, INIT, INL80,
++     A         FLDIN, FQXE, FTABIN, GETARG, HEC2X, IARGC, INIT, inline,
+      B         INSYS, KIL, MULCON, NXTCMD, PIPES, QCLIM, RITTER, SEWER,
+      C         SPBRID, UFGATE, WPRO14, WPROQZ, WPROX, XSTMAK,
+      D         GET_UNIT, FREE_UNIT, RESET_KOUNT_OF_INTERNAL_TABIDS,
+-     E         GET_TABID, GET_GISID
++     E         GET_TABID, GET_GISID, os_file_style, what_os
+  
+ C     + + + INPUT FORMATS + + +
+  40   FORMAT(7X,F10.0)
+@@ -868,8 +924,11 @@
+  52   FORMAT(' *NOTE* Known command found after error.')
+  54   FORMAT('0*WRN:518* One or more errors found. Table file is ',
+      A       'incomplete or invalid.')
++56    format(/,' Global values: ZONE=',A8,' HGRID=',A8,' VDATUM=',a8,
++     a        ' UNITSYS=',a8, ' BASIS=',a8)
++58    format(16x, 'VDATUM_SHIFT=',f10.4)
+  70   FORMAT(' DZLIM=',F10.6,' NRZERO=',F10.6,' USGSBETA=',A3)
+- 72   FORMAT(' Version: ',F6.2,' Version date: ',A17,10X,
++ 72   FORMAT(' Version: ',F6.2,' Version date: ',A17,5X,
+      A          'Date/time of run: ',A4,'/',A2,'/',A2,': ',
+      B          A2,'.',A2,'.',A6)
+  74   FORMAT(' *WRN:526* INVALID RESPONSE FOR USGSBETA. TAKEN AS:NO')
+@@ -889,6 +948,25 @@
+      D  ' elevations.',/,4X,'EXTEND=YES- lower elevation end point',
+      E  ' extended to higher elevation.',/,4X,'Previous versions',
+      D  ' used EXTEND=YES by default.')
++82    format(/,' Global home name is: ',a)
++83    format(/,' FEQUTL configuration from conf file: ',a) 
++84    format(/,' FEQUTL configuration from master-input file.')
++85    format(/,' Master-input file: ',a,/,
++     a         ' Master-output file: ',a,/,
++     b         ' Function-table file: ',a)
++
++86    format(/,';Version number is ',i8,' for the Subversion working ',
++     a         'copy') 
++87    format(/,';*WRN:XXX* The working copy contains local ',
++     a 'modifications.',/,';',5x,
++     b 'The version number given is therefore',
++     b' not current and may not properly',/,';',5x,
++     b  'provide the version',
++     c' number required to retrieve all the same files ',
++     d'at a later time.')
++88    format('; Global home name is: ',a)
++89    format('; Local home name is: ',a)
++
+  90   FORMAT('  Processing FTABIN')
+ 91    FORMAT(/,' EPSABS is missing or zero.  Value set to EPSF.',/,
+      A    ' Check input and add EPSABS after EPSF on the same line.')
+@@ -914,6 +992,7 @@
+      B/,' name.  If part or all of the path is given with the name,',
+      C/,' make sure that all directories exist as spelled.')
+ C***********************************************************************
++      trk_files = .false. !Disable file tracking.  Implementation incomplete
+ C
+ C     strings for Unix what command
+       line =
+@@ -941,6 +1020,7 @@
+       STD48 = GET_UNIT(0)
+       STD49 = GET_UNIT(0)
+       STD50 = GET_UNIT(0)
++      stdscr = get_unit(0) !define a unit for a scratch file that mirrors the master-input file
+       STDIN = STD5
+       STDOUT = STD6
+       STDSYS = STDIN
+@@ -959,6 +1039,14 @@
+       NXT = 1
+ 
+ 
++c     set options for testing table fitting
++      ty13_to_ty43 = 'NO'
++      upgrade_xsec_tab = 'NO'
++
++c     Clear the location-status flag for function tables.
++      ft_loc_status = ' '
++
++
+ C     Clear the home-name values
+       CALL CLEAR_HOME()
+       CALL CLEAR_GHOME()
+@@ -976,9 +1064,49 @@
+ C     Clear the symbol table for processing table id's
+       NUM_TABID = 0
+ 
++c     set the Operating System flag
++      osis = what_os()
++
+ C     PROCESS COMMAND LINE ARGUMENTS
+  
+       NARG = IARGC()
++c     Bring all command-line arguments into a vector and then scan for special
++c     arguments, such as the standard-header file.  Process the special arguments,
++c     if any, then set things so that the subsequent code will work as it did 
++c     prior to the addition of special arguments. 
++      if(narg.gt.10) then
++        write(*,*) ' narg > 10. Too many command-line arguments.'
++        STOP 'Abnormal stop. Errors found.'
++      else
++        do j=1,narg - MORG
++          CALL GETARG
++     I               (j+MORG,
++     O                cmd_line_args(j)  )
++        end do
++
++c       Now scan for special arguments:  These are:
++c        -conf  signals that a file name for the fequtl configuration
++c               file is given.  
++
++        conf_flag = 0
++        do j=1,narg
++          if(cmd_line_args(j)(1:5) == '-conf') then
++c           found configuration-file name.  The file name
++c           is the following argument.
++            conf_file = cmd_line_args(j+1)
++            conf_flag = 1
++            call os_file_style(
++     m                                    conf_file)
++c           reset stdsys to a unique unit number
++            stdsys = get_unit(0)
++c           Adjust narg to match what would have been true had 
++c           -conf not been present.
++            narg = narg -2
++            exit
++          endif
++        end do
++      endif
++
+       IF(NARG.EQ.1+MORG) THEN
+ C       If only one file argument is given we assume that the 
+ C       extension, if any, from the file given is stripped and the 
+@@ -999,6 +1127,9 @@
+       CALL GETARG
+      I           (1+MORG,
+      O            FNAME)
++c     fix common OS deviations in file names
++      call os_file_style(
++     m                           fname)
+       INQUIRE(FILE=FNAME, EXIST=THERE)
+       IF(THERE) THEN
+         OPEN(STDIN, FILE = FNAME, STATUS = 'OLD')
+@@ -1006,7 +1137,7 @@
+         N = LEN_TRIM(FNAME)
+         WRITE(*,*) ' '
+         WRITE(*,*) ' File named: ',FNAME(1:N),' not found.'
+-        WRITE(*,*) ' Please check spelling of user-input file.'
++        WRITE(*,*) ' Please check spelling of master-input file.'
+         STOP 'Abnormal stop. Errors found.'
+       ENDIF
+ 
+@@ -1021,12 +1152,19 @@
+         CALL GETARG
+      I             (2+MORG,
+      O              FNAME2)
++c       fix common OS deviations in file names
++        call os_file_style(
++     m                             fname2)
+         
+ C       GET THE THIRD FILE ARGUMENT
+         
+         CALL GETARG
+      I             (3+MORG,
+      O              FNAME3)
++c       fix common OS deviations in file names
++        call os_file_style(
++     m                              fname3)
++
+       ENDIF
+ 
+ C     Make sure that no file names match. 
+@@ -1052,6 +1190,13 @@
+         STOP 'Abnormal stop. Errors found.'
+       ENDIF
+ 
++c     Make a copy of the master-input file as a scratch file here.  We may 
++c     need it if we later want to compute md5 digests of various input blocks. 
++c
++      if(trk_files) then
++        call copy_master_input_file(stdin, stdscr)
++      endif
++
+ C     Clear the cross section slot values
+ 
+       CALL CLEAR_SLOT(STDTAB)
+@@ -1061,8 +1206,26 @@
+       CALL DATE_AND_TIME(DATE, ZEIT, ZONE, VALUES)
+       WRITE(STDOUT,72) VERSION_NUMBER, VERSION_DATE, DATE(1:4), 
+      A      DATE(5:6), DATE(7:8), ZEIT(1:2), ZEIT(3:4), ZEIT(5:10)
+-C      WRITE(STDOUT,72)
+- 
++c     Save the version and run time stamps
++      WRITE(version_run_date_time_string,72) 
++     a      VERSION_NUMBER, VERSION_DATE, DATE(1:4), 
++     b      DATE(5:6), DATE(7:8), ZEIT(1:2), ZEIT(3:4), ZEIT(5:10)
++      
++ 
++      CALL WHAT_EXECUTABLE(STDOUT)
++
++
++      write(stdout,85) fname(1:len_trim(fname)),
++     a                 fname2(1:len_trim(fname2)),
++     b                 fname3(1:len_trim(fname3))
++
++c     Write the version/run string to  the standard table file.  Make an echoing comment.
++      write(stdtab,'(a)') '* Created by program: fequtl'
++      write(stdtab,'(a1,a)') '*', version_run_date_time_string
++      call svn_report(stdout, stdtab)   !Report the repository loc, etc.
++
++      
++
+ C     SET VARIOUS VALUES
+  
+       EFLAG = 0
+@@ -1080,7 +1243,31 @@
+         FTPNT(J) = 0
+  100  CONTINUE
+  
+-C     INPUT THE CONTROL INFORMATION FROM THE SYSTEM DATASET
++      if(conf_flag == 1) then
++        INQUIRE(FILE=conf_file, EXIST=THERE)
++        N = LEN_TRIM(conf_file)
++        IF(THERE) THEN
++         
++           OPEN(stdsys, FILE = conf_file, STATUS = 'OLD')
++           write(*,*) ' FEQUTL configuration from conf file.'
++           write(stdout,83) conf_file(1:n)
++        ELSE
++          WRITE(*,*) ' '
++          WRITE(*,*) ' File named: ',conf_file(1:n),' not found.'
++          WRITE(*,*) ' Please check spelling of configuration file.'
++          STOP 'Abnormal stop. Errors found.'
++        ENDIF
++      else
++        write(*,*) ' FEQUTL configuration from master-input file.'
++        write(stdout,84) 
++        
++      endif
++
++C     INPUT THE CONTROL INFORMATION FROM THE SYSTEM DATASET.
++c     Info may be at the head of the master-input file, old 
++c     method, or in its own file, new method.  In the former
++c     case, stdsys is the same as stdin.  Otherwise, stdsys
++c     is unique.
+  
+       CALL INSYS
+      I          (STDSYS, MAXCMD, NARG, STDOUT,
+@@ -1102,16 +1289,17 @@
+       ELSE
+         EPSDIF = 0.003048
+       ENDIF
+-      CALL INL80
+-     I          (STDIN, STDOUT,
++
++      CALL inline
++     I          (stdsys, STDOUT,
+      O           LINE)
+       READ(LINE, 49,ERR=991) DZLIM
+-      CALL INL80
+-     I          (STDIN, STDOUT,
++      CALL inline
++     I          (stdsys, STDOUT,
+      O           LINE)
+       READ(LINE, 40,ERR=991) NRZERO
+-      CALL INL80
+-     I          (STDIN, STDOUT,
++      CALL inline
++     I          (stdsys, STDOUT,
+      O           LINE)
+       READ(LINE, 42,ERR=991) REPLY
+  
+@@ -1132,8 +1320,8 @@
+         WRITE(STDOUT,74)
+         IUSGS = 0
+       ENDIF
+-      CALL INL80
+-     I          (STDIN, STDOUT,
++      CALL inline
++     I          (stdsys, STDOUT,
+      O           LINE)
+       READ(LINE,45,ERR=991) NXTNAM
+       IF(NXTNAM(1:6).NE.'EPSARG') THEN
+@@ -1143,8 +1331,8 @@
+         STOP 'Abnormal stop. Errors found.'
+       ELSE
+         READ(NXTNAM,44) EPSARG
+-      CALL INL80
+-     I          (STDIN, STDOUT,
++      CALL inline
++     I          (stdsys, STDOUT,
+      O           LINE)
+         READ(LINE,46,ERR=991) EPSF, EPSABS
+         IF(EPSABS.EQ.0.0) THEN
+@@ -1159,8 +1347,8 @@
+  
+       WRITE(STDOUT,76) EPSARG, EPSF, EPSABS
+  
+-      CALL INL80
+-     I          (STDIN, STDOUT,
++      CALL inline
++     I          (stdsys, STDOUT,
+      O           LINE)
+       READ(LINE,45,ERR=991) NXTNAM
+       IF(NXTNAM(1:6).NE.'EXTEND') THEN
+@@ -1184,12 +1372,12 @@
+       ENDIF
+ 
+ C     Seek the minimum flow value.  May not be present.
+-      CALL INL80
+-     I          (STDIN, STDOUT,
++      CALL inline
++     I          (stdsys, STDOUT,
+      O           LINE)
+       IF(LINE(1:4).NE.'MINQ') THEN
+ C       Put the line back!
+-        BACKSPACE(STDIN)
++        BACKSPACE(stdsys)
+ C       Set the default values
+         IF(GRAV.GT.15.0) THEN
+           MINQ = 0.2
+@@ -1203,6 +1391,122 @@
+       WRITE(STDOUT,92) MINQ
+       WRITE(STDOUT,*) ' '
+       
++c     seek the control value for processing tables for cubic interpolation. 
++C     May not be present.
++      CALL inline
++     I          (stdsys, STDOUT,
++     O           LINE)
++      IF(LINE(1:5).NE.'TWOD_') THEN
++C       Put the line back!
++        BACKSPACE(stdsys)
++C       Set the default value
++        twod_cubic_out = 'NO'
++      ELSE
++        is = index(line,'NO')
++        if(is.gt.0) then
++          twod_cubic_out = 'NO'
++        else
++          is = index(line,'YES')
++          if(is.gt.0) then
++            twod_cubic_out = 'YES'
++          else
++            write(stdout,*) ' Invalid response for TWOD_CUBIC_OUT'
++            write(stdout,*) ' Must be : YES or NO.'
++            write(stdout,*) ' Setting value to NO.'
++            twod_cubic_out = 'NO'
++          endif
++        endif
++      ENDIF
++
++c     seek the global home name. May not be present.
++      CALL inline
++     I          (stdsys, STDOUT,
++     O           LINE)
++      IF(LINE(1:5).NE.'GHOME') THEN
++C       Put the line back!
++        BACKSPACE(stdsys)
++C       Default value already set above
++      else
++c       Skip over the =, read, and then shift left to 
++c       strip leading spaces if any. 
++        read(line(7:),'(a)') ghome
++        ghome = adjustl(ghome)
++        write(stdout,82) ghome(1:len_trim(ghome))
++        write(stdtab,88) ghome(1:len_trim(ghome))
++        call getsvn_rev(stdout, ghome,
++     o                      svn_rev, svn_mod)
++        if(svn_rev >0 ) then
++          write(stdtab,86) svn_rev
++          if(svn_mod > 0) then
++            write(stdtab,87)
++          endif
++        endif
++      
++      endif
++
++c     Seek the global grid/datum/unitsys information. Consists of five lines
++c     of input.  If the first line is present, then all five lines must be 
++c     present!  Makes life a bit simpler:)
++      CALL inline
++     I          (stdsys, STDOUT,
++     O           LINE)
++      IF(LINE(1:6).NE.'G_ZONE') THEN
++C       Put the line back!
++        BACKSPACE(stdsys)
++C       Set the default values
++        G_ZONE = 'NONE'
++        G_HGRID = 'NONE'
++        G_VDATUM = 'NONE'
++        G_UNITSYS = 'NONE'
++        G_BASIS = 'NONE'
++      else
++        call get_single_named_item(stdout, line,
++     o                             item_name, g_zone, eflag)
++        CALL inline
++     I            (stdsys, STDOUT,
++     O             LINE)
++        call get_single_named_item(stdout, line,
++     o                             item_name, g_hgrid, eflag)
++        CALL inline
++     I            (stdsys, STDOUT,
++     O             LINE)
++        call get_single_named_item(stdout, line,
++     o                             item_name, g_vdatum, eflag)
++        CALL inline
++     I            (stdsys, STDOUT,
++     O             LINE)
++        call get_single_named_item(stdout, line,
++     o                             item_name, g_unitsys, eflag)
++        CALL inline
++     I            (stdsys, STDOUT,
++     O             LINE)
++        call get_single_named_item(stdout, line,
++     o                             item_name, g_basis, eflag)
++        if(eflag == 0) then 
++          write(stdout,56) g_zone, g_hgrid, g_vdatum, g_unitsys, g_basis
++        else
++          STOP 'Abnormal stop. Errors found.'
++        endif
++      endif
++
++
++      if(conf_flag == 1) then 
++        call skip_header_if_present(
++     I                              STDIN, STDOUT, NCMD, CMDTAB)
++      endif
++
++c     We have processed all the header values and are about to begin processing commands. 
++c     At this point we analyze the master-input file to compute various md5 digests.
++c     This will be made optional later by user input in the standard header.  
++
++      if(trk_files) then
++        call find_md5_for_fequtl_input(stdscr, stdout, stdsys, stdin, 
++     i                               fname, NCMD, CMDTAB, cmdval,
++     i                               conf_file, ghome)
++      endif
++
++
++
+ C     READ NEXT COMMAND AND DETERMINE ACTION
+  
+       CFLAG=0
+@@ -1236,7 +1540,7 @@
+       GOTO(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+      A      17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+      B      30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 240, 241,
+-     C      242,243), NEXT
++     C      242,243, 244), NEXT
+  
+       WRITE(STDOUT,*) ' *BUG:501* INVALID ADDRESS FOR A COMMAND'
+       WRITE(STDOUT,*) ' NEXT=',NEXT 
+@@ -1311,7 +1615,7 @@
+               else
+                 velocity = 0.0
+               endif
+-              WRITE(STDOUT,93 )
++              WRITE(STDOUT, 93 )
+      A          TABID, GISID, FLDOPT(ITABA), FLDELV(ITABA), BOT, LEFT,
+      B          RIGHT, FLDLOS(ITABA), fldarea(itaba), velocity
+             ENDIF
+@@ -1389,10 +1693,12 @@
+         HSLOT = 0.0
+         IS = STDIN
+  1200   CONTINUE
+- 
++          make_tab_index = 'NO  '  !Disable making a table index during input of function tables
++          current_file = ' '       !Argument needed even if no table index is made
++          index_knt = 0
+           CALL FTABIN
+      I               (IS, STDIN, STDOUT, OUTPUT, FTP, PMXTAB, MRFTAB,
+-     I                HSLOT,
++     I                HSLOT, current_file,
+      M                EFLAG, FTKNT, FTPNT,
+      O                TABLE, NXTNAM)
+  
+@@ -1411,6 +1717,22 @@
+               WRITE(STDOUT,*) ' CHECK FUNCTION TABLE FILE NAME.'
+               STOP 'Abnormal stop. Errors found.'
+             ENDIF
++          ELSEIF(TABLE.EQ.-16) THEN
++C           Set the local value of the home directory
++            CALL SET_HOME(NXTNAM)
++c           Check for version control and report
++            
++            call getsvn_rev(stdout, nxtnam,
++     o                      svn_rev, svn_mod)
++            write(stdtab,89) nxtnam
++            if(svn_rev >0 ) then
++              write(stdtab,86) svn_rev
++              if(svn_mod > 0) then
++                write(stdtab,87)
++              endif
++            endif
++
++            
+           ELSE
+             IS = STDIN
+           ENDIF
+@@ -1422,9 +1744,9 @@
+         ENDIF
+  
+         WRITE(STDOUT,*) ' '
+-        WRITE(STDOUT,'('' THERE ARE NOW'',I5,
+-     A   '' FUNCTION TABLES STORED'')') FTKNT
+-        WRITE(STDOUT,'(3X, I7,'' LOCATIONS OUT OF '',I7,'' ARE USED'')')
++        WRITE(STDOUT,'('' There are now'',I7,
++     A   '' function tables stored'')') FTKNT
++        WRITE(STDOUT,'(3X, I9,'' locations out of '',I9,'' are used'')')
+      A   FTP, MRFTAB
+         GOTO 1000
+  
+@@ -1433,7 +1755,7 @@
+ C       PROCEDURE
+         CALL EMBANK
+      I             (STDIN, STDOUT, STDTAB, MINQ,
+-     M              EFLAG)
++     M              EFLAG, FTP)
+         GOTO 1000
+  
+  14   CONTINUE
+@@ -1479,7 +1801,7 @@
+  
+         CALL CHNTAB
+      I             (STDIN, STDOUT, STDTAB, GRAV, MINQ,
+-     M              TABDIR, EFLAG)
++     M              TABDIR, EFLAG, FTP)
+  
+ C        WRITE(STDOUT,*) ' EFLAG=',EFLAG
+         GOTO 1000
+@@ -1572,7 +1894,7 @@
+         GOTO 1000 
+ 32    CONTINUE
+         CALL   ORIFICE(GRAV, STDIN, STDOUT, STDTAB,
+-     M                    EFLAG, TABDIR)
++     M                    EFLAG, TABDIR, FTP)
+ 
+       GOTO 1000
+ 
+@@ -1632,6 +1954,11 @@
+ 
+ 243   CONTINUE
+         CALL  MAKELAKEXS(STDIN, STDOUT, EFLAG)
++
++        GOTO 1000
++
++244   CONTINUE
++        CALL SET_SLOTE(STDIN, STDOUT, STDTAB)
+ 
+         GOTO 1000
+ 
+@@ -1648,6 +1975,75 @@
+         STOP 'Abnormal stop. Errors found.'
+  
+       END
++
++C
++C
++C
++      subroutine skip_header_if_present(
++     I                                  STDIN, STDOUT, NCMD, CMDTAB)
++ 
++C     + + + PURPOSE + + +
++C     Read files from stdin, skipping any header block lines
++c     and returning with stdin set so that it is at the first 
++c     command.  Depends on the first command, at least, not having
++c     anything following it on its line.   That has been my practice
++c     but it is not strictly required.  ddf 8 June 2004.
++ 
++      IMPLICIT NONE
++
++C     + + + DUMMY ARGUMENTS + + +
++      INTEGER NCMD, STDIN, STDOUT
++      CHARACTER CMDTAB(NCMD)*8
++ 
++C     + + +DUMMY ARGUMENT DEFINITIONS + + +
++C     STDIN  - Fortran unit number for user input file
++C     STDOUT - Fortran unit number for user output and messages
++C     NCMD   - Number of commands
++C     CMDTAB - Vector holding the command names
++ 
++C     + + + LOCAL VARIABLES + + +
++      integer i, match
++      CHARACTER  LINE*80
++ 
++C     + + + EXTERNAL NAMES + + +
++      EXTERNAL BINSER, inline
++ 
++C***********************************************************************
++c     Read first 80 chars of each line, see if the line will match 
++c     any of the commands.  If not, go get the next line, otherwise,
++c     backspace stdin, and exit. 
++
++100   continue
++
++        CALL inline
++     I            (STDIN, STDOUT,
++     O             LINE)
++
++        if(line == 'ENDFILE') then
++          write(*,*) ' No commands found in master-input file.'
++          STOP 'Abnormal stop. Errors found.'
++        endif
++        match = 0
++        do i=1,ncmd
++          if(line == cmdtab(i)) then
++            match = 1
++            exit
++          endif
++        enddo 
++
++        if(match == 0) then
++
++          goto 100
++
++        else
++          backspace(stdin)
++          return
++        endif
++
++        write(*,*) 'bug in handling configuration file.'
++        STOP 'Abnormal stop. Bug found.'
++      end
++
+ 
+ C  ***********************************************************************
+ C  *  Warning:  This program is large and complex and  extensive         *  

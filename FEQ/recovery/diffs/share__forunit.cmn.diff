@@ -1,0 +1,10 @@
+--- 9.98/share/forunit.cmn
++++ 10.61/share/forunit.cmn
+@@ -13,6 +13,6 @@
+       SAVE /UNIT_COM/
+ 
+ C     Note: There appears to be a limit in the software at 
+-C     some point that requires keeing DIM_UNIT at 1024 or 
++C     some point that requires keeping DIM_UNIT at 1024 or 
+ C     less.  August 9, 2002.  Should be large enough for 
+ C     most models!

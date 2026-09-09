@@ -1,0 +1,170 @@
+*Sample input for TSFUTL
+*Each line to be echoed as a comment or heading line
+*must start with an asterisk in column 1.
+;
+;   TSFUTL is a utility program for manipulating TSF files. 
+;   This version only works with diffuse time series files, denoted
+;   as DTSF.  Later additions might work with point time series
+;   files.  When they are added they will be denoted by PTSF
+;
+;   The input to TSFUTL is broken into commands.  A command line
+;   starts with a command and is followed in most cases by 
+;   an argument.  For example, one of the commands is PRINT but
+;   we must specify what to print.  In this case the only 
+;   option is to print the contents of a DTSF.  Thus the
+;   complete command line is: PRINT DTSF.  It can also be
+;   in lower case: print dtsf.  It can be mixed case in 
+;   anyway you see fit.  However, the word PRINT must come 
+;   before DTSF and there must be one or more spaces separating them.
+;   The command does not need to start in column 1; it can
+;   start anywhere on the line.  The only rule is that all 
+;   items on the command line must be on one line. 
+;
+;   The command line initiates a command block.  A command 
+;   block is one or more lines that follow the command line
+;   and define values needed by the command.  The command block
+;   is ended by an END statement on a line followed by the
+;   command name.  In this version the command name is not
+;   checked but in later versions it will be checked so 
+;   don't play loose with the rules!
+;
+;   This is an example input and in order for it to work 
+;   certain things must be true.  This input assumes that
+;   the example time series files are stored in a directory
+;   with the name TSF.  This directory is placed in the 
+;   root directory and is on the same drive as this file.
+;   You must have the DTSF file: TSFLONG.SLT present in
+;   the TSF directory.  This DTSF will be the starting 
+;   point for what this example input does.  This DTSF file
+;   is large and we will be creating more large files.  
+;   You will need about 25 megabytes of free space on your
+;   disk. 
+;
+;   A bit of review of the history of DTSF's is in order to 
+;   understand some of what TSFUTL is doing.  Originally all
+;   DTSF's used eight bytes to store runoff values.  However,
+;   it soon became evident that was more precision than
+;   was needed and a second format for the DTSF's was created.
+;   It only requires four bytes for each runoff value.  The
+;   difference in results obtained from the two formats
+;   is negligible but the size reduction is substantial.
+;   Because the differences in results are small TSFUTL will 
+;   automatically create the newer format DTSF as a result of 
+;   any operation.  That is, the old format is supported in a 
+;   read mode only. The initial DTSF used here is in the older 
+;   format and will be used to create various other DTSF's to 
+;   illustrate the commands in TSFUTL. 
+;
+;
+;   The commands  supported are as follows:
+;
+;    Command Name  Command Argument   Function
+;    ------------  ---------------- ------------------------------------
+;      GET          DATES           Scans a DTSF and reports the starting
+;                                   and ending date/time strings for each
+;                                   event in the DTSF. It also prints 
+;                                   a multiplying factor that is used
+;                                   to create a character dump of a DTSF
+;                                   to move it between computers or 
+;                                   compilers that cannot share 
+;                                   unformatted data. See the DUMP and
+;                                   RESTORE commands below.
+;      
+;     PRINT         DTSF            Prints part or all of a DTSF in s 
+;                                   human-readable form.
+;
+;     CONVERT       DTSF            Converts an old format DTSF to a 
+;                                   new format DTSF. 
+;
+;     DELETE        EVENTS          Reads events from one DTSF, called the
+;                                   old DTSF, and transfers them to a
+;                                   new DTSF deleting any events selected
+;                                   by the user. 
+;
+;     MERGE         DTSF            Uses a primary DTSF and one or more
+;                                   secondary DTSF's and merges them
+;                                   to create a new DTSF.
+;
+;     DUMP          DTSF            Converts the entire contents of a
+;                                   DTSF to a character file, called
+;                                   an ASCII file.  The multiplying
+;                                   factor from GET DATES is used
+;                                   to convert the runoff values to 
+;                                   integers between 0 and 999999.
+;
+;     RESTORE       DTSF            Restores the entire contents of a
+;                                   DTSF from an ASCII file created by
+;                                   DUMP.
+;
+;     FINISH                        Defines the end of the input for
+;                                   TSFUTL.                                
+;
+;  The first example is of GET DATES.  Its command block must give
+;  the name of the DTSF file to process.  All specification of
+;  values must not cross a line boundary.  Names of files cannot
+;  have blanks.  The value specifications all have one or more
+;  words to the left of an equal sign.  Only one of those
+;  words is used by TSFUTL.  If that word does not appear TSFUTL
+;  cannot understand what you are talking about!  Other words can 
+;  appear to the left of the equal sign to further define what
+;  the value is.  These can be selected by the user.  The key word
+;  MUST appear and must be separated from any other words by one
+;  or more spaces.  The key words will be in all upper case
+;  in these example in order to identify them.  
+;
+;  The file name can be a fully qualified name including a drive letter
+;  just as MS-DOS allows.  The name can be up to 64 characters in length.  
+;
+;  To run TSFUTL, invoke it like FEQ, that is, with the name of the 
+;  executable file followed by two arguments.  The first argument
+;  is the name of the file that defines the user input for TSFUTL.
+;  That is this file--the one your are reading right now.  I have
+;  called this file: INPUT.  Thus to run this example insert a line
+;  following  the line with END GET on it that contains the command:
+;  FINISH.  That will limit the example to the GET DATES 
+;  example.    Then exit this file and get back to the command
+;  prompt for the operating system.  Then type
+;
+;    TSFUTL  INPUT  OUTPUT
+;
+;  followed by pressing the ENTER key.  If all goes well the 
+;  program will indicate what it is working on: GET DATES and
+;  when it finishes will report: Normal stop.
+;
+
+DUMP DTSF
+   DTSF file name= d:\tsf\tsflng01.map
+   ASCII file name= dtsfdump
+   conversion FACTOR = 1.1E10
+END DUMP
+
+
+;  Now remember to remove the FINISH and move it below the following
+;  command example.  You should also move the GET DATES block
+;  below the FINISH to prevent it being processed again.  There
+;  is no harm other than the computation time taken. From the series 
+;  of dates for the various events I have selected an interval to
+;  illustrate printing of the DTSF contents. 
+
+GET DATES
+    FILE name =  d:\tsf\tsflng01.map
+END GET
+FINISH
+
+
+DUMP DTSF
+   DTSF file name= TSFSHORT.SLT
+   ASCII file name= dtsfdump
+   conversion FACTOR = 1.07E10
+END DUMP
+
+;  We then restore the ASCII file to a DTSF with
+;  a new name. 
+
+RESTORE DTSF
+    ASCII file name = DTSFDUMP
+    DTSF file name = testdtsf
+END RESTORE
+
+
+FINISH

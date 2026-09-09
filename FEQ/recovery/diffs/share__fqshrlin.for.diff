@@ -1,0 +1,91 @@
+--- 9.98/share/fqshrlin.for
++++ 10.61/share/fqshrlin.for
+@@ -25,7 +25,7 @@
+      B        CLEN(ITEM_KNT), IVAL(ITEM_KNT)
+       REAL RVAL(ITEM_KNT)
+       REAL*8 DPVAL(ITEM_KNT)
+-      CHARACTER SYMBOL_TABLE(N_SYMBOL)*16, CVAL(ITEM_KNT)*64
++      CHARACTER SYMBOL_TABLE(N_SYMBOL)*16, CVAL(ITEM_KNT)*(*)
+ 
+ C     Local
+ 
+@@ -319,7 +319,7 @@
+  
+ C     + + + SAVED VALUES + + +
+       INTEGER ACTION(17,20), CHRCLS(0:255), L, NEXT, SLEN, STATE
+-      CHARACTER VALUE*80
++      CHARACTER VALUE*256
+       SAVE ACTION, CHRCLS, L, NEXT, SLEN, STATE, VALUE
+  
+ C     + + + LOCAL VARIABLES + + +
+@@ -816,7 +816,7 @@
+      A        TERMCLS(NVAL)
+       REAL RVAL(NVAL)
+       REAL*8 DPVAL(NVAL)
+-      CHARACTER CVAL(NVAL)*64, LINE*(*), TERM(NVAL)*1
++      CHARACTER CVAL(NVAL)*(*), LINE*(*), TERM(NVAL)*1
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDERR - Fortran unit number for output of error messages
+@@ -853,7 +853,7 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER EOS, ITMSTA, ITML, TRML, TRMCLS
+-      CHARACTER ITEM*64, TRM*1
++      CHARACTER ITEM*256, TRM*1
+       LOGICAL FIRST
+  
+ C     + + + EXTERNAL NAMES + + +
+@@ -1093,7 +1093,7 @@
+ C                                              10     contains the day number
+ C                                              11     contains double 
+ C                                              12      precision hour of the day           
+-C   6     SOPER          CHAR     CHRVAL        1     Note that character values have their on index.  Each 
++C   6     SOPER          CHAR     CHRVAL        1     Note that character values have their own index.  Each 
+ C                                                     character value can be 64 characters long.
+ C   7     BRANCH         NXTBLK   NONE          0     Group index is not used.  This example would apply to 
+ C                                                     processing the run-control block because the heading
+@@ -1128,10 +1128,8 @@
+ 
+       REAL*8 DP_RESPONSE(N_DP)
+ 
+-      CHARACTER CHAR_RESPONSE(N_CHAR)*64, NAME_TABLE(N_NAME)*16,
++      CHARACTER CHAR_RESPONSE(N_CHAR)*(*), NAME_TABLE(N_NAME)*16,
+      A          BLOCK_NAME*(*)
+-
+-
+ 
+ C     Local
+ 
+@@ -1152,11 +1150,11 @@
+      A        ITEM_TYPE(NVAL)
+       REAL RVAL(NVAL)
+       REAL*8 DPVAL(NVAL)
+-      CHARACTER CVAL(NVAL)*64, TERM(NVAL)*1, LINE*196,
++      CHARACTER CVAL(NVAL)*256, TERM(NVAL)*1, LINE*196,
+      A          KEY*16
+ 
+ 
+-      EXTERNAL  GETVAL, INL196
++      EXTERNAL  GETVAL, inline
+ 
+ C     *****************************FORMATS******************************
+ 54    FORMAT(/,' *ERR:389* Name=',A,' is unknown in: ',A)
+@@ -1184,7 +1182,7 @@
+ 
+         IF(LINE_KNT.GE.MAX_LINE) RETURN
+ 
+-        CALL INL196
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+ 
+@@ -1222,7 +1220,7 @@
+ C         line. 
+ 
+ C         Check if this is already something from a following input block
+-C         or the end of block signal.  CHK_AND_AND_CONVERT_RESPONSE does
++C         or the end of block signal.  CHK_AND_CONVERT_RESPONSE does
+ C         not know anything about what might follow this signal value.
+ 
+           I = 1

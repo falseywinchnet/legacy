@@ -1,0 +1,33 @@
+c
+c 
+c 
+      subroutine pwd(
+     o               cwd_path)
+
+c     Find the path to the current working directory.
+c     For g95 under MSW.  Same as Gnu/Linux.  However,
+c     unique name used to mimic pattern for lf95.
+
+      implicit none
+      character*(*) cwd_path
+
+      integer get_unit, system
+      external get_unit, free_unit
+      intrinsic system
+
+c     Local
+      integer stddum, it
+c***********************************************************************
+      it = system('cd > pwd.pwd')
+      stddum = get_unit(0)
+      open(unit=stddum, file='pwd.pwd', status='old')
+      read(stddum,'(a)') cwd_path
+      close(unit=stddum, status='delete')
+      return
+      end
+
+
+
+      
+
+

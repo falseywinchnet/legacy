@@ -1,0 +1,885 @@
+C
+C
+C
+      SUBROUTINE  XXLKT20
+     I                   (ADRS,
+     M                    YA,
+     O                    A, T, DT, K, DK, B, DB)
+ 
+C     Experiment with speed up of look up.
+C     + + + PURPOSE + + +
+C     Given depth find area, top-width, conveyance, etc.
+C     using direct linear interpolation for top width.
+ 
+      IMPLICIT  NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ADRS
+      REAL A, B, DB, DK, DT, K, T, YA
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     ADRS   - address of the function table in FTAB/ITAB
+C     YA     - depth to use for table look up
+C     A      - Cross sectional area from the cross section table
+C     T      - top width of the cross section
+C     DT     - derivative of the top width with respect to depth
+C     K      - conveyance
+C     DK     - derivative of conveyance with respect to depth
+C     B      - the value of the momentum flux correction coef. from the
+C               table
+C     DB     - derivative of B with respect to depth
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'offcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER  IT, L, TYPE, XOFF, doff
+      REAL B0, DY, DYI, H, K0, T0, Y, Y0, b1, k1,
+     a    db0, db1, dk0, dk1
+      real  flp, frp, fl, fr, dlp, drp, dmf, p
+C***********************************************************************
+C     L = ADDRESS FOUND ON THE LAST CALL TO XLKT20
+ 
+      Y = YA
+      L = ITAB(ADRS+3)
+ 
+      TYPE = ITAB(ADRS+2)
+      XOFF = OFFVEC(TYPE)
+      doff = itab(adrs+21)
+
+      IF(Y.GE.FTAB(L)) THEN
+ 100   CONTINUE
+         IF(Y.GT.FTAB(L+XOFF)) THEN
+           L = L + XOFF
+           GOTO 100
+         ENDIF
+      ELSE
+ 110   CONTINUE
+         L = L - XOFF
+         IF(Y.LT.FTAB(L)) GOTO 110
+      ENDIF
+C     AT THIS POINT L DEFINES THE LOW ARGUMENT END OF THE
+C     INTERVAL CONTAINING THE ARGUMENT, PERHAPS ADJUSTED
+C     FOR ARGUMENT OUT OF RANGE.
+ 
+C     RESET POINTER FOR LAST ADDRESS
+ 
+      ITAB(ADRS+3) = L
+ 
+C     FETCH VALUES FROM FTAB
+ 
+      Y0 = FTAB(L)
+      T0 = FTAB(L+1)
+      K0 = FTAB(L+3)
+      B0 = FTAB(L+4)
+      IT = L + XOFF
+      b1 = ftab(it+4)
+      k1 = ftab(it+3) 
+
+C     DIRECT LINEAR INTERPOLATION FOR T AND SQRT(CONVEYANCE)
+C     N.B. K IN FTAB IS SQRT(CONVEYANCE)
+ 
+      IT = L + XOFF
+      DY = FTAB(IT) - Y0
+      H = Y - Y0
+      DYI = 1.0/DY
+      DT = (FTAB(IT+1) - T0)*DYI
+      T = T0 + H*DT
+      A = FTAB(L+2) + 0.5*H*(T + T0)
+
+      if(doff.eq.0) then
+        DB = (b1 - B0)*DYI
+        B = B0 + H*DB
+        DK = (k1 - K0)*DYI
+        K = K0 + H*DK
+      else
+        p = h*dyi
+c       compute factors on left and right derivative. 
+        flp = (1.0 - p)*p*dy
+        frp = -flp*p
+        flp = flp*(1.0 - p)
+c       compute factors on left and right function value
+        fl = 2.*p + 1.0
+        fr = (4.0 - fl)*p*p
+        fl = fl*(1.0 - p)**2
+c       compute the factors based on relative interval for computing derivatives. 
+        dlp = 1. - 3.*p
+        drp = -(1. + dlp)*p
+        dlp = dlp*(1.0 - p)
+        dmf = 6.*(1.0 - p)*p*dyi
+
+        l = l + doff
+        it = it + doff
+        dk0 = ftab(l)
+        dk1 = ftab(it)
+
+        db0 = ftab(l+1)
+        db1 = ftab(it+1)
+
+        b =  flp*db0 + frp*db1 + fl*b0 + fr*b1
+        db = dlp*db0 + drp*db1 + dmf*(b1 - b0)
+
+        k =  flp*dk0 + frp*dk1 + fl*k0 + fr*k1
+        dk = dlp*dk0 + drp*dk1 + dmf*(k1 - k0)
+      endif
+
+      DK = (K + K)*DK
+      K = K*K
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   SETINX
+     I                   (DT, NBR, NBRA, WT, BRPT,
+     M                    IEQ, ERRP, ERRQ,
+     O                    BERRP, NERRP, BERRQ, NERRQ)
+ 
+C     + + + PURPOSE + + +
+C     Create the portion of the matrix corresponding to the
+C     given branch number, NBR. IEQ gives the last equation created
+C     in the matrix.  Used only for branches which have 2 unknowns
+C     per node.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER BERRP, BERRQ, IEQ, NBR, NBRA, NERRP, NERRQ
+      INTEGER BRPT(8,NBRA)
+      REAL ERRP, ERRQ, WT
+      REAL*8 DT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     DT     - time step in seconds
+C     NBR    - number of the branch being processed
+C     NBRA   - number of branches in the model
+C     WT     - weight factor for approximating time integrals
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     IEQ    - equation number
+C     ERRP   - current maximum relative change in surcharge storage
+C     ERRQ   - maximum value of the ratio of lateral inflow to the
+C               average flow in the element
+C     BERRP  - records the branch number(internal) that has the
+C               greatest absolute value of the change in surcharge
+C               storage relative to the storage in the storm sewer
+C     NERRP  - node at which maximum correction to surcharge storage
+C               occurs
+C     BERRQ  - records the branch number(internal) that has the
+C               greatest value of the ratio of lateral inflow
+C               to average flow in an element
+C     NERRQ  - node at which maximum relative lateral inflow occurs
+ 
+      INCLUDE 'arsize.prm'         
+      INCLUDE 'misccon.cmn'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'bnothr.cmn'
+      INCLUDE 'matcom.cmn'
+      INCLUDE 'bnpond.cmn'
+      INCLUDE 'grav.cmn'
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'offcom.cmn'
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADRS, ELMADR, FN, JCOL, LN, NINC, NND, NTAB, UBNBAS
+      REAL ABARU, ALD, ALU, AMD, AMU, ARD, ARU, B, BLD, BLU, BRD, BRU,
+     A     C1, C2, C3, C4, CF, DBLU, DBRU, DH, DK, DKHLM, DKLU, DKRU,
+     B     DQPYLU, DQPYRU, DTLU, DTRU, DV, DV2, DX, DX2, DXDT, DXH,
+     C     DXHDT, DY, DYNDIF, DZ, ERR, GDE, KAC, KDC, KHLM, KLD, KLU,
+     D     KMD, KMU, KRD, KRU, KSUM, NEWSUM, OLDFLW, OLDIMP, OLDSUM,
+     E     OLDVOL, OLDWND, PFQLU, PFQRU, PFYLU, PFYRU, PGFU, QLD, QLU,
+     F     QMAX, QP, QRD, QRU, RES, S1, S2, S3, SFMT, SFMU, TLD, TLU,
+     G     TP, TPA, TPB, TPC, TPD, TRD, TRU, VLD, VLU, VRD, VRU, WTC,
+     H     WX, YC, YLD, YLU, YM, YRD, YRU, ZI, ZIT, ZIY
+ 
+C     + + + LOCAL VARIABLES for inline table lookup
+      INTEGER  IT, L, TYPE, XOFF, doff
+      REAL B0, DYI, H, K0, T0, Y0, beta1, kh1,
+     a    db0, db1, dk0, dk1
+      real  flp, frp, fl, fr, dlp, drp, dmf, p
+
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS, SIGN, SQRT
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL LKTAB, XXLKT20
+C***********************************************************************
+      WTC = 1.0 - WT
+ 
+C     SET THE DIRECTION OF PROCESSING FOR THIS BRANCH.  THE SIGN OF THE
+C     VARIABLE NUMBER FOR THE FIRST VARIABLE ON THE BRANCH SETS THE
+C     DIRECTION
+ 
+      JCOL = BRPT(7,NBR)
+      IF(JCOL.GT.0) THEN
+        FN = BRPT(3,NBR)
+        LN = BRPT(4,NBR)
+        NINC = 1
+C       SET THE USER BRANCH NODE BASE FOR REPORTING NERRQ AND NERRP
+        UBNBAS = BRPT(1,NBR) + 1
+      ELSE
+        FN = BRPT(4,NBR)
+        LN = BRPT(3,NBR)
+        NINC = -1
+        JCOL = -JCOL
+        UBNBAS = BRPT(2,NBR)
+      ENDIF
+ 
+        ZI = ZIVEC(NBR)
+        ZIT = ZI
+        ZIY = ZILIM(NBR)
+        IF(STFLAG.EQ.0) THEN
+          IF(NINC.GT.0) THEN
+            TLD = T1(FN)
+            ALD = A1(FN)
+            YLD = Y1(FN)
+            BLD = B1(FN)
+            QLD = Q1(FN)
+            KLD = K1(FN)
+          ELSE
+            TRD = T1(FN)
+            ARD = A1(FN)
+            YRD = Y1(FN)
+            BRD = B1(FN)
+            QRD = Q1(FN)
+            KRD = K1(FN)
+          ENDIF
+        ENDIF
+ 
+        IF(NINC.GT.0) THEN
+          QLU = Q2(FN)
+          YLU = Y2(FN)
+          CALL XXLKT20
+     I               (NSEC(FN),
+     M                YLU,
+     O                ALU, TLU, DTLU, KLU, DKLU, BLU, DBLU)
+          T2(FN) = TLU
+          A2(FN) = ALU
+          B2(FN) = BLU
+          K2(FN) = KLU
+          FN = FN + 1
+        ELSE
+          QRU = Q2(FN)
+          YRU = Y2(FN)
+          CALL XXLKT20
+     I               (NSEC(FN),
+     M                YRU,
+     O                ARU, TRU, DTRU, KRU, DKRU, BRU, DBRU)
+          T2(FN) = TRU
+          A2(FN) = ARU
+          B2(FN) = BRU
+          K2(FN) = KRU
+          FN = FN - 1
+        ENDIF
+ 
+C      WRITE(STD6,*) ' Dump of residual and derivatives'
+        DO 100 NND=FN,LN,NINC
+          IF(NINC.EQ.1) THEN
+            ELMADR = NND
+          ELSE
+            ELMADR = NND + 1
+          ENDIF
+          DX = DXVEC(ELMADR)
+          DXH = 0.5*DX
+          DX2 = DX + DX
+          DXDT = DX/DT
+          DXHDT =0.5*DXDT
+          DZ = DZVEC(ELMADR)
+          KAC = KA(ELMADR)
+          KDC = KD(ELMADR)
+          ADRS = HLTAB(ELMADR)
+          IF(STFLAG.EQ.0) THEN
+            WX = WXVEC(ELMADR)
+            IF(NINC.GT.0) THEN
+              TRD = T1(NND)
+              ARD = A1(NND)
+              YRD = Y1(NND)
+              BRD = B1(NND)
+              QRD = Q1(NND)
+              KRD = K1(NND)
+            ELSE
+              TLD = T1(NND)
+              ALD = A1(NND)
+              YLD = Y1(NND)
+              BLD = B1(NND)
+              QLD = Q1(NND)
+              KLD = K1(NND)
+            ENDIF
+ 
+C           SUPPRESS INERTIAL TERMS IF DEPTH IS TOO SMALL.
+            IF(YLD.LT.ZIY.OR.YRD.LT.ZIY) THEN
+              ZI = 0.0
+            ELSE
+              ZI = ZIT
+            ENDIF
+ 
+C           COMPUTE VALUES AT THE START OF THE TIME STEP AND STORE
+ 
+            OLDSUM = QLD + QRD
+ 
+            SUMVEC(ELMADR) = OLDSUM
+            VLD = QLD/ALD
+            VRD = QRD/ARD
+ 
+            GDE = 0.0
+            IF(KDC.GT.0.0.OR.KAC.GT.0.0) THEN
+C             PROCESS EXPANSION AND CONTRACTION LOSSES
+              DV = VLD - VRD
+              IF(DV.GT.0.0) THEN
+C               FLOW IS UNDERGOING NEGATIVE ACCELERATION-TAKEN
+C               TO INDICATE EXPANSION
+ 
+                GDE = 0.5*SIGN(KDC, OLDSUM)*ABS(DV*(VLD + VRD))
+              ELSE
+C               FLOW IS UNDERGOING POSITIVE ACCELERATION- TAKEN TO
+C               INDICATE CONTRACTION
+ 
+                GDE = 0.5*SIGN(KAC, OLDSUM)*ABS(DV*(VLD + VRD))
+              ENDIF
+            ENDIF
+ 
+            IF(ADRS.GT.0) THEN
+C             POINT LOSS BASED ON AVERAGE VELOCITY HEAD IN ELEMENT
+              YM = 0.5*(YLD + YRD)
+              CALL LKTAB
+     I                  (ADRS, YM, 0,
+     O                   KHLM, NTAB, DKHLM)
+              IF(OLDSUM.LT.0.0) THEN
+                KHLM = -KHLM
+                DKHLM = - DKHLM
+              ENDIF
+ 
+              GDE = GDE + 0.5*KHLM*(OLDSUM/(ALD + ARD))**2
+            ENDIF
+ 
+            DY = YRD - YLD
+            KMD = KLD + WX*(KRD - KLD)
+            AMD = ALD + 0.5*(ARD - ALD)
+            OLDIMP = (GRAV*(DZ
+     A                 + 0.25*OLDSUM*ABS(OLDSUM)*DX/KMD**2 + DY)
+     1                 + GDE)*AMD
+     3                 + ZI*(BRD*VRD*QRD - BLD*VLD*QLD)
+            IMPVEC(ELMADR) = OLDIMP
+            IF(WSVEC(ELMADR).NE.0.0) THEN
+C             COMPUTE THE WIND STRESS TERM.  WSVEC IS USED TO HOLD
+C             VALUE BECAUSE THE WIND STRESS IS RECOMPUTED FOR EACH
+C             TIME STEP AT THE START OF THE TIME STEP.  WE USE THE
+C             EULER APPROXIMATION FOR THE INTEGRAL TO SIMPLIFY THE
+C             EQUATIONS.
+ 
+              OLDWND = DXH*(TLD + TRD)*WSVEC(ELMADR)
+              WSVEC(ELMADR) = OLDWND
+            ELSE
+              OLDWND = 0.0
+            ENDIF
+ 
+            OLDVOL = AMD
+            VOLVEC(ELMADR) = OLDVOL
+            OLDFLW = QRD - QLD
+            FLWVEC(ELMADR) = OLDFLW
+ 
+            IF(NINC.GT.0) THEN
+              YLD = YRD
+              TLD = TRD
+              ALD = ARD
+              BLD = BRD
+              KLD = KRD
+              QLD = QRD
+            ELSE
+              YRD = YLD
+              TRD = TLD
+              ARD = ALD
+              BRD = BLD
+              KRD = KLD
+              QRD = QLD
+            ENDIF
+          ELSE
+            OLDSUM = SUMVEC(ELMADR)
+            OLDIMP = IMPVEC(ELMADR)
+            OLDVOL = VOLVEC(ELMADR)
+            OLDFLW = FLWVEC(ELMADR)
+            OLDWND = WSVEC(ELMADR)
+          ENDIF
+ 
+ 
+          IF(NINC.GT.0) THEN
+            QRU = Q2(NND)
+            YRU = Y2(NND)
+c            CALL XXLKT20
+c     I                 (NSEC(NND),
+c     M                  YRU,
+c     O                  ARU, TRU, DTRU, KRU, DKRU, BRU, DBRU)
+
+C     Inline lookup code
+
+      IT = NSEC(NND)
+      L = ITAB(IT+3)
+      doff = itab(it+21)
+ 
+      TYPE = ITAB(IT+2)
+      XOFF = OFFVEC(TYPE)
+ 
+      IF(YRU.GE.FTAB(L)) THEN
+ 8100  CONTINUE
+         IF(YRU.GT.FTAB(L+XOFF)) THEN
+           L = L + XOFF
+           GOTO 8100
+         ENDIF
+      ELSE
+ 8110  CONTINUE
+         L = L - XOFF
+         IF(YRU.LT.FTAB(L)) GOTO 8110
+      ENDIF
+      ITAB(IT+3) = L
+ 
+      Y0 = FTAB(L)
+      T0 = FTAB(L+1)
+      K0 = FTAB(L+3)
+      B0 = FTAB(L+4)
+ 
+      IT = L + XOFF
+      kh1 = ftab(it+3) 
+      beta1 = ftab(it+4)
+
+      DY = FTAB(IT) - Y0
+      H = YRU - Y0
+      DYI = 1.0/DY
+      DTRU = (FTAB(IT+1) - T0)*DYI
+      TRU = T0 + H*DTRU
+      ARU = FTAB(L+2) + 0.5*H*(TRU + T0)
+c      if(doff.eq.0) then
+        DBRU = (beta1 - B0)*DYI
+        BRU = B0 + H*DBRU
+        DK = (kh1 - K0)*DYI
+        KRU = K0 + H*DK
+c      else
+c        p = h*dyi
+cc       compute factors on left and right derivative. 
+c        flp = (1.0 - p)*p*dy
+c        frp = -flp*p
+c        flp = flp*(1.0 - p)
+cc       compute factors on left and right function value
+c        fl = 2.*p + 1.0
+c        fr = (4.0 - fl)*p*p
+c        fl = fl*(1.0 - p)**2
+cc       compute the factors based on relative interval for computing derivatives. 
+c        dlp = 1. - 3.*p
+c        drp = -(1. + dlp)*p
+c        dlp = dlp*(1.0 - p)
+c        dmf = 6.*(1.0 - p)*p*dyi
+c
+c        l = l + doff
+c        it = it + doff
+c        dk0 = ftab(l)
+c        dk1 = ftab(it)
+c
+c        db0 = ftab(l+1)
+c        db1 = ftab(it+1)
+c
+c        bru =  flp*db0 + frp*db1 + fl*b0 + fr*beta1
+c        dbru = dlp*db0 + drp*db1 + dmf*(beta1 - b0)
+c
+c        kru =  flp*dk0 + frp*dk1 + fl*k0 + fr*kh1
+c        dkru = dlp*dk0 + drp*dk1 + dmf*(kh1 - k0)
+c      endif
+
+      DKRU = (KRU + KRU)*DK
+      KRU = KRU*KRU
+
+c     End inline lookup code.
+
+            T2(NND) = TRU
+            A2(NND) = ARU
+            B2(NND) = BRU
+            K2(NND) = KRU
+          ELSE
+            QLU = Q2(NND)
+            YLU = Y2(NND)
+c            CALL XXLKT20
+c     I                 (NSEC(NND),
+c     M                  YLU,
+c     O                  ALU, TLU, DTLU, KLU, DKLU, BLU, DBLU)
+
+C     Inline lookup code
+
+      IT = NSEC(NND)
+      L = ITAB(IT+3)
+      doff = itab(it+21)
+
+      TYPE = ITAB(IT+2)
+      XOFF = OFFVEC(TYPE)
+ 
+      IF(YLU.GE.FTAB(L)) THEN
+ 9100  CONTINUE
+         IF(YLU.GT.FTAB(L+XOFF)) THEN
+           L = L + XOFF
+           GOTO 9100
+         ENDIF
+      ELSE
+ 9110  CONTINUE
+         L = L - XOFF
+         IF(YLU.LT.FTAB(L)) GOTO 9110
+      ENDIF
+      ITAB(IT+3) = L
+ 
+      Y0 = FTAB(L)
+      T0 = FTAB(L+1)
+      K0 = FTAB(L+3)
+      B0 = FTAB(L+4)
+ 
+      IT = L + XOFF
+      beta1 = ftab(it+4)
+      kh1 = ftab(it+3) 
+      DY = FTAB(IT) - Y0
+      H = YLU - Y0
+      DYI = 1.0/DY
+      DTLU = (FTAB(IT+1) - T0)*DYI
+      TLU = T0 + H*DTLU
+      ALU = FTAB(L+2) + 0.5*H*(TLU + T0)
+c      if(doff.eq.0) then
+        DBLU = (beta1 - B0)*DYI
+        BLU = B0 + H*DBLU
+        DK = (kh1 - K0)*DYI
+        KLU = K0 + H*DK
+c      else
+c        p = h*dyi
+cc       compute factors on left and right derivative. 
+c        flp = (1.0 - p)*p*dy
+c        frp = -flp*p
+c        flp = flp*(1.0 - p)
+cc       compute factors on left and right function value
+c        fl = 2.*p + 1.0
+c        fr = (4.0 - fl)*p*p
+c        fl = fl*(1.0 - p)**2
+cc       compute the factors based on relative interval for computing derivatives. 
+c        dlp = 1. - 3.*p
+c        drp = -(1. + dlp)*p
+c        dlp = dlp*(1.0 - p)
+c        dmf = 6.*(1.0 - p)*p*dyi
+c
+c        l = l + doff
+c        it = it + doff
+c        dk0 = ftab(l)
+c        dk1 = ftab(it)
+c
+c        db0 = ftab(l+1)
+c        db1 = ftab(it+1)
+c
+c        blu =  flp*db0 + frp*db1 + fl*b0 + fr*beta1
+c        dblu = dlp*db0 + drp*db1 + dmf*(beta1 - b0)
+c
+c        klu =  flp*dk0 + frp*dk1 + fl*k0 + fr*kh1
+c        dklu = dlp*dk0 + drp*dk1 + dmf*(kh1 - k0)
+c      endif
+
+      DKLU = (KLU + KLU)*DK
+      KLU = KLU*KLU
+
+C     End inline lookup code.
+
+            T2(NND) = TLU
+            A2(NND) = ALU
+            B2(NND) = BLU
+            K2(NND) = KLU
+          ENDIF
+          NEWSUM = QLU + QRU
+ 
+          DY = YRU - YLU
+C         SELECT NEW VALUE OF WX.
+          KMU = 0.5*(KLU + KRU)
+          IF(NEWSUM.GE.0.0) THEN
+C           FLOW IS FROM LEFT TO RIGHT. UPSTREAM END IS ON LEFT.
+C            WRITE(STD6,*) ' CRITERION=',DKRU*(-DY - DZ) - KMU
+C            WRITE(STD6,*) ' DKRU=',DKRU,'DY+DZ=',DY+DZ,' KMU=',KMU
+            IF(DKRU*(-DY - DZ) - KMU.GE.0.0) THEN
+C             SHIFT TO UPSTREAM CONVEYANCE.
+              WX = 0.4*KLU/(DKRU*(-DY-DZ) - 0.5*(KRU - KLU))
+              KMU = KLU + WX*(KRU - KLU)
+            ELSE
+              WX = 0.5
+            ENDIF
+          ELSE
+C           FLOW IS FROM RIGHT TO LEFT. UPSTREAM END IS ON RIGHT.
+            IF(DKLU*(DY + DZ) - KMU.GE.0.0) THEN
+C             SHIFT TO UPSTREAM CONVEYANCE
+              WX = 1.0 - 0.4*KRU/(DKLU*(DY + DZ) - .5*(KRU - KLU))
+              KMU = KLU + WX*(KRU - KLU)
+            ELSE
+              WX = 0.5
+            ENDIF
+          ENDIF
+ 
+          AMU = ALU + 0.5*(ARU - ALU)
+          WXVEC(ELMADR) = WX
+          KSUM = KMU + KMU
+ 
+C          IF(STFLAG.EQ.0)
+C     A     WRITE(STD6,'(6H RDVAL,6F10.3)') YRD, TRD, ARD, KRD, BRD, QRD
+C        WRITE(STD6,'(6H RUVAL,7F10.3)') YRU, TRU, ARU, KRU, BRU, QRU, DKRU
+ 
+C         SUPPRESS INERTIAL TERMS IF DEPTH IS TOO SMALL.
+          IF(YLU.LT.ZIY.OR.YRU.LT.ZIY) THEN
+            ZI = 0.0
+          ELSE
+            ZI = ZIT
+          ENDIF
+ 
+C         CONTINUITY EQUATION
+C         1) PARTIAL DERIVATIVES
+ 
+C          WRITE(STD6,*) ' DXHDT=',DXHDT,' TLU=',TLU,' TRU=',TRU
+          C1 = DXHDT*TLU
+          C2 = -WT
+          C3 = DXHDT*TRU
+          C4 = WT
+ 
+          QP = QPVEC(ELMADR)
+          CF = COEFIN(ELMADR)
+          IF(CF.GT.0.0) THEN
+ 
+C            PROCESS INFLOW RESTRICTION ON SEWERS
+ 
+             YC = YCUT(ELMADR)
+             S1 = POND1(ELMADR)
+             S2 = POND2(ELMADR)
+             YM = 0.5*((YLU + YRU))
+             DH = YC - YM
+             IF(ABS(DH).LE.DHSTAR) THEN
+                QMAX = DH*CF*QPCON
+             ELSE
+                QMAX = CF*SQRT(TWOG*ABS(DH))
+                IF(DH.LT.0.0) QMAX = -QMAX
+             ENDIF
+ 
+C            CHECK FOR FLOW ALLOWED
+ 
+             TP = QP + S1/DT
+             IF(QMAX.GT.TP) THEN
+                POND2(ELMADR) = 0.0
+                QP = TP
+                DQPYLU = 0.0
+                DQPYRU = 0.0
+             ELSE
+                S3 = S1 + DT*(QP-QMAX)
+                B = ABS(S2 -S3)/(DX*OLDVOL)
+                IF(B.GT.ERRP) THEN
+                  ERRP = B
+                  NERRP = UBNBAS + NND - FN
+                  BERRP = NBR
+                ENDIF
+                POND2(ELMADR) = S3
+                QP = QMAX
+                IF(ABS(DH).LE.DHSTAR) THEN
+                  DQPYLU = -0.5*CF*QPCON
+                  DQPYRU = DQPYLU
+                ELSE
+                  DQPYLU = -HALFG*CF*CF/ABS(QP)
+                  DQPYRU = DQPYLU
+                ENDIF
+             ENDIF
+             C1 = C1 - DQPYLU
+             C3 = C3 - DQPYRU
+ 
+          ENDIF
+ 
+C         2) RESIDUAL
+          IEQ = IEQ +1
+ 
+        DYNDIF = OLDFLW + WT*(QRU - QLU - OLDFLW) - QP
+        RES = -((AMU - OLDVOL)*DXDT + DYNDIF)
+ 
+C        WRITE(STD6,2345) ' CON EQ:C1,C2,C3,C4,RES', C1, C2, C3, C4, RES
+C2345  FORMAT(A,5(1PE10.3))
+ 
+C         JCOL GIVES THE VARIABLE NUMBER AT THE FIRST COEFFICIENT IN
+C         THE EQUATIONS.
+ 
+          IF(NINC.GT.0) THEN
+            PDAVEC(R(IEQ)) = C2
+            PDAVEC(C(JCOL+1)) = C1
+            PDAVEC(C(JCOL+2)-1) = C4
+            PDAVEC(C(JCOL+3)-2) = C3
+          ELSE
+            PDAVEC(R(IEQ)) = C4
+            PDAVEC(C(JCOL+1)) = C3
+            PDAVEC(C(JCOL+2)-1) = C2
+            PDAVEC(C(JCOL+3)-2) = C1
+          ENDIF
+ 
+          RHS(IEQ) = RES
+ 
+ 
+        ERR = ABS(QP)/(ABS(0.5*OLDSUM)+0.1)
+        IF(ERR.GT.ERRQ) THEN
+          ERRQ = ERR
+          BERRQ = NBR
+          NERRQ = UBNBAS + NND - FN
+        ENDIF
+ 
+C       MOMENTUM EQUATION
+ 
+        SFMT = ABS(NEWSUM)/KSUM**2
+        SFMU = NEWSUM*SFMT
+C        WRITE(STD6,*) ' SFMU=', SFMU
+        PGFU = GRAV*(DZ +SFMU*DX + DY)
+        VLU = QLU/ALU
+        VRU = QRU/ARU
+        TPA = (DX2 + DX2)*SFMU/KSUM
+        TPB = AMU*GRAV*DX2*SFMT
+ 
+C       PARTIAL DERIVATIVES
+ 
+        C1 =
+     A      WT*(AMU*GRAV*(-TPA*DKLU*(1. - WX) - 1.0) +
+     B      PGFU*(0.5)*TLU -
+     D      ZI*(DBLU*QLU - TLU*BLU*VLU)*VLU)
+ 
+ 
+        C2 =
+     A      ZI*DXHDT + WT*(TPB -  2.*ZI*BLU*VLU)
+ 
+        C3 =
+     A      WT*(AMU*GRAV*(-TPA*DKRU*WX + 1.0) +
+     B      PGFU*(0.5)*TRU +
+     D      ZI*(DBRU*QRU - TRU*BRU*VRU)*VRU)
+ 
+        C4 =
+     A      ZI*DXHDT + WT*(TPB + 2.*ZI*BRU*VRU)
+ 
+        IF(KDC.GT.0.0.OR.KAC.GT.0.0) THEN
+          ABARU = 0.5*(ALU + ARU)
+C         PROCESS EXPANSION AND CONTRACTION LOSSES
+          DV2 = ABS((VRU - VLU)*(VRU + VLU))
+          IF(VLU.GE.VRU) THEN
+C           FLOW IS UNDERGOING NEGATIVE ACCELERATION
+ 
+            KDC = SIGN(KDC, NEWSUM)
+            PFQLU = KDC*ABARU*VLU/ALU
+            PFQRU = -KDC*ABARU*VRU/ARU
+            PFYLU = TLU*(0.25*KDC*DV2 - PFQLU*VLU)
+            PFYRU = TRU*(0.25*KDC*DV2 - PFQRU*VRU)
+            GDE = 0.5*KDC*DV2
+          ELSE
+C           FLOW IS UNDERGOING POSITIVE ACCELERATION
+ 
+            KAC = SIGN(KAC, NEWSUM)
+            PFQLU = -KAC*ABARU*VLU/ALU
+            PFQRU = KAC*ABARU*VRU/ARU
+            PFYLU = TLU*(0.25*KAC*DV2 - PFQLU*VLU)
+            PFYRU = TRU*(0.25*KAC*DV2 - PFQRU*VRU)
+            GDE = 0.5*KAC*DV2
+          ENDIF
+ 
+          PGFU = PGFU + GDE
+          C1 = C1 + WT*PFYLU
+          C2 = C2 + WT*PFQLU
+          C3 = C3 + WT*PFYRU
+          C4 = C4 + WT*PFQRU
+ 
+        ENDIF
+ 
+        IF(ADRS.GT.0) THEN
+C         POINT LOSS BASED ON AVERAGE VELOCITY HEAD IN ELEMENT
+          YM = 0.5*(YLU + YRU)
+          ABARU = 0.5*(ALU + ARU)
+          CALL LKTAB
+     I              (ADRS, YM, 0,
+     O               KHLM, NTAB, DKHLM)
+          IF(NEWSUM.LT.0.0) THEN
+            KHLM = -KHLM
+            DKHLM = -DKHLM
+          ENDIF
+ 
+          TPA = NEWSUM/(ALU + ARU)**2
+          TPB = TPA*NEWSUM
+          GDE = 0.5*KHLM*TPB
+          PGFU = PGFU + GDE
+          TPC = WT*ABARU
+          TPD = KHLM*TPA
+ 
+          C1 = C1 - TPC*(TPD*TLU - DKHLM*TPB)
+          C2 = C2 + TPC*TPD
+          C3 = C3 - TPC*(TPD*TRU - DKHLM*TPB)
+          C4 = C4 + TPC*TPD
+        ENDIF
+ 
+C        IF(C1.EQ.0.0) THEN
+C          WRITE(STD6,*) ' C1=0.0 AT IEQ=',IEQ
+C          STOP 'Abnormal stop: errors found.'
+C        ENDIF
+C        IF(C2.EQ.0.0) THEN
+C          WRITE(STD6,*) ' C2=0.0 AT IEQ=',IEQ
+C          STOP 'Abnormal stop: errors found.'
+C        ENDIF
+C        IF(C3.EQ.0.0) THEN
+C          WRITE(STD6,*) ' C3=0.0 AT IEQ=',IEQ
+C          STOP 'Abnormal stop: errors found.'
+C        ENDIF
+C        IF(C4.EQ.0.0) THEN
+C          WRITE(STD6,*) ' C4=0.0 AT IEQ=',IEQ
+C          STOP 'Abnormal stop: errors found.'
+C        ENDIF
+ 
+ 
+C       RESIDUAL
+ 
+        RES = ZI*(NEWSUM - OLDSUM)*DXHDT + WT*(PGFU*AMU +
+     A      ZI*(BRU*QRU*VRU - BLU*QLU*VLU)) + WTC*OLDIMP - OLDWND
+ 
+          IEQ = IEQ + 1
+ 
+C        WRITE(STD6,2345) ' MOM EQ:C1,C2,C3,C4,RES', C1, C2, C3, C4, RES
+ 
+ 
+          IF(NINC.GT.0) THEN
+            PDAVEC(R(IEQ)-1) = C2
+            PDAVEC(R(IEQ)  ) = C1
+            PDAVEC(C(JCOL+2)) = C4
+            PDAVEC(C(JCOL+3)-1) = C3
+          ELSE
+            PDAVEC(R(IEQ)-1) = C4
+            PDAVEC(R(IEQ)  ) = C3
+            PDAVEC(C(JCOL+2)) = C2
+            PDAVEC(C(JCOL+3)-1) = C1
+          ENDIF
+ 
+          RHS(IEQ) = -RES
+ 
+C         TRANSFER VALUES
+ 
+          IF(NINC.GT.0) THEN
+            QLU = QRU
+            ALU = ARU
+            TLU = TRU
+            YLU = YRU
+            KLU = KRU
+            DKLU = DKRU
+            BLU = BRU
+            DBLU = DBRU
+          ELSE
+            QRU = QLU
+            ARU = ALU
+            TRU = TLU
+            YRU = YLU
+            KRU = KLU
+            DKRU = DKLU
+            BRU = BLU
+            DBRU = DBLU
+          ENDIF
+          JCOL = JCOL + 2
+ 
+ 100    CONTINUE
+ 
+C      WRITE(STD6,*) ' '
+      RETURN
+      END

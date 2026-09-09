@@ -1,0 +1,8 @@
+c     Common block for handling time-step tables
+      integer stddtout, tab_for_maxdt
+      character make_dt_tab*256, use_maxdt_tab*16
+
+      common/timetabc/ make_dt_tab, use_maxdt_tab
+      common/timetab/ stddtout, tab_for_maxdt
+
+      save /timetabc/, /timetab/

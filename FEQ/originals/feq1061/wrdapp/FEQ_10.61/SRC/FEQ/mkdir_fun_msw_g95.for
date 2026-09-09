@@ -1,0 +1,42 @@
+c
+c 
+c 
+      subroutine mkdir(stdout,dirname)
+
+c     Check if the dirname, given with its full path, exists,
+c     and if not, create it.
+      
+      implicit none
+
+      integer stdout
+
+      character*(*) dirname
+
+      integer it
+
+      integer system
+      intrinsic system
+c     *********************Formats**************************************
+50    format(/,' Using existing directory:',a)
+52    format(/,' Creating directory:',a)
+54    format(/,' Unable to create directory:',a)
+c***********************************************************************
+      it = len_trim(dirname)
+      call os_file_style(
+     m                    dirname)
+      if(system('dir '//dirname(1:it)//'> NUL 2>&1') == 0) then
+        write(stdout,50) dirname(1:it)
+      else
+        if(system('mkdir '//dirname(1:it)//'> NUL 2>&1') == 0) then
+          write(stdout,52) dirname(1:it)
+        else
+          write(stdout,54) dirname(1:it)
+          stop 'Abnormal stop: Unable to create output home directory'
+        endif
+      endif
+
+      return
+      end
+        
+
+

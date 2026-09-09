@@ -1,0 +1,1991 @@
+Any use of trade, product, or firm names in this document is for 
+descriptive purposes only and does not imply endorsement by the 
+U.S. Government.
+
+See release.txt packaged with FEQ 8.92 and FEQ 9.98 for notes on 
+earlier versions. Also available at 
+http://il.water.usgs.gov/proj/feq/software/release_feq892.txt and
+http://il.water.usgs.gov/proj/feq/software/release_feq998.txt
+
+
+-----------------------------------
+Descriptions of changes made to FEQ
+-----------------------------------
+(Descriptions of changes made to FEQUTL follows at end.)
+
+Version 10.0
+
+22 April 2003
+
+--Options are available in the Run-Control Block to control the Newton
+solution. This is targeted at the problem of having only a few variables 
+fail to meet convergence before the time step is automatically reduced 
+to the to the minimum step size set by the user.  The options are 
+referred to as High IQ Newton Solution (HI_IQ_NS). 
+
+The general idea is to identify the internal variable that last appeared 
+in the iteration log at convergence failure.  This variable is the added 
+to an action list: a list of variables for which the user can take 
+special action.  The user can choose to not use the full correction for 
+that variable in the Newton solution.  Instead, a partial correction 
+can be specified with the partial correction being determined by other 
+options given in the Run-Control Block. In this way FEQ can respond to 
+some computational problems on the fly rather than requiring a manual 
+change of the input file set up conditions and the "time-step too small" 
+message frequency can be reduced.  
+
+Note:  There are two variables at each node in the model: flow and 
+depth/elevation. Even though only one variable is not converged both 
+variables are added to the action list by placing the internal id number 
+for the flow variable on the list.  The id number for the flow variable 
+is always odd and the depth/elevation variable is the next following 
+even number.  This is needed because a frequent problem near full 
+submergence for a two-dimensional structure is that the depth variable 
+may oscillate within its convergence tolerance but the flow variable 
+will be outside its tolerance.  Thus we link the two variables at a 
+node: both must be converged before they can be removed from the action 
+list but only one being out of convergence forces them to be placed 
+on the action list.  The iteration log may show an even number as 
+the internal id number for the out of convergence variable but the 
+message about adding the variable to the list will give an odd number 
+that is one less than the out-of-convergence variable. 
+
+The options in the Run-Control Block are:
+
+HI_IQ_NS=NO    This is the default value for this option.  
+
+HI_IQ_NS=LEV1    At level 1, variables stay on the list until the entire 
+                 model converges. At each additional reduced time step 
+                 attempted in seeking convergence, the Newton correction 
+                 is reduced by the factor given in HI_IQ_NS_DWN unless 
+                 the correction is at or belowHI_IQ_NS_LMT.  When 
+                 convergence is achieved for the whole system, the 
+                 correction fraction is increased by HI_IQ_NS_UP until 
+                 the  fraction becomes 1.0 and the variable is removed 
+                 from the action list.
+
+HI_IQ_NS=LEV2    At level 2, variables stay on the list only until that  
+                 variable is converged.  Thus even if system-wide 
+                 convergence is not achieved, a variable on the list 
+                 will be removed if it has converged.  Also on system 
+                 convergence, all variables are removed from the list 
+                 and the correction fraction returns to 1.0.
+
+
+HI_IQ_NS_NUMGT  The count of variables outside of the convergence 
+                tolerance must be less than or equal to this number 
+                before the IH_IQ_NS levels become active.  The 
+                corrections used in the HI_IQ_NS process make sense 
+                only if the number of variables areout of tolerances 
+                is small.  The ability to converge is sensitive to 
+                this variable, and the user may need to try a number 
+                great or smaller than 7. Note that this count is for
+                variables out of convergence and does not include any 
+                that are in convergence.  However, as noted above 
+                both variables at a node will be added to the list 
+                even though only one is out of convergence. 
+
+HI_IQ_NS_DWN    is the reduction factor for the Newton correction.  
+                Default is 0.5
+
+HI_IQ_NS_UP     is the factor to increase the Newton correction up to 
+                the limit of 1.0. Default is sqrt(1.0/HI_IQ_NS_DWN).  
+                If the value for HI_IQ_NS_UP is < 0, then the value is
+                redefined as (1.0/HI_IQ_NS_DWN)^(1.0/abs(HI_IQ_NS_UP)).  
+                For example we get, assumming, HI_IQ_NS_DWN= 0.75,
+
+                 Input value of        Internal value of
+                 HI_IQ_NS_UP           HI_IQ_NS_UP
+                 --------------        ------------------
+                    1.25                 1.25
+                    -1.0                 1.3333
+                    -2.0                 1.1547
+                    -3.0                 1.1006
+               This parameter is only used for LEV1.  In LEV2 a 
+               variable is removed from the action list as soon as 
+               that variable satisfies the convergence tolerances.             
+                    
+HI_IQ_NS_LMT   is the lower limit for the fraction defining the 
+               partial-Newton correction. Default is 0.1.  Users may 
+               find values as low as 0.01 useful in some cases.  
+
+Here is an example that was tested on a large model with more than 
+13,000 variables:
+
+HI_IQ_NS=LEV2
+HI_IQ_NS_NUMGT= 7
+HI_IQ_NS_DWN = 0.5
+HI_IQ_NS_UP = -1.0
+HI_IQ_NS_LMT = 0.01
+
+In this example, a small value for HI_IQ_NS_LMT was required to get 
+convergence at at one point.
+
+In this example, the default values for time-step increase and 
+decrease were also modified because the default values moved the time 
+step too rapidly.  The values that worked with HI_IQ_NS=LEV2 were:
+
+AUTO=0.67
+MAXDT=1800. MINDT= 1.0
+LFAC= 0.8  HFAC= 1.25
+
+--The format of the iteration log has been changed slightly.  A new 
+column listing the internal variable number has been added.  This 
+makes it possible to connect a given branch/node or free node with an 
+internal variable number. The node column now has a one-character 
+column that will contain q for flow or y for depth instead of using 
+a sign to indicate the difference.  This may prove helpful in 
+deciding what High IQ Newton Solution option to try. 
+
+--Additional output has been added.  Brief messages are given in the 
+master-output file when variables are placed on or removed from the 
+action list.  Also the runtime is now given when the run fails due to 
+excessive reduction of the time step.
+
+Refined upgrades of cross-section table types 20-25 are now available.
+The new internal cross-section function tables are numbered 30-35. 
+These include the derivatives to render conveyance, alpha, beta, Ma, 
+and Mq, to be at least piecewise cubic with continuous first 
+derivatives everywhere and continuous second derivatives at all but 
+some breakpoints.  There is also an extension of type 13, type 43, 
+that also ensures at least piecewise cubic variation with continuous 
+first derivatives everywhere and continuous second derivatives except 
+near regions that had to be adjusted.  This option may prove useful 
+for situations where the Newton solution fails to converge because of
+the simple approximations for the required derivatives that were not 
+continuous at the breakpoints for conveyance, alpha, beta, Ma, Mq in 
+the cross-section function tables and for function table types 2, 13, 
+and 14.
+
+These tables have been added to yield functional representations that 
+are smoother in the sense of having continuity of the first derivative 
+and sometimes the second derivative at the tabulated depth values 
+(breakpoints).  It may be that some of the computational problems in an 
+unsteady-flow model originate at the discontinuities in first 
+derivative at breakpoints.  A review of the convergence theorems for 
+Newton's method shows that they all depend on continuity of the first 
+derivative near the root.  If one of the roots is close to a 
+breakpoint, a likely occurrence with a few thousand cross-section 
+function tables and each table with 30-100 breakpoints, then the model 
+may have convergence difficulty.
+
+The increased order of interpolation may yield more accurate values 
+of conveyance, for example, but it is not clear that the change is of 
+any significance.  None of the effort in including increased smoothness 
+in approximations was motivated by increased accuracy.  It was done to 
+increase the robustness of the computations.
+
+To convert all cross-section function tables to types 30-35 for an 
+unsteady-flow model, add UPGRADE_XSEC_TAB=YES to the Run-Control 
+Block.  All cross-section function tables found by FEQ will be 
+automatically converted to the corresponding new type.  If you use
+UPGRADE_XSEC_TAB=YESO, then FEQ will dump the new tables as they 
+are created.  This results in a large output file.  In any case, 
+FEQ currently runs some checks for problem areas on the new tables 
+and outputs what it has found.  
+
+An external form for type 43 has not yet been defined.  Thus to get 
+this type use TY13_TO_TY43=YES in the Run-Control Block.  All type 
+13 tables found will be converted to type 43. Tests will be run on 
+each table and a summary printed.  Some tables may need to be 
+recomputed to reduce problems.  Again if TY13_TO_TY43=YESO is used, 
+a complete dump of the table will be done.  This results in quite 
+large output files but can be used for testing and checking. 
+
+It should be apparent that both the storage-space required and the 
+lookup-time required for these tables is appreciably larger than for 
+their simpler relatives.  Thus not all models will benefit with 
+respect to computation time by using these options.  The user can try 
+these options and compare with the standard defaults option.  Results 
+so far indicate that for:
+
+1. For large models, those with more than 500 branches, the greater 
+smoothness in derivatives provided by these options provides somewhat 
+greater robustness, that is, there seem to be fewer computational 
+failures, and there is a reduced run time because the extra time in 
+lookup is repaid in there being fewer iterations required to 
+convergence. It is also possible to use the extrapolation options in 
+the Run-Control block and still maintain good performance.  This can 
+reduce runtimes by as much as 25 percent alone.  Trying to use that 
+large an extrapolation without the smoother tables either fails to 
+converge or the iteration count rises to the point that it takes 
+longer to compute. However, it is not uniformly true that the 
+smoother tables produce better convergence.  Therefore, the standard 
+tables options is always available.
+
+
+2. In rough comparisons so far, the results for extreme values are 
+essentially the same if both approaches result in a completed 
+computation.  The maximum elevation differ on the order of a few 
+thousandths of a foot and the flows may vary in the third or fourth 
+digit, which is the same order of variation that occurs when using 
+executable code compiled by different compilers.  It should be noted 
+that may large models make heavy use of automatic argument selection 
+for type 13 tables whereever FEQUTL supports it.  This is important 
+because this means that all  2-D tables of type 13, save those from 
+CULVERT, are computed so that linear interpolation in the table would 
+yield errors at most of 1 to 2 per cent.  If manual spacing for 
+arguments is used, then the differences may be much larger because 
+the piecewise cubic fit and the piecewise linear fit will differ by 
+much larger amounts, especially at small heads.  It is almost always
+true that manual placement of the upstream heads results in far too 
+many large heads and far too few small heads.  
+
+--It was found that FEQ can fail to converge before the minimum time 
+step is reached because of a bug in the code used to synchronize time 
+when the maximum time step is attained. Some years ago users found it 
+disconcerting that the time would be at some odd interval even though 
+the maximum time step was being used for long periods.  To avoid this, 
+FEQ tests for the need to synchronize the time with the max time step,  
+that is, bring the time so that its value would result in  values in 
+agreement with the maximum time step.  For example if the maximum time 
+step were 1800 seconds, then the computation points should be shifted 
+so that there are results at every hour and every half hour.  
+
+Because the default factors for decreasing and increasing the time 
+step were 0.5 and 2.0 respectively, the roundoff error in the process 
+of changing the time step was small, especially since, FEQ maintins 
+the time step in double precision.  However, when using the HI_IQ_NS 
+options, the reduction factor was changed from 0.5 to 0.7 which 
+introduced more potential roundoff error.  After many runs with no 
+problems the synchronizing algorithm computed a time step close to 
+zero but larger than the tolerance allowed.  Thus FEQ found that the 
+time step was less than the minimum allowed time step and stopped.  
+In fact, the time step was being reset to the maximum when this 
+occurred and the computation for the time step needed to synchronize 
+was just roundoff error.   
+
+Therefore, this bug has been fixed by requiring that the 
+synchronizing time step must be at least as large as the minimum time 
+step before it is done.  In addition a new message is written to the 
+master output file when a synchronizing time step is computed.  This 
+message is needed because the output can become a bit confusing 
+because the time step is first set to the maximum and then it is 
+changed to something smaller.  
+
+--FEQ now has the ability use a time-series table that gives the 
+maximum time step as a function of time.  This can prove useful when 
+models require an extensive warmup period before the computations for 
+the period of interest begin.  It is also useful for those cases when 
+long periods of low flow must be simulated in order to drain water 
+stored on the flood plain behind levees or behind dams when modeling 
+a sequence of storms.   This table is of type 7 and gives the time 
+and the maximum time step at that time. Please note that the time and 
+the time step given in the master output file give the time at the 
+end of the time step reported.  The max-time step table needs the 
+time at the beginning of the time step.
+
+To make this task easier, FEQ, also has the ability to output a file 
+containing the record of all time steps with the time at the start 
+of the time step given.  This file can then be used as a basis for
+creating the max-time step table.   To do this make a run with a 
+fixed time step and request that this file be created.  Then edit 
+the file to create a valid sequence of maximum time steps and 
+rename the file.  Then add the file to the list of files read in the 
+Functions-Table block. 
+
+The two new Run-Control Block options are:
+
+
+MAKE_DT_TAB= /dt_tab  This requests that the time-step and time 
+                      information be written to a file named dt_tab 
+                      and appearing in the global-home name directory 
+                      if any exists. If none exists the file should 
+                      appear in the current directory.  Note that 
+                      this file DOES not contain a vaild type 7 table.  
+                      You must use the contents of this file to create 
+                      such a table.
+
+
+
+USE_MAXDT_TAB= max_dt_2002  This requests using a table with a table 
+                            id of max_dt_2002 to define the maximum 
+                            time step.  The maximum time step is reset
+                            before the computations are started.  
+
+Again it takes some practice to make good use of this feature.  
+However, by carefully editing the time-step pattern from a successful 
+run, reductions in runtime on the order of 25 percent can be attained.  
+However, again, at least with large models, computational failure 
+can also be created. 
+
+--Changed meaning of the flow-factor adjustment table in the side-weir 
+instruction, code=14, when it appears with a crest level adjustment.  
+When both optional tables are present, FEQ does the following:
+
+1. Computes the flow at the head at current crest level = Q1
+2. Computes the flow at the head at original fixed crest level = Q2 
+3. Finds the current flow factor, fac, from the flow-factor table. 
+4. Computes the flow as:  
+   
+     Q = fac*Q1 + (1 - fac)*Q2
+
+This approximates the combination of flow over the portion of the 
+flow surface that is at its original level and the flow through the 
+portion of the flow surface that is at its new level.  This 
+computation assumes the crest is approx horizontal and that the flow 
+interaction between the two flows is small.     The factor is estimated
+by the ratio of the length of weir that is being shifted by erosion of 
+the surface to the total overflow weir segment.   Previously, this 
+time series table consisted of factor values determined by the user.  
+See the side weir description in 
+http://il.water.usgs.gov/proj/feq/software/release_feq998.txt
+Version 9.69.
+
+Version 10.01
+
+17 May 2003
+
+--Increased the title block to 201 lines. 
+
+--Skip blank lines at the start of the master-input file.  
+
+Version 10.02
+
+19 June 2003
+
+--Fixed bug in reporting the interpolation for high-water marks.  The 
+stationing factor was not applied to the output when interpolating.  
+Thus small errors on the order of a few tenths of foot were made.  
+This is relevant only for users who utilize a file hwmark.loc 
+containing high-water marks for their model.
+
+--Added code to the GENSCN output to compensate for a bug in GENSCN.  
+GENSCN is unable to plot results at a free node when that node is not 
+a reservoir node.  The problem appears to be that GENSCN is seeking a 
+non-zero index to a function table for every node.  However, no such 
+table is needed nor does one exist for a free node on a dummy branch 
+or for the inflow to a level-pool reservoir.  However, GENSCN will 
+plot the results if a valid ftab index is given for these free nodes.  
+Therefore, this code places a valid ftab index for all free nodes not 
+having any such table.  If under some circumstances, GENSCN should
+try to lookup some values in this function table, we will have 
+problems.  So far this has not happened.  
+
+
+Version 10.03
+
+21 July 2003
+                                                        
+--Fixed bug in code 4 type 6 output.  This feature was coded for one 
+particular model needed by the FEQ developer.
+
+Version 10.04
+
+1 December 2003  
+
+--Changed the console output for FEQ to try to get the same behavior in 
+MSW and Linux. The new output prints a horizontal series of periods 
+(dots) for each consecutive time step that is unchanged from the 
+earlier one.  A new line of information is printed whenever the time 
+step changes.  In GNU/Linux where the whole set of dots is printed at 
+one time.
+
+Version 10.05
+
+22 April 2004
+
+--Changed computation of the minimum time step to exclude time steps
+that were set in order to sychronize time with even increments of
+one hour.  Sometimes that adjustment produces a time step that is
+small and the minimum time step does not reflect the level of 
+computational difficulty found during the run.
+
+
+Version 10.06
+
+6 May 2004
+
+--Changed format for Time of max Z, Time of max Q, and Time of min Q
+to include leading zeros in the year, month, and day fields.
+
+
+Version 10.10
+
+22 May 2004
+
+--Changed format of debug output of the equations in the Network Matrix
+to allow 5 digits for the variable number.  Needed to do debugging on 
+a model with more than 14,000 equations. 
+
+--Corrected several errors in the handling of eddy losses (KA and KD 
+being the parameters) in branches:
+
+1. In some cases of strong reverse flow and larger values of either KA
+or KD an error in the partial derivatives of the eddy-loss term caused
+either slow convergence or failure of convergence.  This did not occur
+if all the flows in a branch were positive.  This might be part of the 
+reason for slow convergence observed in some cases for branches subject
+tidal influence.  
+
+2. In some cases of reverse flow, another error in handling the 
+eddy losses could cause the eddy losses to be ignored when they 
+should have been included.  This probably only took place when 
+there was reverse flow and the time step converged in only one
+iteration.  This would normally be during periods of essentially 
+constant flow everywhere or at most slowly varying flow.  Again 
+the potential effect is very small was limited to reverse flows 
+in a branch.  A very large reverse flow might have caused the 
+model to fail to converge.
+
+--Corrected an error in the setting of a partial derivative in tables
+of type 14 when the flow moved from zero to non-zero.  This could cause
+convergence failures when a type 14 table was used for a location where 
+the flow was zero most of the time and became non-zero only during major 
+floods.  
+
+--Added additional code to lookup of tables of type 14 to catch 
+inconsistent heads and flows.  Detailed output added to FEQ 
+to diagnose severe problems for flow in a dry bridge, that is, 
+a bridge through a road fill in the flood plain that has zero
+flow except during floods.   The flows at such a bridge
+are subject to roundoff and convergence tolerance noise
+when the flows are negligible.  Thus FEQ now forces the 
+flow to be zero in the lookup process if the head 
+physically upstream of the claimed non-zero flow is
+less than zero.  Obviously the flow is wrong and is 
+the result of computational round-off error.  This noise causes
+the Newton iterations to sometimes fail repeatedly until 
+the time-step limit is reached.  
+
+--Added output of a summary of the number of equations produces
+by each of the codes used in the Network Matrix Control input.
+This may help the user find patterns in how many equations come from
+various sources.  The summary also indicates which of the equations
+are linear and which are non-linear.   
+
+Version 10.11
+
+29 June 2004
+
+--Added code so that FEQ can determine the operating system under 
+which it is running and then make sure that the directory name
+and subname divider is consistent with the OS in file names. 
+Thus it is possible to use either the backslash or the forward
+slash in a file name or a mix of the two!  Lahey Fortran allows
+this but some other compilers may not do so.  Consequently,
+the FEQ now makes the conversion so that an input can be 
+transfered between the two operating systems and not require changes 
+in the file names.  
+
+--Added home-name addition to the macro file name.  So far the 
+macro file name has not been used except in limited test cases.  
+
+Version 10.12
+
+16 July  2004
+
+--The TAB-defined head datum for code 5 type 6 and code 14 can be 
+modified by specifying an increment/decrement.  
+
+This feature is quite useful when there are many flow tables with head 
+datum defined by looking it up from the table.  For this case, in the 
+instruction in FEQ only the special string TAB or tab appears. 
+Previously, to change the datum it is necessary to find the datum from 
+that table, apply the shift and then change the TAB or tab to the 
+correct numerical value.  This new feature makes it possible to add 
+the change to TAB or tab with no blanks, and FEQ then computes the 
+shift.  For example, to shift the flow table datum up by 0.25 use:
+
+TAB+0.25
+
+A downward shift is then: 
+
+TAB-0.25
+
+The user is of course, as always, responsible to make sure that such a 
+shift makes sense.  FEQ does no checking on the size of the shift.  
+
+Version  10.15
+
+25 August 2004
+
+--Expanded the file-name length for all but command-line arguments to 
+be 128 characters.  The home name can be up to 128 characters as well 
+so I suppose one could end up with a 256-character file name.  The 
+user should be aware of the limitation of their operating system if 
+utilizing a very long file name.
+
+This change required many adjustments in many locations in order that
+the increased lengths could be read from the input files and would be 
+written to the output files.  Tests using file names with lengths 
+varying from 80+ to about 124 characters have been run for:
+
+   Special Output file name
+   Output file name for time-series
+   GENSCN output base file name
+   Function Tables Block with a home name of about 90 characters
+   Function Tables Block with a file name of about 90 characters.
+
+They all were read and output properly. Two existing models without 
+longer file names also ran properly.  One of them used HECDSS and 
+the other did not. 
+
+Version  10.16
+
+20 October 2004
+
+--Increased node limit in GENSCN to 20,000 nodes.  Lahey Fortran
+compilers appear to support the resulting record lengths.  
+
+Version  10.17
+
+5 November 2004
+
+--Increased special output count to 250.  
+
+Version 10.20
+
+13 January 2005
+
+--Point time-series files (PTSF's) are now read and written as 
+direct-access unformatted.  This change allows these files to move 
+among various operating systems and compiled executables.  This has
+been tested on five different compilers (two under Linux and three 
+under MS Windows).  PTSF's created with earlier versions of FEQ must 
+be converted using the PTSFUTL utility or the models that generated 
+the PTSFUTL must be rerun with FEQ version 10.20 or later.
+
+--Diffuse time-series files (DTSF's) are now read by FEQ as 
+direct-access unformatted.  This change was made to allow these files
+to move among the various operating systems and compilers, similarly 
+to the PSTF's.  Old files must be converted using the version of 
+TSFUTL included in the FEQ 10.60 release package.  HSPF 12.0 allows 
+a direct output to the new unformatted DTSF using the PLTGEN routine. 
+
+--In the process of making the changes for DTSF handling, it 
+was noticed that the variables used in computing the average
+runoff in an FEQ time step were declared single precision. 
+All of the variables leading up to that point were double
+precision.  This appeared to be a long term oversight. 
+Therefore, the declarations for these variables have been 
+changed to be double precision also.  
+
+Testing on an old version of a DuPage County Trib4 model,
+showed that the changes in flows, if any, were in the  
+last one or two digits printed.  The time of extreme 
+values sometimes shifted by an FEQ time step or two as
+well.  All of these changes appear to be inconsequential. 
+
+--The response of FEQ to a selector variable with an unknown 
+value has been changed from generating an error message and
+stopping to setting the unknown value to false and continuing
+after issuing a warning message.  This may make using selector 
+variables more natural.  Currently every variable in the input 
+must have a value explicitly set.  These requires setting
+an ever growing number of selector variables to false
+and to changing existing scenario blocks when new 
+scenarios are added.  With this change only the selector 
+variables that have to be true need be set in any scenario-
+defining block.  All others not set will be given the value 
+of false when they are found. 
+
+Version 10.21
+
+14 February 2005
+
+--Changed detection tolerance for side-weirs with non-zero flow
+in the initial conditions.  This was designed to permit these
+flow points to become active.  Ideally the flow over any side weir 
+should be zero in the initial conditions but that is not always 
+possible.  
+
+--The special output block will now write a descriptor file, 
+with a standard extension of *.spi, to describe the special output
+file itself to feqplot, the GUI result viewer for time series. 
+This allows us to better control the working of feqplot and still 
+leave the format of the special output file itself unchanged. 
+
+Version 10.22
+
+7 July 2005
+
+--Changed output units for QUAD option in the Output Files Block
+to use acre-feet when GRAV > 15.0 and 1,000 cubic meters otherwise. 
+
+Version 10.23
+
+2 August 2005
+
+--Home name for output files was truncated to its actual length for 
+output.
+
+--Added the "top of stack" line when processing selector blocks in 
+order to help find problems with matching IF with ELSE, ELSEIF, and 
+ENDIF.  In some cases the output file is complete, especially if an 
+ENDIF is missing, and gives no clue as to where the problem might be.  
+The top of stack line will usually be the IF statement that has not 
+been matched.  If there are multiple IF statements with the same 
+selector variable, a common occurrence, it proves helpful to label 
+each of these identical IF statements with a unique label given after
+a single quote, for example,
+
+IF Q1990    '1
+
+ENDIF
+
+IF Q1990    '2
+
+ENDIF
+
+Then if an ENDIF is missing, and FEQ finds the end of file 
+searching for it, the error message will have the offending IF 
+statement given with the error message and the unique label will 
+allow finding that statement without an extensive and sometimes error 
+prone search.  
+
+Version 10.24
+
+29 August 2005
+
+--Add ability to set a selector variable outside of the SET SELECTORS 
+block. This is done using the keyword: SET.  This feature was added to 
+make the selection process easier to define.  
+
+For examples:
+
+IF Q1990
+  SET lowflow = false
+ELSEIF Q1995
+  SET lowflow = false
+ELSEIF Q2002
+  SET lowflow = true
+ELSE
+  SET Lowflow = true
+ENDIF
+
+IF lowflow
+
+  Select stuff that is only to be used with the smaller flood events
+ELSE
+
+  Select stuff that is only to be used with the larger flood events
+ENDIF
+
+A Selector variable may be defined or redefined by this process.  Do 
+not use SET within a SET SELECTORS block.
+
+Version 10.25
+
+27 September 2005
+
+--Corrected an error in time reporting when using a DTSF.  The 
+reported time offset depended on the initial hour of each event.  If 
+the starting hour was zero then the offset was zero.  Otherwise the 
+offset would depend on the starting hour.  If the starting hour was 1, 
+then then offset was 1 - 1/24.0 hours, which is slightly less than one 
+hour.  Most DTSF's of which I am aware have events which start at hour 
+1 or sometimes hour zero.  Thus the maximum offset in reported time is 
+one hour or less.  
+
+Version 10.30
+
+30 September 2005
+
+--Added support for creating a dual-source forced boundary condition 
+using a new block of input.  This block of input creates a PTSF from 
+two data sources given by the user.  The sources may be either a PTSF 
+or a time-series table (TSTAB).  The purpose of dual sources is to 
+make real-time forecasting using FEQ somewhat smoother.  An example 
+block follows: 
+
+DUAL SOURCE
+  DEFINE forecast._doc_
+    FILE= /forecast/sbrook05/flowhist/busse_flow.ptsf   TRAN_START=2005/09/01: 0.d0
+    TABLE = busse_Q_frm_tab   
+  END  forecast._doc_
+END DUAL SOURCE
+
+This block, if it appears, should be just before the 
+INPUT-FILE-SPECIFICATION block.  The name following the DEFINE is the 
+name of the file that will be created by FEQ.  The strange extension 
+for this file requests that FEQ delete the file when it is closed 
+(delete on close--doc).  The PTSF given in FILE contains the first 
+source in this example.  The data in this PTSF is to be used until the 
+date/time given in TRAN_START If a time point exists in the file, 
+busse_flow.ptsf, at this time point, it will appear in forecast._doc_.  
+The first time point from buss_Q_frm_tab will be the first one 
+following the date/time given in TRAN_START.  If TRAN_START is not 
+present, then the first source is used until its last time point.  Any 
+combination of a PTSF and a TSTAB can be used.  The file created, 
+forecast._doc_, is then referenced in the INPUT-FILE-SPECIFICATION 
+block just like any other PTSF.  
+
+--To better support dual-source creation, the internal storage pattern 
+for time-series tables has been changed to full double precision.  In 
+earlier versions, time-series tables of types 7, 8, and 9, only had an 
+existence until input, at which time they were changed internally to 
+types 2, 3, and 4.  This is no longer true.  There is a special 
+internal representation for time-series tables that now represents 
+long time spans accurately.  Extensive comparisons have been made 
+between old and new versions on a small collection of models.  The 
+effect is small with most changes being in the 4-th significant digit.  
+These changes come about from at least three sources: 
+
+1. The time value is now stored in double precision whereas in earlier
+versions it was stored in single precision.   
+
+2.  The values for the flow or elevation are now stored in double 
+precision yielding a small change in trunctation error.  However, 
+values returned from the table lookup are still given in single 
+precision.  
+
+3.  The above two effects can cause either a change in the number of 
+iterations at one or more time steps or even a change in the number 
+and size of the time steps.  This comes about because the computer is 
+a "slave to precision".  A minute change can sometimes cause a change 
+in number of iterations and this can potentially change one or more 
+time step sizes.  
+
+The effect in step 3 is the primary one and it reflects the inherent 
+uncertainty in using an interative process to find a solution.  
+
+--A new Run-Control-Block option has been added to enable forecasting 
+with a DTSF present.  The standard behavior when a DTSF is present is 
+to force the start time to match the start time of each event in turn.  
+That was the original purpose of have a series of events placed into a 
+DTSF.  To avoid this behavior, include the option, 
+
+FRCST_WTH_DTSF= YES
+
+in the Run Control Block.  
+
+When this option is present, the start time is used to locate the 
+event in the DTSF.  The event selected for simulation is the event 
+that contains the start time.  Only one event will be run because 
+only one event can contain the start time. This follows because 
+events must be non-overlapping and in ascending order in a 
+DTSF.  
+
+--The GETIC and PUTIC files have been updated to be written and read 
+using direct access statements.  This means that old forms of these 
+files cannot be used with this version.  The files have been expanded 
+to support additional control structures as well, so old files are 
+obselete for that reason too.  Note that this version requires that 
+all PTSF and DTSF files be in direct-access format also.  Any that are 
+not in that format can be updated using a utility program for that 
+purpose.  
+
+--The total count of iterations to a given time step has been added 
+to the output to enable comparing runs more closely for differences.  
+If the total iterations differs then a possible source of any 
+differences found is in the number of iterations.
+
+Version 10.31
+
+10 November 2005
+
+--Changed formats used in processing heading-dependent input formats.
+Some floating-point input fields had been read using list-directed 
+input, that is, with no format given.  These have been changed to 
+using f20.0 to allow more comprehensive error checking.  With the 
+list-directed format option the following string, '.  662.0', could
+have been read as zero by at least one compiler's executable of FEQ.  
+
+Version 10.32
+
+8 December 2005
+
+--Changed processing of selected input fields to detect spaces interior 
+to the field that result from a character falling outside the assigned 
+columns in a heading-dependent input line.  Any spaces within a number
+are invalid and will produce an error message.  There should be no 
+spaces between a leading sign and the number to which it applies.
+
+--Fixed bug in the option to automatically generate the master-output 
+file name from the root of the master-input file name.  FEQ failed to 
+add the .out extension to the root name from the master-input file 
+name.  
+
+--The last extension on the master-output file name is now applied to 
+all output files so that they are uniquely named and not overwritten.  
+This happens automatically so if you do not want this action, then no 
+extension should be used on the master-output file name.  The 
+extension from the master-output file is not placed at the end of the 
+file name unless it has no extension.  If an extension is already in 
+place, the added extension is place just before the final extension in 
+the name.  This is done because some of the extensions are keyed to 
+software that processes names based on the final extension.  The 
+extension placed on the master-output file defines a sub-scenario so 
+to speak, perhaps involving variations not included in the other 
+components of the scenario, or perhaps it proves simpler to create 
+variations of a scenario without defining a whole new subdirectory for 
+the results.  
+
+--Home-name processing has been changed.  The home name defined in the 
+set-selectors block is now only used for file output.  This home name 
+becomes the global home name for output.  All other HOME values will 
+refer only to input of files with one exception.  The GETIC and PUTIC 
+files are both treated as being in the directory given by the global 
+home name for output.  GETIC refers to a file used for input of the 
+initial conditions but it is given the output home name because the 
+only way that file can be created is by output from a previous run of 
+FEQ.  In that run it will be placed in the directory given by the home 
+name defined in the set-selectors block.  It does not make sense to 
+have to copy the file to some other location to use it for input on 
+subsequent runs.  
+
+Once set, the global home name for output cannot be changed by any 
+other home-name input.  The home name given in the run-control block 
+is the global home hame for input.  Each block of input to FEQ that 
+contains files, will also have a local home name value that can be set 
+by the user.  The rule for deciding which home name to use is simple: 
+if the local home name is not given, then the global home name is 
+used, otherwise, the local home name is used in that block.  
+
+Version 10.33
+
+6 March 2006
+
+--Changes to home-names caused a problem with finding the special file, 
+hwmark.loc.  Corrected home-name addition to add the global-home name
+for output to hwmark.loc.
+
+--The information file for the special-output file got two instances of 
+the master-output file extension when only one should have been added. 
+
+Version 10.34
+
+17 March 2006
+
+--Removed spaces from blank lines in the schematic script file.  These 
+caused a problem with Autocad applications.
+
+Version 10.35
+
+28 March 2006
+
+--Made final changes to GENSCN for direct-access file usage for both 
+the TSD and the FTF file.  Users should also request that the 
+new-format for the FEO file be used once GENSCN is updated.  This has 
+been made the default.  Thus if you wish to retain the old format for 
+the FEO file, then be sure to add NEW_GENSCN_FE0=NO in the Run-Control 
+Block.  
+
+
+Version 10.4
+
+11 December 2006
+
+--Changed the nature of input for the time-series table giving the 
+structure capacity fraction as a function of time.  This is specified
+in NC(7).  A time-series table id (includes a table number as a special
+case) must be given with a minus sign prefixed to it.  This makes that
+input option consistent with, for example, Code 5, Type 7.  A positive 
+integer in this field is taken to be a Operation Control Block number
+for setting the capacity fraction.  
+
+An additional input is defined at NC(9), giving the name for the 
+control structure so that output on the capacity fraction and flow 
+state can be appear in the Special Output Block.  
+
+A simple example of a valid instruction is:
+
+  5 6 F8983  F1  F1   Seawall_S_boxes Seawall_S_boxes  1  * gate ;  TAB
+
+where "gate" gives the name of the structure for reference in the 
+Special Output Block.  Notice that a place holder, the asterisk, is 
+required because there is an input value that exists between NC(7) and 
+NC(9), that is, NC(8), which we wish to skip and therefore to take its 
+default value of blank.  
+
+
+Version 10.42
+
+19 December 2006
+
+--Added output of a version/run date-time string to the *.spi file for 
+special output.  This is a comment and any program reading this file 
+must be able to process comment lines as defined for feq/fequtl.  This 
+information will permit tracing the parentage of files produced by 
+FEQ.  
+
+--Added to the header for point-time series files that record the FEQ 
+version number, the version date, and the date/time of the run that 
+created the file.  
+
+--Added output of the version/run date-time information from input point
+time-series files. 
+
+--FEQUTL has also been modified so that each function-table file 
+created by it will have two echoing comment lines that record that the 
+file was created by FEQUTL and also giving the version, the version 
+date, and the date and time of the run.  These values will appear in 
+the output from FEQ.  It is also possible to put echoing comment lines 
+at some point in every *.mtb file so that the name of the creator, or 
+modifier, plus dates can be list as well.  This will make it possible 
+for the master output file to document details such as the sources of 
+information for each file that is used in the input. 
+
+--Found that HI_IQ_NS_NUMGT was not being output to the master
+output file.  Added it.
+
+Version 10.43
+
+22 January 2007
+
+--Changed precision of the start and end JTIME values in the 
+special-output information file and the special output file to 7 
+decimals.  Thus the resolution of the output is now 5x10^-8 day or so.  
+
+Version 10.45
+
+8 March 2007
+
+--Added additional checking of the Network-Matrix input to catch free 
+nodes that are unattached.  The problem often arises with nodes on a 
+dummy branch, when the user forgets to add the dummy branch, which 
+results in the message that the number of nodes is odd.  It could be 
+true that the number of exterior nodes is even but they are not 
+properly related.  Therefore, the check is done before the check for 
+the number of exterior nodes being even.  Hopefully this will make 
+finding these model input errors easier.  
+
+
+Version 10.46
+
+29 March 2007
+
+--Correct an error in handling the transition from zero flow to 
+non-zero flow in a structure using a table of type 14.  There were 
+conditions in which the flow would have the wrong sign in the 
+structure and the computations would fail when the time step was 
+automatically reduced below the minimum time step. In testing, 
+this correction has increased robustness of models in which a table of 
+type 14 is used to represent flows that rise from zero or fall to zero.  
+
+Version 10.47
+
+7 June 2007
+
+--Refined the detention-storage option from the linear iteration to 
+Newton's method for solution.  There are cases of time step and flow 
+versus storage variation for which linear iteration will not converge 
+even though its starting value is close to the root.  Newton's method 
+is not subject to that limitation and converges more quickly as well.  
+Because Newton's method is much more efficient, the convergence 
+tolerance was reduced by a factor of 100 and changes were made so 
+that every correction from Newton's method was reflected in the 
+final results.  
+
+These changes reduced the tributary-area relative-balance value from 
+the range of 10^-4 to 10^-7 in the test case used.  Therefore, 
+small changes in output from models run with earlier versions may 
+occur.  These changes are a correction of the results with added 
+solution robustness should a truly extreme runoff event be simulated.  
+Also the chance of non-convergence in solving for the outflow from a 
+detention reservoir has been reduced to essentially zero.  
+
+Version 10.50
+
+25 October 2007
+
+-- FEQ now has the option to output an index for all the function 
+tables used in a given run.  This is requested by adding
+
+MAKE_TAB_INDEX=YES
+
+to the Run-Control Block.  FEQ will then create a file named, 
+ftab_index containing the alpha list of tables by tabid together with 
+the table type and the fully qualified file name where the table was 
+found.  Currently the file name is built in but you can always add an 
+extension to the output file name on the commandline that invokes FEQ, 
+and that extension will be appended to the ftab_index.  For example
+
+feq feqin  out.new
+
+will result in the table index being stored in: ftab_index.new.
+
+Note that the alpha list depends on case.  The all lowercase names
+appear after those that begin with an upper case letter.
+
+
+--Add handling of the new values used to track datums, unit systems, 
+and the basis for function tables.  Optional information in the header 
+block of function tables is now processed and in some cases checked.  
+The information items are: (All are max 8-char long descriptions) 
+
+HGRID --name for the horizontal grid being used for easting
+         and northings.  For example, SPCS83, for the state-plane 
+         coordinate system defined in 1983 using the NAD83.
+
+ZONE -- the zone designation for the horizontal grid, for example: 
+        4601 for the north zone in the state of Washington
+
+VDATUM-- The vertical datum such as: NAVD88, NGVD29, NA, ...
+
+UNITSYS -- unit system:  ENGLISH, METRIC, NA, ...
+
+BASIS --  Describe the era, date, our other item that denotes
+          the principal  source of the data in the function table. 
+
+The following are floating point numbers:
+
+EASTING -- the easting or x value for the coordinate system
+
+NORTHING -- the northing or the y value for the coordinate system.
+
+Here is an example from a cross-section table:
+
+TABID= RDXSEW_S.93
+TYPE=  -25
+ZONE=4601     HGRID=SPCS83   VDATUM=NAVD88   UNITSYS=ENGLISH  BASIS=Pre_05  
+STATION= 3.63734E+01 GISID=RDXSEW_S.93      EASTING=    1310129.680 NORTHING=     662863.810
+ELEVATION= 2.11226E+02                  EXT=-99.900000 FAC=1.000 SLOT=    0.0000
+
+
+Below is an example for a two-dimensional table generated by the CHANRAT command:
+
+TABID= RDXSZZ_ML
+TYPE=  -13 HDATUM=    91.370  CHANRAT zrhufd=    0.0000
+ZONE=4601     HGRID=SPCS83   VDATUM=NAVD88   UNITSYS=ENGLISH  BASIS=Pre_05  
+EASTING=    1275853.412 NORTHING=     702952.255
+LABEL=Flow from MM at RDXSZZ_M.93 to L1                 
+NHUP=   31
+NPFD=    7
+
+
+New values have been added to the Run-Control Block to specify the desired 
+values for these new items in the header block of function tables.  
+Below is an example from a current model:
+
+G_ZONE= 4601
+G_HGRID= SPCS83
+G_VDATUM= NAVD88
+G_UNITSYS= ENGLISH
+G_BASIS= Pre_05
+
+Note that all of these must be given,if any are. Note that the values 
+given are prescriptive with respect to vertical datum and unit system, 
+that is, the vertical datum and unit system for all function tables for 
+which these values have a meaning, MUST agree with those values given 
+in the Run-Control Block.  There are cases of function tables for which 
+the vertical datum or the unit system may not apply.  The special value 
+"NA" is then used to indicate "not applicable".  As an example, a user 
+can specify an adjustment factor as a function of time for a flow at 
+a boundary.  Below is an example of such a table: 
+
+TABID= Dogleg_out_fac
+TYPE=  -7
+ZONE=4601     HGRID=SPCS83   VDATUM=NA       UNITSYS=NA       BASIS=Pre_05  
+EASTING=          -33d6 NORTHING=          -33d6
+REFL=0.0        FAC=1.0
+YEAR MN DY      HOUR  Flow FAC    Adj of Sott Creek connection to Nksk
+1990 01 01       0.0     1.50
+3205 12 31      24.0     1.50
+2001 12 30
+
+
+In this case the table has a location.  Therefore zone, hgrid, easting 
+and northing are meaningful.  However, there is no need of a vertical 
+datum because no elevations are involved.  Furthermore the function 
+value has no units so the unit system is not involved.  Also note the 
+special values for easting and northing, -33d6.  This denotes that the 
+location of the function table has not been given yet.  The user 
+should be aware that meters, US survey feet, and international feet 
+are used in the State Plane Coordinate System.  The US survey foot 
+differs from the international foot by about 2 parts out of a million.  
+The international foot is exactly 0.3048 meter and the US survey foot 
+is 1200/3937 meter.  To further add to possible confusion, the 
+official unit for some states is the meter but surveys are still done 
+in feet-- international feet or perhaps survey feet.  For precise work 
+the difference becomes important but for most application of FEQ the 
+difference between survey feet and international feet is too small to 
+matter.  It may be that the units for elevation may differ from the 
+units for horizontal location.  Therefore, FEQ assumes that the units 
+for horizontal location are implicit in the zone/hgrid specification.  
+In practice this may be specific to a given model and may not agree 
+with what others in the same zone do--set a standard and use it 
+uniformily for a given model.   
+
+Here is another example of a header for a function table:
+
+TABID=weirc
+TYPE=   -2
+ZONE=4601     HGRID=SPCS83   VDATUM=NA       UNITSYS=ENGLISH  BASIS=Pre_05  
+EASTING=          -33d6 NORTHING=          -33d6
+REFL=       0.0 FAC=       1.0
+      Head    WeirC-
+    0.0         3.0
+  200.0         3.0
+ -1.0
+
+
+In this case the units for head are feet but they are relative to the 
+datum for head and not the datum for elevation.  Consequently the 
+vertical datum is not applicable but the unit system is.  Again the 
+location of the table may be meaningful but has not been given.  Note 
+that 33d6 in feet is larger than any plane coordinate likely to be 
+found.  Furthermore, many plane coordinate systems are devised so that 
+no valid coordinate is ever < 0.  Consequently the selection of -33d6 
+as the indicator of an unknown location.  
+
+FEQ prints a summary of the status of each function table in a given 
+run if MAKE_TAB_INDEX=YES exists in the Run-Control Block and if 
+G_ZONE has a value other than the default value of "NONE".  This 
+summary is printed in the master output file and is headed by a line: 
+"List of Function-table status found in FEQ".  As the table is 
+constructed, FEQ also supplies the easting and northing for any table 
+lacking those values and for which FEQ is able to deduce a reasonable 
+value. The updated values of easting and northing are shown with a 
+trailing 'u' to denote having been updated.   
+
+--FEQ is able to apply a constant shift value to output elevations to 
+have the output relative to a vertical datum that differs from the 
+datum used in the computations.  This shift value is given as 
+
+DZ_FOR_OUTPUT=-3.926
+
+in the Run-Control Block.  In this example a shift is made between 
+computations based on NAVD88 to results in NGVD29 for the model of the 
+Nooksack River in northwest Washington.  A constant shift is within 
+about 0.05 feet at every point in the area modeled.  By default the 
+shift is 0.0.  
+
+With the exception of DZ_FOR_OUTPUT, FEQ does not make any conversions 
+between datums.  Such conversions can be very complex and software is 
+generally available to make those conversions to full precision using 
+methods developed by the NGS and others.  From the point of view of 
+FEQ/FEQUTL, these values are descriptive and under user control.  
+Currently only the vertical datum and the unit system are checked for 
+consistency.  
+
+
+Version 10.51
+
+30 November 2007
+
+--Many minor fixes to all of the changes required for the support of 
+explicit vertical datum. 
+
+--Added message for code 4 type 3 when the slope is taken from the 
+previous time step's results and the slope goes zero or negative.  
+Computations must stop at that point. 
+
+Version 10.52
+
+27 February 2008
+
+--Increased the number of PTSF's for output to 1200.  This is no 
+longer limited to counting the number of files, but instead, it counts 
+the number of output locations involved.  Using the ADD, SUB, OUT, 
+OUTA, and QUAD options can often involve far more than 120 locations 
+from which flows are taken.  The new limit is based on 10 locations 
+per output and 120 output locations.  
+
+Version 10.53
+
+3 September 2008
+
+--Corrected errors in the code that checks for the status of the 
+vertical datum and unit system for each function table in a run.  
+There were cases of reporting of false errors as well as cases in 
+which errors could slip by without being reported.  
+
+
+Version 10.60
+
+6 October 2008
+
+--Added output of the Subversion version number and URL for the 
+source code files.  This defines the files that created the 
+executable file that produced the output. 
+
+--Added output of the Subversion version number for the global and 
+local home names.  If no home names are used or the working files 
+are not under Subversion, nothing is printed. 
+
+--Information on the versions is also placed in other output files:
+special output, point time-series files, and the files for Genscn. 
+This will help in tracing what the state of the working files for 
+each output file. 
+
+Version 10.61
+
+15 October 2008
+
+--At some point between version 10.35 and 10.60, the treatment of 
+REFL in tables of types 2, 3, 4, 7, 8, and 9, was changed.  Prior
+to this change, this value was not used by FEQ or FEQUTL.  This 
+variable has two possible roles:  (1) it could be a shift to be 
+applied to all values of the function, or (2) it could be a reference 
+level that would be used by the software at some point, like a 
+reference level for head.  NOTE: Currently no use is made of a 
+reference level for head.  If the value is a shift value, prefix it 
+with a lower case letter 's', otherwise prefix it with an 'h', or 
+just leave it 0.0 if nothing is to be used.  
+
+The default treatment for non-zero values for REFL not having either 
+a 's' or a 'h'prefix proved to be flawed.  It proves to be the case 
+that many users of the model have placed non-zero values in this 
+field either as a reminder to themselves of some reference level, or 
+in error, thinking that FEQ/FEQUTL requires a non-zero value.  The 
+default treatment had a bug in it so that the function value was 
+shifted if REFL was non-zero. 
+
+The default behavior is to treat a non-zero value without any 
+prefixing letter as if it had a prefix of 'h'.  This means that 
+the value is stored in the function table for future reference, 
+but that the function values are unaffected.  A warning message 
+is printed for every table found with a non-zero REFL and no 
+prefixing letter.  
+
+The output for these tables was also changed to reflect how the 
+REFL is treated.  
+
+-------------------------------------
+DESCRIPTION OF CHANGES MADE TO FEQUTL
+-------------------------------------
+
+Version 5.48
+
+22 April 2003
+
+---Small depths on the order of roundoff error appeared in cross 
+sections having more than one minimum point.  These small depths 
+caused subsequent problems in computation.  These have been removed.  
+The current tolerance is set at NRZERO/16.0.  The typical default 
+value for the near-zero depth value in U. S. units is 0.08 feet.  
+Thus, depths less than 0.005 feet will be ignored in computing the 
+table.  One side effect of this change is that FEQ/FEQUTL will 
+sometimes issue a warning that it has found a discrepancey in area or 
+first moment of area greater than the 0.02 tolerance at the initial 
+positive depth in the table.  This message can be ignored since the 
+absolute value of that error is quite small.  The other option is to 
+modify the cross section so that duplicate equal inverts do not occur.  
+A shift on the order of 0.1 foot in one invert should eliminate 
+the warning message when the cross-section function table is processed.  
+
+--A new bottom-slot shape is available.  This bottom slot has a top 
+width that varies exponentially from a given base cross section such 
+that the hydraulic depth is constant, that is A(y)/T(y) = Ao/To for 
+all y > yo, where yo=max depth of the base section and To= top-width 
+of the base section.  The base section is a triangle.  The new command 
+is SETSLOTE and with the default settings the input values can be left 
+the same.  However, the role of NSLOT can be expanded by adding a sign
+to the value.  
+
+ NSLOT > 0.0 -- use NSLOT as the value of Manning's n for the slot 
+                boundary
+ NSLOT < 0.0 -- compute the average of the Manning's n at the two 
+                insertion points on the boundary and multiply this 
+                average by the absolute value of NSLOT.  
+
+The command SETSLOTE has the following additional options.  They 
+should follow YSLOT/ESLOT in the order given here.  A parameter may 
+be omitted but the order of those that remain must be maintained.  
+
+RDEPTH - factor on slot depth to define yo, that is, let ym= max depth 
+         of the slot, then yo=RDEPTH*ym.  The default value of RDEPTH 
+         is 0.37937619 and the default value of To is 
+         WSLOT*RDEPTH/10.0.  If these two defaults are used then the 
+         maximum width of the bottom slot will be WSLOT and the area 
+         of the slot will be nearly RDEPTH of the area of a triangular 
+         slot with the same max depth and with WSLOT as its maximum 
+         width. Thus, shifting to using SETSLOTE from SETSLOT with 
+         no change in the parameters yields the same maximum width 
+         but with a reduced area of flow.  Increasing WSLOT from 1.0 
+         to 1/0.37...=2.6359 yields an exponential slot with a maximum 
+         top width of 2.6359 and an area equivalent to the area of the 
+         triangular slot with top width 1.0 and the same maximum depth. 
+
+TZERO -  Value for the top width of the base section.  
+
+EXPFAC - factor on the exponent in the topwidth for the exponential 
+         channel. Default value= 1.0.
+               
+Changes to RDEPTH must be done carefully because small changes can 
+yield large changes in the exponential channel.  For example using 
+RDEPTH = 0.30 instead of the default yields a maximum topwidth of 
+3.19 instead of 1.0 as given by WSLOT when YSLOT=37.  
+
+The top-width function for the exponential slot is 
+
+T(y) = To*exp[ 2.*EXPFAC*(y/yo - 1)]
+
+to aid in sorting out the effect of non-default settings. 
+
+In limited experiments to date the exponential bottom slot seems to be 
+beneficial.  It also appears that a value of NSLOT of about -0.8, 
+yielding a bottom slot only a bit less rough than the cross section, 
+is also beneficial.  However, these observations are based on only 
+one large model.  
+
+--The NRZERO depth value is NOT added to cross sections with a bottom 
+slot.  This was forced by the addition of the exponential bottom slot 
+wherein the area computed to single precision at the NRZERO depth was 
+0.0.   The purpose of the NRZERO point was to improve 
+interpolation for the square root of conveyance, and cross sections 
+with a bottom slot already have many points that avoid the problem.  
+
+--Six new cross section tables have been added.  These are types 30 
+through 35, and they mimic 20 through 25 with the addition of 
+derivatives to yield at least piecewise cubic Hermite polynomial 
+interpolation for the square root of conveyance, beta, alpha, and the 
+two curvilinear axis correction coefficients.  Only the derivatives 
+required by the contents of the table are added.  
+
+These tables have been added to yield functional representations that 
+are smoother in the sense of having continuity of the first derivative 
+and sometimes the second derivative at the tabulated depth values 
+(breakpoints).  It may be that some of the computational problems in 
+an unsteady-flow model originate at the discontinuities in first 
+derivative at breakpoints.  A review of the convergence theorems for 
+Newton's method shows that they all depend on continuity of the first 
+derivative near the root.  If one of the roots is close to a 
+breakpoint, a likely occurrence with a few thousand cross-section 
+function tables and each table with 30-100 breakpoints, then the model 
+may have convergence difficulty.
+
+The increased order of interpolation may yield more accurate values 
+of conveyance, for example, but it is not clear that the change is of 
+any significance.  None of the effort in including increased 
+smoothness in approximations was motivated by increased accuracy.  
+It was done to increase the robustness of the computations.
+
+As a side effect of these new cross-section table types, FEQUTL will 
+print out the derivatives outlined above in its output display.  
+These derivatives are computed by fitting a cubic spline to the 
+tabulated function values and limiting the first derivative at the 
+breakpoints of this spline to be such that the variation of the 
+function is monotone.  The monotone variation is forced to prevent 
+adding potentially spurious maxima or minima between breakpoints.  In 
+the printout, each derivative changed to attain monotone variation is 
+denoted by a following caret, ^, symbol.  If no caret symbol appears 
+for any derivative of an element, then we have continuous first and 
+second derivatives.  At any breakpoint having a caret the second 
+derivative will be discontinuous.  
+ 
+The tabulated values of the first derivative of the square root of 
+conveyance (dkh/dy) are useful for checking what happens with 
+non-default values of the parameters for an exponential bottom slot.  
+
+With the new commands the sequence of commands in the header block for 
+the master-input file for FEQUTL should be modified to the following:
+
+
+NCMD=      38    5
+FEQX        1
+FLOODWAY    2
+BRIDGE      3
+CULVERT     4
+FINISH      5
+SAME        6
+FEQXLST     8              
+ROADFLOW    9
+SEWER      10
+MULPIPES   11
+FTABIN     12
+EMBANKQ    13
+JUMP       14
+CRITQ      15
+GRITTER    16
+MULCON     18
+CHANRAT    19
+EXPCON     20
+HEC2X      21
+QCLIMIT    22
+XSINTERP   23
+FEQXEXT    25
+CHANNEL    26
+WSPROX     27
+WSPROQZ    28
+WSPROT14   29
+UFGATE     30
+RISERCLV   31                                                                
+ORIFICE    32
+AXIALPMP   33
+PUMPLOSS   34
+SETSLOT    35
+CLRSLOT    36
+MKEMBANK   39
+MKWSPRO    40
+wsprot14   41
+LPRFIT     42
+SETSLOTE   44
+
+
+Please note that without the addition of SETSLOTE to the header 
+block, FEQUTL will treat the command as unknown even if the executable 
+supports the command.  
+
+--Added additional warning to CULVERT under certain conditions 
+involving types 0, 1, and 2 flow.  These conditions may occur when 
+the type 0 flow occurs and the approach section is still restrictive 
+as the flows approach what CULVERT thinks is a type 1 condition.  Any 
+type 0 flow indicates potential problems because having a control at 
+section 1 is non-standard and if this control persists to higher 
+heads, expect computational failure.  See the notes on error 683 in 
+the FEQUTL documentation on what might need to be done.  
+
+--The format for the cross-section function tables has been changed 
+to increase precision.  Various cross-section function-table lookup 
+routines also have been changed.
+
+--To support conversion of type 13 tables to type 43, a value of the 
+free drop at zero upstream head will appear in tables of type 13.  
+This is non-zero only for CHANRAT and then only if there is a 
+sustaining slope to the plane.  In other cases the free drop at 
+zero upstream head should be zero.  It proves useful to have a non-
+zero value for free drop at zero head for CHANRAT to reduce the 
+rate of change of slope near zero flow.
+
+--Increased precision of elevation output in WSPROQZ.
+
+
+Version 5.50
+
+1 December 2003
+
+--In testing a new compiler, several missing commas were found in 
+format statements.  Apparently, previous compilers processed these 
+statements correctly or these formats have never been accessed.  
+
+
+Version 5.60
+
+8 June 2004
+
+--Added a global-home name to the header info so that projects may be 
+shifted from drive to drive or between MS Windows and various 
+Linux/Unix systems.  In order to make this convenient, a command-line 
+option was also added to specify a configuration file that contains 
+the header info.  Thus the same header info can be used for all 
+master-input files to FEQUTL.  Consequently, only one file needs to 
+be changed to shift to a new location if the global home name and the 
+file references in the FEQUTL input are carefully designed.  
+
+Any file name that begins with a / or \ is taken relative to any home 
+name that is active.  The only local home name that now exists in 
+FEQUTL is in the FTABIN block.  If no home name is given there, then 
+any global home name applies.  Otherwise the local home name will 
+apply.  If the file name does not start with a / or \ then it is 
+taken to be in the directory of invocation of the command.  
+
+The global home name is given as:
+
+GHOME=e:\
+
+where GHOME must start in column 1 and must be the last item in the 
+header block.
+
+If a configuration file is given on the command line, then the header 
+info in the master-input file is skipped.  This information can be 
+removed if a configuration file is supplied.  FEQUTL now also reports 
+the names of the master-input file, master-output file, function-
+table file, and the source of the configuration data in the master-
+output file. Also, FEQUTL will write the source of the configuration 
+file to the console. This information should help keep clear what 
+information FEQUTL used. 
+
+The user may wish to modifiy the batch/script file that
+invokes fequtl.  An example script line for Linux/Unix is 
+
+/pj/usf/fequtl/gnulnx/lf95/fequtl95 $1 $2 $3  -conf /pj/usf/fequtl/test/fequtl.conf
+
+An example line for a MS Windows batch file is
+
+f:\usf\fequtl\msw\lf95\fequtl #1 #2 #3  -conf f:\usf\fequtl\test\fequtl.conf
+
+The feature of command-line completion also works in this case, 
+that is, one can type as a valid command:
+
+fequtl fequtl.exm
+
+and the master-output file will be fequtl.out and the function-table 
+file will be fequtl.tab.  The configuration file is found in this case. 
+
+Please note that there must be at least one space between -conf and 
+the first character of the configuration file-name specification. 
+
+--Changed input of TABID and TYPE and control parameters for CHANRAT 
+to named-item input.  Two lines can be taken for this input to match 
+what was used in the fixed format.  However, it is possible to place 
+all of these items on a single line. 
+
+Examples:
+
+1.0 The old fixed form will still work so long as no changes to 
+default values are made:
+
+CHANRAT
+TABID=  600  
+TYPE=   13 
+LABEL=TEST OF CHANRAT-using auto arguments
+XSTAB= 100
+BOTSLP=0.003
+LENGTH=000000030. MIDELEV= TAB
+HEAD SEQUENCE FOR TABLE
+NFRAC= 60
+POWER= 1.5
+LIPREC= 0.02
+MINPFD= 0.1
+0.25
+10.0
+-1.0
+
+A new variable to control the table has been added, the target minimum 
+flow, MINQ.  This is given as one of the options.  The other optional 
+inputs, ERRKND, INTHOW, EPSINT, NDDABS, and NDDREL, are rarely needed, 
+but if given, must follow the named-item pattern.  For example, to 
+change the integration convergence tolerance from the default of 0.1 
+to 0.2 and to set the target minimum flow to 1.5, one could use: 
+
+CHANRAT
+TABID=  600  TYPE=   13  MINQ= 1.5  EPSINT=0.20
+LABEL=TEST OF CHANRAT-using auto arguments
+XSTAB= 100
+BOTSLP=0.003
+LENGTH=000000030. MIDELEV= TAB
+HEAD SEQUENCE FOR TABLE
+NFRAC= 60
+POWER= 1.5
+LIPREC= 0.02
+MINPFD= 0.1
+0.25
+10.0
+-1.0
+
+With this option added to the input, if desired, there is better 
+control over MINQ.  In prior versions, the only way to set MINQ 
+for CHANRAT was through the global value given in the header block 
+and now in the configuration file.  This sometimes proved messy 
+because not all structures in a single master-input file require 
+the same target minimum flow.  In most cases a single value will 
+work, but there were some exceptions that required isolating the 
+structure or structures to their own master-input file.  
+
+
+Version 5.61
+
+29 June 2004
+
+--Added detection of the operating system to FEQUTL so that the proper 
+name divider could be placed in file names.  This was included so that
+inputs can be transferred between MS Windows and Linux/Unix without 
+having to change them.  
+
+
+Version 5.65
+
+25 August 2004
+
+--Changed length of files names for all but command line arguments to 
+be 128 characters.  
+
+--In the process of doing extensive checking of the file-name-length 
+changes, global checking was enabled in the compiler.  This checks 
+many things including un-initialized variables.  Several such 
+variables appeared and have been fixed.  The following is a synopsis 
+of what was changed.  
+
+1.  Sinuosity values were not being set properly for SEWER, MULPIPES, 
+and MULCON.  However, that had no effect because even though these 
+values were being moved around they were not used in the computations.  
+FEQUTL always disables sinuosity corrections in closed conduits.  
+However, the variables involved were initialized to prevent problems 
+during further such checks.  
+
+2.  A bug was found in setting the line-segment Manning's n values in 
+MULCON.  One or two line segments could get a Manning's n at one 
+point, that is for one line segment, that came from an adjacent 
+conduit.  Thus, if the conduits in the system had differing Manning's 
+n, the near flowing full values of conveyance would be affected.  In 
+one test case the changes in conveyance were about 0.4 percent when 
+flowing full.  However, this was a test case in which the conduit 
+diameters varied by more than a factor of two.  Normally this would 
+not be the case.  
+
+3.  The CULVERT command had two cases of un-initialized variables.  One 
+involved using a type 1 value when type 1 flow was not possible.  When 
+corrected, the same results were obtained for the flows in the culvert.  
+However, there might have been some cases where this was not true.  
+
+The other involved a type 5 flow submergence-limit computation and the 
+starting value for an iterative solution was not set.  However, 
+after setting it to a proper value, the same results were obtained 
+as before.  
+
+
+Version 5.66
+
+8 June 2005
+
+--A bug was detected in an area increment by the output routine in 
+FEQUTL.  The problem was eventually traced to the routine that removes 
+duplicate elevations and near duplicate elevations from the list of 
+breakpoints in top-width variation for a cross section.  Detection of 
+near duplicates was not properly scaled when the elevations were in 
+the range of 700's or more.  Thus, one or more breakpoints at the end 
+of boundary line segments that deviated only slightly from horizontal 
+were deleted from the list.  This would then skip a breakpoint that 
+should have been included in the table.  The top widths and areas 
+given in the final table were correct, but some increments in area and 
+related elements were incorrect because a breakpoint was improperly 
+left out.  
+
+The scaling has been changed to detect cases of near duplication when 
+the elevations are large.  However, there may still be cases were the 
+increments in area or first moment of area will fail the test in the 
+output routine.  FEQUTL will stop at this point.  To get FEQUTL to 
+compute the table, scan the cross section for nearly horizontal line 
+segments and increase the deviation from horizontal for any found.  
+The tolerance for near duplicates is determined as follows: 
+
+1. Compute the average of the maximum and minimum elevation in the 
+table. 
+
+2.  Subtract the minimum elevation from the average in 1. to yield 
+an "average" depth for the table. 
+
+3.  For each adjacent pair of elevations in the list of breakpoint 
+elevations, compute the difference in elevation and divide by the 
+average depth computed in 2.  This gives the relative difference in 
+depth for that interval.  
+
+4. If the absolute value of the relative difference in depth is less 
+than 1 x 10^-5, then retain only one of the two elevations in the 
+breakpoint list.  
+
+Example: If the max elevation is 710 and the min elevation is 705, 
+then the average depth is: (710 - 705)/2 - 705 = 2.5.  In order for an 
+elevation breakpoint to be included in the final list, its elevation 
+must deviate by more than 2.5 x 1 x 10^-5 = 2.5 x 10^-5.  If the line 
+segment ending at a deleted elevation breakpoint is long, then the 
+loss of area might be large enough to be noticed.  In this example, a 
+line segment 1000 feet long would yield an error of about (1000 x 2.5 
+x 10^-5)/2= 0.0125 ft^2.  This is clearly a negligible amount given 
+the size of the cross section.  
+
+
+Version 5.67
+
+25 October 2005
+
+--Changes to FEQ required some changes to the storage of 1-D tables
+of types 2, 3, and 4.  
+
+
+Version 5.68
+
+26 October 2006
+
+--Found that GISID was not initialized to blank in subroutines MULCON, 
+PIPES, and SEWER.  Currently, FEQUTL does not input a value for GISID 
+for these sections.  Therefore, GISID was set to blank in these 
+subroutines.  In subroutine TABOUT, a blank value of GISID is then set 
+to the table id for output.  
+
+
+Version 5.70
+
+16 December 2006
+
+--Added output of a version/run date-time string to all of the 
+function-table files.  The lines were added as comments so FEQ or 
+FEQUTL will skip those lines when reading the files.  These items of 
+information will prove useful in tracing the parentage of various 
+files, especially if multiple copies of files of the same name exist 
+in different directories or in a version control system.  
+
+
+Version 5.71
+
+30 March 2007
+
+--Modified wsprot14 to check for changes in tailwater elevation made 
+by WSPRO when the flow state at the exit section is deemed to be super 
+critical.  In that case, WSPRO computes the critical depth for the 
+given flow, and goes on.  What we want is to reduce the flow until the 
+flow state is subcritical at the given water-surface elevation.  
+FEQUTL will NOT output a type 14 table if it finds that any of the 
+tailwater elevations have been changed.  An error message is issued 
+for each one found.  The flows have to be reduced until WSPRO finds 
+the flow in a subcritical state at the exit section.
+
+
+Version 5.75 
+
+29 October 2007
+
+--Added support for attaching a description to each function table 
+that documents the following information about the table: 
+
+1.  Define the horizontal datum of any eastings/northings included in 
+the table.  These will appear in some tables, depending on the data 
+available for their computation.  Easting and northing fields have 
+been added to all tables.  Until this version, the only tables that 
+had such options were cross-section function tables.  The horizontal 
+datum is described using two eight-character fields: ZONE and HGRID.  
+The values supplied for these fields are user defined.  However, once 
+selected, the values must be used with complete consistency for all 
+tables in a model.  
+
+2.  Define the vertical datum of the elevations that may be in the 
+table.  This is defined by an eight-character field labeled: VDATUM.  
+Again the contents of this field are user defined.  
+
+3.  The system of units used in the table.  This field is labeled 
+with: UNITSYS and again its contents are user defined.  It also has a 
+maximum of eight characaters.  
+
+4.  The basis or source or era of the data in the table.  This field 
+is labelled as: BASIS and is eight-characters in length and is again 
+user defined.  
+
+The reason for adding these labels is that the United States is 
+undergoing a shift in datum, both for horizontal and vertical 
+measurements.  The new datums are already in use, for example, recent 
+maps from the USGS already make use of them.  Some GIS databases 
+already make use of them.  However, the transition from the older 
+datums to the newer datums will take place over a protrated period of 
+time and will probably be done model by model.  Thus it is possible 
+that both sets of datums will be in use by one organization and 
+therefore it becomes helpful to have explicit labels attached to 
+function tables to help avoid extra confusion in this process.  
+
+Here are some examples of using these values in FEQUTL.  Only the 
+relevant parts of the input are shown to avoid a huge number of lines.
+
+Example using FEQXEXT with the input generated by a utility program
+that used 3-D sections extracted from a DTM.
+
+FEQXEXT
+TABID=RDXSBJ_S.93      NOOUT MONOTONE EXTEND NEWBETAM
+GISID=RDXSBJ_S.93
+STATION=   28.5293
+ZONE=4601 HGRID=SPCS83 VDATUM=NAVD88 UNITSYS=ENGLISH BASIS=Pre_05
+SHIFT=3.926
+EASTING=  1284704.08 NORTHING=   683186.55
+VARN=NCON
+NSUB   41  0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.086
+           0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.085
+           0.074  0.074  0.074  0.074  0.074  0.074  0.074  0.074  0.074  0.074
+           0.074  0.074  0.074  0.074  0.068  0.057  0.057  0.057  0.057  0.057
+           0.057
+    OFFSET ELEVATION SUBS    N0
+
+The new items are named-item format.  Therefore each name and its 
+value must appear on the same line but the order and the placement is 
+user defined. That is, the input above could be entered as:
+
+FEQXEXT
+TABID=RDXSBJ_S.93      NOOUT MONOTONE EXTEND NEWBETAM
+GISID=RDXSBJ_S.93
+STATION=   28.5293
+EASTING=  1284704.08 NORTHING=   683186.55
+ZONE=4601 
+HGRID=SPCS83 VDATUM=NAVD88 
+UNITSYS=ENGLISH BASIS=Pre_05
+SHIFT=3.926
+VARN=NCON
+NSUB   41  0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.086
+           0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.086  0.085
+           0.074  0.074  0.074  0.074  0.074  0.074  0.074  0.074  0.074  0.074
+           0.074  0.074  0.074  0.074  0.068  0.057  0.057  0.057  0.057  0.057
+           0.057
+    OFFSET ELEVATION SUBS    N0
+
+and still obtain the same result.  Lines below and including NSUB must 
+appear as shown however. 
+
+The output from either one of these inputs yields:
+
+TABID= RDXSBJ_S.93
+TYPE=  -25
+ZONE=4601     HGRID=SPCS83   VDATUM=NAVD88   UNITSYS=ENGLISH  BASIS=Pre_05  
+STATION= 2.85293E+01 GISID=RDXSBJ_S.93      EASTING=    1284704.080 NORTHING=     683186.550
+ELEVATION= 1.17356E+02                  EXT=-99.900000 FAC=1.000 SLOT=    0.0000
+     Depth Top_width         Area   Sqrt(Conv)      Beta First_moment     Alpha        Critq        Ma        Mq
+
+
+Notice that the new labels are just echoed to the output.  However, 
+in the function table itself, the format is fixed, that is each label 
+must appear exactly in the position shown.  The items are not named-
+item.  Most often these tables are created by a computer program and 
+are read by a computer program, so the fixed formats do not cause 
+major problems.  However, if the function table is modified manually, 
+one must exercise care that the fixed format is followed.
+
+Here is an example of a CHANRAT command, again generated from a 
+utility program that uses 3-D sections and this program extracts an 
+appropriate easting and northing:
+
+CHANRAT
+TABID=RDEGEF_M.1R
+TYPE= 13
+ZONE=4601     HGRID=SPCS83   VDATUM=NAVD88   UNITSYS=ENGLISH  BASIS=Pre_05  
+EASTING=    1304906.856 NORTHING=     667997.465
+LABEL=Flow fromMM at RDEGEF_M.1 to R1                   
+XSTAB=RDEGEF_M.1R_XS  
+BOTSLP=        0.
+LENGTH=    50.0   MIDELEV=       TAB
+HEAD SEQUENCE FOR TABLE
+NFRAC= 60 
+POWER= 1.5
+LIPREC= 0.010
+MINPFD= 0.10
+0.25
+20.0
+-1.
+
+The output from this input fragment looks like this:
+
+TABID= RDEGEF_M.1R
+TYPE=  -13 HDATUM=   201.900  CHANRAT zrhufd=    0.0000
+ZONE=4601     HGRID=SPCS83   VDATUM=NAVD88   UNITSYS=ENGLISH  BASIS=Pre_05  
+EASTING=    1304906.856 NORTHING=     667997.465
+LABEL=Flow fromMM at RDEGEF_M.1 to R1                   
+NHUP=   35
+NPFD=    7
+HUP     2605-4 2957-4 3363-4 3747-4 4081-4 4465-4 4932-4 5462-4 6092-4 6616-4
+FDROP   1376-4 1538-4 1725-4 1898-4 2021-4 2141-4 2270-4 2408-4 2569-4 2715-4
+
+
+All the fields are fixed format.
+
+FEQUTL does not make any conversions between datums.  Such conversions 
+can be very complex and software is generally available to make those 
+conversions to full precision using methods developed by the NGS and 
+others.  From the point of view of FEQ/FEQUTL, these values are 
+descriptive and under user control.  Currently, only the vertical 
+datum and the unit system are checked for consistency.  
+
+Working with varying datums can become confusing and even a simple 
+typing error in one of the new fields could result in FEQ complaining 
+because it has found an inconsistent vertical datum or unit system 
+(the only two values now checked by FEQ).  Consequently, new global 
+values for these new items of information have been put into the 
+FEQUTL configuration file (See this file under version 5.60 to get an 
+overview of the configuration file.  It is just the header information 
+placed into a file.) These new values are prescriptive, that is, they 
+are used to force all input values to conform.  Thus a typing error 
+or just a mistake in the datum given, will be detected by FEQUTL.  
+
+Here is an example configuration file:
+
+UNITS=  ENGLISH  NOMINAL      45.0       0.0
+NCMD=      35
+FEQX        1
+FLOODWAY    2
+BRIDGE      3
+CULVERT     4
+FINISH      5
+FEQXLST     8              
+SEWER      10
+MULPIPES   11
+FTABIN     12
+EMBANKQ    13
+CRITQ      15
+GRITTER    16
+MULCON     18
+CHANRAT    19
+EXPCON     20
+HEC2X      21
+QCLIMIT    22
+XSINTERP   23
+FEQXEXT    25
+CHANNEL    26
+WSPROX     27
+WSPROQZ    28
+WSPROT14   29
+UFGATE     30
+RISERCLV   31
+ORIFICE    32
+AXIALPMP   33
+PUMPLOSS   34
+SETSLOT    35
+CLRSLOT    36
+MKEMBANK   39
+MKWSPRO    40
+wsprot14   41
+LPRFIT     42
+SETSLOTE   44
+DZLIM= 2.55
+NRZERO= 0.08
+USGSBETA=NO
+EPSARG=5.E-5
+EPSF=     1.E-4 EPSABS= 1.E-4
+EXTEND=NO
+MINQ= 1.0
+GHOME=/pj/software/usf/fequtl/test
+G_ZONE = 4601
+G_HGRID = SPSC83
+G_VDATUM = NAVD88
+G_UNITSYS = ENGLISH
+G_BASIS = DTM
+
+
+; Make sure that the config file contains several blank lines at the end
+
+
+
+The new values are:
+
+  G_ZONE giving the required zone value for all commands. 
+  G_HGRID giving the required horizontal grid for all commands
+  G_VDATUM giving the required vertical datum for all commands
+  G_UNITSY giving the required unit system for all commands
+  G_BASIS giving the required basis for all commands.
+
+All must be given or all must be omitted, and they must be in the 
+order shown.  If present, FEQUTL will complain with an error message 
+if any command that can have the value is missing a value or has a 
+response that differs from the global value (the G prefix stands for 
+"global").  Currently, this only applies to the vertical datum and 
+the unit system.  However, it may be extended to the other values at 
+a later time when more extensive use is made of the easting and 
+northing values.  Using the response NA for the vertical datum or the 
+unit system will avoid the error message.  
+
+Here is a synopsis of what happens under certain combinations
+of input:
+
+1. Global values not present in the configuration file
+
+   No checking for consistency in vertical datum or unit system. 
+   Complete freedom for specifying these values for a given function
+   table or not specifying these values.  If specified, they will 
+   appear in the function table. 
+
+2. Global values present in the configuration file
+
+    Each command that supports the values must have them 
+    present or an error message will abort the run.  The 
+    vertical datum and the unit system response must match 
+    their global value but all others are not checked. 
+    The response NA for the vertical datum or the unit system
+    will suppress checking that value.  All values will be 
+    placed in the computed function table. 
+
+
+Version 5.76 
+
+5 September 2008
+
+--Fixed problem that NA was not properly recognized as an 
+error-suppressing response for the vertical datum and unit system.  
+
+--Fixed problem in HEC2X so that the location items, zone, hgrid, 
+vdatum, unitsys, basis, easting and northing, were output to each 
+cross section when the user supplied these values in the input.  
+
+Version 5.80
+
+6 October 2008
+
+--Added output of the source code repository and the Subversion 
+version number.  This should define the set of files used to create 
+the executable file that produced the output.  This also appears in 
+the function-table file. 
+
+--Added output of the Subversion version if the global home name or 
+a local home name are under it.  Otherwise, nothing should be printed.  
+If the home names are not used, nothing is printed.  
+
+23 March 2009
+
+--Found that the selection of variation of Manning's n with depth in 
+FEQXEXT was ignored by the code and was being treated as a case of 
+constant n.  This mistake first appeared in version 5.75.  It is 
+now corrected in this version.  

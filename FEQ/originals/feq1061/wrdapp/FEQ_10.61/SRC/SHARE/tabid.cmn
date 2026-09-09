@@ -1,0 +1,8 @@
+C     Common block for table id's.  Position such that it can be 
+C     released at the proper time.
+
+      CHARACTER*16 TABID_TABLE(MFTNUM)
+      INTEGER NUM_TABID
+
+      COMMON /TABID/ NUM_TABID
+      COMMON /TABIDC/ TABID_TABLE

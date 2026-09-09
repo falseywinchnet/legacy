@@ -1,0 +1,87 @@
+--- 9.98/fequtl/culvertb.for
++++ 10.61/fequtl/culvertb.for
+@@ -921,7 +921,7 @@
+ C     + + + OUTPUT FORMATS + + +
+  50   FORMAT(/,' *ERR:570* Zero depth before negative residual while',
+      A         ' seeking Type 1 limit.')
+- 52   FORMAT(/,' *ERR:594* Maximum depth before positive residual'
++ 52   FORMAT(/,' *ERR:594* Maximum depth before positive residual',
+      A         ' while seeking Type 1 limit.')
+  54   FORMAT(' *BUG:XXX* SIGN CHNG ON ENTRY BUT REGFLT CLAIMS NONE IN',
+      A       ' TY1GY2.')
+@@ -1190,6 +1190,11 @@
+ 89    FORMAT(' Minimum depth at section 2 for critical flow match >',
+      A       ' limit at section 2=',F8.3,'.',/,
+      B       '  Type 1 flow not possible.')
++90    format(/,' Warning: Sequence of conditions to this point',
++     a /,'indicates possible computational failure.  If computations',
++     b /,'fail, be sure to read all descriptions of error messages',
++     c /,'that appear.  Representation of the culvert may need',
++     d /,'adjustment to allow flow computations to continue.')
+ C***********************************************************************
+       EFLAG = 0
+ C     Find if type 1 flow even exists and if so find values
+@@ -1523,6 +1528,12 @@
+           WRITE(STDOUT,84) CD1T6, BT1T6, AP1T6
+  
+         ENDIF
++      else
++c       CULVERT has computed the free-flow limits for type 1 flow.  However, the
++c       limiting condition for the water-surface elevation at section 1 is such that 
++c       the ratio of approach head to vertical diameter is < 1.0!  
++        write(stdout, 90) 
++
+       ENDIF
+       RETURN
+       END
+@@ -1624,6 +1635,7 @@
+       BETAF = 0.0
+       BETA3 = 0.0
+       ALPHA3 = 0.0
++c      write(stdout,*) 'TY1BDY: CD1=',cd1
+       IF(CD1.EQ.0.0) THEN
+ C       Type 1 limit not set yet.  Try to find it.
+         CALL TY1BDY
+@@ -1661,6 +1673,7 @@
+ C             type 1 flow at this limit is critical depth.  In this case
+ C             the value of Y3LTY1 is critical depth.   Start the
+ C             process at a slightly higher depth.
++              write(stdout,*) ' Y3LTY1=',y3lty1
+               FG = Y3LTY1 + 0.1*(HUP + HDATUM - Z1TY2)
+             ELSE
+               FG = 0.0
+@@ -4132,6 +4145,7 @@
+       SUBROUTINE   FRFT12
+      I                   (STDOUT, HDATUM, ZDATUM, HUP, DUP, DDN, IU, ID,
+      I                    CULCLS, TRUEA1,
++     M                    CD1,
+      O                    EFLAG, TYPE, CONFLG, EXPFLG, QFREE, FREED)
+  
+ C     + + + PURPOSE + + +
+@@ -4141,7 +4155,7 @@
+ 
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER CONFLG, EFLAG, EXPFLG, ID, IU, STDOUT, TYPE
+-      REAL DDN, DUP, FREED, HDATUM, HUP, QFREE, TRUEA1, ZDATUM
++      REAL CD1, DDN, DUP, FREED, HDATUM, HUP, QFREE, TRUEA1, ZDATUM
+       CHARACTER CULCLS*8
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -4155,6 +4169,8 @@
+ C     ID     - Index for the downstream node for the culvert barrel
+ C     CULCLS - Class for culvert shape, BOX, PIPE, ..
+ C     TRUEA1 - area at section 1
++C     CD1 - Type 1 discharge coef.  -1 if type 1 not possible. 0 if
++c              not tested yet, > 0 if known.
+ C     EFLAG  - Error flag: EFLAG=0-no errors; else one or more errors
+ C     TYPE   - Culvert flow type
+ C     CONFLG - CONFLG=0: flow contracts as it enters the culvert and
+@@ -4181,7 +4197,7 @@
+ C     NON-TYPE 1 FLOW
+  
+       SB = (ZBVEC(IU) - ZBVEC(IU+1))/ABS(XVEC(IU) - XVEC(IU+1))
+-      IF(SB.GT.0.0) THEN
++      IF(SB.GT.0.0 .AND. CD1 >= 0.0) THEN
+ C       TRY TYPE 1 FLOW
+         TYPE = 1
+         CALL FRFT1

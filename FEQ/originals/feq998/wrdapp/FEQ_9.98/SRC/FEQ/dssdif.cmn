@@ -1,0 +1,19 @@
+C***********************************************************************
+      COMMON/DSSDIF/ JTVEC, TSFDT_DSS, HALF_TSFDT_DSS, BUF_DT, 
+     A          DSS_INDEX_DIFF, TIME_STEP_DIFF, TMPVEC
+
+      COMMON/DSSDIFC/ PATH_NAME_DIFF
+
+      CHARACTER*80 PATH_NAME_DIFF(MNDIFA)
+
+      INTEGER  DSS_INDEX_DIFF(MXN_TS), 
+     B        TIME_STEP_DIFF(MXN_TS)
+
+      REAL TMPVEC(MNDBUF+1)
+
+      DOUBLE PRECISION JTVEC(MNDBUF+1), TSFDT_DSS, HALF_TSFDT_DSS, 
+     A            BUF_DT
+C***********************************************************************
+
+                  
+

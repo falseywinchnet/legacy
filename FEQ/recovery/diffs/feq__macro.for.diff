@@ -1,0 +1,84 @@
+--- 9.98/feq/macro.for
++++ 10.61/feq/macro.for
+@@ -354,11 +354,12 @@
+ 
+       INCLUDE 'macro.cmn'
+ 
+-C     Local
++      external os_file_style, maybe_add_home
++
+ 
+ C     Local variables
+ 
+-      CHARACTER LINE*200, LONG_LINE*196, MACRO_FILE_NAME*64
++      CHARACTER LINE*200, LONG_LINE*196, MACRO_FILE_NAME*256
+ 
+       INTEGER MAX_NVAL
+ 
+@@ -381,12 +382,12 @@
+      A        TERML(MAX_NVAL), TERMCLS(MAX_NVAL)
+       REAL RVAL(MAX_NVAL)
+       REAL*8 DPVAL(MAX_NVAL)
+-      CHARACTER CVAL(MAX_NVAL)*64, TERM(MAX_NVAL)*1, MACRO_NAME*16
++      CHARACTER CVAL(MAX_NVAL)*256, TERM(MAX_NVAL)*1, MACRO_NAME*16
+ 
+ C     Called program units and intrinsics.
+       INTEGER LENSTR, GET_UNIT
+ 
+-      EXTERNAL TO_UPPER, INL196, GETVAL, LSA_GLOBAL, LENSTR, GET_UNIT,
++      EXTERNAL TO_UPPER, inline, GETVAL, LSA_GLOBAL, LENSTR, GET_UNIT,
+      A         FREE_UNIT
+ 
+       INTRINSIC INDEX
+@@ -449,7 +450,7 @@
+ C       Get the next line of input.  Could be in the current macro
+ C       file as well as in the user input file. 
+ 
+-        CALL INL196
++        CALL inline
+      I              (INPUT_UNIT, STDOUT,
+      O               LONG_LINE)
+         IF(INPUT_UNIT.EQ.FILE_UNIT) THEN
+@@ -503,15 +504,20 @@
+                   IF(FILE_FLAG.EQ.0) THEN
+ C                   Open the file. 
+                     MACRO_FILE_NAME = CVAL(2)
+-                    INQUIRE(FILE=CVAL(2), EXIST=THERE)
++                    CALL MAYBE_ADD_HOME(
++     M                                  macro_file_name)
++                    call os_file_style(
++     m                                              macro_file_name)
++                    INQUIRE(FILE=macro_file_name, EXIST=THERE)
+                     IF(THERE) THEN
+                       FILE_UNIT = GET_UNIT(STDOUT)
+-                      OPEN(UNIT=FILE_UNIT, FILE=CVAL(2), STATUS='OLD')
++                      OPEN(UNIT=FILE_UNIT, FILE=macro_file_name, 
++     a                                             STATUS='OLD')
+                       FILE_FLAG = 1
+-                      WRITE(STDOUT,74) CVAL(2)(1:CLEN(2))
++                      WRITE(STDOUT,74) macro_file_name
+                       GOTO 9000
+                     ELSE
+-                      WRITE(STDOUT,50) CVAL(2)
++                      WRITE(STDOUT,50) macro_file_name
+                       STOP 'Abnormal stop: errors found.'
+                     ENDIF
+                   ELSE
+@@ -740,7 +746,7 @@
+ 
+       INTEGER STDOUT, ADDRESS, NVAL, CLEN(NVAL), EFLAG
+ 
+-      CHARACTER*64 CVAL(NVAL)
++      CHARACTER*(*) CVAL(NVAL)
+ 
+       INCLUDE 'macro.cmn'
+ 
+@@ -824,7 +830,7 @@
+       INTEGER NVAL, MAX_NVAL, CLEN(MAX_NVAL), ITEM_TYPE(MAX_NVAL),
+      A        TERMCLS(MAX_NVAL), TERML(MAX_NVAL)
+ 
+-      CHARACTER CVAL(MAX_NVAL)*64, TERM(MAX_NVAL)*1
++      CHARACTER CVAL(MAX_NVAL)*256, TERM(MAX_NVAL)*1
+ 
+ C     Local
+ 

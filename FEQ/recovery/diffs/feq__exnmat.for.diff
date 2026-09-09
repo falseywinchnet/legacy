@@ -1,0 +1,1031 @@
+--- 9.98/feq/exnmat.for
++++ 10.61/feq/exnmat.for
+@@ -5,7 +5,7 @@
+ C
+ C
+       SUBROUTINE   ABREXP
+-     I                   (IPNT, GRAV, STDOUT, TIME, NEX, MREMC, EXNODT,
++     I                   (IPNT, GRAV, STDOUT, JTIME, NEX, MREMC, EXNODT,
+      I                    QE2, YE2, ZE,
+      M                    EMC,
+      O                    RES, PYL, PQL, PYR, PQR)
+@@ -29,8 +29,9 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IPNT, STDOUT, MREMC, NEX
+       INTEGER EMC(MREMC), EXNODT(9,NEX)
+-      REAL GRAV, PQL, PQR, PYL, PYR, QE2(NEX), RES, TIME, YE2(NEX),
++      REAL GRAV, PQL, PQR, PYL, PYR, QE2(NEX), RES,  YE2(NEX),
+      A     ZE(NEX)
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IPNT   - pointer into EMC for description of control structure
+@@ -80,7 +81,7 @@
+  
+ C     + + + OUTPUT FORMATS + + +
+  50   FORMAT(/,' *WRN:05* ABRUPT EXPANSION CANNOT ALLOW REVERSE',
+-     1       ' FLOW AT TIME=',F14.0,/,4X,'WITH FLOW=',1PE12.4,
++     1       ' FLOW AT JTIME=',F14.2,/,4X,'WITH FLOW=',1PE12.4,
+      2       ' UPS NODE=',A5,' AND DNS NODE=',A5)
+  52   FORMAT(/,' *WRN:06* INVALID CRITICAL DEPTH FACTOR AT UPS',
+      1       ' NODE=',A5,' IN ABRUPT EXPANSION.',/,4X,'DEPTH=',F10.1)
+@@ -111,7 +112,7 @@
+       IF(FSGN.LT.0) THEN
+ C       REVERSE FLOW NOT PERMITTED
+  
+-        WRITE(STDOUT,50) TIME, QE2(QNN), GETUSN(UNN), GETUSN(DNN)
++        WRITE(STDOUT,50) JTIME, QE2(QNN), GETUSN(UNN), GETUSN(DNN)
+  
+ C       REPRESENT AS A CLOSED BOUNDARY
+  
+@@ -644,7 +645,7 @@
+ C
+       SUBROUTINE   BDFWR
+      I                  (IPNT, EMC, MLEMC, YE2, ZE, QE2, AE2, TE2, NEX,
+-     I                   STDOUT, TIME, GRAV,
++     I                   STDOUT, JTIME, GRAV,
+      O                   RES, PYL, PQL, PYR, PQR)
+  
+ C     + + + PURPOSE + + +
+@@ -658,7 +659,8 @@
+       INTEGER IPNT, STDOUT, MLEMC, NEX
+       INTEGER EMC(MLEMC)
+       REAL AE2(NEX), GRAV, PQL, PQR, PYL, PYR, QE2(NEX), RES, TE2(NEX),
+-     A     TIME, YE2(NEX), ZE(NEX)
++     A      YE2(NEX), ZE(NEX)
++      REAL*8 JTIME
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IPNT   - pointer into EMC for description of control structure
+@@ -740,8 +742,8 @@
+ C       LOOK UP VALUE IN TABLE BASED ON TIME AT START OF THE CURRENT
+ C       STEP
+  
+-        CALL LKTAB
+-     I            (IABS(OPCODE), TIME, 0,
++        CALL LKTSTAB
++     I            (IABS(OPCODE), JTIME,
+      O             P, NTAB, DTIME)
+         IF(P.LT.0.0.OR.P.GT.1.0) THEN
+           WRITE(STDOUT,50) GET_TABID(NTAB)
+@@ -1439,7 +1441,7 @@
+ C
+ C
+       SUBROUTINE   CONTRL
+-     I                   (IPNT, STDOUT, NBN, NEX, OUTPUT, TIME, EXNODT,
++     I                   (IPNT, STDOUT, NBN, NEX, OUTPUT, JTIME, EXNODT,
+      I                    EMC, Y1, ZVEC, DXVEC, EPT,
+      O                    PDV, DISCH)
+  
+@@ -1451,7 +1453,8 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IPNT, STDOUT, EPT, NBN, NEX, OUTPUT
+       INTEGER EMC(EPT), EXNODT(9,NEX)
+-      REAL DISCH, DXVEC(NBN), PDV, TIME, Y1(NBN), ZVEC(NBN)
++      REAL DISCH, DXVEC(NBN), PDV, Y1(NBN), ZVEC(NBN)
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IPNT   - pointer into EMC for description of control structure
+@@ -1507,8 +1510,11 @@
+       EXTERNAL GETUSN, LKTAB, XLKT20, GET_TABID
+  
+ C     + + + OUTPUT FORMATS + + +
+- 50   FORMAT('/, *ERR:64* Table Id=',A,' has invalid values for',
++ 50   FORMAT(/,' *ERR:64* Table Id=',A,' has invalid values for',
+      A  ' structure setting.')
++ 52   format(/,' *ERR:XXX* Slope for computing flow < 0.0 at node: ',a6,
++     a  '. Cannot continue computation.',/,'  Review source for the ',
++     b  'slope or change the nature of the control at this node')
+  2010 FORMAT(/,'SUBROUTINE CONTRL RETURNS :',/,1X,
+      A           ' UNN =  ',I5,' PDV =  ',E12.5,' DISCH =  ',E12.5)
+ C***********************************************************************
+@@ -1599,6 +1605,10 @@
+      I           (XSAD,
+      M            Y,
+      O            AREA, TOP, DTOP, CONVEY, DCONVY, B, DB)
++      if(slope <= 0.0) then
++        write(stdout,52) getusn(unn)
++        stop 'Abnormal stop: errors found.'
++      endif
+       DISCH = CONVEY*SQRT(SLOPE)
+       PDV = SQRT(SLOPE)*DCONVY
+       GOTO 9000
+@@ -1626,8 +1636,8 @@
+       IF(TYPE.EQ.5) GOTO 403
+  
+       ADRS = EMC(IPNT+6)
+-      CALL LKTAB
+-     I          (ADRS, TIME, 1,
++      CALL LKTSTAB
++     I          (ADRS, JTIME,
+      O           P, NTAB, HEAD)
+       IF(P.LT.0.0.OR.P.GT.1.0) THEN
+         WRITE(STDOUT,50) GET_TABID(NTAB)
+@@ -1675,8 +1685,8 @@
+  
+ C       FIND THE CONTROLLING VALUE.
+  
+-        CALL LKTAB
+-     I            (CONTAB, TIME, 1,
++        CALL LKTSTAB
++     I            (CONTAB, JTIME,
+      O             CONLEV, NTAB, PDVDUM)
+  
+ C       FIND THE LIMITING FLOWRATE
+@@ -1709,7 +1719,7 @@
+ C
+ C
+       SUBROUTINE   EXCON
+-     I                  (IPNT, STDOUT, TIME, NEX, MLEMCV, EXNODT,
++     I                  (IPNT, STDOUT, JTIME, NEX, MLEMCV, EXNODT,
+      I                   QE2, YE2, ZE,
+      M                   EMC,
+      O                   RES, PYL, PQL, PYR, PQR)
+@@ -1724,8 +1734,9 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IPNT, STDOUT, MLEMCV, NEX
+       INTEGER EMC(MLEMCV), EXNODT(9,NEX)
+-      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES, TIME, YE2(NEX),
++      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES, YE2(NEX),
+      A     ZE(NEX)
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IPNT   - pointer into EMC for description of control structure
+@@ -1783,7 +1794,7 @@
+  
+ C     + + + OUTPUT FORMATS + + +
+  10     FORMAT(/,' *ERR:85*  Numeric problem in SUBROUTINE EXCON.',/,
+-     1         3I5,F10.0,6(1PE13.5))
++     1         3I5,F14.2,6(1PE13.5))
+ C***********************************************************************
+ C     GET KEY VALUES FROM EMC.  IPNT POINTS
+ C     TO CODE.
+@@ -1945,7 +1956,7 @@
+       IF(FAC.LT.0.0) GOTO 250
+  
+ C       ERROR HERE
+-        WRITE(STDOUT,10) UNN, DNN, FSGN, TIME, YC, TC, AC, BC, DBC
++        WRITE(STDOUT,10) UNN, DNN, FSGN, JTIME, YC, TC, AC, BC, DBC
+         STOP 'Abnormal stop: errors found.'
+  250  CONTINUE
+  
+@@ -2609,7 +2620,7 @@
+ C
+       SUBROUTINE   MCHGAT
+      I                   (IPNT, EMC, MLEMC, YE2, ZE, QE2, NEX, STDOUT,
+-     I                    TIME,
++     I                    JTIME,
+      O                    RES, PYL, PQL, PYR, PQR)
+  
+ C     + + + PURPOSE + + +
+@@ -2620,7 +2631,8 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IPNT, STDOUT, MLEMC, NEX
+       INTEGER EMC(MLEMC)
+-      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES, TIME, YE2(NEX), ZE(NEX)
++      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES, YE2(NEX), ZE(NEX)
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IPNT   - pointer into EMC for description of control structure
+@@ -2685,8 +2697,8 @@
+ C       LOOK UP VALUE IN TABLE BASED ON TIME AT START OF THE CURRENT
+ C       STEP
+  
+-        CALL LKTAB
+-     I            (ABS(OPCODE), TIME, 0,
++        CALL LKTSTAB
++     I            (ABS(OPCODE), JTIME, 
+      O             HG, NTAB, DTIME)
+         IF(HG.LT.0.0.OR.HG.GT.MAXGAT) THEN
+           WRITE(STDOUT,50) GET_TABID(NTAB)
+@@ -2748,8 +2760,8 @@
+ C
+ C     
+ C
+-      SUBROUTINE DO_GATETABL(STDOUT, IPT, TIME,
+-     M                      EMC)
++      SUBROUTINE DO_GATETABL(STDOUT, JTIME,
++     M                       ipt,  EMC)
+ 
+ C     Find the gate opening for the GATETABL control of gates.
+ 
+@@ -2757,7 +2769,7 @@
+       INCLUDE 'arsize.prm'
+       INTEGER STDOUT, IPT, EMC(MREMC)
+ 
+-      REAL TIME
++      REAL*8 JTIME
+ 
+ C     + + + COMMON BLOCKS + + +
+       INCLUDE 'stdun.cmn'
+@@ -2830,19 +2842,19 @@
+           OLD_LEV = FTAB(IPT+4)
+           DIRECTION_EPS = FTAB(IPT+6)
+           CONTROL_NODE_STATE = ITAB(IPT+5)
+-C          WRITE(STDOUT,*) ' CONTROL_NODE_STATE=', CONTROL_NODE_STATE
++c          WRITE(STDOUT,*) ' CONTROL_NODE_STATE=', CONTROL_NODE_STATE
+ 
+           IF( CONTROL_NODE_STATE.GT.0) THEN
+ C           State is rising.  Check to see if we
+ C           have declined enough from the last update of the gate
+ C           opening to change the state.
+-C            WRITE(STDOUT,*) ' '
+-C            WRITE(STDOUT,*) ' Current state is rising.'
+-C            WRITE(STDOUT,*) ' LEVC=',LEVC,' OLD_LEV=',OLD_LEV
+-C            WRITE(STDOUT,*) ' DIRECTION_EPS=',DIRECTION_EPS
++c            WRITE(STDOUT,*) ' '
++c            WRITE(STDOUT,*) ' Current state is rising.'
++c            WRITE(STDOUT,*) ' LEVC=',LEVC,' OLD_LEV=',OLD_LEV
++c            WRITE(STDOUT,*) ' DIRECTION_EPS=',DIRECTION_EPS
+             IF(LEVC.LE. OLD_LEV - DIRECTION_EPS) THEN
+ C             Change state to falling
+-C              WRITE(STDOUT,*) ' Changing state to falling.'
++c              WRITE(STDOUT,*) ' Changing state to falling.'
+               ITAB(IPT+5) = -1
+ C             Table offset selects the table for the 
+ C             just detected direction of motion. 
+@@ -2853,13 +2865,13 @@
+           ELSE
+ C           State is falling.  Check to see if we have risen enough from
+ C           the last update  to change the state. 
+-C            WRITE(STDOUT,*) ' '
+-C            WRITE(STDOUT,*) ' Current state is falling.'
+-C            WRITE(STDOUT,*) ' LEVC=',LEVC,' OLD_LEV=',OLD_LEV
+-C            WRITE(STDOUT,*) ' DIRECTION_EPS=',DIRECTION_EPS
++c            WRITE(STDOUT,*) ' '
++c            WRITE(STDOUT,*) ' Current state is falling.'
++c            WRITE(STDOUT,*) ' LEVC=',LEVC,' OLD_LEV=',OLD_LEV
++c            WRITE(STDOUT,*) ' DIRECTION_EPS=',DIRECTION_EPS
+             IF(LEVC.GT.OLD_LEV + DIRECTION_EPS) THEN
+ C             Change state to rising.
+-C              WRITE(STDOUT,*) ' Changing state to rising.'
++c              WRITE(STDOUT,*) ' Changing state to rising.'
+               ITAB(IPT+5) = 1
+ C             Table offset selects the table for the 
+ C             just detected direction of motion. 
+@@ -2877,8 +2889,8 @@
+ C           control table from the table number and FTPNT.
+       
+             TABLE_ADRS = -TABLE_ADRS
+-            CALL LKTAB
+-     I                (TABLE_ADRS, TIME, 0,
++            CALL LKTSTAB
++     I                (TABLE_ADRS, JTIME, 
+      O                 VALUE, NTAB, DTIME)
+             NTAB = INT(VALUE + 0.5)
+             TABLE_ADRS = FTPNT(NTAB)
+@@ -2967,7 +2979,7 @@
+ C
+ C
+       SUBROUTINE   OPER
+-     I                 (TIME, NBLK, OPBLK, DTHR,
++     I                 (JTIME, NBLK, OPBLK, DTHR,
+      M                  EMC)
+  
+ C     + + + PURPOSE + + +
+@@ -2981,7 +2993,8 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER NBLK
+       INTEGER EMC(MREMC), OPBLK(NBLK)
+-      REAL DTHR, TIME
++      REAL DTHR
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     TIME   - time in seconds from run start
+@@ -3038,13 +3051,15 @@
+         RETURN
+       ENDIF
+ 
+-C      WRITE(STD6,*) ' NBLK=',NBLK 
++c      WRITE(STD6,*) ' NBLK=',NBLK 
+       DO 500 I=1,NBLK
+         PRIG = 999999
+         IPT = OPBLK(I)
+         IPT5 = IPT + 5
+-C        WRITE(STD6,*) ' Current Blk#=',I, ' IPT=',IPT
++c       WRITE(STD6,*) ' Current Blk#=',I, ' IPT=',IPT
+         TABLE_ADRS = ITAB(IPT+7)
++c        write(std6,*) 'In OPER: table_adrs=',table_adrs
++
+         IF(TABLE_ADRS.EQ.0) THEN
+ C         Fall through.  This is the current most frequent instance.
+ c         therefore, chk it first to reduce overhead.
+@@ -3053,10 +3068,12 @@
+           GOTO 500
+         ELSEIF(TABLE_ADRS.GT.0) THEN
+ C         Check if this block should be used now.  
+-          CALL LKTAB
+-     I              (TABLE_ADRS, TIME, 1,
++          CALL LKTSTAB
++     I              (TABLE_ADRS, JTIME,
+      O               VALUE, NTAB, PDV)
+           TS_BLK_NUMBER = INT(VALUE+0.5)
++c          write(std6,9123) i, ts_blk_number, jtime
++c9123  format('In OPER: i=',i5,' ts_blk_number=',i5,' jtime=',f20.7)
+           IF(TS_BLK_NUMBER.EQ.I) THEN
+ C           This block should be used now.  Is it at its first
+ C           time step?
+@@ -3104,11 +3121,14 @@
+ C       Extract the operation block type.
+  
+         BLKTYP = ITAB(IPT+3)
++c        write(std6,*) 'OPER: BLKTYP=',blktyp
++c        write(std6,*) ' old P=',ftab(ipt+1),' current P=',ftab(ipt+2)
++c        write(std6,*) ' Elapsed time=',ftab(ipt+5)
+         IF(BLKTYP.EQ.3) THEN
+ C         This is GATETABL.  Based on different rules than any 
+ C         other.  Therefore, it sets its gate opening internally.
+-          CALL DO_GATETABL(STD6, IPT, TIME,
+-     M                      EMC)
++          CALL DO_GATETABL(STD6, JTIME,
++     M                     ipt, EMC)
+ C         Branch to the end of the loop over control blocks. 
+           GOTO 500
+         ENDIF
+@@ -3451,7 +3471,7 @@
+ C          WRITE(STD6,*) ' Value set in EMC=', POLD
+ C          WRITE(STD6,*) ' '
+  
+- 500    CONTINUE
++ 500  CONTINUE
+       RETURN
+       END
+ C
+@@ -3459,7 +3479,7 @@
+ C
+       SUBROUTINE   PUMP
+      I                 (IPNT, EMC, MLEMC, GRAV, TWOG, YE2, ZE, QE2, NEX,
+-     I                  TIME, STDOUT,
++     I                  JTIME, STDOUT,
+      O                  RES, PYL, PQL, PYR, PQR)
+  
+ C     + + + PURPOSE + + +
+@@ -3470,8 +3490,9 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IPNT, MLEMC, NEX, STDOUT
+       INTEGER EMC(MLEMC)
+-      REAL GRAV, PQL, PQR, PYL, PYR, QE2(NEX), RES, TIME, TWOG,
++      REAL GRAV, PQL, PQR, PYL, PYR, QE2(NEX), RES, TWOG,
+      A     YE2(NEX), ZE(NEX)
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IPNT   - pointer into EMC for description of control structure
+@@ -3535,8 +3556,8 @@
+       SPDTAB = EMC(IPNT+10)
+       IF(SPDTAB.LT.0) THEN
+ C       Pump speed given directly by a time series table.
+-        CALL LKTAB
+-     I            (-SPDTAB, TIME, 1,
++        CALL LKTSTAB
++     I            (-SPDTAB, JTIME,
+      O             RELSPD, NTAB, DSPD)
+       ELSEIF(SPDTAB.EQ.0) THEN
+ C       Force pump to operate at normal speed at all times.
+@@ -3923,11 +3944,8 @@
+ C           buffer does not span enough time.
+             IF(DSS_INDEX_IN(I).EQ.0) THEN
+ C             Traditional connection file.
+-              IF(ICDIN(I).EQ.1.OR.ICDIN(I).EQ.3) THEN
+-                READ(UNIN(I)) JTIN(LH), VALAIN(LH), VALBIN
+-              ELSE
+-                READ(UNIN(I)) JTIN(LH), VALAIN(LH)
+-              ENDIF
++              READ(UNIN(I),rec=rd_rec(i)) JTIN(LH), VALAIN(LH)
++              rd_rec(i) = rd_rec(i) + 1
+               LH = LH + 1
+               IF(LH.GT.MAXR) LH = MINR
+             ELSE
+@@ -4050,7 +4068,7 @@
+ C
+ C
+       SUBROUTINE   SETEXT
+-     I                (DT, WT, NBN, NBRA, NEX, BRPT, HSLOT, EPT, QEPS,
++     I     (DT, DTDY, WT, NBN, NBRA, NEX, BRPT, HSLOT, EPT, QEPS, jtime,
+      M                    EMC, EXNODT,
+      O                    RNORM, MXRES, LMXRES, ERRP, ERRQ, BERRQ,
+      O                    NERRQ, NERRP, BERRP)
+@@ -4066,7 +4084,7 @@
+       INTEGER BERRP, BERRQ, LMXRES, NBN, NBRA, NERRP, NERRQ, NEX, EPT
+       INTEGER BRPT(8,NBRA), EMC(MREMC), EXNODT(9,NEX)
+       REAL ERRP, ERRQ, HSLOT, MXRES, QEPS, RNORM, WT
+-      REAL*8 DT
++      REAL*8 dt, DTDY, jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     DT     - time step in seconds
+@@ -4133,9 +4151,10 @@
+      A     DALPL, DALPR, DBL, DBN, DBR, DC, DCONVY, DISCH, DIV, DTL,
+      B     DTOP, DTR, FAC, FUNC, KFAC, PDV, PQL, PQM, PQR, PYL, PYM,
+      C     PYR, QBASE, QCR, QCL, QCSQR, QL, QN, QR, RDUM, RES, RSGN, 
+-     D     TEMP, TL, TOP, TP, TPTIME, TR, VL, VR, W, WC, WTC, YBAL,
++     D     TEMP, TL, TOP, TP, TR, VL, VR, W, WC, WTC, YBAL,
+      E     YBAR, YBL, YBR, YL, YR, INOUT,
+      F     FB_ADJ_FACTOR
++      real*8 tptime
+  
+ C     + + + EQUIVALENCES + + +
+       EQUIVALENCE (IDUM,RDUM)
+@@ -4301,7 +4320,7 @@
+         DNN = EMC(IPNT+4)
+         NSIGN = EMC(IPNT+3)
+         CALL CONTRL
+-     I             (IPNT, STDOUT, NBN, NEX, OUTPUT, SNGL(TIME), EXNODT,
++     I             (IPNT, STDOUT, NBN, NEX, OUTPUT, jtime, EXNODT,
+      I              EMC, Y1, ZVEC, DXVEC, EPT,
+      O              PDV, DISCH)
+         IEQ = IEQ + 1
+@@ -4346,7 +4365,7 @@
+ C         EXPANSION/CONTRACTION WITH CRITICAL DEPTH POSSIBLE
+  
+           CALL EXCON
+-     I              (IPNT, STDOUT, SNGL(TIME), NEX, MREMC, EXNODT,
++     I              (IPNT, STDOUT, jtime, NEX, MREMC, EXNODT,
+      I               QE2, YE2, ZE,
+      M               EMC,
+      O               RES, PYL, PQL, PYR, PQR)
+@@ -4366,7 +4385,7 @@
+  503    CONTINUE
+           CALL PUMP
+      I             (IPNT, EMC, MREMC, GRAV, TWOG, YE2, ZE, QE2, NEX,
+-     I              SNGL(TIME), STDOUT,
++     I              jtime, STDOUT,
+      O              RES, PYL, PQL, PYR, PQR)
+  
+           GOTO 599
+@@ -4380,7 +4399,7 @@
+           GOTO 599
+  505    CONTINUE
+           CALL ABREXP
+-     I               (IPNT, GRAV, STDOUT, SNGL(TIME), NEX, MREMC, 
++     I               (IPNT, GRAV, STDOUT, jtime, NEX, MREMC, 
+      I                EXNODT, QE2, YE2, ZE,
+      M                EMC,
+      O                RES, PYL, PQL, PYR, PQR)
+@@ -4390,12 +4409,12 @@
+ C         BRANCH ON THE SIGN OF THE NUMBER OF PATHS
+           IF(EMC(IPNT+6).GT.0) THEN
+             CALL TWOD6
+-     I                (IPNT, STDOUT, SNGL(TIME), NEX, EPT, EMC, QE2,
++     I                (IPNT, STDOUT, jtime, NEX, EPT, EMC, QE2,
+      I                 YE2, ZE,
+      O                 RES, PYL, PQL, PYR, PQR)
+           ELSE
+             CALL TWOD14
+-     I                 (IPNT, STDOUT, SNGL(TIME), NEX, EPT, EMC, QE2,
++     I                 (IPNT, STDOUT, jtime, NEX, EPT, EMC, QE2,
+      I                  YE2, ZE,
+      O                  RES, PYL, PQL, PYR, PQR)
+           ENDIF
+@@ -4403,7 +4422,7 @@
+           GOTO 599
+  
+  507    CONTINUE
+-          TPTIME = TIME - DT
++          TPTIME = JTIME - DTDY
+           CALL BDFWR
+      I              (IPNT, EMC, MREMC, YE2, ZE, QE2, AE2, TE2, NEX,
+      I               STDOUT, TPTIME, GRAV,
+@@ -4412,7 +4431,7 @@
+           GOTO 599
+  
+  508    CONTINUE
+-          TPTIME = TIME - DT
++          TPTIME = JTIME - DTDY
+           CALL MCHGAT
+      I               (IPNT, EMC, MREMC, YE2, ZE, QE2, NEX, STDOUT, 
+      I                TPTIME,
+@@ -4421,7 +4440,7 @@
+           GOTO 599
+  
+  509    CONTINUE
+-          TPTIME = TIME - DT
++          TPTIME = JTIME - DTDY
+           CALL UFGATE
+      I               (IPNT, EMC, MREMC, YE2, ZE, QE2, NEX, STDOUT, 
+      I                TPTIME, QE1,
+@@ -4484,8 +4503,8 @@
+         FUNC = FUNC*RDUM
+  
+         IF(EMC(IPNT+10).GT.0) THEN
+-          CALL LKTAB
+-     I              (EMC(IPNT+10), SNGL(TIME), 0,
++          CALL LKTSTAB
++     I              (EMC(IPNT+10), jtime, 
+      O               FB_ADJ_FACTOR, NTAB, PDV)
+ 
+ C          QBASE = FB_ADJ_FACTOR*QBASE
+@@ -5081,6 +5100,7 @@
+      O                  DALPR, QCR)
+  
+           ELSE
++C            stop 'setext: should not be here!'
+             CALL XLKT21
+      I                 (EXNODT(4,NL),
+      M                  YL,
+@@ -5262,7 +5282,7 @@
+  1400 CONTINUE
+  
+         CALL SIDEWR
+-     I             (IPNT, STDOUT, SNGL(TIME), NEX, MREMC, EMC,
++     I             (IPNT, STDOUT, JTIME, NEX, MREMC, EMC,
+      I              EXNODT, QE2, YE2, ZE,
+      O              RES, PYL, PQL, PYR, PQR, PYM, PQM)
+  
+@@ -5407,13 +5427,13 @@
+  
+       RNORM = 0.0
+       DO 9500 IROW=1,NUMEQ
+-         TEMP = RHS(IROW)
+-         IF(ABS(TEMP).GT.1.E15) TEMP = 1.E15
+-         RNORM = RNORM + TEMP**2
+-         IF(ABS(TEMP).GT.MXRES) THEN
+-           MXRES = ABS(TEMP)
+-           LMXRES = IROW
+-         ENDIF
++        TEMP = RHS(IROW)
++        IF(ABS(TEMP).GT.1.E15) TEMP = 1.E15
++        RNORM = RNORM + TEMP**2
++        IF(ABS(TEMP).GT.MXRES) THEN
++          MXRES = ABS(TEMP)
++          LMXRES = IROW
++        ENDIF
+  9500 CONTINUE
+       RETURN
+       END
+@@ -5589,7 +5609,7 @@
+ C
+ C
+       SUBROUTINE   TWOD14
+-     I                   (IPNT, STDOUT, TIME, NEX, EPT, EMC, QE2,    
++     I                   (IPNT, STDOUT, JTIME, NEX, EPT, EMC, QE2,    
+      I                    YE2, ZE,
+      O                    RES, PYL, PQL, PYR, PQR)
+  
+@@ -5601,7 +5621,8 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IPNT, STDOUT, EPT, NEX
+       INTEGER EMC(EPT)
+-      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES, TIME, YE2(NEX), ZE(NEX)
++      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES, YE2(NEX), ZE(NEX)
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IPNT   - pointer into EMC for description of control structure
+@@ -5631,6 +5652,10 @@
+      A        UNN, ZTAB
+       REAL DHUED, DHUQ, DQTHU, ED, HBASE, HD, HU, HUTAB, PDV, Q, QT,
+      A     RDUM
++
++      character*5  getusn, unn_char*5, dnn_char*5
++c      integer verbose
++c      common/debug/ verbose
+  
+ C     + + + EQUIVALENCES + + +
+       EQUIVALENCE (IDUM, RDUM)
+@@ -5645,19 +5670,35 @@
+  
+       UNN = EMC(IPNT+2)
+       DNN = EMC(IPNT+3)
++
++c     extract user node labels for debug output to appear later
++c      unn_char = getusn(unn)
++c      if(unn_char.eq.'F3998') then
++c        dnn_char = getusn(dnn)
++c        verbose = 1
++c      else
++c        verbose = 0
++c      endif 
++
++c      if(verbose.eq.1) then
++c        write(stdout,91) unn_char, dnn_char
++c91      format(/,' Debug type 14 table btwn: Ups Node=',A5,
++c     a          ' and Dns Node=',A5)
++c      endif
++
+       QNN = EMC(IPNT+4)
+       SYSGN = EMC(IPNT+5)
+       Q = QE2(QNN)
+-C     SPECIAL METHOD. CHANGE LATER
+- 
+       IF(Q.LT.0.0) THEN
+         FSGN = -SYSGN
+       ELSE
+         FSGN = SYSGN
+       ENDIF
+- 
+-C      WRITE(STDOUT,*) ' TWOD14: UNN=',UNN,' SYSGN=',SYSGN, ' FSGN=',FSGN
+- 
++c      if(verbose.eq.1) then 
++c        WRITE(STDOUT,*) 'First: SYSGN=',SYSGN, ' FSGN=',FSGN
++c      endif
++ 
++
+ C     GET TABLE ADDRESSES
+       UDTAB = EMC(IPNT+7)
+       DUTAB = EMC(IPNT+8)
+@@ -5668,8 +5709,8 @@
+  
+ C     ESTABLISH THE BASE ELEVATION FOR HEAD
+       IF(ZTAB.GT.0) THEN
+-        CALL LKTAB
+-     I            (ZTAB, TIME, 1,
++        CALL LKTSTAB
++     I            (ZTAB, JTIME,
+      O             HBASE, NTAB, PDV)
+       ENDIF
+  
+@@ -5679,9 +5720,11 @@
+  
+       HU = YE2(UNN) + ZE(UNN) - HBASE
+       HD = YE2(DNN) + ZE(DNN) - HBASE
+- 
+-C      WRITE(STDOUT,*) ' TWOD14: HU=', HU, ' HD=',HD,' Q=',Q
+- 
++      
++c      if(verbose.eq.1) then 
++c        WRITE(STDOUT,*) ' TWOD14-from args: HU=', HU, ' HD=',HD,' Q=',Q
++c      endif
++
+       IF(HU.LE.0.0.AND.HD.LE.0.0) THEN
+ C       SPECIAL CASE.  FORCE FLOW AT FLOW NODE TO BE ZERO.
+  
+@@ -5698,11 +5741,54 @@
+           PQR = 1.0
+           PQL = 0.0
+         ENDIF
+-C      WRITE(STDOUT,*) ' TWOD14 SPECIAL CASE: RES=',RES
+-C      WRITE(STDOUT,*) ' PYL=',PYL,' PQL=',PQL,' PYR=',PYR,' PQR=',PQR
++c        if(verbose.eq.1) then
++c          WRITE(STDOUT,*) ' TWOD14 SPECIAL CASE Q forced to 0: RES=',RES
++c          WRITE(STDOUT,*) ' PYL=',PYL,' PQL=',PQL,' PYR=',PYR,
++c     a                    ' PQR=',PQR
++c        endif
+         RETURN
+       ENDIF
+- 
++
++c     We must check to make sure that Q not zero is consistent with the
++c     heads.  Roundoff and convergence noise can result in a Q in a direction
++c     contrary to the head pattern.  Here we will check for the physical 
++c     upstream head being positive before we accept the flow as valid. 
++c     There may be cases in which both heads are positive but the flow
++c     is inconsistent with the head difference.  That case should be 
++c     handled properly below.  Typically the flows are quite small, 
++c     negligible in fact, that cause the problems detected in testing
++c     so far.  We will see if this additional code solves the severe
++c     convergence problems enountered when tables of type 14 operate
++c     on flows that vary between zero and non-zero.  
++
++c     The FSGN gives the physical direction of flow.  If FSGN > 0 
++c     then the flow is moving from the nominal upstream node
++c     to the nominal dns node, no matter what those nodes are. 
++      if(FSGN.gt.0) then 
++c       flow from unn to dnn.  HU must be > 0 in this case. 
++        if(HU.le.0.0) then
++c         force the flow to zero and set FSGN to SYSGN 
++          q = 0.0
++          QE2(QNN) = q
++
++          fsgn = sysgn
++c          if(verbose.eq.1) then
++c            write(stdout,*) 'Q inconsistent with heads a. forced to 0.'
++c          endif
++        endif
++      else
++c       flow from dnn  to unn.  HD must be > 0 in this case.
++        if(HD.le.0.0) then
++c         force flow to zero and set fsgn to sysgn
++          q = 0.0
++          QE2(QNN) = q
++          fsgn = sysgn
++c          if(verbose.eq.1) then
++c            write(stdout,*) 'Q inconsistent with heads b. forced to 0.'
++c          endif
++        endif
++      endif
++      
+       IF(Q.EQ.0.0.AND.HU.NE.HD) THEN
+ C       SECOND SPECIAL CASE.  STANDARD LOOKUP DOES NOT WORK.
+  
+@@ -5718,9 +5804,10 @@
+      M                QT,
+      O                HUTAB, DQTHU, DHUQ, FREE)
+  
+-C         NOTE: ON RETURN QT IS THE FREE FLOW AT HUTAB.
+- 
+-          PYL = DQTHU
++C         NOTE: ON RETURN QT IS THE FREE FLOW at HUTAB.
++ 
++          PYL = DHUQ
++          PYR = 0.0
+           IF(QNN.EQ.UNN) THEN
+             PQL = -1.0
+             PQR = 0.0
+@@ -5738,6 +5825,7 @@
+           ELSE
+             RES = QT
+           ENDIF
++
+         ELSE
+ C         ASSUME FREE FLOW AT HD FROM NOMINAL DOWNSTREAM TO NOMINAL
+ C         UPSTREAM
+@@ -5750,7 +5838,8 @@
+      M                QT,
+      O                HUTAB, DQTHU, DHUQ, FREE)
+  
+-          PYR = DQTHU
++          PYR = DHUQ
++          PYL = 0.0
+           IF(QNN.EQ.UNN) THEN
+             PQL = -1.0
+             PQR = 0.0
+@@ -5768,6 +5857,13 @@
+             RES = QT
+           ENDIF
+         ENDIF
++c        if(verbose.eq.1) then
++c          write(stdout,*) ' Second special case: HU ne HD and Q=0'
++c          write(stdout,*) ' QT=',qt,' PYL=',pyl,' PQL=',pql,' PYR=',pyr,
++c     a                   ' PQR=',pqr
++c          write(stdout,*) ' RES=',res
++c        endif
++
+         RETURN
+       ENDIF
+  
+@@ -5810,6 +5906,11 @@
+             PQR = -DHUQ
+           ENDIF
+         ENDIF
++c        if(verbose.eq.1) then
++c          write(stdout,*) 'unn->dnn',' Q=',Q,' RES=',RES
++c          write(stdout,*) ' PYL=',pyl,' PQL=',pql,' PYR=',pyr,
++c     a                   ' PQL=',pql
++c        endif
+       ELSE
+ C       FLOW FROM DNN -> UNN.
+  
+@@ -5842,18 +5943,25 @@
+             PQR = -DHUQ
+           ENDIF
+         ENDIF
++c        if(verbose.eq.1) then
++c          write(stdout,*) 'dnn->unn',' Q=',Q,' RES=',RES
++c          write(stdout,*) ' PYL=',pyl,' PQL=',pql,' PYR=',pyr,
++c     a                   ' PQL=',pql
++c        endif
+       ENDIF
+  
+-C      WRITE(STDOUT,*) ' TWOD14: RES=',RES,' HUTAB=',HUTAB
+-C      WRITE(STDOUT,*) ' PYL=',PYL,' PQL=',PQL,' PYR=',PYR,' PQR=',PQR
+- 
++c      if(verbose.eq.1) then
++c        WRITE(STDOUT,*) ' TWOD14: RES=',RES,' HUTAB=',HUTAB, 'Q=',Q
++c        WRITE(STDOUT,*) ' PYL=',PYL,' PQL=',PQL,' PYR=',PYR,' PQR=',PQR
++c      endif
++
+       RETURN
+       END
+ C
+ C
+ C
+       SUBROUTINE   TWOD6
+-     I                  (IPNT, STDOUT, TIME, NEX, EPT, EMC, QE2, YE2,
++     I                  (IPNT, STDOUT, JTIME, NEX, EPT, EMC, QE2, YE2,
+      I                   ZE,
+      O                   RES, PYL, PQL, PYR, PQR)
+  
+@@ -5865,7 +5973,8 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IPNT, STDOUT, EPT, NEX
+       INTEGER EMC(EPT)
+-      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES, TIME, YE2(NEX), ZE(NEX)
++      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES,  YE2(NEX), ZE(NEX)
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IPNT   - pointer into EMC for description of control structure
+@@ -5889,11 +5998,12 @@
+  
+ C     + + + COMMON BLOCKS + + +
+       INCLUDE 'arsize.prm'
++      INCLUDE 'gatcom.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER DNN, DUTAB, FREE, I, IDUM, IOFF, MFTAB, NTAB, QNN, SYSGN,
+-     A        TYPE, UDTAB, UNN, ZTAB
+-      REAL DQED, DQEU, EL, ER, HBASE, PDV, Q, RDUM, YL, YR
++     A        TYPE, UDTAB, UNN, ZTAB, ispout
++      REAL DQED, DQEU, EL, ER, HBASE, PDV, Q, RDUM, YL, YR, cap_fac
+  
+ C     + + + EQUIVALENCES + + +
+       EQUIVALENCE (IDUM, RDUM)
+@@ -5905,7 +6015,7 @@
+       INTEGER GETTYP
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL GETTYP, LKTAB, TDLK13, TDLK6
++      EXTERNAL GETTYP, LKTAB, TDLK13, TDLK6, tdlk43
+ C***********************************************************************
+ C     GET KEY VALUES
+  
+@@ -5941,14 +6051,47 @@
+  
+         IDUM = EMC(IPNT+IOFF+11)
+         HBASE = RDUM
++c        write(stdout,*) ' In TWOD6: HBASE=',HBASE,' IDUM=',IDUM,
++c     a                  ' ipnt+ioff+11=',ipnt+ioff+11
++        ispout = EMC(IPNT+IOFF+12)
++
+  
+ C       ESTABLISH THE BASE ELEVATION FOR HEAD
+         IF(ZTAB.GT.0) THEN
+-          CALL LKTAB
+-     I              (ZTAB, TIME, 1,
++          CALL LKTSTAB
++     I              (ZTAB, JTIME,
+      O               HBASE, NTAB, PDV)
+         ENDIF
+  
++c       Process possible capacity factors
++        if(mftab > 0 ) then 
++c         this structure is controled by an operation block
++          IDUM = EMC(IPNT+ioff+13)
++          cap_fac = RDUM
++          GOPEN(ispout) = cap_fac
++          if(cap_fac == 1.0) then
++            fclass(ispout) = '  FllOpn'
++            FCLASS_CODE(ispout) = 13
++          elseif(cap_fac == 0.0) then
++            fclass(ispout) = '  Closed'
++            FCLASS_CODE(ispout) = 14
++          else
++            fclass(ispout) = '  PrtOpn'
++            FCLASS_CODE(ispout) = 15
++          endif             
++        elseif(mftab < 0) then
++c         Capacity factor given in a time series table.
++          CALL LKTSTAB
++     I              (-mftab, JTIME,
++     O               cap_fac, NTAB, PDV)
++          GOPEN(ispout) = cap_fac
++          fclass(ispout) = '   FrmTS'
++          FCLASS_CODE(ispout) = 16
++          
++        else
++          cap_fac = 1.0
++        endif
++
+         IOFF = IOFF + CD5TY6
+  
+ C       BASE FLOW DIRECTION ON WATER SURFACE ELEVATION FOR NOW.
+@@ -5958,15 +6101,29 @@
+ C         FLOW FROM NOMINAL UPSTREAM NODE TO DOWNSTREAM NODE
+  
+           TYPE = GETTYP(UDTAB)
+-          IF(TYPE.EQ.6) THEN
++          IF(TYPE.EQ.43) THEN
++            call tdlk43
++     I                 (STDOUT, udtab, 43, MFTAB, JTIME, er, el, hbase,
++     O                  Q, DQed, DQeu, FREE)
++c      write(stdout,9143) er, el, Q, DQED, DQEU, FREE
++c9143  format(' tdlk43 on return: EDA=',f10.3,' EUA=',f10.3,' Q=',f10.3,
++c     a       ' DQED=',f10.3,'DQEU=',f10.3,' FREE=',i5)
++
++          ELSEif(type.eq.13) then
++            CALL TDLK13
++     I                 (STDOUT, UDTAB, 13, MFTAB, JTIME, ER, EL, HBASE,
++     O                  Q, DQED, DQEU, FREE)
++          else
+             CALL TDLK6
+-     I                (STDOUT, UDTAB, 6, MFTAB, TIME, ER, EL, HBASE,
++     I                (STDOUT, UDTAB, 6, MFTAB, JTIME, ER, EL, HBASE,
+      O                 Q, DQED, DQEU, FREE)
+-          ELSE
+-            CALL TDLK13
+-     I                 (STDOUT, UDTAB, 13, MFTAB, TIME, ER, EL, HBASE,
+-     O                  Q, DQED, DQEU, FREE)
+-          ENDIF
++          ENDIF
++
++          if(cap_fac .ne. 1.0) then
++            q = cap_fac*q
++            dqeu = cap_fac*dqeu
++            dqed = cap_fac*dqed
++          endif
+           IF(SYSGN.GT.0) THEN
+             RES = RES - Q
+             PYL = PYL - DQEU
+@@ -5976,19 +6133,28 @@
+             PYL = PYL + DQEU
+             PYR = PYR + DQED
+           ENDIF
+- 
+         ELSE
+ C         FLOW FROM NOMINAL DOWNSTREAM NODE TO UPSTREAM NODE
+           TYPE = GETTYP(DUTAB)
+-          IF(TYPE.EQ.6) THEN
++          IF(TYPE.EQ.43) THEN
++            call tdlk43
++     I               (STDOUT, dutab, 43, MFTAB, JTIME, el, er, hbase,
++     O                Q, DQed, DQeu, FREE)
++c      write(stdout,9143) er, el, Q, DQED, DQEU, FREE
++          ELSEif(type.eq.13) then
++            CALL TDLK13
++     I                 (STDOUT, DUTAB, 13, MFTAB, JTIME, EL, ER, HBASE,
++     O                  Q, DQED, DQEU, FREE)
++          else
+             CALL TDLK6
+-     I                (STDOUT, DUTAB, 6, MFTAB, TIME, EL, ER, HBASE,
++     I                (STDOUT, DUTAB, 6, MFTAB, JTIME, EL, ER, HBASE,
+      O                 Q, DQED, DQEU, FREE)
+-          ELSE
+-            CALL TDLK13
+-     I                 (STDOUT, DUTAB, 13, MFTAB, TIME, EL, ER, HBASE,
+-     O                  Q, DQED, DQEU, FREE)
+-          ENDIF
++          ENDIF
++          if(cap_fac .ne. 1.0) then
++            q = cap_fac*q
++            dqeu = cap_fac*dqeu
++            dqed = cap_fac*dqed
++          endif
+           IF(SYSGN.GT.0) THEN
+             RES = RES + Q
+             PYL = PYL + DQED
+@@ -5997,8 +6163,7 @@
+             RES = RES - Q
+             PYL = PYL - DQED
+             PYR = PYR - DQEU
+-         ENDIF
+- 
++          ENDIF
+         ENDIF
+  
+  1000 CONTINUE
+@@ -6012,7 +6177,7 @@
+ C
+       SUBROUTINE   UFGATE
+      I                   (IPNT, EMC, MLEMC, YE2, ZE, QE2, NEX, STDOUT,
+-     I                    TIME, QE1,
++     I                    JTIME, QE1,
+      O                    RES, PYL, PQL, PYR, PQR)
+  
+ C     + + + PURPOSE + + +
+@@ -6022,8 +6187,9 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IPNT, MLEMC, NEX, STDOUT
+       INTEGER EMC(MLEMC)
+-      REAL PQL, PQR, PYL, PYR, QE2(NEX), QE1(NEX), RES, TIME, YE2(NEX),
++      REAL PQL, PQR, PYL, PYR, QE2(NEX), QE1(NEX), RES,  YE2(NEX),
+      A     ZE(NEX)
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IPNT   - pointer into EMC for description of control structure
+@@ -6071,6 +6237,7 @@
+ C     + + + OUTPUT FORMATS + + +
+  50   FORMAT(/,' *ERR:64* Table Id=',A,' has invalid values for',
+      A  ' structure setting.')
++52    format(' Gate opening in ufgate=',f8.2,' Max. opening=',f8.2)
+ C***********************************************************************
+ C     OBTAIN BASIC INFORMATION FROM EMC
+  
+@@ -6112,11 +6279,12 @@
+ C       LOOK UP VALUE IN TABLE BASED ON TIME AT START OF THE CURRENT
+ C       STEP
+  
+-        CALL LKTAB
+-     I            (ABS(OPCODE), TIME, 0,
++        CALL LKTSTAB
++     I            (ABS(OPCODE), JTIME,
+      O             HG, NTAB, DTIME)
+         IF(HG.LT.0.0.OR.HG.GT.MAXGAT) THEN
+           WRITE(STDOUT,50) GET_TABID(NTAB)
++          write(stdout,52) hg, maxgat
+           STOP 'Abnormal stop: errors found.'
+         ENDIF
+       ENDIF
+@@ -6146,7 +6314,7 @@
+ C       FLOW FROM NOMINAL UPSTREAM NODE TO DOWNSTREAM NODE
+  
+         CALL TDLK15
+-     I             (STDOUT, UDTAB, MFTAB, TIME, ER, EL, HG, HBASE,
++     I             (STDOUT, UDTAB, MFTAB, JTIME, ER, EL, HG, HBASE,
+      O              Q, DQED, DQEU, NEWHG, FTYPE, FTYPE_CODE)
+         Q = GATE_FACTOR*Q
+         DQEU = GATE_FACTOR*DQEU
+@@ -6165,7 +6333,7 @@
+ C       FLOW FROM NOMINAL DOWNSTREAM NODE TO UPSTREAM NODE
+  
+         CALL TDLK15
+-     I             (STDOUT, DUTAB, MFTAB, TIME, EL, ER, HG, HBASE,
++     I             (STDOUT, DUTAB, MFTAB, JTIME, EL, ER, HG, HBASE,
+      O              Q, DQED, DQEU, NEWHG, FTYPE, FTYPE_CODE)
+         Q = GATE_FACTOR*Q
+         DQEU = GATE_FACTOR*DQEU

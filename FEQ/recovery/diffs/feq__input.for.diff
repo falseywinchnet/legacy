@@ -1,0 +1,408 @@
+--- 9.98/feq/input.for
++++ 10.61/feq/input.for
+@@ -450,6 +450,28 @@
+       RCBITAB( 72) = 1
+ C     Default for: DTMIN_OUT
+       RCBFTAB(73) = 0.0
++
++c     High IQ Newton solution control added: Feb. 26, 2003
++c     Default for: HI_IQ_NS_DWN
++      rcbftab(74) = 0.5
++c     Default for: HI_IQ_NS_UP
++      rcbftab(75) = sqrt(1.0/rcbftab(74))
++c     Default for: HI_IQ_NS_LMT
++      rcbftab(76) = 0.1
++c     Default for: HI_IQ_NS_NUMGT  added 8 april 2003.
++c     The default value was near optimum for a test model having 13,808 unknowns!
++c     I think that a small number will always prove to be optimum no matter the size of the
++c     model.       
++      rcbitab( 77) = 4
++
++c     Default for: HI_IQ_NS_KNT 
++      rcbitab( 78) = 25
++
++c     Default for: HI_IQ_NS_DT
++      rcbftab( 79) = 40.0
++c     Default for: DZ_FOR_OUTPUT
++      rcbftab( 80) = 0.0
++
+              
+ C     Default for: SOPER       
+       RCBCTAB(  1) = 'NO'        
+@@ -488,9 +510,82 @@
+ C     Default for CDT6_TAB_DATUM--added August 2, 2000
+       RCBCTAB( 18) = 'NO'      
+ C     Default for NEW_GENSCN_FEO--Added Sept. 27, 2000
+-      RCBCTAB( 19) = 'NO'
++c     Changed to YES 28 March 2006.  GENSCN will be changed!
++      RCBCTAB( 19) = 'YES'
+ C     Default for global HOME value--Added May 17, 2002
+       RCBCTAB( 20) = ' '
++c     Default for HI_IQ_NS value--Added Feb. 26, 2003
++      RCBCTAB( 21) = 'NO'
++c     Default for TY13_TO_TY43
++      RCBCTAB( 22) = 'NO'
++c     Default for UPGRADE_XSEC_TAB
++      RCBCTAB( 23) = 'NO'
++c     Default for MAKE_DT_TAB-Added April 7, 2003
++      RCBCTAB( 24) = ' '
++c     Default for USE_MAXDT_TAB
++      RCBCTAB( 25) = ' '
++c     Default for forecasting with a DTSF present-added 27 Sept 2005
++      rcbctab( 26) = 'NO'
++
++c     The following five values express what FEQ expects or demands to see in the
++c     header block of function tables it uses.
++c 
++c     Default for the zone of the horizontal grid used to define location
++c     of a function table
++      rcbctab( 27) = 'NONE'
++c     Default for the horizontal-grid name defining location.
++      rcbctab( 28) = 'NONE'
++c       Rules: 1. Zone and hgrid must both be non-NONE if one of them is.  That is,
++c                 we assume that any hgrid will have some zone designation.  If the one
++c                 in use does not, well, make one up, and just be consistent!
++c              2. If non-NONE, FEQ will output a file in the home output directory, that contains
++c                 a list of all table ids that have a zone/hgrid value that differs from the
++c                 one given in the run-control block.  The run will continue however, and 
++c                 currently, FEQ makes not direct use of these two values. 
++c             3.  If non-NONE, FEQ will report in a file, the table ids and the easting
++c                 and northings for all tables that have these values missing and for 
++c                 which FEQ is able to deduce a location by its internal rules.  This
++c                 information, combined with a table index, requested below, and a utility
++c                 program, will then update all function tables, to have that easting and
++c                 northing.  Also, in some cases, the utility program will also update
++c                 the FEQUTL input used to generate the table so that on the next 
++c                 computation of the table, the easting and northing will be correct.
++c             4.  If both are NONE, then FEQ ignores any information, if it is present,
++c                 on the horizontal grid differences in the input tables.  Also nothing 
++c                 is done about missing easting and northing items.
++
++c     Default for the name of the vertical datum used for elevations in the table, if any
++      rcbctab( 29) = 'NONE'
++c       Rules:  1. If NONE, FEQ ignores any information, even if present, in function tables. 
++c                  This is necessary to support models that know nothing about these new features.
++c               2. If non-NONE, FEQ reports all table ids that disagree in vertical datum and
++c                  terminates the run!  Mixed datums are deadly:)
++c               3. Some utilities will be created to help in updating vertical datums.  However,
++c                  some updates will be manual. 
++
++c     Default for the unit system used in a function table
++      rcbctab( 30) = 'NONE'
++c       Rules:  1. If non-NONE, FEQ will report all table ids that differ and terminate
++c                  the run.  The disparate units will have to be corrected either manually
++c                  or by using the features present in FEQ to produce a function table in 
++c                  the proper unit system. 
++c     Default for the basis for the information in function tables.  This relates to dates,
++c       and nature of the basic data.  
++      rcbctab( 31) = 'NONE'
++c       Rules:  1. If non-NONE, FEQ will report those tab ids that differ.  This can then
++c                  be used to find tables that need to be updated. 
++c               2. The string is only 8 characters long, so be careful in what you pick to 
++c                  describe the basis.  A year and a few well-chosen characters should do it!
++c     Default for requesting a function-table index
++      rcbctab( 32) = 'NO'
++c       Rules:  1. If YES, then FEQ will construct an index of table ids, with the ids sorted
++c                  in whatever sequence Fortran uses for character strings, with the table
++c                  type, and with the fully qualified file name that contains the table. 
++c                  This table is usable manually, searching with a text editor, or usable
++c                  by a utility program to find the file that contains a given table id.
++c                  If standard naming conventions, and locations are used for the input 
++c                  file to FEQUTL, then it could be possible to update the input file
++c                  that created the function table. 
+ 
+ 
+       RETURN
+@@ -501,18 +596,22 @@
+ 
+       SUBROUTINE  SET_RCB1(
+      O                     NBRA, NEX, MINPRT, LAGTSF, DMYEAR, DMMN,
+-     O                     ZIY, SYR, SMN, SDY, SFRAC, EYR, EMN, EDY,                       
+-     O                     EFRAC, GRAV, SSEPS, PAGESP, EPSSYS, ABSTOL,                     
+-     O                     EPSFAC, MKNT, NUMLIM, OUTPUT, PROUT,                            
+-     O                     PRTINT, YR, MN, DY, HR, EPSB, MAXIT, SFAC,                      
++     O                     ZIY, SYR, SMN, SDY, SFRAC, EYR, EMN, EDY,    
++     O                     EFRAC, GRAV, SSEPS, PAGESP, EPSSYS, ABSTOL,  
++     O                     EPSFAC, MKNT, NUMLIM, OUTPUT, PROUT,         
++     O                     PRTINT, YR, MN, DY, HR, EPSB, MAXIT, SFAC,   
+      O                     TAUFAC, QEPS, QCHOP, SOPER, POINT, DIFFUS, 
+      O                     WIND, UNDERF, NODEID, GENAME, OLD_SUMMARY,
+      O                     GISID_TO_NODEID, TABID_TO_NODEID,
+      O                     DO_SCHEMATIC, CD14_TAB_DATUM,
+      O                     CD5T6_TAB_DATUM, NEW_GENSCN_FEO, START_EQ,
+-     O                     END_EQ, DTMIN_OUT, GLB_HOME)                                                               
+-
+-
++     O                     END_EQ, DTMIN_OUT, GLB_HOME, hi_iq_ns,
++     o                     hi_iq_ns_dwn, hi_iq_ns_up, hi_iq_ns_lmt,
++     o                     ty13_to_ty43, upgrade_xsec_tab, make_dt_tab,
++     o                     use_maxdt_tab, hi_iq_ns_numgt, hi_iq_ns_knt,
++     o                     hi_iq_ns_dt, frcst_wth_dtsf, zone, hgrid,
++     o                     vdatum, unitsys, basis, make_tab_index, 
++     o                     dz_for_output)                                 
+ 
+ C     Set the values in the run-control block in INFO1
+ C     All values not set explicitly by user are at their default value.
+@@ -521,18 +620,23 @@
+      *        SYR, SMN, SDY,  EYR, EMN, EDY,
+      *        PAGESP,  MKNT, NUMLIM, OUTPUT, PROUT,
+      *        PRTINT, YR, MN, DY, MAXIT, START_EQ,
+-     *        END_EQ 
++     *        END_EQ, hi_iq_ns_numgt , hi_iq_ns_knt
+ 
+       REAL  ZIY,  GRAV, SSEPS, EPSSYS, ABSTOL,
+      *      EPSFAC, EPSB, SFAC, TAUFAC, QEPS, QCHOP,
+-     *      DTMIN_OUT                                 
++     *      DTMIN_OUT, hi_iq_ns_dwn, hi_iq_ns_up, hi_iq_ns_lmt,
++     *      hi_iq_ns_dt, dz_for_output
+ 
+       REAL*8  SFRAC, EFRAC, HR
+ 
+       CHARACTER  SOPER*4, POINT*4, DIFFUS*4, WIND*4, UNDERF*4,                                       
+      *      NODEID*4, GENAME*5, OLD_SUMMARY*4, GISID_TO_NODEID*4,
+      *      TABID_TO_NODEID*4, DO_SCHEMATIC*4, CD14_TAB_DATUM*4,
+-     *      CD5T6_TAB_DATUM*4, NEW_GENSCN_FEO*4, GLB_HOME*64 
++     *      CD5T6_TAB_DATUM*4, NEW_GENSCN_FEO*4, GLB_HOME*128 ,
++     *      hi_iq_ns*4, ty13_to_ty43*4, upgrade_xsec_tab*4,
++     *      make_dt_tab*256, use_maxdt_tab*16,frcst_wth_dtsf*4,
++     *      zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8,
++     *      make_tab_index*4
+ 
+       INCLUDE 'rcblock.cmn'
+ C***********************************************************************
+@@ -575,6 +679,14 @@
+       START_EQ    = RCBITAB( 71)
+       END_EQ      = RCBITAB( 72)
+       DTMIN_OUT   = RCBFTAB( 73)
++      hi_iq_ns_dwn = rcbftab(74)
++      hi_iq_ns_up = rcbftab(75)
++      hi_iq_ns_lmt = rcbftab(76)
++      hi_iq_ns_numgt = rcbitab(77)
++      hi_iq_ns_knt = rcbitab(78)
++      hi_iq_ns_dt  = rcbftab(79)
++      dz_for_output  = rcbftab(80)
++
+       SOPER       = RCBCTAB(  1)
+       POINT       = RCBCTAB(  2)
+       DIFFUS      = RCBCTAB(  3)
+@@ -590,6 +702,19 @@
+       CD5T6_TAB_DATUM = RCBCTAB( 18)
+       NEW_GENSCN_FEO = RCBCTAB( 19)
+       GLB_HOME = RCBCTAB( 20)
++      hi_iq_ns = rcbctab( 21)
++      ty13_to_ty43 = rcbctab( 22)
++      upgrade_xsec_tab = rcbctab( 23)
++      make_dt_tab = rcbctab( 24)
++      use_maxdt_tab = rcbctab( 25)
++      frcst_wth_dtsf = rcbctab( 26)
++      zone = rcbctab( 27)
++      hgrid = rcbctab( 28)
++      vdatum = rcbctab( 29)
++      unitsys = rcbctab( 30)
++      basis = rcbctab( 31)
++      make_tab_index = rcbctab( 32)
++
+       RETURN
+       END 
+ 
+@@ -599,7 +724,7 @@
+      O                   HIGH, LOW, HFAC, LFAC, MRE, FAC, HSLOT,                                   
+      O                   WSLOT, NSLOT, DWT, BWT, EXTTOL, SQREPS,                                   
+      O                   BWFNAM, CHKGEO, ISTYLE,                                   
+-     O                   GETIC, PUTIC)
++     O                   GETIC, PUTFC)
+ 
+ C     Transfer values into INFO2
+ C     All values not set explicitly by user are at their default value.
+@@ -609,14 +734,15 @@
+       INTEGER  IFRZ
+   
+       REAL DTVEC(10),
+-     *      MAXDT, MINDT, AUTO, SITER,                                     
+-     *      HIGH, LOW, HFAC, LFAC, MRE, FAC, HSLOT,                                   
++     *      MAXDT, MINDT, AUTO, SITER,
++     *      HIGH, LOW, HFAC, LFAC, MRE, FAC, HSLOT,                    
+      *      WSLOT, NSLOT, DWT, BWT, EXTTOL, SQREPS   
+ 
+-      CHARACTER BWFNAM*64, CHKGEO*4, ISTYLE*4,                                   
+-     *      GETIC*64, PUTIC*64
++      CHARACTER BWFNAM*256, CHKGEO*4, ISTYLE*4,
++     *      GETIC*256, PUTFC*256
+ 
+       INCLUDE 'rcblock.cmn'
++
+ C*******************************************************************************
+ C     Force local home name to blank
+       CALL CLEAR_HOME()
+@@ -651,17 +777,33 @@
+       EXTTOL      = RCBFTAB( 69)
+       SQREPS      = RCBFTAB( 70)
+       BWFNAM      = RCBCTAB(  8)
+-      CALL MAYBE_ADD_HOME(
++      CALL MAYBE_ADD_GHOME_OUT(
+      M                    BWFNAM)
+-
++      call maybe_add_ext(
++     m                    bwfnam)
++      call os_file_style(
++     m                       bwfnam)
+       CHKGEO      = RCBCTAB(  9)
+       ISTYLE      = RCBCTAB( 10)
+       GETIC       = RCBCTAB( 11)
+-      CALL MAYBE_ADD_HOME(
++c     Note: A global output home name is added to the getic name because
++c           this file can only be created by a previous run of FEQ.  Therefore, 
++c           if a global output home name is present, that file will be in the 
++c           output location.  The user must add any additional extension to 
++c           read the proper file.  Therefore we do not add an extension because
++c           it could be the wrong one!
++      CALL MAYBE_ADD_GHOME_OUT(
+      M                    GETIC)
+-      PUTIC       = RCBCTAB( 12)
+-      CALL MAYBE_ADD_HOME(
+-     M                    PUTIC)
++      call os_file_style(
++     m                       getic)
++      PUTFC       = RCBCTAB( 12)
++      CALL MAYBE_ADD_GHOME_OUT(
++     M                    PUTFC)
++      call maybe_add_ext(
++     m                    putfc)
++
++      call os_file_style(
++     m                       putfc)
+       RETURN
+       END
+ 
+@@ -690,7 +832,7 @@
+ C     + + + LOCAL PARAMETERS + + +
+       INTEGER  N_SYMBOL
+ 
+-      PARAMETER(N_SYMBOL=70)
++      PARAMETER(N_SYMBOL=89)
+       INTEGER INTVAL, REAVAL, CHRVAL, DPRVAL, EXACT, LOWER,
+      B         DATETIME, MULTR, NUMERIC, CHAR, NXTBLK, ENDSIG,
+      C         NONE
+@@ -714,17 +856,21 @@
+ 
+ 
+       DATA  SYMBOL_TABLE /
+-     *'NBRA','NEX','MINPRT','LAGTSF','DMYEAR','DMMN','ZL','STIME',              
+-     *'ETIME','GRAV','SSEPS','PAGE','EPSSYS','ABSTOL','EPSFAC','MKNT',          
+-     *'NUMGT','OUTPUT','PROUT','PRTINT','DPTIME','EPSB','MAXIT','SFAC',         
+-     *'TAUFAC','QSMALL','QCHOP','IFRZ','MAXDT','MINDT','AUTO','SITER',          
+-     *'HIGH','LOW','HFAC','LFAC','MRE','FAC','HSLOT','WSLOT','NSLOT',           
+-     *'DWT','BWT','EXTTOL','SQREPS','SOPER','POINT','DIFFUS','WIND',            
++     *'NBRA','NEX','MINPRT','LAGTSF','DMYEAR','DMMN','ZL','STIME',      
++     *'ETIME','GRAV','SSEPS','PAGE','EPSSYS','ABSTOL','EPSFAC','MKNT',  
++     *'NUMGT','OUTPUT','PROUT','PRTINT','DPTIME','EPSB','MAXIT','SFAC', 
++     *'TAUFAC','QSMALL','QCHOP','IFRZ','MAXDT','MINDT','AUTO','SITER',  
++     *'HIGH','LOW','HFAC','LFAC','MRE','FAC','HSLOT','WSLOT','NSLOT',   
++     *'DWT','BWT','EXTTOL','SQREPS','SOPER','POINT','DIFFUS','WIND',    
+      *'UNDERFLOW','NODEID','GEQOPT','BWFDSN','CHKGEO','ISTYLE','GETIC',
+      *'PUTFC','FUNCTION','BRANCH','OLD_SUMMARY','GISID_TO_NODEID',
+      *'TABID_TO_NODEID','DO_SCHEMATIC','CD14_TAB_DATUM', 
+      *'CD5T6_TAB_DATUM','NEW_GENSCN_FEO','START_EQ','END_EQ',
+-     *'DTMIN_OUT','HOME'/                                                                 
++     *'DTMIN_OUT','HOME','HI_IQ_NS','HI_IQ_NS_DWN','HI_IQ_NS_UP',
++     *'HI_IQ_NS_LMT','TY13_TO_TY43','UPGRADE_XSEC_TAB',
++     *'MAKE_DT_TAB','USE_MAXDT_TAB','HI_IQ_NS_NUMGT','HI_IQ_NS_KNT',
++     *'HI_IQ_NS_DT','FRCST_WTH_DTSF','G_ZONE','G_HGRID','G_VDATUM',
++     *'G_UNITSYS','G_BASIS','MAKE_TAB_INDEX','DZ_FOR_OUTPUT'/                                                                 
+ 
+       DATA GROUP  /
+      *NUMERIC,NUMERIC,NUMERIC,NUMERIC,NUMERIC,NUMERIC,NUMERIC,NUMERIC,          
+@@ -734,12 +880,15 @@
+      *NUMERIC,NUMERIC,NUMERIC,NUMERIC,NUMERIC,NUMERIC,NUMERIC,NUMERIC,          
+      *NUMERIC,NUMERIC,NUMERIC,NUMERIC,NUMERIC,CHAR,CHAR,CHAR,CHAR,CHAR,
+      *CHAR,CHAR,CHAR,CHAR,CHAR,CHAR,CHAR,NXTBLK, NXTBLK,CHAR,CHAR,
+-     *CHAR,CHAR,CHAR,CHAR,CHAR,NUMERIC,NUMERIC,NUMERIC,CHAR/
++     *CHAR,CHAR,CHAR,CHAR,CHAR,NUMERIC,NUMERIC,NUMERIC,CHAR,CHAR,
++     *NUMERIC,NUMERIC,NUMERIC,CHAR,CHAR,CHAR,CHAR,NUMERIC,NUMERIC,
++     *NUMERIC,CHAR,CHAR,CHAR,CHAR,CHAR,CHAR,CHAR, NUMERIC/
+ 
+       DATA GROUP_INDEX /
+      *1,2,3,4,5,6,7,8,14,19,20,21,22,23,24,25,26,27,28,29,30,36,38,39,          
+      *40,41,42,43,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,1,         
+-     *2,3,4,5,6,7,8,9,10,11,12,0,0,13,14,15,16,17,18,19,71,72,73,20/                                                 
++     *2,3,4,5,6,7,8,9,10,11,12,0,0,13,14,15,16,17,18,19,71,72,73,20,
++     *21,74,75,76,22,23,24,25,77,78,79,26,27,28,29,30,31,32,80/                                                 
+                                        
+ 
+       DATA RESPONSE_TYPE  /
+@@ -750,7 +899,9 @@
+      *REAVAL,REAVAL,REAVAL,REAVAL,REAVAL,REAVAL,REAVAL,REAVAL,REAVAL,           
+      *REAVAL,CHRVAL,CHRVAL,CHRVAL,CHRVAL,CHRVAL,CHRVAL,CHRVAL,CHRVAL,
+      *CHRVAL,CHRVAL,CHRVAL,CHRVAL,NONE, NONE,CHRVAL,CHRVAL,CHRVAL,
+-     *CHRVAL,CHRVAL, CHRVAL,CHRVAL,INTVAL, INTVAL, REAVAL, CHRVAL/                                                                     
++     *CHRVAL,CHRVAL, CHRVAL,CHRVAL,INTVAL, INTVAL, REAVAL, CHRVAL,
++     *CHRVAL,REAVAL,REAVAL,REAVAL,CHRVAL,CHRVAL,CHRVAL,CHRVAL,
++     *INTVAL,INTVAL,REAVAL,CHRVAL,6*CHRVAL,REAVAL/                                                                     
+     
+       DATA CONVERT_RULE /
+      *EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,0,0,EXACT,EXACT,EXACT,
+@@ -759,7 +910,9 @@
+      *LOWER,LOWER,LOWER,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,
+      *EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,
+      *EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,
+-     *EXACT,EXACT,EXACT,EXACT,EXACT,LOWER,EXACT/
++     *EXACT,EXACT,EXACT,EXACT,EXACT,LOWER,EXACT,EXACT,LOWER,LOWER,
++     *LOWER,EXACT,EXACT,EXACT,EXACT,EXACT,EXACT,LOWER,EXACT,5*LOWER,
++     *EXACT,LOWER/
+    
+ C***********************************************************************
+ C     Set Defaults
+@@ -934,7 +1087,7 @@
+       IMPLICIT NONE
+ 
+       INTEGER NLUSE, NGAGE
+-      CHARACTER TSFNAM*64, FFFNAM*64, TABHOME*64
++      CHARACTER TSFNAM*256, FFFNAM*256, TABHOME*128
+ 
+ 
+       INCLUDE 'tabhd.cmn'
+@@ -1178,7 +1331,7 @@
+       CALL STRIP_L_BLANKS(
+      M                    TPC)
+       
+-      READ(TPC,*) GAGE
++      READ(TPC,'(i5)') GAGE
+ 
+ C     Process the number of land uses for the gage
+       N = 2
+@@ -1187,7 +1340,7 @@
+       TPC = LINE(IS:IE)
+       CALL STRIP_L_BLANKS(
+      M                    TPC)
+-      READ(TPC,*) NUM
++      READ(TPC,'(i5)') NUM
+ 
+       RETURN
+       END
+@@ -1368,7 +1521,7 @@
+       TPC = LINE(IS:IE)
+       CALL STRIP_L_BLANKS(
+      M                    TPC)
+-      READ(TPC,*,ERR=999) DSTAT
++      READ(TPC,'(f20.0)',ERR=999) DSTAT
+ 
+ C     Process the raingage number
+       N = 3
+@@ -1380,7 +1533,7 @@
+       IF(TPC.EQ.' ') THEN
+         GAGE = 0
+       ELSE
+-        READ(TPC,*,ERR=999) GAGE
++        READ(TPC,'(i5)',ERR=999) GAGE
+       ENDIF
+       
+       IF(GAGE.GT.0) THEN
+@@ -1405,7 +1558,7 @@
+           TPC = LINE(IS:IE)
+           CALL STRIP_L_BLANKS(
+      M                        TPC)
+-          READ(TPC,*,ERR=998) A(I)
++          READ(TPC,'(f20.0)',ERR=998) A(I)
+ 100     CONTINUE
+       ELSE
+         A = 0.0

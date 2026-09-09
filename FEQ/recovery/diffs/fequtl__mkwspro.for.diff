@@ -1,0 +1,41 @@
+--- 9.98/fequtl/mkwspro.for
++++ 10.61/fequtl/mkwspro.for
+@@ -26,7 +26,8 @@
+ C     Local
+       INTEGER I, J, MODE, M3, R, OLDSUB, M7, M
+       REAL LEFT, RIGHT, ZMAX, NWSPRO(PMXSUB), SA(PMXSUB)
+-      CHARACTER BETOPT*8, OUTOPT*8, SAVOPT*8
++      CHARACTER BETOPT*8, OUTOPT*8, SAVOPT*8, zone*8, hgrid*8,
++     a          vdatum*8, unitsys*8, basis*8
+ 
+ 
+       CHARACTER NAME*7, FORMAT*8
+@@ -61,7 +62,8 @@
+      M              TABDIR, EFLAG,
+      O              TABU, STATU, NPNTU, NSUBU, XU, ZU, SBU, NU, LEFT,
+      O              RIGHT, SAVOPT, OUTOPT, BETOPT, ZMAX, LSNU, NVARU,
+-     O              NATYU, YATNU, NNYU)
++     O              NATYU, YATNU, NNYU, zone, hgrid, vdatum, unitsys,
++     O              basis)
+  
+       ELSEIF(FORMAT.EQ.'FEQX') THEN
+         MODE = 1
+@@ -69,14 +71,16 @@
+      I             (STDIN, STDOUT, MXPNTU, MODE,
+      M              TABDIR, EFLAG,
+      O              TABU, STATU, NPNTU, NSUBU, NAVMU, XU, ZU, SBU, NU,
+-     O              LEFT, RIGHT, SAVOPT, OUTOPT, BETOPT, ZMAX)
++     O              LEFT, RIGHT, SAVOPT, OUTOPT, BETOPT, ZMAX, 
++     O              zone, hgrid, vdatum, unitsys, basis)
+       ELSEIF(FORMAT.EQ.'FEQXLST') THEN
+         MODE = 2
+         CALL INFEQX
+      I             (STDIN, STDOUT, MXPNTU, MODE,
+      M              TABDIR, EFLAG,
+      O              TABU, STATU, NPNTU, NSUBU, NAVMU, XU, ZU, SBU, NU,
+-     O              LEFT, RIGHT, SAVOPT, OUTOPT, BETOPT, ZMAX)
++     O              LEFT, RIGHT, SAVOPT, OUTOPT, BETOPT, ZMAX, zone, 
++     O              hgrid, vdatum, unitsys, basis)
+       ELSE
+         WRITE(STDOUT,55) FORMAT
+         STOP 'Abnormal stop.  Error(s) found.'

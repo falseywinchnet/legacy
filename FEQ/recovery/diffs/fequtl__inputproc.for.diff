@@ -1,0 +1,74 @@
+--- 9.98/fequtl/inputproc.for
++++ 10.61/fequtl/inputproc.for
+@@ -45,7 +45,7 @@
+      A        TERMCLS(NVAL)
+       REAL RVAL(NVAL), THE_VALUES(NVAL)
+       REAL*8 DPVAL(NVAL)
+-      CHARACTER CVAL(NVAL)*64, LINE*(*), TERM(NVAL)*1
++      CHARACTER CVAL(NVAL)*(*), LINE*(*), TERM(NVAL)*1
+ 
+ 
+ C     Definition of arguments.
+@@ -91,7 +91,7 @@
+ 
+       INTEGER LENSTR
+ 
+-      EXTERNAL LENSTR, GETVAL, INL120, CHK_FOR_GIVEN_TYPE
++      EXTERNAL LENSTR, GETVAL, inline, CHK_FOR_GIVEN_TYPE
+       
+ C     Local variables
+ 
+@@ -132,7 +132,7 @@
+ C           Get the next line and parse it.  It should only contain
+ C           numeric data. 
+             WRITE(STDOUT,62)
+-            CALL INL120
++            CALL inline
+      I                 (STDIN, STDOUT,
+      O                  LINE)
+             IT = LENSTR(LINE)
+@@ -187,7 +187,7 @@
+ 135       CONTINUE
+           IF(ITEM_TYPE(ITEM_KNT).EQ.CONTINUATION_VALUE) THEN
+ C           Get the next line and process it.
+-            CALL INL120
++            CALL inline
+      I                 (STDIN, STDOUT,
+      O                  LINE)
+             IT = LENSTR(LINE)
+@@ -243,7 +243,7 @@
+      A        TERMCLS(NVAL), THE_VALUES(NVAL)
+       REAL RVAL(NVAL)
+       REAL*8 DPVAL(NVAL)
+-      CHARACTER CVAL(NVAL)*64, LINE*(*), TERM(NVAL)*1
++      CHARACTER CVAL(NVAL)*(*), LINE*(*), TERM(NVAL)*1
+ 
+ 
+ C     Definition of arguments.
+@@ -294,7 +294,7 @@
+ 
+       INTEGER LENSTR
+ 
+-      EXTERNAL LENSTR, GETVAL, INL120, GET_INTERNAL_TAB_NUMBER
++      EXTERNAL LENSTR, GETVAL, inline, GET_INTERNAL_TAB_NUMBER
+       
+ C     Local variables
+ 
+@@ -331,7 +331,7 @@
+           IF(ITEM_TYPE(IS).EQ.CONTINUATION_VALUE) THEN
+ C           Get the next line, parse it with GETVAL and process
+             WRITE(STDOUT,62) 
+-            CALL INL120
++            CALL inline
+      I                 (STDIN, STDOUT,
+      O                  LINE)
+             IT = LENSTR(LINE)
+@@ -419,7 +419,7 @@
+      A        ITEM_TYPE(NVAL), THE_VALUES(MXGET)
+       REAL RVAL(NVAL)
+       REAL*8 DPVAL(NVAL)
+-      CHARACTER CVAL(NVAL)*64, TERM(NVAL)*1,
++      CHARACTER CVAL(NVAL)*256, TERM(NVAL)*1,
+      A          KEY*16, TABID*16
+ 
+ 

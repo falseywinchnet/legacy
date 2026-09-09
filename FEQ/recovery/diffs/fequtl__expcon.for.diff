@@ -1,0 +1,226 @@
+--- 9.98/fequtl/expcon.for
++++ 10.61/fequtl/expcon.for
+@@ -945,9 +945,12 @@
+       REAL DX, HDATUM, HDOLD, HDVEC(PMXNHU), HUFVEC(PMXNHU),
+      A     HUMAT(PMXNHU,PMXFRC), KACCDU, KACCUD, KDECDU, KDECUD,
+      B     PFQVEC(PMXFRC), POWER, QFVEC(PMXNHU), QOLD, SMOOTH, TGMEAN,
+-     C     XL, XR, ZBL, ZBR
++     C     XL, XR, ZBL, ZBR, zrhufd
++      real*8 easting, northing, dnull, eastingl, northingl, eastingr,
++     a       northingr
+       CHARACTER CHAR4*4, CHAR5*5, HEAD*80, LABDU*50, LABUD*50, LINE*80,
+-     A          JUST*5, TABID*16, IDOUT*32, TABIDU*16, TABIDD*16
++     A          JUST*5, TABID*16, IDOUT*32, TABIDU*16, TABIDD*16,
++     b  zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, FLOAT, MAX
+@@ -957,10 +960,12 @@
+       CHARACTER GETTOK*4, GET_TABID*16
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL CHKCFC, CHKTAB, FNDECT, GETTBN, GETTOK, INL80, TABCHK,
++      EXTERNAL CHKCFC, CHKTAB, FNDECT, GETTBN, GETTOK, inline, TABCHK,
+      A         TWDOUT, GET_TABID, READ_EXPCON_ITEMS1,
+      B         READ_EXPCON_ITEMS2, LENSTR
+  
++      data dnull/-33d6/
++
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(A4,I5,F5.0,F10.0)
+  2    FORMAT(A4,I5,2F5.0,1X,A50)
+@@ -1006,13 +1011,22 @@
+       TABTYP = 14
+       JUST = 'RIGHT'
+ 
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++
+ C     INPUT THE BASIC DATA FROM USER.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24) HEAD
+       WRITE(STDOUT,50) HEAD
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24) HEAD
+@@ -1025,7 +1039,7 @@
+       COLWIDTH =  ITEM_END(2) - ITEM_START(2) + 1
+       
+ C     INPUT THE UPSTREAM TABLE INFORMATION
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       IDLEN = 0
+@@ -1052,7 +1066,7 @@
+       ENDIF
+  
+ C     INPUT THE DOWNSTREAM TABLE INFORMATION
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       IDLEN = 0
+@@ -1084,12 +1098,12 @@
+       ENDIF
+  
+ C     INPUT THE COEFFICIENT AND OUTPUT TABLES
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24) HEAD
+       WRITE(STDOUT,50) HEAD
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24) HEAD
+@@ -1099,7 +1113,7 @@
+      O                     NITEM, ITEM_START, ITEM_END)
+ C     Set the  column width
+       COLWIDTH =  ITEM_END(2) - ITEM_START(2) + 1
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       IDLEN = 0
+@@ -1134,7 +1148,7 @@
+         EFLAG = 1
+       ENDIF
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       IDLEN = 0
+@@ -1174,7 +1188,7 @@
+ C     INPUT THE SMOOTHING CONSTANT FOR LOSSES WHEN AREAS ARE NEARLY
+ C     EQUAL.
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,4,ERR=991) SMOOTH
+@@ -1182,7 +1196,7 @@
+  
+ C     INPUT THE MEAN VALUE PARAMETER
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,5,ERR=991) TGMEAN
+@@ -1208,19 +1222,19 @@
+ C     INPUT THE DOWNSTREAM HEADS AND THE FACTORS CONTROLLING THE
+ C     DISTRIBUTION OF PARTIAL FREE FLOWS.
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24,ERR=991) HEAD
+       WRITE(STDOUT,92) HEAD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,26,ERR=991) CHAR5, NFRAC
+       WRITE(STDOUT,94) CHAR5, NFRAC
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,16,ERR=991) CHAR5, POWER
+@@ -1237,7 +1251,7 @@
+       I = 1
+       HDOLD = -1.0
+  300  CONTINUE
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+         READ(LINE,'(F10.0)',ERR=991) HDVEC(I)
+@@ -1285,6 +1299,38 @@
+         ENDIF
+       ENDIF
+  
++c     Check for existence of easting-northing in the cross-section tables
++      if(easting <= dnull) then
++c       User did not input a value of easting.
++c       Get values from each of the tables.
++        call get_east_north(
++     i                      stdout, xtabl,
++     o                      eastingl, northingl)
++        call get_east_north(
++     i                      stdout, xtabr,
++     o                      eastingr, northingr)
++c       If both are defined, take the average, else, take 
++c       the value that is defined.  
++        if(eastingl > dnull) then
++          if(eastingr > dnull) then
++c           Both are defined.
++            easting = 0.5*(eastingl + eastingr)
++            northing = 0.5*(northingl + northingr)
++          else
++c           Only left values are defined.
++            easting = eastingl
++            northing = northingl
++          endif
++        else
++c         left values undefined
++          if(eastingr > dnull) then
++c           right values are defined
++            easting = eastingr
++            northing = northingr
++          endif
++        endif
++      endif
++
+ C     INPUT OF DATA COMPLETE.  BEGIN THE COMPUTATIONS.
+  
+       WRITE(STDOUT,95)
+@@ -1318,10 +1364,13 @@
+  320  CONTINUE
+  
+ C     OUTPUT THE TABLE
++      zrhufd = 0.0
+       CALL TWDOUT
+      I           (STDOUT, STDTAB, UDTAB, LABUD, NHD, NFRAC, QFVEC,
+      I            HDVEC, PFQVEC, HUMAT, HDATUM,
+-     I            TABTYP,'  EXPCON',
++     I            TABTYP,'  EXPCON', zrhufd,
++     i            zone, hgrid, vdatum, unitsys, basis,
++     i            easting, northing,
+      O            EFLAG)
+  
+       IF(DUTAB.GT.0) THEN
+@@ -1344,10 +1393,13 @@
+  330    CONTINUE
+  
+ C       OUTPUT THE TABLE
++        zrhufd = 0.0
+         CALL TWDOUT
+      I             (STDOUT, STDTAB, DUTAB, LABDU, NHD, NFRAC, QFVEC,
+      I              HDVEC, PFQVEC, HUMAT, HDATUM,
+-     I              TABTYP,'  EXPCON',
++     I              TABTYP,'  EXPCON', zrhufd,
++     i              zone, hgrid, vdatum, unitsys, basis,
++     i              easting, northing,
+      O              EFLAG)
+  
+       ENDIF

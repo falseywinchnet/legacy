@@ -1,0 +1,155 @@
+C
+C
+C
+      SUBROUTINE   INVMJD
+     I                   (MJD,
+     O                    YR, MN, DY)
+ 
+C     + + + PURPOSE + + +
+C     Invert the modified julian date as computed by function MJD
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER DY, MJD, MN, YR
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     MJD    - value of modified julian data number to invert
+C     YR     - calendar year
+C     MN     - number of month(1-12)
+C     DY     - day in the month
+ 
+C     Developed from information given in: "Astronomical Formulae
+C     for Calculators', Jean Meeus, published by Willmann-Bell.
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER A, ALPHA, B, C, D, E, Z
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC DBLE, INT
+C***********************************************************************
+C     CONVERT TO JULIAN TIME PLUS THE .5 DAY CORRECTION. YIELDS AN
+C     INTEGER
+ 
+      Z = MJD + 679006 + 1720994 + 1
+ 
+      IF(Z.LT.2299161) THEN
+        A = Z
+      ELSE
+        ALPHA = INT((DBLE(Z) - 1867216.24D0)/36524.25D0)
+        A = Z + 1 + ALPHA - ALPHA/4
+      ENDIF
+ 
+      B = A + 1524
+      C = INT((DBLE(B) - 122.1D0)/365.25D0)
+      D = INT(365.25D0*DBLE(C))
+      E = INT(DBLE(B-D)/30.6001D0)
+ 
+      DY = B - D - INT(30.6001D0*DBLE(E))
+      IF(E.LE.13) THEN
+        MN = E - 1
+      ELSE
+        MN = E - 13
+      ENDIF
+      IF(MN.GE.3) THEN
+        YR = C - 4716
+      ELSE
+        YR = C - 4715
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION   LPYEAR
+     I                         (YR)
+ 
+C     + + + PURPOSE + + +
+C     Compute code for leap year for the Gregorian calender for
+C     all possible cases.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER YR
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     YR     - calendar year
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC MOD
+C***********************************************************************
+      IF(MOD(YR,4).EQ.0) THEN
+C       This could be a leap year.
+        IF(MOD(YR,100).EQ.0) THEN
+C         It is a century year.
+          IF(MOD(YR,400).EQ.0) THEN
+C           It is a century year divisible by 4 and by 400.  Therefore
+C           it is a leap year.
+            LPYEAR = 2
+          ELSE
+C           Not divisible by 400.  Therefore it is not a leap year.
+            LPYEAR = 1
+          ENDIF
+        ELSE
+C         Not a century year and divisible by 4-leap year.
+          LPYEAR = 2
+        ENDIF
+      ELSE
+C       Not divisible by 4- not a leap year
+        LPYEAR = 1
+      ENDIF
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION   MJD
+     I                      (YR, MN, DY)
+ 
+C     + + + PURPOSE + + +
+C     Compute modified julian date for any date with a year greater
+C     than 1582.  We take the resulting date to represent the
+C     elapsed time from some point in the past to the first instant
+C     of the given day.
+C     The date must be later than Nov. 17, 1858 for MJD to be
+C     a positive number.  Thus for use in FEQ the year must be
+C     1859 or greater.
+ 
+C     This routine and INVMJD have been checked for every day
+C     from 1860 through the year 25000.  Using Lahey compilers!
+C     Others may fail!
+ 
+C     Developed from information given in: "Astronomical Formulae
+C     for Calculators', Jean Meeus, published by Willmann-Bell.
+
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER DY, MN, YR
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     YR     - calendar year
+C     MN     - number of month(1-12)
+C     DY     - day in the month
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER A, B, M, Y
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC INT
+C***********************************************************************
+      IF(MN.GT.2) THEN
+        Y = YR
+        M = MN
+      ELSE
+        Y = YR - 1
+        M = MN + 12
+      ENDIF
+ 
+      A = Y/100
+      B = 2 - A + A/4
+ 
+      MJD = (36525*Y)/100 + INT(30.6001*(M+1)) + DY + B - 679006
+      RETURN
+      END
+
+

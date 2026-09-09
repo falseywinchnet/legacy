@@ -1,0 +1,5395 @@
+C Routines used in determining the structure of the network matrix              
+C                                                                               
+C                                                                               
+C
+C
+C
+      SUBROUTINE   ADDREL
+     I                   (JPT, ND1, ND2, EPT, LJOIN,
+     M                    JOIN,
+     O                    FLAG)
+ 
+C     + + + PURPOSE + + +
+C     Add a relationship to the junction structure.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EPT, FLAG, JPT, LJOIN, ND1, ND2
+      INTEGER JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     JPT    - pointer for the junction descriptions
+C     ND1    - first node of a relationship
+C     ND2    - second node of a relationship
+C     EPT    - pointer to a relationship in EMC(*)
+C     LJOIN  - length of the junction description vector: JOIN
+C     JOIN   - vector for storing the junction descriptions
+C     FLAG   - flag for errors
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADR, ENDLST, J, JFREE, MAXLST, N, RPT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER EXNODN
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL EXNODN, GETUSN, UPDLST
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(' *ERR:219* Too many relationships in junction with nodes:'
+     A        )
+ 52   FORMAT(' Node=',A5)
+ 54   FORMAT(' *ERR:220* Node=',A5,' not found in junction. NODE2=',A5)
+ 56   FORMAT(' Nodes at junction are:')
+ 58   FORMAT(' Extra relationship involves nodes: ',A5,
+     A              ' and ', A5)
+C***********************************************************************
+C     SET THE NUMBER OF NODES
+ 
+      N = JOIN(JPT)
+ 
+C     SET THE END OF THE LIST FOR THIS JUNCTION
+ 
+      ENDLST = JPT + 4 + 4*N + (N-1)
+      MAXLST = JPT + 4 + 4*N + 8*(N-1)
+ 
+C     GET POINTER TO THE NEXT OPEN SLOT FOR A RELATIONSHIP POINTER
+ 
+      RPT = JOIN(JPT+3)
+ 
+      IF(RPT.GE.ENDLST) THEN
+C       WE HAVE TOO MANY RELATIONSHIPS IN THIS JUNCTION
+        WRITE(STD6,50)
+        DO 105 J=JPT+4,JPT+4+N-1
+          WRITE(STD6,52) GETUSN(JOIN(J))
+ 105    CONTINUE
+        WRITE(STD6,58) GETUSN(ND1), GETUSN(ND2)
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+C     STORE POINTER TO RELATIONSHIP
+ 
+      JOIN(RPT) = EPT
+ 
+C     ADD THE RELATIONSHIP TO THE NODE, ND1
+ 
+C     FIND THE ADDRESS OF THE NODE IN THE JUNCTION
+ 
+      ADR = EXNODN(ND1, JPT, LJOIN, JOIN)
+      IF(ADR.EQ.0) THEN
+        WRITE(STD6,54) GETUSN(ND1), GETUSN(ND2)
+        WRITE(STD6,56)
+        DO 101 J=JPT+4,JPT+4+N-1
+          WRITE(STD6,52) GETUSN(JOIN(J))
+ 101    CONTINUE
+ 
+      ELSE
+C       NODE WAS FOUND.  SKIP OVER 2 COLUMNS
+        ADR = ADR + 2*N
+ 
+C       ADD TO THE LIST FOR THIS NODE.  GET CURRENT OPEN POSITION IN
+C       THE LIST
+        JFREE = JOIN(JPT+2)
+        CALL UPDLST
+     I             (RPT, ND2, LJOIN,
+     M              ADR, JFREE, JOIN,
+     O              FLAG)
+ 
+C       CHECK FOR LIST OVERFLOW
+        IF(JFREE.GT.MAXLST) THEN
+          WRITE(STD6,50)
+          DO 100 J=JPT+4,JPT+4+N-1
+            WRITE(STD6,52) JOIN(J)
+ 100      CONTINUE
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+ 
+C       UPDATE FREE SPACE POINTER FOR THIS JUNCTION
+ 
+        JOIN(JPT+2) = JFREE
+      ENDIF
+ 
+C     DO THE OTHER NODE IF IT IS NON-ZERO
+      IF(ND2.GT.0) THEN
+        ADR = EXNODN(ND2, JPT, LJOIN, JOIN)
+        IF(ADR.EQ.0) THEN
+          WRITE(STD6,54) GETUSN(ND2), GETUSN(ND1)
+          WRITE(STD6,56)
+          DO 102 J=JPT+4,JPT+4+N-1
+            WRITE(STD6,52) GETUSN(JOIN(J))
+ 102      CONTINUE
+        ELSE
+          ADR = ADR + 2*N
+          JFREE = JOIN(JPT+2)
+          CALL UPDLST
+     I               (RPT, ND1, LJOIN,
+     M                ADR, JFREE, JOIN,
+     O                FLAG)
+ 
+C         CHECK FOR LIST OVERFLOW
+          IF(JFREE.GT.MAXLST) THEN
+            WRITE(STD6,50)
+            DO 103 J=JPT+4,JPT+4+N-1
+              WRITE(STD6,52) JOIN(J)
+ 103        CONTINUE
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+ 
+          JOIN(JPT+2) = JFREE
+        ENDIF
+      ENDIF
+ 
+C     UPDATE THE POINTER TO THE NEXT SLOT FOR A RELATIONSHIP POINTER
+ 
+      JOIN(JPT+3) = RPT + 1
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   BNVARN
+     I                   (BRAN, BRPT, NBRA, NEX,
+     M                    IVAR, NEQ,
+     O                    EXNVAR, BRNVAR, VARID)
+ 
+C     + + + PURPOSE + + +
+C     Assign variable numbers to nodes on a branch. If BRAN < 0 then
+C     assign them in reverse order.  Signaled by having the
+C     variable number in BRVARN() < 0
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER BRAN, IVAR, NBRA, NEQ, NEX
+      INTEGER BRNVAR(0:NBRA), BRPT(8,NBRA), EXNVAR(NEX), VARID(*)
+ 
+      INCLUDE 'stdun.cmn'
+
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     BRAN   - branch number
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     IVAR   - variable number
+C     NEQ    - equation counter
+C     EXNVAR - variable number for the first variable(Q) at an exterior
+C               node
+C     BRNVAR - branch node variable number for first variable on the
+C               branch(flow rate)
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ELMKNT, NBR, NODKNT, NUM
+      CHARACTER*5 DUMMY
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+C***********************************************************************
+C     ASSIGN THE VARIABLE NUMBERS TO THE NODES ON THE BRANCH.  THE
+C     ASSIGNMENT IS FROM UPSTREAM END TO DOWNSTREAM END IF THE
+C     BRANCH NUMBER IS POSITIVE AND THE REVERSE IF IT IS NEGATIVE.
+ 
+      NBR = BRAN
+C     GET THE NUMBER OF ELEMENTS  AND NODES ON THIS BRANCH
+C     ON THIS BRANCH
+ 
+      ELMKNT = BRPT(4,ABS(NBR)) - BRPT(3,ABS(NBR))
+      NODKNT = ELMKNT + 1
+ 
+      IF(NBR.GT.0) THEN
+C       ASSIGN FROM UPSTREAM END TO DOWNSTREAM END.
+        BRNVAR(NBR) = IVAR
+C       ALSO SET LOCATION FOR EXTERIOR NODE AT UPSTREAM END
+        NUM = BRPT(5,NBR)
+      ELSE
+        BRNVAR(ABS(NBR)) = -IVAR
+C       ALSO SET LOCATION FOR EXTERIOR NODE AT DOWNSTREAM END
+        NUM = BRPT(6,ABS(NBR))
+      ENDIF
+      EXNVAR(NUM) = IVAR
+C     Identify the variable number with the exterior node number
+      VARID(IVAR) = NUM
+      VARID(IVAR+1) = NUM
+
+C     Write statement to prevent bug in F95--linux version still
+C     has it!
+      WRITE(DUMMY,'(I5)') EXNVAR(1)
+
+ 
+C     UPDATE THE COUNTER FOR UNKNOWNS.
+ 
+      IVAR = IVAR + BRPT(8,ABS(NBR))*NODKNT
+
+C     NOW DO THE REMAINING EXTERIOR NODE ON THE BRANCH
+      IF(NBR.GT.0) THEN
+C       DO THE EXTERIOR NODE ON THE DOWNSTREAM END OF THE BRANCH
+C       NOTE THAT IVAR IS SET TO THE VARIABLE BEYOND THE END OF
+C       THE BRANCH.  DECREMENT TO REPRESENT THE END OF THE BRANCH.
+        NUM = BRPT(6,NBR)
+      ELSE
+        NUM = BRPT(5,ABS(NBR))
+      ENDIF
+      EXNVAR(NUM) = IVAR - 2
+      VARID(IVAR-2) = NUM
+      VARID(IVAR-1) = NUM
+
+ 
+
+C     UPDATE THE COUNTER FOR THE NUMBER OF EQUATIONS
+ 
+      NEQ = NEQ + BRPT(8,ABS(NBR))*ELMKNT
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CNVENF
+     M                   (ENF,
+     O                    PREFIX, NUMBER)
+ 
+C     + + + PURPOSE + + +
+C     Convert an exterior node field and return the prefix and
+C     the number found in the field.  Replace the field with the
+C     properly formated version of the node id.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER NUMBER
+      CHARACTER ENF*5, PREFIX*1
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     ENF    - exterior node field
+C     PREFIX - prefix for an exterior node label
+C     NUMBER - number found in an exterior node field in Network
+C               Matrix input
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I, NUM
+      CHARACTER CHR5*5
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER ISNUMD
+      CHARACTER MAKENN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL ISNUMD, MAKENN
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:210* Conversion error in exterior node field:',A5)
+C***********************************************************************
+      CHR5 = ENF
+      DO 100 I=1,5
+        IF(ISNUMD(CHR5(I:I)).EQ.0) THEN
+C         CHARACTER FOUND THAT IS NOT A DECIMAL DIGIT.
+          IF(CHR5(I:I).NE.' ') THEN
+            PREFIX = CHR5(I:I)
+            CHR5(I:I) = ' '
+            READ(CHR5,'(I5)', ERR=991) NUM
+            NUMBER = NUM
+            ENF = MAKENN(PREFIX, NUM)
+            RETURN
+          ENDIF
+        ENDIF
+ 100  CONTINUE
+C     NO NON-NUMBER FOUND.  MUST BE AN OLD STYLE EXTERIOR NUMBER.
+      PREFIX = ' '
+      READ(CHR5,'(I5)', ERR=991) NUM
+      NUMBER = NUM
+      ENF = MAKENN(PREFIX, NUM)
+      RETURN
+ 
+ 991  CONTINUE
+C     CONVERSION ERROR IN THE FIELD
+      WRITE(STD6,50) CHR5
+      STOP 'Abnormal stop: errors found.'
+      END
+C
+C
+C
+      SUBROUTINE DOCODE_5_6(
+     I                      STDOUT, NC_LONG,
+     O                      EFLAG, N)
+
+C     Process the non-node input for Code 5 Type 6.
+      IMPLICIT NONE
+      INTEGER STDOUT, EFLAG, N(10)
+      CHARACTER NC_LONG(10)*16
+
+      include 'arsize.prm'
+      include 'gatcom.cmn'
+
+C     External names
+      INTEGER FNDNUM, NONBLANK_NONZERO
+      EXTERNAL FNDNUM, NONBLANK_NONZERO, LSATAB
+
+C     Local
+
+      INTEGER I, NGTMP
+      character*16 tmpstrng
+*******************************Formats**********************************
+ 50   FORMAT(/,' *ERR:XXX* Conversion error in capacity field:',a)
+ 89   FORMAT(/,' *ERR:257* Gate or pump name=',A16,' already in use.')
+C***********************************************************************
+      
+      DO 561 I=5,6
+        CALL GET_INTERNAL_TAB_NUMBER
+     I                              (STDOUT, NC_LONG(I),
+     M                               EFLAG,
+     O                               N(I))
+ 561  CONTINUE
+      IF(NONBLANK_NONZERO(NC_LONG(7)).GT.0) THEN
+c       11 Dec 2006-ddf: This field is now changdd to include the 
+c       following options:
+c       If blank we have no control block nor a time-series table
+c       If first character is a minus sign, '-', then we have a 
+c       time series table.
+c       otherwise we have a control block number
+        if(nc_long(7)(1:1) .eq. '-') then
+c         This is a table id with prefixed minus sign.  Strip the sign
+          tmpstrng = nc_long(7)(2:)
+          CALL GET_INTERNAL_TAB_NUMBER
+     I                                (STDOUT, tmpstrng,
+     M                                 EFLAG,
+     O                                 N(7))
+c         Make internal table number  negative as a signal that it is an address
+          n(7) = -n(7)
+        else
+c         No prefixed minus sign.  We assume we have an integer.
+          read(nc_long(7),'(i10)', err=999) n(7)
+        endif
+      ELSE
+       N(7) = 0
+      ENDIF
+
+      IF(NONBLANK_NONZERO(NC_LONG(8)).GT.0) THEN
+        CALL GET_INTERNAL_TAB_NUMBER
+     I                              (STDOUT, NC_LONG(8),
+     M                               EFLAG,
+     O                               N(8))
+      ELSE
+       N(8) = 0
+      ENDIF
+
+c     Process a possible structure name for use in special output
+      n(9) = 0
+      if(NONBLANK_NONZERO(NC_LONG(9)).GT.0) THEN
+c       We have a name for a variable geometry structure. 
+c       Add this name to the gate table and if already there
+c       signal an error. 
+C       Check if gate name is already in the table. If it is
+C       in the table it is an error otherwise add it to the table.
+        NGTMP = NGATE
+        CALL LSATAB
+     I             (STDOUT, nc_long(9), MNGATE,
+     M              GNAME, NGATE,
+     O              n(9), EFLAG)
+        IF(NGATE.EQ.NGTMP) THEN
+C         The new name did not increase the size of the table.
+C         Therefore the name was in the table and is not new!
+          WRITE(STDOUT,89) nc_long(9)
+          EFLAG = 1
+        ENDIF
+      endif
+
+      N(10) = FNDNUM(NC_LONG(10)(1:5))
+      RETURN
+999   continue
+      write(stdout,50) nc_long(7)
+      STOP 'Abnormal stop: errors found.'
+      END
+C
+C
+C
+      SUBROUTINE   CNVRTN
+     I                   (STDOUT, CODE, NC, NC_LONG,
+     M                    USENIN, ENODEN,
+     O                    EFLAG, INENUS, N)
+ 
+C     + + + PURPOSE + + +
+C     Convert the integers in the matrix input record to numbers
+C     with exterior node ids going to internal numbers.
+ 
+      IMPLICIT NONE
+      INCLUDE 'arsize.prm'
+
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER CODE, EFLAG, ENODEN, STDOUT
+      INTEGER N(10), USENIN(-9999:19998)
+      CHARACTER INENUS(MNEX)*5, NC(10)*5, NC_LONG(10)*16
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     CODE   - code number for the network matrix input line
+C     NC     - input fields from Network Matrix input
+C     NC_LONG - input fields in long format
+C     NEX    - number of exterior nodes in the model
+C     USENIN - conversion from user exterior node number to internal
+C               exterior node number
+C     ENODEN - internal exterior-node number
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+C     INENUS - conversion from internal exterior node number to user
+C              exterior node designation
+C     N      - internal node numbers
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I, M, NUM
+      CHARACTER PREFIX*1
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER FNDNUM, NONBLANK_NONZERO
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL CNVENF, FNDINN, FNDNUM, KIL, GET_INTERNAL_TAB_NUMBER,
+     A         NONBLANK_NONZERO, SET_CONTROL_SOURCE
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:215* Branch number =',I5,' <= 0 invalid.')
+C***********************************************************************
+      GOTO(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),CODE
+        WRITE(STDOUT,*) ' *BUG:11* INVALID EMC CODE IN CNVRTN. CODE=',
+     A                   CODE
+           STOP 'Abnormal stop: errors found.'
+ 
+C     CODE FOR A BRANCH
+ 
+ 1      CONTINUE
+C         N(1) = user branch number; N(2) = time-series indicator for
+C         rainfall on water surface; N(3) = time-series indicator for
+C         evaporation on water surface
+C         Note: N(2) and N(3) are input values but they are not stored as
+C         part of the instruction.  They only set values in the time-series
+C         management system.  The effect of rainfall and evaporation on
+C         the branch water surface is represented as a lateral inflow.
+C         GET THE USER BRANCH NUMBER.
+ 
+          N(1) = FNDNUM(NC(1))
+          IF(N(1).LE.0) THEN
+            WRITE(STDOUT,50) N(1)
+            N(1) = -N(1)
+            EFLAG = 1
+          ENDIF
+C         Process possible time-series references for rain and evap
+          IF(NC_LONG(2).EQ.' ') THEN
+C           No rainfall time-series reference
+            N(2) = 0
+
+          ELSEIF(NC_LONG(2)(1:1).EQ.'-') THEN
+C           The contents refer to a time series file.  Set N(2) to
+C           a negative value to force checking of the time series
+C           reference for rain.   Also strip the - from the id.
+            N(2) = -1
+            NC_LONG(2) = NC_LONG(2)(2:16)
+          ELSEIF(NC_LONG(2).NE.' ') THEN
+C           The reference is to a time series table.  The value
+C           could be a zero in which case it signals no time 
+C           series.
+
+            IF(NONBLANK_NONZERO(NC_LONG(2)).GT.0) THEN
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(2),
+     M                                     EFLAG,
+     O                                     N(2))
+            ELSE
+              N(2) = 0
+            ENDIF
+          ENDIF
+
+          IF(NC_LONG(3).EQ.' ') THEN
+C           No rainfall time-series reference
+            N(3) = 0
+
+          ELSEIF(NC_LONG(3)(1:1).EQ.'-') THEN
+C           The contents refer to a time series file.  Set N(3) to
+C           a negative value to force checking of the time series
+C           reference for evap.   Also strip the - from the id.
+            N(3) = -1
+            NC_LONG(3) = NC_LONG(3)(2:16)
+          ELSEIF(NC_LONG(3).NE.' ') THEN
+C           The reference is to a time series table.  The value
+C           could be a zero in which case it signals no time 
+C           series.
+
+            IF(NONBLANK_NONZERO(NC_LONG(3)).GT.0) THEN
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(3),
+     M                                     EFLAG,
+     O                                     N(3))
+            ELSE
+              N(3) = 0
+            ENDIF
+          ENDIF
+          GOTO 8000
+ 
+C     CODE FOR SUM OF FLOW RATES EQUALS ZERO
+ 
+ 2      CONTINUE
+ 
+        N(1) = FNDNUM(NC(1))
+        M = N(1)
+        IF(M.LT.2.OR.M.GT.9) CALL KIL
+     I                                (14,
+     M                                 M, EFLAG)
+        M = N(1)
+        DO 210 I=2,2+M-1
+ 
+          CALL FNDINN
+     I               (
+     M                NC(I), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(I))
+ 210    CONTINUE
+        GOTO 8000
+ 
+C     ELEVATION EQUALITY
+ 
+ 3      CONTINUE
+          DO 300 I=1,2
+            CALL FNDINN
+     I                 (
+     M                  NC(I), ENODEN, USENIN,
+     O                  EFLAG, INENUS, N(I))
+ 300      CONTINUE
+          GOTO 8000
+ 
+C     ONE-NODE HEAD-DISCHARGE
+ 
+ 4      CONTINUE
+ 
+C         N(1) = TYPE; N(2) = HEAD; N(3) = DIRECTION; N(4) = FLOW NODE
+C         CHECK AND REPORT STANDARD INFOR FOR CODE = 4.
+ 
+          N(1) = FNDNUM(NC(1))
+          N(3) = FNDNUM(NC(3))
+ 
+          DO 450 I=2,4,2
+            CALL FNDINN
+     I                 (
+     M                  NC(I), ENODEN, USENIN,
+     O                  EFLAG, INENUS, N(I))
+ 450      CONTINUE
+ 
+C         BRANCH ON N(1) AND COMPLETE PROCESSING
+ 
+          GOTO(401, 401, 403, 404, 405, 406),N(1)
+            WRITE(STDOUT,*) ' *BUG:12* INVALID CODE=4 TYPE IN CNVRTN.',
+     A                    ' TYPE=', N(1)
+            STOP 'Abnormal stop: errors found.'
+ 
+ 401        CONTINUE
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                  (STDOUT, NC_LONG(5),
+     M                                   EFLAG,
+     O                                   N(5))
+
+C              N(5) = FNDNUM(NC(5))
+              GOTO 499
+ 
+ 403        CONTINUE
+              N(5) = FNDNUM(NC(5))
+              GOTO 499
+
+ 404        CONTINUE
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(5),
+     M                                     EFLAG,
+     O                                     N(5))
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(6),
+     M                                     EFLAG,
+     O                                     N(6))
+ 
+C              N(5) = FNDNUM(NC(5))
+C              N(6) = FNDNUM(NC(6))
+              GOTO 499
+ 
+ 405        CONTINUE
+ 
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(5),
+     M                                     EFLAG,
+     O                                     N(5))
+C              N(5) = FNDNUM(NC(5))
+C              N(6) = FNDNUM(NC(6))
+              CALL SET_CONTROL_SOURCE(
+     I                               STDOUT, MFTNUM, MNBLK, NC_LONG(6),
+     O                               EFLAG, N(6))
+              GOTO 499
+ 
+ 406        CONTINUE
+C             N(5) = RATING TABLE NUMBER, N(6) = SOURCE FOR CONTROLLING
+C             LEVEL.  N(6) > 0: TIME SERIES TABLE; N(6) < 0 FILE IN
+C             CONNECTION FORMAT. N(7)= TABLE CONVERTING CONTROLLING LEVEL
+C             INTO FLOWRATE.
+ 
+C              N(5) = FNDNUM(NC(5))
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(5),
+     M                                     EFLAG,
+     O                                     N(5))
+C              N(6) = FNDNUM(NC(6))
+              IF(NC_LONG(6)(1:1).EQ.'-') THEN                         
+C               The contents refer to a time series file.  Set N(6) to     
+C               a negative value to force checking of the time series 
+C               reference.   Also strip the - from the id.            
+                N(6) = -1                                             
+                NC_LONG(6) = NC_LONG(6)(2:16)                         
+              ELSE                                                    
+C               The reference is to a time series table or to         
+C               a constant value given later in the instruction.      
+C               A blank or zero value signals the constant value.     
+C               The reference is to a time series table or to 
+C               a constant value given later in the instruction.
+C               A blank or zero value signals the constant value.
+                IF(NONBLANK_NONZERO(NC_LONG(6)).GT.0) THEN
+                  CALL GET_INTERNAL_TAB_NUMBER
+     I                                        (STDOUT, NC_LONG(6),
+     M                                         EFLAG,
+     O                                         N(6))
+                ELSE
+                  N(6) = 0
+                ENDIF
+              ENDIF
+C              N(7) = FNDNUM(NC(7))
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(7),
+     M                                     EFLAG,
+     O                                     N(7))
+              GOTO 499
+ 499        CONTINUE
+            GOTO 8000
+ 
+ 5      CONTINUE
+ 
+C         N(1) = TYPE; N(2) = UPN; N(3) = DNN; N(4) = FLOW NODE;
+ 
+          N(1) = FNDNUM(NC(1))
+          DO 580 I=2,4
+            CALL FNDINN
+     I                 (
+     M                  NC(I), ENODEN, USENIN,
+     O                  EFLAG, INENUS, N(I))
+ 580      CONTINUE
+C          BRANCH ON N(1) AND COMPLETE PROCESSING
+          GOTO(501, 502, 503, 504, 505, 506, 507, 508, 509),N(1)
+            WRITE(STDOUT,*) ' *BUG:13* INVALID CODE=5 TYPE IN CNVRTN.',
+     A                  ' TYPE=', N(1)
+            STOP 'Abnormal stop: errors found.'
+ 
+ 501        CONTINUE
+ 
+C             EXPANSION-CONTRACTION WITH CRITICAL DEPTH POSSIBLE
+ 
+C             N(5) = TRANSISTION SIGN; N((6) = TABLE# FOR
+C             COMPUTING CRITICAL FLOW;
+ 
+              N(5) = FNDNUM(NC(5))
+C              N(6) = FNDNUM(NC(6))
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(6),
+     M                                     EFLAG,
+     O                                     N(6))
+              GOTO 599
+ 
+ 502        CONTINUE
+ 
+C             N(5) = TABLE NUMBER FOR UPSTREAM TO DOWNSTREAM FLOW
+C             VERSUS HEAD; N(6) = TABLE NUMBER FOR SUBMERGENCE
+C             CORRECTION FOR TABLE GIVEN BY N(5); N(7) = TABLE NUMBER
+C             FOR DOWNSTREAM TO UPSTREAM FLOW VERSUS HEAD; N(8) =
+C             TABLE NUMBER FOR SUBMERGENCE CORRECTION FOR TABLE
+C             GIVEN BY N(7);
+C             N(9) = KEY. KEY = 0 IF TURNON IS ELEVATION, KEY = 1
+C              IF TURNON IS FLOWRATE
+C             N(10) = SWITCH NODE. IF FLOW AT NODE IS > 0 THEN PUMP
+C                     IF ON MUST BE TURNED OFF AND IF OFF SHOULD NOT BE
+C                     TURNED ON BY OTHER RULES.
+ 
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(5),
+     M                                     EFLAG,
+     O                                     N(5))
+              IF(NONBLANK_NONZERO(NC_LONG(6)).GT.0) THEN
+                CALL GET_INTERNAL_TAB_NUMBER
+     I                                      (STDOUT, NC_LONG(6),
+     M                                       EFLAG,
+     O                                       N(6))
+                CALL GET_INTERNAL_TAB_NUMBER
+     I                                      (STDOUT, NC_LONG(7),
+     M                                       EFLAG,
+     O                                       N(7))
+                CALL GET_INTERNAL_TAB_NUMBER
+     I                                      (STDOUT, NC_LONG(8),
+     M                                       EFLAG,
+     O                                       N(8))
+                ELSE
+                  N(6) = 0
+                  N(7) = 0
+                  N(8) = 0
+              ENDIF
+              N(9) = FNDNUM(NC(9))
+
+              IF(NC(10).NE.'    ') THEN
+                CALL FNDINN
+     I                     (
+     M                      NC(10), ENODEN, USENIN,
+     O                      EFLAG, INENUS, N(10))
+              ELSE
+               N(10) = 0
+              ENDIF
+ 
+             GOTO 599
+ 
+ 503       CONTINUE
+ 
+C         Pump with variable head and optional conduit and
+C         entrance and exit losses
+ 
+C         N(5)-flow direction: 1 is U to D and -1 is D to U
+C         N(6)-Table number for the pump curve.  Head across
+C              the pump for flow.  Defined for the standard or
+C              base speed if the pump is variable speed.
+C         N(7)-Table number for the losses at the inlet, in the
+C              inlet conduit, and in the outlet conduit.  Taken
+C              as a function of the flow through the pump.
+C         N(8)-Table number for the coefficient on the velocity
+C              head difference between the end of the outlet
+C              conduit and the target node.  Is a function of the
+C              depth of submergence of the outlet.  Must be 1.0 at
+C              zero submergence.
+C         N(9)-Table number for pump speed as a function of time if
+C              < 0.  Operation block number controlling the pump if > 0.
+ 
+C          NC(10)- Optional name for the pump for output to special
+C                  output file.
+ 
+             N(5) = FNDNUM(NC(5))
+             CALL GET_INTERNAL_TAB_NUMBER
+     I                                   (STDOUT, NC_LONG(6),
+     M                                    EFLAG,
+     O                                    N(6))
+             DO 543 I=7,8
+               IF(NONBLANK_NONZERO(NC_LONG(I)).GT.0) THEN
+                 CALL GET_INTERNAL_TAB_NUMBER
+     I                                       (STDOUT, NC_LONG(I),
+     M                                        EFLAG,
+     O                                        N(I))
+               ELSE
+                 N(I) = 0
+               ENDIF
+543          CONTINUE
+
+             CALL SET_CONTROL_SOURCE(
+     I                               STDOUT, MFTNUM, MNBLK, NC_LONG(9),
+     O                               EFLAG, N(9))
+
+             GOTO 599
+ 
+ 504       CONTINUE
+ 
+C            BRIDGE / FLOW OVER THE ROADWAY POSSIBLE
+C            N(5) - TABLE# OF HEAD LOSS COEF VS DEPTH + FLOW
+C            N(6) - TABLE# OF HEAD LOSS COEF VS DEPTH - FLOW
+C            N(7) - TABLE# OF AREA VS DEPTH FOR BRIDGE OPENING
+C            N(8) - TABLE# OF FLOW OVER ROAD VS HEAD  + FLOW
+C            N(9) - TABLE# OF FLOW OVER ROAD VS HEAD  - FLOW
+C            N(10)- TABLE# GIVING FLOW RATIO VS SUBMERGENCE RATIO
+             DO 565 I=5,10
+C               N(I) = FNDNUM(NC(I))
+               CALL GET_INTERNAL_TAB_NUMBER
+     I                                     (STDOUT, NC_LONG(I),
+     M                                      EFLAG,
+     O                                      N(I))
+ 565         CONTINUE
+             GOTO 599
+ 
+ 505        CONTINUE
+ 
+C             ABRUPT EXAPANSION-
+C             N(5) = TABLE NUMBER OF CRITICAL FLOW TABLE
+C              N(5) = FNDNUM(NC(5))
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(5),
+     M                                     EFLAG,
+     O                                     N(5))
+              GOTO 599
+ 
+ 506        CONTINUE
+C             TWO-D FLOW TABLE WITH ELEVATION AS ARGUMENTS
+C
+C             N(5) = TABLE NUMBER FOR FLOW FROM U TO D
+C             N(6) = TABLE NUMBER FOR FLOW FROM D TO U
+C             N(7) = OPTIONAL TABLE NUMBER FOR TABLE GIVING THE FACTOR
+C                    TO USE TO MULTIPLY THE VALUE DERIVED FROM THE TABLES.
+C                    IF ZERO FACTOR IS TAKEN AS 1.0
+C             N(8) = OPTIONAL TABLE NUMBER FOR TABLE GIVING THE ELEVATION
+C                    FOR COMPUTING HEAD VERSUS TIME.  IF ZERO THE ELEVATION
+C                    FOR COMPUTING HEAD IS THE VALUE IN F(1)
+C             N(10) = IF GT 0 THEN INDICATES A CONTINUATION LINE FOLLOWS.
+C                     THE CONTINUATION LINE WILL HAVE ONLY N(5:10), AND
+C                     F(1) ON IT IN THE SAME FORMAT AS THE FIRST LINE OF
+C                     INPUT FOR THIS TYPE.  THIS ALLOWS MULTIPLE TABLES
+C                    FOR THE FLOW BETWEEN THE TWO NODES.
+
+               CALL DOCODE_5_6(
+     I                         STDOUT, NC_LONG,
+     O                         EFLAG, N)
+ 
+
+               GOTO 599
+ 
+ 507        CONTINUE
+ 
+C             BIDIRECTIONAL FLOW OVER A WEIR WITH VARIABLE HEIGHT
+C             AND DISCHARGE COEFFICIENT
+ 
+ 
+C             N(5) = OPERATION BLOCK NUMBER OR NEGATIVE OF
+C             TABLE NUMBER GIVING THE OPENING FRACTION AS
+C             A FUNCTION OF TIME; N(6) = TABLE NUMBER
+C             OF THE TABLE GIVING THE ELEVATION OF THE WEIR CREST
+C             VS. P; N(7)= TABLE NUMBER OF TABLE GIVING C VS. P
+C             FOR POSITIVE FLOW; N(8) = TABLE NUMBER OF TABLE GIVING
+C             C VS. P FOR NEGATIVE FLOW; N(9)= TABLE NUMBER OF TABLE
+C             GIVING SUMERGENCE CORRECTION FOR BOTH DIRECTIONS;
+C             FOR THE VELOCITY HEAD COMPUTED FROM THE AVERAGE VELOCITY.
+C             NC(10)- Optional name for the gate for output to
+C                 the special output file.
+
+              CALL SET_CONTROL_SOURCE(
+     I                               STDOUT, MFTNUM, MNBLK, NC_LONG(5),
+     O                               EFLAG, N(5))
+
+              DO 570 I=6,9
+C                N(I) = FNDNUM(NC(I))
+                 CALL GET_INTERNAL_TAB_NUMBER
+     I                                       (STDOUT, NC_LONG(I),
+     M                                        EFLAG,
+     O                                        N(I))
+ 570          CONTINUE
+              GOTO 599
+ 
+ 508        CONTINUE
+C             MCHENRY SLUICE GATES ON THE FOX RIVER BELOW FOX CHAIN OF
+C             LAKES.
+ 
+C             N(5) = OPERATION BLOCK NUMBER OR NEGATIVE OF
+C             TABLE NUMBER GIVING THE OPENING FRACTION AS
+C             A FUNCTION OF TIME.
+              CALL SET_CONTROL_SOURCE(
+     I                               STDOUT, MFTNUM, MNBLK, NC_LONG(5),
+     O                               EFLAG, N(5))
+              GOTO 599
+ 
+ 
+ 509        CONTINUE
+ 
+C             Generic gate
+ 
+C             N(5) = OPERATION BLOCK NUMBER OR NEGATIVE OF
+C             TABLE NUMBER GIVING THE OPENING FRACTION AS
+C             A FUNCTION OF TIME; N(6) = 4-character string for
+C             gate id.
+C             N(7)= TABLE NUMBER of type 15 giving flow from u to d
+C             N(8)= table number of type 15 giving flow from d to u
+
+              CALL SET_CONTROL_SOURCE(
+     I                               STDOUT, MFTNUM, MNBLK, NC_LONG(5),
+     O                               EFLAG, N(5))
+
+              DO 5091 I=7,8
+                CALL GET_INTERNAL_TAB_NUMBER
+     I                                      (STDOUT, NC_LONG(I),
+     M                                       EFLAG,
+     O                                       N(I))
+5091          CONTINUE
+
+ 
+C             NC(6) already contains the 4-character string giving the
+C             gate name.
+ 
+C             Check for a gate-efficiency table.
+              IF(NONBLANK_NONZERO(NC_LONG(9)).GT.0) THEN
+C               There is a table for gate efficiency.
+                CALL GET_INTERNAL_TAB_NUMBER
+     I                                      (STDOUT, NC_LONG(9),
+     M                                       EFLAG,
+     O                                       N(9))
+              ELSE
+                N(9) = 0
+              ENDIF
+              IF(N(9).GT.0) THEN
+C               There is a gate-efficiency table specified.
+C               Get the exterior node id and convert to 
+C               internal form.
+                CALL FNDINN
+     I                     (
+     M                      NC(10), ENODEN, USENIN,
+     O                      EFLAG, INENUS, N(10))
+              ENDIF
+
+              GOTO 599
+ 
+ 599       CONTINUE
+           GOTO 8000
+ 
+C       FORCED BOUNDARY
+ 
+ 6      CONTINUE
+ 
+C         N(1)=TYPE; N(2)=NODE; N(3)=DIRECTION; N(4)=time-series id
+C         N(5) = time-series table id giving an adjustment factor on the
+C                flow or elevation value as function of time.  May be
+C                missing. 
+          N(1) = FNDNUM(NC(1))
+          CALL FNDINN
+     I               (
+     M                NC(2), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(2))
+          N(3) = FNDNUM(NC(3))
+C          N(4) = FNDNUM(NC(4))
+          IF(NC_LONG(4)(1:1).EQ.'-') THEN
+C           The contents refer to a time series file.  Set N(4) to
+C           a negative value to force checking of the time series
+C           reference.   Also strip the - from the id.
+            N(4) = -1
+            NC_LONG(4) = NC_LONG(4)(2:16)
+          ELSE
+C           The reference is to a time series table or to 
+C           a constant value given later in the instruction.
+C           A blank or zero value signals the constant value.
+            IF(NONBLANK_NONZERO(NC_LONG(4)).GT.0) THEN
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(4),
+     M                                     EFLAG,
+     O                                     N(4))
+            ELSE
+              N(4) = 0
+            ENDIF
+          ENDIF
+
+          IF(NONBLANK_NONZERO(NC_LONG(5)).GT.0) THEN
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(5),
+     M                                     EFLAG,
+     O                                     N(5))
+          ELSE
+            N(5) = 0
+         ENDIF
+         GOTO 8000
+ 
+C       LEVEL POOL RESERVOIR
+ 
+ 7      CONTINUE
+ 
+C         IN THIS VERSION N(3) MUST BE 1!
+C         N(1) = NODE NUMBER; N(2) = STORAGE TABLE NUMBER;
+C         N(3) = NUMBER OF INFLOW NODES; N(4) = INFLOW NODE NUMBER
+C         N(5) = time-series indicator for rainfall on surface
+C         N(6) =  time-series indicator for evaporation on surface
+C         Note: N(5) and N(6) are input values but they are not stored as
+C         part of the instruction.  They only set values in the time-series
+C         management system.  The effect of rainfall and evaporation on
+C         the branch water surface is represented as a lateral inflow.
+ 
+          CALL FNDINN
+     I               (
+     M                NC(1), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(1))
+C          N(2) = FNDNUM(NC(2))
+          CALL GET_INTERNAL_TAB_NUMBER
+     I                                (STDOUT, NC_LONG(2),
+     M                                 EFLAG,
+     O                                 N(2))
+          N(3) = FNDNUM(NC(3))
+          CALL FNDINN
+     I               (
+     M                NC(4), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(4))
+
+C         Process references to time series for rainfall and evaporations
+          IF(NC_LONG(5).EQ.' ') THEN
+C           No rainfall time-series reference
+            N(5) = 0
+
+          ELSEIF(NC_LONG(5)(1:1).EQ.'-') THEN
+C           The contents refer to a time series file.  Set N(5) to
+C           a negative value to force checking of the time series
+C           reference for rain.   Also strip the - from the id.
+            N(5) = -1
+            NC_LONG(5) = NC_LONG(5)(2:16)
+          ELSEIF(NC_LONG(5).NE.' ') THEN
+C           The reference is to a time series table.  The value
+C           could be a zero in which case it signals no time 
+C           series.
+
+            IF(NONBLANK_NONZERO(NC_LONG(5)).GT.0) THEN
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(5),
+     M                                     EFLAG,
+     O                                     N(5))
+            ELSE
+              N(5) = 0
+            ENDIF
+          ENDIF
+          IF(NC_LONG(6).EQ.' ') THEN
+C           No evaporation time-series reference
+            N(6) = 0
+
+          ELSEIF(NC_LONG(6)(1:1).EQ.'-') THEN
+C           The contents refer to a time series file.  Set N(6) to
+C           a negative value to force checking of the time series
+C           reference for evap.   Also strip the - from the id.
+            N(6) = -1
+            NC_LONG(6) = NC_LONG(6)(2:16)
+          ELSEIF(NC_LONG(6).NE.' ') THEN
+C           The reference is to a time series table.  The value
+C           could be a zero in which case it signals no time 
+C           series.
+
+            IF(NONBLANK_NONZERO(NC_LONG(6)).GT.0) THEN
+              CALL GET_INTERNAL_TAB_NUMBER
+     I                                    (STDOUT, NC_LONG(6),
+     M                                     EFLAG,
+     O                                     N(6))
+            ELSE
+              N(6) = 0
+            ENDIF
+          ENDIF
+          GOTO 8000
+ 
+C     CRITICAL DEPTH
+ 
+ 8      CONTINUE
+          CALL FNDINN
+     I               (
+     M                NC(1), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(1))
+          GOTO 8000
+ 
+ 
+C     Code number available. 
+ 
+ 9    CONTINUE
+        GOTO 8000
+ 
+C       ENERGY HEAD EQUALITY
+ 
+ 10     CONTINUE
+          CALL CNVENF
+     M               (NC(1),
+     O                PREFIX, NUM)
+          CALL FNDINN
+     I               (
+     M                NC(1), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(1))
+          CALL FNDINN
+     I               (
+     M                NC(2), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(2))
+          GOTO 8000
+ 
+C       MOMENTUM FLUX PLUS PRESSURE FORCE EQUALITY.  USE ONLY
+C       IF UPSTREAM AND DOWNSTREAM SECTION ARE SAME SIZE AND FLOW
+C       CHANGES AT RIGHT ANGLES TO THE CHANNEL TAKE PLACE
+ 
+ 11     CONTINUE
+ 
+          CALL FNDINN
+     I               (
+     M                NC(1), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(1))
+          CALL FNDINN
+     I               (
+     M                NC(2), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(2))
+          GOTO 8000
+ 
+C       MATCH AN AVERAGE ELEVATION WITH THE ELEVATION AT A THIRD NODE
+C       USEFUL WHEN MOMENTUM IS CONSERVED AT A JUNCTION INVOLVING A
+C       RIGHT ANGLED ENTRY OR NEARLY SO!
+ 
+ 12     CONTINUE
+ 
+        DO 120 I=1,3
+          CALL FNDINN
+     I               (
+     M                NC(I), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(I))
+ 120    CONTINUE
+        GOTO 8000
+ 
+C       EQUALITY OF MOMENTUM AT A SIMPLE JUNCTION IF FLOW IS
+C       ENTERING OR EQUALITY OF SPECIFIC ENERGY IF FLOW IS LEAVING
+C       REPLACEMENT FOR CODE 11 BUT CODE 11 IS RETAINED FOR
+C       CONSISTENCY WITH PAST USAGE AND FOR SPECIAL CASES.
+ 
+ 13     CONTINUE
+          CALL FNDINN
+     I               (
+     M                NC(1), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(1))
+          CALL FNDINN
+     I               (
+     M                NC(2), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(2))
+ 
+C         Get the number of side nodes.
+          N(3) = FNDNUM(NC(3))
+          DO 1301 I=1,N(3)
+            CALL FNDINN
+     I                 (
+     M                  NC(3+I), ENODEN, USENIN,
+     O                  EFLAG, INENUS, N(3+I))
+1301      CONTINUE
+          GOTO 8000
+ 
+C     SIDE-WEIR FLOW COMPUTATION. USED IN CONJUNCTION WITH
+C     CODE 13.
+ 
+ 14     CONTINUE
+          DO 140 I=1,3
+            CALL FNDINN
+     I                 (
+     M                  NC(I), ENODEN, USENIN,
+     O                  EFLAG, INENUS, N(I))
+ 140      CONTINUE
+C         Process the tabid for the U to D flow table
+          CALL GET_INTERNAL_TAB_NUMBER
+     I                                (STDOUT, NC_LONG(4),
+     M                                 EFLAG,
+     O                                 N(4))
+C         Process the tabid for the D to U flow table
+          CALL GET_INTERNAL_TAB_NUMBER
+     I                                (STDOUT, NC_LONG(5),
+     M                                 EFLAG,
+     O                                 N(5))
+C         Process the tabid for the optional table giving an adjustment
+C         factor as a function of time.
+          IF(NC_LONG(6).NE.' ') THEN
+            CALL GET_INTERNAL_TAB_NUMBER
+     I                                  (STDOUT, NC_LONG(6),
+     M                                   EFLAG,
+     O                                   N(6))
+          ELSE
+           N(6) = 0
+          ENDIF
+
+C         Process the tabid for the optional table giving the fractional
+C         crest change as a function of time.
+          IF(NC_LONG(7).NE.' ') THEN
+            CALL GET_INTERNAL_TAB_NUMBER
+     I                                  (STDOUT, NC_LONG(7),
+     M                                   EFLAG,
+     O                                   N(7))
+          ELSE
+            N(7) = 0
+          ENDIF
+         GOTO 8000
+ 
+C       DUMMY BRANCH
+ 
+ 15     CONTINUE
+          CALL FNDINN
+     I               (
+     M                NC(1), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(1))
+          CALL FNDINN
+     I               (
+     M                NC(2), ENODEN, USENIN,
+     O                EFLAG, INENUS, N(2))
+          GOTO 8000
+ 
+ 8000   CONTINUE
+ 
+      RETURN
+      END
+C
+C
+C
+      CHARACTER*4 FUNCTION   CONCHR
+     I                             (ID)
+ 
+C     + + + PURPOSE + + +
+C     Return string for the connecting id number.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ID
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     ID     - connecting id number
+C***********************************************************************
+      IF(ID.EQ.1) THEN
+        CONCHR = 'BRA '
+      ELSEIF(ID.EQ.2) THEN
+        CONCHR = 'JUNC'
+      ELSEIF(ID.EQ.3) THEN
+        CONCHR = 'BC  '
+      ELSEIF(ID.EQ.4) THEN
+        CONCHR = 'NB  '
+      ELSEIF(ID.EQ.5) THEN
+        CONCHR = 'LPR '
+      ELSE
+        CONCHR = '????'
+      ENDIF
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION   EXNODN
+     I                         (NODE, JPT, LJOIN, JOIN)
+ 
+C     + + + PURPOSE + + +
+C     Find the address of the node number in NODE in the list of
+C     nodes for the junction given by JPT.  Return zero if NODE
+C     not found in the list.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER JPT, LJOIN, NODE
+      INTEGER JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NODE   - node number
+C     JPT    - pointer for the junction descriptions
+C     LJOIN  - length of the junction description vector: JOIN
+C     JOIN   - vector for storing the junction descriptions
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I, IE, IS
+C***********************************************************************
+      IS = JPT + 4
+      IE = IS + JOIN(JPT) - 1
+      DO 100 I=IS,IE
+        IF(NODE.EQ.JOIN(I)) THEN
+          EXNODN = I
+          RETURN
+        ENDIF
+ 100  CONTINUE
+      EXNODN = 0
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION   FDNUMR
+     I                         (NODE, JPT, LJOIN, JOIN)
+ 
+C     + + + PURPOSE + + +
+C     Return the number of  relationships at NODE.  All codes can be
+C     counted.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER JPT, LJOIN, NODE
+      INTEGER JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NODE   - node number
+C     JPT    - pointer for the junction descriptions
+C     LJOIN  - length of the junction description vector: JOIN
+C     JOIN   - vector for storing the junction descriptions
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER EMCADR, KNT, N, NODADR, NXTADR, RPT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER EXNODN
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL EXNODN, GETUSN
+C***********************************************************************
+C     SET NUMBER OF NODES
+      N = JOIN(JPT)
+ 
+      NODADR = EXNODN(NODE, JPT, LJOIN, JOIN)
+      IF(NODADR.LE.0) THEN
+        WRITE(STD6,*) ' *BUG:XXX* FDNUMR:NODE=',GETUSN(NODE),' NOT IN',
+     A             ' LIST. JPT=',JPT
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      KNT = 0
+      NXTADR = JOIN(NODADR+2*N)
+ 
+ 100  CONTINUE
+        IF(NXTADR.GT.0) THEN
+          RPT = JOIN(NXTADR+1)
+          EMCADR = JOIN(RPT)
+          IF(EMCADR.GT.0) THEN
+            KNT = KNT + 1
+          ENDIF
+          NXTADR = JOIN(NXTADR)
+          GOTO 100
+        ENDIF
+ 
+      FDNUMR = KNT
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   FIND4
+     I                  (JPT, NODE, LJOIN, LEMC, EMC,
+     M                   JOIN,
+     O                   NODE2, RADR)
+ 
+C     + + + PURPOSE + + +
+C     Find code 4 relationship with flow node at NODE.  If flow node
+C     and head node are the same then NODE2 = 0 otherwise NODE2 
+C     is the flow node.  Return address of relationship in EMC if found
+C     and zero otherwise.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER JPT, LEMC, LJOIN, NODE, NODE2, RADR
+      INTEGER EMC(LEMC), JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     JPT    - pointer for the junction descriptions
+C     NODE   - node number
+C     LJOIN  - length of the junction description vector: JOIN
+C     LEMC   - length of EMC(*)
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     JOIN   - vector for storing the junction descriptions
+C     NODE2  - second node in relationship if any exists
+C     RADR   - relationship address
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, EMCADR, N, NODADR, NXTADR, QNODE, RPT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER EXNODN
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL EXNODN
+C***********************************************************************
+C     GET THE NUMBER OF NODES
+      N = JOIN(JPT)
+ 
+C     FIND THE NODE IN THE LIST
+      NODADR = EXNODN(NODE, JPT, LJOIN, JOIN)
+      IF(NODADR.LE.0) THEN
+        WRITE(STD6,*) ' *BUG:* NODE NOT IN NODE LIST IN FIND4.'
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+C     GET THE POINTER TO THE FIRST RELATIONSHIP POINTER RECORD
+      NXTADR = JOIN(NODADR+2*N)
+ 
+C     SCAN THE RELATIONSHIPS IN THE LIST FOR THIS NODE FOR A MATCH
+ 100  CONTINUE
+        IF(NXTADR.GT.0) THEN
+C         GET THE POINTER TO THE RELATIONSHIP POINTER
+          RPT = JOIN(NXTADR+1)
+C         GET THE SECOND NODE.  ALREADY SET PROPERLY IN THE JUNCTION
+          NODE2 = JOIN(NXTADR+2)
+ 
+C         GET THE POINTER TO THE RELATIONSHIP
+          EMCADR = JOIN(RPT)
+          IF(EMCADR.GT.0) THEN
+C           A RELATIONSHIP IS AVAILABLE
+            CODE = EMC(EMCADR)
+            IF(CODE.EQ.4) THEN
+C             FOUND THE CODE WE ARE SEEKING.  CHECK FLOW NODE.
+              QNODE = EMC(EMCADR+4)
+              IF(QNODE.EQ.NODE) THEN
+C               FOUND MATCH!
+                RADR = EMCADR
+C               MARK RELATIONSHIP AS UNAVAILABLE
+                JOIN(RPT) = -EMCADR
+                RETURN
+              ENDIF
+            ENDIF
+          ENDIF
+ 
+C         GET THE ADDRESS OF THE NEXT RECORD IN THE LIST
+          NXTADR = JOIN(NXTADR)
+          GOTO 100
+        ENDIF
+ 
+C     IF WE REACH HERE NO RELATIONSHIP MATCH WAS FOUND.
+ 
+      RADR = 0
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   FIND8
+     I                  (JPT, NODE, LJOIN, LEMC, EMC,
+     M                   JOIN,
+     O                   NODE2, RADR)
+ 
+C     + + + PURPOSE + + +
+C     Find any code 8 at node NODE and return the address of the code
+C     8 relationship in EMC.  If not found, return zero.  If found,
+C     mark the relationship as in use.  Return NODE2 as zero because
+C     code 8 never involves more than one node.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER JPT, LEMC, LJOIN, NODE, NODE2, RADR
+      INTEGER EMC(LEMC), JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     JPT    - pointer for the junction descriptions
+C     NODE   - node number
+C     LJOIN  - length of the junction description vector: JOIN
+C     LEMC   - length of EMC(*)
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     JOIN   - vector for storing the junction descriptions
+C     NODE2  - second node in relationship if any exists
+C     RADR   - relationship address
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, EMCADR, N, NODADR, NXTADR, RPT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER EXNODN
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL EXNODN
+C***********************************************************************
+      NODE2 = 0
+ 
+C     SET THE NUMBER OF NODES AT THE JUNCTION
+      N = JOIN(JPT)
+ 
+C     FIND THE ADDRESS FOR THE NODE IN THE NODE LIST
+ 
+      NODADR = EXNODN(NODE, JPT, LJOIN, JOIN)
+      IF(NODADR.LE.0) THEN
+        WRITE(STD6,*) ' *BUG:* NODE NOT IN NODE LIST IN FIND8.'
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+C     GET THE POINTER TO THE FIRST RELATIONSHIP POINTER RECORD
+      NXTADR = JOIN(NODADR + 2*N)
+ 
+C     FIND EACH RELATIONSHIP IN THE LIST FOR NODE.  IF RELATIONSHIP IS
+C     AVAILABLE, CHECK THE CODE IN EMC.  IF CODE IS 8 GET ADDRESS IN
+C     EMC OF THE RELATION AND RETURN IT.
+ 
+ 100  CONTINUE
+        IF(NXTADR.GT.0) THEN
+C         THERE IS A NEXT RECORD IN THE LIST. GET DATA AND CHECK
+C         GET THE POINTER TO THE POINTER TO THE RELATIONSHIP.
+          RPT = JOIN(NXTADR+1)
+C         GET THE ADDRESS IN EMC
+          EMCADR = JOIN(RPT)
+          IF(EMCADR.GT.0) THEN
+C           RELATIONSHIP IS AVAILABLE
+            CODE = EMC(EMCADR)
+ 
+ 
+            IF(CODE.EQ.8) THEN
+C             FOUND IT!
+              RADR = EMCADR
+C             MARK THE RELATIONSHIP AS UNAVAILABLE
+              JOIN(RPT) = -EMCADR
+              RETURN
+            ENDIF
+          ENDIF
+ 
+C         GET THE ADDRESS OF THE NEXT RECORD IN THE LIST
+ 
+          NXTADR = JOIN(NXTADR)
+          GOTO 100
+        ENDIF
+ 
+C     IF WE GET HERE CODE 8 WAS NOT FOUND
+ 
+      RADR = 0
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   FND4
+     I                 (STDOUT, EXN, EMC, EPT,
+     O                  IPNT)
+ 
+C     + + + PURPOSE + + +
+C     Find location of CODE = 4 with a head node equal
+C     to EXN in the network-matrix control vector.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EXN, IPNT, STDOUT, EPT
+      INTEGER EMC(EPT)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     EXN    - exterior node number
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     MLEMC  - maximum length of EMC(*)
+C     IPNT   - pointer into EMC for description of control structure
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'matcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, IENTRY
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETUSN
+ 
+C     + + + OUTPUT FORMATS + + +
+ 10   FORMAT(/,' *ERR:89* Exterior node = ',A5,' not found in ',
+     1           'Network-Matrix Control with Code = 4')
+C***********************************************************************
+C     START SEARCH
+      IENTRY = 0
+ 
+ 100  CONTINUE
+        IENTRY = IENTRY + 1
+        IPNT = ADD(IENTRY)
+        CODE = EMC(IPNT)
+        IF(CODE.EQ.4) THEN
+C         CODE = 4.  Check if the head node matches EXN.
+          IF(EXN.EQ.EMC(IPNT+2)) RETURN
+        ENDIF
+ 
+        IF(CODE.GT.0) THEN
+C         Continue the search.
+          GOTO 100
+        ELSE
+C         End of Network-Matrix Control data.
+          WRITE(STDOUT,10) GETUSN(EXN)
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+      END
+C
+C
+C
+      SUBROUTINE   FND5
+     I                 (STDOUT, TYPE, UEXN, DEXN, EMC, EPT,
+     O                  IPNT)
+ 
+C     + + + PURPOSE + + +
+C     Find location of CODE = 5 with TYPE and upstream and
+C     downstream nodes as given in the network-matrix control vector.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER DEXN, EPT, IPNT, STDOUT, TYPE, UEXN
+      INTEGER EMC(EPT)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     TYPE   - code type being sought
+C     UEXN   - upstream exterior node
+C     DEXN   - downstream exterior node number
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     MLEMC  - maximum length of EMC(*)
+C     IPNT   - pointer into EMC for description of control structure
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'matcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, IENTRY
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETUSN
+ 
+C     + + + OUTPUT FORMATS + + +
+ 10   FORMAT(/,' *ERR:245* TYPE=',I5,' and nodes:',2A6,' not',
+     1          ' found in Network-Matrix Control with CODE = 5')
+C***********************************************************************
+C     START SEARCH
+      IENTRY = 0
+ 
+ 100  CONTINUE
+        IENTRY = IENTRY + 1
+        IPNT = ADD(IENTRY)
+        CODE = EMC(IPNT)
+        IF(CODE.EQ.5) THEN
+C         CODE = 5.  Check for type.
+          IF(TYPE.EQ.EMC(IPNT+1)) THEN
+C           Found match for type
+            IF(UEXN.EQ.EMC(IPNT+2)) THEN
+C             Found match for upstream node.
+              IF(DEXN.EQ.EMC(IPNT+3)) THEN
+C               Found match for downstream node.
+                RETURN
+              ENDIF
+            ENDIF
+          ENDIF
+        ENDIF
+ 
+        IF(CODE.GT.0) THEN
+C         Continue the search.
+          GOTO 100
+        ELSE
+C         End of Network-Matrix Control data.
+          WRITE(STDOUT,10) TYPE, GETUSN(UEXN), GETUSN(DEXN)
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+      END
+C
+C
+C
+      SUBROUTINE   FND514
+     I                   (JPT, NODE, LJOIN, LEMC, EMC,
+     M                    JOIN,
+     O                    NODE2, RADR)
+ 
+C     + + + PURPOSE + + +
+C     Find code 5 or 14 relationship with flow node at NODE.
+C     NODE2 is set properly in the junction already.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER JPT, LEMC, LJOIN, NODE, NODE2, RADR
+      INTEGER EMC(LEMC), JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     JPT    - pointer for the junction descriptions
+C     NODE   - node number
+C     LJOIN  - length of the junction description vector: JOIN
+C     LEMC   - length of EMC(*)
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     JOIN   - vector for storing the junction descriptions
+C     NODE2  - second node in relationship if any exists
+C     RADR   - relationship address
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, EMCADR, N, NODADR, NXTADR, QNODE, RPT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER EXNODN
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL EXNODN
+C***********************************************************************
+C     GET THE NUMBER OF NODES
+      N = JOIN(JPT)
+ 
+C     FIND THE NODE IN THE LIST
+      NODADR = EXNODN(NODE, JPT, LJOIN, JOIN)
+      IF(NODADR.LE.0) THEN
+        WRITE(STD6,*) ' *BUG:* NODE NOT IN NODE LIST IN FND514.'
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+C     GET THE POINTER TO THE FIRST RELATIONSHIP POINTER RECORD
+      NXTADR = JOIN(NODADR+2*N)
+ 
+C     SCAN THE RELATIONSHIPS IN THE LIST FOR THIS NODE FOR A MATCH
+ 100  CONTINUE
+        IF(NXTADR.GT.0) THEN
+C         GET THE POINTER TO THE RELATIONSHIP POINTER
+          RPT = JOIN(NXTADR+1)
+C         GET THE SECOND NODE.  ALREADY SET PROPERLY IN THE JUNCTION
+          NODE2 = JOIN(NXTADR+2)
+ 
+C         GET THE POINTER TO THE RELATIONSHIP
+          EMCADR = JOIN(RPT)
+          IF(EMCADR.GT.0) THEN
+C           A RELATIONSHIP IS AVAILABLE
+            CODE = EMC(EMCADR)
+            IF(CODE.EQ.5) THEN
+C             FOUND A CODE WE ARE SEEKING.  CHECK FLOW NODE.
+              QNODE = EMC(EMCADR+4)
+              IF(QNODE.EQ.NODE) THEN
+C               FOUND MATCH!
+                RADR = EMCADR
+C               MARK RELATIONSHIP AS UNAVAILABLE
+                JOIN(RPT) = -EMCADR
+                RETURN
+              ENDIF
+            ELSEIF(CODE.EQ.14) THEN
+C             FOUND A CODE WE ARE SEEKING.  CHECK FLOW NODE.
+              QNODE = EMC(EMCADR+3)
+              IF(QNODE.EQ.NODE) THEN
+C               FOUND MATCH!
+                RADR = EMCADR
+C               Mark relationship as unavailable.
+                JOIN(RPT) = -EMCADR
+                RETURN
+              ENDIF
+            ENDIF
+          ENDIF
+ 
+C         GET THE ADDRESS OF THE NEXT RECORD IN THE LIST
+          NXTADR = JOIN(NXTADR)
+          GOTO 100
+        ENDIF
+ 
+C     IF WE REACH HERE NO RELATIONSHIP MATCH WAS FOUND.
+ 
+      RADR = 0
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   FND7
+     I                 (STDOUT, RNODE, EMC, MLEMC,
+     O                  INODE, ADRS)
+ 
+C     + + + PURPOSE + + +
+C     Find location of CODE = 7 with the given reservoir node and
+C     return the inflow node and the address of the reservoir storage
+C     table.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ADRS, INODE, STDOUT, MLEMC, RNODE
+      INTEGER EMC(MLEMC)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     RNODE  - reservoir node
+C     MLEMC  - maximum length of EMC(*)
+C     INODE  - inflow node for the level-pool reservoir
+C     ADRS   - address of the function table in FTAB/ITAB
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'matcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, IENTRY, IPNT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETUSN
+ 
+C     + + + OUTPUT FORMATS + + +
+ 10   FORMAT(/,' *BUG:XXX* Reservoir node=',A5,' and inflow node=',A5,
+     A  ' not found in Network-Matrix Control with CODE = 7')
+C***********************************************************************
+C     START SEARCH
+      IENTRY = 0
+ 
+ 100  CONTINUE
+        IENTRY = IENTRY + 1
+        IPNT = ADD(IENTRY)
+        CODE = EMC(IPNT)
+        IF(CODE.EQ.7) THEN
+C         CODE = 7.  Check reservoir node.
+          IF(RNODE.EQ.EMC(IPNT+1)) THEN
+C           Found match for reservoir node.  Get the inflow node.
+            INODE = EMC(IPNT+5)
+C           Get the address of the storage table.
+            ADRS = EMC(IPNT+2)
+            RETURN
+          ENDIF
+        ENDIF
+ 
+        IF(CODE.GT.0) THEN
+C         Continue the search.
+          GOTO 100
+        ELSE
+C         End of Network-Matrix Control data.
+          WRITE(STDOUT,10) GETUSN(RNODE), GETUSN(INODE)
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+      END
+C
+C
+C
+      SUBROUTINE   FNDANY
+     I                   (JPT, NODE, LJOIN, LEMC, EMC,
+     M                    JOIN,
+     O                    NODE2, ANYR)
+ 
+C     + + + PURPOSE + + +
+C     Find any relationship excluding code 4 and code 8--code 8 should
+C     should not appear and code 4 should only appear with its head
+C     node only at the node.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ANYR, JPT, LEMC, LJOIN, NODE, NODE2
+      INTEGER EMC(LEMC), JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     JPT    - pointer for the junction descriptions
+C     NODE   - node number
+C     LJOIN  - length of the junction description vector: JOIN
+C     LEMC   - length of EMC(*)
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     JOIN   - vector for storing the junction descriptions
+C     NODE2  - second node in relationship if any exists
+C     ANYR   - address of relationship found in EMC(*)
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL PARAMETERS + + +
+      INTEGER BIG
+      PARAMETER(BIG=9999999)
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, EMCADR, LEN, MINADR, MINLEN, MINND2, MINRPT, N,
+     A        ND2ADR, NODADR, NODGRP, NXTADR, RPT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER EXNODN, ISNUMR
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL EXNODN, GETUSN, ISNUMR
+C***********************************************************************
+C     GET THE NUMBER OF NODES.
+      N = JOIN(JPT)
+ 
+C
+C     FIND THE NODE IN THE LIST
+      NODADR = EXNODN(NODE, JPT, LJOIN, JOIN)
+      IF(NODADR.LE.0) THEN
+        WRITE(STD6,*) ' *BUG:XXX NODE=',GETUSN(NODE),
+     A    ' NOT IN NODE LIST',' IN FNDANY'
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+C     GET THE POINTER TO THE FIRST RELATIONSHIP POINTER RECORD
+      NXTADR = JOIN(NODADR+2*N)
+ 
+C     SCAN THE AVAILABLE AND CODE VALID RELATIONSHIPS FOR THIS
+C     NODE.
+ 
+C     There are three groups of available relationships for a node
+C     all classified on the basis of NODE2.  Note that all of the
+C     relationships permitted here have a positive value of NODE2.
+C     The groups are defined as follows:
+ 
+C            NODE2 is terminated.
+ 
+C            NODE2 is initiated.
+ 
+C            NODE2 is uninitiated.
+ 
+ 
+C     The first priority relationship would be any in the first group.
+C     Since the second node is terminated any relationship will be ok.
+C     The next priority is the second group so that we keep the profile
+C     of the matrix smaller.  However, this group must be used with
+C     care because we must make sure that  NODE2 will have a relationship
+C     available when its path is terminated.  The last group is last
+C     in priority but any node can be taken.  If there is more than one
+C     we will pick the NODE2 with the shortest path length.
+ 
+C     Optimization may be added to the first two groups as we
+C     gain experience with the new method.
+ 
+      MINLEN = BIG
+ 100  CONTINUE
+        IF(NXTADR.GT.0) THEN
+C         GET THE POINTER TO THE POINTER TO THE RELATIONSHIP IN EMC
+          RPT = JOIN(NXTADR+1)
+C         GET THE SECOND NODE
+          NODE2 = JOIN(NXTADR+2)
+C         GET THE EMC POINTER
+          EMCADR = JOIN(RPT)
+          IF(EMCADR.GT.0) THEN
+C           RELATIONSHIP IS AVAILABLE-CHECK CODE
+            CODE = EMC(EMCADR)
+            IF(CODE.EQ.8) THEN
+              WRITE(STD6,*) ' *BUG:XXX* CODE 8 FOUND IN FNDANY. JPT='
+     A                ,JPT
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+ 
+            IF(CODE.NE.4.AND.CODE.NE.5.AND.CODE.NE.14) THEN
+C             We have an available relationship at NODE. NODE2, RPT,
+C             and EMCADR are all defined.  Now check for the various
+C             groups.
+ 
+              ND2ADR = EXNODN(NODE2, JPT, LJOIN, JOIN)
+              IF(ND2ADR.LE.0) THEN
+                WRITE(STD6,*) ' *BUG:XXX* NODE2=',GETUSN(NODE2),
+     A             ' NOT IN',' NODE LIST. JPT=',JPT
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+ 
+              NODGRP = JOIN(ND2ADR+N)
+              IF(NODGRP.EQ.2) THEN
+C               NODE2 in the relationship is a terminated node.
+C               Use the relationship.  We take the first one
+C               we find now but might add optimization later.
+                ANYR = EMCADR
+C               Mark the relationship as used.
+                JOIN(RPT) = -EMCADR
+                RETURN
+              ELSEIF(NODGRP.EQ.1) THEN
+C               NODE2 in the relationship is initiated.
+C               Since it is initiated it will be seeking a terminating
+C               relationship.  The sum of flows relationship is
+C               of high priority for initiating the beginning
+C               of a path.  Therefore do not depend on it being
+C               available for terminating a path.
+ 
+C               Must leave at least one relationship at NODE2
+C               so that it can be terminated.
+                IF(ISNUMR(NODE2, JPT, LJOIN, JOIN, LEMC, EMC).GE.2)
+     A                                                         THEN
+C                 There are two or more relationships at NODE2.
+C                 Therefore we can use the one we have and still
+C                 leave one for terminating the initiated path.
+                  ANYR = EMCADR
+C                 Mark the relationship as used
+                  JOIN(RPT) = -EMCADR
+                  RETURN
+                ENDIF
+              ELSE
+C               NODE2 not initiated.  Find minimum length.
+ 
+                LEN = JOIN(ND2ADR+3*N)
+                IF(LEN.LT.MINLEN) THEN
+                  MINLEN = LEN
+                  MINADR = EMCADR
+                  MINRPT = RPT
+                  MINND2 = NODE2
+                ENDIF
+ 
+              ENDIF
+            ENDIF
+          ENDIF
+ 
+C         GET THE ADDRESS OF THE NEXT RELATIONSHIP POINTER RECORD
+ 
+          NXTADR = JOIN(NXTADR)
+          GOTO 100
+        ENDIF
+ 
+C     IF A RELATIONSHIP WITH AN UNINITIATED NODE2 WAS FOUND
+C     WE FALL TO HERE.
+ 
+      IF(MINLEN.NE.BIG) THEN
+        ANYR = MINADR
+        NODE2 = MINND2
+C       Mark the relationship as used.
+        JOIN(MINRPT) = -MINADR
+      ELSE
+        ANYR = 0
+      ENDIF
+ 
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   FNDINN
+     I                   (
+     M                    ENF, ENODEN, USENIN,
+     O                    EFLAG, INENUS, EIDINN)
+ 
+C     + + + PURPOSE + + +
+C     Find an internal node number for an exterior node id.  The node
+C     may never have been seen or it may have been seen already.
+ 
+      
+      IMPLICIT NONE
+      INCLUDE 'arsize.prm'
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, EIDINN, ENODEN
+      INTEGER USENIN(-9999:19998)
+      CHARACTER ENF*5, INENUS(MNEX)*5
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     ENF    - exterior node field
+C     ENODEN - internal exterior-node number
+C     USENIN - conversion from user exterior node number to internal
+C               exterior node number
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+C     INENUS - conversion from internal exterior node number to user
+C              exterior node designation
+C     EIDINN - internal node number for an exterior node id
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + SAVED VALUES + + +
+      INTEGER STYLE
+      SAVE STYLE
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER II, NUM
+      CHARACTER CHR5*5, PREFIX*1
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER MAKENN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL CNVENF, MAKENN
+ 
+C     + + + DATA INITIALIZATIONS + + +
+      DATA STYLE/-1/
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:207* Exterior node number=',I5,' out of range.')
+ 51   FORMAT(/,' *ERR:211* Number=',I5,' out of range for',
+     A ' exterior node. Prefix=',A2)
+ 52   FORMAT(/,' *ERR:208* Prefix=',A2,' is invalid.')
+ 54   FORMAT(/,' *ERR:212* Branch number=',I5, ' does not exist. ',
+     A       'Prefix=',A2,' for the node id.')
+ 56   FORMAT(/,' *ERR:213* Node=',A5,' makes node count > max value',
+     A       ' of:',I5)
+ 58   FORMAT(/,' *ERR:90* Mixed input style. Node#=',I5)
+ 60   FORMAT(/,' *ERR:104* Mixed input style. Node id=',1X,A5)
+C***********************************************************************
+C     GET THE PREFIX AND THE BRANCH NUMBER
+      CALL CNVENF
+     M           (ENF,
+     O            PREFIX, NUM)
+ 
+      IF(PREFIX.EQ.' ') THEN
+C       OLD STYLE
+        IF(NUM.LT.1.OR.NUM.GT.19998) THEN
+          WRITE(STD6,50) NUM
+          NUM = 19998
+          EFLAG = 1
+        ENDIF
+        IF(STYLE.EQ.-1) THEN
+          STYLE = 0
+        ELSEIF(STYLE.EQ.1) THEN
+          WRITE(STD6,58) NUM
+          EFLAG = 1
+        ENDIF
+      ELSE
+C       NEW STYLE
+        IF(NUM.LT.1.OR.NUM.GT.9999) THEN
+          WRITE(STD6,51) NUM, PREFIX
+          NUM = 9999
+          EFLAG = 1
+        ENDIF
+        IF(STYLE.EQ.-1) THEN
+          STYLE = 1
+        ELSEIF(STYLE.EQ.0) THEN
+          WRITE(STD6,60) ENF
+          EFLAG = 1
+        ENDIF
+ 
+      ENDIF
+ 
+C     COMPUTE INDEX INTO USENIN() TO FIND THE INTERNAL NUMBER
+      IF(PREFIX.EQ.' ') THEN
+        II = NUM
+      ELSEIF(PREFIX.EQ.'F') THEN
+        II = -NUM
+      ELSEIF(PREFIX.EQ.'U') THEN
+        II = NUM
+      ELSEIF(PREFIX.EQ.'D') THEN
+        II = 9999 + NUM
+      ELSE
+        WRITE(STD6,52) PREFIX
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      IF(USENIN(II).EQ.0) THEN
+ 
+C       NODE HAS NOT BEEN SEEN BEFORE.  MUST NOT BE ON A BRANCH.
+        IF(PREFIX.EQ.'U'.OR.PREFIX.EQ.'D') THEN
+          WRITE(STD6,54) NUM, PREFIX
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+ 
+C       ASSIGN THE NEXT INTERNAL NUMBER TO THE NODE
+ 
+        ENODEN = ENODEN + 1
+        IF(ENODEN.GT.MNEX) THEN
+C         PROBLEM
+          CHR5 = MAKENN(PREFIX, NUM)
+          WRITE(STD6,56) CHR5, MNEX
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+C       ADD IT TO THE TRANSLATION VECTORS
+        USENIN(II) = ENODEN
+        INENUS(ENODEN) = MAKENN(PREFIX, NUM)
+        EIDINN = ENODEN
+      ELSE
+C       NODE HAS BEEN SEEN BEFORE
+ 
+        EIDINN = USENIN(II)
+      ENDIF
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION   FNDNOD
+     I                         (FNODE, MNBN, LNODE, STAT, STLIST)
+ 
+C     + + + PURPOSE + + +
+C     Return the node number if a match for STAT is found
+C     in STLIST and -1 otherwise.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER FNODE, LNODE, MNBN
+      REAL STAT, STLIST(MNBN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     FNODE  - location of the first node in the search
+C     MNBN   - maximum number of branch nodes
+C     LNODE  - location of last node in the search
+C     STAT   - station value
+C     STLIST - list of stations to search
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER NODE
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+C***********************************************************************
+      DO 100 NODE=FNODE,LNODE
+        IF(ABS(STAT-STLIST(NODE)).LT.1.E-4) THEN
+          FNDNOD = NODE
+          RETURN
+         ENDIF
+ 100  CONTINUE
+      FNDNOD = -1
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION   FNDNUM
+     I                         (CHR5)
+ 
+C     + + + PURPOSE + + +
+C     Find the number for a non-exterior node integer field in the
+C     matrix control input.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      CHARACTER CHR5*5
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     CHR5   - 5 character non-exterior node field value
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER NUM
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:214* Conversion error in: ',A5)
+C***********************************************************************
+      READ(CHR5,'(I5)', ERR=991) NUM
+      FNDNUM = NUM
+      RETURN
+ 
+ 991  CONTINUE
+        WRITE(STD6,50) CHR5
+        STOP 'Abnormal stop: errors found.'
+      END
+C
+C
+C
+      INTEGER FUNCTION   FNDNXT
+     I                         (JPT, LJOIN, JOIN, LEMC, EMC)
+ 
+C     + + + PURPOSE + + +
+C     Find the next path to initiate at the junction since the
+C     previous path did not force a next path.  If an uninitiated
+C     path has no relationships available at its initiating node
+C     then that path must be taken next. Otherwise, take the
+C     uninitated path with the shortest attached length
+C     that has an available node.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER JPT, LEMC, LJOIN
+      INTEGER EMC(LEMC), JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     JPT    - pointer for the junction descriptions
+C     LJOIN  - length of the junction description vector: JOIN
+C     JOIN   - vector for storing the junction descriptions
+C     LEMC   - length of EMC(*)
+C     EMC    - vector containing coded form of the Matrix Control Input
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL PARAMETERS + + +
+      INTEGER BIG
+      PARAMETER(BIG=9999999)
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I, IE, IS, LEN, MINLEN, MINNOD, N, NODE, NODE0, NUM,
+     A        NUMFLG
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER ISNDAV, ISNUMR
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL ISNDAV, ISNUMR
+C***********************************************************************
+C     GET THE NUMBER OF NODES
+      N = JOIN(JPT)
+ 
+C     CHECK FOR UNINITATED NODE THAT HAS NO RELATIONSHIP AVAILABLE.
+      IS = JPT + 4
+      IE = IS + N - 1
+      NUMFLG = 0
+      DO 100 I=IS,IE
+        IF(JOIN(I+N).EQ.0) THEN
+C         NODE IS UNINITIATED.
+          NODE = JOIN(I)
+          NUM = ISNUMR(NODE, JPT, LJOIN, JOIN, LEMC, EMC)
+          IF(NUM.EQ.0) THEN
+            NUMFLG = NUMFLG + 1
+            NODE0 = NODE
+          ENDIF
+        ENDIF
+ 100  CONTINUE
+      IF(NUMFLG.GT.0) THEN
+C       FOUND A NODE WITH ZERO RELATIONSHIPS
+        IF(NUMFLG.GT.1) THEN
+          WRITE(STD6,*) ' PROBLEM IN FNDNXT. JPT=',JPT,' NUMFLG=',
+     A       NUMFLG,' NODE0=',NODE0
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+        FNDNXT = NODE0
+        RETURN
+      ENDIF
+ 
+C     CHECK EACH NODE AND TAKE THE AVAILABLE NODE WITH THE
+C     MINIMUM LENGTH
+      MINLEN = BIG
+      IS = JPT + 4
+      IE = IS + N -1
+      DO 200 I=IS,IE
+        IF(JOIN(I+N).EQ.0) THEN
+C         PATH IS AVAILABLE. IS THE NODE AVAILABLE.
+          NODE = JOIN(I)
+          IF(ISNDAV(JPT, NODE, LJOIN, JOIN, LEMC, EMC).EQ.1) THEN
+            LEN = JOIN(I+3*N)
+            IF(LEN.LT.MINLEN) THEN
+              MINLEN = LEN
+              MINNOD = NODE
+            ENDIF
+          ENDIF
+        ENDIF
+ 200  CONTINUE
+ 
+      IF(MINLEN.EQ.BIG) THEN
+        FNDNXT = 0
+      ELSE
+        FNDNXT = MINNOD
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   FNVARN
+     I                   (NODE, EXNODT,
+     M                    IVAR, EXNVAR, VARID)
+ 
+C     + + + PURPOSE + + +
+C     Assign variable numbers to a free node.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IVAR, NODE
+      INTEGER EXNODT(9,*), EXNVAR(*), VARID(*)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NODE   - node number
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     IVAR   - variable number
+C     EXNVAR - variable number for the first variable(Q) at an exterior
+C               node
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ND
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+C***********************************************************************
+      ND = ABS(NODE)
+      IF(EXNODT(3,ND).LE.0) THEN
+C       ASSIGN VARIABLE NUMBER AND INCREMENT THE NUMBER
+        IF(EXNVAR(ND).EQ.0) THEN
+          EXNVAR(ND) = IVAR
+C         Identify the variable with the exterior node number
+          VARID(IVAR) = ND
+          VARID(IVAR+1) = ND
+          IVAR = IVAR + 2
+        ENDIF
+      ENDIF
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   GETINB
+     M                   (EBN,
+     O                    EFLAG, INB)
+ 
+C     + + + PURPOSE + + +
+C     Get an internal branch number.  If none exists write an error.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EBN, EFLAG, INB
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     EBN    - external(user) branch number
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+C     INB    - internal branch number
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'usintp.cmn'
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:205* Branch=',I5,' out of range.')
+ 52   FORMAT(/,' *ERR:206* Branch=',I5,' has undefined internal value.',
+     A       '  Branch id is invalid.')
+C***********************************************************************
+      IF(EBN.LT.0) THEN
+        INB = -1
+        RETURN
+      ELSEIF(EBN.EQ.0) THEN
+        INB = 0
+        RETURN
+      ELSEIF(EBN.GT.9999) THEN
+        WRITE(STD6,50) EBN
+        EFLAG = 1
+        EBN = 9999
+      ENDIF
+      IF(USBRIN(EBN).EQ.0) THEN
+        WRITE(STD6,52) EBN
+        STOP 'Abnormal stop: errors found.'
+      ELSE
+        INB = USBRIN(EBN)
+        RETURN
+      ENDIF
+      END
+C
+C
+C
+      SUBROUTINE   GETINN
+     M                   (ENF,
+     O                    EFLAG, INN)
+ 
+C     + + + PURPOSE + + +
+C     Find an internal node number for an exterior node id.  If none
+C     exists it is an error.  May be a minus sign prefixing the id.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, INN
+      CHARACTER ENF*5
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     ENF    - exterior node field
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+C     INN    - internal exterior node number
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'usintp.cmn'
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I, II, MINUS, NUM
+      CHARACTER CHR5*5, PREFIX*1
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER ISNUMD
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL ISNUMD
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:207* Exterior node number=',I5,' out of range.')
+ 51   FORMAT(/,' *ERR:211* Number=',I5,' out of range for',
+     A ' exterior node. Prefix=',A2)
+ 52   FORMAT(/,' *ERR:208* Prefix=',A2,' is invalid.')
+ 56   FORMAT(/,' *ERR:209* Node=',A5,' has an undefined internal ',
+     A       'value.  Node id is invalid.')
+58    FORMAT(/,' *ERR:364* Field for exterior node id:',A6,',',
+     A  ' does not make sense.  Some input lines may be missing.')
+C***********************************************************************
+      CHR5 = ENF
+      MINUS = 1
+      DO 100 I=1,5
+        IF(CHR5(I:I).EQ.'-') THEN
+          MINUS = -1
+          CHR5(I:I) = ' '
+          ENF(I:I) = ' '
+        ELSEIF(CHR5(I:I).EQ.'+') THEN
+          CHR5(I:I) = ' '
+          ENF(I:I) = ' '
+        ELSE
+          IF(ISNUMD(CHR5(I:I)).EQ.0) THEN
+C           CHARACTER FOUND THAT IS NOT A DECIMAL DIGIT.
+            IF(CHR5(I:I).NE.' ') THEN
+              PREFIX = CHR5(I:I)
+              CHR5(I:I) = ' '
+              READ(CHR5,'(I5)', ERR=991) NUM
+              GOTO 120
+            ENDIF
+          ENDIF
+        ENDIF
+ 100  CONTINUE
+C     NO NON-NUMBER FOUND.  MUST BE AN OLD STYLE EXTERIOR NUMBER.
+      PREFIX = ' '
+      READ(CHR5,'(I5)', ERR=991) NUM
+ 
+ 120  CONTINUE
+ 
+      IF(PREFIX.EQ.' ') THEN
+C       OLD STYLE
+        IF(NUM.LT.1.OR.NUM.GT.1998) THEN
+          WRITE(STD6,50) NUM
+          NUM = 1998
+          EFLAG = 1
+        ENDIF
+      ELSE
+C       NEW STYLE
+        IF(NUM.LT.1.OR.NUM.GT.9999) THEN
+          WRITE(STD6,51) NUM, PREFIX
+          NUM = 9999
+          EFLAG = 1
+        ENDIF
+      ENDIF
+ 
+C     COMPUTE INDEX INTO USENIN() TO FIND THE INTERNAL NUMBER
+      IF(PREFIX.EQ.' ') THEN
+        II = NUM
+      ELSEIF(PREFIX.EQ.'F') THEN
+        II = -NUM
+      ELSEIF(PREFIX.EQ.'U') THEN
+        II = NUM
+      ELSEIF(PREFIX.EQ.'D') THEN
+        II = 9999 + NUM
+      ELSE
+        WRITE(STD6,52) PREFIX
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      IF(USENIN(II).EQ.0) THEN
+C       NODE HAS NOT BEEN SEEN BEFORE.
+        WRITE(STD6,56) ENF
+        STOP 'Abnormal stop: errors found.'
+      ELSE
+C       NODE HAS BEEN SEEN BEFORE
+ 
+        INN = USENIN(II)
+        IF(MINUS.LT.0) INN = -INN
+      ENDIF
+      RETURN
+ 991  CONTINUE
+C     CONVERSION ERROR IN THE FIELD
+      WRITE(STD6,58) CHR5
+      STOP 'Abnormal stop: errors found.'
+      END
+C
+C
+C
+      SUBROUTINE   GETREC
+     I                   (STDOUT, BEGBUF, ENDBUF, LBUFF, BUFF,
+     M                    IGET, NIN,
+     O                    EMCADR, CONID, POINT, NODEIN)
+ 
+C     + + + PURPOSE + + +
+C     Get the next record from the pending instruction buffer.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER BEGBUF, CONID, EMCADR, ENDBUF, IGET, LBUFF, NIN, NODEIN,
+     A        POINT, STDOUT
+      INTEGER BUFF(LBUFF)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - standard output unit for user messages
+C     BEGBUF - beginning address for pending instruction buffer
+C     ENDBUF - end point for the pending instruction buffer
+C     LBUFF  - number of elements in the pending instruction buffer
+C     BUFF   - pending instruction buffer
+C     IGET   - address of the instruction in the pending instruction
+C               buffer
+C     NIN    - number or records remaining in the pending instruction
+C               buffer
+C     EMCADR - address of relationship in EMC(*)
+C     CONID  - connecting item id code.  Defined in MAKEMC
+C     POINT  - pointer to the connecting item
+C     NODEIN - user node identification string
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(' *BUG:XXX GETREC CALLED WHEN BUFFER IS EMPTY.')
+C***********************************************************************
+C     ON ENTRY NIN SHOULD BE POSITIVE BUT CHECK FOR BUGS
+      IF(NIN.LE.0) THEN
+        WRITE(STDOUT,50)
+        STOP 'Abnormal stop: errors found.'
+      ELSE
+        NIN = NIN - 1
+        EMCADR = BUFF(IGET)
+        CONID = BUFF(IGET+1)
+        POINT = BUFF(IGET+2)
+        NODEIN = BUFF(IGET+3)
+ 
+        IGET = IGET + 4
+        IF(IGET.GT.ENDBUF) THEN
+C         WRAP TO THE BEGINNING
+          IGET = BEGBUF
+        ENDIF
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION   GETUSB
+     I                         (IBN)
+ 
+C     + + + PURPOSE + + +
+C     Get a user branch number.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IBN
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IBN    - internal branch number
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'inusnb.cmn'
+C***********************************************************************
+      if(ibn > 0) then
+        GETUSB = INBRUS(IBN)
+      else
+        getusb = 0
+      endif
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION   ISNDAV
+     I                         (JPT, NODE, LJOIN, JOIN, LEMC, EMC)
+ 
+C     + + + PURPOSE + + +
+C     Is node available for initiating a path at a junction?  We
+C     already know that the path is available.  A relationship
+C     must be available at the node.  If this is true then any
+C     of the following will qualify the node as available:
+ 
+C     1. Node has CODE 8.
+C     2. Node is a flow node with CODE 4.
+C     3. Node is a flow node with CODE 5.
+C     4. Node is a flow node with CODE 14.
+C     5. Node is attached to a node that is already initiated or
+C        terminated.
+C     6. Sum of flows = 0 is still available for the junction.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER JPT, LEMC, LJOIN, NODE
+      INTEGER EMC(LEMC), JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     JPT    - pointer for the junction descriptions
+C     NODE   - node number
+C     LJOIN  - length of the junction description vector: JOIN
+C     JOIN   - vector for storing the junction descriptions
+C     LEMC   - length of EMC(*)
+C     EMC    - vector containing coded form of the Matrix Control Input
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, EMCADR, N, ND2ADR, NODADR, NODE2, NXTADR, RPT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER EXNODN
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL EXNODN, GETUSN
+C***********************************************************************
+C     Scan the relationships at NODE--for each available relationship
+C     check if it satisfies any of the criteria.
+ 
+      N = JOIN(JPT)
+      NODADR = EXNODN(NODE, JPT, LJOIN, JOIN)
+      IF(NODADR.LE.0) THEN
+        WRITE(STD6,*) ' *BUG:XXX* NODE=',GETUSN(NODE),' NOT IN LIST',
+     A             ' IN ISNDAV. JPT=',JPT
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      NXTADR = JOIN(NODADR+2*N)
+ 100  CONTINUE
+        IF(NXTADR.GT.0) THEN
+          RPT = JOIN(NXTADR+1)
+          NODE2 = JOIN(NXTADR+2)
+          EMCADR = JOIN(RPT)
+          IF(EMCADR.GT.0) THEN
+C           THE RELATIONSHIP IS AVAILABLE.
+            CODE = EMC(EMCADR)
+            IF(CODE.EQ.8) THEN
+              ISNDAV = 1
+              RETURN
+            ELSEIF(CODE.EQ.4) THEN
+              IF(EMC(EMCADR+4).EQ.NODE) THEN
+                ISNDAV = 1
+                RETURN
+              ENDIF
+            ELSEIF(CODE.EQ.5) THEN
+              IF(EMC(EMCADR+4).EQ.NODE) THEN
+                ISNDAV = 1
+                RETURN
+              ENDIF
+            ELSEIF(CODE.EQ.14) THEN
+              IF(EMC(EMCADR+3).EQ.NODE) THEN
+                ISNDAV = 1
+                RETURN
+              ENDIF
+            ENDIF
+ 
+C           AT THIS POINT WE CHECK NODE2 TO SEE IF IT INVOLVES A NODE
+C           ALREADY INITIATED OR TERMINATED.  NODE2 SHOULD EXIST.
+            IF(NODE2.EQ.0) THEN
+              WRITE(STD6,*) ' *BUG:XXX* NODE2=0 IN ISNDAV. JPT=',JPT,
+     A                   ' NODE=',GETUSN(NODE)
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+ 
+            ND2ADR = EXNODN(NODE2, JPT, LJOIN, JOIN)
+            IF(ND2ADR.LE.0) THEN
+              WRITE(STD6,*) ' *BUG:XXX* NODE2=',GETUSN(NODE2),
+     A          ' NOT FOUND',' IN JUNCTION JPT=',JPT,' IN ISNDAV.'
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+ 
+            IF(JOIN(ND2ADR+N).GT.0) THEN
+C             NODE2 PATH IS INITIATED OR TERMINATED.
+              ISNDAV = 1
+              RETURN
+            ENDIF
+ 
+          ENDIF
+ 
+          NXTADR = JOIN(NXTADR)
+          GOTO 100
+        ENDIF
+ 
+C     IF WE ARRIVE HERE THRE IS NO AVAILABLE RELATIONSHIP MEETING THE
+C     CRITERIA.  CHECK IF SUM OF FLOWS = 0 IS STILL AVAILABLE.
+ 
+      IF(JOIN(JPT+1).GT.0) THEN
+        ISNDAV = 1
+      ELSE
+        ISNDAV = 0
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION   ISNDIN
+     I                         (NODE, JPT, LJOIN, JOIN)
+ 
+C     + + + PURPOSE + + +
+C     Is the path for the given node initiated?  If so return 1 else
+C     return zero.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER JPT, LJOIN, NODE
+      INTEGER JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NODE   - node number
+C     JPT    - pointer for the junction descriptions
+C     LJOIN  - length of the junction description vector: JOIN
+C     JOIN   - vector for storing the junction descriptions
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADR, N, NODADR
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER EXNODN
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL EXNODN, GETUSN
+C***********************************************************************
+C     SET NUMBER OF NODES
+      N = JOIN(JPT)
+ 
+      NODADR = EXNODN(NODE, JPT, LJOIN, JOIN)
+      IF(NODADR.LE.0) THEN
+        WRITE(STD6,*) ' *BUG:XXX* ISNDIN:NODE=',GETUSN(NODE),' NOT IN',
+     A             ' LIST. JPT=',JPT
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      ADR = NODADR + N
+      IF(JOIN(ADR).NE.0) THEN
+        ISNDIN = 1
+      ELSE
+        ISNDIN = 0
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION   ISNUMD
+     I                         (X)
+ 
+C     + + + PURPOSE + + +
+C     If X is a decimal digit return 1 else return 0.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      CHARACTER X*1
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     X      - character checked for being a numerical digit
+C***********************************************************************
+      IF(X.EQ.'0') THEN
+        ISNUMD = 1
+      ELSEIF(X.EQ.'1') THEN
+        ISNUMD = 1
+      ELSEIF(X.EQ.'2') THEN
+        ISNUMD = 1
+      ELSEIF(X.EQ.'3') THEN
+        ISNUMD = 1
+      ELSEIF(X.EQ.'4') THEN
+        ISNUMD = 1
+      ELSEIF(X.EQ.'5') THEN
+        ISNUMD = 1
+      ELSEIF(X.EQ.'6') THEN
+        ISNUMD = 1
+      ELSEIF(X.EQ.'7') THEN
+        ISNUMD = 1
+      ELSEIF(X.EQ.'8') THEN
+        ISNUMD = 1
+      ELSEIF(X.EQ.'9') THEN
+        ISNUMD = 1
+      ELSE
+        ISNUMD = 0
+      ENDIF
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION   ISNUMR
+     I                         (NODE, JPT, LJOIN, JOIN, LEMC, EMC)
+ 
+C     + + + PURPOSE + + +
+C     Return the number of available relationships at NODE.
+C     All codes can be counted.
+C     For a flow node relationship to be available it must have its
+C     flow node match NODE.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER JPT, LEMC, LJOIN, NODE
+      INTEGER EMC(LEMC), JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NODE   - node number
+C     JPT    - pointer for the junction descriptions
+C     LJOIN  - length of the junction description vector: JOIN
+C     JOIN   - vector for storing the junction descriptions
+C     LEMC   - length of EMC(*)
+C     EMC    - vector containing coded form of the Matrix Control Input
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, EMCADR, KNT, N, NODADR, NXTADR, QNODE, RPT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER EXNODN
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL EXNODN, GETUSN
+C***********************************************************************
+C     SET NUMBER OF NODES
+      N = JOIN(JPT)
+ 
+      NODADR = EXNODN(NODE, JPT, LJOIN, JOIN)
+      IF(NODADR.LE.0) THEN
+        WRITE(STD6,*) ' *BUG:XXX* ISNUMR:NODE=',GETUSN(NODE),' NOT IN',
+     A             ' LIST. JPT=',JPT
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      KNT = 0
+      NXTADR = JOIN(NODADR+2*N)
+ 
+ 100  CONTINUE
+        IF(NXTADR.GT.0) THEN
+          RPT = JOIN(NXTADR+1)
+          EMCADR = JOIN(RPT)
+          IF(EMCADR.GT.0) THEN
+            QNODE = 0
+C           The relationship is unused. Is it available to NODE?
+            CODE = EMC(EMCADR)
+            IF(CODE.EQ.4) THEN
+              QNODE = EMC(EMCADR+4)
+            ELSEIF(CODE.EQ.5) THEN
+              QNODE = EMC(EMCADR+4)
+            ELSEIF(CODE.EQ.14) THEN
+              QNODE = EMC(EMCADR+3)
+            ENDIF
+            IF(QNODE.EQ.0) THEN
+C             NO RESTRICTIONS ON AVAILABILITY.
+              KNT = KNT + 1
+            ELSE
+              IF(QNODE.EQ.NODE) THEN
+                KNT = KNT + 1
+              ENDIF
+            ENDIF
+          ENDIF
+          NXTADR = JOIN(NXTADR)
+          GOTO 100
+        ENDIF
+ 
+      ISNUMR = KNT
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   MAKEMC
+     I                   (STDOUT, BNODE, NENTRY, LEMC, LJOIN, LBUFF,
+     I                    NEX, NBRA, EXNODT, BRPT, NBN, BDYFLG, MRMAT,
+     M                    JOIN, EMC,
+     O                    BUFF, ADD, EXNVAR, BRNVAR, NEQ, VARID)
+ 
+C     + + + PURPOSE + + +
+C     Make a reordered version of EMC using ADD to store the order
+C     and BNODE as the starting boundary node.  Also number the
+C     variables and count the equations.
+ 
+      IMPLICIT NONE
+     
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER BDYFLG, BNODE, LBUFF, LEMC, LJOIN, MRMAT, NBN, NBRA, 
+     A        NENTRY, NEQ, NEX, STDOUT
+      INTEGER ADD(NENTRY), BRNVAR(0:NBRA), BRPT(8,NBRA), BUFF(LBUFF),
+     A        EMC(LEMC), EXNODT(9,NEX), EXNVAR(NEX), JOIN(LJOIN),
+     B        VARID(MRMAT)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - standard output unit for user messages
+C     BNODE  - boundary node number at which to start defining the
+C               coefficient matrix
+C
+C     NENTRY - number of entries in Network Matrix input
+C     LEMC   - length of EMC(*)
+C     LJOIN  - length of the junction description vector: JOIN
+C     LBUFF  - number of elements in the pending instruction buffer
+C     NEX    - number of exterior nodes in the model
+C     NBRA   - number of branches in the model
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     NBN    - total number on nodes on branches in the model
+C     BDYFLG - 0 if user supplied boundary node; 1 if not
+C     JOIN   - vector for storing the junction descriptions
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     BUFF   - pending instruction buffer
+C     ADD    - Address of entry in EMC, that is, the index in EMC
+C               at which a matrix control specification begins.
+C     EXNVAR - variable number for the first variable(Q) at an exterior
+C               node
+C     BRNVAR - branch node variable number for first variable on the
+C               branch(flow rate)
+C     NEQ    - equation counter
+ 
+C     + + + LOCAL PARAMETERS + + +
+      INTEGER BC, BRANCH, JUNC, LPR, NB, NREC, OUT
+      PARAMETER(NREC=4, JUNC=2, BRANCH=1, BC=3, NB=4, LPR=5)
+      PARAMETER(OUT=0)
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER BEGBUF, BRAN, CODE, CONID, DEXN, EMCADR, ENDBUF, IENTRY,
+     A        IGET, IPUT, IT, IVAR, J, JPT, MAXNIN, MKPATH, NEXP, NIN,
+     B        NODE2, NODEIN, NODOUT, POINT, UEXN
+      CHARACTER CHR63*63, VARNAME*6
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER FNDNXT, ISNDIN
+      CHARACTER CONCHR*4, FNDEMC*63, GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL BNVARN, CONCHR, FIND4, FIND8, FND514, FNDANY, FNDEMC,
+     A         FNDNXT, FNVARN, GETREC, GETUSN, ISNDIN, MKNDIN, PUTREC
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(' TO BUFF: EMCADR=',I5, ' CODE=',I3,' CONID=',A4,
+     A       ' POINT=',I7,' NODEIN=',A5)
+ 52   FORMAT(' FR BUFF: EMCADR=',I5, ' CODE=',I3,' CONID=',A4,
+     A       ' POINT=',I7,' NODEIN=',A5)
+ 54   FORMAT(I9,1X,A6,1X,I6,1X,A)
+ 55   FORMAT(I9,2I6,1X,A)
+ 56   FORMAT(' *BUG:XXX BNODE=',A5,' not on boundary in MAKEMC.')
+ 58   FORMAT(/,' Dump of activity in MAKEMC.')
+ 60   FORMAT(/,' *ERR:301* Wrong entry count=',I5,' in MAKEMC.',
+     A         '  Count expected=',I5,'.',/,5X,
+     B         '  Model may be disjoint.')
+ 2010 FORMAT(/,' *ERR:103* Incorrect no. of equations specified',
+     A            ' for Network Matrix',
+     B       /,1X,'No. of equations specified  = ',I5,
+     C       /,1X,'No. of equations required   = ',I5 )
+C***********************************************************************
+      IF(OUT.GT.0) WRITE(STDOUT,58)
+C     SET THE CIRCULAR BUFFER VALUES
+      BEGBUF = 1
+      MAXNIN = LBUFF/NREC
+      ENDBUF = MAXNIN*NREC + BEGBUF
+      IPUT = BEGBUF
+      IGET = BEGBUF
+      NIN = 0
+ 
+C     Clear the variable id numbers
+
+      VARID = 0
+
+C     CLEAR THE EQUATION COUNTER
+      NEQ = 0
+ 
+C     SET THE VARIABLE COUNTER TO THE NEXT VARIABLE NUMBER
+      IVAR = 1
+ 
+C     CLEAR THE EXTERIOR NODE VARIABLE INDEX VECTOR
+ 
+      DO 200 J=1,NEX
+        EXNVAR(J) = 0
+ 200  CONTINUE
+ 
+C     SET THE POINT FOR PUTTING POINTERS INTO ADD(). PREVIOUS
+C     CONTENTS OF ADD NO LONGER NEEDED.  POINT TO NEXT OPEN SLOT.
+      IENTRY = 1
+ 
+C     Create the record for the starting boundary condition.  Note that
+C     free nodes in non-default context are not permitted at a boundary.
+C     The record contents are:
+ 
+C     elem#   Contents
+C     -----   ----------------------------------------------------------
+C       1     Address of entry in EMC() to be placed in ADD()
+C       2     Connecting item ID number
+C               1-branch number(may be negative)(BRANCH)
+C               2-junction pointer(JUNC)
+C               3-boundary condition(BC)
+C               4-null branch(NB)
+C               5-level pool reservoir(LPR)
+C       3     Pointer to the connecting item.
+C       4     node of entry for a junction, node for boundary condtion
+ 
+C     A record is created for an entry to be made in EMC().  There are
+C     some entries in EMC which are transferred directly and not by
+C     a record in the buffer.
+ 
+      IF(EXNODT(3,BNODE).LE.0) THEN
+C       FREE NODE.  EVERY FREE NODE IS ATTACHED TO EITHER A LPR OR
+C       A NB.  GET THE EMC ADDRESS FOR THE BC.
+ 
+        IF(EXNODT(5,BNODE).GE.0) THEN
+          WRITE(STDOUT,56) GETUSN(BNODE)
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+        EMCADR = -EXNODT(5,BNODE)
+ 
+C       GET THE CODE FROM EMC TO GET DESCRIPTION OF THE ITEM ATTACHED
+C       TO THE FREE NODE.
+ 
+        POINT = ABS(EXNODT(2,BNODE))
+        CODE = EMC(POINT)
+        IF(CODE.EQ.7) THEN
+C         ATTACHED TO A LPR. GET THE UPSTREAM AND DOWNSTREAM NODES
+C         AND SET THE DIRECTION IN EMC ACCORDINGLY. ALSO SET CONID
+C         AND THE NODE AT THE END OF THE LPR OPPOSITE FROM BNODE.
+ 
+          UEXN = EMC(POINT+5)
+          DEXN = EMC(POINT+1)
+          IF(BNODE.EQ.UEXN) THEN
+            NODEIN = DEXN
+            EMC(POINT+6) = 1
+          ELSE
+            NODEIN = UEXN
+            EMC(POINT+6) = -1
+          ENDIF
+ 
+          CONID = LPR
+        ELSEIF(CODE.EQ.15) THEN
+C         ATTACHED TO A NB.  DO THE SAME AS FOR LPR
+ 
+          UEXN = EMC(POINT+1)
+          DEXN = EMC(POINT+2)
+          IF(BNODE.EQ.UEXN) THEN
+            NODEIN = DEXN
+            EMC(POINT+3) = 1
+          ELSE
+            NODEIN = UEXN
+            EMC(POINT+3) = -1
+          ENDIF
+ 
+          CONID = NB
+        ELSE
+          WRITE(STDOUT,*) ' *BUG:XXX* INVALID CODE FOR BOUNDARY ',
+     A       ' FOR LPR OR NB.'
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+ 
+C       PUT THE RECORD IN THE BUFFER
+        IF(OUT.EQ.1)
+     A    WRITE(STDOUT,50) EMCADR, EMC(EMCADR), CONCHR(CONID), POINT,
+     B                GETUSN(NODEIN)
+ 
+        CALL PUTREC
+     I             (STDOUT, MAXNIN, BEGBUF, ENDBUF, LBUFF, EMCADR,
+     I              CONID, POINT, NODEIN,
+     M              IPUT, NIN,
+     O              BUFF)
+ 
+C       CREATE THE RECORD FOR THE LPR OR NB.
+ 
+        EMCADR = POINT
+        IF(EXNODT(5,NODEIN).GT.0) THEN
+          CONID = JUNC
+          POINT = EXNODT(5,NODEIN)
+C         MARK THE PATH FOR NODIN IN THE JUNCTION GIVEN BY POINT AS
+C         INITIATED.
+          CALL MKNDIN
+     I               (NODEIN, 1, POINT, LJOIN,
+     M                JOIN,
+     O                MKPATH)
+          IF(MKPATH.EQ.0) THEN
+            WRITE(STDOUT,*) ' *BUG:XXX FOR NODE IN=',GETUSN(NODEIN),
+     A                      ' PATH ALREADY INITIATED.'
+            WRITE(STDOUT,*) ' JPT=',POINT
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+        ELSE
+          CONID = BC
+          POINT = -EXNODT(5,NODEIN)
+        ENDIF
+C       PUT THE RECORD IN THE BUFFER
+ 
+        IF(OUT.EQ.1)
+     A    WRITE(STDOUT,50) EMCADR, EMC(EMCADR), CONCHR(CONID), POINT,
+     B    GETUSN(NODEIN)
+ 
+        CALL PUTREC
+     I             (STDOUT, MAXNIN, BEGBUF, ENDBUF, LBUFF, EMCADR,
+     I              CONID, POINT, NODEIN,
+     M              IPUT, NIN,
+     O              BUFF)
+ 
+      ELSE
+C       Boundary node is on an end of a branch. EXNODT(5,BNODE) points
+C       to the boundary condition in EMC(). The branch number is
+C       in EXNODT(3,BNODE).  We determine which end of the branch is
+C       involved from BRPT().
+ 
+        BRAN = EXNODT(3,BNODE)
+        UEXN = BRPT(5,BRAN)
+        DEXN = BRPT(6,BRAN)
+ 
+        IF(EXNODT(5,BNODE).GT.0) THEN
+          WRITE(STDOUT,56) GETUSN(BNODE)
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+        EMCADR = -EXNODT(5,BNODE)
+        CONID = BRANCH
+        IF(BNODE.EQ.UEXN) THEN
+C         ENTRY NODE IS THE DOWNSTREAM NODE AND THE BRANCH
+C         IS IN DEFAULT ORDER.
+          POINT = BRAN
+          NODEIN = DEXN
+        ELSE
+C         ENTRY NODE IS THE UPSTREAM NODE AND THE BRANCH IS
+C         IN REVERSE ORDER
+          POINT = -BRAN
+          NODEIN = UEXN
+        ENDIF
+ 
+C       PUT THE RECORD IN THE BUFFER
+        IF(OUT.EQ.1)
+     A    WRITE(STDOUT,50) EMCADR, EMC(EMCADR), CONCHR(CONID), POINT,
+     B                GETUSN(NODEIN)
+ 
+        CALL PUTREC
+     I             (STDOUT, MAXNIN, BEGBUF, ENDBUF, LBUFF, EMCADR,
+     I              CONID, POINT, NODEIN,
+     M              IPUT, NIN,
+     O              BUFF)
+ 
+C       CREATE THE RECORD FOR THE BRANCH AND TRANSFER TO THE
+C       BUFFER
+ 
+        EMCADR = BRPT(7,BRAN)
+ 
+C       SELECT THE CONNECTING ITEM ID
+        IF(EXNODT(5,NODEIN).GT.0) THEN
+          CONID = JUNC
+          POINT = EXNODT(5,NODEIN)
+C         NODEIN IS UNCHANGED.
+C         MARK THE PATH FOR NODIN IN THE JUNCTION GIVEN BY POINT AS
+C         INITIATED.
+          CALL MKNDIN
+     I               (NODEIN, 1, POINT, LJOIN,
+     M                JOIN,
+     O                MKPATH)
+          IF(MKPATH.EQ.0) THEN
+            WRITE(STDOUT,*) ' *BUG:XXX FOR NODE IN=',GETUSN(NODEIN),
+     A                      ' PATH ALREADY INITIATED.'
+            WRITE(STDOUT,*) ' JPT=',POINT
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+        ELSE
+          CONID = BC
+          POINT = -EXNODT(5,NODEIN)
+C         NODEIN IS UNCHANGED.
+        ENDIF
+        IF(OUT.EQ.1)
+     A    WRITE(STDOUT,50) EMCADR, EMC(EMCADR), CONCHR(CONID), POINT,
+     B                GETUSN(NODEIN)
+ 
+        CALL PUTREC
+     I             (STDOUT, MAXNIN, BEGBUF, ENDBUF, LBUFF, EMCADR,
+     I              CONID, POINT, NODEIN,
+     M              IPUT, NIN,
+     O              BUFF)
+      ENDIF
+ 
+C     Now start reading the records in the buffer.  As we go
+C     through the records in the buffer we take the following actions:
+C     put EMCADR in the next entry in ADD, and process the CONID.
+C     Processing CONID will add one or more records to the buffer
+C     or in some cases will add an entry directly to ADD.  The
+C     process is complete when there are no records remaining in the
+C     pending buffer.
+ 
+ 100  CONTINUE
+C       ARE WE DONE?
+        IF(NIN.EQ.0) THEN
+          IF(IENTRY-1.NE.NENTRY) THEN
+C           Wrong entry count.  Model may be disjoint.
+            WRITE(STDOUT,60) IENTRY-1, NENTRY
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+C         CHECK ON THE NUMBER OF EQUATIONS.  ONLY VALID FOR CURRENT CASE
+C         OF 2 UNKNOWNS PER BRANCH NODE.  NEEDS CHANGE IF MORE GENERAL
+C         BRANCH EQUATIONS ARE ADDED.
+ 
+          NEXP =  2*(NBN + NEX - 2*NBRA)
+          IF(NEXP.NE.NEQ) THEN
+            WRITE(STDOUT,2010) NEQ, NEXP
+          ENDIF
+C          WRITE(STDOUT,*) ' NUMBER OF EQUATIONS=',NEQ
+ 
+          RETURN
+ 
+        ELSE
+C         GET NEXT RECORD FROM THE BUFFER.
+          CALL GETREC
+     I               (STDOUT, BEGBUF, ENDBUF, LBUFF, BUFF,
+     M                IGET, NIN,
+     O                EMCADR, CONID, POINT, NODEIN)
+        IF(OUT.EQ.1)
+     A    WRITE(STDOUT,52) EMCADR, EMC(EMCADR), CONCHR(CONID), POINT,
+     B                GETUSN(NODEIN)
+ 
+C         ASSIGN VARIABLES TO THE EQUATIONS.
+          IF(EMC(EMCADR).EQ.1) THEN
+C           BRANCH ADDED TO EMC.  GET THE BRANCH NUMBER AND
+C           ASSIGN VARIABLES AND COUNT EQUATIONS.
+            BRAN = EMC(EMCADR+1)
+
+            CALL BNVARN
+     I                 (BRAN, BRPT, NBRA, NEX,
+     M                  IVAR, NEQ,
+     O                  EXNVAR, BRNVAR, VARID)
+
+          ELSEIF(EMC(EMCADR).EQ.7) THEN
+C           LPR TO BE ADDED TO EMC.
+            UEXN = EMC(EMCADR+5)
+            DEXN = EMC(EMCADR+1)
+            IF(EMC(EMCADR+6).GT.0) THEN
+C             DEFAULT DIRECTION
+              CALL FNVARN
+     I                   (UEXN, EXNODT,
+     M                    IVAR, EXNVAR, VARID)
+              CALL FNVARN
+     I                   (DEXN, EXNODT,
+     M                    IVAR, EXNVAR, VARID)
+            ELSE
+C             REVERSE DIRECTION
+              CALL FNVARN
+     I                   (DEXN, EXNODT,
+     M                    IVAR, EXNVAR, VARID)
+              CALL FNVARN
+     I                   (UEXN, EXNODT,
+     M                    IVAR, EXNVAR, VARID)
+            ENDIF
+ 
+            NEQ = NEQ + 2
+          ELSEIF(EMC(EMCADR).EQ.15) THEN
+C           NB TO BE ADDED TO EMC.
+            UEXN = EMC(EMCADR+1)
+            DEXN = EMC(EMCADR+2)
+            IF(EMC(EMCADR+3).GT.0) THEN
+C             DEFAULT DIRECTION
+              CALL FNVARN
+     I                   (UEXN, EXNODT,
+     M                    IVAR, EXNVAR, VARID)
+              CALL FNVARN
+     I                   (DEXN, EXNODT,
+     M                    IVAR, EXNVAR, VARID)
+            ELSE
+C             REVERSE DIRECTION
+              CALL FNVARN
+     I                   (DEXN, EXNODT,
+     M                    IVAR, EXNVAR, VARID)
+              CALL FNVARN
+     I                   (UEXN, EXNODT,
+     M                    IVAR, EXNVAR, VARID)
+            ENDIF
+ 
+            NEQ = NEQ + 2
+          ELSE
+C           COUNT THE EQUATION. NO NODES TO NUMBER.
+            NEQ = NEQ + 1
+          ENDIF
+ 
+C         TRANSFER THE VALUE TO EMC()
+ 
+          IF(OUT.EQ.1.OR.BDYFLG.EQ.0) THEN
+            CHR63 = FNDEMC(EMCADR, LEMC, EMC)
+            IF(VARID(NEQ).GT.0) THEN
+               IF(MOD(NEQ,2).EQ.0) THEN
+C               This is depth
+                VARNAME = GETUSN(VARID(NEQ))//'Y'
+              ELSE
+                VARNAME = GETUSN(VARID(NEQ))//'Q'
+              ENDIF
+            ELSE
+              VARNAME = ' ' 
+            ENDIF
+            WRITE(STDOUT,54) NEQ, VARNAME,  EMC(EMCADR-1), CHR63
+          ENDIF
+      
+          ADD(IENTRY) = EMCADR
+          IENTRY = IENTRY + 1
+ 
+C         PROCESS THE CONNECTING ITEM. CONNECTING ITEMS LPR AND
+C         NB DO NOTHING.  SIGN CHANGE ALREADY MADE IN EMC WHEN
+C         RECORD WAS WRITTEN.
+ 
+          IF(CONID.EQ.BRANCH) THEN
+C           POINT GIVES THE BRANCH NUMBER AND ITS SIGN GIVES THE
+C           SIGN THE BRANCH NUMBER IN EMC MUST HAVE.  CHANGE SIGN IN
+C           EMC.
+            IF(POINT.LT.0) THEN
+C             BRANCH IN REVERSE.  MAKE SIGN NEGATIVE IN EMC.
+              POINT = BRPT(7,-POINT)
+              EMC(POINT+1) = -ABS(EMC(POINT+1))
+            ELSE
+C             MAKE BRANCH POSITIVE-COULD BE NEGATIVE FROM A PREVIOUS
+C             SCAN.
+              POINT = BRPT(7,POINT)
+              EMC(POINT+1) = ABS(EMC(POINT+1))
+            ENDIF
+          ELSEIF(CONID.EQ.BC) THEN
+C           THE BOUNDARY CONDITION MUST BE TRANSFERED TO EMC NOW
+C           TO PROPERLY TERMINATE THE PREVIOUS ENTRY.
+ 
+ 
+C           COUNT THE EQUATION
+            NEQ = NEQ + 1
+ 
+            IF(OUT.EQ.1.OR.BDYFLG.EQ.0) THEN
+              CHR63 = FNDEMC(POINT, LEMC, EMC)
+            IF(VARID(NEQ).GT.0) THEN
+               IF(MOD(NEQ,2).EQ.0) THEN
+C               This is depth
+                VARNAME = GETUSN(VARID(NEQ))//'Y'
+              ELSE
+                VARNAME = GETUSN(VARID(NEQ))//'Q'
+              ENDIF
+            ELSE
+              VARNAME = ' ' 
+            ENDIF
+              WRITE(STDOUT,54) NEQ, VARNAME, EMC(POINT-1), CHR63
+            ENDIF
+ 
+            ADD(IENTRY) = POINT
+            IENTRY = IENTRY + 1
+ 
+          ELSEIF(CONID.EQ.JUNC) THEN
+C           PROCESS A JUNCTION.  USE JPT AS THE JUNCTION ADDRESS.
+ 
+            JPT = POINT
+ 
+ 
+C           WRITE THE TERMINATING CONDITION FOR NODEIN IN EMC().
+C           SEEK CODE 8 FIRST.  IF FOUND MUST BE USED.
+ 
+C            EMCADR = FIND8(JPT, NODEIN, NODE2, LJOIN, JOIN, LEMC, EMC)
+            CALL FIND8
+     I                (JPT, NODEIN, LJOIN, LEMC, EMC,
+     M                 JOIN,
+     O                 NODE2, EMCADR)
+ 
+            IF(EMCADR.EQ.0) THEN
+ 
+ 
+C             CODE 8 NOT PRESENT-TRY FOR A CODE 4 NEXT.
+C             EMCADR = FIND4(JPT, NODEIN, NODE2, LJOIN, JOIN, LEMC, EMC)
+              CALL FIND4
+     I                  (JPT, NODEIN, LJOIN, LEMC, EMC,
+     M                   JOIN,
+     O                   NODE2, EMCADR)
+              IF(EMCADR.EQ.0) THEN
+ 
+ 
+C               CODE 4 NOT FOUND. TRY FOR CODE 5 OR 14 WITH FLOW NODE
+C               AT NODEIN
+                CALL FND514
+     I                     (JPT, NODEIN, LJOIN, LEMC, EMC,
+     M                      JOIN,
+     O                      NODE2, EMCADR)
+                IF(EMCADR.EQ.0) THEN
+ 
+ 
+C                 NO CODE 5 WITH FLOW NODE AT NODEIN FOUND.  TRY FOR
+C                 ANY ELEVATION RELATIONSHIP
+C                  EMCADR = FNDANY(JPT, NODEIN, NODE2, LJOIN, JOIN, LEMC,
+C     A                            EMC)
+                  CALL FNDANY
+     I                       (JPT, NODEIN, LJOIN, LEMC, EMC,
+     M                        JOIN,
+     O                        NODE2, EMCADR)
+                  IF(EMCADR.EQ.0) THEN
+C                   NO ELEVATION RELATIONSHIPS AVAILABLE FOR THIS
+C                   NODE.  THE JUNCTION RELATIONSHIP SHOULD BE
+C                   AVAILABLE.
+                    EMCADR = JOIN(JPT+1)
+                    NODE2 = 0
+                    IF(EMCADR.LT.0) THEN
+                      WRITE(STDOUT,*) ' NO AVAILABLE TERMINATING ',
+     A                   'CONDITON AT JUNCTION JPT=',JPT,
+     B                   ' FOR NODEIN=',GETUSN(NODEIN)
+                      STOP 'Abnormal stop: errors found.'
+                    ELSE
+C                     JUNCTION RELATIONSHIP IS AVAILABLE. MARK AS USED.
+                      JOIN(JPT+1) = -JOIN(JPT+1)
+                    ENDIF
+                  ENDIF
+                ENDIF
+              ENDIF
+            ENDIF
+ 
+C           WE HAVE A TERMINATING CONDITION.  TRANSFER TO EMC
+ 
+ 
+C           COUNT THE EQUATION.
+            NEQ = NEQ + 1
+ 
+            IF(OUT.EQ.1) THEN
+              WRITE(STDOUT,*) ' TERMINATING AT NODE=',GETUSN(NODEIN),
+     A                   ' WITH:'
+              CHR63 = FNDEMC(EMCADR, LEMC, EMC)
+              IF(VARID(NEQ).GT.0) THEN
+                 IF(MOD(NEQ,2).EQ.0) THEN
+C                 This is depth
+                  VARNAME = GETUSN(VARID(NEQ))//'Y'
+                ELSE
+                  VARNAME = GETUSN(VARID(NEQ))//'Q'
+                ENDIF
+              ELSE
+                VARNAME = ' ' 
+              ENDIF
+              WRITE(STDOUT,55) NEQ, VARNAME, IENTRY, EMCADR, CHR63
+            ENDIF
+            IF(BDYFLG.EQ.0) THEN
+              CHR63 = FNDEMC(EMCADR, LEMC, EMC)
+              IF(VARID(NEQ).GT.0) THEN
+                 IF(MOD(NEQ,2).EQ.0) THEN
+C                 This is depth
+                  VARNAME = GETUSN(VARID(NEQ))//'Y'
+                ELSE
+                  VARNAME = GETUSN(VARID(NEQ))//'Q'
+                ENDIF
+              ELSE
+                VARNAME = ' ' 
+              ENDIF
+              WRITE(STDOUT,54) NEQ, VARNAME, EMC(EMCADR-1), CHR63
+            ENDIF
+ 
+            ADD(IENTRY) = EMCADR
+            IENTRY = IENTRY + 1
+ 
+C           MARK THE PATH AS COMPLETED
+C            IT = MKNDIN(NODEIN, 2, JPT, LJOIN, JOIN)
+            CALL MKNDIN
+     I                 (NODEIN, 2, JPT, LJOIN,
+     M                  JOIN,
+     O                  IT)
+ 
+C           NOW INITIATE THE NODES AT THIS JUNCTION WHICH ARE NOT
+C           YET INITIATED.
+ 
+ 500        CONTINUE
+              IF(OUT.EQ.1)
+     A          WRITE(STDOUT,*) ' NODE2=',NODE2,' ',GETUSN(NODE2),
+     B                      ' FROM PREVIOUS RELATIONSHIP'
+              IF(NODE2.NE.0) THEN
+C               Is NODE2 initiated? 
+                IF(ISNDIN(NODE2, JPT, LJOIN, JOIN).NE.1) GOTO 505
+              ENDIF
+C             Yes- Seek another node in the junction.
+C             NO UNINITIATED NODE GIVEN BY PREVIOUS RELATIONSHIP
+              NODE2 = FNDNXT(JPT, LJOIN, JOIN, LEMC, EMC)
+              IF(OUT.EQ.1)
+     A          WRITE(STDOUT,*) ' NODE2=',NODE2,' ',GETUSN(NODE2),
+     B                          ' FROM FNDNXT'
+ 505          CONTINUE
+
+              IF(NODE2.EQ.0) THEN
+C               No other uninitiated nodes found. 
+                GOTO 600
+              ELSE
+C               We now have a node at the junction that represents
+C               an uninitiated path out of the junction.  Call it
+C               NODOUT because NODE2 is redefined in the loop.
+ 
+                NODOUT = NODE2
+ 
+C               MARK THE PATH FOR THIS NODE AS INITIATED AND COMPLETED
+C               IN THE CURRENT JUNCTION.  INITIATE FIRST TO FIND
+C               BUGS.
+ 
+ 
+C                IF(MKNDIN(NODOUT, 1, JPT, LJOIN, JOIN).EQ.0) THEN
+                CALL MKNDIN
+     I                     (NODOUT, 1, JPT, LJOIN,
+     M                      JOIN,
+     O                      MKPATH)
+                IF(MKPATH.EQ.0) THEN
+                  WRITE(STDOUT,*) ' *BUG:XXX FOR NODE OUT=',
+     A                  GETUSN(NODOUT),' PATH ALREADY INITIATED.'
+                  WRITE(STDOUT,*) ' JPT=',JPT
+                  STOP 'Abnormal stop: errors found.'
+                ENDIF
+ 
+C               NOW MARK AS COMPLETED
+C                IT = MKNDIN(NODOUT, 2, JPT, LJOIN, JOIN)
+                CALL MKNDIN
+     I                     (NODOUT, 2, JPT, LJOIN,
+     M                      JOIN,
+     O                      IT)
+ 
+C               SELECT THE INITIATING RELATIONSHIP FOR THIS PATH.
+C               SEEK CODE 8 FIRST
+C                EMCADR = FIND8(JPT, NODOUT, NODE2, LJOIN, JOIN, LEMC,
+                CALL FIND8
+     I                    (JPT, NODOUT, LJOIN, LEMC, EMC,
+     M                     JOIN,
+     O                     NODE2, EMCADR)
+                IF(EMCADR.EQ.0) THEN
+C                 NO CODE 8. TRY CODE 4.
+C                  EMCADR = FIND4(JPT, NODOUT, NODE2, LJOIN, JOIN,
+C     A                           LEMC, EMC)
+                  CALL FIND4
+     I                      (JPT, NODOUT, LJOIN, LEMC, EMC,
+     M                       JOIN,
+     O                       NODE2, EMCADR)
+                  IF(EMCADR.EQ.0) THEN
+C                   NO CODE 4. TRY CODE 5 AND 14.
+                    CALL FND514
+     I                         (JPT, NODOUT, LJOIN, LEMC, EMC,
+     M                          JOIN,
+     O                          NODE2, EMCADR)
+                    IF(EMCADR.EQ.0) THEN
+C                     NO CODE 5. TRY THE JUNCTION CONDITION.
+                      EMCADR = JOIN(JPT+1)
+ 
+ 
+                      IF(EMCADR.LT.0) THEN
+C                       JUNCTION ALREADY USED. TRY FOR ANY.
+                        CALL FNDANY
+     I                             (JPT, NODOUT, LJOIN, LEMC, EMC,
+     M                              JOIN,
+     O                              NODE2, EMCADR)
+                        IF(EMCADR.EQ.0) THEN
+                          WRITE(STDOUT,*) ' *BUG:XXX* NO AVAILABLE',
+     A  ' RELATIONSHIP FOR INITIATING AT JPT=',JPT, ' NODE OUT=',
+     A                      GETUSN(NODOUT)
+                          STOP 'Abnormal stop: errors found.'
+                        ENDIF
+                      ELSE
+C                       JUNCTION AVAILABLE. MARK AS USED
+                        JOIN(JPT+1) = -JOIN(JPT+1)
+                      ENDIF
+                    ENDIF
+                  ENDIF
+                ENDIF
+ 
+C               We have the pointer to the initiating condition in hand.
+C               Now find the address and nature of the connecting item.
+C               NODOUT is the node.  It is in the initiating condition.
+ 
+                IF(EXNODT(3,NODOUT).LE.0) THEN
+C                 NODOUT IS A FREE NODE.  IT IS ON EITHER A NULL BRANCH
+C                 OR A LEVEL POOL RESERVOIR.
+ 
+                  IF(EXNODT(5,NODOUT).LT.0) THEN
+C                   BOUNDARY CONDITION AT THE NODE.  INVALID!
+                    WRITE(STDOUT,*) ' *BUG:XXX* BC INVALID AT FREE ND',
+     A               'NODOUT=',GETUSN(NODOUT),' AT JUNCTION=',JPT
+                    STOP 'Abnormal stop: errors found.'
+                  ELSE
+ 
+                    POINT = ABS(EXNODT(2,NODOUT))
+                    CODE = EMC(POINT)
+                    IF(CODE.EQ.7) THEN
+C                     ATTACHED TO A LPR. GET THE UPSTREAM AND DOWNSTREAM
+C                     NODES AND SET THE DIRECTION IN EMC ACCORDINGLY.
+C                     ALSO SET CONID AND THE NODE AT THE END OF THE LPR
+C                     OPPOSITE FROM BNODE.
+ 
+                      UEXN = EMC(POINT+5)
+                      DEXN = EMC(POINT+1)
+                      IF(NODOUT.EQ.UEXN) THEN
+                        NODEIN = DEXN
+                        EMC(POINT+6) = 1
+                      ELSE
+                        NODEIN = UEXN
+                        EMC(POINT+6) = -1
+                      ENDIF
+ 
+                      CONID = LPR
+                    ELSEIF(CODE.EQ.15) THEN
+C                     ATTACHED TO A NB.  DO THE SAME AS FOR LPR
+ 
+                      UEXN = EMC(POINT+1)
+                      DEXN = EMC(POINT+2)
+                      IF(NODOUT.EQ.UEXN) THEN
+                        NODEIN = DEXN
+                        EMC(POINT+3) = 1
+                      ELSE
+                        NODEIN = UEXN
+                        EMC(POINT+3) = -1
+                      ENDIF
+ 
+                      CONID = NB
+                    ELSE
+                      WRITE(STDOUT,*) ' *BUG:XXX* INVALID CODE.',
+     A                                ' NODOUT=',GETUSN(NODOUT),
+     B                                ' IN JPT=',JPT
+                      STOP 'Abnormal stop: errors found.'
+                    ENDIF
+ 
+C                   PUT THE RECORD IN THE BUFFER
+                    IF(OUT.EQ.1)
+     A                WRITE(STDOUT,50) EMCADR, EMC(EMCADR),
+     B                     CONCHR(CONID), POINT, GETUSN(NODEIN)
+ 
+                    CALL PUTREC
+     I                         (STDOUT, MAXNIN, BEGBUF, ENDBUF, LBUFF,
+     I                          EMCADR, CONID, POINT, NODEIN,
+     M                          IPUT, NIN,
+     O                          BUFF)
+ 
+C                   CREATE THE RECORD FOR THE LPR OR NB.
+ 
+                    EMCADR = POINT
+                    IF(EXNODT(5,NODEIN).GT.0) THEN
+                      CONID = JUNC
+                      POINT = EXNODT(5,NODEIN)
+C                     MARK THE PATH FOR NODIN IN THE JUNCTION GIVEN
+C                     BY POINT AS INITIATED.
+C                      IF(MKNDIN(NODEIN, 1, POINT, LJOIN, JOIN).EQ.0)
+                      CALL MKNDIN
+     I                           (NODEIN, 1, POINT, LJOIN,
+     M                            JOIN,
+     O                            MKPATH)
+                      IF(MKPATH.EQ.0) THEN
+                        WRITE(STDOUT,*) ' *BUG:XXX FOR NODE IN=',
+     A                    GETUSN(NODEIN),' PATH ALREADY INITIATED.'
+                        WRITE(STDOUT,*) ' JPT=',POINT
+                        STOP 'Abnormal stop: errors found.'
+                      ENDIF
+                    ELSE
+                      CONID = BC
+                      POINT = -EXNODT(5,NODEIN)
+                    ENDIF
+C                   PUT THE RECORD IN THE BUFFER
+                    IF(OUT.EQ.1)
+     A                WRITE(STDOUT,50) EMCADR, EMC(EMCADR),
+     A                         CONCHR(CONID), POINT, GETUSN(NODEIN)
+ 
+                    CALL PUTREC
+     I                         (STDOUT, MAXNIN, BEGBUF, ENDBUF, LBUFF,
+     I                          EMCADR, CONID, POINT, NODEIN,
+     M                          IPUT, NIN,
+     O                          BUFF)
+                  ENDIF
+ 
+                ELSE
+C                 NODOUT is on a branch--connecting item is a branch.
+C                 Find the branch number.
+ 
+                  CONID = BRANCH
+ 
+                  BRAN = EXNODT(3,NODOUT)
+C                 FIND THE UPS AND DNS EXTERIOR NODE ON THIS BRANCH
+                  UEXN = BRPT(5,BRAN)
+                  DEXN = BRPT(6,BRAN)
+C                 SET SIGN OF BRAN TO INDICATE DIRECTION OF THE BRANCH.
+C                 SET NODEIN FOR THE POSSIBLE JUNCTION AT THE OTHER END
+C                 OF THE BRANCH.
+                  IF(NODOUT.EQ.UEXN) THEN
+                    NODEIN = DEXN
+                  ELSE
+                    NODEIN = UEXN
+                    BRAN = -BRAN
+                  ENDIF
+                  POINT = BRAN
+ 
+                  IF(OUT.EQ.1)
+     A              WRITE(STDOUT,50) EMCADR, EMC(EMCADR), CONCHR(CONID),
+     B                          POINT, GETUSN(NODEIN)
+ 
+                  CALL PUTREC
+     I                       (STDOUT, MAXNIN, BEGBUF, ENDBUF, LBUFF,
+     I                        EMCADR, CONID, POINT, NODEIN,
+     M                        IPUT, NIN,
+     O                        BUFF)
+ 
+ 
+C                 NOW GET THE ADDRESS OF EMC ENTRY FOR THE BRANCH AND
+C                 DESCRIBE THE ITEM CONNECTED TO THE BRANCH.
+ 
+                  EMCADR = BRPT(7,ABS(BRAN))
+ 
+C                 FOR A NODE ON A BRANCH, EXNODT(5,NODEIN) GIVES
+C                 EITHER A BC OR A JUNCTION.
+                  IF(EXNODT(5,NODEIN).LT.0) THEN
+C                   BOUNDARY CONDITION AT THE NODE.
+                    CONID = BC
+                    POINT = -EXNODT(5,NODEIN)
+                    IF(OUT.EQ.1)
+     A                WRITE(STDOUT,50) EMCADR, EMC(EMCADR),
+     B                         CONCHR(CONID), POINT, GETUSN(NODEIN)
+ 
+                    CALL PUTREC
+     I                         (STDOUT, MAXNIN, BEGBUF, ENDBUF, LBUFF,
+     I                          EMCADR, CONID, POINT, NODEIN,
+     M                          IPUT, NIN,
+     O                          BUFF)
+                  ELSE
+C                   JUNCTION IS CONNECTED TO THE END OF THE BRANCH
+                    CONID = JUNC
+                    POINT = EXNODT(5,NODEIN)
+                    IF(OUT.EQ.1)
+     A                WRITE(STDOUT,50) EMCADR, EMC(EMCADR),
+     B                            CONCHR(CONID), POINT, GETUSN(NODEIN)
+ 
+                    CALL PUTREC
+     I                         (STDOUT, MAXNIN, BEGBUF, ENDBUF, LBUFF,
+     I                          EMCADR, CONID, POINT, NODEIN,
+     M                          IPUT, NIN,
+     O                          BUFF)
+ 
+C                    IF(MKNDIN(NODEIN, 1, POINT, LJOIN, JOIN).EQ.0) THEN
+                    CALL MKNDIN
+     I                         (NODEIN, 1, POINT, LJOIN,
+     M                          JOIN,
+     O                          MKPATH)
+                    IF(MKPATH.EQ.0) THEN
+                      WRITE(STDOUT,*) ' *BUG:XXX* AT JUNCTION=',POINT,
+     A ' AND NODEIN=',GETUSN(NODEIN),' PATH ALREADY MARKED INITIATED.'
+                      STOP 'Abnormal stop: errors found.'
+                    ENDIF
+                  ENDIF
+                ENDIF
+                GOTO 500
+              ENDIF
+ 600        CONTINUE
+C           JUNCTION COMPLETED
+          ENDIF
+          GOTO 100
+        ENDIF
+ 
+      END
+C
+C
+C
+      SUBROUTINE   MAKJUN
+     I                   (STDOUT, NEX, NBRA, LEMC, LJOIN, NENTRY, ADD,
+     M                    EMC, BRPT,
+     O                    EXNODT, JOIN, JUNKNT, JUNPNT, LJUNC, EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Create the junction information and the temporary pointers in
+C     BRPT and EXNODT for creating the revised pattern in EMC for
+C     generating the matrix.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, JUNKNT, LEMC, LJOIN, LJUNC, NBRA, NENTRY, NEX,
+     A        STDOUT
+      INTEGER ADD(NENTRY), BRPT(8,NBRA), EMC(LEMC), EXNODT(9,NEX),
+     A        JOIN(LJOIN), JUNPNT(NENTRY)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - standard output unit for user messages
+C     NEX    - number of exterior nodes in the model
+C     NBRA   - number of branches in the model
+C     LEMC   - length of EMC(*)
+C     LJOIN  - length of the junction description vector: JOIN
+C     NENTRY - number of entries in Network Matrix input
+C     ADD    - Address of entry in EMC, that is, the index in EMC
+C               at which a matrix control specification begins.
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     JOIN   - vector for storing the junction descriptions
+C     JUNKNT - junction counter
+C     JUNPNT - junction counter
+C     LJUNC  - length of the junction description used
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER BRAN, CODE, EMCADR, EPT, FLAG, I, IT, J, JPT, LEN, N, ND1,
+     A        ND2, NODE, QNODE
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER FDNUMR
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL ADDREL, FDNUMR, GETUSN
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(' *ERR:221* NODE=',A5,' not in a junction or boundary',
+     A   ' condition.')
+ 52   FORMAT(' *ERR:222* ',I5,' relationships missing for',
+     A       ' junction with nodes:')
+ 54   FORMAT('     NODE=',A5)
+ 56   FORMAT(' *ERR:223* Duplication of relationships involving nodes:',
+     A       A5,' and ',A5)
+ 58   FORMAT(' *WRN:47* Node=',A5,' < 0 invalid. FEQ takes absolute',
+     A      ' value.')
+ 60   FORMAT(' *ERR:224* Relationship with Code=',I5,' and nodes',
+     A       1X,A5,' and ',A5,/,11X,' not in a junction.')
+ 62   FORMAT(' *ERR:225* Node=',A5,', a flow node, is used in a',
+     A       ' relationship other than',/,11X,'the one defining it',
+     B       ' as a flow node.')
+C***********************************************************************
+C     THE  STRUCTURE FOR EACH JUNCTION IS DEFINED IN A VECTOR AS
+C     FOLLOWS:
+ 
+C     LOCATION     CONTENTS
+C       JPT+0      Number of nodes in the junction-N.
+C       JPT+1      Pointer to the junction condition in EMC(*)
+C       JPT+2      Pointer to next open slot for the linked list
+C                  of pointers to the EMC pointers to the relationships
+C                  involved at this junction.  Excludes the sum of
+C                  flows = 0 relationship.  Maximum number of
+C                  entries possible in the linked list for this
+C                  junction is 2*(N-1).  There are 3 elements of
+C                  the vector used for each item stored in the list.
+C                  Structure of an item in the list is:
+C                          Element #    Contents
+C                              1        pointer to the next item if
+C                                       a next item exists. Otherwise
+C                                       0.
+C                              2        pointer to the EMC pointer in
+C                                       list starting at  JPT+3
+C                              3        Second node in the relationship
+C                                       if one exists, 0 otherwise.
+C       JPT+3      Pointer to the first EMC pointer in the relationship
+C                  list for this junction.  There are always N-1
+C                  relationships.
+C       JPT+4      List of N nodes in the junction.
+C       JPT+4+N    Path flag for the path attached to the node.
+C                  0 if path has not been initiated. 1 if path
+C                  has been initiated, and 2 if the path has
+C                  terminated in this junciton.
+C       JPT+4+2*N  Pointer to the first relationship item in the
+C                  linked list of relationships referencing this
+C                  node.  0 if there is no relationship.
+C       JPT+4+3*N  Length of the path connected to the node.
+C                  Length is the number of nodes on the path.
+C       JPT+4+4*N  List of EMC pointers for the N-1 relationships.
+C       JPT+4+4*N+
+C           N-1    List of N-1 elements not currently used.
+C       JPT+4+4*N+
+C         2*(N-1)  Start of the 6*(N-1) elements for storing the
+C                  linked list items.
+ 
+C     CLEAR THE WORK SPACE
+ 
+      DO 80 I=1,LJOIN
+        JOIN(I) = 0
+ 80   CONTINUE
+ 
+C     FIRST PASS THROUGH EMC: SET THE JUNCTIONS AND THE FORCED BOUNDARY
+C     CONDITIONS AND THE BRANCHES.
+ 
+C     CLEAR THE JUNCTION POINTERS.  IF > 0 POINTS TO A JUNCTION.
+C     IF < 0 POINTS TO AN EMC ENTRY FOR A BOUNDARY CONDTION.
+ 
+      DO 90 I=1,NEX
+        EXNODT(5,I) = 0
+ 90   CONTINUE
+ 
+C     CLEAR THE JUNCTION COUNTER
+ 
+      JUNKNT = 0
+ 
+C     JPT IS THE POINTER TO THE NEXT OPEN LOCATION IN VECTOR JOIN
+C     WHICH IS REALLY THE REAL VECTOR PDAVEC.  USE AS WORK SPACE.
+ 
+      JPT = 1
+      DO 1000 I=1,NENTRY
+        EPT = ADD(I)
+        CODE = EMC(EPT)
+        IF(CODE.EQ.2) THEN
+ 
+          JUNKNT = JUNKNT + 1
+          JUNPNT(JUNKNT) = JPT
+ 
+C         SUM OF Q =0
+          N = EMC(EPT+1)
+ 
+C         STORE THE NUMBER OF NODES AT THE JUNCTION
+ 
+          JOIN(JPT) = N
+ 
+C         STORE THE POINTER INTO EMC(*) OF THE CODE 2 CONDITION
+ 
+          JOIN(JPT+1) = EPT
+ 
+C         STORE THE  INDEX OF THE FIRST OPEN SLOT FOR THE
+C         LISTS OF POINTERS TO THE POINTERS FOR THE ELEVATION
+C         RELATIONSHIPS BETWEEN AND AT NODES IN THE JUNCTION.
+ 
+          JOIN(JPT+2) = JPT + 4*N + 2*(N-1) + 4
+ 
+C         STORE THE INDEX FOR THE STORING OF THE RELATIONSHIP POINTERS
+ 
+          JOIN(JPT+3) = JPT + 4*N + 4
+ 
+C         SET POINTERS IN EXNODT() AND MAKE NODE LIST FOR THE NODES
+C         AT THE JUNCTION.  ALSO ESTABLISH INITIAL VALUES FOR PATH
+C         FLAGS AND FOR THE INITIAL POINTER FOR THE LISTS OF RELATIONSHIP
+C         POINTERS. SET THE LENGTH FIELD FOR THE ITEM ATTACHED TO EACH
+C         NODE.
+ 
+          DO 100 J=1,N
+            NODE = EMC(EPT+J+1)
+C            WRITE(STD6,*) ' MAKJUN: INT NODE=',NODE,' EXT NODE=',
+C     A                   GETUSN(NODE)
+ 
+            IF(NODE.GT.0) THEN
+C             NODE IN ITS DEFAULT SIGN CONTEXT. ONLY CONTEXT
+C             PERMITTED IN VERSION 7.0 AND LATER.
+              EXNODT(5,NODE) = JPT
+            ELSE
+C             SHOULD NOT OCCUR.
+              WRITE(STDOUT,58) '-'//GETUSN(-NODE)
+              NODE = ABS(NODE)
+              EXNODT(5,NODE) = JPT
+              EMC(EPT+J+1) = NODE
+            ENDIF
+ 
+            IT = JPT + J + 3
+C           STORE THE NODE NUMBER
+            JOIN(IT) = NODE
+C           CLEAR THE PATH FLAG AND THE RELATIONSHIP POINTER
+            JOIN(IT+N) = 0
+            JOIN(IT+2*N) = 0
+C           SET THE PATH LENGTH
+            IF(EXNODT(3,NODE).LE.0) THEN
+C             ALL FREE NODES ARE PART OF A UNIT THAT ALWAYS INVOLVES
+C             TWO NODES.
+              LEN = 2
+            ELSE
+              BRAN = EXNODT(3,NODE)
+              LEN = BRPT(4,BRAN) - BRPT(3,BRAN) + 1
+            ENDIF
+            JOIN(IT + 3*N) = LEN
+ 100      CONTINUE
+ 
+C         CLEAR THE ENTRY LEVEL FOR EACH OF THE ELEVATION
+C         RELATIONSHIPS
+          IT = JPT + 4*N + N -1 + 4
+          DO 102 J=1,N-1
+            JOIN(IT) = 0
+            IT = IT + 1
+ 102      CONTINUE
+          JPT = JPT + 4*N + 8*(N-1) + 4
+ 
+        ELSEIF(CODE.EQ.1) THEN
+C         ADD BRANCH CODE POINTER
+          BRPT(7,ABS(EMC(EPT+1))) = EPT
+        ELSEIF(CODE.EQ.6) THEN
+C         RECORD POINTER TO FORCED BOUNDARY
+          NODE = EMC(EPT+2)
+          IF(NODE.GT.0) THEN
+            EXNODT(5,NODE) = -EPT
+          ELSE
+            WRITE(STDOUT,58) '-'//GETUSN(-NODE)
+            NODE = ABS(NODE)
+            EXNODT(5,NODE) = -EPT
+            EMC(EPT+2) = NODE
+          ENDIF
+        ENDIF
+ 1000 CONTINUE
+ 
+C     SET THE LENGTH OF THE JUNCTION PORTION
+      LJUNC = JPT - 1
+ 
+C      WRITE(STDOUT,*) ' '
+C      WRITE(STDOUT,*) ' LENGTH OF JUNCTION DATA IS: ', LJUNC
+C      WRITE(STDOUT,*) ' '
+ 
+C     Make sure that the LJUNC value is always > 0 to avoid problems
+C     with some compilers when LJUNC is used in a dimension of an array.
+ 
+      IF(LJUNC.EQ.0) LJUNC = 1
+ 
+C      WRITE(STDOUT,*) ' '
+C      WRITE(STDOUT,*) ' DUMP OF EXNODT AFTER FIRST PASS'
+C      WRITE(STDOUT,1234)
+C1234  FORMAT(' NODE CLASS EXNODT(2,*) EXNODT(5,*)')
+C      DO 1001 I=1,NEX
+C        IF(EXNODT(3,I).LT.0) THEN
+C          CHR6 = '   LPR'
+C        ELSEIF(EXNODT(3,I).EQ.0) THEN
+C          CHR6 = '  FREE'
+C        ELSE
+C          CHR6 = '  BRAN'
+C        ENDIF
+C        WRITE(STDOUT,1235) I, CHR6, EXNODT(2,I), EXNODT(5,I)
+C1235  FORMAT(I5,A6,2I12)
+C1001  CONTINUE
+C      WRITE(STDOUT,*) ' '
+ 
+C     ON THE SECOND PASS ADD THE INFORMATION FOR BOUNDARY CONDITIONS
+C     OTHER THAN FORCED BOUNDARIES, I. E. CODE 4 AND CODE 8 CAN BE
+C     ON A BOUNDARY, AND FOR THE ELEVATION RELATIONSHIPS
+C     AT THE JUNCTIONS.
+ 
+      DO 5000 I=1,NENTRY
+        EPT = ADD(I)
+        CODE = EMC(EPT)
+        GOTO(2000, 2000, 2003, 2004, 2005, 2000, 2000, 2008, 2000,
+     A       2010, 2011, 2012, 2013, 2014, 2000), CODE
+ 
+        WRITE(STD6,*) ' BUG: INVALID CODE IN MAKJUN. CODE=',CODE
+        STOP 'Abnormal stop: errors found.'
+ 
+ 2000   CONTINUE
+C         SKIP CODES 1, 2, 6, 7 AND 9, AND 15.  ALREADY PROCESSED.
+          GOTO 4999
+ 
+ 2003   CONTINUE
+C         EQUALITY OF WATER SURFACE
+          ND1 = EMC(EPT+1)
+          ND2 = EMC(EPT+2)
+          GOTO 4900
+ 
+ 2004   CONTINUE
+C         ONE-NODE CONTROL. CHECK FOR BOUNDARY CONDITION.
+          ND1 = EMC(EPT+2)
+          ND2 = EMC(EPT+4)
+          IF(ND2.EQ.ND1) THEN
+C           FLOW NODE AND HEAD NODE THE SAME
+            ND2 = 0
+          ENDIF
+          JPT = EXNODT(5,ND1)
+          IF(JPT.EQ.0) THEN
+C           NODE NEVER APPEARS IN A JUNCTION.  IT MUST BE A
+C           BOUNDARY NODE.
+ 
+            EXNODT(5,ND1) = -EPT
+          ELSE
+            CALL ADDREL
+     I                 (JPT, ND1, ND2, EPT, LJOIN,
+     M                  JOIN,
+     O                  FLAG)
+            IF(FLAG.EQ.1) THEN
+              WRITE(STDOUT,56) GETUSN(ND1), GETUSN(ND2)
+              EFLAG = 1
+            ENDIF
+          ENDIF
+          GOTO 4999
+ 
+ 2005   CONTINUE
+C         2-NODE CONTROL
+          ND1 = EMC(EPT+2)
+          ND2 = EMC(EPT+3)
+          GOTO 4900
+ 
+ 2008   CONTINUE
+C         CRITICAL DEPTH
+          ND1 = EMC(EPT+1)
+          ND2 = 0
+          JPT = EXNODT(5,ND1)
+          IF(JPT.EQ.0) THEN
+C           BOUNDARY NODE
+            EXNODT(5,ND1) = -EPT
+          ELSE
+            CALL ADDREL
+     I                 (JPT, ND1, ND2, EPT, LJOIN,
+     M                  JOIN,
+     O                  FLAG)
+            IF(FLAG.EQ.1) THEN
+              WRITE(STDOUT,56) GETUSN(ND1), GETUSN(ND2)
+              EFLAG =1
+            ENDIF
+          ENDIF
+          GOTO 4999
+ 
+ 2010   CONTINUE
+C         EQUALITY OF ENERGY LINE
+          ND1 = EMC(EPT+1)
+          ND2 = EMC(EPT+2)
+          GOTO 4900
+ 
+ 2011   CONTINUE
+C         SIMPLE MOMENTUM BALANCE
+          ND1 = EMC(EPT+1)
+          ND2 = EMC(EPT+2)
+          GOTO 4900
+ 
+ 2012   CONTINUE
+C         MATCH AVERAGE ELEVATION. TAKE UPSTREAM NODE FOR NOW
+          ND1 = EMC(EPT+1)
+          ND2 = EMC(EPT+3)
+          GOTO 4900
+ 
+ 2013   CONTINUE
+C         ENERGY/MOMENTUM MATCH
+          ND1 = EMC(EPT+1)
+          ND2 = EMC(EPT+2)
+          GOTO 4900
+ 
+ 2014   CONTINUE
+C         SIDE WEIR FLOW.
+          ND1 = EMC(EPT+1)
+          ND2 = EMC(EPT+3)
+          GOTO 4900
+ 
+ 
+ 4900   CONTINUE
+C         PROCESS RELATIONSHIPS INVOLVING TWO NODES.
+ 
+          JPT = EXNODT(5,ND1)
+          IF(JPT.LE.0) THEN
+            WRITE(STDOUT,60) CODE, GETUSN(ND1), GETUSN(ND2)
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+          CALL ADDREL
+     I               (JPT, ND1, ND2, EPT, LJOIN,
+     M                JOIN,
+     O                FLAG)
+          IF(FLAG.EQ.1) THEN
+            WRITE(STDOUT,56) GETUSN(ND1), GETUSN(ND2)
+            EFLAG =1
+          ENDIF
+          GOTO 4999
+ 
+ 4999   CONTINUE
+ 
+ 5000 CONTINUE
+ 
+ 
+C     CHECK FOR ERRORS IN THE MODEL SPECIFICATION
+ 
+      DO 5100 I=1,NEX
+        IF(EXNODT(5,I).EQ.0) THEN
+          WRITE(STDOUT,50) GETUSN(I)
+        EFLAG = 1
+        ENDIF
+ 5100 CONTINUE
+ 
+      DO 5200 I=1, JUNKNT
+        JPT = JUNPNT(I)
+        N = JOIN(JPT)
+ 
+        IT = JOIN(JPT+3) - (JPT + 4 + 4*N)
+ 
+        IF(IT.LT.N-1) THEN
+C         TOO FEW RELATIONSHIPS IN A JUNCTION
+          WRITE(STDOUT,52) N -1 - IT
+          DO 5150 J=JPT+4,JPT+4+N-1
+            WRITE(STDOUT,54) GETUSN(JOIN(J))
+ 5150     CONTINUE
+          EFLAG = 1
+        ENDIF
+ 
+C       CHECK TO MAKE SURE THAT NODES GIVEN AS FLOW NODES
+C       DO NOT HAVE ANY OTHER RELATIONSHIP ATTACHED TO THEM.
+        IF(N.GT.1) THEN
+C         SCAN THE RELATIONSHIPS AND CHECK THE RELATIONSHIP
+C         COUNT AT THE FLOW NODES FOUND.
+          DO 5160 J=JPT+4+4*N,JPT+4+4*N+N-2
+            EMCADR = JOIN(J)
+            CODE = EMC(EMCADR)
+            QNODE = 0
+            IF(CODE.EQ.4) THEN
+              QNODE = EMC(EMCADR+4)
+            ELSEIF(CODE.EQ.5) THEN
+              QNODE = EMC(EMCADR+4)
+            ELSEIF(CODE.EQ.14) THEN
+              QNODE = EMC(EMCADR+3)
+            ENDIF
+            IF(QNODE.GT.0) THEN
+C             Relationship has a flow node. Count relationships at
+C             the flow node.  There can only be one relationship
+C             at a flow node--the one that defines the flow node.
+C             The sum of flows = 0 condition is not counted as
+C             a relationship.
+ 
+              IF(FDNUMR(QNODE, JPT, LJOIN, JOIN).NE.1) THEN
+C               Problem with relationship at a flow node
+                WRITE(STDOUT,62) GETUSN(QNODE)
+                EFLAG = 1
+              ENDIF
+            ENDIF
+ 5160     CONTINUE
+        ENDIF
+ 5200 CONTINUE
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   MAKMAT
+     I                   (STDOUT, NBRA, NEX, NBN, BRPT, EXNODT,
+     M                    EMC)
+ 
+C     + + + PURPOSE + + +
+C     Create the pattern in the solution matrix.  Variable numbers
+C     have already been assigned.  We need to create the pointer
+C     vectors for the matrix profile and create the matrix blocks.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER STDOUT, NBN, NBRA, NEX
+      INTEGER BRPT(8,NBRA), EMC(MREMC), EXNODT(9,NEX)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     NBRA   - number of branches in the model
+C     NEX    - number of exterior nodes in the model
+C     NBN    - total number on nodes on branches in the model
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     EMC    - vector containing coded form of the Matrix Control Input
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'matcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER CODE, DNN, EQLEN, EQOFF, EQSTR, I, IENTRY, IPNT, ITMP,
+     A        IVAR, J, NBR, ND, NEQ, NEXP, NND, NUM, PDAPNT, TYPE, UNN
+      INTEGER JEQ(20)
+      INTEGER ELMKNT
+      
+C      CHARACTER*1 CMAT(1013,1013)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL MAKPRO
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:226* Model requires ',I5,' or more matrix blocks',
+     A      ' but only',I5,' available.')
+57    FORMAT(/,' *BUG:XXX* Wrong block type for CODE=',I5,' in',
+     A   ' MAKMAT.',/,11X,'Expected -1 but found MBTYPE=',I5)
+58    FORMAT(/,' *BUG:XXX* Invalid EDNCON for CODE=',I5,' in MAKMAT.',
+     A     /,11X,'Expected > 0 but found -1.')
+C***********************************************************************
+C     CMAT USED TO DISPLAY PATTERN OF THE MATRIX FOR DEBUGGING.
+C     NORMALLY DISABLED.
+C      CHARACTER*1 CMAT(1013,1013)
+C      CHARACTER*1 CMAT(1,1)
+C     INITIALIZE VARIABLES
+ 
+C     IPNT = COUNTER FOR EMC
+C     NEQ = NO. OF EQUATIONS FOR THE MATRIX
+C     IENTRY = INDEX FOR ADDRESSES OF ENTRIES IN EMC IN ADD(*)
+C     IVAR = COUNTER FOR THE VARIABLE NUMBER.  EACH NODE HAS 2 VARIABLES
+C            FOR THE 4-POINT SCHEME.  MORE COMPLEX SCHEMES ON A BRANCH
+C            MAY REQUIRE 4 OR 6 VARIABLES OR MORE FOR EACH NODE.
+C     PDAPNT = POINTER INTO THE PARTIAL DERIVATIVE ARRAY VECTOR
+C              USED IN MAKPRO TO ASSIGN VALUES TO C() AND R().
+ 
+ 
+      IPNT = EMC(1)
+      IENTRY = 1
+      NEQ = 0
+      PDAPNT = 0
+ 
+C     OPEN THE FIRST BLOCK FOR THE MATRIX.  GENERAL TYPE WITH A
+C     NULL ENDING CONDITION.  THE TYPE IS SET NEGATIVE TO INDICATE THAT
+C     IT IS OPEN.  THE ENDING CONDITION WILL CHANGE BEFORE THE BLOCK IS
+C     COMPLETE.  THUS IT CANNOT BE USED AS A SIGNAL THAT THE BLOCK
+C     IS STILL OPEN.
+ 
+      MATBLK = 1
+      BEGROW(1) = 2
+      ENDCON(1) = -1
+      MBTYPE(1) = -1
+ 
+C     INITIALIZE THE POINTER FOR THE COLUMNS IN THE MATRIX PROFILE
+ 
+      DO 9 I=0,MRMAT
+        C(I) = 0
+ 9    CONTINUE
+ 
+CC     INITIALIZE CMAT FOR CHECKING MATRIX STRUCTURE
+C      DO 813 I=1,1013
+C        DO 713 J=1,1013
+C          CMAT(I,J)='.'
+C713     CONTINUE
+C813   CONTINUE
+ 
+10000 CONTINUE
+ 
+C     GET NEXT CODE FROM MATRIX CONTROL VECTOR
+ 
+      IPNT = ADD(IENTRY)
+      CODE = EMC(IPNT)
+      IF(CODE.EQ.-1) GOTO 20000
+      GOTO(100,200,300,400,500,600,700,800,900,950, 950,
+     A     1200, 1300, 1400,1500),CODE
+        WRITE(STDOUT,*) ' *BUG:05* INVALID EMC CODE IN MAKMAT. CODE=',
+     A      CODE
+        STOP 'Abnormal stop: errors found.'
+ 
+C     CODE 1 GIVES BRANCH NUMBERS
+ 
+ 100  CONTINUE
+ 
+        NBR = EMC(IPNT+1)
+C       GET THE NUMBER OF ELEMENTS  AND NODES ON THIS BRANCH
+ 
+        ELMKNT = BRPT(4,ABS(NBR)) - BRPT(3,ABS(NBR))
+C        NODKNT = ELMKNT + 1
+ 
+C       MAKE BRANCH NUMBER IN EMC() POSITIVE
+ 
+        NBR = ABS(NBR)
+        EMC(IPNT+1) = NBR
+ 
+C       GET THE VARIABLE NUMBER FOR THIS BRANCH
+ 
+        IVAR = ABS(BRPT(7,NBR))
+ 
+C       UPDATE THE POINTERS FOR THE MATRIX PROFILE FOR THE
+C       EQUATIONS WHICH WILL APPEAR FOR THIS BRANCH.
+ 
+C       SET THE EQUATION OFFSET FOR THE BRANCH.  SAME AS NUMBER OF
+C       UNKNOWNS FOR EACH NODE ON THE BRANCH.
+ 
+        EQOFF = BRPT(8,NBR)
+ 
+C       SET THE EQUATION LENGTH.  FOR SINGLE CHANNELS CURRENTLY
+C       IMPLEMENTED THE EQUATION LENGTH IS TWICE THE NUMBER OF
+C       UNKNOWNS AT EACH NODE.
+ 
+        EQLEN = 2*EQOFF
+ 
+C       SET THE STARTING POINT FOR THE FIRST EQUATION IN THE BRANCH
+ 
+        EQSTR = IVAR
+ 
+        DO 120 I=1,ELMKNT
+C         SET THE VARIABLE NUMBERS INVOLVED IN THE NEXT SET OF
+C         EQUATIONS.
+          DO 105 J=1,EQLEN
+            JEQ(J) = EQSTR + J -1
+ 105      CONTINUE
+ 
+C         CALL MKPRO EQOFF TIMES INCREMENTING THE NUMBER OF EQUATIONS
+          DO 110 J=1,EQOFF
+            NEQ = NEQ +1
+            CALL MAKPRO
+     I                 (NEQ, EQLEN,
+     M                  JEQ, PDAPNT, C,
+     O                  R)
+ 
+C           Set the offset from the main diagonal for the rightmost nonzero
+C           coeff. in the current equation. 
+            EQEND(NEQ) = JEQ(EQLEN) - NEQ
+
+C           SET PATTERN IN THE MATRIX FOR CHECKING
+C            CALL MAKPAT(NUMEQ, NEQ, EQLEN, JEQ, CMAT)
+ 
+ 
+ 110      CONTINUE
+ 
+C         UPDATE THE STARTING POINT OF THE EQUATIONS FOR THE NEXT
+C         SET IN THE MATRIX FOR THE BRANCH.
+ 
+          EQSTR = EQSTR + EQOFF
+ 
+ 120    CONTINUE
+ 
+C       NOW PROCESS THE MATRIX BLOCKS.
+C       THE CURRENT OPEN BLOCK TYPE SHOULD BE -1 SHOWING AN
+C       OPEN GENERAL BLOCK.
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+          GOTO 999
+        ENDIF
+ 
+        IF(ELMKNT.LE.3) THEN
+C         BLOCK IS TOO SHORT FOR SPECIAL OPERATIONS.  THE EQUATIONS
+C         FOR THE FIRST AND LAST ELEMENT IN THE BRANCH CANNOT BE
+C         IN A SPECIAL SOLUTION TYPE BECAUSE THEY COULD INVOLVE
+C         CONNECTIONS TO OTHER BRANCHES.  THUS THE MATRIX PROFILE
+C         COULD DIFFER FROM THE STANDARD WITHIN-BRANCH PATTERN.
+ 
+C         PLACE ALL THE EQUATIONS IN THE CURRENTLY OPEN BLOCK AND
+C         LEAVE THE BLOCK OPEN BECAUSE OTHER EQUATIONS WILL HAVE TO
+C         BE ADDED TO IT.
+C         EQUATIONS ARE PLACED IN THE BLOCK BY CHANGING THE ENDING
+C         CONDITION VALUE TO THE CURRENT LAST EQUATION NUMBER.  THE
+C         STARTING EQUATION NUMBER WAS SET WHEN THE BLOCK WAS OPENED.
+ 
+          ENDCON(MATBLK) = NEQ
+        ELSE
+C         THE BLOCK IS LONGER THAN THREE ELEMENTS.  ADD THE FIRST
+C         TWO EQUATIONS TO THE CURRENTLY OPEN BLOCK.  CLOSE THE
+C         CURRENT BLOCK AND OPEN A NEW BLOCK OF TYPE 2. FILL THIS
+C         BLOCK. CLOSE IT. OPEN ANOTHER BLOCK OF TYPE -1 AND PLACE
+C         THE LAST TWO EQUATIONS IN IT. THUS BLOCKS FOR THE
+C         INTERNALS OF BRANCHES ARE ONLY OPEN FOR THE PROCESSING
+C         OF THAT BRANCH.
+ 
+          ENDCON(MATBLK) = ENDCON(MATBLK) + 2
+          MBTYPE(MATBLK) = ABS(MBTYPE(MATBLK))
+          MATBLK = MATBLK + 1
+          IF(MATBLK.GT.MRMBLK) THEN
+            WRITE(STDOUT,50) MATBLK, MRMBLK
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+          BEGROW(MATBLK) = ENDCON(MATBLK-1) + 1
+C         THE ENDING CONDITION FOR A BLOCK FOR A BRANCH IS NOT THE
+C         ENDING EQUATION NUMBER BUT THE ROW ADDRESS IN R() GIVEN
+C         BY THE EQUATION NUMBER OF THE FIRST EQUATION OF THE ENDING
+C         PAIR OF EQUATIONS APPEARING IN THE BLOCK.
+ 
+          ENDCON(MATBLK) = R(NEQ-3)
+ 
+C         BLOCK IS DEFINED. CLOSE BLOCK WITH POSTIVE BLOCK TYPE.
+ 
+          MBTYPE(MATBLK) = 2
+ 
+C         OPEN NEXT BLOCK OF GENERAL TYPE AND PUT THE LAST TWO EQUATIONS
+C         FOR THIS BRANCH IN IT.
+ 
+          MATBLK = MATBLK + 1
+          IF(MATBLK.GT.MRMBLK) THEN
+            WRITE(STDOUT,50) MATBLK, MRMBLK
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+          BEGROW(MATBLK) = NEQ -1
+          ENDCON(MATBLK) = NEQ
+          MBTYPE(MATBLK) = -1
+        ENDIF
+      GOTO 9000
+ 
+C     CODE 2 GIVES DISCHARGE CONTINUITY AT JUNCTIONS.
+ 
+ 200  CONTINUE
+        NND = EMC(IPNT+1)
+C       TRANSFER THE VARIABLE NUMBERS TO JEQ(). THESE INVOLVE THE FLOW
+C       SO THE VARIABLE NUMBERS AS STORED IN EXNODT() GIVE THE CORRECT
+C       VALUES
+        DO 210 I=1,NND
+          JEQ(I) = EXNODT(5,ABS(EMC(IPNT+1+I)))
+ 210    CONTINUE
+ 
+C       PROCESS THE EQUATIONS
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, NND,
+     M              JEQ, PDAPNT, C,
+     O              R)
+
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(NND) - NEQ
+ 
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, NND, JEQ, CMAT)
+ 
+C       ADD THE EQUATION TO THE CURRENT OPEN BLOCK.
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+ 
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+C         SUM OF FLOWS WITH ONE NODE AS A FORCED ZERO FLOW
+ 
+          ENDCON(MATBLK) = 1
+        ELSE
+C         UPDATE ENDCON TO THE CURRENT EQUATION NUMBER
+ 
+          ENDCON(MATBLK) = NEQ
+        ENDIF
+      GOTO 9000
+ 
+C     CODE 3 - GIVES ELEVATION EQUALITY
+ 
+ 300  CONTINUE
+        UNN = EMC(IPNT+1)
+        DNN = EMC(IPNT + 2)
+C       TRANSFER THE VARIABLE NUMBERS.  INVOLVES ONLY ELEVATIONS SO ADD
+C       ONE TO THE VARIABLE NUMBERS IN EXNODT()
+        JEQ(1) = EXNODT(5,UNN) + 1
+        JEQ(2) = EXNODT(5,DNN) + 1
+        IF(JEQ(1).GT.JEQ(2)) THEN
+          ITMP = JEQ(2)
+          JEQ(2) = JEQ(1)
+          JEQ(1) = ITMP
+        ENDIF
+ 
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 2,
+     M              JEQ, PDAPNT, C,
+     O              R)
+
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(2) - NEQ
+ 
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, 2, JEQ, CMAT)
+ 
+C       ADD TO CURRENT BLOCK
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+          GOTO 999
+        ENDIF
+ 
+        ENDCON(MATBLK) = ENDCON(MATBLK) + 1
+      GOTO 9000
+ 
+C     CODE 4 - CONTROL STRUCTURE WITH 1 NODE HEAD DISCHARGE
+C     UNN = UPSTREAM NODE FOR HEAD
+C     DNN = NODE FOR DISCHARGE
+ 
+ 400  CONTINUE
+        UNN = EMC(IPNT+2)
+        DNN = EMC(IPNT+4)
+ 
+C       GET THE VARIABLE NUMBERS.  THE NODE FOR HEAD ONLY INVOLVES
+C       HEAD AND THE NODE FOR FLOW ONLY INVOLVES FLOW.
+        JEQ(1) = EXNODT(5,UNN) + 1
+        JEQ(2) = EXNODT(5,DNN)
+        IF(JEQ(1).GT.JEQ(2)) THEN
+          ITMP = JEQ(2)
+          JEQ(2) = JEQ(1)
+          JEQ(1) = ITMP
+        ENDIF
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 2,
+     M              JEQ, PDAPNT, C,
+     O              R)
+
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(2) - NEQ
+ 
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+        IF(JEQ(1).EQ.EXNODT(5,UNN)+1) THEN
+          JEQ(1) = -JEQ(1)
+        ELSE
+          JEQ(2) = -JEQ(2)
+        ENDIF
+C        CALL MAKPAT(NUMEQ, NEQ, 2, JEQ, CMAT)
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+C         MATRIX STARTS AT A DOWNSTREAM BOUNDARY
+          ENDCON(MATBLK) = 1
+        ELSE
+          ENDCON(MATBLK) = ENDCON(MATBLK) + 1
+        ENDIF
+      GOTO 9000
+ 
+C     CODE 5 - CONTROL STRUCTURE WITH 2 NODE HEAD DISCHARGE
+ 500  CONTINUE
+ 
+        UNN = EMC(IPNT+2)
+        DNN = EMC(IPNT+3)
+C       GET THE VARIABLE NUMBERS.  BOTH NODES INVOLVE BOTH FLOW
+C       AND ELEVATION
+        JEQ(1) = EXNODT(5,UNN)
+        JEQ(2) = JEQ(1) + 1
+        JEQ(3) = EXNODT(5,DNN)
+        JEQ(4) = JEQ(3) + 1
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 4,
+     M              JEQ, PDAPNT, C,
+     O              R)
+ 
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(4) - NEQ
+
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+        IF(JEQ(2).EQ.EXNODT(5,UNN) + 1) THEN
+          JEQ(2) = -JEQ(2)
+        ELSE
+          JEQ(4) = -JEQ(4)
+        ENDIF
+        IF(JEQ(2).EQ.EXNODT(5,DNN) + 1) THEN
+          JEQ(2) = -JEQ(2)
+        ELSE
+          JEQ(4) = -JEQ(4)
+        ENDIF
+C        CALL MAKPAT(NUMEQ, NEQ, 4, JEQ, CMAT)
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+          GOTO 999
+        ENDIF
+        ENDCON(MATBLK) = ENDCON(MATBLK) + 1
+ 
+        GOTO 9000
+ 
+C     CODE 6 - GIVES DETAILS OF FORCED BOUNDARY
+C     ITYPE = 1  Q VS T
+C     ITYPE = 2  Y VS T
+ 
+ 600  CONTINUE
+        TYPE = EMC(IPNT+1)
+        NUM = EMC(IPNT+2)
+C       VARIABLE NUMBER INVOLVED VARIES WITH TYPE
+        IF(TYPE.EQ.1) THEN
+          JEQ(1) = EXNODT(5,NUM)
+        ELSE
+          JEQ(1) = EXNODT(5,NUM) + 1
+        ENDIF
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 1,
+     M              JEQ, PDAPNT, C,
+     O              R)
+ 
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(1) - NEQ
+
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, 1, JEQ, CMAT)
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+          ENDCON(MATBLK) = 1
+        ELSE
+          ENDCON(MATBLK) = ENDCON(MATBLK) + 1
+        ENDIF
+      GOTO 9000
+ 
+C     CODE 7 - LEVEL POOL RESERVOIR
+C     NND = NO. OF INFLOW NODES = 1 EXACTLY
+C     DNN = NODE OF RESERVOIR
+C     UNN = INFLOW NODES IN TURN
+ 
+ 700  CONTINUE
+C       MODIFY THE RESERVOIR SO THAT IT IS MORE LIKE A DUMMY BRANCH
+C       GOAL IS TO FILL OUT ALL SLOTS IN THE MATRIX ENTRIES FOR THE
+C       RESERVOIR
+ 
+        DNN =  EMC(IPNT+1)
+        UNN =  EMC(IPNT+5)
+ 
+C       USE KINEMATIC FUNCTION LIKE FOR A DUMMY BRANCH
+        JEQ(1) = EXNODT(5,DNN)
+        JEQ(2) = JEQ(1) + 1
+        JEQ(3) = EXNODT(5,UNN)
+        JEQ(4) = JEQ(3) + 1
+ 
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 4,
+     M              JEQ, PDAPNT, C,
+     O              R)
+
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(4) - NEQ
+
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, 4, JEQ, CMAT)
+ 
+C       SET THE RESERVOIR NODE VALUES
+ 
+        JEQ(1) = EXNODT(5,DNN)
+        JEQ(2) = JEQ(1) + 1
+        JEQ(3) = EXNODT(5,UNN)
+        JEQ(4) = JEQ(3) + 1
+ 
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 4,
+     M              JEQ, PDAPNT, C,
+     O              R)
+ 
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(4) - NEQ
+
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, 4, JEQ, CMAT)
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+          GOTO 999
+        ENDIF
+        ENDCON(MATBLK) = ENDCON(MATBLK) + 2
+ 
+      GOTO 9000
+ 
+C     CODE 8 - CRITICAL DEPTH CONDITION
+C     NUM = NODE NUMBER
+ 
+ 800  CONTINUE
+        NUM = EMC(IPNT+1)
+C       INVOLVES BOTH VARIABLES AT THE NODE
+        JEQ(1) = EXNODT(5,NUM)
+        JEQ(2) = JEQ(1) + 1
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 2,
+     M              JEQ, PDAPNT, C,
+     O              R)
+ 
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(2) - NEQ
+
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, 2, JEQ, CMAT)
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+          ENDCON(MATBLK) = 1
+        ELSE
+          ENDCON(MATBLK) = ENDCON(MATBLK) + 1
+        ENDIF
+      GOTO 9000
+ 
+ 
+C     CODE 9 MOMENTUM JUNCTION
+ 
+ 900  CONTINUE
+        WRITE(STDOUT,*) ' SHOULD NOT REACH CODE=9 IN MAKMAT'
+        STOP 'Abnormal stop: errors found.'
+C        GOTO 9000
+ 
+C     CODE 10 - EQUALITY OF ELEVATION OF TOTAL ENERGY LINE,
+C     and momentum balance code 11
+ 
+ 
+ 950  CONTINUE
+        UNN = EMC(IPNT+1)
+        DNN = EMC(IPNT+2)
+C       ALL VARIABLES AT EACH NODE INVOLVED
+        JEQ(1) = EXNODT(5,UNN)
+        JEQ(2) = JEQ(1) + 1
+        JEQ(3) = EXNODT(5,DNN)
+        JEQ(4) = JEQ(3) + 1
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 4,
+     M              JEQ, PDAPNT, C,
+     O              R)
+ 
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(4) - NEQ
+
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, 4, JEQ, CMAT)
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+          GOTO 999
+        ENDIF
+ 
+        ENDCON(MATBLK) = ENDCON(MATBLK) + 1
+      GOTO 9000
+ 
+ 1200 CONTINUE
+C       THREE NODES INVOLVED HERE.  ONLY DEPTH VARIABLE INVOLVED.
+        DO 1201 I=1,3
+          ND = EMC(IPNT+I)
+          JEQ(I) = EXNODT(5,ND) + 1
+ 1201   CONTINUE
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 3,
+     M              JEQ, PDAPNT, C,
+     O              R)
+ 
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(3) - NEQ
+
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, 3, JEQ, CMAT)
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+          GOTO 999
+        ENDIF
+        ENDCON(MATBLK) = ENDCON(MATBLK) + 1
+      GOTO 9000
+ 
+C     Momentum/energy conservation
+ 
+ 1300 CONTINUE
+        UNN = EMC(IPNT+1)
+        DNN = EMC(IPNT+2)
+C       ALL VARIABLES AT EACH NODE INVOLVED
+        JEQ(1) = EXNODT(5,UNN)
+        JEQ(2) = JEQ(1) + 1
+        JEQ(3) = EXNODT(5,DNN)
+        JEQ(4) = JEQ(3) + 1
+        NND = 4
+C       Do the side nodes if any are present.   Both variables
+C       are involved with a side node.
+        DO 1301 J=1,EMC(IPNT+6)
+          NND = NND + 1
+          JEQ(NND) = EXNODT(5,EMC(IPNT+6+J))
+          NND = NND + 1
+          JEQ(NND) = JEQ(NND-1) + 1
+1301    CONTINUE
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, NND,
+     M              JEQ, PDAPNT, C,
+     O              R)
+ 
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(NND) - NEQ
+
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, 4, JEQ, CMAT)
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+          GOTO 999
+        ENDIF
+ 
+        ENDCON(MATBLK) = ENDCON(MATBLK) + 1
+      GOTO 9000
+ 
+ 
+ 1400 CONTINUE
+C       THREE NODES INVOLVED HERE.  BOTH VARIABLES INVOLVED AT THE NODES.
+        J =1
+        DO 1401 I=1,3
+          ND = EMC(IPNT+I)
+          JEQ(J) = EXNODT(5,ND)
+          JEQ(J+1) = JEQ(J) + 1
+          J = J + 2
+ 1401   CONTINUE
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 6,
+     M              JEQ, PDAPNT, C,
+     O              R)
+ 
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(6) - NEQ
+
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, 6, JEQ, CMAT)
+ 
+        IF(MBTYPE(MATBLK).NE.-1) THEN
+          GOTO 998
+        ENDIF
+        IF(ENDCON(MATBLK).EQ.-1) THEN
+          GOTO 999
+        ENDIF
+        ENDCON(MATBLK) = ENDCON(MATBLK) + 1
+      GOTO 9000
+ 
+ 1500 CONTINUE
+C       NULL BRANCH.  TWO EQUATIONS GENERATED HERE
+ 
+        UNN = EMC(IPNT+1)
+        DNN = EMC(IPNT+2)
+ 
+C       DO FIRST EQUATION: LINEAR KINEMATIC
+        JEQ(1) = EXNODT(5,UNN)
+        JEQ(2) = JEQ(1) + 1
+        JEQ(3) = EXNODT(5,DNN)
+        JEQ(4) = JEQ(3) + 1
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 4,
+     M              JEQ, PDAPNT, C,
+     O              R)
+ 
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(4) - NEQ
+
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, 4, JEQ, CMAT)
+ 
+C       DO SECOND EQUATION: CONTINUITY EQUATION
+ 
+        JEQ(1) = EXNODT(5,UNN)
+        JEQ(2) = JEQ(1) + 1
+        JEQ(3) = EXNODT(5,DNN)
+        JEQ(4) = JEQ(3) + 1
+        NEQ = NEQ + 1
+        CALL MAKPRO
+     I             (NEQ, 4,
+     M              JEQ, PDAPNT, C,
+     O              R)
+ 
+C       Set the offset from the main diagonal for the rightmost nonzero
+C       coeff. in the current equation. 
+        EQEND(NEQ) = JEQ(4) - NEQ
+
+C       SET PATTERN IN THE MATRIX FOR CHECKING
+C        CALL MAKPAT(NUMEQ, NEQ, 4, JEQ, CMAT)
+ 
+        ENDCON(MATBLK) = ENDCON(MATBLK) + 2
+        GOTO 9000
+ 
+ 9000 CONTINUE
+ 
+      IENTRY = IENTRY + 1
+      GOTO 10000
+ 
+20000 CONTINUE
+ 
+C     CLOSE THE LAST BLOCK
+      MBTYPE(MATBLK) = ABS(MBTYPE(MATBLK))
+ 
+C     CHECK NUMBER OF EQUATIONS. ONLY WORKS WITH BRANCHES WITH
+C     2 UNKNOWNS PER NODE.
+ 
+      NEXP = 2*(NBN + NEX - 2*NBRA)
+      IF(NEQ.NE.NEXP) THEN
+        WRITE(STDOUT,*) ' *BUG:XXX* FOUND ',NEQ,' EQUATIONS IN MAKMAT',
+     A    ' BUT EXPECTED ', NEXP
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+C     OUTPUT MATRIX PATTERN
+ 
+C      IF(NUMEQ.LE.1013) THEN
+C        CALL PUTPAT(STDOUT, NEQ, CMAT, NEX, EXNODT, NBRA, BRPT)
+C      ENDIF
+ 
+      RETURN
+998   CONTINUE
+      WRITE(STDOUT,57) CODE, MBTYPE(MATBLK)
+      STOP 'Abnormal stop: errors found.'
+999   CONTINUE
+      WRITE(STDOUT,58) CODE
+      STOP 'Abnormal stop: errors found.'
+      END
+C
+C
+C
+      SUBROUTINE   MAKPRO
+     I                   (IEQ, NONZR,
+     M                    JEQ, FP, C,
+     O                    R)
+ 
+C     + + + PURPOSE + + +
+C     Process equation number, IEQ, creating the pointers into
+C     PDAVEC(*) used to store the profile of a variable-band matrix.
+C     NONZR gives the number of non-zero entries on the current
+C     row given by IEQ.  JEQ(*) contains the column numbers of the
+C     entries.  FP is the pointer into
+C     PDAVEC(*) and points to the last entry used in PDAVEC(*).
+C     Therefore FP should be zero for the first call to MAKPRO and
+C     should be left unchanged for all subsequent calls.
+C     On the first call C(0:*) must be set to zero also.
+C     After the equation has been processed, R(IEQ) points to the
+C     location in PDAVEC(*) of the first subdiagonal in row IEQ of the
+C     matrix.  If there are no coefficients in the row below the
+C     main diagonal then R(IEQ) has the same value as C(IEQ-1).
+C     On exit C(IEQ) points to the diagonal coefficient in row
+C     IEQ.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER FP, IEQ, NONZR
+      INTEGER C(0:MRMAT), JEQ(20), R(MRMAT)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IEQ    - equation number
+C     NONZR  - number of non-zero entries for an equation
+C     JEQ    - column numbers of nonzero coefficients for current
+C               equation
+C     FP     - pointer to last entry used in PDAVEC
+C     C      - pointer to diagonal element for each equation in the
+C               network matrix
+C     R      - pointer to first subdiagonal element for each equation
+C               in the network matrix
+ 
+C     + + + LOCAL PARAMETERS + + +
+      INTEGER MAXINT
+      PARAMETER(MAXINT=2147483647)
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER J, K, MINJ
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC MIN
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL IASORT
+C***********************************************************************
+C     SORT JEQ INTO ASCENDING ORDER
+      CALL IASORT
+     I           (NONZR,
+     M            JEQ)
+ 
+C     SET THE MINIMUM COLUMN VALUE FOR THE ROW
+      MINJ = MAXINT
+ 
+      DO 100 K=1,NONZR
+C       GET THE CURRENT COLUMN NUMBER
+        J = JEQ(K)
+        IF(J.GE.IEQ) THEN
+C         WE HAVE A VALUE IN THE CURRENT ROW ON OR ABOVE THE MAIN
+C         DIAGONAL.  REMEMBER THE ROW NUMBER FOR THIS COLUMN IF THIS
+C         IS THE FIRST TIME A NONZERO VALUE HAS OCCURRED IN THIS COLUMN.
+ 
+          IF(C(J).EQ.0) THEN
+            C(J) = IEQ
+          ENDIF
+        ELSE
+C         WE HAVE A VALUE BELOW THE MAIN DIAGONAL IN THE CURRENT ROW.
+C         FIND THE MINIMUM VALUE FOR ALL COLUMNS BELOW THE MAIN DIAGONAL
+C         IN THE CURRENT ROW.
+ 
+          MINJ = MIN(J, MINJ)
+        ENDIF
+ 
+ 100  CONTINUE
+ 
+C     AT THIS POINT ALL THE POSSIBLE COEFFICIENTS AT OR ABOVE
+C     ROW IEQ HAVE BEEN ENCOUNTERED.  THUS THE COLUMN ABOVE THE
+C     DIAGONAL IN THE CURRENT ROW IS DEFINED.
+ 
+C     PROCESS THE CURRENT ROW
+      IF(MINJ.EQ.MAXINT) THEN
+C       NO VALUES BELOW THE MAIN DIAGONAL. SIGNAL A NULL ROW.
+        R(IEQ) = C(IEQ-1)
+      ELSE
+C       MUST ALLOCATE SPACE IN PDAVEC(*) FROM MINIMUM COLUMN THROUGH THE
+C       ELEMENT IN THE FIRST SUBDIAGONAL.
+ 
+        FP = FP + IEQ - MINJ
+        R(IEQ) = FP
+      ENDIF
+ 
+C     PROCESS THE CURRENT COLUMN(COLUMN ABOVE THE DIAGONAL ELEMENT OF
+C     THE CURRENT ROW)
+      IF(C(IEQ).EQ.0) THEN
+C       NO COLUMN ENTRIES FOUND.  MUST ALLOCATE SPACE FOR THE
+C       DIAGONAL ELEMENT.
+ 
+        FP = FP + 1
+        C(IEQ) = FP
+      ELSE
+C       C(IEQ) GIVES THE VALUE OF THE FIRST ROW IN THE MATRIX HAVING
+C       A NON-ZERO ELEMENT IN COLUMN IEQ.
+ 
+        FP = FP + IEQ - C(IEQ) + 1
+        C(IEQ) = FP
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   MKNDIN
+     I                   (NODE, ACTION, JPT, LJOIN,
+     M                    JOIN,
+     O                    MKPATH)
+ 
+C     + + + PURPOSE + + +
+C     Mark the path at NODE according to ACTION. If ACTION=1 then
+C     the path should not have been marked before. If it is marked
+C     return a value of zero, else mark it with 1 and return value
+C     of 1. If ACTION=2 then set the path at NODE to 2 and return
+C     2.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ACTION, JPT, LJOIN, MKPATH, NODE
+      INTEGER JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NODE   - node number
+C     ACTION - Coded value for the action to take when initiating a
+C               path
+C     JPT    - pointer for the junction descriptions
+C     LJOIN  - length of the junction description vector: JOIN
+C     JOIN   - vector for storing the junction descriptions
+C     MKPATH - mark value for the path
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADR, N, NODADR
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER EXNODN
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL EXNODN, GETUSN
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(' *BUG:XXX MKNDIN: NODE=',A5,' NOT IN LIST. JPT=',I6)
+C***********************************************************************
+C     SET NUMBER OF NODES
+      N = JOIN(JPT)
+ 
+      NODADR = EXNODN(NODE, JPT, LJOIN, JOIN)
+      IF(NODADR.LE.0) THEN
+        WRITE(STD6,50) GETUSN(NODE), JPT
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      ADR = NODADR + N
+      IF(ACTION.EQ.1) THEN
+        IF(JOIN(ADR).NE.0) THEN
+          MKPATH = 0
+        ELSE
+          MKPATH = 1
+          JOIN(ADR) = 1
+C          WRITE(STD6,*) ' NODE=',GETUSN(NODE),' INITIATED IN JPT=',JPT
+        ENDIF
+      ELSE
+        MKPATH = 2
+        JOIN(ADR) = 2
+C        WRITE(STD6,*) ' NODE=',GETUSN(NODE),' COMPLETED IN JPT=',JPT
+      ENDIF
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   PUTREC
+     I                   (STDOUT, MAXNIN, BEGBUF, ENDBUF, LBUFF, EMCADR,
+     I                    CONID, POINT, NODEIN,
+     M                    IPUT, NIN,
+     O                    BUFF)
+ 
+C     + + + PURPOSE + + +
+C     Write the next record in the pending instruction buffer.
+C     The buffer is circular.  Each record has four elements in
+C     it.  NIN gives the count of the number of records in the
+C     buffer and MAXNIN gives the maximum number of records which
+C     the buffer can hold without overlap of information.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER BEGBUF, CONID, EMCADR, ENDBUF, IPUT, LBUFF, MAXNIN, NIN,
+     A        NODEIN, POINT, STDOUT
+      INTEGER BUFF(LBUFF)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - standard output unit for user messages
+C     MAXNIN - maximum number of records that the pending instruction
+C               buffer can hold
+C     BEGBUF - beginning address for pending instruction buffer
+C     ENDBUF - end point for the pending instruction buffer
+C     LBUFF  - number of elements in the pending instruction buffer
+C     EMCADR - address of relationship in EMC(*)
+C     CONID  - connecting item id code.  Defined in MAKEMC
+C     POINT  - pointer to the connecting item
+C     NODEIN - user node identification string
+C     IPUT   - address in the pending instruction buffer for storing
+C               the next instruction
+C     NIN    - number or records remaining in the pending instruction
+C               buffer
+C     BUFF   - pending instruction buffer
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(' *ERR:227* Pending instruction buffer overflow. Number ',
+     A  ' of records=',I5)
+C***********************************************************************
+      NIN = NIN + 1
+      IF(NIN.GT.MAXNIN) THEN
+C       BUFFER IS OVER FULL. MUST STOP PROCESSING
+        WRITE(STDOUT,50) MAXNIN
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+C     PUT THE VALUES IN THE BUFFER STARTING AT IPUT
+ 
+      BUFF(IPUT) = EMCADR
+      BUFF(IPUT+1) = CONID
+      BUFF(IPUT+2) = POINT
+      BUFF(IPUT+3) = NODEIN
+ 
+      IPUT = IPUT + 4
+      IF(IPUT.GT.ENDBUF) THEN
+C       WRAP BACK TO THE START OF THE BUFFER
+ 
+        IPUT = BEGBUF
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   UPDLST
+     I                   (RPT, NODE, LJOIN,
+     M                    ADR, JFREE, JOIN,
+     O                    FLAG)
+ 
+C     + + + PURPOSE + + +
+C     Update the list of relationships for a node.  The address
+C     for the start of the list is stored at ADR in JOIN.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ADR, FLAG, JFREE, LJOIN, NODE, RPT
+      INTEGER JOIN(LJOIN)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     RPT    - pointer to the relationship pointer
+C     NODE   - node number
+C     LJOIN  - length of the junction description vector: JOIN
+C     ADR    -  the address of the list of addresses of relationships
+C               that reference a node.
+C     JFREE  - free space pointer for a junction
+C     JOIN   - vector for storing the junction descriptions
+C     FLAG   - flag for errors
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER IPNT
+C***********************************************************************
+      FLAG = 0
+      IPNT = JOIN(ADR)
+ 100  CONTINUE
+        IF(IPNT.EQ.0) THEN
+C         FOUND END OF THE LIST.  ADD NEW ITEM AND PUT IN ADDRESS OF
+C         NEW ITEM. (SINGLE LINKED LIST)
+ 
+          JOIN(ADR) = JFREE
+ 
+C         CLEAR THE POINTER TO THE NEXT ITEM
+ 
+          JOIN(JFREE) = 0
+C         STORE POINTER TO THE RELATIONSHIP POINTER
+          JOIN(JFREE+1) = RPT
+C         STORE THE NODE NUMBER FOR THE OTHER END OF THE RELATIONSHIP
+C         NODE IS ZERO IF THERE IS NO OTHER END.
+          JOIN(JFREE+2) = NODE
+ 
+          JFREE = JFREE + 3
+        ELSE
+C         CHECK TO MAKE SURE THAT THE SECOND NODE IS NOT DUPLICATED
+C         AT ANY NODE.
+          IF(JOIN(IPNT+2).EQ.NODE) THEN
+C           ERROR-DUPLICATE USE OF TWO NODES FOR A RELATIONSHIP.
+            FLAG = FLAG + 1
+          ENDIF
+C         GO TO THE NEXT ITEM IN THE LIST
+ 
+          ADR = IPNT
+          IPNT = JOIN(ADR)
+          GOTO 100
+        ENDIF
+ 
+      RETURN
+      END

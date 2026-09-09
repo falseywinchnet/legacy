@@ -1,0 +1,11 @@
+--- 9.98/fequtl/imptrap.for
++++ 10.61/fequtl/imptrap.for
+@@ -1269,7 +1269,7 @@
+ C     ****************************FORMATS*******************************
+ 50    FORMAT(/,' *ERR:745*: Computational problem(s) in IMPTRAP on',
+      A /, 11X, ' step after station=',F12.4,' and after index=',I10,'.',
+-     B /, 11X  ' The problem was identified as:')
++     B /, 11X,  ' The problem was identified as:')
+ 51    FORMAT(' Maximum number of steps=',I5,' exceeded.')
+ 52    FORMAT(' Minimum step length reached seeking solution at full'  ,
+      a      ' step=',1PD10.3)

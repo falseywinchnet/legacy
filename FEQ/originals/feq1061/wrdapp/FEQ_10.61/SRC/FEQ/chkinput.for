@@ -1,0 +1,3354 @@
+C Routines used in checking the user input                                      
+
+
+C     ***********
+C     *         *
+C     * PROCESS_SIMPLE_BLK_NUMBER
+C     *         *
+C     ***********
+
+      SUBROUTINE PROCESS_SIMPLE_BLK_NUMBER(STDOUT, OPBLK, BLK_NUMBER, 
+     I                                     EMC_ADRS, 
+     I                                     EMC_ADRS_OF_BLK_NUMBER,
+     I                                     ACTIVE_FLAG, 
+     I                                     EMC_DIR_ADRS, EMC_DIR, EPT,
+     M                                     EMC, EFLAG) 
+
+C     Set value for a simple operation block number.
+
+      IMPLICIT NONE
+      INCLUDE 'arsize.prm'
+
+      INTEGER EPT, STDOUT, BLK_NUMBER, OPBLK(BLK_NUMBER), EMC(EPT), 
+     A        EMC_ADRS, 
+     A        EFLAG, ACTIVE_FLAG, EMC_ADRS_OF_BLK_NUMBER,
+     B        EMC_DIR_ADRS, EMC_DIR
+
+      INCLUDE 'ftable.cmn'
+
+C     Local
+
+      INTEGER BLK_ADRS
+
+C     ************************Formats***********************************
+54    FORMAT(/,' *ERR:320* Operation Block#=',I5,' is referenced',
+     A        ' more than once',/,11X,'or is missing.')
+C***********************************************************************
+C      WRITE(STDOUT,*) ' PROCESS_S...:BLK NUMBER=',BLK_NUMBER
+C     Get the address of  block in FTAB/ITAB
+      BLK_ADRS = OPBLK(BLK_NUMBER)
+
+C      WRITE(STDOUT,*) ' BLK_ADRS=',BLK_ADRS
+
+C     Set the pointer to the structure opening slot in EMC in the
+C     Operation Control Block structure.  
+      ITAB(BLK_ADRS) = EMC_ADRS
+ 
+C     Establish the initial value of the structure setting in EMC
+ 
+      EMC(EMC_ADRS) = ITAB(BLK_ADRS+1)
+
+C     Set the active flag  to indicate that the block is
+C     active and is the only block used by the structure. The  active
+C     flag is set to -2 when the operation block data is input.  If
+C     the active flag is found to be different than -2, then
+C     the user has requested that the same block be used for two
+C     different structures.  This is an error. 
+C      WRITE(STDOUT,*) ' ITAB(BLK_ADRS+7)=',ITAB(BLK_ADRS+7)
+      IF(ITAB(BLK_ADRS+7).NE.-2.AND.ACTIVE_FLAG.EQ.0) THEN
+        WRITE(STDOUT,54) BLK_NUMBER
+        EFLAG = 1
+        STOP 'Abnormal stop: errors found.'
+      ELSE
+C       Ok here. If this is a multiple block for a control structure
+C       it will be set many times as the operation block selection 
+C       table is scanned. 
+        ITAB(BLK_ADRS+7) = ACTIVE_FLAG
+      ENDIF
+C     Set the pointer to the block number location in EMC. 
+C     Used only for multiple block numbers per structure.
+      ITAB(BLK_ADRS+8) = EMC_ADRS_OF_BLK_NUMBER
+
+C     Set the values for 2-way pumps.  Set in all cases but
+C     only used for 2-way pumps.
+      ITAB(BLK_ADRS+9) = EMC_DIR
+      ITAB(BLK_ADRS+10) = EMC_DIR_ADRS
+C      WRITE(STDOUT,*) ' LEAVING PROCESS_SIMPLE_BLK_NUMBER'
+      RETURN
+      END
+
+C     ***********
+C     *         *
+C     * PROCESS_OPER_BLK
+C     *         *
+C     ***********
+
+      SUBROUTINE PROCESS_OPER_BLK(STDOUT, EMC_BASE, EMC_OFFSET, 
+     I                            EMC_OFFSET_OF_BLK_NUMBER, 
+     I                            BLK_NUMBER, OPBLK, NUMBER_OF_BLOCKS,
+     I                            EPT, 
+     M                            EMC, EFLAG)
+
+C     Process the operation block references      
+
+      IMPLICIT NONE
+      INCLUDE 'arsize.prm'
+
+      INTEGER EPT, STDOUT, EMC_BASE, EMC_OFFSET,  BLK_NUMBER, 
+     A        NUMBER_OF_BLOCKS,
+     B        OPBLK(NUMBER_OF_BLOCKS), EMC(EPT), EFLAG,
+     C        EMC_OFFSET_OF_BLK_NUMBER
+
+      INCLUDE 'ftable.cmn'
+
+C     Local
+
+      INTEGER EMC_ADRS, TABLE_ADRS, LOW_ADRS, HIGH_ADRS,
+     A        BODY_INC, I, TS_BLK_NUMBER, ACTIVE_FLAG,
+     B        EMC_ADRS_OF_BLK_NUMBER, EMC_DIR, EMC_DIR_ADRS
+
+C     External subprograms.
+      INTEGER  GETTYP
+      CHARACTER*16 GET_TABID
+      EXTERNAL  GETTYP, GET_TABID
+C     ************************Formats***********************************
+50    FORMAT(/,' *ERR:321* Operation Block Table Id=',A,' is invalid.')
+52    FORMAT(/,' *ERR:322* Expected table of type 7 but found',
+     A        ' type ',I5)
+56    FORMAT(/,' *ERR:323* Operation Block#=',I5,' from Table Id=',A,
+     A        ' is out of range.')
+C***********************************************************************
+
+      EMC_ADRS = EMC_BASE + EMC_OFFSET
+C      WRITE(STDOUT,*) ' EMC_ADRS=',EMC_ADRS
+
+      EMC_ADRS_OF_BLK_NUMBER = EMC_BASE + EMC_OFFSET_OF_BLK_NUMBER
+C     Followiing values only used if this is a 2-way pump.  However,
+C     the value can be computed in other cases. 
+      EMC_DIR_ADRS = EMC_BASE + 6
+      EMC_DIR = EMC(EMC_DIR_ADRS)
+
+C     See subroutine SET_CONTROL_SOURCE for the setting of the 
+C     BLK_NUMBER to understand the code here.  Special settings
+C     are used to detect various conditions.
+
+      IF(BLK_NUMBER.LT.MFTNUM+1) THEN
+C       In this instance the operation block is the only one used
+C       by a structure.  In this case the ACTIVE_FLAG value is 0
+        IF(BLK_NUMBER.GE.1.AND.BLK_NUMBER.LE.NUMBER_OF_BLOCKS) THEN
+          ACTIVE_FLAG = 0
+          CALL PROCESS_SIMPLE_BLK_NUMBER(STDOUT, OPBLK, BLK_NUMBER, 
+     I       EMC_ADRS, EMC_ADRS_OF_BLK_NUMBER, ACTIVE_FLAG, 
+     I       EMC_DIR_ADRS, EMC_DIR, EPT,
+     M                                   EMC, EFLAG) 
+        ELSE
+C         Block numbers are out of proper range in the Network Matrix
+C         input.  They must be consecutive starting at 1.
+          CALL KIL
+     I              (31,
+     M                 BLK_NUMBER, EFLAG)
+        ENDIF
+      ELSE
+C       If the value given is greater than MFTNUM+1 , we assume that it is
+C       a time series table of type 7.  Thus we must verify that the
+C       table exists and that it is a time-series table..  Once these tests
+C       are passed, then we scan the body of the time-series table
+C       and process all operation control blocks that are given.
+C       Compute the actual number.  
+        TABLE_ADRS = BLK_NUMBER - MFTNUM - 1
+        CALL CHKTAB
+     I             (7, STDOUT, FTPNT, MFTNUM,
+     M              TABLE_ADRS,
+     O              EFLAG)
+        IF(EFLAG.EQ.0) THEN
+          IF(GETTYP(TABLE_ADRS).NE.7) THEN
+            WRITE(STDOUT,52) GETTYP(TABLE_ADRS)
+            EFLAG = 1
+          ENDIF
+        ENDIF
+        IF(EFLAG.NE.0) THEN
+          WRITE(STDOUT,50) GET_TABID(BLK_NUMBER - MFTNUM -1)
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+
+C       At this point the table exists and is of type 7.  Set the
+C       address points for the table.
+        LOW_ADRS = (TABLE_ADRS + OFF234)/2
+        HIGH_ADRS = ITAB(TABLE_ADRS)
+        BODY_INC = 2
+
+        DO 500 I=LOW_ADRS, HIGH_ADRS, BODY_INC
+C         Round the table value to the nearest integer and treat
+C         it like a block number.  It must be in valid block number
+C         range. 
+          TS_BLK_NUMBER = INT(DTAB(I+1)+0.5)
+          IF(TS_BLK_NUMBER.LT.1.OR.TS_BLK_NUMBER.GT.MNBLK) THEN
+            WRITE(STDOUT,56) TS_BLK_NUMBER, 
+     A                    GET_TABID(BLK_NUMBER - MFTNUM -1)
+            EFLAG = 1
+            STOP 'Abnormal stop: errors found.'
+          ELSE
+C           Block reference is in valid range. 
+C           In this instance the active flag is set to the address
+C           of the time-series table containing the various blocks
+C           to be used in the operation of the structure. 
+            ACTIVE_FLAG = TABLE_ADRS
+            CALL PROCESS_SIMPLE_BLK_NUMBER(STDOUT, OPBLK, TS_BLK_NUMBER, 
+     I                   EMC_ADRS, EMC_ADRS_OF_BLK_NUMBER, ACTIVE_FLAG, 
+     I                   EMC_DIR_ADRS, EMC_DIR, EPT,
+     M                   EMC, EFLAG) 
+          ENDIF
+
+500     CONTINUE
+      ENDIF
+      RETURN
+      END
+
+C
+C
+C
+      SUBROUTINE   CHKBR
+     I                  (STDOUT, NBN, NBRA, NEX, MFT, BRPT, FTPNT, 
+     I                   GEQVEC, GRAV, SFAC, XVEC,
+     M                   NSEC, HLTAB,
+     O                   EFLAG, EXNODT)
+ 
+C     + + + PURPOSE + + +
+C     Check table numbers for the branch nodes.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, STDOUT, MFT, NBN, NBRA, NEX
+      INTEGER BRPT(8,NBRA), EXNODT(9,NEX), FTPNT(MFT), GEQVEC(NBRA),
+     A        HLTAB(NBN), NSEC(NBN)
+      REAL GRAV, SFAC, XVEC(NBN) 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     NBN    - total number on nodes on branches in the model
+C     NBRA   - number of branches in the model
+C     NEX    - number of exterior nodes in the model
+C     MFT    - maximum function table pointer value.  Same as maximum
+C               function table number
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     FTPNT  - function table pointer giving the table address for each
+C              table number.  If the address is zero the table does not
+C              exist.
+C     GEQVEC - code for the governing equation option for each branch
+C     SFAC   - stationing factor.  Used to scale check for essentially equal
+C              stations on a branch
+C     GRAV   - gravitational acceleration.
+C     XVEC   - values of stations along branches.  Already in the internal
+C              scale of feet or meters.
+C     NSEC   - number and also address of cross section table at a node
+C               on a branch
+C     HLTAB  - addresses of point loss tables.  0 if none present
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+ 
+C     + + + SAVED VALUES + + +
+      INTEGER GEQTAB(4)
+      SAVE GEQTAB
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER EFLAG1, FIRST, FTP, I, IT, J, LAST
+      REAL STATION
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER GETUSB
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL CHKTAB, GETUSB
+ 
+C     + + + DATA INITIALIZATIONS + + +
+      DATA GEQTAB/20, 20, 23, 23/
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:192* One or more cross section function tables',
+     A      ' for branch',I4,/,11X,' do not support the GEQ option',
+     B       ' for this branch.')
+52      FORMAT(/,'*ERR:409* Stations match in branch number:',I5,
+     B' near station=',F10.4)
+C***********************************************************************
+ 
+      DO 5000 I=1,NBRA
+ 
+C       GET LIMITS FOR THIS BRANCH
+ 
+        FIRST = BRPT(3,I)
+        LAST = BRPT(4,I)
+ 
+        EFLAG1 = 0
+        DO 4000 J=FIRST,LAST
+ 
+C         GET THE TABLE NUMBER FOR THE CROSS SECTION PROPERTIES
+ 
+          IT = NSEC(J)
+C         CHECK FOR INTERPOLATED TABLE REQUEST
+          IF(IT.GT.0) THEN
+C           REAL TABLE
+            FTP = IT
+            CALL CHKTAB
+     I                 (GEQTAB(GEQVEC(I)), STDOUT, FTPNT, MFT,
+     M                  FTP,
+     O                  EFLAG1)
+ 
+C           STORE THE TABLE ADDRESS
+ 
+            NSEC(J) = FTP
+          ENDIF
+ 
+C         CHECK POINT LOSS TABLE NUMBERS
+          IT = HLTAB(J)
+          IF(IT.GT.0) THEN
+C           TABLE REFERENCED
+            FTP = IT
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  FTP,
+     O                  EFLAG)
+            HLTAB(J) = FTP
+          ENDIF
+ 4000   CONTINUE
+        IF(EFLAG1.GT.0) THEN
+          WRITE(STDOUT,50) GETUSB(I)
+          EFLAG = 1
+        ENDIF
+ 
+        EXNODT(4,BRPT(5,I)) = NSEC(FIRST)
+        EXNODT(4,BRPT(6,I)) = NSEC(LAST)
+
+        EFLAG1 = 0
+C       Check for a computational element that has 
+C       essentially zero length.       
+        STATION = XVEC(FIRST)
+        DO 4500 J=FIRST+1,LAST
+          IF(GRAV.GT.15.0) THEN
+C           We have Customary US units.                                   
+            IF(ABS(STATION - XVEC(J)).LE.0.1) THEN
+              EFLAG1 = 1
+            ENDIF
+          ELSE
+C           We have metric
+            IF(ABS(STATION - XVEC(J)).LE.0.1/3.28) THEN
+              EFLAG1 = 1
+            ENDIF
+          ENDIF
+          IF(EFLAG1.GT.0) THEN                   
+            WRITE(STDOUT,52) GETUSB(I), XVEC(J)/SFAC
+            EFLAG = 1
+            EFLAG1 = 0
+          ENDIF
+ 4500   CONTINUE
+ 5000 CONTINUE
+
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CHKDAT
+     I                   (STDOUT, YR,
+     M                    MN, DY,
+     O                    EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Check a Gregorian calender date for validity.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER DY, EFLAG, MN, STDOUT, YR
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - standard output unit for user messages
+C     YR     - calendar year
+C     MN     - number of month(1-12)
+C     DY     - day in the month
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + SAVED VALUES + + +
+      INTEGER DPM(12,2)
+      SAVE DPM
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER LEAP
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER LPYEAR
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL LPYEAR
+ 
+C     + + + DATA INITIALIZATIONS + + +
+      DATA DPM/31,28,31,30,31,30,31,31,30,31,30,31,
+     1         31,29,31,30,31,30,31,31,30,31,30,31/
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:243* Month=',I3,' is invalid.')
+ 52   FORMAT(/,' *ERR:244* Day=',I3,' is invalid for month=',I3)
+C***********************************************************************
+      LEAP = LPYEAR(YR)
+      IF(MN.GT.12.OR.MN.LT.1) THEN
+        WRITE(STDOUT,50) MN
+        MN = 1
+        EFLAG = 1
+      ENDIF
+      IF(DY.LT.1.OR.DY.GT.DPM(MN,LEAP)) THEN
+        WRITE(STDOUT,52) DY, MN
+        DY = DPM(MN,LEAP)
+        EFLAG = 1
+      ENDIF
+      RETURN
+      END
+
+C
+C
+C
+      SUBROUTINE CHK_BN_WITH_TRIB_AREA(STDOUT, FLOW_ADDRESS_IN_EMC,
+     I                                   NODE)
+       
+C     Find the tributary are units attached to the boundary node
+C     given in NODE and set the pointer to the storage location in
+C     EMC that contains the flow at the boundary. 
+
+      IMPLICIT NONE
+      INTEGER STDOUT, FLOW_ADDRESS_IN_EMC, NODE
+
+      INCLUDE 'arsize.prm'
+      INCLUDE 'tam.cmn'
+
+C     Local
+
+      INTEGER UNIT_PNT, CAT_CODE, TA_NODE, FOUND
+
+C     Called program units
+
+      CHARACTER*5 GETUSN
+
+      EXTERNAL GETUSN
+C     ****************************Formats*******************************
+50    FORMAT(/,' *BUG:XXX CHK_BN_WITH_TRIB_AREA found either no trib',
+     A  ' area units or more',/,11X,' than two trib area units',
+     B  ' attached to the BN.')
+52    FORMAT(/,' *ERR:325* Boundary node=',A5,' has neither',
+     A           ' detention nor delay.')
+C***********************************************************************
+      UNIT_PNT = 1
+      FOUND = 0
+
+C     Scan the linked list until the end.  Update all tributary area
+C     units with category code of an LPR (2) that match NODE to be
+C     category code BN (3) and set the flow storage address.
+
+100   CONTINUE
+        TA_NODE = TAM_ITAB(UNIT_PNT)
+        CAT_CODE = TAM_ITAB(UNIT_PNT+1)
+        IF(CAT_CODE.EQ.2) THEN
+C         Subroutine TRIBIN assigned trib area to a reservoir
+          IF(TA_NODE.EQ.NODE) THEN
+C           We have a match.  Reset the cat code to be boundary node.
+            TAM_ITAB(UNIT_PNT+1) = 3
+C           Set the pointer to the flow storage location.
+            TAM_ITAB(UNIT_PNT+8) = FLOW_ADDRESS_IN_EMC
+C           Make sure that there is delay or detention present.
+            IF(TAM_ITAB(UNIT_PNT+5).EQ.0.AND.
+     A         TAM_ITAB(UNIT_PNT+6).EQ.0) THEN
+C             Must have either one or both.
+              WRITE(STDOUT,52) GETUSN(NODE)
+              STOP 'Abnormal stop.  Errors found.'
+            ENDIF
+            FOUND = FOUND + 1
+          ENDIF
+        ENDIF
+        UNIT_PNT = TAM_ITAB(UNIT_PNT+2)
+        IF(UNIT_PNT.GT.0) GOTO 100
+        IF(FOUND.EQ.0.OR.FOUND.GT.3) THEN
+          WRITE(STDOUT,50) FOUND          
+          STOP 'Abnormal stop. Bugs found.'
+        ENDIF
+      RETURN
+      END            
+            
+C
+C
+C
+      SUBROUTINE   CHKEX
+     I                  (STDOUT, NEX, MFT, EPT, OPBLK, NBLK, NRWTA, 
+     I                   RTAP,
+     M                   EFLAG, EMC, EXNODT, FTP, FTKNT, RWTA)
+ 
+C     + + + PURPOSE + + +
+C     Checks validity of information in the network-matrix control
+C     vector, EMC.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, EPT, FTKNT, FTP, STDOUT, MFT, NBLK, NEX, NRWTA
+      INTEGER EMC(EPT), EXNODT(9,NEX), OPBLK(NBLK), RTAP(MNFREE),
+     A        RWTA(MNFREE)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     NEX    - number of exterior nodes in the model
+C     MFT    - maximum function table pointer value.  Same as maximum
+C               function table number
+C     EPT    - current length of EMC(*)
+C     OPBLK  - pointer into the function table storage(FTAB/ITAB) for
+C               each operation block.
+C     NBLK   - number of operation blocks
+C     NRWTA  - number of reservoirs with tributary area
+C     RTAP   - reservoir tributary area pointer
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     FTP    - next open location in the function table storage
+C     RWTA   - reservoirs with tributary area
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'enelem.cmn'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'enrslt.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADRS, CODE, DIR, DNN, EFLAG1, I, IADRS, IDUM, IOFF, IT,
+     A        ITDU, ITUD, ITYPE, J, K, NLINK, NODE, NTAB, QNODE, SIGN,
+     B        TAB, TYPE, UPN, N1, N2, FLOW_ADDRESS_IN_EMC
+      REAL DFLOW, RDUM, TEMP
+      CHARACTER NOTEA*10, NOTEB*10
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM,RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER GETTBN, GETTYP
+      CHARACTER GETUSN*5, NOTE*10, GET_TABID*16
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL CHKTAB, CHKTYP, CKTY15, GETTBN, GETTYP, GETUSN, 
+     A         KIL, LKTAB, MKQCTB, NOTE, OLD14, GET_TABID
+ 
+C     + + + OUTPUT FORMATS + + +
+ 52   FORMAT(/,' *ERR:112* Critical depth invalid for this node: ',A5)
+ 55   FORMAT(/,' *ERR:113* Reservoir trib area given for node ',A5,
+     A       ' but node is not a reservoir.')
+ 56   FORMAT('0*BUG:06* EMC ENDS AT ELEMENT:',I3,' BUT SHOULD END AT:',
+     A       I3,' IN CHKEX.')
+ 58   FORMAT(/,' *WRN:12* Bottom elevation difference between ',
+     A  /,5X,'node ',A5,' ',A10, ' and node ',A5,' ',A10,' IS',F7.2)
+ 60   FORMAT(/,' *ERR:115* Node= ',A5,' not on a branch for code:', I5)
+ 62   FORMAT(/,' *ERR:116* Cross sections not the same for code:',I5,
+     A       ' between nodes ',A5,' and ',A5)
+ 64   FORMAT(/,' *ERR:117* Bottom elevations not the same for code:',I5,
+     A      ' between nodes ', A5,' and ',A5)
+ 72   FORMAT(/,' *ERR:66* Table type mismatch. Table Ids:',A,
+     A       ' and',A,' must be type 14.')
+ 74   FORMAT(/,' *ERR:67* Table type mismatch. Table Ids:',A,
+     A       ' and ',A,' must be type 6, 13, or 43.')
+C 75   FORMAT('/, *ERR:88* Expected',I5,' operation block references.',
+C     A '  Only',I5,' found.')
+ 78   FORMAT('/, *ERR:120* Only one flow path permitted between node ',
+     A  A5,' and node ',A5)
+ 80   FORMAT('/, *ERR:171* File access not yet supported for',
+     A         ' controlling level.')
+ 82   FORMAT(/,' *ERR:233* A cross section function table at abrupt',
+     A       ' expansion between',/,10X,
+     A      ' nodes ',A5,' and ',A5,' has wrong type.')
+ 84   FORMAT(
+     A/,' *ERR:234* A cross section function table for Code',
+     A        I3,' between',/,10X,' nodes ',A5,' and ',A5,' has',
+     A        ' wrong type. Types 21, 22, 24,or 25 are OK')
+ 85   FORMAT(/,' *ERR:254* Upstream node=',A5,' for Code',I3,' is',
+     A       ' not the',/,10X,'downstream node on its branch.')
+ 86   FORMAT(/,' *ERR:255* Downstream node=',A5,' for Code',I3,' is',
+     A       ' not the',/,10X,' upstream node on its branch.')
+ 90   FORMAT(/,' *ERR:235* Outlet loss coef. not 1.0 at zero',
+     A  ' submergence in Table Id=',A)
+91    FORMAT(/,' *ERR:326* Boundary node=',A5,
+     A       ' has both tributary area',
+     B         ' and a non-constant flow source.')
+92    FORMAT(/'*ERR:88* Number of links > NEX=',I6)
+ 94   FORMAT(
+     A/,' *ERR/WRN:234* A cross section function table for Code',
+     A        I3,' between',/,10X,' nodes ',A5,' and ',A5,' has',
+     A        ' wrong type.',/,10X,' Should be Type 22 or 25. Please',
+     A        ' update your model for best performance!')
+C***********************************************************************
+C     Clear the counter for links to other node for Code 5 Type 6.
+      NLINK = 0
+C     Set the link vector to zero to indicate no link. 
+      DO 100 I=1, NEX
+        TOSTORE(I) = 0
+100   CONTINUE
+
+C     START THE LOOP OVER THE ELEMENTS
+      J = EMC(1)
+ 1000 CONTINUE
+         CODE = EMC(J)
+         IF(CODE.EQ.-1) GOTO 2000
+         GOTO(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),CODE
+           WRITE(STDOUT,*) ' *BUG:08* INVALID EMC CODE IN CHKEX. CODE=',
+     A                   CODE
+           STOP 'Abnormal stop: errors found.'
+ 
+ 1       CONTINUE
+            GOTO 1500
+ 2       CONTINUE
+C         MAKE SURE THAT ONLY NON-RESERVOIR FREE NODES
+C         ARE NEGATIVE
+ 
+C          DO 200 I=J+2,J+1+EMC(J+1)
+C            IF(EMC(I).LT.0.AND.EXNODT(3,ABS(EMC(I))).NE.0)
+C     A        CALL KIL
+C     I                 (6,
+C     M                  EMC(I), EFLAG)
+C 200      CONTINUE
+            J = J+EMC(J+1)
+            GOTO 1500
+ 3       CONTINUE
+ 
+C           If a node on a dummy branch is connected to a node 
+C           on a branch, then force the invert elevation for 
+C           both nodes on the dummy branch to match the invert 
+C           elevation of the node on a branch.  
+            N1 = EMC(J+1)
+            N2 = EMC(J+2)
+            IF(EXNODT(3,N1).GT.0.AND.EXNODT(3,N2).EQ.0) THEN
+C             N1 is on a branch and N2 is on a dummy branch
+C             or is an inflow node to a LPR
+              IF(EXNODT(4,N2).GT.0) THEN
+C               If a dummy branch, EXNODT(4,N2) has a pointer
+C               to the other node.  If the inflow node to an LPR,
+C               it is zero. 
+                TEMP = ZE(N2)
+                ZE(N2) = ZVEC(EXNODT(2,N1))
+                YE1(N2) = YE1(N2) + TEMP - ZE(N2)
+                TEMP = ZE(EXNODT(4,N2))
+                YE1(EXNODT(4,N2)) =  YE1(EXNODT(4,N2)) + TEMP - ZE(N2)
+                ZE(EXNODT(4,N2)) = ZE(N2)
+              ENDIF
+            ELSEIF(EXNODT(3,N2).GT.0.AND.EXNODT(3,N1).EQ.0) THEN
+C             N2 is on a branch and N1 is on a dummy branch or
+C             is an inflow node to a LPR
+              IF(EXNODT(4,N1).GT.0) THEN
+C               N1 is on a dummy branch
+                TEMP = ZE(N1)
+                ZE(N1) = ZVEC(EXNODT(2,N2))
+                YE1(N1) = YE1(N1) + TEMP - ZE(N1)
+                TEMP = ZE(EXNODT(4,N1)) 
+                YE1(N1) = YE1(N1) + TEMP - ZE(N1)
+                ZE(EXNODT(4,N1)) = ZE(N1)
+              ENDIF
+            ENDIF
+
+            TEMP = ABS(ZE(EMC(J+1)) - ZE(EMC(J+2)))
+            IF(TEMP.GT.0.01) THEN
+              NOTEA = NOTE(J+1, EMC, EXNODT, EPT, NEX)
+              NOTEB = NOTE(J+2, EMC, EXNODT, EPT, NEX)
+              WRITE(STDOUT,58)  GETUSN(EMC(J+1)), NOTEA,
+     A                       GETUSN(EMC(J+2)), NOTEB, TEMP
+            ENDIF
+            GOTO 1500
+ 4       CONTINUE
+ 
+C        SET THE FLOW SIGN
+         DIR = EMC(J+3)
+C         HNODE = EMC(J+2)
+         QNODE = EMC(J+4)
+         SIGN = -DIR*EXNODT(1,QNODE)
+         EMC(J+3) = SIGN
+ 
+C        BRANCH ON TYPE
+ 
+         TYPE = EMC(J+1)
+         GOTO(401, 402, 403, 404, 405, 406), TYPE
+           WRITE(STDOUT,*) ' *BUG:09* INVALID TYPE FOR CODE=4',
+     A            ' IN CHKEX. TYPE=', TYPE
+           STOP 'Abnormal stop: errors found.'
+ 
+ 401     CONTINUE
+           CALL CHKTAB
+     I                (2, STDOUT, FTPNT, MFT,
+     M                 EMC(J+5),
+     O                 EFLAG)
+           GOTO 499
+ 402     CONTINUE
+           CALL CHKTAB
+     I                (2, STDOUT, FTPNT, MFT,
+     M                 EMC(J+5),
+     O                 EFLAG)
+           GOTO 499
+ 403     CONTINUE
+           GOTO 499
+ 404     CONTINUE
+           CALL CHKTAB
+     I                (2, STDOUT, FTPNT, MFT,
+     M                 EMC(J+5),
+     O                 EFLAG)
+           CALL CHKTAB
+     I                (2, STDOUT, FTPNT, MFT,
+     M                 EMC(J+6),
+     O                 EFLAG)
+           GOTO 499
+ 405     CONTINUE
+           CALL CHKTAB
+     I                (2, STDOUT, FTPNT, MFT,
+     M                 EMC(J+5),
+     O                 EFLAG)
+ 
+C          SET ADDRESS FOR OPENING FRACTION
+ 
+C          GET THE OPERATION BLOCK NUMBER
+           IT = EMC(J+6)
+           CALL PROCESS_OPER_BLK(STDOUT, J, 8, 6,
+     I                           IT, OPBLK, NBLK, EPT,
+     M                           EMC, EFLAG)
+           GOTO 499
+ 
+ 406     CONTINUE
+ 
+           CALL CHKTAB
+     I                (2, STDOUT, FTPNT, MFT,
+     M                 EMC(J+5),
+     O                 EFLAG)
+           IF(EMC(J+6).GT.0) THEN
+             CALL CHKTAB
+     I                  (2, STDOUT, FTPNT, MFT,
+     M                   EMC(J+6),
+     O                   EFLAG)
+           ELSE
+             WRITE(STDOUT,80)
+             EFLAG = 1
+           ENDIF
+           CALL CHKTAB
+     I                (2, STDOUT, FTPNT, MFT,
+     M                 EMC(J+7),
+     O                 EFLAG)
+           GOTO 499
+ 
+ 499     CONTINUE
+         GOTO 1500
+ 5       CONTINUE
+ 
+C        SET THE SYSTEM SIGN-CONSISTS OF PRODUCT OF CONTROL STRUCTURE
+C        SIGN AND FLOW NODE SIGN
+C        FLOW NODE SIGN MAY BE SWITCHED BY INITIAL CONTENTS
+C        OF EMC(J+5)-- EMC(J+5) is always 1. Remove from the
+C        computations.  Used in pre-version 7 days!
+
+ 
+         UPN = EMC(J+2)
+         DNN = EMC(J+3)
+         QNODE = EMC(J+4)
+         SIGN = +1
+         IF(QNODE.EQ.DNN) SIGN = -1
+         EMC(J+5) = SIGN*EXNODT(1,QNODE)
+ 
+C        BRANCH ON TYPE
+ 
+         TYPE = EMC(J+1)
+         GOTO(501, 502, 503, 504, 505, 506, 507, 508, 509),TYPE
+           WRITE(STDOUT,*) ' *BUG:10* INVALID CODE 5 TYPE IN CHKEX.',
+     A                   ' TYPE=', TYPE
+           STOP 'Abnormal stop: errors found.'
+ 
+ 
+ 501     CONTINUE
+           CALL CHKTAB
+     I                (20, STDOUT, FTPNT, MFT,
+     M                 EMC(J+7),
+     O                 EFLAG)
+           J = J + CD5TY1
+           GOTO 599
+ 502     CONTINUE
+           DO 5020 K=6,9
+           CALL CHKTAB
+     I                (2, STDOUT, FTPNT, MFT,
+     M                 EMC(J+K),
+     O                 EFLAG)
+ 5020      CONTINUE
+ 
+C          SET DEFAULTS
+ 
+           IF(EMC(J+8).NE.0.OR.EMC(J+9).NE.0) GOTO 5030
+C            BOTH ZERO TAKE UPSTREAM VALUES
+ 
+             EMC(J+8) = EMC(J+6)
+             EMC(J+9) = EMC(J+7)
+ 5030      CONTINUE
+ 
+C          TURN OFF THE PUMP AT THE START
+ 
+           EMC(J+15) = 0
+ 
+           J = J + CD5TY2
+           GOTO 599
+ 
+ 503    CONTINUE
+          DO 5040 K=7,9
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+K),
+     O                  EFLAG)
+ 5040     CONTINUE
+ 
+ 
+          IF(EMC(J+10).GT.0) THEN
+C          Process the operation block reference or references
+C          for this control structure. 
+           
+           IT = EMC(J+10)
+
+           N1 = 19
+           N2 = 10
+           CALL PROCESS_OPER_BLK(STDOUT, J, N1, N2,
+     I                           IT, OPBLK, NBLK, EPT,
+     M                           EMC, EFLAG)
+
+
+          ELSEIF(EMC(J+10).LT.0) THEN
+C           EMC(J+10) IS NEGATIVE MEANING THAT IT IS A TABLE NUMBER
+ 
+            EMC(J+10) = -EMC(J+10)
+C           CHECK FOR EXISTENCE OF TABLE AND REPLACE ITS NUMBER
+C           WITH ITS ADDRESS IF IT IS FOUND
+ 
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+10),
+     O                  EFLAG)
+ 
+C           MAKE ADDRESS NEGATIVE TO ACT AS A FLAG FOR THIS CASE IN
+C           Subroutine SETEXT
+ 
+            EMC(J+10) = -EMC(J+10)
+          ENDIF
+ 
+C         If no errors get information from the tables.
+          IF(EFLAG.EQ.0) THEN
+C           Get the shutoff head value.
+            CALL LKTAB
+     I                (EMC(J+7), 0.0, 0,
+     O                 RDUM, NTAB, DFLOW)
+            EMC(J+18) = IDUM
+ 
+C           Make sure that the value at zero in the outlet loss
+C           table is 1.0.
+            IF(EMC(J+9).GT.0) THEN
+            CALL LKTAB
+     I                (EMC(J+9), 0.0, 0,
+     O                 RDUM, NTAB, DFLOW)
+              IF(ABS(RDUM - 1.0).GT.0.01) THEN
+                WRITE(STDOUT,90) GET_TABID(NTAB)
+                EFLAG = 1
+              ENDIF
+            ENDIF
+          ENDIF
+ 
+C         Set the velocity head factors to reflect the possiblity of
+C         computing velocity head.  Velocity head only exists at
+C         exterior nodes on branches.
+ 
+          IF(EXNODT(3,UPN).LE.0) THEN
+C           Upstream node is a free node.  Velocity head does
+C           not exist.
+            RDUM = 0.0
+            EMC(J+16) = IDUM
+            EMC(J+11) = 0
+          ELSE
+C           Set the pointer to the cross section table for finding
+C           the kinetic energy flux correction coef.
+            IF(EFLAG.EQ.0) THEN
+              EMC(J+11) = EXNODT(4,UPN)
+            ELSE
+              EMC(J+11) = 0
+            ENDIF
+          ENDIF
+          IF(EXNODT(3,DNN).LE.0) THEN
+C           Downstream node is a free node.
+            RDUM = 0.0
+            EMC(J+17) = IDUM
+            EMC(J+12) = 0
+          ELSE
+C           Set the pointer to the cross section table for finding
+C           the kinetic energy flux correction coef.
+            IF(EFLAG.EQ.0) THEN
+              EMC(J+12) = EXNODT(4,DNN)
+            ELSE
+              EMC(J+12) = 0
+            ENDIF
+ 
+          ENDIF
+          J = J + CD5TY3
+          GOTO 599
+ 
+ 504    CONTINUE
+        DO 5050 K=6,11
+          IF(K.EQ.8) THEN
+            CALL CHKTAB
+     I                 (20, STDOUT, FTPNT, MFT,
+     M                  EMC(J+K),
+     O                  EFLAG)
+          ELSE IF(K.EQ.7) THEN
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+K),
+     O                  EFLAG)
+          ELSE
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+K),
+     O                  EFLAG)
+          ENDIF
+ 5050   CONTINUE
+        TEMP = ABS(ZE(EMC(J+2)) - ZE(EMC(J+3)))
+        IF(TEMP.GT.0.01) THEN
+           NOTEA = NOTE(J+2, EMC, EXNODT, EPT, NEX)
+           NOTEB = NOTE(J+3, EMC, EXNODT, EPT, NEX)
+           WRITE(STDOUT,58) GETUSN(EMC(J+2)), NOTEA,
+     A                    GETUSN(EMC(J+3)), NOTEB, TEMP
+ 
+        ENDIF
+ 
+        J = J + CD5TY4
+        GOTO 599
+ 
+ 505    CONTINUE
+ 
+C         Make sure the critical flow table is defined.
+          CALL MKQCTB
+     I               (STDOUT,
+     M                EMC(J+8), FTP, FTKNT,
+     O                EFLAG)
+ 
+ 
+C         THE UPSTREAM AND DOWNSTREAM NODES ARE ON BRANCHES
+C         AND MUST HAVE AT LEAST TYPE 21 CROSS SECTION TABLES.
+ 
+          EFLAG1 = 0
+          ADRS = EXNODT(4,UPN)
+          TAB = FTAB(ADRS+1)
+          CALL CHKTAB
+     I               (21, STDOUT, FTPNT, MFT,
+     M                TAB,
+     O                EFLAG1)
+          ADRS = EXNODT(4,DNN)
+          CALL CHKTYP
+     I               (STDOUT, ADRS, 21,
+     O                EFLAG1)
+ 
+          IF(EFLAG1.GT.0) THEN
+C          SOMETHING WRONG WITH THE TABLES
+           EFLAG = EFLAG1
+           WRITE(STDOUT,82) GETUSN(UPN), GETUSN(DNN)
+          ENDIF
+ 
+          J = J + CD5TY5
+        GOTO 599
+ 
+ 506    CONTINUE
+          IOFF = 0
+C         SET THE TABLE TYPE FROM THE FIRST FLOW PATH.  ALL OTHER
+C         PATHS MUST HAVE A TABLE OF THE SAME CLASS
+ 
+          ITYPE = EMC(J+7+IOFF)
+          ITYPE = ITAB(FTPNT(ITYPE)+2)
+          IF(ITYPE.EQ.14) THEN
+C           MUST BE ONLY ONE PATH.
+            IF(EMC(J+6).NE.1) THEN
+              WRITE(STDOUT,78) GETUSN(UPN), GETUSN(DNN)
+              EFLAG = 1
+            ENDIF
+          ENDIF
+          DO 5061 I=1,EMC(J+6)
+C           REPLACE TABLE NUMBERS WITH TABLE ADDRESS IN EMC(*)
+      
+            ITUD = EMC(J+7+IOFF)
+            ITDU = EMC(J+8+IOFF)
+            CALL CHKTAB
+     I                 (6, STDOUT, FTPNT, MFT,
+     M                  ITUD,
+     O                  EFLAG)
+            CALL CHKTAB
+     I                 (6, STDOUT, FTPNT, MFT,
+     M                  ITDU,
+     O                  EFLAG)
+            EMC(J+7+IOFF) = ITUD
+            EMC(J+8+IOFF) = ITDU
+            IF(ITYPE.EQ.14) THEN
+              IF(ITAB(ITUD+2).NE.14.OR.ITAB(ITDU+2).NE.14) THEN
+C               INVALID TABLE TYPE MIX
+                WRITE(STDOUT,72) GET_TABID(GETTBN(ITUD)), 
+     A                         GET_TABID(GETTBN(ITDU))
+                EFLAG = 1
+              ENDIF
+C             CHECK FOR OLD FORMAT TYPE 14.
+              CALL OLD14
+     I                  (ITUD, STDOUT,
+     O                   EFLAG)
+              CALL OLD14
+     I                  (ITDU, STDOUT,
+     O                   EFLAG)
+            ELSE
+              IF(ITAB(ITUD+2).NE.6.AND.ITAB(ITUD+2).NE.13
+     a            .AND.ITAB(ITUD+2).NE.43.OR.
+     b           ITAB(ITDU+2).NE.6.AND.ITAB(ITDU+2).NE.13
+     c              .AND.ITAB(ITDU+2).NE.43) THEN
+C               INVALID TABLE TYPE MIX
+                WRITE(STDOUT,74) GET_TABID(GETTBN(ITUD)), 
+     A                  GET_TABID(GETTBN(ITDU))
+                EFLAG = 1
+              ENDIF
+            ENDIF
+c           11 Dec 2006 ddf: Changes made.  We may have an operation 
+c           block number here as well as a table number.  Each must be 
+c           processed.
+            if(emc(j+9+ioff) < 0) then
+c             We have a time-series table number. 
+              emc(j+9+ioff) = -emc(j+9+ioff) 
+              CALL CHKTAB
+     I                   (2, STDOUT, FTPNT, MFT,
+     M                    EMC(J+9+IOFF),
+     O                    EFLAG)
+c             Set the address to negative as a signal
+              emc(j+9+ioff) = -emc(j+9+ioff) 
+            elseif(emc(j+9+ioff) > 0) then
+c             This is an operation-block number
+              IT = emc(j+9+ioff) 
+              CALL PROCESS_OPER_BLK(STDOUT, J, 13+ioff, 9+ioff,
+     I                           IT, OPBLK, NBLK, EPT,
+     M                           EMC, EFLAG)
+
+            else
+c             Case of zero we do nothing because a zero value correctly 
+c             signals that we have neither an operation-block number nor
+c             a time-series id! 
+            endif
+
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+10+IOFF),
+     O                  EFLAG)
+ 
+            IOFF = IOFF + CD5TY6
+ 5061     CONTINUE
+C         DETECT 2-D TABLES WITH FLOW RATE AND DOWNSTREAM HEAD
+C         AS ARGUMENTS.  USE NUMBER OF PATHS TO SIGNAL CASE. ALL PATHS
+C         USE THE SAME TYPE CLASS.
+          IF(ITYPE.EQ.14) THEN
+            EMC(J+6) = -EMC(J+6)
+          ENDIF
+
+C         For each of the ups and dns node, establish a link to storage locations
+C         so that FEQ can remember the flow at the flow node and the 
+C         elevation at the other node when the maximum elevation occurs
+C         at the ups or dns node.  Used for checking state of 2-D tables
+C         at the end of a run or event. 
+
+C         Do the ups node
+          NLINK = NLINK + 1
+          IF(NLINK.GT.NEX) THEN
+            WRITE(STDOUT,92) NEX
+            STOP 'Abnormal stop.  Errors found.'
+          ENDIF   
+          TOSTORE(UPN) = NLINK
+          FLOWNODE(UPN) = QNODE
+          OTHERNODE(UPN) = DNN
+
+C         Do the dns node
+          NLINK = NLINK + 1
+          IF(NLINK.GT.NEX) THEN
+            WRITE(STDOUT,92) NEX
+            STOP 'Abnormal stop.  Errors found.'
+          ENDIF   
+          TOSTORE(DNN) = NLINK
+          FLOWNODE(DNN) = QNODE
+          OTHERNODE(DNN) = UPN
+ 
+          J = J + 1 + IOFF
+          GOTO 599
+ 
+ 507    CONTINUE
+          DO 5070 K=7,10
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+K),
+     O                  EFLAG)
+ 5070     CONTINUE
+ 
+          IF(EMC(J+6).GT.0) THEN
+C          SET ADDRESS FOR OPENING FRACTION
+ 
+C          GET THE OPERATION BLOCK NUMBER
+           IT = EMC(J+6)
+           CALL PROCESS_OPER_BLK(STDOUT, J, 13, 6,
+     I                           IT, OPBLK, NBLK, EPT,
+     M                           EMC, EFLAG)
+          ELSEIF(EMC(J+6).LT.0) THEN
+C           EMC(J+6) IS NEGATIVE MEANING THAT IT IS A TABLE NUMBER
+ 
+            EMC(J+6) = -EMC(J+6)
+C           CHECK FOR EXISTENCE OF TABLE AND REPLACE ITS NUMBER
+C           WITH ITS ADDRESS IF IT IS FOUND
+ 
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+6),
+     O                  EFLAG)
+ 
+C           MAKE ADDRESS NEGATIVE TO ACT AS A FLAG FOR THE CASE IN
+C           Subroutine SETEXT
+ 
+            EMC(J+6) = -EMC(J+6)
+          ENDIF
+ 
+          J = J + CD5TY7
+          GOTO 599
+ 
+ 508    CONTINUE
+          IF(EMC(J+6).GT.0) THEN
+ 
+C          SET ADDRESS FOR OPENING FRACTION
+ 
+C          GET THE OPERATION BLOCK NUMBER
+           IT = EMC(J+6)
+           CALL PROCESS_OPER_BLK(STDOUT, J, 10, 6,
+     I                           IT, OPBLK, NBLK, EPT,
+     M                           EMC, EFLAG)
+
+          ELSEIF(EMC(J+6).LT.0) THEN
+C           EMC(J+6) IS NEGATIVE MEANING THAT IT IS A TABLE NUMBER
+ 
+            EMC(J+6) = -EMC(J+6)
+C           CHECK FOR EXISTENCE OF TABLE AND REPLACE ITS NUMBER
+C           WITH ITS ADDRESS IF IT IS FOUND
+ 
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+6),
+     O                  EFLAG)
+ 
+C           MAKE ADDRESS NEGATIVE TO ACT AS A FLAG FOR THE CASE IN
+C           Subroutine SETEXT
+ 
+            EMC(J+6) = -EMC(J+6)
+          ENDIF
+ 
+          J = J + CD5TY8
+          GOTO 599
+ 
+ 509    CONTINUE
+C         Tables must be in type class 15.
+          IF(EMC(J+8).EQ.EMC(J+9))THEN
+            CALL CHKTAB
+     I                 (15, STDOUT, FTPNT, MFT,
+     M                  EMC(J+8),
+     O                  EFLAG)
+            IF(EFLAG.EQ.0) THEN
+C             Check the contents of the table to make sure that
+C             the tables referenced in the table also exist and
+C             are of the proper type.
+              CALL CKTY15
+     I                   (EMC(J+8), STDOUT,
+     O                    EFLAG)
+            ENDIF
+            EMC(J+9) = EMC(J+8)
+          ELSE
+            DO 5090 K=8,9
+              CALL CHKTAB
+     I                   (15, STDOUT, FTPNT, MFT,
+     M                    EMC(J+K),
+     O                    EFLAG)
+              IF(EFLAG.EQ.0) THEN
+C               Check the contents of the table to make sure that
+C               the tables referenced in the table also exist and
+C               are of the proper type.
+                CALL CKTY15
+     I                     (EMC(J+K), STDOUT,
+     O                      EFLAG)
+              ENDIF
+ 5090       CONTINUE
+          ENDIF
+ 
+          IF(EMC(J+6).GT.0) THEN
+C          SET ADDRESS FOR OPENING FRACTION
+ 
+C          GET THE OPERATION BLOCK NUMBER
+           IT = EMC(J+6)
+           CALL PROCESS_OPER_BLK(STDOUT, J, 13, 6,
+     I                           IT, OPBLK, NBLK, EPT,
+     M                           EMC, EFLAG)
+
+          ELSEIF(EMC(J+6).LT.0) THEN
+C           EMC(J+6) IS NEGATIVE MEANING THAT IT IS A TABLE NUMBER
+ 
+            EMC(J+6) = -EMC(J+6)
+C           CHECK FOR EXISTENCE OF TABLE AND REPLACE ITS NUMBER
+C           WITH ITS ADDRESS IF IT IS FOUND
+ 
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+6),
+     O                  EFLAG)
+ 
+C           MAKE ADDRESS NEGATIVE TO ACT AS A FLAG FOR THE CASE IN
+C           Subroutine SETEXT
+ 
+            EMC(J+6) = -EMC(J+6)
+          ENDIF
+ 
+C         Check for existence of the gate-efficiency factor table.
+          IF(EMC(J+15).GT.0) THEN
+C           Such a table was referenced.  
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+15),
+     O                  EFLAG)
+          ENDIF
+
+          J = J + CD5TY9
+          GOTO 599
+ 
+ 
+ 599    CONTINUE
+        GOTO 1500
+ 
+ 6      CONTINUE
+ 
+C         SET FLOW SIGN
+C         IN THIS CASE THE FLOW NODE IS THE SAME AS THE GIVEN NODE
+ 
+          DIR = EMC(J+3)
+          NODE = EMC(J+2)
+          EMC(J+3) = -DIR*EXNODT(1,NODE)
+ 
+          IF(EMC(J+4).GT.0) THEN
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+4),
+     O                  EFLAG)
+          ENDIF
+          IF(EMC(J+10).GT.0) THEN
+            CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+10),
+     O                  EFLAG)
+          ENDIF
+          
+ 
+C         Do checking for any tributary area attached to this boundary
+C         node.  If any is present this node will appear in the list
+C         of reservoirs with tributary area.  The node must also be
+C         present in the tributary area management system and it also 
+C         must have either a delay or a detention reservoir present.
+C         Furthermore the whole tributary area must have at least
+C         delay present. 
+
+          IADRS = 0
+          FLOW_ADDRESS_IN_EMC = J + 6
+          DO 605 I=1,NRWTA
+            IF(NODE.EQ.RWTA(I)) THEN
+              IF(EMC(J+4).NE.0) THEN
+C               Error-cannot have both a time series source other
+C               than constant flow AND tributary area at the boundary 
+C               node. 
+                WRITE(STDOUT,91) GETUSN(NODE)
+                STOP 'Abnormal stop.  Errors found.'
+              ELSE
+C               Scan the trib area management blocks to find 
+C               all occurrences of this node.  It should occur at
+C               least once but can appear twice: once for the area
+C               subject to detention and once for the area not
+C               subject to detention. 
+                CALL CHK_BN_WITH_TRIB_AREA(STDOUT, FLOW_ADDRESS_IN_EMC,
+     I                                   NODE)
+                IADRS = RTAP(I)
+C               Set signal for final error check below to show that
+C               this boundary node has been found in the input list. 
+                RWTA(I) = -RWTA(I)
+                GOTO 610
+              ENDIF
+            ENDIF
+ 605        CONTINUE
+ 610        CONTINUE
+
+          GOTO 1500
+ 
+ 7      CONTINUE
+          CALL CHKTAB
+     I               (2, STDOUT, FTPNT, MFT,
+     M                EMC(J+2),
+     O                EFLAG)
+          NODE = EMC(J+1)
+ 
+C         STORE ADDRESS OF RESERVOIR TABLE IN EXNODT
+ 
+          EXNODT(4,NODE) = EMC(J+2)
+ 
+C         FIND tributary area inflow location if any. 
+ 
+          IADRS = 0
+          DO 705 I=1,NRWTA
+            IF(NODE.EQ.RWTA(I)) THEN
+              IADRS = RTAP(I)
+              RWTA(I) = -RWTA(I)
+              GOTO 710
+            ENDIF
+ 705      CONTINUE
+ 710      CONTINUE
+ 
+           EMC(J+3) = IADRS
+          GOTO 1500
+ 
+ 8      CONTINUE
+           IT = EMC(J+1)
+           IF(EXNODT(3,IT).GT.0) GOTO 300
+ 
+C          ERROR -NODE IS NOT ON A BRANCH
+              WRITE(STDOUT,52) GETUSN(IT)
+              EFLAG = 1
+              IT = 1
+ 300       CONTINUE
+ 
+C          STORE THE DIRECT ADDRESS
+ 
+           EMC(J+1) = IT
+           GOTO 1500
+ 9      CONTINUE
+           GOTO 1500
+ 
+ 10     CONTINUE
+          GOTO 1500
+ 11     CONTINUE
+C         SPECIAL INFLOW AND OUTFLOW POINT IN A CHANNEL.
+C         BOTTOM ELEVATIONS MUST MATCH, BOTH NODES MUST BE ON BRANCHES
+C         AND THE CROSS SECTIONS MUST BE THE SAME.
+ 
+          UPN = EMC(J+1)
+          DNN = EMC(J+2)
+ 
+          IF(EXNODT(3,UPN).LE.0) THEN
+            WRITE(STDOUT,60) GETUSN(UPN), CODE
+            EFLAG = 1
+          ENDIF
+          IF(EXNODT(3,DNN).LE.0) THEN
+            WRITE(STDOUT,60) GETUSN(DNN), CODE
+            EFLAG = 1
+          ENDIF
+ 
+          IF(EXNODT(3,UPN).GT.0.AND.EXNODT(3,DNN).GT.0) THEN
+            IF(EXNODT(4,UPN).NE.EXNODT(4,DNN)) THEN
+              WRITE(STDOUT,62) CODE, GETUSN(UPN), GETUSN(DNN)
+              EFLAG = 1
+            ENDIF
+          ENDIF
+ 
+          IF(ABS(ZE(UPN) - ZE(DNN)).GT.0.005) THEN
+            WRITE(STDOUT,64) CODE, GETUSN(UPN), GETUSN(DNN)
+            EFLAG = 1
+          ENDIF
+ 
+C         CROSS SECTION FUNCTION TABLE MUST CONTAIN THE FIRST MOMENT
+C         OF AREA. TYPE 21, 22, 24, 25.
+ 
+          ADRS = EXNODT(4,UPN)
+          EFLAG1 = 0
+          CALL CHKTYP
+     I               (STDOUT, ADRS, 21,
+     O                EFLAG1)
+          IF(EFLAG1.GT.0) THEN
+            WRITE(STDOUT,84) CODE, GETUSN(UPN), GETUSN(DNN)
+            EFLAG = EFLAG1
+          ENDIF
+ 
+          GOTO 1500
+ 
+ 
+ 12     CONTINUE
+ 
+          TEMP = ABS(ZE(EMC(J+1)) - ZE(EMC(J+2)))
+          IF(TEMP.GT.0.01) THEN
+            NOTEA = NOTE(J+1, EMC, EXNODT, EPT, NEX)
+            NOTEB = NOTE(J+2, EMC, EXNODT, EPT, NEX)
+            WRITE(STDOUT,58)  GETUSN(EMC(J+1)), NOTEA,
+     A                      GETUSN(EMC(J+2)), NOTEB, TEMP
+          ENDIF
+          TEMP = ABS(ZE(EMC(J+2)) - ZE(EMC(J+3)))
+          IF(TEMP.GT.0.01) THEN
+            NOTEA = NOTE(J+2, EMC, EXNODT, EPT, NEX)
+            NOTEB = NOTE(J+3, EMC, EXNODT, EPT, NEX)
+            WRITE(STDOUT,58)  GETUSN(EMC(J+2)), NOTEA,
+     A                      GETUSN(EMC(J+3)), NOTEB, TEMP
+          ENDIF
+ 
+          GOTO 1500
+ 13     CONTINUE
+C         SPECIAL INFLOW AND OUTFLOW POINT IN A CHANNEL.
+C         BOTTOM ELEVATIONS MUST MATCH, BOTH NODES MUST BE ON BRANCHES
+C         AND THE CROSS SECTIONS MUST BE THE SAME.
+ 
+          UPN = EMC(J+1)
+          DNN = EMC(J+2)
+ 
+          IF(EXNODT(3,UPN).LE.0) THEN
+            WRITE(STDOUT,60) GETUSN(UPN), CODE
+            EFLAG = 1
+          ELSE
+C           The upstream node for this structure must be the
+C           downstream node on the branch.
+            IF(EXNODT(1,UPN).NE.1) THEN
+              WRITE(STDOUT,85) GETUSN(UPN), CODE
+              EFLAG = 1
+            ENDIF
+          ENDIF
+          IF(EXNODT(3,DNN).LE.0) THEN
+            WRITE(STDOUT,60) GETUSN(DNN), CODE
+            EFLAG = 1
+          ELSE
+C           The downstream node for this structure must be the
+C           upstream node on the branch.
+            IF(EXNODT(1,DNN).NE.-1) THEN
+              WRITE(STDOUT,86) GETUSN(DNN), CODE
+              EFLAG = 1
+            ENDIF
+          ENDIF
+ 
+          IF(EXNODT(3,UPN).GT.0.AND.EXNODT(3,DNN).GT.0) THEN
+            IF(EXNODT(4,UPN).NE.EXNODT(4,DNN)) THEN
+              WRITE(STDOUT,62)  CODE, GETUSN(UPN), GETUSN(DNN)
+              EFLAG = 1
+            ENDIF
+          ENDIF
+ 
+          IF(ABS(ZE(UPN) - ZE(DNN)).GT.0.005) THEN
+            WRITE(STDOUT,64) CODE, GETUSN(UPN), GETUSN(DNN)
+            EFLAG = 1
+          ENDIF
+ 
+C         CROSS SECTION FUNCTION TABLE MUST CONTAIN THE FIRST MOMENT
+C         OF AREA. TYPE 21, 22, 24, 25.  Feb. 15, 2001: It must
+C         also contain the critical flow!
+ 
+          ADRS = EXNODT(4,UPN)
+          EFLAG1 = 0
+          CALL CHKTYP
+     I               (STDOUT, ADRS, 22,
+     O                EFLAG1)
+          IF(EFLAG1.GT.0) THEN
+            WRITE(STDOUT,94) CODE, GETUSN(UPN), GETUSN(DNN)
+C            EFLAG = EFLAG1
+          ELSE
+C           Set the type flag in EMC to signal availability of
+C           tabulated values of ALPHA.
+            TYPE = GETTYP(ADRS)
+            IF(TYPE.EQ.22.OR.TYPE.EQ.25.OR.
+     a         type.eq.32.or.TYPE.EQ.35) THEN
+              EMC(J+4) = 1
+            ELSE
+              EMC(J+4) = 0
+C              WRITE(STDOUT,*) ' BUG: Code=13 in CHKEX.'
+C              STOP 'Abnormal stop.  Bug found.'
+            ENDIF
+          ENDIF
+ 
+          IF(EMC(J+6).GT.0) THEN
+C           Check the side nodes.  Must be on a branch.  The
+C           cross section function tables do not need first moment
+C           in this approximation.  We will only compute momentum flux
+C           and all cross section function tables contain area and
+C           beta.
+            IF(EXNODT(3,EMC(J+7)).LE.0) THEN
+              WRITE(STDOUT,60) GETUSN(EMC(J+7)), CODE
+              EFLAG = 1
+            ENDIF
+            IF(EMC(J+6).GT.1) THEN
+              IF(EXNODT(3,EMC(J+8)).LE.0) THEN
+                WRITE(STDOUT,60) GETUSN(EMC(J+8)), CODE
+                EFLAG = 1
+              ENDIF
+            ENDIF
+          ENDIF
+          GOTO 1500
+ 
+ 14     CONTINUE
+C         SIDE-WEIR OUTFLOW INFLOW. TO BE USED ONLY WITH CODE 13 OR
+C         PERHAPS 11.  DO SAME CHECKS AS FOR THOSE PLUS CHECK THE
+C         TABLE NUMBERS.
+ 
+          UPN = EMC(J+1)
+          DNN = EMC(J+2)
+C          MDN = EMC(J+3)
+ 
+          IF(EXNODT(3,UPN).LE.0) THEN
+            WRITE(STDOUT,60) GETUSN(UPN), CODE
+            EFLAG = 1
+          ENDIF
+          IF(EXNODT(3,DNN).LE.0) THEN
+            WRITE(STDOUT,60) GETUSN(DNN), CODE
+            EFLAG = 1
+          ENDIF
+ 
+          IF(EXNODT(3,UPN).GT.0.AND.EXNODT(3,DNN).GT.0) THEN
+            IF(EXNODT(4,UPN).NE.EXNODT(4,DNN)) THEN
+              WRITE(STDOUT,62)  CODE, GETUSN(UPN), GETUSN(DNN)
+              EFLAG = 1
+            ENDIF
+          ENDIF
+ 
+          IF(ABS(ZE(UPN) - ZE(DNN)).GT.0.005) THEN
+            WRITE(STDOUT,64) CODE, GETUSN(UPN), GETUSN(DNN)
+            EFLAG = 1
+          ENDIF
+ 
+          CALL CHKTAB
+     I               (6, STDOUT, FTPNT, MFT,
+     M                EMC(J+4),
+     O                EFLAG)
+          CALL CHKTAB
+     I               (6, STDOUT, FTPNT, MFT,
+     M                EMC(J+5),
+     O                EFLAG)
+          IF(EMC(J+6).GT.0) THEN
+             CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+6),
+     O                  EFLAG)
+          ENDIF
+          IF(EMC(J+7).GT.0) THEN
+             CALL CHKTAB
+     I                 (2, STDOUT, FTPNT, MFT,
+     M                  EMC(J+7),
+     O                  EFLAG)
+          ENDIF
+
+ 
+          GOTO 1500
+ 
+ 15     CONTINUE
+C          Dummy branch. Nothing to check
+           GOTO 1500
+ 
+ 1500 CONTINUE
+        J = J+EMC(CODE+1)
+      GOTO 1000
+ 2000 CONTINUE
+ 
+C     MAKE SURE THAT END OCCURRED AT THE CORRECT PLACE.
+ 
+      IF(J.NE.EPT) THEN
+        WRITE(STDOUT,56) J, EPT
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+C     CHECK TO MAKE SURE THAT NODES ASSIGNED RESERVOIR TRIB AREA
+C     WERE IN FACT RESERVOIR NODES
+ 
+      DO 6000 I=1,NRWTA
+        IF(RWTA(I).GT.0) THEN
+          WRITE(STDOUT,55) GETUSN(RWTA(I))
+          EFLAG = 1
+        ENDIF
+        RWTA(I) = ABS(RWTA(I))
+ 6000 CONTINUE
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CHKGEO
+     I                   (STDOUT, NBRA, BRPT)
+ 
+C     + + + PURPOSE + + +
+C     Check for anomolous features in the stream channel geometry
+C     subroutine does not return.  selected only at user option
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER STDOUT, NBRA
+      INTEGER BRPT(8,NBRA)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     NBRA   - number of branches in the model
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'bnothr.cmn'
+      INCLUDE 'grav.cmn'
+ 
+C     + + + SAVED VALUES + + +
+      REAL FRVEC(2), STDY(12)
+      SAVE FRVEC, STDY
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER EFLAG, FN, I, IBRA, IFLAG, IFR, IOFF, KNT, LN, N, NODE
+      REAL AL, AR, ARATIO, ASLOPE, BL, BR, C, DBL, DBR, DE, DF, DKL,
+     A     DKR, DTL, DTR, DV, DX, DY, F, FR, KL, KR, KRATIO, Q, TL, TR,
+     B     TRATIO, VL, VR, Y(MNDEP), YL, YR, YT
+      CHARACTER ARAT*7, ASLP*7, CVEC(2)*7, EL(2)*7, KRAT*7, TRAT*7
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS, SQRT
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL MERGE, XLKT20
+ 
+C     + + + DATA INITIALIZATIONS + + +
+      DATA FRVEC/0.10,0.25/, STDY/0.5,1.0,2.0,4.0,8.0,12.0,16.0,
+     A     20.0,24.0,30.0,40.0,50.0/
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(' CHECKING GEOMETRY FOR BRANCH:',I5)
+ 52   FORMAT('   RESULTS FOR COMPUTATIONAL ELEMENT ENDING AT NODE:',I5)
+ 54   FORMAT('   DEPTH TRATIO ARATIO KRATIO ASLOPE   EL10    C10',
+     A       '   EL25    C25')
+ 56   FORMAT(F8.3,8A7)
+ 58   FORMAT(/,' CHECK OF GEOMETRY COMPLETE.  PLEASE MAKE CHANGES',
+     A       ' BEFORE ATTEMPTING',/,' EXECUTION OF FEQ.')
+ 60   FORMAT(' BOTTOM SLOPE=',F10.4,'  ELEMENT LENGTH=',F10.1)
+C***********************************************************************
+C     SCAN EACH BRANCHES ELEMENTS AND REPORT ANY OUT OF RANGE CONDITIONS
+ 
+      DO 1000 IBRA=1,NBRA
+        FN = BRPT(3,IBRA)
+        LN = BRPT(4,IBRA)
+        IOFF = BRPT(1,IBRA) - FN
+ 
+        WRITE(STDOUT,50) IBRA
+ 
+        DO 900 NODE=FN+1,LN
+          WRITE(STDOUT,52) NODE+IOFF
+          DX = ABS(XVEC(NODE) - XVEC(NODE-1))
+          IF(DX.EQ.0.0) THEN
+            WRITE(STDOUT,*) ' *ERR:61* Element length is zero'
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+          WRITE(STDOUT,60) (ZVEC(NODE-1) - ZVEC(NODE))/DX, DX
+ 
+C         FIND LIST OF UNIQUE DEPTHS FOR THE TWO TABLES
+ 
+          CALL MERGE
+     I              (STDOUT, NSEC(NODE-1), NSEC(NODE),
+     O               EFLAG, N, Y)
+ 
+ 
+ 
+          WRITE(STDOUT,54)
+ 
+          DO 800 I=1,12
+            YL = STDY(I)
+            IF(YL.GT.Y(N)) GOTO 801
+            CALL XLKT20
+     I                 (NSEC(NODE-1),
+     M                  YL,
+     O                  AL, TL, DTL, KL, DKL, BL, DBL)
+ 
+            YR = YL
+            CALL XLKT20
+     I                 (NSEC(NODE),
+     M                  YR,
+     O                  AR, TR, DTR, KR, DKR, BR, DBR)
+ 
+ 
+C           MAKE RATIO AND SLOPE TESTS
+ 
+C           ONLY THOSE VALUES OUT OF RANGE ARE PRINTED
+ 
+            TRAT = ' '
+            ARAT = ' '
+            KRAT = ' '
+C            TSLP = ' '
+            ASLP = ' '
+C            KSLP = ' '
+ 
+            IFLAG = 0
+ 
+            IF(TL.EQ.0.0) THEN
+              WRITE(STDOUT,*) ' *BUG:28* TL = 0'
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+            IF(AL.EQ.0.0) THEN
+              WRITE(STDOUT,*) ' *BUG:29* AL = 0'
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+            IF(KL.EQ.0.0) THEN
+              WRITE(STDOUT,*) ' *BUG:30* KL = 0'
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+            TRATIO = TR/TL
+            ARATIO = AR/AL
+            KRATIO = KR/KL
+ 
+ 
+            IF(YL.EQ.0.0) THEN
+              WRITE(STDOUT,*) ' *BUG:31* YL = 0'
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+C            TSLOPE = (TR - TL)/DX
+            ASLOPE = (AR - AL)/(DX*YL)
+ 
+            WRITE(TRAT,'(F7.2)') TRATIO
+            IF(TRATIO.LT.0.5.OR.TRATIO.GT.2.0) THEN
+              IFLAG = 1
+            ENDIF
+            WRITE(ARAT,'(F7.2)') ARATIO
+            IF(ARATIO.LT.0.5.OR.ARATIO.GT.2.0) THEN
+              IFLAG = 1
+            ENDIF
+            WRITE(KRAT,'(F7.2)') KRATIO
+            IF(KRATIO.LT.0.5.OR.KRATIO.GT.2.0) THEN
+              IFLAG = 1
+            ENDIF
+ 
+C            WRITE(TSLP,'(F7.2)') TSLOPE
+C            IF(TSLOPE.LT.-0.60.OR.TSLOPE.GT.0.30) THEN
+C              IFLAG = 1
+C            ENDIF
+            WRITE(ASLP,'(F7.2)') ASLOPE
+            IF(ASLOPE.LT.-0.30.OR.ASLOPE.GT.0.30) THEN
+              IFLAG = 1
+            ENDIF
+ 
+            IF(IFLAG.EQ.0) GOTO 800
+C           COMPUTE THE MODEL STEADY FLOW MOMENTUM BALANCE ASSUMING
+C           HORIZONTAL FLOW AND ZERO BOUNDARY SHEAR
+ 
+            IF(AR.EQ.0.0) THEN
+              WRITE(STDOUT,*) ' *BUG:32* AR = 0'
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+            IF(TR.EQ.0.0) THEN
+              WRITE(STDOUT,*) ' *BUG:33* TR = 0'
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+            DO 700 IFR = 1,2
+              FR = FRVEC(IFR)
+              Q = FR*AR*SQRT(GRAV*AR/TR)
+C              WRITE(STDOUT,*) 'Q=',Q
+ 
+C             SOLVE FOR YL GIVEN THE CONDITIONS AT R
+ 
+              KNT = 0
+ 600          CONTINUE
+                VL = Q/AL
+                F = VL*Q - Q**2/AR + 0.5*GRAV*(YL - YR)*
+     A              (AL + AR)
+                DF = (- TL)*VL**2 + 0.5*GRAV*
+     A               (AL + AR + (YL - YR)*TL)
+ 
+                 IF(DF.EQ.0.0) THEN
+                   WRITE(STDOUT,*) '*WRN:25* DF = 0.0 IN CHKGEO'
+                   DF = 1.0
+                 ENDIF
+ 
+C                WRITE(STDOUT,'(3F15.4)') YL, F, DF
+                KNT = KNT + 1
+                IF (KNT.GT.10) THEN
+                  CVEC(IFR) = '   *   '
+                  EL(IFR) = '   *   '
+                  GOTO 700
+                ENDIF
+ 
+                DY = F/DF
+                YT = YL - DY
+                IF(YT.LE.0.0) THEN
+                  YL = 0.5*YL
+                  GOTO 600
+                ENDIF
+ 
+                YL = YT
+                IF(YL.GT.Y(N)) YL = Y(N)
+ 
+                CALL XLKT20
+     I                     (NSEC(NODE-1),
+     M                      YL,
+     O                      AL, TL, DTL, KL, DKL, BL, DBL)
+ 
+                IF(ABS(DY).GT.0.0002) GOTO 600
+ 
+C             SOLUTION HERE
+ 
+              VL = Q/AL
+              VR = Q/AR
+              DE = YL + VL**2/TWOG - YR - VR**2/TWOG
+              IF(ASLOPE.GT.0.0) THEN
+                DV = VL - VR
+                IF(DV.LT.0.01) THEN
+                  C = 0.0
+                ELSE
+                  C = TWOG*DE/DV**2
+                ENDIF
+              ELSE
+                C = TWOG*DE/VR**2
+              ENDIF
+              WRITE(CVEC(IFR),'(F7.2)') C
+              WRITE(EL(IFR),'(F7.4)') DE
+ 700        CONTINUE
+ 
+            IF(IFLAG.GT.0) THEN
+              WRITE(STDOUT,56) YR, TRAT, ARAT, KRAT, ASLP,
+     A                       EL(1), CVEC(1), EL(2), CVEC(2)
+            ENDIF
+ 
+ 800      CONTINUE
+ 801     CONTINUE
+ 900    CONTINUE
+ 1000 CONTINUE
+ 
+      WRITE(STDOUT,58)
+      STOP 'Normal stop in CHKGEO'
+      END
+C
+C
+C
+      SUBROUTINE   CHKIC
+     I                  (STDOUT, NBRA, BRPT)
+ 
+C     + + + PURPOSE + + +
+C     Check for agreement between the bottom profile and stationing
+C     stored in the initial conditions file and from the user input.
+C     If there is any disagreement terminate the run.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER STDOUT, NBRA
+      INTEGER BRPT(8,NBRA)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     NBRA   - number of branches in the model
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'inusnb.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ERROR, IBRA, IE, INODE, IS, NODE, USBR
+      REAL DX, DZ
+      CHARACTER TYPE*5
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' Intial Condition Discrepancies')
+ 52   FORMAT('  BRA  NODE TYPE   DZ from   DZ from   DX from   DX from')
+ 54   FORMAT(16X,5X,'Input   IC file',5X,'Input   IC file')
+ 56   FORMAT(1X,I4,1X,I5,A5,2F10.3,2F10.1)
+C***********************************************************************
+      ERROR = 0
+      DO 200 IBRA=1,NBRA
+        USBR = INBRUS(IBRA)
+ 
+        IS = BRPT(3,IBRA)
+        IE = BRPT(4,IBRA)
+        DO 100 INODE=IS+1,IE
+          DX = ABS(XVEC(INODE) - XVEC(INODE-1))
+          DZ = ZVEC(INODE) - ZVEC(INODE-1)
+ 
+          IF(DZ.EQ.0.0) THEN
+C           REQUIRE EXACT AGREEMENT FOR ZERO BOTTOM SLOPES
+            IF(DZVEC(INODE).NE.0.0) THEN
+              IF(ERROR.EQ.0) THEN
+C               WRITE HEADINGS
+                WRITE(STDOUT,50)
+                WRITE(STDOUT,52)
+                WRITE(STDOUT,54)
+              ENDIF
+              ERROR = 1
+              TYPE = '   DZ'
+              NODE = BRPT(1,IBRA) + INODE - IS
+              WRITE(STDOUT,56) USBR, NODE, TYPE, DZ, DZVEC(INODE),
+     A                       DX, DXVEC(INODE)
+            ENDIF
+          ELSE
+            IF(ABS((DZ - DZVEC(INODE))/DZ).GT.0.001) THEN
+              IF(ERROR.EQ.0) THEN
+C               WRITE HEADINGS
+                WRITE(STDOUT,50)
+                WRITE(STDOUT,52)
+                WRITE(STDOUT,54)
+              ENDIF
+              ERROR = 1
+              TYPE = '   DZ'
+              NODE = BRPT(1,IBRA) + INODE - IS
+              WRITE(STDOUT,56) USBR, NODE, TYPE, DZ, DZVEC(INODE),
+     A                       DX, DXVEC(INODE)
+            ENDIF
+          ENDIF
+ 
+          IF(ABS(DX - DXVEC(INODE))/DX.GT.0.001) THEN
+            IF(ERROR.EQ.0) THEN
+C             WRITE HEADINGS
+              WRITE(STDOUT,50)
+              WRITE(STDOUT,52)
+              WRITE(STDOUT,54)
+            ENDIF
+            ERROR = 1
+            TYPE = '   DX'
+            NODE = BRPT(1,IBRA) + INODE - IS
+            WRITE(STDOUT,56) USBR, NODE, TYPE, DZ, DZVEC(INODE),
+     A                     DX, DXVEC(INODE)
+          ENDIF
+ 
+ 100    CONTINUE
+ 200  CONTINUE
+ 
+      IF(ERROR.EQ.1) STOP 'Abnormal stop: errors found.'
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CHKMJD
+     I                   (STDOUT, YEAR, MONTH,
+     O                    EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Check YEAR and MONTH to make sure that the modified
+C     julian date  and its inverse will be computed properly.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, MONTH, STDOUT, YEAR
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - standard output unit for user messages
+C     YEAR   - calendar year
+C     MONTH  - number of the month
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:130* Month=',I5,' in date < 1 or > 12.')
+ 52   FORMAT(/,' *ERR:137* Year=',I5,' too early for modified julian',
+     A     ' date computation.'/,10X,' Must be 1859 or later.')
+C***********************************************************************
+C     YEAR MUST BE THE FULL YEAR DESIGNATION NOT JUST THE LAST TWO DIGITS.
+C     On March 10, 1992 changed to be valid for any date on or following
+C     January 1, 1859.
+C
+      IF(MONTH.LT.1.OR.MONTH.GT.12) THEN
+        WRITE(STDOUT,50) MONTH
+        EFLAG = 1
+      ENDIF
+ 
+      IF(YEAR.LT.1859) THEN
+        WRITE(STDOUT,52) YEAR
+        EFLAG = 1
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CHKPT
+     I                  (STDOUT, LPNT, MFT, FTPNT,
+     M                   PFPNT,
+     O                   EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Check for valid point flow information.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, STDOUT, LPNT, MFT
+      INTEGER FTPNT(MFT), PFPNT(3,LPNT)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     LPNT   - length of the point load point load array
+C     MFT    - maximum function table pointer value.  Same as maximum
+C               function table number
+C     FTPNT  - function table pointer giving the table address for each
+C              table number.  If the address is zero the table does not
+C              exist.
+C     PFPNT  - point flow pointer array
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER FTP, I, ITYPE
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL CHKTAB
+ 
+C     + + + OUTPUT FORMATS + + +
+ 52   FORMAT(/,'*err:118* invalid type=',I5,' in Point Flow',
+     1       ' Table')
+C***********************************************************************
+      DO 5000 I=1,LPNT
+        ITYPE = PFPNT(1,I)
+        IF(ITYPE.GT.0.AND.ITYPE.LT.3) GOTO 100
+ 
+C       INVALID TYPE
+ 
+        WRITE(STDOUT,52) ITYPE
+        EFLAG = 1
+        PFPNT(1,I) = 1
+ 100    CONTINUE
+ 
+C       CHECK TABLE NUMBER
+ 
+        FTP = PFPNT(2,I)
+ 
+        CALL CHKTAB
+     I             (2, STDOUT, FTPNT, MFT,
+     M              FTP,
+     O              EFLAG)
+ 
+C       STORE DIRECT ADDRESS
+ 
+        PFPNT(2,I) = FTP
+ 5000 CONTINUE
+      RETURN
+      END
+ 
+ 
+C     ***********
+C     *         *
+C     * CHKSPOUT*
+C     *         *
+C     ***********
+ 
+      SUBROUTINE CHKSPOUT(STDOUT, NOUT, MFT, FTPNT, EFLAG)
+ 
+C     Check table numbers and existence of tables for the
+C     main channel definition in Special Output.
+ 
+      IMPLICIT NONE
+      INTEGER EFLAG, MFT, FTPNT(MFT), NOUT, STDOUT
+ 
+      INCLUDE 'arsize.prm'
+      INCLUDE 'spout.cmn'
+ 
+C     Local
+ 
+      INTEGER I, FTP
+ 
+C***********************************************************************
+      DO 100 I=1,NOUT
+ 
+        FTP = SPOUT_MAIN_CHANNEL_TABLE(I)
+        IF(FTP.GT.0) THEN
+C         Assume that minimum cross section table will work in most
+C         cases.  If user requests an item in the OPTIONS list that
+C         is not in the table, the run will fail at the first
+C         special output with an error message about the table.
+          CALL CHKTAB
+     I               (20, STDOUT, FTPNT, MFT,
+     M                FTP,
+     O                EFLAG)
+ 
+C         STORE THE TABLE ADDRESS
+ 
+          SPOUT_MAIN_CHANNEL_TABLE(I) = FTP
+        ENDIF
+ 
+100   CONTINUE
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CHKTAB
+     I                   (CTYPE, STDOUT, FTPNT, MFT,
+     M                    TAB,
+     O                    EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Checks for address of table and returns address in place of
+C     TAB.  Otherwise writes error and sets TAB = 1 on return.
+C     if TAB = 0 on entry return without doing anything.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER CTYPE, EFLAG, STDOUT, MFT, TAB
+      INTEGER FTPNT(MFT)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     CTYPE  - type class number for checking valid table types
+C     STDOUT   - Fortran unit number for user output and messages
+C     FTPNT  - function table pointer giving the table address for each
+C              table number.  If the address is zero the table does not
+C              exist.
+C     MFT    - maximum function table pointer value.  Same as maximum
+C               function table number
+C     TAB    - table number
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADRS
+ 
+C     + + + EXTERNAL NAMES + + +
+      CHARACTER*16 GET_TABID
+      EXTERNAL CHKTYP, GET_TABID
+ 
+C     + + + OUTPUT FORMATS + + +
+ 1    FORMAT(/,' *ERR:81* Table Id = ',A,' does not exist.')
+ 2    FORMAT(/,' *ERR:82* Internal table number = ',I8,' too large.')
+     
+C***********************************************************************
+      IF(TAB.EQ.0) RETURN
+ 
+C     MAKE SURE TABLE NUMBER IS IN VALID RANGE
+ 
+      IF(TAB.GT.MFT) THEN
+        WRITE(STDOUT,2) GET_TABID(TAB), MFT
+        TAB = MFT
+        STOP 'Abnormal stop.  Errors found.'
+      ENDIF
+ 
+      ADRS = FTPNT(TAB)
+      IF(ADRS.LE.0) THEN
+        WRITE(STDOUT,1) GET_TABID(TAB)
+        WRITE(STDOUT,*) ' Internal table number=',TAB
+        EFLAG = 1
+        TAB = 1
+      ELSE
+        TAB = ADRS
+        CALL CHKTYP
+     I             (STDOUT, ADRS, CTYPE,
+     O              EFLAG)
+      ENDIF
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CHKWIN
+     I                   (STDOUT, MFT, FTPNT,
+     M                    WINTAB,
+     O                    EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Check table for wind loading.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, STDOUT, MFT, WINTAB
+      INTEGER FTPNT(MFT)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     MFT    - maximum function table pointer value.  Same as maximum
+C               function table number
+C     FTPNT  - function table pointer giving the table address for each
+C              table number.  If the address is zero the table does not
+C              exist.
+C     WINTAB - table for the table of wind speed and direction
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL CHKTAB
+C***********************************************************************
+      CALL CHKTAB
+     I           (11, STDOUT, FTPNT, MFT,
+     M            WINTAB,
+     O            EFLAG)
+ 
+      RETURN
+ 
+      END
+C
+C
+C
+      SUBROUTINE   FINCHK
+     I                   (STDOUT, NEX, EXNODT, HSLOT, QCHOP, EPT,
+     I                    CD14_TAB_DATUM, CD5T6_TAB_DATUM,
+     M                    EMC)
+ 
+C     + + + PURPOSE + + +
+C     Checks validity of initial conditions and other information
+C     which could not be checked earlier.  This is the last check
+C     before unsteady flow is simulated.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EPT, STDOUT, NEX
+      INTEGER EMC(EPT), EXNODT(9,NEX)
+      REAL HSLOT, QCHOP
+      CHARACTER CD14_TAB_DATUM*4, CD5T6_TAB_DATUM*4
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     NEX    - number of exterior nodes in the model
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     HSLOT  - height of bottom slot.  Currently 0.0 always
+C     QCHOP  - chopping value for output of flow
+C     EMC    - vector containing coded form of the Matrix Control Input
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'enelem.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADRS, CODE, DNN, FRFLOW, I, IADR, IDUM, IOFF, ITYPE, J, K,
+     A        LSTARG, N, NQSGN, NTAB, NUM, UPN, null, qnode, tabadrs, ii
+      REAL AB, ABMAX, ABSSUM, AD, B, CD, CDFL, CON, DB, DCON, DTAP,
+     A     DTOP, EMAX, FLOSS, HBASE, HDATUM, PDV, QN, QTMP, RAT, RDUM,
+     B     SUM, TEMP, TOP, YB, YBTAB, YD
+      real*8 easting, northing, dnull
+      CHARACTER NOTEA*10, NOTEB*10
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM,RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS, FLOAT, SIGN
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER GETTBN
+      REAL GETHDD
+      CHARACTER GETUSN*5, NOTE*10, GET_TABID*16
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETHDD, GETTBN, GETUSN, LKTAB, NOTE, XLKT20,
+     A         GET_TABID, put_location_1dtab, put_location_2dtab,
+     b          get_east_north, put_east_north
+ 
+      data dnull/-33d6/, null/-2147483647/
+
+C     + + + OUTPUT FORMATS + + +
+50    FORMAT(/,' Starting final check of Network Matrix Instructions')
+51    FORMAT(/,' End of final check of Network Matrix Instructions')
+ 52   FORMAT(/,' *WRN:17* Continuity error of',F10.1,
+     A       ' in initial conditions at nodes:')
+ 53   FORMAT(10X,A5,' ',A10)
+ 54   FORMAT(/,' *WRN:18* WS elev dif btwn',
+     A       ' node ',A5,' ',A10,' & node ',A5,' ',A10,' :',F6.2)
+ 56   FORMAT('/, *WRN:19* POSS. FLOW DISCON. AT FULL FLOW AT',
+     A /,3X, ' BRIDGE BETWEEN NODES ',A5,' ',A10,' AND ',A5,' ',A10)
+ 58   FORMAT(10X,' FREE FLOW LOSS COEF. = ',F6.3,' FROM TABLE# = ',I5,
+     A  /,3X,' FREE FLOW LOSS COEF IMPLIED BY SUBMERGED FLOW',
+     B       ' DISCHARGE COEF. = ',F6.3)
+ 60   FORMAT(/,' *WRN:20* MAX. FLOW AREA FOR BRIDGE AND AREA AT MAX.',
+     A       ' DEPTH',/,3X,'DISAGREE FOR BRIDGE BETWEEN NODES',/,
+     B       10X,A5,' ',A10,' AND ',A5,' ',A10)
+ 62   FORMAT(10X,'MAXIMUM FLOW AREA = ',F10.1,
+     A       ' AREA AT MAXIMUM DEPTH = ',F10.1)
+ 64   FORMAT('0*WRN:21* DISCREPANCY IN MAX. ELEV. OF BRIDGE OPENING',
+     A   /,' FOR BRIDGE BETWEEN NODES ',A5,' ',A10,' AND ',A5,' ',A10)
+ 66   FORMAT(3X,'MAX. ELEV. IN NETWORK-MATRIX = ',F10.2,
+     A       3X,'MAX ELEV IN TABID ',A,' IS ',F10.2)
+ 68   FORMAT(3X,'MAX. ELEV. USED IS',F10.2,' MAKE INPUT CHANGES',
+     A       ' IF UNSATISFACTORY')
+ 70   FORMAT(3X,'MAX. AREA USED IS',F10.1,' MAKE INPUT CHANGE IF',
+     A       ' UNSATISFACTORY')
+ 72   FORMAT(3X,' LAST THREE VALUES IN TABLE HAVE BEEN CHANGED TO',
+     A       ' MATCH LOSS IMPLIED BY SUBMERGED DISCHARGE COEF.',/,
+     B       3X,' CHECK TABLE FOR POSSIBLE ABRUPT TRANSITION.')
+ 74   FORMAT(3X,' TABLE NOT CHANGED BECAUSE TABLE TYPE IS NOT 2')
+ 76   FORMAT(/,' *WRN:22* Flow discontinuity at constant flow',
+     A       ' boundary',/,3X,' AT NODE ',A5,' ',A10)
+ 80   FORMAT(/,' REVISED VALES ARE:',/,6X,'DEPTH LOSS COEF')
+ 82   FORMAT(' ',F10.3, F10.4)
+ 84   FORMAT(' *WRN:23* FOR BRIDGE BETWEEN NODES ',A5,' ',A10,
+     A   ' AND ',A5,' ',A10,/, 3X,'DOWNSTREAM AREA < MAX BRIDGE AREA.',
+     A       ' AB/AD=',F10.2,/,3X,'VIOLATES BPR BRIDGE LOSS METHOD',
+     B       ' ASSUMPTIONS')
+ 86   FORMAT(' SUBMERGED BRIDGE FLOW WILL BE MIMICKED USING',
+     A       ' FREE FLOW RELATIONSHIP')
+ 88   FORMAT(/,' *WRN:14* Head datum=',F10.2,' disagrees with TABID=',
+     A       A,/,11X,'having head datum=',F10.2)
+90    FORMAT(/,' *WRN:56* Datums for head in 2-D tables: ',A,' and ',A,
+     A  11X,' in a Side-weir instruction differ by more than 0.01')
+92    FORMAT(' ','Head datum=',F10.3,' from table with TabId: ',A,
+     A       ' replaces side-weir-instruction datum=',F10.3)
+C***********************************************************************
+C     START THE LOOP OVER THE instructions
+      WRITE(STDOUT,50) 
+      J = EMC(1)
+ 1000 CONTINUE
+         CODE = EMC(J)
+         IF(CODE.EQ.-1) GOTO 2000
+         GOTO(1,2,3,4,5,6,7,8,9,10, 10, 10, 10, 14, 10),CODE
+           WRITE(STDOUT,*)' *BUG:20* INVALID EMC CODE IN FINCHK. CODE=',
+     A                  CODE
+            STOP 'Abnormal stop: errors found.'
+ 1       CONTINUE
+            GOTO 1500
+ 2       CONTINUE
+C           MAKE SURE THAT CONTINUITY IS SATISFIED AT A JUNCTION
+            SUM = 0.0
+C           PREVENT DIVIDE BY ZERO BY MAKING ABSSUM NON-ZERO
+            ABSSUM = 0.1
+            DO 220 I=1,EMC(J+1)
+               NQSGN = EMC(J+I+1)
+               NUM = ABS(NQSGN)
+               NQSGN = SIGN(1,NQSGN)*EXNODT(1,NUM)
+               QN = QE1(NUM)
+               IF(NQSGN.GT.0) THEN
+                 SUM = SUM + QN
+               ELSE
+                 SUM = SUM - QN
+               ENDIF
+               ABSSUM = ABSSUM + ABS(QN)
+ 220        CONTINUE
+ 
+            IF(ABS(SUM)/ABSSUM.GT.0.001) THEN
+              WRITE(STDOUT,52) SUM
+              DO 221 I=1,EMC(J+1)
+                NOTEA = NOTE(J+I+1, EMC, EXNODT, EPT, NEX)
+                WRITE(STDOUT,53) GETUSN(EMC(J+I+1)), NOTEA
+ 221          CONTINUE
+            ENDIF
+            J = J+EMC(J+1)
+            GOTO 1500
+ 3       CONTINUE
+C           MAKE SURE INITIAL ELEVATIONS ARE EQUAL
+            TEMP = ABS( ZE(EMC(J+1)) + YE1(EMC(J+1)) -
+     A              (ZE(EMC(J+2)) + YE1(EMC(J+2))))
+            IF(TEMP.GT.0.01) THEN
+               NOTEA = NOTE(J+1, EMC, EXNODT, EPT, NEX)
+               NOTEB = NOTE(J+2, EMC, EXNODT, EPT, NEX)
+               WRITE(STDOUT,54) GETUSN(EMC(J+1)), NOTEA,
+     A                        GETUSN(EMC(J+2)), NOTEB, TEMP
+            ENDIF
+            GOTO 1500
+ 4       CONTINUE
+ 
+           QNODE = EMC(J+4)                         
+C          BRANCH ON TYPE                           
+                                                    
+           ITYPE = EMC(J+1)                          
+           GOTO(401, 402, 403, 404, 405, 406), ITYPE 
+                                                    
+ 401       CONTINUE                                 
+c            check for flow node having a location.
+             if(exnodt(6,qnode) /= null) then
+c              we have a location.  Extract it and store 
+c              in the function tables if the table contains
+c              the default null value.
+               tabadrs = emc(j + 5) 
+               call get_east_north(
+     i                      stdout, tabadrs,
+     o                      easting, northing)
+
+               if(easting <= dnull) then
+c                replace with the values found in FEQ
+                 easting = dble(exnodt(6,qnode))/100.d0
+                 northing = dble(exnodt(7,qnode))/100.d0
+                 call put_east_north(
+     i                      stdout, tabadrs, 
+     i                      easting, northing)
+               endif
+             endif
+             GOTO 499                               
+ 402       CONTINUE                                 
+c            check for flow node having a location.
+             if(exnodt(6,qnode) /= null) then
+c              we have a location.  Extract it and store 
+c              in the function tables if the table contains
+c              the default null value.
+               tabadrs = emc(j + 5) 
+               call get_east_north(
+     i                      stdout, tabadrs,
+     o                      easting, northing)
+
+               if(easting <= dnull) then
+c                replace with the values found in FEQ
+                 easting = dble(exnodt(6,qnode))/100.d0
+                 northing = dble(exnodt(7,qnode))/100.d0
+                 call put_east_north(
+     i                      stdout, tabadrs, 
+     i                      easting, northing)
+               endif
+             endif
+             GOTO 499                               
+ 403       CONTINUE                                 
+             GOTO 499                               
+ 404       CONTINUE                                 
+c            check for flow node having a location.
+             if(exnodt(6,qnode) /= null) then
+c              we have a location.  Extract it and store 
+c              in the function tables if the table contains
+c              the default null value.
+               do i=5,6  
+                 tabadrs = emc(j + i) ! Get the next function-table address
+                 call get_east_north(
+     i                        stdout, tabadrs,
+     o                        easting, northing)
+
+                 if(easting <= dnull) then
+c                  replace with the values found in FEQ
+                   easting = dble(exnodt(6,qnode))/100.d0
+                   northing = dble(exnodt(7,qnode))/100.d0
+                   call put_east_north(
+     i                        stdout, tabadrs, 
+     i                        easting, northing)
+                 endif
+               end do
+             endif
+             GOTO 499                               
+ 405       CONTINUE                                 
+c            check for flow node having a location.
+             if(exnodt(6,qnode) /= null) then
+c              we have a location.  Extract it and store 
+c              in the function tables if the table contains
+c              the default null value.
+               tabadrs = emc(j + 5) 
+               call get_east_north(
+     i                      stdout, tabadrs,
+     o                      easting, northing)
+
+               if(easting <= dnull) then
+c                replace with the values found in FEQ
+                 easting = dble(exnodt(6,qnode))/100.d0
+                 northing = dble(exnodt(7,qnode))/100.d0
+                 call put_east_north(
+     i                      stdout, tabadrs, 
+     i                      easting, northing)
+               endif
+             endif
+             GOTO 499                               
+ 406       CONTINUE                                 
+c            check for flow node having a location.
+             if(exnodt(6,qnode) /= null) then
+c              we have a location.  Extract it and store  
+c              in the function tables if the table contains
+c              the default null value.
+               do i=5,7  
+                 tabadrs = emc(j + i) ! Get the next function-table address
+                 if(tabadrs > 0 ) then
+                   call get_east_north(
+     i                        stdout, tabadrs, 
+     o                        easting, northing)
+
+                   if(easting <= dnull) then
+c                    replace with the values found in FEQ
+                     easting = dble(exnodt(6,qnode))/100.d0
+                     northing = dble(exnodt(7,qnode))/100.d0
+                     call put_east_north(
+     i                        stdout, tabadrs,
+     i                        easting, northing)
+                   endif
+                 endif
+               end do
+             endif
+             GOTO 499                               
+                                                    
+ 499       CONTINUE                                 
+                                                    
+           GOTO 1500                                
+ 5       CONTINUE
+           ITYPE = EMC(J+1)
+           UPN = EMC(J+2)
+           DNN = EMC(J+3)
+           qnode = emc(j+4)
+           GOTO(501, 502, 503, 504, 505, 506, 507, 508, 509), ITYPE
+             WRITE(STDOUT,*) ' *BUG:21* INVALID CODE=5 TYPE IN FINCHK.',
+     A                 ' TYPE=', ITYPE
+             STOP 'Abnormal stop: errors found.'
+ 501       CONTINUE
+             J = J + CD5TY1
+             GOTO 599
+ 502       CONTINUE
+c            check for flow node having a location.
+             if(exnodt(6,qnode) /= null) then
+c              we have a location.  Extract it and store 
+c              in the function tables if the table contains
+c              the default null value.
+               do i=6,9  
+                 tabadrs = emc(j + i) ! Get the next function-table address
+                 call get_east_north(
+     i                        stdout, tabadrs, 
+     o                        easting, northing)
+
+                 if(easting <= dnull) then
+c                  replace with the values found in FEQ
+                   easting = dble(exnodt(6,qnode))/100.d0
+                   northing = dble(exnodt(7,qnode))/100.d0
+                   call put_east_north(
+     i                        stdout, tabadrs,
+     i                        easting, northing)
+                 endif
+               end do
+             endif
+
+             J = J + CD5TY2
+             GOTO 599
+ 
+ 503       CONTINUE
+c            check for flow node having a location.
+             if(exnodt(6,qnode) /= null) then
+c              we have a location.  Extract it and store  
+c              in the function tables if the table contains
+c              the default null value.
+               do i=7,9  
+                 tabadrs = emc(j + i) ! Get the next function-table address
+                 if(tabadrs > 0 ) then
+                   call get_east_north(
+     i                        stdout, tabadrs, 
+     o                        easting, northing)
+
+                   if(easting <= dnull) then
+c                    replace with the values found in FEQ
+                     easting = dble(exnodt(6,qnode))/100.d0
+                     northing = dble(exnodt(7,qnode))/100.d0
+                     call put_east_north(
+     i                        stdout, tabadrs, 
+     i                        easting, northing)
+                   endif
+                 endif
+               end do
+             endif
+ 
+             J = J + CD5TY3
+             GOTO 599
+ 
+ 504       CONTINUE
+             IDUM = EMC(J+13)
+             YB = RDUM - ZE(UPN)
+             EMAX = RDUM
+C            CHK YB ABAINST MAX DEPTH IN THE BRIDGE OPENING TABLE
+             YBTAB = FTAB(ITAB(EMC(J+8)))
+             IF(ABS(YB - YBTAB).GT.0.02) THEN
+C              DISCREPANCY TOO LARGE.  USE YBTAB
+               NOTEA = NOTE(J+2, EMC,EXNODT, EPT, NEX)
+               NOTEB = NOTE(J+3, EMC, EXNODT, EPT, NEX)
+               WRITE(STDOUT,64) GETUSN(UPN), NOTEA, GETUSN(DNN), NOTEB
+               WRITE(STDOUT,66) RDUM, GET_TABID(ITAB(EMC(J+8)+1)),
+     A                YBTAB + ZE(UPN)
+               IF(YB.GT.YBTAB+1.0) THEN
+                 WRITE(STDOUT,86)
+                 YB = YBTAB
+                 FRFLOW = 1
+                 EMAX = YB + ZE(UPN)
+               ELSE
+                 YB = YBTAB
+                 FRFLOW = 0
+                 EMAX = YB + ZE(UPN)
+                 RDUM = EMAX
+                 EMC(J+13) = IDUM
+               ENDIF
+               WRITE(STDOUT,68) RDUM
+             ENDIF
+ 
+             IDUM = EMC(J+12)
+             ABMAX = RDUM
+             CALL XLKT20
+     I                  (EMC(J+8),
+     M                   YB,
+     O                   AB, TOP, DTOP, CON, DCON, B, DB)
+             IF(AB/ABMAX.LT.0.98.OR.AB/ABMAX.GT.1.02) THEN
+               NOTEA = NOTE(J+2, EMC, EXNODT, EPT, NEX)
+               NOTEB = NOTE(J+3, EMC, EXNODT, EPT, NEX)
+               WRITE(STDOUT,60) GETUSN(UPN), NOTEA, GETUSN(DNN), NOTEB
+               WRITE(STDOUT,62) ABMAX, AB
+               RDUM = AB
+               EMC(J+12) = IDUM
+               WRITE(STDOUT,70) RDUM
+             ENDIF
+             AB = RDUM
+ 
+C            CHECK TRANSITION FROM FREE FLOW TO SUBMERGED FLOW
+             IF(HSLOT.GE.YB) THEN
+               FLOSS = 0.005
+               PDV = 0.0
+             ELSE
+               CALL LKTAB
+     I                   (EMC(J+6), YB-HSLOT, 0,
+     O                    FLOSS, NTAB, PDV)
+             ENDIF
+             IDUM = EMC(J+14)
+C            COMPUTE THE FREE LOSS COEF. IMPLIED BY THE SUBMERGED
+C            COEFFICIENT OF DISCHARGE AT THE BRIDGE SOFFIT.
+ 
+             CD = RDUM
+ 
+C            FIND DOWNSTREAM AREA CORRESPONDING TO THE TRUE MAX BRIDGE
+C            OPENING ELEVATION
+ 
+             YD = EMAX - ZE(DNN)
+C             WRITE(STDOUT,*) 'FINCHK: EMAX=',EMAX, ' ZE(DNN)=',ZE(DNN)
+ 
+             CALL XLKT20
+     I                  (EXNODT(4,DNN),
+     M                   YD,
+     O                   AD, TOP, DTAP, CON, DCON, B, DB)
+             RAT = AB/AD
+             IF(RAT.GT.1.0) THEN
+               NOTEA = NOTE(J+2, EMC, EXNODT, EPT, NEX)
+               NOTEB = NOTE(J+3, EMC, EXNODT, EPT, NEX)
+               WRITE(STDOUT,84) GETUSN(UPN), NOTEA, GETUSN(DNN), NOTEB,
+     A                        RAT
+               RAT = 1.0
+             ENDIF
+ 
+             CDFL = 1.0/CD**2 - RAT**2
+             IF(FLOSS/CDFL.LT.0.98.OR.FLOSS/CDFL.GT.1.02
+     A                                    .OR.FRFLOW.EQ.1) THEN
+               NOTEA = NOTE(J+2, EMC, EXNODT, EPT, NEX)
+               NOTEB = NOTE(J+3, EMC, EXNODT, EPT, NEX)
+               WRITE(STDOUT,56) GETUSN(UPN), NOTEA, GETUSN(DNN), NOTEB
+               WRITE(STDOUT,58) FLOSS, NTAB, CDFL
+               IF(FRFLOW.EQ.1) THEN
+                 IADR = EMC(J+6)
+                 IF(ITAB(IADR+2).EQ.2) THEN
+C                  MODIFY THE TOP THREE VALUES IN THE TABLE
+ 
+                   LSTARG = ITAB(IADR)
+                   FTAB(LSTARG-1) = CDFL
+                   FTAB(LSTARG+1) = 1.0/CD**2
+                   FTAB(LSTARG-3) = 0.5*(FTAB(LSTARG-3) + CDFL)
+                   WRITE(STDOUT,72)
+                   WRITE(STDOUT,80)
+                   DO 510 I=-4,0,2
+                     WRITE(STDOUT,82) FTAB(LSTARG+I), FTAB(LSTARG+I+1)
+ 510               CONTINUE
+                 ELSE
+                   WRITE(STDOUT,74)
+                 ENDIF
+               ENDIF
+             ENDIF
+             J = J + CD5TY4
+             GOTO 599
+ 
+ 505       CONTINUE
+             J = J + CD5TY5
+             GOTO 599
+ 506       CONTINUE
+C            CHECK THAT THE HEAD DATUM STORED IN THE TABLE MATCHES
+C            THE HEAD DATUM GIVEN.  IF HEAD DATUM STORED IN THE TABLE
+C            IS < -9000, THEN ASSUME THAT HEAD DATUM IS NOT KNOWN AND
+C            SKIP THE CHECK FOR THAT TABLE.
+ 
+             IOFF = 0
+             N = ABS(EMC(J+6))
+             DO 5069 I=1,N
+               IF(EMC(J+IOFF+10).EQ.0) THEN
+C                NO TIME VARYING HEAD. THEREFORE DO CHECK. FIRST
+C                EXTRACT THE HEAD FROM EMC FOR I-TH FLOW PATH.
+                 IDUM = EMC(J+IOFF+11)
+                 HBASE = RDUM
+                 IF(HBASE.LT.40000.) THEN
+C                  LARGE HBASE USED TO DISABLE FLOW WITHOUT HAVING TO
+C                  DELETE THE RELATIONSHIP
+                   DO 5068 K=0,1
+C                    EXTRACT  NEXT TABLE ADRESS
+                     ADRS = EMC(J+IOFF+7+K)
+                     HDATUM = GETHDD(ADRS)
+                     IF(HDATUM.GE.-9000.) THEN
+                       IF(CD5T6_TAB_DATUM.EQ.'NO') THEN
+                         IF(ABS(HBASE - HDATUM).GT.0.01) THEN
+C                          REPORT AS A WARNING.
+                           WRITE(STDOUT,88) HBASE, 
+     A                                    GET_TABID(GETTBN(ADRS)),
+     A                                    GETHDD(ADRS)
+                  
+                         ENDIF
+                       ELSE
+C                        Take table datum and use it.
+                         RDUM = HDATUM
+                         EMC(J+IOFF+11) = IDUM
+                       ENDIF
+                     ENDIF
+ 5068              CONTINUE
+                 ENDIF
+               ENDIF
+               IOFF = IOFF + CD5TY6
+ 5069        CONTINUE
+             ioff = 0
+             do ii=1,n
+c              check for flow node having a location.                   
+               if(exnodt(6,qnode) /= null) then                         
+c                we have a location.  Extract it and store              
+c                in the function tables if the table contains           
+c                the default null value.                                
+                 do i=7,10                                              
+                   tabadrs = emc(j + ioff + i) ! Get the next function-table address
+                   if(i==9) then   ! Special case for this table:)
+                     if(tabadrs < 0) then
+                       tabadrs = abs(tabadrs)
+                     else
+                       tabadrs = 0
+                     endif
+                   endif                                                     
+                   if(tabadrs > 0 ) then                                
+                     call get_east_north(                               
+     i                          stdout, tabadrs,       
+     o                          easting, northing)                      
+                                                                        
+                     if(easting <= dnull) then                          
+c                      replace with the values found in FEQ
+                       easting = dble(exnodt(6,qnode))/100.d0           
+                       northing = dble(exnodt(7,qnode))/100.d0          
+                       call put_east_north(                             
+     i                          stdout, tabadrs,       
+     i                          easting, northing)                      
+                     endif                                              
+                   endif                                                
+                 end do                                                 
+               endif                                                    
+               ioff = ioff + CD5TY6                                                         
+             end do
+
+             J = J + 1 + ABS(EMC(J+6))*CD5TY6
+             GOTO 599
+ 507       CONTINUE
+c            check for flow node having a location.
+             if(exnodt(6,qnode) /= null) then
+c              we have a location.  Extract it and store  
+c              in the function tables if the table contains
+c              the default null value.
+               do i=7,10  
+                 tabadrs = emc(j + i) ! Get the next function-table address
+                 if(tabadrs > 0 ) then
+                   call get_east_north(
+     i                        stdout, tabadrs, 
+     o                        easting, northing)
+
+                   if(easting <= dnull) then
+c                    replace with the values found in FEQ
+                     easting = dble(exnodt(6,qnode))/100.d0
+                     northing = dble(exnodt(7,qnode))/100.d0
+                     call put_east_north(
+     i                        stdout, tabadrs, 
+     i                        easting, northing)
+                   endif
+                 endif
+               end do
+             endif
+ 
+             J = J + CD5TY7
+             GOTO 599
+ 508       CONTINUE
+             J = J + CD5TY8
+             GOTO 599
+ 509       CONTINUE
+             J = J + CD5TY9
+             GOTO 599
+ 
+ 599       CONTINUE
+         GOTO 1500
+ 
+ 6       CONTINUE
+ 
+           IF(EMC(J+1).NE.2.AND.EMC(J+4).EQ.0) THEN
+C            CHECK THE CONSTANT FLOW RATE
+             IDUM = EMC(J+8)
+C            COMPUTE WHAT THE FLOW SHOULD BE
+             RDUM = -FLOAT(EXNODT(1,EMC(J+2)))*RDUM
+             QTMP = QE1(EMC(J+2))
+             IF(ABS(QTMP).LE.QCHOP) QTMP = 0.0
+             IF(ABS(QTMP - RDUM).GT.0.01*ABS(RDUM)) THEN
+               NOTEA = NOTE(J+2, EMC, EXNODT, EPT, NEX)
+               WRITE(STDOUT,76) GETUSN(EMC(J+2)), NOTEA
+               QE1(EMC(J+2)) = RDUM
+             ENDIF
+           ENDIF
+c          check for boundary node having a location.
+           qnode = emc(j+2)
+           if(exnodt(6,qnode) /= null) then
+c            we have a location.  Extract it and store  
+c            in the function tables if the table contains
+c            the default null value.
+             do i=4,10,6  
+               tabadrs = emc(j + i) ! Get the next function-table address
+               if(tabadrs > 0 ) then
+                 call get_east_north(
+     i                      stdout, tabadrs, 
+     o                      easting, northing)
+
+                 if(easting <= dnull) then
+c                  replace with the values found in FEQ
+                   easting = dble(exnodt(6,qnode))/100.d0
+                   northing = dble(exnodt(7,qnode))/100.d0
+                   call put_east_north(
+     i                      stdout, tabadrs, 
+     i                      easting, northing)
+                 endif
+               endif
+             end do
+           endif
+
+           GOTO 1500
+ 
+ 7       CONTINUE
+           qnode = emc(j+1)
+           if(exnodt(6,qnode) /= null) then
+             tabadrs = emc(j+2)                          
+             call get_east_north(                         
+     i                  stdout, tabadrs,  
+     o                  easting, northing)                
+                                                          
+             if(easting <= dnull) then                    
+c              replace with the values found in FEQ       
+               easting = dble(exnodt(6,qnode))/100.d0     
+               northing = dble(exnodt(7,qnode))/100.d0    
+               call put_east_north(                       
+     i                  stdout, tabadrs,  
+     i                  easting, northing)                
+             endif                                        
+           endif
+           GOTO 1500
+ 8       CONTINUE
+            GOTO 1500
+ 9       CONTINUE
+            GOTO 1500
+ 
+ 10      CONTINUE
+           GOTO 1500
+ 14      CONTINUE
+C          Check for replacement of the datum for head given in the 
+C          instruction. 
+           IF(CD14_TAB_DATUM.EQ.'YES') THEN
+C            Get the address of the outflow 2-D table and its datum.
+             ADRS = EMC(J+4)
+             HDATUM = GETHDD(ADRS)
+             IDUM = EMC(J+9)
+             IF(ABS(HDATUM - RDUM).GT.0.002) THEN
+               WRITE(STDOUT,92) HDATUM, GET_TABID(GETTBN(ADRS)), RDUM
+            
+C              Use it as the datum in the instruction
+               RDUM = HDATUM
+               EMC(J+9) = IDUM
+             ENDIF
+C            Get the datum of the inflow table and check
+             HDATUM = GETHDD(EMC(J+5))
+             IF(ABS(HDATUM - RDUM).GT.0.005) THEN
+               WRITE(STDOUT,90) GET_TABID(GETTBN(ADRS)),
+     A                    GET_TABID(GETTBN(EMC(J+5)))
+             ENDIF
+           ENDIF
+c          check for middle node having a location.
+           qnode = emc(j+3)
+           if(exnodt(6,qnode) /= null) then
+c            we have a location.  Extract it and store  
+c            in the function tables if the table contains
+c            the default null value.
+             do i=4,7  
+               tabadrs = emc(j + i) ! Get the next function-table address
+               if(tabadrs > 0 ) then
+                 call get_east_north(
+     i                      stdout, tabadrs,
+     o                      easting, northing)
+
+                 if(easting <= dnull) then
+c                  replace with the values found in FEQ
+                   easting = dble(exnodt(6,qnode))/100.d0
+                   northing = dble(exnodt(7,qnode))/100.d0
+                   call put_east_north(
+     i                      stdout, tabadrs,
+     i                      easting, northing)
+                 endif
+               endif
+             end do
+           endif
+
+           GOTO 1500        
+ 1500 CONTINUE
+        J = J + EMC(CODE+1)
+      GOTO 1000
+ 2000 CONTINUE
+      WRITE(STDOUT,51)
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   KILC
+     I                  (CRH5, ICODE,
+     M                   IFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Prints out error messages and sets a flag
+C     and adjusts the value of N.  This is a near copy of KIL.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ICODE, IFLAG
+      CHARACTER CRH5*5
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     CRH5   - reference value that is in error
+C     ICODE  - code number for the error message to output
+C     IFLAG  - error flag
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'xscom.cmn'
+ 
+C     + + + SAVED VALUES + + +
+      CHARACTER MESG(51)*72
+      SAVE MESG
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ICD
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + DATA INITIALIZATIONS + + +
+      DATA MESG(1)/' Branch number out of range'/
+      DATA MESG(2)/' Node on a branch outside valid range'/
+      DATA MESG(3 )/' Node on a branch out of sequence or a duplicate'/
+      DATA MESG(4 )/' Upstream exterior node number out of range'/
+      DATA MESG(5 )/' Downstream exterior node number out of range'/
+      DATA MESG(6 )/' AVAILABLE MESSAGE '/
+      DATA MESG(7 )/' Invalid device type for a control structure'/
+      DATA MESG(8 )/' Message available'/
+      DATA MESG(9 )/' Internal table number out of valid range'/
+      DATA MESG(10)/' Function table space exceeded'/
+      DATA MESG(11)/' Invalid code for Network Matrix Control'/
+      DATA MESG(12)/' AVAILABLE MESSAGE'/
+      DATA MESG(13)/' Network Matrix Control space exceeded'/
+      DATA MESG(14)/' Number of nodes at a junction > 9 or < 2'/
+      DATA MESG(15)/' Unknown branch number in Ntwrk Mtrx Cntrl input'/
+      DATA MESG(16)/' Type must be 1,or 2 for a forced boundary'/
+      DATA MESG(17)/' Number of reservoir inflow nodes must be 1'/
+      DATA MESG(18)/' Type for point flows > 2 or < 1'/
+      DATA MESG(19)/' Too many point flows given'/
+      DATA MESG(20)/' MESSAGE AVAILABLE'/
+      DATA MESG(21)/' Message available'/
+      DATA MESG(22)/' The nodes for head must be distinct'/
+      DATA MESG(23)
+     A/' The node for flow must equal one of the head nodes'/
+      DATA MESG(24)/' Reservoir node duplicates an existing node'/
+      DATA MESG(25)/' Duplicate function table number'/
+      DATA MESG(26)/' Message available'/
+      DATA MESG(27)/' Too many nodes'/
+      DATA MESG(28)/' Point flow invalid for upstream node'/
+      DATA MESG(29)/' Too many branches'/
+      DATA MESG(30)/' Too many exterior nodes'/
+      DATA MESG(31)/' Invalid operation block number in CHKEX'/
+      DATA MESG(32)
+     A/' Level pool reservoir inflow node is not free or is in use elsew
+     Bhere.'/
+      DATA MESG(33)
+     A/' Free node on a dummy branch is not free or is in use elsewhere.
+     B'/
+      DATA MESG(34)/'AVAILABLE MESSAGE'/
+      DATA MESG(35)/' Invalid print out option'/
+      DATA MESG(36)/' Point flows no longer supported'/
+      DATA MESG(37)/' Invalid option for diffuse flows'/
+      DATA MESG(38)/' Invalid option for wind loading'/
+      DATA MESG(39)/' Message available'/
+      DATA MESG(40)/' Message available'/
+      DATA MESG(41)/' Special Operation Block number out of range'/
+      DATA MESG(42)/' Invalid option for Special Operation Block'/
+      DATA MESG(43)
+     A/' Exterior node used as a flow node more than once'/
+      DATA MESG(44)/' Exterior node appears on more than one branch'/
+      DATA MESG(45)
+     A/' Invalid slope source for channel control:-1,0,1, are valid'/
+      DATA MESG(46)
+     A/' This node matches another when nodes must be distinct.'/
+      DATA MESG(47)/'Message available'/
+      DATA MESG(48)/'Message available'/
+      DATA MESG(49) /' Message available'/
+      DATA MESG(50) /' Invalid direction: 1 or -1 are valid.'/
+      DATA MESG(51) 
+     A/' Branch has already appeared in Ntwrk Mtrx Cntrl input.'/
+ 
+C     + + + OUTPUT FORMATS + + +
+10000 FORMAT(/,'*ERR:',I2,'*')
+10101 FORMAT(' REFERENCE VALUE=',A5)
+10200 FORMAT(A)
+10300 FORMAT(/,' PREVIOUS ERROR FORCES CESSATION OF PROCESSING.')
+C***********************************************************************
+C     NOTE: DO NOT USE ICODE GREATER THAN 60 FOR SUBROUTINE
+C     KIL. OTHERWISE DUPLICATE NUMBERS WILL APPEAR FOR ERROR
+C     MESSAGES.
+ 
+      WRITE(STDOUT,10000) ABS(ICODE)
+ 
+      IFLAG = IFLAG+1
+      ICD = ABS(ICODE)
+      WRITE(STDOUT,10101) CRH5
+ 
+      IF(ICD.LT.0.OR.ICD.GT.51) THEN
+        WRITE(STDOUT,*) ' *BUG:01* INVALID ICODE IN KILC. CODE=',ICD
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+      WRITE(STDOUT,10200) MESG(ICD)
+      IF(ICD.EQ.10.OR.ICD.EQ.13) THEN
+        WRITE(STDOUT,10300)
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   OLD14
+     I                  (ADR, STDOUT,
+     O                   EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Check for old form of type 14 two-d table.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER ADR, EFLAG, STDOUT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     ADR    - address of the function table in FTAB/ITAB
+C     STDOUT   - Fortran unit number for user output and messages
+C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER L, LPFQ, LQF
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GET_TABID*16
+      INTEGER GETTBN
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETTBN, GET_TABID
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:65* Table Id=',A,' is old form TYPE 14. Replace',
+     A       ' with new form.')
+C***********************************************************************
+C     GET POINTER TO THE FIRST NON-ZERO FREE FLOW
+ 
+      LQF = ITAB(ADR+4) + 4
+ 
+C     GET POINTER TO THE PARTIAL FREE FLOW LIST
+ 
+      LPFQ = ITAB(ADR+6)
+ 
+C     ADD OFFSET BETWEEN START OF PARTIL FREE FLOW LIST AND START
+C     OF THE LIST OF UPSTREAM HEADS FOR THE FIRST NON-ZERO FREE
+C     FLOW TO THE START OF THE PARTIAL FREE FLOW LIST.
+ 
+      L = ITAB(LQF+3) + LPFQ
+ 
+      IF(FTAB(L).EQ.0.0) THEN
+        WRITE(STDOUT,50) GET_TABID(GETTBN(ADR))
+        EFLAG = 1
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   PMPCTB
+     I                   (NBLK, OPBLK, MFT,
+     O                    EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Find the addresses for the pump control tables in a pump
+C     control operation block
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, MFT, NBLK
+      INTEGER OPBLK(NBLK)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NBLK   - number of operation blocks
+C     OPBLK  - pointer into the function table storage(FTAB/ITAB) for
+C               each operation block.
+C     MFT    - maximum function table pointer value.  Same as maximum
+C               function table number
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'stdun.cmn'
+      INCLUDE 'ftable.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER BLKTYP, I, IPT, NODE, TBFALL, TBRISE
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL CHKTAB
+C***********************************************************************
+      DO 500 I=1,NBLK
+        IPT = OPBLK(I)
+ 
+C       Extract the operation block type.
+ 
+        BLKTYP = ITAB(IPT+3)
+C       Skip gate operation.
+        IF(BLKTYP.EQ.1.OR.BLKTYP.EQ.3) GOTO 500
+ 
+        IPT = IPT + 12
+ 100    CONTINUE
+          NODE = ITAB(IPT)
+          IF(NODE.EQ.0) GOTO 410
+          TBRISE = ITAB(IPT+5)
+          CALL CHKTAB
+     I               (2, STD6, FTPNT, MFT,
+     M                TBRISE,
+     O                EFLAG)
+          ITAB(IPT+5) = TBRISE
+ 
+          TBFALL = ITAB(IPT+6)
+          CALL CHKTAB
+     I               (2, STD6, FTPNT, MFT,
+     M                TBFALL,
+     O                EFLAG)
+          ITAB(IPT+6) = TBFALL
+ 
+C         Set the initial table to rising stage.
+ 
+          ITAB(IPT+7) = TBRISE
+ 
+          IPT = IPT + 17
+          GOTO 100
+ 410    CONTINUE
+ 
+ 500    CONTINUE
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   FIND_GATE_TABLE_ADDRESS
+     I                   (STDOUT, NBLK, OPBLK, MFT,
+     O                    EFLAG)
+ 
+C     + + + PURPOSE + + +
+C     Find the addresses for the control tables in a GATETABL
+C     control operation block
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER EFLAG, MFT, NBLK, STDOUT
+      INTEGER OPBLK(NBLK)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     NBLK   - number of operation blocks
+C     OPBLK  - pointer into the function table storage(FTAB/ITAB) for
+C               each operation block.
+C     MFT    - maximum function table pointer value.  Same as maximum
+C               function table number
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER BLKTYP, I, J, IPT, NODE, TAB_NUMBER, NEG_FLAG, LOW_ADRS,
+     A        HIGH_ADRS, BODY_INC, TABN, TAB_OFFSET
+
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL CHKTAB
+C***********************************************************************
+      DO 500 I=1,NBLK
+        IPT = OPBLK(I)
+ 
+C       Extract the operation block type.
+ 
+        BLKTYP = ITAB(IPT+3)
+C       Skip gate operation.
+        IF(BLKTYP.EQ.3) THEN
+ 
+          IPT = IPT + 12
+ 100      CONTINUE
+            NODE = ITAB(IPT)
+            IF(NODE.EQ.0) GOTO 410
+
+            DO 300 TAB_OFFSET=7,10,3            
+              TAB_NUMBER = ITAB(IPT+TAB_OFFSET)
+              IF(TAB_NUMBER.LT.0) THEN
+C               Catch flag for a selection table.
+                NEG_FLAG = 1
+                TAB_NUMBER = -TAB_NUMBER
+              ELSE
+                NEG_FLAG = 0
+              ENDIF
+              IF(NEG_FLAG.EQ.0) THEN
+                CALL CHKTAB
+     I                     (10, STDOUT, FTPNT, MFT,
+     M                      TAB_NUMBER,
+     O                      EFLAG)
+              ELSE
+                CALL CHKTAB
+     I                     (2, STDOUT, FTPNT, MFT,
+     M                      TAB_NUMBER,
+     O                      EFLAG)
+                IF(EFLAG.EQ.0) THEN
+C                 Selection table exists.  Check its contents to make sure
+C                 the tables referenced in it also exist!
+                  LOW_ADRS = TAB_NUMBER + OFF234
+                  HIGH_ADRS = ITAB(TAB_NUMBER)
+                  BODY_INC = 2
+
+                  DO 200 J=LOW_ADRS, HIGH_ADRS, BODY_INC
+C                   Round the table value to the nearest integer and treat
+C                   it like a table number. 
+                    TABN = INT(FTAB(J+1)+0.5)
+                    CALL CHKTAB
+     I                         (10, STDOUT, FTPNT, MFT,
+     M                          TABN,
+     O                          EFLAG)
+200               CONTINUE
+                ENDIF
+              ENDIF
+
+              IF(NEG_FLAG.EQ.0) THEN
+                ITAB(IPT+TAB_OFFSET) = TAB_NUMBER
+              ELSE
+                ITAB(IPT+TAB_OFFSET) = -TAB_NUMBER
+              ENDIF
+ 
+300         CONTINUE
+            IPT = IPT + 17
+            GOTO 100
+ 410    CONTINUE
+        ENDIF
+ 500    CONTINUE
+      RETURN
+      END
+C     ***********
+C     *         *
+C     * SET_SPOUT_OPTIONS
+C     *         *
+C     ***********
+ 
+      SUBROUTINE SET_SPOUT_OPTIONS(STDOUT, CIN, EFLAG)
+ 
+ 
+C     Set the optional special output options.
+ 
+      IMPLICIT NONE
+      CHARACTER*(*) CIN
+ 
+      INTEGER EFLAG, STDOUT
+ 
+ 
+      INCLUDE 'arsize.prm'
+      INCLUDE 'spout.cmn'
+ 
+C     Local
+ 
+      CHARACTER NAME*8
+      INTEGER I, J, IEND, IS, IT
+ 
+      INTRINSIC LEN
+C     **************************FORMATS*********************************
+50    FORMAT(' *ERR:62* ',A8,' is a bad Special Output option.')
+51    FORMAT(' *ERR:68* Too many Special Output options. Maximum',
+     A         ' allowed=',I5)
+C***********************************************************************
+      IEND = LEN(CIN)
+      IS = 1
+ 
+ 
+ 100  CONTINUE
+        CALL GETNXT
+     I             (CIN, IS,
+     O              IT, NAME)
+        IS =  IT
+        IF(NAME.NE.' ') THEN
+C         Find the name in the table.
+ 
+          CALL LSTAB
+     I              (NAME, SPOUT_ITEM_NAME, MNSPROW,
+     O                   I)
+          IF(I.EQ.0) THEN
+            WRITE(STDOUT,50) NAME
+            EFLAG = 1
+          ELSE
+            SPOUT_KNT = SPOUT_KNT + 1
+            IF(SPOUT_KNT.GT.MNSPROW) THEN
+              WRITE(STDOUT,51) MNSPROW
+              EFLAG = 1
+              SPOUT_KNT = MNSPROW
+            ENDIF
+            SPOUT_ITEM(SPOUT_KNT) = I
+ 
+          ENDIF
+        ENDIF
+        IF(IS.GE.IEND) GOTO 200
+        GOTO 100
+ 200  CONTINUE
+C     Set flags for table lookup so that it is done once
+C     if needed.
+      NEED_LOOKUP = 0
+      DO 490 J=1,SPOUT_KNT
+        IF(SPOUT_ITEM_VALUE(SPOUT_ITEM(J)).GT.10) THEN
+          NEED_LOOKUP = 1
+          GOTO 491
+        ENDIF
+490   CONTINUE
+491   CONTINUE
+ 
+      RETURN
+      END

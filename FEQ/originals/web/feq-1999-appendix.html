@@ -1,0 +1,150 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+   <title>APPENDIX 5</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+<a NAME="Head"></a>
+<br><b><font face="TIMES"><font size=+1>ENHANCEMENTS AND MODIFICATIONS
+TO THE FULL EQUATIONS (FEQ) MODEL, MARCH 1995 TO AUGUST 1999:</font></font></b>
+<br><font face="TIMES">Updates to Franz, D.D., and Melching, C.S., 1997, Full Equations (FEQ) model for the solution of the full, dynamic equations of motion for one-dimensional unsteady flow in open channels and through control structures: U.S. Geological Survey Water-Resources Investigations Report 96-
+4240, 258 p.</font>
+<p><i><font face="TIMES">Prepared by</font></i>
+<br>DELBERT D. FRANZ, Ph.D.
+<p><i>Note: This document is separate from the U.S. Geological Survey report
+by Franz and Melching (1997). This description of enhancements and modifications
+to the Full Equations Model has not been approved by the Director of the
+U.S. Geological Survey.</i>
+<p><a NAME="TOC"></a><font face="Times New Roman,Times"><font size=+1>TABLE
+OF CONTENTS</font></font>
+<br>
+<table BORDER CELLPADDING=7 >
+<tr>
+<td VALIGN=TOP WIDTH="50%"><font face="Times New Roman,Times"><a href="#introduction">INTRODUCTION</a></font></td>
+
+<td VALIGN=TOP WIDTH="62%"><a href="../index.html">RETURN TO MAIN FEQ/FEQUTL
+INDEX PAGE</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP><font face="Times New Roman,Times"><a href="../feqdoc/release.html">RELEASE
+INFORMATION</a></font></td>
+
+<td VALIGN=TOP WIDTH="62%"><font face="Times New Roman,Times">Release notes
+that are distributed with the FEQ software. Summarizes with brief descriptions
+selected modifications implemented in FEQ from March 1995 to January 1999.</font></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP ROWSPAN="9" WIDTH="38%" HEIGHT="3"><font face="Times New Roman,Times">Input
+Description Updates</font></td>
+
+<td VALIGN=TOP WIDTH="62%" HEIGHT="3"><font face="Times New Roman,Times"><a href="13_3update.html">Section
+13.3 Tributary Area Block-Tributary Area Tables</a></font></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="62%" HEIGHT="2"><font face="Times New Roman,Times"><a href="13_3aupdate.html">Section
+13.3a Tributary Area Block-Tributary Area Tables</a></font></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="62%" HEIGHT="2"><font face="Times New Roman,Times"><a href="13_5aupdate.html">Section
+13.5a Define Macros and Instructions Block-Macro and Instruction Definition</a></font></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="62%" HEIGHT="2"><font face="Times New Roman,Times"><a href="13_6_C5update.html">Section
+13.6 Network-Matrix Control Block-Network-Matrix Table, Code 5</a></font></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="62%" HEIGHT="2"><font face="Times New Roman,Times"><a href="13_6_C13update.html">Section
+13.6 Network-Matrix Control Block-Network-Matrix Table, Code 13</a></font></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="62%" HEIGHT="2"><font face="Times New Roman,Times"><a href="13_9update.html">Section
+13.9 Special-Output Locations Block-Special-Output Table</a></font></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="62%" HEIGHT="2"><font face="Times New Roman,Times"><a href="13_10update.html">Section
+13.10 Input Files Block-Input File Table</a></font></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="62%" HEIGHT="2"><font face="Times New Roman,Times"><a href="13_11update.html">Section
+13.11 Output Files Block-Output File Table</a><a href="13_11update.html#Head"></a></font></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="62%" HEIGHT="2"><font face="Times New Roman,Times"><a href="13_12update.html">Section
+13.12 Operation of Control Structures Block-Operation Tables</a></font></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="38%"><font face="Times New Roman,Times">Section Updates</font></td>
+
+<td VALIGN=TOP WIDTH="62%"><font face="Times New Roman,Times"><a href="sect8_updates.html">Section
+8.1.2.1.2.7 Conservation of Momentum/Energy: Code 13</a></font></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="38%"><font face="Times New Roman,Times"><a href="references.html">REFERENCES</a></font></td>
+
+<td VALIGN=TOP WIDTH="62%"><font face="Times New Roman,Times"></font></td>
+</tr>
+</table>
+
+<p><a NAME="introduction"></a>
+<br><font face="Times New Roman,Times">INTRODUCTION</font>
+<p>This documentation detailing enhancements and modifications to the Full
+Equations (FEQ) model has been prepared as an update to the U.S. Geological
+Survey Water Resources Investigations Report 96-4240, Full Equations (FEQ)
+Model for the Solution of the Full, Dynamic Equations of Motion for One-Dimensional
+Unsteady Flow in Open Channels and Through Control Structures (Franz and
+Melching, 1997). The version of FEQ that was documented was maintained
+at the state as of March 1995 during the documentation process so that
+the task could be completed. This update has been written order to document
+the development of FEQ since March 1995.
+<p>Enhancements and modifications are made to FEQ on a continuing basis
+for the following reasons:
+<p>1. Correction of errors detected in the software.
+<p>2. Addition of new features to the software.
+<p>3. Enhancements or modifications to existing features of the software
+as suggested by experienced users.
+<p>A maintenance file, RELEASE.TXT, is distributed with the code and contains
+brief descriptions of the modifications made to FEQ, the approximate date
+each modification was implemented, and the version number assigned to the
+software as a result of the change. This list of modifications has been
+maintained since 1994 and is the basis for this update to the documentation
+report, Franz and Melching (1997). The published documentation report was
+prepared as a hyperlinked Hypertext Markup Language (HTML) document and
+posted to the Internet in 1997.
+<p><font face="TIMES">This update documents and summarizes the modifications
+made to the software from March 1995 to January 1999. It is being distributed
+as an HTML document that is hyperlinked to the original documentation report.
+The maintenance file, RELEASE.TXT, is hyperlinked both to the original
+documentation report and to expanded text documenting the changes to the
+Section 13.0--Input Description for the Full Equations Model: Version 8.0
+(Franz and Melching, 1997), if any, caused by the changes. Any changes
+made to the main text of the documentation report to describe the modifications
+in addition to that contained in the input description is hyperlinked to
+both the original documentation report and the RELEASE.TXT file.</font>
+<p><a NAME="release.txt"></a>
+<br><font face="Times New Roman,Times">RELEASE.TXT</font>
+<p><font face="TIMES">These notes from the RELEASE.TXT file appear in an
+equal-spaced font because the ASCII input excerpts are more clear when
+presented in columns, and in some cases must always be entered in fixed
+fields. RELEASE.TXT is written in a more abbreviated and informal style
+than the detailed updates to the FEQ documentation report, and the ASCII
+text style is an indication of this.</font>
+<p><font face="TIMES">The notes have been hyperlinked to the original documentation
+report and to the updated input description, and other selected update
+sections where available.</font>
+<script type="application/javascript" src="http://www.usgs.gov/scripts/analytics/usgs-analytics.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a382cc0ec96b69f8',t:'MTc4ODkyMTMwMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

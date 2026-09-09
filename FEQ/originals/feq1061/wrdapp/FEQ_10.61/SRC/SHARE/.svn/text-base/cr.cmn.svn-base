@@ -1,0 +1,7 @@
+C     Common block to hold the carriage return character
+
+      CHARACTER*1 CR
+
+      COMMON /CRCOM/ CR
+      
+      SAVE /CRCOM/

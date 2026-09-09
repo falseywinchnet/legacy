@@ -1,0 +1,56 @@
+--- 9.98/fequtl/sinuous.for
++++ 10.61/fequtl/sinuous.for
+@@ -818,14 +818,14 @@
+      B        VTYPE(PMXNFL)
+       REAL DELTA, MINDEL, OLDOFF, RVAL(PMXNFL)
+       DOUBLE PRECISION DPVAL(PMXNFL)
+-      CHARACTER CRDNAM*4, CVAL(PMXNFL)*64, FLNTAB(PMXNFL)*8, KEY*8,
+-     A          LINE*80,  TERM(PMXNFL)*1, SINDEF*8
++      CHARACTER CRDNAM*4, CVAL(PMXNFL)*256, FLNTAB(PMXNFL)*8, KEY*8,
++     A          LINE*196,  TERM(PMXNFL)*1, SINDEF*8
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, MIN
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL ADJSIN, BINSER, CPSINU, GETVAL, INL80, LSATAB, LSTAB,
++      EXTERNAL ADJSIN, BINSER, CPSINU, GETVAL, inline, LSATAB, LSTAB,
+      A         STBOUT
+  
+ C     + + + DATA INITIALIZATIONS + + +
+@@ -885,7 +885,7 @@
+  99   FORMAT(/,' *ERR:677* Offset=',F10.2,' <= previous offset=',F10.2)
+ C***********************************************************************
+ C     GET THE SINUOSITY VALUE: LINEAR, PARABOLIC, OR CUBIC.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       WRITE(STDOUT,'(1X,A80)') LINE
+@@ -964,7 +964,7 @@
+  112  CONTINUE
+  
+  9999 CONTINUE
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         WRITE(STDOUT,'(1X,A80)') LINE
+@@ -1004,7 +1004,7 @@
+ C     O                MVAL)
+  
+            CALL GETVAL
+-     I                (STDOUT, LINE(5:80), MXNSIN, OPT,
++     I                (STDOUT, LINE(5:), MXNSIN, OPT,
+      O                 VTYPE, IVAL, RVAL, DPVAL, CVAL, CLEN, 
+      O                 EFLAG2, TERM, TERML, TERMCLS,
+      O                 MVAL)
+@@ -1300,7 +1300,7 @@
+ C     O                  VTYPE, IVAL, RVAL, DPVAL, CVAL, CLEN, EFLAG2,
+ C     O                  MVAL)
+            CALL GETVAL
+-     I                (STDOUT, LINE(5:80), MXNSIN, OPT,
++     I                (STDOUT, LINE(5:), MXNSIN, OPT,
+      O                 VTYPE, IVAL, RVAL, DPVAL, CVAL, CLEN, 
+      O                 EFLAG2, TERM, TERML, TERMCLS,
+      O                 MVAL)

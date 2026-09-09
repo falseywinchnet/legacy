@@ -1,0 +1,23 @@
+--- 9.98/fequtl/culvertc.for
++++ 10.61/fequtl/culvertc.for
+@@ -626,7 +626,7 @@
+ C     supercritical flow was encountered.  It is believed that the
+ C     supercritical flow is physically caused by a steep slope.
+ C     The last valid depth is contained in YVECSB(IS).  SFLAG = -1:
+-C     computations not completed supercritical flow was encountered
++C     computations not completed, supercritical flow was encountered
+ C     and it is believed to be caused by DX being too large. The last
+ C     valid depth is again in YVECSB(IS).  SFLAG = -2: computations
+ C     not completed supercritical flow was encountered and it
+@@ -759,8 +759,9 @@
+         IF(QN.GT.QCR) THEN
+ C         INITIAL SLOPE IS SUPER CRITICAL.  NO SUB-CRITICAL SOLUTION
+ C         EXISTS WITH INITIAL CRITICAL DEPTH.
+-C          WRITE(STDOUT,*) ' SFPSBE: INITIAL SLOPE IS SUPERCRITICAL'
+-          SFLAG = 0
++          WRITE(STDOUT,*) ' SFPSBE: Dns invert slope is super critical.'
++c          SFLAG = 0   Change to 2 on 27 Feb. 2008.  
++          SFLAG = 2
+           IS = ID
+ C          WRITE(STDOUT,*) ' ERROR RETURN: IS=',IS,' SFLAG=',SFLAG
+           RETURN

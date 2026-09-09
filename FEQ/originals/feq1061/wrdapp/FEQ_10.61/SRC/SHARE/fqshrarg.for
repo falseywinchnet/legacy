@@ -1,0 +1,98 @@
+      
+C     ***********
+C     *         *
+C     * GETARG  *
+C     *         *
+C     ***********
+
+      SUBROUTINE   GETARG
+     I                   (N,
+     O                    RESULT)
+
+C     + + + PURPOSE + + +
+C     Get the argument number n from the list of command line
+C     names found by IARGC.
+
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER N
+      CHARACTER RESULT*(*)
+
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     N      - number of argument to get
+C     RESULT - item found
+
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'clcom.cmn'
+C***********************************************************************
+      IF(NARG.EQ.0) THEN
+        WRITE(*,*) ' BUG. SEEKING COMMAND LINE ARGUMENT WHEN NONE',
+     A             ' HAVE BEEN FOUND.'
+
+      ELSEIF(N.GT.NARG) THEN
+        WRITE(*,*) ' BUG. SEEKING COMMAND LINE ARGUMENT BEYOND END',
+     A             ' OF COMMAND LINE.'
+
+      ELSEIF(N.EQ.1) THEN
+        WRITE(*,*) ' BUG. SEEKING COMMAND LINE ARGUMENT 1.  DOES NOT',
+     A             ' EXIST!'
+
+      ELSE
+        RESULT = NAMVEC(N)
+        RETURN
+      ENDIF
+      STOP 'Abnormal stop: errors found.'
+      END
+
+C     ***********
+C     *         *
+C     * IARGC   *
+C     *         *
+C     ***********
+ 
+      INTEGER FUNCTION   IARGC()
+
+C     + + + PURPOSE + + +
+
+      IMPLICIT NONE
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'clcom.cmn'
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC LEN
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL NXTTOK
+C***********************************************************************
+C     USE THE SVS NUMBERING SCHEME FOR COMMAND LINE ARGUMENTS.
+C     THE COMMAND IS CONSIDERED TO BE ARGUMENT 1. THUS THE FIRST
+C     ITEM OF INTEREST TO US IS THE SECOND ARGUMENT.  THE LAHEY
+C     COMPILER DOES NOT PLACE THE COMMAND IN THE COMMAND LINE STRING
+C     AND THUS WE CANNOT ACCESS THE STRING. MORG IN ARSIZE SHOULD BE
+C     1.
+      NARG = 1
+ 
+      NXT = 1
+C     GET THE COMMAND LINE STRING USING THE LAHEY COMPILER CALL.
+ 
+      CALL GETCL(CL)
+C      WRITE(*,50) CL
+C50    FORMAT(' CL=',A)
+      IEND = LEN(CL)
+ 
+ 100  CONTINUE
+        NARG = NARG + 1
+        CALL NXTTOK
+     I             (CL,
+     M              NXT,
+     O              NAMVEC(NARG))
+        IF(NAMVEC(NARG).NE.' ') THEN
+C          WRITE(*,*) ' IARGC: NARG=',NARG,' NAMVEC(NARG)=',
+C     A               NAMVEC(NARG)
+          GOTO 100
+        ENDIF
+      NARG = NARG - 1
+C     WRITE(*,*) ' EXIT FROM IARGC: NARG=',NARG
+      IARGC = NARG
+      RETURN
+      END

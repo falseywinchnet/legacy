@@ -1,0 +1,124 @@
+C     Create a routine that can be called at runtime
+C     that will report the compiler and the operating
+C     system.  Also include a routine that will 
+C     report the operating system when called at runtime. 
+C     Fortran has not builtin means for reporting this 
+C     info so we create a system at compile time 
+C     that will do that.  A file file like this one
+C     will exist for each compiler-os supported.  The
+C     script or batch file used to compile will then 
+C     select the correct one to include. 
+
+C
+C
+C
+      INTEGER FUNCTION WHAT_OS()
+
+C     Return a coded value that gives the OS. 
+
+      IMPLICIT NONE
+      INTEGER MS, LINUX
+      PARAMETER (MS=1, LINUX=2)
+      
+
+C***********************************************************************
+      WHAT_OS = MS
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION WHAT_COMPILER()
+
+C     Return a coded value that gives the compiler. 
+
+      IMPLICIT NONE
+      INTEGER LF90, LF95_MS, LF95_LNX, PGI, INTEL, GNU77
+      PARAMETER (LF90=1, LF95_MS=2, LF95_LNX=3, PGI=4, INTEL=5, GNU77=6)
+      
+
+C***********************************************************************
+      WHAT_COMPILER = LF95_MS
+      RETURN
+      END
+C
+C
+C
+      INTEGER FUNCTION WHAT_PREFETCH()
+
+C     Return a coded value that gives the prefetch option. 
+
+      IMPLICIT NONE
+      INTEGER NONE, LEVEL1, LEVEL2
+      PARAMETER (NONE=1, LEVEL1=2, LEVEL2=3)
+      
+
+C***********************************************************************
+      WHAT_PREFETCH = LEVEL1
+      RETURN
+      END
+C
+C
+C
+
+      INTEGER FUNCTION WHAT_PRECISION()
+
+C     Return a coded value that gives the prefetch option. 
+
+      IMPLICIT NONE
+      INTEGER SINGLE, DOUBLE
+      PARAMETER (SINGLE=1, DOUBLE=2)
+      
+
+C***********************************************************************
+      WHAT_PRECISION = SINGLE
+      RETURN
+      END
+
+C
+C
+C     
+      SUBROUTINE WHAT_EXECUTABLE(STDOUT)
+
+C     Report the compiler,the OS, and pre-fetch options for this executable.
+      IMPLICIT NONE
+
+      INTEGER STDOUT
+
+C     Local
+      INTEGER OS, COMPILER, PRECISION, PREFETCH
+
+      CHARACTER*40 OS_NAME(2), COMPILER_NAME(6), PRECISION_NAME(2)
+      CHARACTER*60 PREFETCH_NAME(3)
+
+C     Called routines
+      INTEGER WHAT_OS, WHAT_COMPILER, WHAT_PREFETCH, WHAT_PRECISION
+
+      DATA OS_NAME/'MS Windows', 'Linux'/
+      DATA COMPILER_NAME/'Lahey F90-V 4.5i','Lahey F95-V 5.70b',
+     A   'Lahey F95-V 6.10d','PGI F90 4.0','Intel 6.0','GNU77'/
+      DATA PREFETCH_NAME/
+     A 'No prefetch. For Pentium II and greater and clones.',
+     B    'Prefetch level 1. For Pentium III, Athlon. Not Pentium 4.',
+     C    'Prefetch level 2. For Pentium III, Athlon. Not Pentium 4.'/
+      DATA PRECISION_NAME/
+     A 'Single',
+     B 'Double'/ 
+
+C     **************************Formats*********************************
+50    FORMAT(/,' Report on executable:',/,
+     A 5X,' Operating system is: ',A,/,
+     B 5X,' Compiler used was: ',A,/,
+     C 5X,' Solution precision: ',A,/,
+     D 5X,' Prefetch option used was: ',A)
+C***********************************************************************
+      OS = WHAT_OS()
+      COMPILER = WHAT_COMPILER()
+      PRECISION = WHAT_PRECISION()
+      PREFETCH = WHAT_PREFETCH()
+
+      WRITE(STDOUT,50) OS_NAME(OS), COMPILER_NAME(COMPILER),
+     A     PRECISION_NAME(PRECISION), PREFETCH_NAME(PREFETCH)
+
+      RETURN
+      END

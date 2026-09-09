@@ -1,0 +1,323 @@
+{
+  "release": "1061",
+  "created_utc": "2026-09-09T02:36:48.614595+00:00",
+  "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
+  "wine": "wine-11.4",
+  "inputs": [
+    {
+      "path": "data/CULVERT.IN",
+      "bytes": 8263,
+      "sha256": "fbd6ce4963c88319bf79469188e34422eef5d22c58a02f9ecb5ff483287a40b0"
+    },
+    {
+      "path": "data/FEQEX1",
+      "bytes": 13850,
+      "sha256": "29c0db7065d86cb04206b35aaaf932e260126b9c00de8034e4d61cf99eae24b4"
+    },
+    {
+      "path": "data/FEQEX2",
+      "bytes": 8996,
+      "sha256": "ef75e6c0c063a155e495a5f0f8b871fd2dc4e47f5297c7e6250236efa11b743c"
+    },
+    {
+      "path": "data/FEQEX3",
+      "bytes": 9767,
+      "sha256": "f85f8cb1566c6cfcb68739e7cb5dac3896d0b7c541746c6cd45cf1f08ff31ab7"
+    },
+    {
+      "path": "data/FEQEX4",
+      "bytes": 7604,
+      "sha256": "e48e0e0ea8329c9b1e732ec77ab08773984e39e13c4ffd449b443ff44b1c5fa6"
+    },
+    {
+      "path": "data/MODEL01.INP",
+      "bytes": 7363,
+      "sha256": "07764dad7c1bc3943ee5eb8da7bcc239cd5eeddcaa0ea092db83f4b860418df8"
+    },
+    {
+      "path": "data/TYPE5.TAB",
+      "bytes": 11513,
+      "sha256": "dd15462267c4a24caa402e6257e0f903c3b677dbf48344c8eb7021fe8acd81b1"
+    },
+    {
+      "path": "data/UTLEXM.IN",
+      "bytes": 60045,
+      "sha256": "53b079f89acbf771ed164c4bfbeec888426ee17e33073778b963f65abb1d3ea8"
+    },
+    {
+      "path": "data/WEIRTABS",
+      "bytes": 4689,
+      "sha256": "e818590713f9878ded0de329fd47142df35bd9c0f73ce0c161b7593c5892ee1d"
+    },
+    {
+      "path": "data/culvert.out",
+      "bytes": 141152,
+      "sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72"
+    },
+    {
+      "path": "data/culvert.tab",
+      "bytes": 6015,
+      "sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade"
+    },
+    {
+      "path": "data/feqex1.out",
+      "bytes": 1693210,
+      "sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e"
+    },
+    {
+      "path": "data/feqex1.out.spi",
+      "bytes": 1836,
+      "sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc"
+    },
+    {
+      "path": "data/feqex1.out.wsq",
+      "bytes": 129731,
+      "sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b"
+    },
+    {
+      "path": "data/feqex2.out",
+      "bytes": 876444,
+      "sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db"
+    },
+    {
+      "path": "data/feqex2.out.spi",
+      "bytes": 1132,
+      "sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60"
+    },
+    {
+      "path": "data/feqex2.out.wsq",
+      "bytes": 15809,
+      "sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b"
+    },
+    {
+      "path": "data/feqex3.out",
+      "bytes": 1340610,
+      "sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96"
+    },
+    {
+      "path": "data/feqex3.out.spi",
+      "bytes": 1132,
+      "sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41"
+    },
+    {
+      "path": "data/feqex3.out.wsq",
+      "bytes": 23579,
+      "sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2"
+    },
+    {
+      "path": "data/feqex4.out",
+      "bytes": 1371793,
+      "sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650"
+    },
+    {
+      "path": "data/feqex4.out.spi",
+      "bytes": 1132,
+      "sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6"
+    },
+    {
+      "path": "data/feqex4.out.wsq",
+      "bytes": 23579,
+      "sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff"
+    },
+    {
+      "path": "data/utlexm.chx",
+      "bytes": 12998,
+      "sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af"
+    },
+    {
+      "path": "data/utlexm.out",
+      "bytes": 775740,
+      "sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de"
+    },
+    {
+      "path": "data/utlexm.tab",
+      "bytes": 135953,
+      "sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705"
+    }
+  ],
+  "binaries": [
+    {
+      "path": "bin/feq.exe",
+      "bytes": 1857892,
+      "sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399"
+    },
+    {
+      "path": "bin/fequtl.exe",
+      "bytes": 2094240,
+      "sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2"
+    }
+  ],
+  "cases": [
+    {
+      "case": "feqex1",
+      "program": "feq",
+      "arguments": [
+        "..\\data\\feqex1",
+        "feqex1.out"
+      ],
+      "working_directory": "test",
+      "returncode": 0,
+      "elapsed_seconds": 5.293679791968316,
+      "outputs": [
+        {
+          "path": "feqex1.out",
+          "bytes": 1693210,
+          "sha256": "18d8bbfbe8cd5f809211df4ce014c546ad181950ec71323169bc6fd6dcaa6a5d"
+        },
+        {
+          "path": "feqex1.out.spi",
+          "bytes": 1836,
+          "sha256": "68ce2d8b5112ce7485c84b844c09b1b96b4e22c85b6404753278303c70e18823"
+        },
+        {
+          "path": "feqex1.out.wsq",
+          "bytes": 129731,
+          "sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b"
+        }
+      ],
+      "process_completed": true
+    },
+    {
+      "case": "feqex2",
+      "program": "feq",
+      "arguments": [
+        "..\\data\\feqex2",
+        "feqex2.out"
+      ],
+      "working_directory": "test",
+      "returncode": 0,
+      "elapsed_seconds": 4.979361625155434,
+      "outputs": [
+        {
+          "path": "feqex2.out",
+          "bytes": 876444,
+          "sha256": "6edf186ce78e92db6ab2e5b7f5cab8750355617929e72cd302b3afc1a3b72b68"
+        },
+        {
+          "path": "feqex2.out.spi",
+          "bytes": 1132,
+          "sha256": "b941f226146ac75a66d706c5cdc551d4f4617d51a613f26c237e73887aebeb16"
+        },
+        {
+          "path": "feqex2.out.wsq",
+          "bytes": 15809,
+          "sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b"
+        }
+      ],
+      "process_completed": true
+    },
+    {
+      "case": "feqex3",
+      "program": "feq",
+      "arguments": [
+        "..\\data\\feqex3",
+        "feqex3.out"
+      ],
+      "working_directory": "test",
+      "returncode": 0,
+      "elapsed_seconds": 5.081901833880693,
+      "outputs": [
+        {
+          "path": "feqex3.out",
+          "bytes": 1340610,
+          "sha256": "0cb5bf719f15c5804015e1ecc66625b17596e6637e2258d9d8ef6359562e7062"
+        },
+        {
+          "path": "feqex3.out.spi",
+          "bytes": 1132,
+          "sha256": "a13996f87df015e820bb59c1545cf8f1ba06636be4020c5c64f92689d75d072a"
+        },
+        {
+          "path": "feqex3.out.wsq",
+          "bytes": 23579,
+          "sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2"
+        }
+      ],
+      "process_completed": true
+    },
+    {
+      "case": "feqex4",
+      "program": "feq",
+      "arguments": [
+        "..\\data\\feqex4",
+        "feqex4.out"
+      ],
+      "working_directory": "test",
+      "returncode": 0,
+      "elapsed_seconds": 5.121286542154849,
+      "outputs": [
+        {
+          "path": "feqex4.out",
+          "bytes": 1371793,
+          "sha256": "427ff2cd8ddf2753dbf981e39101fa395b20b6c3458666955ac5cb0efcb9073c"
+        },
+        {
+          "path": "feqex4.out.spi",
+          "bytes": 1132,
+          "sha256": "fc99d6e1a58227b0e062ce36834e3043c5870918d4e402dd56c5945e10571158"
+        },
+        {
+          "path": "feqex4.out.wsq",
+          "bytes": 23579,
+          "sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff"
+        }
+      ],
+      "process_completed": true
+    },
+    {
+      "case": "utlexm",
+      "program": "fequtl",
+      "arguments": [
+        "..\\data\\utlexm.in",
+        "utlexm.out",
+        "utlexm.tab"
+      ],
+      "working_directory": "test",
+      "returncode": 0,
+      "elapsed_seconds": 5.80286950012669,
+      "outputs": [
+        {
+          "path": "utlexm.chx",
+          "bytes": 12998,
+          "sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af"
+        },
+        {
+          "path": "utlexm.out",
+          "bytes": 775740,
+          "sha256": "d5288e31973afb94064e07c2a421c158bfce56fe620d9216baa6d647e12c96de"
+        },
+        {
+          "path": "utlexm.tab",
+          "bytes": 135953,
+          "sha256": "e27d9d9c99822504327043dd8ce4acdf6722243de6f9ec208b2ea80346523492"
+        }
+      ],
+      "process_completed": true
+    },
+    {
+      "case": "culvert",
+      "program": "fequtl",
+      "arguments": [
+        "..\\data\\culvert.in",
+        "culvert.out",
+        "culvert.tab"
+      ],
+      "working_directory": "test",
+      "returncode": 0,
+      "elapsed_seconds": 5.13776637497358,
+      "outputs": [
+        {
+          "path": "culvert.out",
+          "bytes": 141152,
+          "sha256": "30594b2c69f988b51598afddaefd0db221bd77ccd506bf0acb05d46701aa52d1"
+        },
+        {
+          "path": "culvert.tab",
+          "bytes": 6015,
+          "sha256": "e9b26a3bcb11302c3329dcbd24a654921584dc23d84bec998f65cd09c4557523"
+        }
+      ],
+      "process_completed": true
+    }
+  ]
+}

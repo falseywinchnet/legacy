@@ -1,0 +1,38 @@
+C**********************************************************************
+
+      COMMON/ENRSLT/ FTQMAX, FTQMIN, FTZMAX, FNQMAX, FNZMAX, FNQMIN,
+     A               TOSTORE, FLOWNODE, OTHERNODE,
+     B               QSTORE, ZSTORE
+
+      INTEGER TOSTORE(MNEX), FLOWNODE(MNEX), OTHERNODE(MNEX)
+
+      REAL FNQMAX(MNEX), FNZMAX(MNEX), FNQMIN(MNEX), QSTORE(MNEX),
+     A     ZSTORE(MNEX)
+
+      DOUBLE PRECISION FTQMAX(MNEX), FTQMIN(MNEX), FTZMAX(MNEX)
+
+C**********************************************************************
+
+C     Definition of identifiers
+
+C     FTQMAX - time of maximum flow at a free node
+C     FTQMIM - time of minimum flow at a free node
+C     FTZMAX - time of maximium elevation at a free node
+
+C     FNQMAX - maximum flow at a free node
+C     FNZMAX - maximum elevation at a free node
+C     FNQMIN - minimum flow at a free node
+
+C     FLOWNODE - flow node number (internal) for flow node
+C     OTHERNODE- other node number (internal) for the other head node
+C     TOSTORE - vector of pointers (vector indices) to the location 
+C              where the flow at the flow node and the elevation at 
+C              the other node are stored for a 2-D control structure
+C              using  a Code 5 Type 6 instruction in 
+C              the Network Matrix Control Input.
+C              Used to check state of 2-D tables  at the end of a run.
+C     QSTORE - vector of flows at the flow node for the control structure
+C               of Code 5 Type 6.  This is the flow at the time the maximun
+C               elevation occurs at the node in FNZMAX
+C     ZSTORE- vector of elevation at the other node  at the time of
+C              maximum elevation at the node in FNZMAX.

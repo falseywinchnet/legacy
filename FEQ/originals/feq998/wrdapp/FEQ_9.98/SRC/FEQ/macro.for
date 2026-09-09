@@ -1,0 +1,866 @@
+C     ***********
+C     *         *
+C     * LSA_GLOBAL
+C     *         *
+C     ***********
+
+      SUBROUTINE   LSA_GLOBAL
+     I                       (STDOUT, KEY, 
+     M                        CLASS, VALUE, 
+     O                        INDEX, FLAG)
+ 
+C     + + + PURPOSE + + +
+C     Do a linear search for KEY in the entries in the global
+C     symbol table and add to the table if KEY is not found.
+C     Otherwise, return the index to KEY and the value of
+C     CLASS and VALUE found for the symbol in KEY. 
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER FLAG, INDEX, STDOUT, CLASS, VALUE
+      CHARACTER KEY*16
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - standard output unit for user messages
+C     KEY    - search value
+C     CLASS  - Class code for the symbol.
+C     VALUE  - numeric value for the symbol.
+C     INDEX  - index into the table at the match point
+C     FLAG  -  0: KEY not in the table; 1: Key in the table;
+C              2: error encountered.
+
+      INCLUDE 'symbol.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:302* Too many entries in global symbol table.',
+     A         ' Number=',I5)
+C***********************************************************************
+      DO 100 I=1,LAST_SYMBOL
+        IF(KEY.EQ.SYMBOL(I)) THEN
+C         FOUND MATCH
+          INDEX = I
+          CLASS = SYMBOL_CLASS(I)
+          VALUE = SYMBOL_VALUE(I)
+          FLAG = 1
+          RETURN
+        ENDIF
+ 100  CONTINUE
+C     MATCH NOT FOUND
+      LAST_SYMBOL = LAST_SYMBOL + 1
+
+      IF(LAST_SYMBOL.GT.MAX_SYMBOL) THEN
+        WRITE(STDOUT,50) LAST_SYMBOL
+        FLAG = 2
+        LAST_SYMBOL = MAX_SYMBOL
+      ENDIF
+      FLAG = 0
+      SYMBOL(LAST_SYMBOL) = KEY
+      SYMBOL_CLASS(LAST_SYMBOL) = CLASS
+      SYMBOL_VALUE(LAST_SYMBOL) = VALUE
+      INDEX = LAST_SYMBOL
+      RETURN
+      END
+C     ***********
+C     *         *
+C     * LS_GLOBAL
+C     *         *
+C     ***********
+
+      SUBROUTINE   LS_GLOBAL
+     I                       (KEY, 
+     O                        CLASS, VALUE, INDEX)
+ 
+C     + + + PURPOSE + + +
+C     Do a linear search for KEY in the entries in the global
+C     symbol table and return its class, value, and index
+C     if it is found.  Otherwise return a zero value for
+C     index.  
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER INDEX, CLASS, VALUE
+      CHARACTER KEY*16
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     KEY    - search value
+C     CLASS  - Class code for the symbol.
+C     VALUE  - numeric value for the symbol.
+C     INDEX  - index into the table at the match point
+
+      INCLUDE 'symbol.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I
+ 
+C***********************************************************************
+      DO 100 I=1,LAST_SYMBOL
+        IF(KEY.EQ.SYMBOL(I)) THEN
+C         Found match
+          INDEX = I
+          CLASS = SYMBOL_CLASS(I)
+          VALUE = SYMBOL_VALUE(I)
+          RETURN
+        ENDIF
+ 100  CONTINUE
+C     Match not found.
+      INDEX = 0
+      RETURN
+      END
+
+
+
+C     ***********
+C     *         *
+C     * IDENTIFIER_REPLACE
+C     *         *
+C     ***********
+      
+      SUBROUTINE IDENTIFIER_REPLACE(STDOUT, DUMMY, DUMMY_LEN, ACTUAL, 
+     I                               ACTUAL_LEN, ISTART, MAX_LINE_LEN,
+     M                               LINE, LINE_LEN, EFLAG)
+
+C     Find and replace any occurences of an identifier, DUMMY, of 
+C     length, DUMMY_LEN, with the identifer in ACTUAL, of length
+C     ACTUAL_LEN, in LINE, of length, LINE_LEN, on input, starting
+C     at character number, ISTART.  On return, LINE, contains the
+C     updated string, and LINE_LEN contains the new length of the
+C     possibly changed line.  EFLAG=0 if no error, EFLAG=1 if the
+C     substitution causes the length of LINE to exceed 
+C     MAX_LINE_LEN. 
+
+      IMPLICIT NONE
+
+      INTEGER ACTUAL_LEN, DUMMY_LEN, ISTART, LINE_LEN, MAX_LINE_LEN, 
+     A        EFLAG, STDOUT
+
+      CHARACTER LINE*196, DUMMY*16, ACTUAL*16
+
+C     Local
+
+      INTEGER I, IS, SHIFT, NEW_LINE_LEN, REJECT, INEXT, TEMP_LEN
+
+      CHARACTER CHR*1, TEMP*196
+
+C     Called program units/intrinsics
+
+      INTRINSIC INDEX
+C***********************************************************************
+C      WRITE(STDOUT,*) ' '
+C      WRITE(STDOUT,*) ' Entering Idenifier_replace:'
+C      WRITE(STDOUT,*) ' ACTUAL=',ACTUAL
+C      WRITE(STDOUT,*) ' ACTUAL_LEN=',ACTUAL_LEN
+C      WRITE(STDOUT,*) ' DUMMY=',DUMMY
+C      WRITE(STDOUT,*) ' DUMMY_LEN=',DUMMY_LEN
+C      WRITE(STDOUT,*) ' MAX_LINE_LEN=',MAX_LINE_LEN
+C      WRITE(STDOUT,*) ' LINE=',LINE
+C      WRITE(STDOUT,*) ' LINE_LEN=',LINE_LEN
+C      WRITE(STDOUT,*) ' Starting processing:'
+
+            
+      IS = ISTART
+      SHIFT = ACTUAL_LEN - DUMMY_LEN
+100   CONTINUE
+        IF(IS.LE.LINE_LEN) THEN
+C         Some characters still remain. 
+          I = INDEX(LINE(IS:LINE_LEN), DUMMY(1:DUMMY_LEN))
+C          WRITE(STDOUT,*) ' I before substring adjustment=',I
+          IF(I.GT.0) THEN
+C           Adjust value of I for substring.
+            I = I + IS - 1
+C            WRITE(STDOUT,*) ' I after substring adjustment=',I,
+C     A                 ' LINE(I:I)=',LINE(I:I)
+C           Now verify that the occurrence is really an 
+C           identifier and not a sequence of characters embedded
+C           in a larger string. 
+
+            REJECT = 2
+            IF(I.EQ.1) THEN
+C             Start of LINE is valid delimiter identifier
+              REJECT = REJECT - 1
+            ELSE
+              CHR = LINE(I-1:I-1)
+              IF(CHR.EQ.' '.OR.CHR.EQ.'+'.OR.CHR.EQ.'-'.OR.
+     A           CHR.EQ.'|'.OR.CHR.EQ.'*') THEN
+                REJECT = REJECT - 1
+              ENDIF
+            ENDIF
+
+C           Find the index of the first character following DUMMY
+            INEXT = I + DUMMY_LEN
+            IF(INEXT.GT.LINE_LEN) THEN
+C             End of line is valid delimiter for an identifier
+              REJECT = REJECT - 1
+            ELSE
+              CHR = LINE(INEXT:INEXT)
+              IF(CHR.EQ.' '.OR.CHR.EQ.'+'.OR.CHR.EQ.'-'.OR.
+     A           CHR.EQ.'|'.OR.CHR.EQ.'*') THEN
+                REJECT = REJECT - 1
+              ENDIF
+            ENDIF
+            IF(REJECT.NE.0) THEN
+C             Go back and search again. 
+              IS = INEXT
+              GOTO 100
+            ENDIF
+C           DUMMY was found as a valid identifier.
+
+            IF(SHIFT.EQ.0) THEN
+C             The symbols are of the same length.
+C             Find the character that is or would be to the immediate
+C             right of the new symbol.  This may be beyond the 
+C             end of the new line length. 
+              IS = I + ACTUAL_LEN
+              LINE(I:IS-1) = ACTUAL(1:ACTUAL_LEN)
+              LINE_LEN = LINE_LEN + SHIFT
+C              WRITE(STDOUT,*) 'SHIFT=0: After replace: Line is:'
+C              WRITE(STDOUT,*) LINE
+C              WRITE(STDOUT,*) ' IS=',IS
+              IF(LINE_LEN.GT.MAX_LINE_LEN) THEN
+                EFLAG = 1
+                LINE_LEN = MAX_LINE_LEN
+              ENDIF
+            ELSEIF(I+DUMMY_LEN-1.EQ.LINE_LEN) THEN
+C             There is nothing to the right of the symbol being 
+C             replaced.
+              IS = I + ACTUAL_LEN
+              LINE(I:) = ACTUAL(1:ACTUAL_LEN)
+              LINE_LEN = LINE_LEN + SHIFT
+              IF(LINE_LEN.GT.MAX_LINE_LEN) THEN
+                EFLAG = 1
+                LINE_LEN = MAX_LINE_LEN
+              ENDIF
+            ELSE
+C             The symbol being replaced is not at the end of the
+C             line and its length differs from the replacing symbol.
+C             There are always some characters to the right of the
+C             existing symbol that need to be shifted. 
+
+              NEW_LINE_LEN = LINE_LEN + SHIFT
+              IF(NEW_LINE_LEN.GT.MAX_LINE_LEN) THEN
+                EFLAG = 1
+                NEW_LINE_LEN = MAX_LINE_LEN
+              ELSE
+C               Compute the start point for the search after
+C               symbol replacement.  
+                IS = I + ACTUAL_LEN
+C                WRITE(STDOUT,*) ' IS=',IS,' NEW_LINE_LEN=',NEW_LINE_LEN
+C                WRITE(STDOUT,*) ' I+DUMMY_LEN=',I+DUMMY_LEN,
+C     A                          ' LINE_LEN=', LINE_LEN
+C                WRITE(STDOUT,*) ' Line before shift:',LINE(1:LINE_LEN)
+C                WRITE(STDOUT,*) ' Tail to shift=',
+C     A                           LINE(I+DUMMY_LEN:LINE_LEN)
+                TEMP_LEN = LINE_LEN - (I+DUMMY_LEN) + 1
+                TEMP = LINE(I+DUMMY_LEN:LINE_LEN)
+C                WRITE(STDOUT,*) ' TEMP=',TEMP(1:TEMP_LEN)
+C                WRITE(STDOUT,*) ' TEMP_LEN=',TEMP_LEN
+                LINE(IS:) = TEMP(1:TEMP_LEN)
+C                WRITE(STDOUT,*) ' Line after shift:',
+C     A                           LINE(1:NEW_LINE_LEN)
+C               Insert the new identifier
+                LINE(I:IS-1) = ACTUAL(1:ACTUAL_LEN)
+C                WRITE(STDOUT,*) ' Line after insert:',
+C     A                               LINE(1:NEW_LINE_LEN)
+
+                LINE_LEN = NEW_LINE_LEN
+              ENDIF
+              GOTO 100
+            ENDIF
+            GOTO 100
+          ENDIF
+        ENDIF
+C        WRITE(STDOUT,*) ' At exit: LINE=',LINE(1:LINE_LEN),
+C     A                  ' LINE_LEN=', LINE_LEN
+      RETURN
+      END
+
+
+C     ***********
+C     *         *
+C     * MACRO_SYMBOL_INIT
+C     *         *
+C     ***********
+
+      SUBROUTINE MACRO_SYMBOL_INIT()
+
+C     Initialize the macro instruction and symbol table facility. 
+
+      IMPLICIT NONE
+
+      INCLUDE 'macro.cmn'
+      INCLUDE 'symbol.cmn'
+
+C     Local
+      INTEGER  VARIABLE_ARGUMENTS_CLASS
+      PARAMETER (VARIABLE_ARGUMENTS_CLASS=3)
+
+C**********************************************************************
+C     Clear the top of stack pointer.
+      MACRO_STACK_TOP = 0
+
+
+C     Clear the various counters
+      LAST_ARG = 0
+      LAST_MACRO = 0
+      LAST_BODY = 0
+
+C     Add the special instructions for sum of flows being zero.
+      LAST_SYMBOL = 1
+      SYMBOL(LAST_SYMBOL) = 'SUMQ'
+      SYMBOL_CLASS(LAST_SYMBOL) = VARIABLE_ARGUMENTS_CLASS
+      SYMBOL_VALUE(LAST_SYMBOL) = 2
+
+      LAST_SYMBOL = 2
+      SYMBOL(LAST_SYMBOL) = 'SQ'
+      SYMBOL_CLASS(LAST_SYMBOL) = VARIABLE_ARGUMENTS_CLASS
+      SYMBOL_VALUE(LAST_SYMBOL) = 2
+
+      LAST_SYMBOL = 3
+      SYMBOL(LAST_SYMBOL) = 'QSUM'
+      SYMBOL_CLASS(LAST_SYMBOL) = VARIABLE_ARGUMENTS_CLASS
+      SYMBOL_VALUE(LAST_SYMBOL) = 2
+
+      LAST_SYMBOL = 4
+      SYMBOL(LAST_SYMBOL) = 'SumQ'
+      SYMBOL_CLASS(LAST_SYMBOL) = VARIABLE_ARGUMENTS_CLASS
+      SYMBOL_VALUE(LAST_SYMBOL) = 2
+
+      LAST_SYMBOL = 5
+      SYMBOL(LAST_SYMBOL) = 'sumq'
+      SYMBOL_CLASS(LAST_SYMBOL) = VARIABLE_ARGUMENTS_CLASS
+      SYMBOL_VALUE(LAST_SYMBOL) = 2
+
+      RETURN
+      END
+
+
+
+
+C     ***********
+C     *         *
+C     * DEFINE_MACRO
+C     *         *
+C     ***********
+
+      SUBROUTINE DEFINE_MACRO(STDIN, STDOUT, EFLAG)
+
+C     Input the macro definitions. 
+
+      IMPLICIT NONE
+
+      INTEGER STDIN, STDOUT, EFLAG
+
+      INCLUDE 'macro.cmn'
+
+C     Local
+
+C     Local variables
+
+      CHARACTER LINE*200, LONG_LINE*196, MACRO_FILE_NAME*64
+
+      INTEGER MAX_NVAL
+
+      PARAMETER (MAX_NVAL=30)
+
+      INTEGER  CHRVAL, INTVAL
+      PARAMETER(INTVAL=1, CHRVAL=4)
+
+      INTEGER MACRO_CLASS, INSTRUCTION_CLASS, VARIABLE_ARGUMENTS_CLASS
+      PARAMETER (MACRO_CLASS=1, INSTRUCTION_CLASS=2,
+     A           VARIABLE_ARGUMENTS_CLASS=3)
+
+      LOGICAL THERE
+
+      INTEGER NVAL, OPT, I, IT,  MACRO_FLAG, FILE_FLAG, INPUT_UNIT, 
+     A        FILE_UNIT, CLASS, VALUE, FLAG, MACRO_LINES, INDX, N,
+     B        MACRO_NAME_LENGTH
+      
+      INTEGER CLEN(MAX_NVAL), IVAL(MAX_NVAL), ITEM_TYPE(MAX_NVAL),
+     A        TERML(MAX_NVAL), TERMCLS(MAX_NVAL)
+      REAL RVAL(MAX_NVAL)
+      REAL*8 DPVAL(MAX_NVAL)
+      CHARACTER CVAL(MAX_NVAL)*64, TERM(MAX_NVAL)*1, MACRO_NAME*16
+
+C     Called program units and intrinsics.
+      INTEGER LENSTR, GET_UNIT
+
+      EXTERNAL TO_UPPER, INL196, GETVAL, LSA_GLOBAL, LENSTR, GET_UNIT,
+     A         FREE_UNIT
+
+      INTRINSIC INDEX
+C     ******************************FORMATS*****************************
+50    FORMAT(/,' *ERR:303* File named:',A,/,5X,' not found. Check',
+     A         ' spelling of macro instruction file.')
+52    FORMAT(/,' *ERR:304* File name:',A,/,5X,'found in current',
+     A         ' macro instruction file.',/,5X,'File reference in a',
+     B         ' macro instruction file is not supported.')
+54    FORMAT(/,' *ERR:305* Macro instruction file name expected but',
+     A         ' none found.')
+56    FORMAT(/,' *ERR:306* Identifer: FILE is reserved but appears',
+     A         ' as a macro instruction.')
+58    FORMAT(/,' *ERR:307* Macro instruction table overflow.',
+     A          ' Number=',I5)
+60    FORMAT(/,' *ERR:308* Macro instruction: ',A,' already',
+     A         ' defined.')
+62    FORMAT(/,' *ERR:309* Macro instruction argument: ',A,
+     A       ' is invalid.  Must be an identifier.')
+64    FORMAT(/,' *ERR:310* END found before a macro instruction',
+     A          ' name was found.')
+66    FORMAT(/,' *ERR:311* Macro instruction name; ',A,' has no',
+     A         ' arguments.')
+68    FORMAT(/,' *ERR:312* Macro instruction argument table overflow.',
+     A         ' Number=',I5)
+70    FORMAT(/,' *ERR:313* Expecting a macro instruction name but',
+     A         ' found:',/,5X,A)
+72    FORMAT(/,' *ERR:314* Macro instruction body table overflow.',
+     A         ' Number=',I5)
+74    FORMAT(/,' Processing macro file: ',A)
+76    FORMAT(/,' Closing macro file: ',A)            
+78    FORMAT(' ',A)
+82    FORMAT(/,' *ERR:315* Instruction definition has more than two',
+     A         ' arguments.')
+84    FORMAT(/,' *ERR:316* Macro instruction: ',A,' not terminated.',
+     A      /,11X,'Check spelling of name following END.')
+C***********************************************************************
+C     At entry the heading for the DEFINE MACROS block has been processed.
+C     The lines can be up to 196 characters wide in the DEFINE MACROS
+C     block.  
+
+C     Clear the counters.
+      LAST_MACRO = 0
+      LAST_BODY = 0
+      LAST_ARG = 0
+
+C     Clear the macro flag.  Set when a macro name has been found.
+      MACRO_FLAG = 0
+
+C     Clear the file flag.  Set when a macro file is being processed. 
+      FILE_FLAG = 0
+      FILE_UNIT = 0
+100   CONTINUE
+
+        IF(FILE_FLAG.EQ.0) THEN
+          INPUT_UNIT = STDIN
+        ELSE
+          INPUT_UNIT = FILE_UNIT
+        ENDIF
+C       Get the next line of input.  Could be in the current macro
+C       file as well as in the user input file. 
+
+        CALL INL196
+     I              (INPUT_UNIT, STDOUT,
+     O               LONG_LINE)
+        IF(INPUT_UNIT.EQ.FILE_UNIT) THEN
+C         Check for end of file on the macro instruction file. 
+          IF(LONG_LINE(1:7).EQ.'ENDFILE') THEN
+            CALL FREE_UNIT(STDOUT, FILE_UNIT)
+            WRITE(STDOUT,76) MACRO_FILE_NAME
+            FILE_FLAG = 0
+            GOTO 9000
+          ENDIF
+        ENDIF            
+
+        N = LENSTR(LONG_LINE)
+        WRITE(STDOUT,78) LONG_LINE(1:N)
+        IF(MACRO_FLAG.EQ.0) THEN
+C         Looking for a macro name.  
+          LINE = LONG_LINE
+C          CALL TO_UPPER (
+C     M                   LINE)
+C         Search for user given quote.
+          I = INDEX(LINE,'''')
+          IF(I.EQ.0) THEN
+            IT = LENSTR(LINE)
+            LINE(IT+1:IT+1) = ''''
+          ELSE
+C           Revise user quote to  ,quote
+C            LINE(I:I+2) = ' ,'''
+          ENDIF
+      
+          OPT = 1
+          CALL GETVAL(STDOUT, LINE, MAX_NVAL, OPT,
+     O                ITEM_TYPE, IVAL, RVAL, DPVAL, CVAL, CLEN, EFLAG,
+     O                TERM, TERML, TERMCLS, NVAL)
+C          WRITE(STDOUT,*) 
+C     A       ' Return from GETVAL in DEFINE_MACRO: NVAL=',NVAL
+C          DO 9213 I=1,NVAL
+C            WRITE(STDOUT,99) CVAL(I), CLEN(I), ITEM_TYPE(I), TERM(I)
+C99    FORMAT(' ',A12,' ',I5,' ',I5,' ',A1)
+C9213  CONTINUE
+
+C         Trim off the end of line item.
+C          NVAL = NVAL - 1
+
+          IF(ITEM_TYPE(1).EQ.CHRVAL) THEN
+C           Found an identifier.  Is it a file reference?
+            IF(CVAL(1)(1:4).EQ.'FILE') THEN
+C             Yes, looks like it could be.
+              IF(TERM(1).EQ.'=') THEN
+                IF(ITEM_TYPE(2).EQ.CHRVAL) THEN
+C                 This is a file reference.
+                  IF(FILE_FLAG.EQ.0) THEN
+C                   Open the file. 
+                    MACRO_FILE_NAME = CVAL(2)
+                    INQUIRE(FILE=CVAL(2), EXIST=THERE)
+                    IF(THERE) THEN
+                      FILE_UNIT = GET_UNIT(STDOUT)
+                      OPEN(UNIT=FILE_UNIT, FILE=CVAL(2), STATUS='OLD')
+                      FILE_FLAG = 1
+                      WRITE(STDOUT,74) CVAL(2)(1:CLEN(2))
+                      GOTO 9000
+                    ELSE
+                      WRITE(STDOUT,50) CVAL(2)
+                      STOP 'Abnormal stop: errors found.'
+                    ENDIF
+                  ELSE
+C                   File reference in a macro instruction file 
+C                   is not supported. 
+                    WRITE(STDOUT,52) CVAL(2)            
+                    STOP 'Abnormal stop: errors found.'
+                  ENDIF
+                ELSE
+C                 File name expected but none found.
+                  WRITE(STDOUT,54)
+                  STOP 'Abnormal stop: errors found.'
+                ENDIF
+              ELSE
+C               Identifier 'FILE' is reserved.
+                WRITE(STDOUT,56)
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+
+            ELSEIF(CVAL(1)(1:3).EQ.'END') THEN
+              
+              IF(CVAL(2)(1:6).EQ.'MACROS') THEN
+C               All macro definitions are completed.
+                GOTO 9001
+              ELSE
+                WRITE(STDOUT,64) 
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+
+            ELSEIF(ITEM_TYPE(2).EQ.INTVAL) THEN
+C             Assume an  instruction here. 
+              MACRO_NAME = CVAL(1)
+              MACRO_NAME_LENGTH = CLEN(1)
+              READ(CVAL(2)(1:CLEN(2)),*) VALUE
+              IF(NVAL.EQ.2) THEN
+C               Simple value replacement instruction
+                CLASS = INSTRUCTION_CLASS
+              ELSEIF(NVAL.EQ.3) THEN
+C               Special case for Code 2: Sum of flows is zero.
+                CLASS = VARIABLE_ARGUMENTS_CLASS
+                VALUE = 2
+              ELSE
+                WRITE(STDOUT,82) NVAL
+                STOP 'Abnormal stop: errors found.'
+              ENDIF                
+
+              CALL LSA_GLOBAL
+     I                       (STDOUT, MACRO_NAME, 
+     M                        CLASS, VALUE, 
+     O                        INDX, FLAG)
+              IF(FLAG.EQ.1) THEN
+C               Problem.  Macro name is already in the table.
+                WRITE(STDOUT,60) MACRO_NAME
+                STOP 'Abnormal stop: errors found.'
+              ELSEIF(FLAG.EQ.2) THEN
+                STOP 'Abnormal stop: errors found.'
+              ENDIF              
+            ELSE
+C             Assume macro name here. 
+              MACRO_FLAG = 1
+              MACRO_NAME = CVAL(1)
+              MACRO_NAME_LENGTH = CLEN(1)
+C             Determine its location in the macro table.
+              LAST_MACRO = LAST_MACRO + 1
+              IF(LAST_MACRO.GT.MAX_MACRO) THEN
+                WRITE(STDOUT,58) 
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+              CLASS = MACRO_CLASS
+              VALUE = LAST_MACRO
+              CALL LSA_GLOBAL
+     I                       (STDOUT, MACRO_NAME, 
+     M                        CLASS, VALUE, 
+     O                        INDX, FLAG)
+              IF(FLAG.EQ.1) THEN
+C               Problem.  Macro name is already in the table.
+                WRITE(STDOUT,60) MACRO_NAME
+                STOP 'Abnormal stop: errors found.'
+              ELSEIF(FLAG.EQ.2) THEN
+                STOP 'Abnormal stop: errors found.'
+              ENDIF              
+
+              IF(NVAL.EQ.1) THEN
+                WRITE(STDOUT,66) MACRO_NAME
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+                  
+C             Check that all other values are of the
+C             correct type. 
+              DO 110 I=2,NVAL
+                IF(ITEM_TYPE(I).NE.CHRVAL) THEN
+                  WRITE(STDOUT,62) CVAL(I)(1:CLEN(I))
+                  FLAG = 1
+                ENDIF
+110           CONTINUE
+              IF(FLAG.NE.0) THEN
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+
+C             Macro name appears to be valid.  Clear the
+C             line counter and store the values currently known.
+              MACRO_LINES = 0
+
+              MACRO_BODY_PNT(LAST_MACRO) = LAST_BODY + 1
+              MACRO_ARG_KNT(LAST_MACRO) = NVAL - 1
+              MACRO_ARG_PNT(LAST_MACRO) = LAST_ARG + 1
+C             Store the dummy argument names.
+              DO 120 I=2,NVAL
+                LAST_ARG = LAST_ARG + 1
+                IF(LAST_ARG.GT.MAX_ARG) THEN
+                  WRITE(STDOUT,68) LAST_ARG
+                  STOP 'Abnormal stop: errors found.'
+                ENDIF
+                MACRO_ARG(LAST_ARG) = CVAL(I)
+                MACRO_ARG_LEN(LAST_ARG) = CLEN(I)
+120           CONTINUE
+            ENDIF
+          ELSE
+C           Expected Macro instruction name but found something
+C           else.
+            WRITE(STDOUT,70) CVAL(I)(1:CLEN(1))
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+        ELSE
+C         We are in the body of a macro definition here. 
+C         We store the lines without examination.  Errors
+C         will be detected after expansion in the normal 
+C         processing of the Network-Matrix Control Input.
+
+          CALL STRIP_L_BLANKS(
+     M                        LONG_LINE)
+
+          IF(LONG_LINE(1:3).EQ.'END') THEN
+C           The current macro instruction is done.  Store the
+C           line count for the macro body and clear the
+C           macro flag. 
+            MACRO_BODY_KNT(LAST_MACRO) = MACRO_LINES
+            MACRO_FLAG = 0
+C           Make sure that the end is for the correct name. 
+            I = INDEX(LONG_LINE, MACRO_NAME(1:MACRO_NAME_LENGTH))
+            IF(I.EQ.0) THEN
+              WRITE(STDOUT,84) MACRO_NAME(1:MACRO_NAME_LENGTH)
+              STOP 'Abnormal stop: errors found.'
+            ENDIF            
+          ELSE
+C           Store the line in the body with its true length.
+            LAST_BODY = LAST_BODY + 1
+            IF(LAST_BODY.GT.MAX_BODY) THEN
+              WRITE(STDOUT,72) LAST_BODY
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+            MACRO_LINES = MACRO_LINES + 1
+            MACRO_BODY(LAST_BODY) = LONG_LINE
+            MACRO_LINE_LEN(LAST_BODY) = LENSTR(LONG_LINE)
+          ENDIF
+        ENDIF           
+9000    CONTINUE
+        GOTO 100
+
+9001  CONTINUE
+      RETURN
+      END
+C     ***********
+C     *         *
+C     * PUSH_LINE
+C     *         *
+C     ***********
+
+      SUBROUTINE PUSH_LINE(STDOUT, LINE)
+
+C     Put a line on the stack. 
+      IMPLICIT NONE
+
+      INTEGER STDOUT
+      CHARACTER*196 LINE
+
+      INCLUDE 'macro.cmn'
+C     *****************************FORMATS******************************
+50    FORMAT(/,' *ERR:317* Macro instruction stack overflow.  Number=',
+     A           I5)
+C***********************************************************************
+      MACRO_STACK_TOP = MACRO_STACK_TOP + 1
+      IF(MACRO_STACK_TOP.GT.MAX_STACK) THEN
+        WRITE(STDOUT,50) MACRO_STACK_TOP
+        STOP 'Abnormal stop: errors found.'
+      ELSE
+        MACRO_STACK(MACRO_STACK_TOP) = LINE
+      ENDIF
+      RETURN
+      END        
+C     ***********
+C     *         *
+C     * POP_LINE
+C     *         *
+C     ***********
+
+      SUBROUTINE POP_LINE(LINE)
+
+C     Get a line from the stack. 
+      IMPLICIT NONE
+
+      CHARACTER*196 LINE
+
+      INCLUDE 'macro.cmn'
+C***********************************************************************
+      LINE = MACRO_STACK(MACRO_STACK_TOP)
+      MACRO_STACK_TOP = MACRO_STACK_TOP - 1
+      RETURN
+      END        
+
+C     ***********
+C     *         *
+C     * EXPAND_MACRO
+C     *         *
+C     ***********
+      
+      SUBROUTINE  EXPAND_MACRO(STDOUT, ADDRESS, NVAL, CVAL, CLEN,
+     O                         EFLAG)
+
+
+C     Expand a macro instruction.  ADDRESS is the index into the
+C     macro table,  CVAL(2:NVAL) gives the actual arguments, and
+C     CLEN(2:NVAL) gives the length of the arguments. 
+
+      IMPLICIT NONE
+
+      INTEGER STDOUT, ADDRESS, NVAL, CLEN(NVAL), EFLAG
+
+      CHARACTER*64 CVAL(NVAL)
+
+      INCLUDE 'macro.cmn'
+
+C     Local
+
+      CHARACTER LINE*196, ACTUAL*16
+
+      INTEGER ISTART_BODY, IEND_BODY, ISTART_ARG, IEND_ARG,
+     A   ILINE, IARG, LINE_LEN, ACTUAL_LEN, ISTART
+
+      EXTERNAL PUSH_LINE, IDENTIFIER_REPLACE
+C     *************************FORMATS**********************************
+50    FORMAT(/,' *ERR:318* Macro: ',A,' expects ',I3,' arguments but ',
+     A         'found ',I3)
+52    FORMAT(/,' Macro instruction expansion fails.  Chk for errors.')
+54    FORMAT(/,' Expanding macro: ',A)
+C***********************************************************************
+      WRITE(STDOUT,54) CVAL(1)(1:CLEN(1))
+
+C     Check that the number of arguments is correct.
+      IF(MACRO_ARG_KNT(ADDRESS).NE.NVAL-1) THEN
+        WRITE(STDOUT,50) CVAL(1)(1:CLEN(1)), MACRO_ARG_KNT(ADDRESS), 
+     A                   NVAL - 1
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+
+C     Transfer the the macro body lines to the macro stack such that
+C     the last line in the body goes onto the stack first.  Thus the
+C     first line of the macro body will be at the top of the stack.
+
+      IEND_BODY = MACRO_BODY_PNT(ADDRESS)
+      ISTART_BODY = IEND_BODY + MACRO_BODY_KNT(ADDRESS) - 1
+
+      ISTART_ARG = MACRO_ARG_PNT(ADDRESS) 
+      IEND_ARG = ISTART_ARG + MACRO_ARG_KNT(ADDRESS) - 1
+
+C     Put each line in a temporary string and do the argument replacement
+C     operation. 
+
+      EFLAG = 0
+C     Start scan at first character of each line.
+      ISTART = 1
+      DO 200 ILINE=ISTART_BODY, IEND_BODY, -1
+        LINE_LEN = MACRO_LINE_LEN(ILINE)
+        LINE = MACRO_BODY(ILINE)
+        DO 100 IARG=ISTART_ARG, IEND_ARG
+          ACTUAL = CVAL(IARG - ISTART_ARG + 2)
+          ACTUAL_LEN = CLEN(IARG - ISTART_ARG + 2)
+          CALL IDENTIFIER_REPLACE(STDOUT, MACRO_ARG(IARG), 
+     I                             MACRO_ARG_LEN(IARG),
+     I                             ACTUAL, ACTUAL_LEN, ISTART, 196, 
+     M                               LINE, LINE_LEN, EFLAG)
+100     CONTINUE
+
+C       Put the line on the top of stack. 
+        CALL PUSH_LINE(STDOUT, LINE)
+        
+200   CONTINUE
+      IF(EFLAG.NE.0) THEN
+        WRITE(STDOUT,52)
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+      RETURN
+      END
+
+C     ***********
+C     *         *
+C     * INSERT_ARGUMENT_KNT
+C     *         *
+C     ***********
+
+      SUBROUTINE INSERT_ARGUMENT_KNT(MAX_NVAL,
+     M                               NVAL, CVAL, CLEN, ITEM_TYPE,
+     M                               TERM, TERML, TERMCLS)
+
+C     Special case for variable number of arguments where the user
+C     need not give the count of the arguments.
+
+      IMPLICIT NONE
+
+      INTEGER NVAL, MAX_NVAL, CLEN(MAX_NVAL), ITEM_TYPE(MAX_NVAL),
+     A        TERMCLS(MAX_NVAL), TERML(MAX_NVAL)
+
+      CHARACTER CVAL(MAX_NVAL)*64, TERM(MAX_NVAL)*1
+
+C     Local
+
+      INTEGER  INTVAL
+      PARAMETER(INTVAL=1)
+
+      INTEGER I
+
+C***********************************************************************
+C     The number of arugments should appear at index 2.  Thus 
+C     move all items above this location so that space is created
+C     in CVAL, CLEN, and ITEM_TYPE for a new entry at index 2.
+C     We need not check for overflow in the vectors because NVAL
+C     was already reduced by 1 in the calling program.  Thus an
+C     increase of 1 will not overflow the vectors--we hope!
+      
+      DO 100 I=NVAL,2,-1
+        CVAL(I+1) = CVAL(I)
+        CLEN(I+1) = CLEN(I)
+        ITEM_TYPE(I+1) = ITEM_TYPE(I)
+        TERMCLS(I+1) = TERMCLS(I)
+        TERML(I+1) = TERML(I)
+        TERM(I+1) = TERM(I)
+100   CONTINUE
+
+C     There are NVAL - 1 arguments.  Convert the number of arguments
+C     to a character string to make it appear as if it were input.
+C     Leading spaces are ok so long as the string length includes
+C     them. 
+      CVAL(2) = ' '
+      WRITE(CVAL(2)(1:5),'(I5)') NVAL - 1
+      ITEM_TYPE(2) = INTVAL
+      CLEN(2) = 5
+      TERM(2) = ' '
+      TERML(2) = 1
+      TERMCLS(2) = 6
+      NVAL = NVAL + 1
+      RETURN
+      END

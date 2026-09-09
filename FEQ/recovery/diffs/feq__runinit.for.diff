@@ -1,0 +1,1696 @@
+--- 9.98/feq/runinit.for
++++ 10.61/feq/runinit.for
+@@ -3,7 +3,7 @@
+ C
+ C
+ C
+-      SUBROUTINE SET_INITIAL_OPER_BLK(NBLK, OPBLK, TIME, EPT, 
++      SUBROUTINE SET_INITIAL_OPER_BLK(NBLK, OPBLK, JTIME, EPT, 
+      M                                EMC)
+ 
+ C     Set the initial block value for control structures
+@@ -14,7 +14,7 @@
+ 
+       INTEGER EPT, NBLK, OPBLK(NBLK), EMC(EPT)
+ 
+-      REAL TIME
++      REAL*8 JTIME
+ 
+       INCLUDE 'ftable.cmn'
+ 
+@@ -35,8 +35,8 @@
+         IF(TABLE_ADRS.GT.0) THEN
+ 
+ C         Find the block number at this time from the table.
+-          CALL LKTAB
+-     I              (TABLE_ADRS, TIME, 0,
++          CALL LKTSTAB
++     I              (TABLE_ADRS, JTIME,
+      O               VAL, NTAB, PDV)
+           TS_BLK_NUMBER = INT(VAL+0.5)
+           IF(TS_BLK_NUMBER.EQ.I) THEN
+@@ -115,7 +115,8 @@
+ C
+       SUBROUTINE   BCKWTR
+      I                   (EPSB, GRAV, IN, STDOUT, MAXIT, NBRA, NBN, NEX,
+-     I                    OUTPUT, TIME, SFAC, BRPT, EMC, QEPS, EPT,
++     I                    OUTPUT, JTIME, SFAC, BRPT, EMC, QEPS, EPT,
++     i                    dz_for_output,
+      M                    EXNODT,
+      O                    EFLAG)
+  
+@@ -134,7 +135,8 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER EFLAG, IN, STDOUT, MAXIT, NBN, NBRA, NEX, OUTPUT, EPT
+       INTEGER BRPT(8,NBRA), EMC(EPT), EXNODT(9,NEX)
+-      REAL EPSB, GRAV, QEPS, SFAC, TIME
++      REAL EPSB, GRAV, QEPS, SFAC, dz_for_output
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     EPSB   - convergence limit for steady flow computations
+@@ -204,17 +206,17 @@
+  
+ C     + + + EXTERNAL NAMES + + +
+       EXTERNAL CD4QY, CD56QY, FND5, FNDCD, GETINB, GETINN, GETTOK,
+-     A         INL80, LKTAB, SFPSBM, XLKT23, GETUSB, GETUSN
++     A         inline, LKTAB, SFPSBM, XLKT23, GETUSB, GETUSN
+  
+ C     + + + INPUT FORMATS + + +
+- 1000 FORMAT(20A4)
++c 1000 FORMAT(20A4)
+  1010 FORMAT(14X,I5)
+  1060 FORMAT(A5,A5,F10.0,A5)
+  1070 FORMAT(10X,F10.0)
+  
+ C     + + + OUTPUT FORMATS + + +
+- 2000 FORMAT(' ',20A4)
+- 2001 FORMAT(/,' ',20A4)
++ 2000 FORMAT(' ',A80)
++ 2001 FORMAT(/,' ',A80)
+  2010 FORMAT(/,' BRANCH NUMBER = ',I5)
+  2110 FORMAT(/,' *ERR:94* Downstream depth missing ',
+      A     'for branch',I5)
+@@ -291,17 +293,16 @@
+  310    CONTINUE
+  
+ C     READ TITLE CARD
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+-      READ(LINE,1000) (CHAR(I), I=1,20)
+-      WRITE(STDOUT,2000) (CHAR(I), I=1,20)
++      WRITE(STDOUT,2000) line
+  
+ C     BRANCH LOOP
+  
+       EFLAG = 0
+       DO 100 NB=1,NBRA
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,1010,ERR=991) NBR
+@@ -312,7 +313,7 @@
+          CALL GETINB
+      M              (NBR,
+      O               EFLAG, NBR)
+-         CALL INL80
++         CALL inline
+      I             (IN, STDOUT,
+      O              LINE)
+          READ(LINE,1070, ERR=991) DISCH
+@@ -332,11 +333,10 @@
+         STOP 'Abnormal stop: errors found.'
+  100  CONTINUE
+  
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+-      READ(LINE,1000) (CHAR(I), I=1,20)
+-      WRITE(STDOUT,2001) (CHAR(I), I=1,20)
++      WRITE(STDOUT,2001) line
+  
+  
+ C     NOW START COMPUTATION LOOP
+@@ -344,7 +344,7 @@
+ C     START LOOP FOR BACKWATER ANALYSIS: Read the next instruction.
+  
+  160  CONTINUE
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,1060,ERR=991) USNBC, USCODE, SELEV, USNODE
+@@ -482,7 +482,7 @@
+                 ELSE
+                   YR = YE1(SNODE)
+                   CALL CD4QY
+-     I                      (STDOUT, NB, SNODE, NBRA, NEX, NBN, TIME,
++     I                      (STDOUT, NB, SNODE, NBRA, NEX, NBN, JTIME,
+      I                       BRPT, EXNODT, EMC, MAXIT, EPSB, OUTPUT,
+      I                       EPT,
+      M                       YR)
+@@ -597,7 +597,7 @@
+                 STOP 'Abnormal stop: errors found.'
+               ELSE
+                 CALL CD4QY
+-     I                    (STDOUT, NB, DEXN, NBRA, NEX, NBN, TIME, BRPT,
++     I                   (STDOUT, NB, DEXN, NBRA, NEX, NBN, JTIME, BRPT,
+      I                     EXNODT, EMC, MAXIT, EPSB, OUTPUT, EPT,
+      M                     YR)
+ C                On return YR contains the depth at the node.  The
+@@ -622,7 +622,7 @@
+                   YL = SELEV - ZE(DEXN)
+                   YR = YE1(SNODE)
+                   CALL CD56QY
+-     I                   (STDOUT, IPNT, NEX, TIME, EMC, MAXIT, YR, EPSB,
++     I                  (STDOUT, IPNT, NEX, JTIME, EMC, MAXIT, YR, EPSB,
+      I                    QEPS, EPT,
+      M                    YL)
+  
+@@ -649,7 +649,7 @@
+  
+             CALL SFPSBM
+      I                 (STDOUT, USNB, FN, LN, DN, UEXN, SFAC, GRAV, 
+-     I                  EPSB, YR, MAXIT, ZI,
++     I                  EPSB, YR, MAXIT, ZI, dz_for_output,
+      O                  EFLAG)
+             IF(EFLAG.NE.0) STOP 'Abnormal stop: errors found.'
+           ENDIF
+@@ -674,7 +674,7 @@
+                 YL = SELEV - ZE(DEXN)
+                 YR = YE1(SNODE)
+                 CALL CD56QY
+-     I                 (STDOUT, IPNT, NEX, TIME, EMC, MAXIT, YR, EPSB,
++     I                 (STDOUT, IPNT, NEX, JTIME, EMC, MAXIT, YR, EPSB,
+      I                  QEPS, EPT,
+      M                  YL)
+  
+@@ -785,7 +785,7 @@
+  
+ 
+ C     Check for a branch having values that are not set.  Y1(*) was set 
+-C     to a larger negative value at start.  
++C     to a large negative value at start.  
+       DO 950 NBR=1,NBRA
+         FN = BRPT(3,NBR)
+         LN = BRPT(4,NBR)
+@@ -865,13 +865,15 @@
+ C
+ C
+ C
+-      SUBROUTINE   BFINIT()
++      SUBROUTINE   BFINIT(DT)
+  
+ C     + + + PURPOSE + + +
+ C     Initialize the TSF buffer system and initialize the
+ C     time as given in the TSF.
+  
+       IMPLICIT NONE
++
++      real*8 DT
+ C     + + + COMMON BLOCKS + + +
+       INCLUDE 'arsize.prm'
+       INCLUDE 'tsfcom.cmn'
+@@ -880,9 +882,9 @@
+       INCLUDE 'stdun.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER DYT, I, J, MNT, YRT
++      INTEGER DYT, I, J, MNT, YRT, fsyr, fsmn, fsdy, wyr
+       REAL RUNOFF(MNDIFA)
+-      REAL*8 DUMMY, DYF, RI(MNDIFA), TSFDT
++      REAL*8 DUMMY, DYF, RI(MNDIFA), TSFDT, fsfrac
+  
+ C     + + + EQUIVALENCES + + +
+       EQUIVALENCE(DUMMY, RUNOFF(1))
+@@ -894,13 +896,16 @@
+       INTEGER IWYR, LPYEAR
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL IWYR, LPYEAR
++      EXTERNAL IWYR, LPYEAR, LKTSF
+  
+ C     + + + OUTPUT FORMATS + + +
+  50   FORMAT(/,' *BUG:04* INVALID JTIME FOR TSF RECORD JTIME = ',
+      1     1PD25.16)
+- 52   FORMAT(' *BUG:36 UNEXPECTED END OF FILE IN DTSF IN BFINIT.',/,
+-     A         10X,' RUN JTIME=',1PD20.12,' RUN EJTIME=',1PD20.12)
++52    format(/,
++     a    'Forecasting with DTSF: Start time NOT reset to event start')
++54    format(' Skipping event with start jtime=',f17.10,
++     a      ' and end jtime=',f17.10,/,5x,
++     b ' that does not contain the current run start jtime=',f17.10,'.')
+ C***********************************************************************
+ C     DEFINE NUMBER OF BUFFERS
+  
+@@ -911,17 +916,13 @@
+  
+  90   CONTINUE
+  
+-        IF(TSFTYP.EQ.0) THEN
+-          READ(TSFDSN, END=5000) BJTIME(1),
+-     A                                SFRAC, SYR, SMN, SDY, NDFVAL,
+-     B                                (TSFBUF(1,J),J=1,NDFVAL)
+-        ELSE
+-          READ(TSFDSN, END=5000) BJTIME(1), SFRAC, SYR, SMN, SDY,
+-     1                 (RUNOFF(J), J=1,NDFVAL)
+-          DO 105 J=1,NDFVAL
+-            TSFBUF(1,J) = RUNOFF(J)
+- 105      CONTINUE
+-        ENDIF
++        READ(TSFDSN, rec=dtsf_rec) 
++     a               BJTIME(1), fSFRAC, fSYR, fSMN, fSDY,
++     1               (RUNOFF(J), J=1,NDFVAL)
++        dtsf_rec = dtsf_rec + 1
++        DO 105 J=1,NDFVAL
++          TSFBUF(1,J) = RUNOFF(J)
++ 105    CONTINUE
+  
+         IF(LAGTSF.GT.0) THEN
+ C         INITIALIZE TSFRAT TO STANDARD VALUE OF 0.0
+@@ -941,14 +942,9 @@
+  100    CONTINUE
+  
+ C       SET THE END TIME FOR THIS SEGMENT(FRAME) AND CLEAR BUFFER ENTRY
+-        IF(TSFTYP.EQ.0) THEN
+-          EJTIME = TSFBUF(1,1)
+-        ELSE
+-          EJTIME = DUMMY
+-          TSFBUF(1,2) = 0.D0
+-        ENDIF
+- 
++        EJTIME = DUMMY
+         TSFBUF(1,1) = 0.D0
++
+         LEAP = LPYEAR(YR)
+  
+ C       MAKE SURE THAT END OF THIS SEGMENT DOES NOT EXTEND BEYOND
+@@ -959,30 +955,59 @@
+         ENDIF
+  
+         BJTIME(1) = DABS(BJTIME(1))
+-        SJTIME = BJTIME(1)
+- 
++c       See if we can get a start time later than the start time
++c       of the event when we have only one event in the DTSF
++        if(frcst == 1) then
++          write(std6,52)
++          
++        else
++          SJTIME = BJTIME(1)
++          sfrac = fsfrac
++          dyfrac = sfrac
++          syr = fsyr
++          smn = fsmn
++          sdy = fsdy
++        endif
++
+ C       CHECK IF THE START TIME OF THIS EVENT IS AFTER THE ENDING
+ C       TIME SET FOR THE RUN
+         IF(SJTIME.GE.VJTIME) THEN
+           RESET = -1
+           RETURN
+         ENDIF
+-        IF(SJTIME.LT.UJTIME.AND.SYR.NE.DMYEAR) THEN
+-C         SKIP THIS EVENT
+- 110      CONTINUE
+-            IF(TSFTYP.EQ.0) THEN
+-              READ(TSFDSN) BJTIME(1), DYF, YRT, MNT, DYT, NDFVAL,
+-     1                    (TSFBUF(1,J),J=1,NDFVAL)
+-            ELSE
+-              READ(TSFDSN) BJTIME(1), DYF, YRT, MNT, DYT,
++        if(frcst == 0) then
++          IF(SJTIME.LT.UJTIME.AND.SYR.NE.DMYEAR) THEN
++C           SKIP THIS EVENT
++ 110        CONTINUE
++              READ(TSFDSN,rec=dtsf_rec) BJTIME(1), DYF, YRT, MNT, DYT,
+      1                     (RUNOFF(J), J=1,NDFVAL)
+-            ENDIF
+-            IF(BJTIME(1).NE.EJTIME) THEN
+-              GOTO 110
+-            ELSE
+-              GOTO 90
+-            ENDIF
+-        ENDIF
++              dtsf_rec = dtsf_rec + 1
++              IF(BJTIME(1).NE.EJTIME) THEN
++                GOTO 110
++              ELSE
++                GOTO 90
++              ENDIF
++          ENDIF
++        else
++c         Here we skip over events until we find the one containing
++c         the value of sjtime and we assume that this will be the single
++c         event involved. 
++c          IF(SJTIME.LT.UJTIME.AND.SYR.NE.DMYEAR) THEN
++          IF(.not.(sjtime <= ejtime .and. sjtime >= bjtime(1))) THEN
++C           SKIP THIS EVENT
++            write(std6,54) bjtime(1), ejtime, sjtime 
++ 120        CONTINUE
++              READ(TSFDSN,rec=dtsf_rec) BJTIME(1), DYF, YRT, MNT, DYT,
++     1                     (RUNOFF(J), J=1,NDFVAL)
++              dtsf_rec = dtsf_rec + 1
++              IF(BJTIME(1).NE.EJTIME) THEN
++                GOTO 120
++              ELSE
++                GOTO 90
++              ENDIF
++          ENDIF
++       endif   
++
+  
+       BWYR(1) = IWYR(SYR,SMN)
+  
+@@ -990,16 +1015,12 @@
+  
+       DO 200 I=2,NBUFF
+  
+-        IF(TSFTYP.EQ.0) THEN
+-          READ(TSFDSN, END=5000) BJTIME(I), DYF, YRT, MNT, DYT, NDFVAL,
+-     1                 (RI(J),J=1,NDFVAL)
+-        ELSE
+-          READ(TSFDSN, END=5000) BJTIME(I), DYF, YRT, MNT, DYT,
+-     1                 (RUNOFF(J), J=1,NDFVAL)
+-          DO 106 J=1,NDFVAL
+-            RI(J) = RUNOFF(J)
+- 106      CONTINUE
+-        ENDIF
++        READ(TSFDSN, rec=dtsf_rec) BJTIME(I), DYF, YRT, MNT, DYT,
++     1               (RUNOFF(J), J=1,NDFVAL)
++        dtsf_rec = dtsf_rec + 1
++        DO 106 J=1,NDFVAL
++          RI(J) = RUNOFF(J)
++ 106    CONTINUE
+  
+         BWYR(I) = IWYR(YRT,MNT)
+  
+@@ -1036,16 +1057,17 @@
+       LHEAD = 1
+  
+ C     SET VALUE OF THE  DIFFUSE FLOW BUFFER
+- 
+-      DO 300 I=1,NLUSE
+-        CLSR1(I) = 0.D0
+- 300  CONTINUE
++      CALL LKTSF
++     I          (STD6, sjtime, DT,
++     O           CLSR1, WYR)
++
++ 
++c      DO 300 I=1,NLUSE
++c        CLSR1(I) = 0.D0
++c 300  CONTINUE
+  
+       RETURN
+  
+- 5000 CONTINUE
+-      WRITE(STD6,52) JTIME, EJTIME
+-      STOP 'Abnormal stop: errors found.'
+       END
+ C
+ C
+@@ -1182,6 +1204,7 @@
+ C
+       SUBROUTINE   BWGET
+      I                  (BWFDSN, NBRA, NBN, NEX, MBLK, NBLK, OPBLK,
++     m                   bwrec,
+      O                   WT)
+  
+ C     + + + PURPOSE + + +
+@@ -1189,7 +1212,7 @@
+  
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER BWFDSN, MBLK, NBLK, NBN, NBRA, NEX
++      INTEGER BWFDSN, bwrec, MBLK, NBLK, NBN, NBRA, NEX
+       INTEGER OPBLK(MBLK)
+       REAL WT
+  
+@@ -1203,6 +1226,7 @@
+ C     OPBLK  - pointer into the function table storage(FTAB/ITAB) for
+ C               each operation block.
+ C     WT     - weight factor for approximating time integrals
++c     bwrec  - record pointer for storing information
+  
+ C     + + + COMMON BLOCKS + + +
+       INCLUDE 'arsize.prm'
+@@ -1213,19 +1237,54 @@
+       INCLUDE 'tam.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER I, IT
++      integer  i, it, control_node_state_offset, control_node_state, 
++     a          old_lev_offset
++      real  old_lev                       
+ C***********************************************************************
+-      READ(BWFDSN) WT
++c      READ(BWFDSN) WT
++c      DO 100 I=1,NBN
++c 
++c        READ(BWFDSN) Q1(I), Y1(I), T1(I), A1(I), K1(I), B1(I), WXVEC(I),
++c     A      POND1(I), DXVEC(I), DZVEC(I), MY(I), MQ(I), MA1(I), MQ1(I)
++c 
++c 100  CONTINUE
++
++      read(bwfdsn, rec=bwrec) wt
++      bwrec = bwrec + 1
+       DO 100 I=1,NBN
+- 
+-        READ(BWFDSN) Q1(I), Y1(I), T1(I), A1(I), K1(I), B1(I), WXVEC(I),
+-     A      POND1(I), DXVEC(I), DZVEC(I), MY(I), MQ(I)
+- 
++        read(bwfdsn, rec=bwrec) Q1(I), Y1(I)
++        bwrec = bwrec + 1
++        read(bwfdsn, rec=bwrec) T1(I), A1(I)
++        bwrec = bwrec + 1
++        read(bwfdsn, rec=bwrec)  K1(I),B1(I)
++        bwrec = bwrec + 1
++        read(bwfdsn, rec=bwrec) WXVEC(I), POND1(I)
++        bwrec = bwrec + 1
++        read(bwfdsn, rec=bwrec) DXVEC(I), DZVEC(I)
++        bwrec = bwrec + 1
++        read(bwfdsn, rec=bwrec) MY(I), MQ(I)
++        bwrec = bwrec + 1
++        read(bwfdsn, rec=bwrec) MA1(I), MQ1(I)
++        bwrec = bwrec + 1
++
+  100  CONTINUE
+- 
++
++ 
++c      DO 200 I=1,NEX
++c        READ(BWFDSN) QE1(I), YE1(I), AE1(I), MYE(I), MQE(I), TE1(I)
++c 200  CONTINUE
++
+       DO 200 I=1,NEX
+-        READ(BWFDSN) QE1(I), YE1(I), AE1(I), MYE(I), MQE(I)
++c        WRITE(BWFDSN) QE1(I), YE1(I), AE1(I), MYE(I), MQE(I), TE1(I)
++        read(bwfdsn, rec=bwrec) QE1(I), YE1(I)
++        bwrec = bwrec + 1        
++        read(bwfdsn, rec=bwrec)  AE1(I), MYE(I)
++        bwrec = bwrec + 1        
++        read(bwfdsn, rec=bwrec)  MQE(I), TE1(I)
++        bwrec = bwrec + 1        
++
+  200  CONTINUE
++
+  
+ C     RESETTING EMC CAUSES PROBLEMS WITH FORECASTING.  TRY TO
+ C     GET BY WITHOUT IT AND SETTING THE STATE LIKE WE DO WHEN
+@@ -1242,27 +1301,75 @@
+         K2(I) = K1(I)
+         B2(I) = B1(I)
+         T2(I) = T1(I)
++        MA2(I) = MA1(I)
++        MQ2(I) = MQ1(I)
+  300    CONTINUE
+  
+       DO 400 I=1,NEX
+         QE2(I) = QE1(I)
+         YE2(I) = YE1(I)
+         AE2(I) = AE1(I)
++        TE2(I) = TE1(I)
+  400    CONTINUE
+  
+-      DO 500 I=1,NBLK
+-        IT = OPBLK(I) + 1
+-        READ(BWFDSN) FTAB(IT), FTAB(IT+1)
+- 500  CONTINUE
+- 
+- 
+-      READ(BWFDSN) (BPOND(I), I=1,NBRA)
+-
+-      IF(DLAY_KNT.GT.0) READ(BWFDSN) (DLAY_Q1(I),I=1,DLAY_KNT)
+-
+-      DO 600  I=1,DTEN_KNT
+-        READ(BWFDSN) DTEN_S1(I), DTEN_Q1(I), DTEN_Q1P(I)
+-600   CONTINUE
++c      DO 500 I=1,NBLK
++c        IT = OPBLK(I) + 1
++c        READ(BWFDSN) FTAB(IT), FTAB(IT+1)
++c 500  CONTINUE
++c 
++c 
++c      READ(BWFDSN) (BPOND(I), I=1,NBRA)
++c
++c      IF(DLAY_KNT.GT.0) READ(BWFDSN) (DLAY_Q1(I),I=1,DLAY_KNT)
++c
++c      DO 600  I=1,DTEN_KNT
++c        READ(BWFDSN) DTEN_S1(I), DTEN_Q1(I), DTEN_Q1P(I)
++c600   CONTINUE
++
++      DO  I=1,NBLK
++        IT = OPBLK(I) 
++        read(BWFDSN, rec=bwrec) FTAB(IT+1), FTAB(IT+2)
++        bwrec = bwrec + 1        
++        read(BWFDSN, rec=bwrec) FTAB(IT+5)
++        bwrec = bwrec + 1 
++c       Blocks of type 3, GATETABL, have values for each control point
++c       that need to be remembered as well.  
++        if(itab(it+3) == 3) then 
++c         Restore the  value for old level and  the control-node state. 
++500       continue
++            read(bwfdsn, rec=bwrec) old_lev_offset, old_lev
++            bwrec = bwrec + 1
++            if(old_lev_offset > 0) then
++              ftab(it+old_lev_offset) = old_lev
++              read(bwfdsn, rec=bwrec) 
++     a                   control_node_state_offset, control_node_state
++              bwrec = bwrec + 1
++              itab(it+control_node_state_offset) = control_node_state
++
++              goto 500
++            endif                                                            
++        endif                                                                
++       
++      enddo
++
++      do i=1,nbra
++        read(bwfdsn,rec=bwrec) bpond(i)
++        bwrec = bwrec + 1        
++      enddo
++      do i=1,dlay_knt
++        read(BWFDSN, rec=bwrec) DLAY_Q1(I)
++        bwrec = bwrec + 1        
++      enddo
++
++      DO  I=1,DTEN_KNT
++        read(bwfdsn, rec=bwrec) dten_s1(i)
++        bwrec = bwrec + 1        
++        read(bwfdsn, rec=bwrec) dten_q1(i)
++        bwrec = bwrec + 1        
++        read(bwfdsn, rec=bwrec) dten_q1p(i)
++        bwrec = bwrec + 1        
++      enddo
++
+ 
+       RETURN
+       END
+@@ -1270,7 +1377,7 @@
+ C
+ C
+       SUBROUTINE   CD4QY
+-     I                  (STDOUT, NB, HDNODE, NBRA, NEX, NBN, TIME, BRPT,
++     I                 (STDOUT, NB, HDNODE, NBRA, NEX, NBN, JTIME, BRPT,
+      I                   EXNODT, EMC, MAXIT, EPSB, OUTPUT, EPT,
+      M                   YR)
+  
+@@ -1285,7 +1392,8 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER HDNODE, STDOUT, MAXIT, NB, NBN, NBRA, NEX, OUTPUT, EPT
+       INTEGER BRPT(8,NBRA), EMC(EPT), EXNODT(9,NEX)
+-      REAL EPSB, TIME, YR
++      REAL EPSB, YR
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT   - Fortran unit number for user output and messages
+@@ -1391,7 +1499,7 @@
+ C       FIND DISCHARGE AT THE INPUT ELEVATION.
+  
+         CALL CONTRL
+-     I             (IPNT, STDOUT, NBN, NEX, OUTPUT, TIME, EXNODT, EMC,
++     I             (IPNT, STDOUT, NBN, NEX, OUTPUT, JTIME, EXNODT, EMC,
+      I              Y1, ZVEC, DXVEC, EPT,
+      O              PDV, DISCH)
+         IF(PDV.EQ.0.0) THEN
+@@ -1425,7 +1533,7 @@
+ C
+ C
+       SUBROUTINE   CD56QY
+-     I                   (STDOUT, IPNT, NEX, TIME, EMC, MAXIT, YR, EPSB,
++     I                  (STDOUT, IPNT, NEX, JTIME, EMC, MAXIT, YR, EPSB,
+      I                    QEPS, EPT,
+      M                    YL)
+  
+@@ -1440,7 +1548,8 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER EPT, IPNT, STDOUT, MAXIT, NEX
+       INTEGER EMC(EPT)
+-      REAL EPSB, QEPS, TIME, YL, YR
++      REAL EPSB, QEPS, YL, YR
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT   - Fortran unit number for user output and messages
+@@ -1506,7 +1615,6 @@
+ C     will know the elevations and must supply them explicitly in
+ C     the initial condition portion of the input to FEQ.
+  
+-C      WRITE(STDOUT,*) ' ENTERING CD56QY: YL=',YL,' YR=',YR
+  
+       UEXN = EMC(IPNT+2)
+       DEXN = EMC(IPNT+3)
+@@ -1520,7 +1628,6 @@
+         WRITE(STDOUT,2160)
+         STOP 'Abnormal stop: errors found.'
+       ENDIF
+-C      WRITE(STDOUT,*) ' NPATH=',NPATH,' FLOW=',FLOW
+       IF(FLOW.LT.0.0) THEN
+         FSGN = -SYSGN
+       ELSE
+@@ -1560,7 +1667,7 @@
+         WRITE(STDOUT,2140) GETUSN(UEXN), GETUSN(DEXN)
+  100    CONTINUE
+           CALL TWOD6
+-     I              (IPNT, STDOUT, TIME, NEX, EPT, EMC, QE2, YE2, ZE,
++     I              (IPNT, STDOUT, JTIME, NEX, EPT, EMC, QE2, YE2, ZE,
+      O               RES, PYL, PQL, PYR, PQR)
+  
+ C         RES gives the residual between the known flow at the
+@@ -1621,8 +1728,8 @@
+         ZTAB = EMC(IPNT+10)
+         IF(ZTAB.GT.0) THEN
+ C         Time variable head datum.  Find head datum for current time.
+-          CALL LKTAB
+-     I              (ZTAB, TIME, 1,
++          CALL LKTSTAB
++     I              (ZTAB, JTIME,
+      O               HBASE, NTAB, PDV)
+         ELSE
+           IDUM = EMC(IPNT+11)
+@@ -1712,7 +1819,7 @@
+       TPC = LINE(IS:IE)
+       CALL STRIP_BLANKS_AND_ZEROS(
+      M                            TPC)
+-      READ(TPC,*,ERR=991) DEPTH
++      READ(TPC,'(f20.0)',ERR=991) DEPTH
+ 
+ C     Process the discharge
+       N = 4
+@@ -1721,7 +1828,7 @@
+       TPC = LINE(IS:IE)
+       CALL STRIP_BLANKS_AND_ZEROS(
+      M                            TPC)
+-      READ(TPC,*,ERR=991) DISCHARGE
++      READ(TPC,'(f20.0)',ERR=991) DISCHARGE
+ 
+ C     Process the datum elevation
+       N = 5
+@@ -1884,7 +1991,7 @@
+       CHARACTER GETUSN*5
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL GETINN, GETUSB, GETUSN, INL80, READ_FREE_NODE_ITEMS,
++      EXTERNAL GETINN, GETUSB, GETUSN, inline, READ_FREE_NODE_ITEMS,
+      A         GET_ITEM_LIMITS, FIND_CODE7
+  
+ C     + + + INPUT FORMATS + + +
+@@ -1939,7 +2046,7 @@
+  
+ C     HEADINGS FOR EXTERIOR NODES NOT ON  A BRANCH
+  
+-      CALL INL120
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       IF(LINE(1:4).NE.'FREE') THEN
+@@ -1948,7 +2055,7 @@
+         STOP 'Abnormal stop: errors found.'
+       ENDIF  
+       WRITE(STDOUT,2030) LINE
+-      CALL INL120
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+ C     Define the limits for the items on a line.
+@@ -1964,7 +2071,7 @@
+       ENDIF
+  
+       DO 200 NB=1,NFREE
+-        CALL INL120
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+          CALL READ_FREE_NODE_ITEMS(
+@@ -2231,7 +2338,7 @@
+       INTEGER EXNODT(9,NEX), OPBLK(MNBLK)
+       REAL SITER, WT
+       REAL*8 DT, JTIME
+-      CHARACTER NAME*64
++      CHARACTER NAME*256
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT - standard output unit for user messages
+@@ -2252,7 +2359,7 @@
+ C     DT     - time step in seconds
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER FBNODE, FLAG, FNBN, FNBRA, FNEX
++      INTEGER FBNODE, FLAG, FNBN, FNBRA, FNEX, bwrec, dummy, it
+       REAL*8 FJTIME
+       LOGICAL THERE
+  
+@@ -2281,13 +2388,16 @@
+      A       'found BNODE=',A5,' in GETIC file:'/,11X,A)
+ C***********************************************************************
+       IF(NAME.EQ.' ') THEN
+-        OPEN(GETDSN, FILE='GETD', FORM='UNFORMATTED', STATUS='OLD')
++        OPEN(GETDSN, FILE='GETD', FORM='UNFORMATTED', STATUS='OLD',
++     a    access='direct', recl=8)
+       ELSE
+         INQUIRE(FILE=NAME, EXIST=THERE)
+         IF(THERE) THEN
+-          OPEN(GETDSN, FILE=NAME, FORM='UNFORMATTED', STATUS='OLD')
++          OPEN(GETDSN, FILE=NAME, FORM='UNFORMATTED', STATUS='OLD',
++     a       access='direct', recl=8)
+         ELSE
+-          WRITE(STDOUT,*) ' FILE NAMED:', NAME,' NOT FOUND.'
++          it = len_trim(name)
++          WRITE(STDOUT,*) ' FILE NAMED:', NAME(1:it),' NOT FOUND.'
+           WRITE(STDOUT,*) ' CHECK SPELLING OF GETIC FILE.'
+           STOP 'Abnormal stop: errors found.'
+         ENDIF
+@@ -2295,7 +2405,19 @@
+  
+ C     READ THE FIRST BLOCK OF DATA FOR CHECKING
+  
+-      READ(GETDSN) FNBRA, FNBN, FNEX, FJTIME, SITER, DT, FBNODE
++c      READ(GETDSN) FNBRA, FNBN, FNEX, FJTIME, SITER, DT, FBNODE
++      bwrec = 1
++      read(getdsn, rec=bwrec) fnbra, fnbn
++      bwrec = bwrec + 1
++      read(getdsn, rec=bwrec) fnex, siter
++      bwrec = bwrec + 1
++      read(getdsn, rec=bwrec) fbnode, dummy
++      bwrec = bwrec + 1
++      read(getdsn, rec=bwrec) fjtime
++      bwrec = bwrec + 1
++      read(getdsn, rec=bwrec) dt
++      bwrec = bwrec + 1
++
+       FLAG = 0
+       IF(FNBRA.NE.NBRA) THEN
+         WRITE(STDOUT,50) NBRA, FNBRA, NAME
+@@ -2326,6 +2448,7 @@
+  
+       CALL BWGET
+      I          (GETDSN, NBRA, NBN, NEX, MNBLK, NBLK, OPBLK,
++     m           bwrec,
+      O           WT)
+  
+       CALL FREE_UNIT(STDOUT, GETDSN)
+@@ -2717,8 +2840,13 @@
+       INCLUDE 'endrun.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER EACH, EFLAG, I, J, MINR, UN, NEED, GOT, TMPVEC_SIZE
++      integer (kind=2) :: file_version
++      INTEGER EACH, EFLAG, I, J, MINR, UN, NEED, GOT, TMPVEC_SIZE,
++     a    rd_rec_len, first_ts_pnt, it, n1, n2, n3, n4, n5
+       REAL*8 JT, START_TIME
++      character :: what*1, unused*1, c12*12, 
++     a  program_name*12, program_version*12, version_date*12,
++     b  date_of_run*12, time_of_run*12
+       LOGICAL THERE
+  
+ C     + + + OUTPUT FORMATS + + +
+@@ -2739,6 +2867,8 @@
+      A /,1X,A,/,1X,'has no data at start time of run.')
+ 59    FORMAT(/,' File named:', A,/,11X,' not found.  Check spelling',
+      A         ' of an input time-series file.')
++60    format(36x,'Written by: ',a,' version: ',a,' dated: ',a,' on ',
++     a       a,' at ',a)          
+ C***********************************************************************
+ C     Compute the end time of the run in terms of HECDSS
+       JDE_RUN = INT(EJTIME)
+@@ -2765,112 +2895,152 @@
+       ENDIF        
+ 
+       IF(NUM_TS_F.GT.0) THEN
++c       Clear the delete on close list
++        delete_list = 0
+ C       ALLOCATE THE AVAILABLE BUFFER SPACE AMOMG THE INPUT FILES         
+-                                                                              
+-        EACH = MRRBUF/NUM_TS_F                                                    
+-                                                                              
+-        MINR = 1                                                              
+-        DO 500 I=1,NUM_TS_F                                                       
+-                                                                              
+-          WRITE(STDOUT,56) TS_ID_FOR_FILE_TABLE(I), I, NAMIN(I)                                    
+-          IF(EFLAG.EQ.1) STOP 'Abnormal stop: errors found.'                  
+-          IF(DSS_INDEX_IN(I).EQ.0) THEN                                       
+-C           This is a traditional time-series file.                           
+-            INQUIRE(FILE=NAMIN(I), EXIST=THERE)                               
++                                                                        
++        EACH = MRRBUF/NUM_TS_F        
++                                                                        
++        MINR = 1                                                        
++        DO 500 I=1,NUM_TS_F                                                 
++                                                                        
++          WRITE(STDOUT,56) TS_ID_FOR_FILE_TABLE(I), I, NAMIN(I)                              
++          IF(EFLAG.EQ.1) STOP 'Abnormal stop: errors found.'            
++          IF(DSS_INDEX_IN(I).EQ.0) THEN                                 
++C           This is a traditional time-series file.                     
++            INQUIRE(FILE=NAMIN(I), EXIST=THERE)                         
+             UN = UNIN(I)
+ 
+-            IF(THERE) THEN                                                    
++            IF(THERE) THEN                                              
+               OPEN(UN, FILE=NAMIN(I), FORM = 'UNFORMATTED',
+-     A             STATUS = 'OLD')
+-            ELSE                                                              
+-              WRITE(STDOUT,59) NAMIN(I)                                       
+-              STOP 'Abnormal stop: errors found.'                             
+-            ENDIF                                                             
+-                                                                              
+-C           INPUT THE INTERNAL CODE                                           
+-                                                                              
+-            READ(UN) ICDIN(I)                                                 
+-          ENDIF                                                               
+-C         INITIALIZE THE CIRCULAR BUFFER CONTROL VALUES                       
+-                                                                              
+-          LSTHD(I) = MINR                                                     
+-          LTRY(I) = MINR                                                      
+-          MINROW(I) = MINR                                                    
+-          MAXROW(I) = MINR + EACH - 1                                         
+-          MINR = MINR + EACH                                                  
+-                                                                              
+-C         FILL THE CURRENT BUFFER FROM THE FILE                               
+-                                                                              
+-          IF(DSS_INDEX_IN(I).EQ.0) THEN                                       
+-            DO 150 J=MINROW(I),MAXROW(I)                                      
+-              IF(ICDIN(I).EQ.1.OR.ICDIN(I).EQ.3) THEN                         
+-                READ(UN) JT, VALAIN(J), VALBIN                                
+-              ELSE                                                            
+-                READ(UN) JT, VALAIN(J)                                        
+-              ENDIF                                                           
+-C             Check for end of file.                                          
+-              IF(JT.EQ.0.D0) GOTO 160                                         
+-              JTIN(J) = JT                                                    
+- 150        CONTINUE                                                          
+-            J = MAXROW(I)                                                     
+- 160        CONTINUE                                                          
+-C           Reset the list head so that it always points to the               
+-C           first invalid value when traversing the buffer clockwise.         
+-C           If buffer is full the first invalid value is the first            
+-C           value in the buffer.  However, if the buffer is not               
+-C           full, then the first invalid value is the value next              
+-C           after the last value.                                             
+-            J = J + 1                                                         
+-            IF(J.GT.MAXROW(I)) J = MINROW(I)                                  
+-            LSTHD(I) = J                                                      
+-                                                                              
+-          ELSE                                                                
+-C           Fill the buffer from the HECDSS path name.                        
+-            JT = SJTIME                                                       
+-            CALL CHK_HECDSS_RECORD(STDOUT, NAMIN(I), DSS_INDEX_IN(I),         
+-     A                             TIME_STEP_IN(I), 'INST-VAL', JT,           
+-     B                             START_TIME, EFLAG)                         
+-                                                                              
+-            IF(EFLAG.EQ.1) THEN                                               
+-              WRITE(STDOUT,51) UNIN(I), START_TIME, SJTIME                    
+-              WRITE(STDOUT,57) NAMIN(I)                                       
+-              STOP 'Abnormal stop: errors found.'                             
+-            ELSEIF(EFLAG.EQ.2) THEN                                           
+-              WRITE(STDOUT,58) UNIN(I), NAMIN(I)                              
+-              STOP 'Abnormal stop: errors found.'                             
+-            ENDIF                                                             
+-            NEED = MAXROW(I) - MINROW(I) + 1                                  
+-            JT = START_TIME                                                   
+-            CALL GET_HECDSS_BLOCK(STDOUT, NAMIN(I), DSS_INDEX_IN(I),          
+-     A                      TIME_STEP_IN(I), 'INST-VAL', JT, NEED,            
+-     B                      GOT, JTVEC, TMPVEC, TMPVEC_SIZE)                  
+-                                                                              
+-            DO 170 J=1,GOT                                                    
+-              JTIN(MINROW(I) + J - 1) = JTVEC(J)                              
+-              VALAIN(MINROW(I) + J -1) = TMPVEC(J)                            
+-170         CONTINUE                                                          
+-C           Reset the list head so that it always points to the               
+-C           first invalid value when traversing the buffer clockwise.         
+-C           If buffer is full the first invalid value is the first            
+-C           value in the buffer.  However, if the buffer is not               
+-C           full, then the first invalid value is the value next              
+-C           after the last value.                                             
+-            J = MINROW(I) + GOT - 1                                           
+-            J = J + 1                                                         
+-            IF(J.GT.MAXROW(I)) J = MINROW(I)                                  
+-            LSTHD(I) = J                                                      
+-                                                                              
+-          ENDIF                                                               
+-                                                                              
+-C         MAKE SURE THAT THE START TIME FOR EACH INPUT FILE IS AT OR          
+-C         BEFORE THE START TIME OF THE RUN.                                   
+-                                                                              
+-          IF(SJTIME.LT.JTIN(MINROW(I))) THEN                                  
+-            WRITE(STDOUT,51) UNIN(I), JTIN(MINROW(I)), SJTIME                 
+-            STOP 'Abnormal stop: errors found.'                               
+-          ENDIF                                                               
+-                                                                              
+- 500    CONTINUE                                                              
++     A             STATUS = 'OLD', access='direct', recl=4)
++c             Get the record length of the file.  First 4 bytes
++c             of record number 1.
++              read(un, rec=1) rd_rec_len
++              close(un)
++              OPEN(UN, FILE=NAMIN(I), FORM = 'UNFORMATTED',
++     A             STATUS = 'OLD', access='direct', recl=rd_rec_len)
++            ELSE                                                        
++              WRITE(STDOUT,59) NAMIN(I)                                 
++              STOP 'Abnormal stop: errors found.'                       
++            ENDIF  
++
++c           Check if user has requested delete on close
++            it = index(namin(i),'._doc_')
++            if(it > 0) then
++c             signal delete on close for this file
++              delete_list(i) = 1
++            endif                                               
++                                                                        
++C           Get the first record number with time-series data
++c           and get the code for the values stored.   
++            read(un, rec=1) 
++     a        rd_rec_len, file_version, what, unused, first_ts_pnt
++c           Output information on the creating program, etc. 
++c           We read the information, strip trailing blanks and
++c           output.  Detials of what these fields contain is 
++c           in subroutine wropen() for feq.  
++ 
++
++            read(un,rec=9)  program_name
++            n1 = len_trim(program_name)
++            read(un,rec=10) program_version
++            n2 = len_trim(program_version)
++            read(un,rec=11) version_date
++            n3 = len_trim(version_date)
++            read(un,rec=12) date_of_run
++            n4 = len_trim(date_of_run)
++            read(un,rec=13) time_of_run
++            n5 = len_trim(time_of_run)
++            write(stdout,60) program_name(1:n1),
++     a                      program_version(1:n2),
++     b                      version_date(1:n3),
++     c                      date_of_run(1:n4),
++     d                      time_of_run(1:n5)
++
++
++c           Set rd_rec to the first record
++            rd_rec(i) = first_ts_pnt
++           
++          ENDIF                                                         
++C         INITIALIZE THE CIRCULAR BUFFER CONTROL VALUES                 
++                                                                        
++          LSTHD(I) = MINR                                               
++          LTRY(I) = MINR                                                
++          MINROW(I) = MINR                                              
++          MAXROW(I) = MINR + EACH - 1                                   
++          MINR = MINR + EACH                                            
++                                                                        
++C         FILL THE CURRENT BUFFER FROM THE FILE                         
++                                                                        
++          IF(DSS_INDEX_IN(I).EQ.0) THEN                                 
++            DO 150 J=MINROW(I),MAXROW(I)                                
++              READ(UN, rec=rd_rec(i)) JT, VALAIN(J)
++              rd_rec(i) = rd_rec(i) + 1
++
++C             Check for end of file.                                    
++              IF(JT.EQ.0.D0) GOTO 160                                   
++              JTIN(J) = JT                                              
++ 150        CONTINUE                                                    
++            J = MAXROW(I)                                               
++ 160        CONTINUE                                                    
++C           Reset the list head so that it always points to the         
++C           first invalid value when traversing the buffer clockwise.   
++C           If buffer is full the first invalid value is the first      
++C           value in the buffer.  However, if the buffer is not         
++C           full, then the first invalid value is the value next        
++C           after the last value.                                       
++            J = J + 1                                                   
++            IF(J.GT.MAXROW(I)) J = MINROW(I)                            
++            LSTHD(I) = J                                                
++                                                                        
++          ELSE                                                          
++C           Fill the buffer from the HECDSS path name.                  
++            JT = SJTIME                                                 
++            CALL CHK_HECDSS_RECORD(STDOUT, NAMIN(I), DSS_INDEX_IN(I),   
++     A                             TIME_STEP_IN(I), 'INST-VAL', JT,     
++     B                             START_TIME, EFLAG)                   
++                                                                        
++            IF(EFLAG.EQ.1) THEN                                         
++              WRITE(STDOUT,51) UNIN(I), START_TIME, SJTIME              
++              WRITE(STDOUT,57) NAMIN(I)                                 
++              STOP 'Abnormal stop: errors found.'                       
++            ELSEIF(EFLAG.EQ.2) THEN                                     
++              WRITE(STDOUT,58) UNIN(I), NAMIN(I)                        
++              STOP 'Abnormal stop: errors found.'                       
++            ENDIF                                                       
++            NEED = MAXROW(I) - MINROW(I) + 1                            
++            JT = START_TIME                                             
++            CALL GET_HECDSS_BLOCK(STDOUT, NAMIN(I), DSS_INDEX_IN(I),    
++     A                      TIME_STEP_IN(I), 'INST-VAL', JT, NEED,      
++     B                      GOT, JTVEC, TMPVEC, TMPVEC_SIZE)            
++                                                                        
++            DO 170 J=1,GOT                                              
++              JTIN(MINROW(I) + J - 1) = JTVEC(J)                        
++              VALAIN(MINROW(I) + J -1) = TMPVEC(J)                      
++170         CONTINUE                                                    
++C           Reset the list head so that it always points to the         
++C           first invalid value when traversing the buffer clockwise.   
++C           If buffer is full the first invalid value is the first      
++C           value in the buffer.  However, if the buffer is not         
++C           full, then the first invalid value is the value next        
++C           after the last value.                                       
++            J = MINROW(I) + GOT - 1                                     
++            J = J + 1                                                   
++            IF(J.GT.MAXROW(I)) J = MINROW(I)                            
++            LSTHD(I) = J                                                
++                                                                        
++          ENDIF                                                         
++                                                                        
++C         MAKE SURE THAT THE START TIME FOR EACH INPUT FILE IS AT OR    
++C         BEFORE THE START TIME OF THE RUN.                             
++                                                                        
++          IF(SJTIME.LT.JTIN(MINROW(I))) THEN                            
++            WRITE(STDOUT,51) UNIN(I), JTIN(MINROW(I)), SJTIME           
++            STOP 'Abnormal stop: errors found.'                         
++          ENDIF                                                         
++                                                                        
++ 500    CONTINUE                                                        
+  
+       ENDIF
+       RETURN
+@@ -2891,13 +3061,13 @@
+       INCLUDE 'namcom.cmn'
+       INCLUDE 'stdun.cmn'
+  
+-C     + + + LOCAL PARAMETERS + + +
+-      INTEGER ID
+-      PARAMETER(ID = 8+2*MNDIFA)
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER I, J, LIMIT, IOSTATUS
+-      INTEGER A(ID), TEMP(10)
++      INTEGER I, J, LIMIT
++      INTEGER A(7+mndifa), TEMP(10)
++      character c(7+mndifa)*4
++
++   
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC MIN
+@@ -2919,29 +3089,24 @@
+ C***********************************************************************
+       WRITE(STD6,20)
+  
+-C     READ THE FIRST PART OF THE FIRST RECORD TO ESTABLISH THE FORMAT OF
++C     READ THE FIRST PART OF THE second RECORD TO ESTABLISH THE FORMAT OF
+ C     THE DTSF
+  
+-      READ(TSFDSN,IOSTAT=IOSTATUS) (A(I), I=1,7)
+-      IF(IOSTATUS.NE.0) THEN
+-        WRITE(STD6,*) ' Problem in reading DTSF in READOC'
+-        WRITE(STD6,*) ' IO Status value=',IOSTATUS
+-        STOP 'Abnormal stop: errors found.'
+-      ENDIF
++      READ(TSFDSN,rec=dtsf_rec) (A(I), I=1,7)
++      dtsf_rec = dtsf_rec + 1
+       
+ C      NREC = A(5)
+       NDFVAL = A(6)
+       TSFTYP = A(7)
+-      CLOSE(TSFDSN)
+- 
+- 
+-      IF(TSFTYP.EQ.0) THEN
+-        WRITE(STD6,*) ' '
+-        WRITE(STD6,*) ' TSF uses 8 bytes per runoff value'
+-      ELSE
+-        WRITE(STD6,*) ' '
+-        WRITE(STD6,*) ' TSF uses 4 bytes per runoff value'
+-      ENDIF
++ 
++ 
++c      IF(TSFTYP.EQ.0) THEN
++c        WRITE(STD6,*) ' '
++c        WRITE(STD6,*) ' TSF uses 8 bytes per runoff value'
++c      ELSE
++c        WRITE(STD6,*) ' '
++c        WRITE(STD6,*) ' TSF uses 4 bytes per runoff value'
++c      ENDIF
+  
+       IF(NDFVAL.GT.MNDIFA) THEN
+         WRITE(STD6,50) NDFVAL, MNDIFA
+@@ -2953,39 +3118,32 @@
+         STOP 'Abnormal stop: errors found.'
+       ENDIF
+  
+-C     REOPEN THE TSF FILE TO RESTART AT FIRST RECORD
+- 
+-      IF(TSFNAM.EQ.' ') THEN
+-        OPEN(TSFDSN, FILE='DTSF', FORM='UNFORMATTED', STATUS='OLD')
+-      ELSE
+-        OPEN(TSFDSN, FILE= TSFNAM, FORM= 'UNFORMATTED', STATUS='OLD')
+-      ENDIF
+- 
+-      IF(TSFTYP.EQ.0) THEN
+-        LIMIT = 8 + 2*NLUSE
+-      ELSE
+-        LIMIT = 7 + NLUSE
+-      ENDIF
+- 
+-      READ(TSFDSN) (A(I), I=1,LIMIT)
++      LIMIT = 7 + NLUSE
++ 
++      dtsf_rec = 2
++      READ(TSFDSN, rec=dtsf_rec) (A(I), I=1,LIMIT)
++      dtsf_rec = dtsf_rec + 1
+  
+       DO 12 I=1,4
+         TEMP(I) = A(I)
+  12   CONTINUE
+  
+-      READ(TSFDSN) (A(I), I=1,LIMIT)
++      READ(TSFDSN,rec=dtsf_rec) (A(I), I=1,LIMIT)
++      dtsf_rec = dtsf_rec + 1
+       DO 13 I=5,10
+         TEMP(I) = A(I-4)
+  13   CONTINUE
+  
+-      READ(TSFDSN) (A(I), I=1,LIMIT)
+-      WRITE(STD6,14) (A(I), I=1,MIN(32,LIMIT))
++      READ(TSFDSN, rec=dtsf_rec) (c(I), I=1,LIMIT)
++      dtsf_rec = dtsf_rec + 1
++      WRITE(STD6,14) (c(I), I=1,MIN(32,LIMIT))
+       WRITE(STD6,10) (TEMP(I), I=1,4), NDFVAL
+       WRITE(STD6,11) (TEMP(I), I=5,10)
+  
+       DO 15 I=1,NDFVAL
+-        READ(TSFDSN) (A(J), J=1,LIMIT)
+-        WRITE(STD6,16) I, (A(J), J=1,MIN(20,LIMIT))
++        READ(TSFDSN,rec=dtsf_rec) (c(J), J=1,LIMIT)
++        dtsf_rec = dtsf_rec + 1
++        WRITE(STD6,16) I, (c(J), J=1,MIN(20,LIMIT))
+  15   CONTINUE
+  
+       WRITE(STD6,20)
+@@ -3280,7 +3438,7 @@
+ C
+       SUBROUTINE   SFPSBM
+      I                   (STDOUT, USNB, FN, LN, DN, UEXN, SFAC, GRAV,
+-     I                    EPSB, YD, MAXIT, ZI,
++     I                    EPSB, YD, MAXIT, ZI, dz_for_output,
+      O                    EFLAG)
+  
+ C     + + + PURPOSE + + +
+@@ -3289,7 +3447,7 @@
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER DN, EFLAG, FN, LN, STDOUT, MAXIT, UEXN, USNB
+-      REAL EPSB, GRAV, SFAC, YD, ZI
++      REAL EPSB, GRAV, SFAC, YD, ZI, dz_for_output
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     USNB   - user branch number
+@@ -3316,7 +3474,7 @@
+       REAL AL, AM, AR, BL, BR, CK, D, DBL, DBR, DEM, DG, DIV, DKHL, DKL,
+      A     DKR, DTL, DTR, DVM, DX, DY, DZ, ELEV, F, FAC, KHL, KL, KM,
+      B     KR, QL, QM, QR, RES, SFM, SGNDV, ST, TL, TR, VL, VR, WX, XL,
+-     C     XR, YL, YM, YR, YTA, ZL, ZR
++     C     XR, YL, YM, YR, YTA, ZL, ZR, zout
+       CHARACTER CY*7, CQ*8, TABID*16
+  
+ C     + + + INTRINSICS + + +
+@@ -3393,22 +3551,23 @@
+       CALL VAR_DECIMAL(QR,
+      O                   CQ)
+ 
++      zout = elev + dz_for_output
+       SELECT CASE(ID)
+         CASE(0)
+           WRITE(STDOUT,14000) ST, IT, CY, CQ, AR, TR,
+-     A                     DZ, DX, ELEV, D, F, TABID
++     A                     DZ, DX, zout, D, F, TABID
+         CASE(1)
+           WRITE(STDOUT,14100) ST, IT, CY, CQ, AR, TR,
+-     A                     DZ, DX, ELEV, D, F, TABID
++     A                     DZ, DX, zout, D, F, TABID
+         CASE(2)
+           WRITE(STDOUT,14200) ST, IT, CY, CQ, AR, TR,
+-     A                     DZ, DX, ELEV, D, F, TABID
++     A                     DZ, DX, zout, D, F, TABID
+         CASE(3)
+           WRITE(STDOUT,14300) ST, IT, CY, CQ, AR, TR,
+-     A                     DZ, DX, ELEV, D, F, TABID
++     A                     DZ, DX, zout, D, F, TABID
+         CASE DEFAULT
+           WRITE(STDOUT,14400) ST, IT, CY, CQ, AR, TR,
+-     A                     DZ, DX, ELEV, D, F, TABID
++     A                     DZ, DX, zout, D, F, TABID
+       END SELECT
+ 
+  
+@@ -3591,22 +3750,23 @@
+      O                     CY)
+         CALL VAR_DECIMAL(QL,
+      O                     CQ)
++        zout = elev + dz_for_output
+         SELECT CASE(ID)
+           CASE(0)
+             WRITE(STDOUT,14000) ST, IT, CY, CQ, AL, TL,
+-     A                       DZ, DX, ELEV, RES, F, TABID
++     A                       DZ, DX, zout, RES, F, TABID
+           CASE(1)
+             WRITE(STDOUT,14100) ST, IT, CY, CQ, AL, TL,
+-     A                       DZ, DX, ELEV, RES, F, TABID
++     A                       DZ, DX, zout, RES, F, TABID
+           CASE(2)
+             WRITE(STDOUT,14200) ST, IT, CY, CQ, AL, TL,
+-     A                       DZ, DX, ELEV, RES, F, TABID
++     A                       DZ, DX, zout, RES, F, TABID
+           CASE(3)
+             WRITE(STDOUT,14300) ST, IT, CY, CQ, AL, TL,
+-     A                       DZ, DX, ELEV, RES, F, TABID
++     A                       DZ, DX, zout, RES, F, TABID
+           CASE DEFAULT
+             WRITE(STDOUT,14400) ST, IT, CY, CQ, AL, TL,
+-     A                       DZ, DX, ELEV, RES, F, TABID
++     A                       DZ, DX, zout, RES, F, TABID
+         END SELECT
+  
+  150  CONTINUE
+@@ -3719,11 +3879,11 @@
+ C
+       SUBROUTINE   STINT
+      I                  (TSFDSN, STDOUT, NBRA, NEX, BRPT, EXNODT, EFLAG,
+-     I                   EPSB, GRAV, IN, MAXIT, NBN, OUTPUT, TIME, SFAC,
++     I                  EPSB, GRAV, IN, MAXIT, NBN, OUTPUT, JTIME, SFAC,
+      I                   NBLK, OPBLK, BWFDSN, FFFDSN, DIFFUS, UNDERF,
+-     I                   IFRZ, DT, GETDSN, UJTIME,
+-     I                   EPT, BNODE, QEPS,
+-     M                   EMC,
++     I                   IFRZ, DT, GETDSN, putdsn, UJTIME,
++     I                   EPT, BNODE, QEPS, dz_for_output,
++     M                   EMC, dtsf_rec,
+      O                   WT, SITER)
+  
+ C     + + + PURPOSE + + +
+@@ -3735,11 +3895,12 @@
+  
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER BNODE, BWFDSN, EFLAG, EPT, FFFDSN, GETDSN, IFRZ, IN, 
+-     A        STDOUT, MAXIT, NBLK, NBN, NBRA, NEX, OUTPUT, TSFDSN
++     A        STDOUT, MAXIT, NBLK, NBN, NBRA, NEX, OUTPUT, TSFDSN,
++     b        dtsf_rec, putdsn
+       INTEGER BRPT(8,NBRA), EMC(EPT), EXNODT(9,NEX),
+      A        OPBLK(MNBLK)
+-      REAL EPSB, GRAV, QEPS, SFAC, SITER, TIME, WT
+-      REAL*8 DT, UJTIME
++      REAL EPSB, GRAV, QEPS, SFAC, SITER, WT, dz_for_output
++      REAL*8 DT, UJTIME, JTIME
+       CHARACTER DIFFUS*4, UNDERF*4
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -3779,7 +3940,7 @@
+ C               steady flow profile
+ C     NBN    - total number on nodes on branches in the model
+ C     OUTPUT - output level for diagnostic work
+-C     TIME   - elapsed time in seconds from start of run
++C     JTIME   - julian time in days
+ C     SFAC   - conversion factor from user stations to internal stations
+ C     NBLK   - number of operation blocks
+ C     OPBLK  - pointer into the function table storage(FTAB/ITAB) for
+@@ -3800,6 +3961,7 @@
+ C     QEPS   - value of flow to prevent zero divide when computing
+ C               relative correction
+ C     EMC    - vector containing coded form of the Matrix Control Input
++c     dtsf_rec - record number for the single dtsf file used when DIFFUS='YES'
+ C     WT     - weight factor for approximating time integrals
+ C     SITER  - weighted sum of iterations to convergence
+  
+@@ -3814,7 +3976,7 @@
+       SAVE OFF, YES
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER IOFLAG
++      INTEGER IOFLAG, record_len, bwrec
+       LOGICAL THERE
+  
+ C     + + + EXTERNAL NAMES + + +
+@@ -3859,8 +4021,9 @@
+ C       PERFORM BACKWATER CALCS FOR INITIAL CONDITIONS
+  
+         CALL BCKWTR
+-     I             (EPSB, GRAV, IN, STDOUT, MAXIT, NBRA, NBN, NEX,           
+-     I              OUTPUT, TIME, SFAC, BRPT, EMC, QEPS, EPT,
++     I             (EPSB, GRAV, IN, STDOUT, MAXIT, NBRA, NBN, NEX,   
++     I              OUTPUT, JTIME, SFAC, BRPT, EMC, QEPS, EPT, 
++     i              dz_for_output,
+      M              EXNODT,
+      O              EFLAG)
+  
+@@ -3879,27 +4042,33 @@
+ 
+       IF(NBLK.GT.0) THEN
+         CALL OPINIT(NBLK, OPBLK)
+-        CALL SET_INITIAL_OPER_BLK(NBLK, OPBLK, TIME, EPT,
++        CALL SET_INITIAL_OPER_BLK(NBLK, OPBLK, JTIME, EPT,
+      M                            EMC)
+       ENDIF 
+       IF(DIFFUS.EQ.YES) THEN
+-        IF(TSFNAM.EQ.' ') THEN
+-          OPEN(TSFDSN, FILE='DTSF', FORM='UNFORMATTED', STATUS='OLD')
++        INQUIRE(FILE=TSFNAM, EXIST=THERE)
++        IF(THERE) THEN
++          OPEN(TSFDSN, FILE=TSFNAM, FORM='UNFORMATTED', STATUS='OLD',
++     a         access='direct', recl=4)
++          dtsf_rec = 1
++          read(tsfdsn,rec=1) record_len
++          close(tsfdsn)
++          OPEN(TSFDSN, FILE=TSFNAM, FORM='UNFORMATTED', STATUS='OLD',
++     a         access='direct', recl=record_len)
++c         update record pointer to point to second record
++          dtsf_rec = dtsf_rec + 1
+         ELSE
+-          INQUIRE(FILE=TSFNAM, EXIST=THERE)
+-          IF(THERE) THEN
+-            OPEN(TSFDSN, FILE=TSFNAM, FORM='UNFORMATTED', STATUS='OLD')
+-          ELSE
+-            WRITE(STDOUT,*) ' FILE NAMED:', TSFNAM,' NOT FOUND.'
+-            WRITE(STDOUT,*) ' CHECK SPELLING OF TSF FILE.'
+-            STOP 'Abnormal stop: errors found.'
+-          ENDIF
++          WRITE(STDOUT,*) ' FILE NAMED:', TSFNAM,' NOT FOUND.'
++          WRITE(STDOUT,*) ' CHECK SPELLING OF TSF FILE.'
++          STOP 'Abnormal stop: errors found.'
+         ENDIF
+         IF(BWFNAM.EQ.' ') THEN
+-          OPEN(BWFDSN, FILE='BWFD', FORM='UNFORMATTED', STATUS='NEW')
++          OPEN(BWFDSN, FILE='BWFD', FORM='UNFORMATTED', 
++     a        STATUS='UNKNOWN', access='direct', recl=8)
+         ELSE
+           OPEN(BWFDSN, FILE=BWFNAM, FORM='UNFORMATTED',
+-     A            STATUS='UNKNOWN', IOSTAT=IOFLAG)
++     A            STATUS='UNKNOWN', IOSTAT=IOFLAG,
++     b           access='direct', recl=8)
+  
+           IF(IOFLAG.NE.0) THEN
+             WRITE(STDOUT,*) ' PROBLEM IN OPENING FILE: ',BWFNAM
+@@ -3925,7 +4094,7 @@
+           ENDIF
+         ENDIF
+         CALL READOC
+-        CALL BFINIT
++        CALL BFINIT(DT)
+       ELSEIF(DIFFUS.EQ.'DSS') THEN
+ C       Initialize the buffer for unit-area runoff intensities when
+ C       a HECDSS is used as the source.
+@@ -3935,14 +4104,19 @@
+ C     INITIALIZE ANY OUTPUT FILES
+  
+       IF(NFOUT.GT.0) THEN
+-        CALL WROPEN(STDOUT)
++        CALL WROPEN(
++     i              STDOUT, nbra, BRPT)
+       ENDIF
+  
+ C     SAVE STATE OF THE SYSTEM.
+       IF(IFRZ.EQ.0.AND.DIFFUS.EQ.YES) THEN
+-        CALL BWPUT
+-     I            (BWFDSN, WT, NBRA, NBN, NEX, NBLK, OPBLK)
+-        WRITE(STDOUT,*) ' BWF BEING WRITTEN. STINT'
++        if(getdsn+putdsn == 0)  then
++          bwrec = 1
++          CALL BWPUT
++     I              (BWFDSN, WT, NBRA, NBN, NEX, NBLK, OPBLK,
++     m               bwrec)
++          WRITE(STDOUT,*) ' BWF BEING WRITTEN. STINT'
++        endif
+       ENDIF
+       RETURN
+       END
+@@ -3976,7 +4150,7 @@
+       INCLUDE 'offcom.cmn'
+  
+ C     + + + SAVED VALUES + + +
+-      INTEGER CXTYPE(35)
++      INTEGER CXTYPE(55)
+       SAVE CXTYPE
+  
+ C     + + + LOCAL VARIABLES + + +
+@@ -3992,7 +4166,7 @@
+  
+       EXTERNAL GET_TABID
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA CXTYPE/19*0,6*1,10*0/
++      DATA CXTYPE/19*0,6*1,30*0/
+  
+ C     + + + OUTPUT FORMATS + + +
+  52   FORMAT(' *BUG:XXX* Internal tab#=',I10,' EXPECTED IN TABRC BUT ',
+@@ -4101,7 +4275,7 @@
+               STOP 'Abnormal stop: errors found.'
+             ENDIF
+  
+-            LA = ADRS + 5
++            LA = ADRS + OFF234
+             HA = ITAB(ADRS)
+  
+             XOFF = 3
+@@ -4162,11 +4336,11 @@
+       INCLUDE 'offcom.cmn'
+  
+ C     + + + SAVED VALUES + + +
+-      INTEGER CXTYPE(35)
++      INTEGER CXTYPE(55)
+       SAVE CXTYPE
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER HA, J, LA, TYPE, XOFF
++      INTEGER doff, HA, J, LA, TYPE, XOFF
+       REAL FAC
+       CHARACTER NAME*16
+  
+@@ -4176,7 +4350,7 @@
+       EXTERNAL GET_STRING_FROM_FT
+ 
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA CXTYPE/19*0,6*1,10*0/
++      DATA CXTYPE/19*0,6*1,4*0,6*1,20*0/
+  
+ C     + + + OUTPUT FORMATS + + +
+ 50    FORMAT(/,' *BUG* Expected TABID= ',A,' to be cross section',
+@@ -4206,14 +4380,18 @@
+  
+         LA = ADRS + XTIOFF
+         HA = ITAB(ADRS)
+-
++        doff = itab(adrs+21)
+         IF(ITAB(ADRS+3).EQ.LA) THEN
+ C         We can adjust this table. 
+           FAC = SQRT(KADJ)
+           DO 300 J=LA,HA,XOFF
+             FTAB(J+3) = FAC*FTAB(J+3)
++            if(doff.gt.0) then
++c             adjust the derivative of the sqrt(conveyance)
++              ftab(j+doff) = fac*ftab(j+doff)
++            endif
+  300      CONTINUE
+-C         Change the address for last acces to the 2nd level
++C         Change the address for last access to the 2nd level
+           ITAB(ADRS+3) = LA + XOFF
+           NAME = GET_STRING_FROM_FT(ADRS+16)
+           WRITE(STDOUT,52) NAME,  KADJ
+@@ -4397,7 +4575,8 @@
+           ENDIF
+           IF(ACTOUT(I).EQ.OUTA.OR.ACTOUT(I).EQ.OUTS) THEN 
+             VAL = SNGL(SUM)
+-            WRITE(UNOUT(I)) JTIME, VAL
++            WRITE(UNOUT(I), rec=wr_rec(i)) JTIME, VAL
++            wr_rec(i) = wr_rec(i) + 1
+             IS_SUM_GOOD = NO
+           ELSEIF(ACTOUT(I).EQ.QUAD) THEN
+ C           Clear the running quadrature value
+@@ -4408,7 +4587,8 @@
+ 
+ C           Write the initial value of zero
+             VAL = 0.0
+-            WRITE(UNOUT(I)) JTIME, VAL
++            WRITE(UNOUT(I), rec=wr_rec(i)) JTIME, VAL
++            wr_rec(i) = wr_rec(i) + 1
+           ENDIF
+         ELSE
+ C         Output to a HECDSS dataset
+@@ -4422,35 +4602,193 @@
+ C
+ C
+ C
+-      SUBROUTINE   WROPEN(STDOUT)
++      SUBROUTINE   WROPEN(
++     i                    STDOUT, nbra, BRPT)
+  
+ C     + + + PURPOSE + + +
+ C     Open the output files and write headers to each.
+  
+       IMPLICIT NONE
+-      INTEGER STDOUT
++      INTEGER :: nbra, STDOUT, BRPT(8,NBRA)
+ 
+ C     + + + COMMON BLOCKS + + +
+       INCLUDE 'arsize.prm'
+-      INCLUDE 'wrcom.cmn'
++      INCLUDE 'wrcom.cmn'  
++      include 'datetime.cmn'
++      include 'svn.cmn'
++
++c     Called routines
++      integer :: GETUSB
++      character :: GETUSN*5
++
++      EXTERNAL GETUSB, GETUSN
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER I, IOFLAG
++      integer (kind=2) :: file_structure_version
++      INTEGER I, IOFLAG, j, n, record_length,  usr_bran_number
++      character :: what*1, unused*1, usr_nodeid*8, s72*72, c12*12
+ C     ******************************FORMATS*****************************
+ 50    FORMAT(/,' *ERR:300* Cannot open file named:',/,5X,A,/,5X,
+      A        ' Check path for file used for time-series output.')
+ 52    FORMAT(' Writing header to PTSF:',A)
++54    format(/,'***BUG*** WROPEN: record count wrong at end of header')
+ C***********************************************************************
++c     The standard header consists of the following as of version 10.40
++c     December 2006:
++c     Note: Fortran counts records from 1 and also character positions 
++c           from 1.  We do the same here. 
++c 
++c     Record     byte   Date            Contents
++c       #       range   type
++c     ------    -----  -----    ----------------------------------------------
++c       1        1:4   I*4      Record length. Currently 12 bytes
++c                5:6   I*2      File structure version
++c                7:7   C*1      Z-elevation vs. time. Q-flow vs. time
++c                8:8   C*1      Unused-currently set to a blank (space)
++c                9:12  I*4      Record number of the first time series point
++c                               in the file. 
++c       2        1:4   I*4      User branch number: if zero denotes that
++c                               user node id is an exterior node.
++c                5:12  C*8      User node id: if user branch number > 0
++c                                contains user node number on a branch,
++c                                else contains the exterior node id string
++c                                Unnnn, Dnnnn, or Fnnnn, where the number
++c                                of digits may range from 1 through 4.
++c       3:8      1:12  C*12      Up to 72 characters for the file name. 
++c                                No path info is stored.  If the name is
++c                                shorter, blanks are appended at the end.
++c                                If the name is longer, it is truncated!
++c        9       1:12  C*12      Name of program creating the file
++c   
++c       10       1:12  C*12      Version number/id of creating program
++c       
++c       11       1:12  C*12      Date string for the version of the creating program
++c 
++c       12       1:2   C*12      Date string for the run of the program creating the file
++c 
++c       13       1:12  C*12      hh.mm.ss.ttt  Time of run to nearest millisecond!
++c                                hh - 24-hour clock value of hour
++c                                mm - minute 
++c                                ss - seconds
++c                                ttt - millisconds. 
++c       
++c       14      1:12   c*12      Revision number of source code for FEQ
++c       15      1:4    I*4       Revision number for working files
++c               5:8    i*4       ==1 local working files are modified
++c                                ==0 local working files are fully committed to repository
++c               9:12   c*4       'work'
+       WRITE(STDOUT,*) ' '
++      record_length = 12
++      file_structure_version = 1
++      unused = ' '
+       DO 500 I=1,NFOUT
++c       Open each file and create the header record for it. 
+         IF(UNOUT(I).LT.1000.AND.UNOUT(I).GT.0) THEN
+           OPEN(UNOUT(I), FILE = NAMOUT(I), FORM = 'UNFORMATTED',
+-     A       STATUS = 'UNKNOWN', IOSTAT=IOFLAG)
++     A       STATUS = 'UNKNOWN', IOSTAT=IOFLAG, access='direct',
++     b       recl=record_length)
+           IF(IOFLAG.NE.0) THEN
+             WRITE(STDOUT,50) NAMOUT(I)
+             STOP 'Abnormal stop: errors found.'
+           ENDIF
+-          WRITE(UNOUT(I)) ICDOUT(I)
++          if(icdout(i) == 2) then
++            what = 'Z'
++          else
++             what = 'Q'
++          endif
++          write(unout(i),rec=wr_rec(i)) record_length, 
++     a       file_structure_version, what, unused,
++     b       DPTSF_REC_AT_FRST_TS_PNT 
++
++c         Point to the next open record for writing time-series data.
++          wr_rec(i) = wr_rec(i) + 1
++
++c         Now set the details used to describe the data to the
++c         user during review of the results. 
++          usr_bran_number = getusb(braout(i))
++          if(usr_bran_number == 0) then
++c           This is an exterior node id
++            usr_nodeid = getusn(nodout(i))
++          else
++c           This is a node number on a branch.  Make a char string.
++            write(usr_nodeid,'(i8)') 
++     a                nodout(i) + brpt(1,braout(i)) - brpt(3,braout(i)) 
++          endif
++
++          write(unout(i), rec=wr_rec(i)) usr_bran_number, usr_nodeid
++          wr_rec(i) = wr_rec(i) + 1
++
++c         Find the last path name divider (/ or \) in the name for the 
++c         file. 
++          n = len_trim(namout(i))
++          do j=n-1,1,-1
++            if(namout(i)(j:j) == '/' .or.
++     a         namout(i)(j:j) == '\') then
++                exit
++            endif
++          end do
++c         Drop through is valid.  It means that no part of the path
++c         name was given.  The name beyond 72 chars in length is 
++c         discarded.  User has to be terse in selecting names!
++          s72 = namout(i)(j+1:n)
++          do j=0,5
++            write(unout(i), rec=wr_rec(i)) s72(j*12+1:12*(j+1))
++            wr_rec(i) = wr_rec(i) + 1
++          end do
++
++          write(unout(i),rec=wr_rec(i))  'Feq', '         '
++          wr_rec(i) = wr_rec(i) + 1
++
++c         Parse the version/run date/time string and store parts
++c         in the header to identify the version, version date, 
++c         and the date/time of the run used to create this 
++c         file. Store the version number
++          write(unout(i),rec=wr_rec(i))  
++     a                 version_run_date_time_string(10:16), '     '
++c          read(unout(i),rec=wr_rec(i)) c12
++c          write(stdout,*) 'In WROPEN: c12a=',c12,'rec=',wr_rec(i)
++c         store the date of the version
++          wr_rec(i) = wr_rec(i) + 1
++          write(unout(i),rec=wr_rec(i)) 
++     a                      version_run_date_time_string(32:37), ' ',
++     a                      version_run_date_time_string(44:47), ' '
++c          read(unout(i),rec=wr_rec(i)) c12
++c          write(stdout,*) 'In WROPEN: c12b=',c12,'rec=',wr_rec(i)
++          wr_rec(i) = wr_rec(i) + 1
++c         store the date of the run
++          write(unout(i),rec=wr_rec(i))  
++     a                         version_run_date_time_string(72:81), '  '
++c          read(unout(i),rec=wr_rec(i)) c12
++c          write(stdout,*) 'In WROPEN: c12c=',c12,'rec=',wr_rec(i)
++c         store the time of the run
++          wr_rec(i) = wr_rec(i) + 1
++          write(unout(i),rec=wr_rec(i)) 
++     a                            version_run_date_time_string(84:95)
++c          read(unout(i),rec=wr_rec(i)) c12
++c          write(stdout,*) 'In WROPEN: c12d=',c12,'rec=',wr_rec(i)
++          wr_rec(i) = wr_rec(i) + 1
++          write(unout(i),rec=wr_rec(i)) revision(1:12)  !Software revision
++    
++          wr_rec(i) = wr_rec(i) + 1
++          write(unout(i),rec=wr_rec(i)) svn_rev, svn_mod, 'work'  !Working copy revision
++
++          wr_rec(i) = wr_rec(i) + 1
++          
++          if(wr_rec(i) /= DPTSF_REC_AT_LKUP_TAB_START) then
++            write(stdout, 54) namout(i)
++            STOP 'Abnormal stop: bug found.'
++           endif 
++
++c         Fill missing records with blanks
++          do j=wr_rec(i), DPTSF_REC_AT_FRST_TS_PNT - 1
++            write(unout(i), rec=j) '            '
++          end do
++
++c         Update pointer to the record for the first time-series value
++          wr_rec(i) = DPTSF_REC_AT_FRST_TS_PNT
++          
++
++c         Tell the user about the successful open. 
+           WRITE(STDOUT,52) NAMOUT(I)
+         ENDIF
+  500  CONTINUE

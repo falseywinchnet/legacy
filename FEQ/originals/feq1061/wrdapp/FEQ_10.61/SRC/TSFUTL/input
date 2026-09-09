@@ -1,0 +1,482 @@
+*Sample input for TSFUTL
+*Each line to be echoed as a comment or heading line
+*must start with an asterisk in column 1.
+;   Important:  This utility no longer processes old style 
+;   sequential unformatted DTSF's used in version 10.17 of FEQ
+;   and earlier.  The UPDATE command, given below, will convert
+;   old style DTSF's to the new style direct unformatted form.
+;   Thus you must first convert your project to version 10.20 or 
+;   later if you wish to use this utility.  
+;
+;   TSFUTL is a utility program for manipulating TSF files. 
+;   This version only works with diffuse time series files, denoted
+;   as DTSF.  Later additions might work with point time series
+;   files.  When they are added they will be denoted by PTSF
+;
+;   The input to TSFUTL is broken into commands.  A command line
+;   starts with a command and is followed in most cases by 
+;   an argument.  For example, one of the commands is PRINT but
+;   we must specify what to print.  In this case the only 
+;   option is to print the contents of a DTSF.  Thus the
+;   complete command line is: PRINT DTSF.  It can also be
+;   in lower case: print dtsf.  It can be mixed case in 
+;   anyway you see fit.  However, the word PRINT must come 
+;   before DTSF and there must be one or more spaces separating them.
+;   The command does not need to start in column 1; it can
+;   start anywhere on the line.  The only rule is that all 
+;   items on the command line must be on one line. 
+;
+;   The command line initiates a command block.  A command 
+;   block is one or more lines that follow the command line
+;   and define values needed by the command.  The command block
+;   is ended by an END statement on a line followed by the
+;   command name.  In this version the command name is not
+;   checked but in later versions it will be checked so 
+;   don't play loose with the rules!
+;
+;   This is an example input and in order for it to work 
+;   certain things must be true.  This input assumes that
+;   the example time series files are stored in a directory
+;   with the name TSF.  This directory is placed in the 
+;   root directory and is on the same drive as this file.
+;   You must have the DTSF file: TSFLONG.SLT present in
+;   the TSF directory.  This DTSF will be the starting 
+;   point for what this example input does.  This DTSF file
+;   is large and we will be creating more large files.  
+;   You will need about 25 megabytes of free space on your
+;   disk. 
+;
+;   A bit of review of the history of DTSF's is in order to 
+;   understand some of what TSFUTL is doing.  Originally all
+;   DTSF's used eight bytes to store runoff values.  However,
+;   it soon became evident that was more precision than
+;   was needed and a second format for the DTSF's was created.
+;   It only requires four bytes for each runoff value.  The
+;   difference in results obtained from the two formats
+;   is negligible but the size reduction is substantial.
+;   Because the differences in results are small TSFUTL will 
+;   automatically create the newer format DTSF as a result of 
+;   any operation.  That is, the old format is supported in a 
+;   read mode only. The initial DTSF used here is in the older 
+;   format and will be used to create various other DTSF's to 
+;   illustrate the commands in TSFUTL. 
+;
+;   Another change in the format of the DTSF took place in 
+;   version 10.20.  This was a change from using the sequential 
+;   unformatted style to the direct unformatted style.  To use 
+;   a version of 10.20 or later, the DTSF must be updated.  The
+;   version of tsfutl used must be compiled with the same compiler
+;   as was used to compile the version of the software that 
+;   created the DTSF.  This will often be HSPF and you must 
+;   know what compiler was used.  If you cannot determine the 
+;   compiler, then try both executables of TSFUTL.  If you get 
+;   a strange error or even a system message, then you have picked
+;   the wrong exectuable!  This of course assumes you know what
+;   you are doing with the input.  The following examples should 
+;   work because all of them have been tested one or more times. 
+;
+;
+;   The commands  supported are as follows:
+;
+;    Command Name  Command Argument   Function
+;    ------------  ---------------- ------------------------------------
+;      GET          DATES           Scans a DTSF and reports the starting
+;                                   and ending date/time strings for each
+;                                   event in the DTSF. It also prints 
+;                                   a multiplying factor that is used
+;                                   to create a character dump of a DTSF
+;                                   to move it between computers or 
+;                                   compilers that cannot share 
+;                                   unformatted data. See the DUMP and
+;                                   RESTORE commands below.
+;      
+;     PRINT         DTSF            Prints part or all of a DTSF in s 
+;                                   human-readable form.
+;
+;     CONVERT       DTSF            Converts an old format DTSF to a 
+;                                   new format DTSF. 
+;
+;     DELETE        EVENTS          Reads events from one DTSF, called the
+;                                   old DTSF, and transfers them to a
+;                                   new DTSF deleting any events selected
+;                                   by the user. 
+;
+;     MERGE         DTSF            Uses a primary DTSF and one or more
+;                                   secondary DTSF's and merges them
+;                                   to create a new DTSF.
+;
+;     DUMP          DTSF            Converts the entire contents of a
+;                                   DTSF to a character file, called
+;                                   an ASCII file.  The multiplying
+;                                   factor from GET DATES is used
+;                                   to convert the runoff values to 
+;                                   integers between 0 and 999999.
+;
+;     RESTORE       DTSF            Restores the entire contents of a
+;                                   DTSF from an ASCII file created by
+;                                   DUMP.
+;
+;     UPDATE        DTSF            Reads an old style sequential unformatted
+;                                   DTSF and creates a new style direct unformatted
+;                                   DTSF.
+;
+;     FINISH                        Defines the end of the input for
+;                                   TSFUTL.  
+;                              
+;
+;  The first example is of GET DATES.  Its command block must give
+;  the name of the DTSF file to process.  All specification of
+;  values must not cross a line boundary.  Names of files cannot
+;  have blanks.  The value specifications all have one or more
+;  words to the left of an equal sign.  Only one of those
+;  words is used by TSFUTL.  If that word does not appear TSFUTL
+;  cannot understand what you are talking about!  Other words can 
+;  appear to the left of the equal sign to further define what
+;  the value is.  These can be selected by the user.  The key word
+;  MUST appear and must be separated from any other words by one
+;  or more spaces.  The key words will be in all upper case
+;  in these examples in order to identify them.  
+;
+;  The file name can be a fully qualified name including a drive letter
+;  just as MS-DOS allows.  The name can be up to 64 characters in length.  
+;
+;  To run TSFUTL, invoke it like FEQ, that is, with the name of the 
+;  executable file followed by two arguments.  The first argument
+;  is the name of the file that defines the user input for TSFUTL.
+;  That is this file--the one your are reading right now.  I have
+;  called this file: INPUT.  Thus to run this example insert a line
+;  following  the line with END GET on it that contains the command:
+;  FINISH.  That will limit the example to the GET DATES 
+;  example.    Then exit this file and get back to the command
+;  prompt for the operating system.  Then type
+;
+;    TSFUTL  INPUT  OUTPUT
+;
+;  followed by pressing the ENTER key.  If all goes well the 
+;  program will indicate what it is working on: GET DATES and
+;  when it finishes will report: Normal stop.
+;
+
+GET DATES
+    FILE name =  TSFLONG.SLT
+END GET
+
+;  Now remember to remove the FINISH and move it below the following
+;  command example.  You should also move the GET DATES block
+;  below the FINISH to prevent it being processed again.  There
+;  is no harm other than the computation time taken. From the series 
+;  of dates for the various events I have selected an interval to
+;  illustrate printing of the DTSF contents. 
+
+PRINT DTSF
+   DTSF File name   = tsflong.slt
+   START time =1972/ 8/22:  0.000000  'This is the first event in 1972.
+   STOP time=  1973/ 1/ 7: 24.
+END PRINT
+
+
+;  The runoff is printed in units of 0.001 inch per hour.  Integers are
+;  used to save space in the output.  Each event is headed by its
+;  starting and ending time.  The print window, that is the time
+;  interval between the START and STOP time values should extend
+;  a bit beyond the end of the final event to avoid double printing
+;  of the summary statistics.  These statistics are given for each
+;  series in each event.  They are the maximum intensity, the 
+;  minimum intensity, and the average intensity all in the same
+;  units as the runoff values are printed. 
+; 
+;  The line width for the printed output will exceed 80 or even 132
+;  columns.  To see the extra columns you will need an editor that
+;  can access more than 80 columns and you may have to shift your
+;  display window.  Ideally you should be seeking an operating system
+;  and an editor that is not limited to an 80 column window in 
+;  any case.  MS Windows NT leaves those restrictions behind.  I
+;  do not know if Windows 95 does the same since I have no
+;  experience with that OS.  However, with Windows NT and with
+;  the Rimstar editor and a 17-inch diagonal screen I can display
+;  about 178 columns and still maintain legibility. 
+;
+;
+;  Move the FINISH below the following example of converting
+;  to the newer format for a DTSF.  In this case we give
+;  two values: the file name for the old format DTSF and
+;  the file name for the new format DTSF.
+
+ CONVERT DTSF
+    OLD file name= tsfLONG.slt
+    NEW file name =TSFSHORT.SLT
+END CONVERT
+
+;  The new DTSF file has a stated size of 2,976,275 bytes.  The
+;  old format file has a stated size of 7,018,677 bytes.  There
+;  is a significant reduction in space required for a DTSF
+;  with 25 distinct runoff time series in it!
+
+;  In order to illustrate the MERGE command we must create
+;  some DTSF files that can be merged.  To do this we will use
+;  the DELETE EVENTS command to delete most of the events
+;  from an existing DTSF to create a smaller one.  We will
+;  create two small DTSF's:  the first will contain all events
+;  starting in 1972 and the second will contain events 
+;  in 1987.  Each of these DTSF's will require the standard
+;  dummy event as well.   
+
+;  The first step is to delete all but the 1925 dummy event
+;  and the 1972 events from the DTSF TSFSHORT.SLT that we
+;  just created.  We use an editor to delete and change
+;  the sequence of starting times produced by GET DATES.
+;  The list of times is given, one per line.  Any event
+;  containing a TIME given below will not be transferred to the
+;  NEW file.  Only those events with no time point
+;  appearing in the list of delete TIMES will be transferred
+;  to the NEW DTSF.
+
+DELETE EVENTS
+   OLD File name=TSFSHORT.SLT
+   NEW FILE NAME=   TSF1972
+     TIME=1949/ 6/12:  0.000000 
+     TIME=1950/ 3/ 5:  0.000000 
+     TIME=1951/ 2/15:  0.000000 
+     TIME=1951/ 5/ 8:  0.000000 
+     TIME=1952/ 1/13:  0.000000 
+     TIME=1953/ 3/11:  0.000000 
+     TIME=1953/ 7/19:  0.000000 
+     TIME=1954/ 3/23:  0.000000 
+     TIME=1954/ 4/23:  0.000000 
+     TIME=1954/10/ 2:  0.000000 
+     TIME=1956/ 4/25:  0.000000 
+     TIME=1957/ 7/11:  0.000000 
+     TIME=1958/ 6/11:  0.000000 
+     TIME=1958/ 7/ 1:  0.000000 
+     TIME=1959/ 2/20:  0.000000 
+     TIME=1959/ 6/24:  0.000000 
+     TIME=1960/ 1/10:  0.000000 
+     TIME=1961/ 9/10:  0.000000 
+     TIME=1962/ 3/ 6:  0.000000 
+     TIME=1962/ 7/ 1:  0.000000 
+     TIME=1963/ 4/28:  0.000000 
+     TIME=1963/ 7/12:  0.000000 
+     TIME=1964/ 3/31:  0.000000 
+     TIME=1964/ 7/16:  0.000000 
+     TIME=1965/ 9/16:  0.000000 
+     TIME=1966/ 5/10:  0.000000 
+     TIME=1967/ 3/30:  0.000000 
+     TIME=1967/ 6/ 9:  0.000000 
+     TIME=1968/ 8/14:  0.000000 
+     TIME=1969/ 1/21:  0.000000 
+     TIME=1969/ 6/ 5:  0.000000 
+     TIME=1969/10/ 9:  0.000000 
+     TIME=1970/ 5/31:  0.000000 
+     TIME=1971/ 2/16:  0.000000 
+     TIME=1971/ 8/23:  0.000000 
+     TIME=1974/ 1/18:  0.000000 
+     TIME=1975/ 4/17:  0.000000 
+     TIME=1975/ 8/27:  0.000000 
+     TIME=1976/ 2/28:  0.000000 
+     TIME=1976/ 4/23:  0.000000 
+     TIME=1977/ 6/29:  0.000000 
+     TIME=1977/ 8/30:  0.000000 
+     TIME=1978/ 6/29:  0.000000 
+     TIME=1978/ 9/11:  0.000000 
+     TIME=1979/ 2/27:  0.000000 
+     TIME=1980/ 8/ 8:  0.000000 
+     TIME=1981/ 5/28:  0.000000 
+     TIME=1981/ 6/12:  0.000000 
+     TIME=1981/ 8/13:  0.000000 
+     TIME=1982/ 3/ 8:  0.000000 
+     TIME=1982/ 7/20:  0.000000 
+     TIME=1982/12/ 1:  0.000000 
+     TIME=1983/ 3/25:  0.000000 
+     TIME=1983/11/22:  0.000000 
+     TIME=1984/ 2/ 7:  0.000000 
+     TIME=1985/ 2/17:  0.000000 
+     TIME=1985/10/31:  0.000000 
+     TIME=1986/ 9/20:  0.000000 
+     TIME=1987/ 8/12:  0.000000 
+     TIME=1988/ 1/15:  0.000000 
+     TIME=1988/ 4/ 1:  0.000000 
+     TIME=1988/ 9/11:  0.000000 
+END DELETE
+
+
+
+;  Now we create the second DTSF; one containing only 
+;  the 1987 event and the dummy event (which must be 
+;  present in each DTSF. The first event in a DTSF
+;  is always treated as the dummy event.)
+
+DELETE EVENTS
+   OLD File name   = TSFSHORT.SLT
+   NEW FILE NAME =   TSF1987
+     TIME=1949/ 6/12:  0.000000 
+     TIME=1950/ 3/ 5:  0.000000 
+     TIME=1951/ 2/15:  0.000000 
+     TIME=1951/ 5/ 8:  0.000000 
+     TIME=1952/ 1/13:  0.000000 
+     TIME=1953/ 3/11:  0.000000 
+     TIME=1953/ 7/19:  0.000000 
+     TIME=1954/ 3/23:  0.000000 
+     TIME=1954/ 4/23:  0.000000 
+     TIME=1954/10/ 2:  0.000000 
+     TIME=1956/ 4/25:  0.000000 
+     TIME=1957/ 7/11:  0.000000 
+     TIME=1958/ 6/11:  0.000000 
+     TIME=1958/ 7/ 1:  0.000000 
+     TIME=1959/ 2/20:  0.000000 
+     TIME=1959/ 6/24:  0.000000 
+     TIME=1960/ 1/10:  0.000000 
+     TIME=1961/ 9/10:  0.000000 
+     TIME=1962/ 3/ 6:  0.000000 
+     TIME=1962/ 7/ 1:  0.000000 
+     TIME=1963/ 4/28:  0.000000 
+     TIME=1963/ 7/12:  0.000000 
+     TIME=1964/ 3/31:  0.000000 
+     TIME=1964/ 7/16:  0.000000 
+     TIME=1965/ 9/16:  0.000000 
+     TIME=1966/ 5/10:  0.000000 
+     TIME=1967/ 3/30:  0.000000 
+     TIME=1967/ 6/ 9:  0.000000 
+     TIME=1968/ 8/14:  0.000000 
+     TIME=1969/ 1/21:  0.000000 
+     TIME=1969/ 6/ 5:  0.000000 
+     TIME=1969/10/ 9:  0.000000 
+     TIME=1970/ 5/31:  0.000000 
+     TIME=1971/ 2/16:  0.000000 
+     TIME=1971/ 8/23:  0.000000 
+     TIME=1972/ 8/22:  0.000000 
+     TIME=1972/ 9/10:  0.000000 
+     TIME=1972/12/28:  0.000000 
+     TIME=1974/ 1/18:  0.000000 
+     TIME=1975/ 4/17:  0.000000 
+     TIME=1975/ 8/27:  0.000000 
+     TIME=1976/ 2/28:  0.000000 
+     TIME=1976/ 4/23:  0.000000 
+     TIME=1977/ 6/29:  0.000000 
+     TIME=1977/ 8/30:  0.000000 
+     TIME=1978/ 6/29:  0.000000 
+     TIME=1978/ 9/11:  0.000000 
+     TIME=1979/ 2/27:  0.000000 
+     TIME=1980/ 8/ 8:  0.000000 
+     TIME=1981/ 5/28:  0.000000 
+     TIME=1981/ 6/12:  0.000000 
+     TIME=1981/ 8/13:  0.000000 
+     TIME=1982/ 3/ 8:  0.000000 
+     TIME=1982/ 7/20:  0.000000 
+     TIME=1982/12/ 1:  0.000000 
+     TIME=1983/ 3/25:  0.000000 
+     TIME=1983/11/22:  0.000000 
+     TIME=1984/ 2/ 7:  0.000000 
+     TIME=1985/ 2/17:  0.000000 
+     TIME=1985/10/31:  0.000000 
+     TIME=1986/ 9/20:  0.000000 
+     TIME=1988/ 1/15:  0.000000 
+     TIME=1988/ 4/ 1:  0.000000 
+     TIME=1988/ 9/11:  0.000000 
+
+  END DELETE
+
+
+;  Now we can combine the two DTSF's created above
+;  by using the MERGE command.  The DTSF's being merged
+;  should have no overlap in their non-dummy events.
+;  That is the time span of any event, excluding the
+;  dummy event again, should not overlap any other event.
+
+MERGE DTSF
+   PRIMARY file name= tsf1972
+   NEW tsf file name= merged.1
+   SECONDARY file name= TSF1987
+END MERGE
+
+;  Now we try the merge in the other order.
+MERGE DTSF
+   PRIMARY file name= tsf1987
+   NEW tsf file name= merged.2
+   SECONDARY file name= TSF1972
+END MERGE
+
+
+;  The order of the secondary files becomes important
+;  when more than one is given.  The files cannot backup
+;  in time.  That is the sequence of 
+;  secondary files should be in order of the sequence
+;  of the events they contain, excluding the dummy event
+;  in each file.  The file with the latest events 
+;  should be last in the list and the file with the
+;  earliest events should be first in the list and
+;  be the primary file.
+;
+;
+;  There are times when a DTSF must be transferred to
+;  another computer that uses a different CPU chip
+;  and therefore UNFORMATTED data must be converted.
+;  Sometimes utility programs are available to do this
+;  but a DTSF is not pure numeric.  Some of the data
+;  is character, some is in a floating point form, and
+;  some is in integer form.  Each of these must be treated
+;  differently in making a direct conversion.  TSFUTL
+;  avoids this problem by making an indirect conversion.
+;  The same problem may arise when two different compilers
+;  are used on the same computer-each compiler designer
+;  chooses the detail of keeping track of the internal
+;  form of UNFORMATTED data.  Please see the UPDATE 
+;  command below if only converting from the old style 
+;  sequential unformatted to the new style direct unformatted
+;  form of a DTSF.
+;
+;  Thus assume we want to convert from  A (computer
+;  or compiler or both) to  B.  We do the following:
+;
+;  Step 1. On A run TSFUTL and DUMP a character 
+;          form of the DTSF.  Run GET DATES to define a 
+;          multiplying factor to use.  Do not take the 
+;          multiplying factor as printed at the end of the 
+;          GET DATES output because roundoff could cause the 
+;          maximum intensity in the DTSF to be falsified.
+;          In the above example, GET DATES reports a 
+;          factor of 1.07005E10.  Use 1.07E10 instead
+;          to make sure that the maximum intensity will
+;          not round to a number greater than 999999 when
+;          it is multiplied by this factor. 
+;       
+;  Step 2. Move the ASCII file created by the DUMP
+;          command to B.  Also move the source
+;          of TSFUTL to B. 
+;  Step 3. Compile TSFUTL on B.  This may require some
+;          changes to the code.  TSFUTL uses some
+;          Fortran 90 extensions that Lahey provided
+;          to FORTRAN 77.  The major extension that
+;          may not be supported on B is allocatable
+;          arrays.  If a Fortran 90 compiler is
+;          available on B then there should be little
+;          problem. 
+;  Step 4. Convert the ASCII file to a DTSF by using
+;          the RESTORE command in TSFUTL on B.
+;
+;  We cannot got through all the steps here but we will
+;  simulate the steps by creating an ASCII file from
+;  a DTSF and also restore it to a DTSF. 
+
+DUMP DTSF
+   DTSF file name= TSFSHORT.SLT
+   ASCII file name= dtsfdump
+   conversion FACTOR = 1.07E10
+END DUMP
+
+;  We then restore the ASCII file to a DTSF with
+;  a new name. 
+
+RESTORE DTSF
+    ASCII file name = DTSFDUMP
+    DTSF file name = testdtsf
+END RESTORE
+
+
+;Example for UPDATE DTSF
+UPDATE DTSF
+    OLD file name= t3g102505.tsf
+    NEW file name= t3g102505.dtsf
+END UPDATE
+
+
+FINISH

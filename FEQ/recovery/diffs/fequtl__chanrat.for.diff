@@ -1,0 +1,560 @@
+--- 9.98/fequtl/chanrat.for
++++ 10.61/fequtl/chanrat.for
+@@ -540,7 +540,7 @@
+ C
+       SUBROUTINE   CHNTAB
+      I                   (STDIN, STDOUT, STDTAB, GRV, MINQ,
+-     M                    TABDIR, EFLAG)
++     M                    TABDIR, EFLAG, FTP)
+  
+ C     + + + PURPOSE + + +
+ C     Compute a 2D table for flow through prismatic channel reach,
+@@ -548,7 +548,7 @@
+  
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER EFLAG, STDIN, STDOUT, STDTAB
++      INTEGER EFLAG, FTP, STDIN, STDOUT, STDTAB
+       INTEGER TABDIR(*)
+       REAL GRV, MINQ
+  
+@@ -565,31 +565,35 @@
+       INCLUDE 'epscom.cmn'
+       INCLUDE 'chncom.cmn'
+       INCLUDE 'ftable.cmn'
++      INCLUDE 'tabupgrade.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER I, J, N, NFRAC, NHU, TAB, TABTYP, WFLAG, XSTAB,
+      A        LOCATION_HU, LOCATION_PFD, N_GT, N_GT_TWICE,
+-     B        XSTAB_NUMBER
++     B        XSTAB_NUMBER, ftpup, verbose
+       REAL BOTSLP, DROP, ELEV, FDROP, FDVEC(PMXNHU), HDATUM, HUOLD, HUP,
+      A     HUVEC(PMXNHU), LENGTH, PFDVEC(PMXFRC), POWER, QFREE,
+      B     QMAT(PMXNHU,PMXFRC), QRATIO, ZBOTL, YRATIO, ZBOTR,
+      C     GLOBAL_ERROR, QD_SPAN, RMS_ERROR, LIPREC, MINPFD, FMID, XMID,
+-     D     RERR, LOCAL_MINQ
+-
+-      REAL*8 SIESQR
++     D     RERR, LOCAL_MINQ, zrhufd, epsint_sngl
++
++      REAL*8 SIESQR, easting, northing, dnull
+       CHARACTER CHAR4*4, CHAR5*5, CHAR6*6, CHRVEC(5)*5, HEAD*80,
+      A          LABEL*50, LINE*80, SAVEIT*4, CQ*8, TABID*16,
+-     B          XSTABID*16, ELEV_STRING*10
++     B          XSTABID*16, ELEV_STRING*10,
++     c          zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, FLOAT, MAX, MIN
+  
+ C     + + + EXTERNAL NAMES + + +
+       INTEGER LENSTR
+-      EXTERNAL CHKCFC, CHKTAB, FRFCHN, INL80, SBFCHN, TABCHK, TWDOUT,
++      CHARACTER GET_TABID*16
++      EXTERNAL CHKCFC, CHKTAB, FRFCHN, inline, SBFCHN, TABCHK, TWDOUT,
+      A         CHANRAT_OPT, LENSTR, READ_TABID_PLUS, READ_TABID,
+-     B         STRIP_L_BLANKS, FNDELV
+- 
++     B         STRIP_L_BLANKS, FNDELV, GET_TABID, get_east_north
++ 
++      data dnull/-33d6/
+ C     + + + INPUT FORMATS + + +
+ C 1    FORMAT(7X,I5,1X,A4)
+  2    FORMAT(A5,1X,A)
+@@ -602,7 +606,7 @@
+  27   FORMAT(A4,1X,I5,5A5)
+  
+ C     + + + OUTPUT FORMATS + + +
+- 50   FORMAT(/,' TABID= ',A,2X,A4)
++ 50   FORMAT(/,' TABID= ',A,'  TYPE=',i5)
+  51   FORMAT(/,' Upstream Head=',F9.4,'  Free Drop=',F9.4,
+      A       ' Normal Flow=',F15.3)
+  52   FORMAT(/,' ',A5,'=',A)
+@@ -624,16 +628,18 @@
+  64   FORMAT(/,' ',F5.2,' of checked points had error > LIPREC and',
+      A         F5.2,' had error > 2*LIPREC.')
+  66   FORMAT(' ',A5,'=',F10.2)
++ 68   format('; Flow defining minimum head=',f10.3)
+  71   FORMAT(/,'  Table type 5 replaced by type 13.')
+  72   FORMAT(/,' *ERR:628* Channel length <= 0.0. must be > 0.0.')
+- 74   FORMAT(/,' *ERR:629* ERRKND=',I5,' invalid. range 0 through 3.')
++ 74   FORMAT(/,' *ERR:629* ERRKND=',I5,' invalid. range 0 through 1.')
+  76   FORMAT(/,' Adaptive Simpson''s rule for steady flow.')
+  77   FORMAT(/,' Romberg rule deleted. Using Adaptive Simpson''s rule.')
+  78   FORMAT(/,' Integration error tolerance=',F7.3)
+  79   FORMAT(/,' Requested linear interpolation precision=',F5.3)
+  80   FORMAT(/,' Minimum partial free drop=',F8.3)
+  81   FORMAT(/,' Upstream Head=',F9.4,'  Free Drop=',F9.4)
+- 82   FORMAT(3X' Ups WS Elevation=',F9.4)
++ 82   FORMAT(3X,' Ups WS Elevation=',F9.4)
++83    format(/,' Minimum flow target=',F10.3 )
+  87   FORMAT(/' *ERR:607* TABLE# <= 0')
+  88   FORMAT(/,' Checking cross section table for possible critical',
+      A       ' flow',/,5X,' problems.')
+@@ -650,37 +656,31 @@
+  98   FORMAT(' *ERR:589* table type not 6 or 13.')
+  99   FORMAT(/,' *ERR:630* Upstream heads non-increasing at:',F10.2)
+ C***********************************************************************
++c      write(stdout,*) ' chntab: ftp=',ftp,' on entry.'
++
+ C     Clear the global value of error.
+       GLOBAL_ERROR = 0.0
+ 
+ C     Clear the linear interpolation precision 
+       LIPREC = 0.0
+ 
+-
+-C     Set the local minimum flow.  Revise later when named-item input
+-C     is created.
+-      LOCAL_MINQ = MINQ
+-
+-      CALL INL80
+-     I          (STDIN, STDOUT,
+-     O           LINE)
+-      CALL READ_TABID_PLUS
+-     I                   (STDOUT, LINE,
+-     O                    EFLAG, TABID, TAB, SAVEIT)
+-
+-C      READ(LINE,1,ERR=991) TAB, SAVEIT
+-      WRITE(STDOUT,50) TABID(1:LENSTR(TABID)), SAVEIT
+-      WRITE(*,90) TABID(1:LENSTR(TABID))
+- 
+-      CALL TABCHK
+-     I           (STDOUT, PMXTAB,
+-     M            TAB, TABDIR, EFLAG)
+- 
+-      CALL INL80
+-     I          (STDIN, STDOUT,
+-     O           LINE)
+-      READ(LINE,27,ERR=991) CHAR4, TABTYP, CHRVEC
+-      WRITE(STDOUT,97) CHAR4, TABTYP, CHRVEC
++      call GET_chnrt_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_chnrt_ITEMS(
++     M             EFLAG,
++     O             TAB, tabtyp, errknd, inthow, epsint_sngl, nddabs, 
++     o             nddrel, LOCAL_MINQ,
++     O             zone, hgrid, vdatum, unitsys, basis, 
++     O             easting, northing)
++
++      epsint = dble(epsint_sngl)
++
++c     Check local min flow.  Default is 0.0 to force use of global 
++c     value.
++      if(local_minq.eq.0.0) then
++        local_minq = minq
++      endif
++
+       IF(TABTYP.EQ.5) THEN
+         WRITE(STDOUT,71)
+         TABTYP = 13
+@@ -690,29 +690,13 @@
+         EFLAG = 1
+       ENDIF
+  
+-      IF(CHRVEC(1).NE.'     ') THEN
+-        READ(CHRVEC(1),'(I5)') ERRKND
+-        IF(ERRKND.LT.0.OR.ERRKND.GT.3) THEN
+-          WRITE(STDOUT,74) ERRKND
+-          EFLAG = 1
+-        ENDIF
+-      ELSE
+-        ERRKND = 0
+-      ENDIF
+-      IF(CHRVEC(2).NE.'     ') THEN
+-        READ(CHRVEC(2),'(I5)') INTHOW
+-        IF(INTHOW.EQ.1) THEN
+-          WRITE(STDOUT,76)
+-        ELSE
+-          WRITE(STDOUT,77)
+-        ENDIF
+-      ELSE
+-        INTHOW = 1
+-         WRITE(STDOUT,76)
+-      ENDIF
+-      IF(CHRVEC(3).NE.'     ') THEN
+-        READ(CHRVEC(3),'(F5.0)') EPSINT
+-      ELSE
++      IF(ERRKND.LT.0.OR.ERRKND.GT.1) THEN
++        WRITE(STDOUT,74) ERRKND
++        EFLAG = 1
++      ENDIF
++     
++       
++      if(epsint.le.0.0) then
+         IF(GRV.GT.15.0) THEN
+ C         US standard unit 
+           EPSINT = 0.1D0
+@@ -721,38 +705,51 @@
+           EPSINT = 0.030480D0
+         ENDIF
+       ENDIF
+-      WRITE(STDOUT,78) EPSINT
+-      IF(CHRVEC(4).NE.'     ') THEN
+-         READ(CHRVEC(4),'(F5.0)') NDDABS
+-      ELSE
++
++      if(nddabs.le.0.0) then
+         IF(GRV.GT.15.0) THEN
+           NDDABS = 0.005
+         ELSE
+           NDDABS = 0.001524
+         ENDIF
+       ENDIF
+-      IF(CHRVEC(5).NE.'     ') THEN
+-        READ(CHRVEC(5),'(F5.0)') NDDREL
++      
++
++      TABID = GET_TABID(TAB)
++     
++      WRITE(STDOUT,50) TABID(1:LENSTR(TABID)), tabtyp
++
++C     MAKE SURE TABLE NUMBER IS NOT ALREADY USED IN THIS INPUT
++ 
++      IF(FTPNT(TAB).NE.0) CALL TAB_IN_USE
++     I                                   (TABID,
++     M                                     EFLAG)
++
++      IF(INTHOW.EQ.1) THEN
++        WRITE(STDOUT,76)
+       ELSE
+-        NDDREL = 0.005
+-      ENDIF
++        WRITE(STDOUT,77)
++        inthow = 1
++      ENDIF
++      WRITE(STDOUT,78) EPSINT
+       WRITE(STDOUT,91) NDDABS, NDDREL
+- 
+- 
+-      CALL INL80
++      write(stdout,83) local_minq
++      write(stdtab,68) local_minq
++ 
++ 
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2,ERR=991) CHAR5, LABEL
+       WRITE(STDOUT,52) CHAR5, LABEL
+  
+ C     INPUT THE CROSS SECTION TABLE FOR THE CHANNEL
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+      I               (STDOUT, LINE, 'XSTAB',
+      O                EFLAG, XSTABID, XSTAB)
+-C      READ(LINE,4,ERR=991) CHAR6, XSTAB
+       WRITE(STDOUT,54)  XSTABID(1:LENSTR(XSTABID))
+ 
+ C     Save the table number
+@@ -765,15 +762,21 @@
+      I             (12, STDOUT, FTPNT, MFTNUM,
+      M              XSTAB,
+      O              EFLAG)
+-      ENDIF
+-      CALL INL80
++        if(easting <= dnull) then
++c         Get values from the cross-section table. 
++          call get_east_north(
++     i                        stdout, xstab,
++     o                        easting, northing)
++        endif
++      ENDIF
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,6,ERR=991) CHAR6, BOTSLP
+  
+       WRITE(STDOUT,56) CHAR6, BOTSLP
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,6,ERR=991) CHAR6, LENGTH, ELEV_STRING
+@@ -805,19 +808,19 @@
+ C     INPUT THE FACTORS CONTROLLING THE UPSTREAM HEADS AND THE
+ C     DISTRIBUTION OF DROPS
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24,ERR=991) HEAD
+       WRITE(STDOUT,92) HEAD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,26,ERR=991) CHAR5, NFRAC
+       WRITE(STDOUT,94) CHAR5, NFRAC
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,16,ERR=991) CHAR5, POWER
+@@ -829,7 +832,7 @@
+       I = 1
+       HUOLD = -1.0
+  300  CONTINUE
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+ C       Check for optional parameters for definition of 
+@@ -838,7 +841,7 @@
+ C         The user wants table optimization.
+           READ(LINE,8, ERR=991) CHAR6, LIPREC
+           WRITE(STDOUT,79) LIPREC
+-          CALL INL80
++          CALL inline
+      I              (STDIN, STDOUT,
+      O               LINE)
+           READ(LINE,8, ERR=991) CHAR6, MINPFD
+@@ -907,6 +910,13 @@
+       ZBOTL = ELEV + 0.5*BOTSLP*LENGTH
+       ZBOTR = ELEV - 0.5*BOTSLP*LENGTH
+  
++c     Drop to free flow at zero flow is equal to the drop in 
++c     elevation on the defining plane but only if there is a drop
++c     in elevation from ups to dns.  Otherwise it is zero.
++
++      zrhufd = zbotl - zbotr
++      if(zrhufd.lt.0.0) zrhufd = 0.0
++
+       HDATUM = MAX(ZBOTL, ZBOTR)
+  
+       WRITE(STDOUT,96) HDATUM
+@@ -1091,8 +1101,22 @@
+       CALL TWDOUT
+      I           (STDOUT, STDTAB, TAB, LABEL, NHU, NFRAC, HUVEC, FDVEC,
+      I            PFDVEC, QMAT, HDATUM,
+-     I            TABTYP, ' CHANRAT',
++     I            TABTYP, ' CHANRAT', zrhufd,
++     i            zone, hgrid, vdatum, unitsys, basis,
++     i            easting, northing,
+      O            EFLAG)
++
++      if(twod_cubic_out.eq.'YES') then
++        verbose = 1
++
++        CALL twodfit
++     I           (STDOUT,  TAB, NHU, NFRAC, HUVEC, FDVEC,
++     I            PFDVEC, QMAT, HDATUM,
++     I            TABTYP, ' CHANRAT', zrhufd, verbose,
++     M            FTP,
++     O            EFLAG, ftpup)
++      endif
++
+ 
+ C      DO 890 I=1,NHU
+ C        WRITE(STDOUT,68) HUVEC(I), QMAT(I,NFRAC)
+@@ -1344,3 +1368,202 @@
+ 
+       RETURN
+       END
++
++
++
++C
++C
++C 
++      SUBROUTINE SET_chnrt_ITEM_DEFAULTS()
++
++C     Set the default values in the vectors used to
++      IMPLICIT NONE
++      INCLUDE 'chnrtitm.cmn'
++
++C***********************************************************************
++C     Default for: TABID 
++      chnrtITMCTAB(  1) = '    '           
++C     Default for: TABLE - note # is ignored in the standard scanner 
++      chnrtITMCTAB(  2) = '    '           
++C     Default for: TYPE
++      chnrtITMITAB(  1) = 13
++C     Default for: ERRKND-absolute error
++      chnrtITMiTAB(  2) = 0
++C     Default for: INTHOW - simpson adaptive-only option
++      chnrtITMiTAB(  3) = 1
++C     Default for: EPSINT - special value to signal need for default assignment later
++      chnrtITMFTAB(  4) = -1.0
++C     Default for: NDDABS - special value to signal need for default assignment later
++      chnrtITMFTAB(  5) = -1.0
++C     Default for: NDDREL 
++      chnrtITMFTAB(  6) = 0.005
++C     Default for: LOCAL_MINQ 
++      chnrtITMFTAB(  7) = 0.0
++C     Default for: ZONE
++      chnrtITMCTAB(  3) = 'NONE'           
++C     Default for: HGRID
++      chnrtITMCTAB(  4) = 'NONE'           
++C     Default for: VDATUM
++      chnrtITMCTAB(  5) = 'NONE'           
++C     Default for: UNITSYS
++      chnrtITMCTAB(  6) = 'NONE' 
++C     Default for: BASIS
++      chnrtITMCTAB(  7) = 'NONE' 
++c     Default for: EASTING
++      chnrtITMDTAB(  5) = -33d6
++c     Default for: NORTHING
++      chnrtITMDTAB(  6) = -33d6
++      
++
++      RETURN
++      END
++C
++C
++C
++      SUBROUTINE  SET_chnrt_ITEMS(
++     M             EFLAG,
++     O             TAB, TYPE, errknd, inthow, epsint, nddabs, nddrel,
++     O             LOCAL_MINQ, zone, hgrid, vdatum, unitsys, basis,
++     O             easting, northing)
++
++C     Set items in CHANRAT
++C     All values not set explicitly by user are at their default value.
++
++      IMPLICIT NONE
++
++      INTEGER TAB, TYPE, GETQ, GETY2, EFLAG, errknd, inthow
++      REAL epsint, nddabs, nddrel, LOCAL_MINQ
++      real*8 easting, northing
++      character*8 zone, hgrid, vdatum, unitsys, basis
++    
++
++C     Local
++      CHARACTER*16 KEY1, KEY2
++
++      INCLUDE 'chnrtitm.cmn'
++      INCLUDE 'stdun.cmn'
++C***********************************************************************
++C     Set the table id.  There  are two strings allowed as the variable name:
++C     TABID or TABLE
++      KEY1 = chnrtITMCTAB(  1)
++      KEY2 = chnrtITMCTAB(  2)
++      IF(KEY1.NE.' ') THEN
++        CALL GET_INTERNAL_TAB_NUMBER
++     I                               (STD6, KEY1,
++     M                                EFLAG,
++     O                                TAB)
++      ELSEIF(KEY2.NE.' ') THEN
++        CALL GET_INTERNAL_TAB_NUMBER
++     I                               (STD6, KEY2,
++     M                                EFLAG,
++     O                                TAB)
++      ELSE
++        TAB = 0
++      ENDIF
++    
++C     Set the value for TYPE
++      TYPE =   chnrtITMITAB( 1)
++C     Set the value for errknd
++      errknd = chnrtITMITAB( 2)
++C     Set the value for inthow
++      inthow =  chnrtITMITAB( 3)   
++C     Set the value for epsint
++      epsint = chnrtITMFTAB( 4)
++C     Set the value for nddabs
++      nddabs = chnrtITMFTAB( 5)
++C     Set the value for nddrel
++      nddrel = chnrtITMFTAB( 6)
++C     Set the value for the local MINQ
++      LOCAL_MINQ = chnrtITMFTAB(7)
++C     Set the value for ZONE
++      ZONE = chnrtITMCTAB( 3)
++c     Set the value for HGRID
++      HGRID = chnrtITMCTAB( 4)
++c     Set the value for VDATUM
++      VDATUM = chnrtITMCTAB( 5)
++c     Set the value for UNITSYS
++      UNITSYS = chnrtITMCTAB( 6)             
++c     Set the value for BASIS
++      basis = chnrtITMCTAB( 7)             
++c     Set the value for EASTING
++      EASTING =  chnrtITMDTAB( 5)
++c     Set the value for NORTHING
++      NORTHING = chnrtITMDTAB( 6)
++    
++      RETURN
++      END
++
++C
++C
++C
++      SUBROUTINE GET_chnrt_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++
++C     Get the table id and various options for CHANRAT command
++
++      IMPLICIT NONE
++
++      INCLUDE 'arsize.prm'
++
++      INTEGER STDIN, STDOUT, EFLAG
++
++      INCLUDE 'chnrtitm.cmn'
++
++C     Local
++
++C     + + + LOCAL PARAMETERS + + +
++      INTEGER  INTVAL, REAVAL, NONE,
++     A         CHRVAL, DPRVAL, EXACT, LOWER,
++     B         NUMERIC, CHAR, N_SYMBOL, NXTBLK
++      PARAMETER(N_SYMBOL=17, INTVAL=1, REAVAL=2,
++     A          DPRVAL=3, CHRVAL=4, NXTBLK=2, NONE=0,
++     B          EXACT=0,LOWER=1, NUMERIC=0, CHAR=1)
++
++      INTEGER MAX_LINE
++     A        
++
++      EXTERNAL GET_NAMED_ITEMS, SET_chnrt_ITEM_DEFAULTS
++
++C     + + + SAVED VALUES + + +
++      INTEGER GROUP(N_SYMBOL), RESPONSE_TYPE(N_SYMBOL),
++     A        CONVERT_RULE(N_SYMBOL), GROUP_INDEX(N_SYMBOL)
++      CHARACTER SYMBOL_TABLE(N_SYMBOL)*16
++
++      SAVE  SYMBOL_TABLE, GROUP, RESPONSE_TYPE, CONVERT_RULE,
++     A      GROUP_INDEX
++
++      DATA  SYMBOL_TABLE /
++     *'TABID','TABLE','TYPE','ERRKND','INTHOW','EPSINT','NDDABS',
++     A 'NDDREL','MINQ','LABEL','ZONE','HGRID','VDATUM','UNITSYS',
++     b 'EASTING','NORTHING','BASIS'/
++                                                                      
++      DATA GROUP  /
++     *CHAR, CHAR, 7*NUMERIC,NXTBLK,4*CHAR,2*NUMERIC,CHAR/          
++
++      DATA GROUP_INDEX /
++     *1, 2, 1, 2, 3, 4, 5, 6, 7, 0, 3, 4, 5, 6, 9, 11, 7/
++                                       
++      DATA RESPONSE_TYPE  /
++     *CHRVAL,CHRVAL,3*INTVAL, 4*REAVAL, NONE, 4*CHRVAL, 2*DPRVAL,
++     a  CHRVAL/
++    
++      DATA CONVERT_RULE /
++     *LOWER,LOWER,3*EXACT,4*LOWER,EXACT,4*LOWER,2*LOWER,LOWER/
++   
++C***********************************************************************
++C     Set Defaults
++ 
++      CALL SET_chnrt_ITEM_DEFAULTS()
++
++      MAX_LINE = 4
++      CALL GET_NAMED_ITEMS(
++     I                     STDIN, STDOUT,  MAX_LINE, N_SYMBOL,
++     I  GROUP, RESPONSE_TYPE, CONVERT_RULE, GROUP_INDEX, SYMBOL_TABLE,
++     I  MAXR_chnrtITM, MAXDP_chnrtITM, MAXC_chnrtITM, 'CHANRAT items',
++     O  chnrtITMITAB, chnrtITMFTAB, chnrtITMDTAB, chnrtITMCTAB,
++     O  EFLAG)
++      
++      RETURN
++
++      END
++

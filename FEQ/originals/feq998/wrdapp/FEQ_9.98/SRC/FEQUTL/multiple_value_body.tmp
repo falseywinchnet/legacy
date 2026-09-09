@@ -1,0 +1,105 @@
+              IF(ITEM_TYPE(2).EQ.INTVAL) THEN
+C               The user has given a count of the subsections.  Get the values
+C               of roughness on the current line. NSUB gives the total
+C               number of values expected.
+
+                NSUB = IVAL(2)
+                IS = 3
+                IE = ITEM_KNT
+                KNT = 0
+
+128             CONTINUE
+                  DO 130 J=IS, IE
+                    KNT = KNT + 1
+                    IF(KNT.GT.PMXSUB) THEN
+                      WRITE(STDOUT,58) KNT, PMXSUB
+                      STOP 'Abnormal stop.  Errors found.'
+                    ENDIF
+                    N(KNT) = RVAL(J)
+130               CONTINUE
+                  IF(KNT.EQ.NSUB) THEN
+C                   All the claimed roughness values have been found. 
+C                   We are done with the header.
+                    GOTO 200
+                  ELSE
+C                   Get the next line and parse it.  It should only contain
+C                   numeric data. 
+                    WRITE(STDOUT,62)
+                    CALL INL120
+     I                         (STDIN, STDOUT,
+     O                          LINE)
+                    IT = LENSTR(LINE)
+                    WRITE(STDOUT,60) LINE(1:IT)
+                    LINE(IT+1:IT+1) = ''''
+                    CALL GETVAL
+     I                         (STDOUT, LINE, NVAL, OPT,
+     O                          ITEM_TYPE, IVAL, RVAL, DPVAL, CVAL, 
+     O                          CLEN, EFLAG2, TERM, TERML, TERMCLS,
+     O                          ITEM_KNT)
+                    IF(EFLAG2.NE.0) THEN
+                       WRITE(STDOUT,56)
+                       STOP 'Abnormal stop.  Errors found.'
+                    ENDIF
+                    EFLAG2 = 0
+                    CALL CHK_FOR_GIVEN_TYPE(
+     I                              1, ITEM_KNT, ITEM_TYPE, REAVAL,
+     O                              EFLAG2)
+                    IF(EFLAG2.NE.0) THEN
+                      WRITE(STDOUT,50) EFLAG2
+                      STOP 'Abnormal stop.  Errors found.'
+                    ENDIF
+132                 CONTINUE
+                    IS = 1
+                    IE = ITEM_KNT
+                    GOTO 128
+                  ENDIF           
+                ELSE
+                  KNT = 0
+                  IS = 2
+133               CONTINUE
+C                   The user has not given a count of the subsections.
+                    IF(ITEM_TYPE(ITEM_KNT).EQ.CONTINUATION_VALUE) THEN
+                      IE = ITEM_KNT - 1
+                    ELSE
+                      IE = ITEM_KNT
+                    ENDIF
+                    EFLAG2 = 0
+                    CALL CHK_FOR_GIVEN_TYPE(IS, IE, ITEM_TYPE, REAVAL,
+     O                              EFLAG2)
+                    IF(EFLAG2.NE.0) THEN
+                      WRITE(STDOUT,50) EFLAG2
+                      STOP 'Abnormal stop.  Errors found.'
+                    ENDIF
+                    DO 135 J=IS,IE
+                      IF(KNT.GT.PMXSUB) THEN
+                        WRITE(STDOUT,58) KNT, PMXSUB
+                        STOP 'Abnormal stop.  Errors found.'
+                      ENDIF
+                      KNT = KNT + 1
+                      N(KNT) = RVAL(J)
+135                 CONTINUE
+                    IF(ITEM_TYPE(ITEM_KNT).EQ.CONTINUATION_VALUE) THEN
+C                     Get the next line and process it.
+                      CALL INL120
+     I                           (STDIN, STDOUT,
+     O                            LINE)
+                      IT = LENSTR(LINE)
+                      WRITE(STDOUT,60) LINE(1:IT)
+                      LINE(IT+1:IT+1) = ''''
+                      CALL GETVAL
+     I                           (STDOUT, LINE, NVAL, OPT,
+     O                            ITEM_TYPE, IVAL, RVAL, DPVAL, CVAL, 
+     O                            CLEN, EFLAG2, TERM, TERML, TERMCLS,
+     O                            ITEM_KNT)
+                      IF(EFLAG2.NE.0) THEN
+                         WRITE(STDOUT,56) LINE
+                         STOP 'Abnormal stop.  Errors found.'
+                      ENDIF
+                      IS = 1
+                      GOTO 133
+                    ELSE
+C                      All lines processed
+                       NSUB = KNT
+                       GOTO 200     
+                    ENDIF
+                ENDIF

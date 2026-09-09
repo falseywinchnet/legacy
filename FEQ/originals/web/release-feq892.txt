@@ -1,0 +1,1808 @@
+Descriptions of changes made to FEQ
+-----------------------------------
+(Descriptions of changes make to FEQUTL follow)
+
+Version 8.07 
+
+September 1, 1994: Discovered that the tributary area
+adjustment factor and the tributary area linear-reservoir delay time
+were not stored properly.  Problems could occur if the factors were
+not all the same value and if the order in which the branches were
+presented in the tributary input differed from the order of input of
+the branches. 
+
+Also changed the format of the tributary area input echo to suppress
+the carriage control characters that remained. 
+
+
+Version 8.08
+
+October 19, 1994:  Changed spacing of function table file name output
+line when reading function table files.  Added a blank line to make
+the file name appear more clearly.
+
+
+Version 8.09 
+
+March 10, 1995: Changed FAC option in Tributary-Area Block.  If FAC >
+0.0, then same action as previous versions.  That is, the FAC value
+is applied internally but its effect is not shown in the external
+echo of the values reported in the tributary area summary.  This
+follows because FAC was originally provided as a factor on the
+unit-area runoff intensity or as a unit conversion.  In either of
+these roles it makes sense that the echo of the tributary area be
+given to the user in exactly the same units and numeric value as the
+user supplied.   
+
+However, it is sometimes convenient to use FAC to allocate tributary
+area to sub-branches when an existing branch is divided to provide
+for some requirement in the analysis.  In this role it makes sense
+that the echo of the input value SHOULD reflect the value of FAC.  In
+Version 8.09 this role is indicated by giving FAC as a negative
+value. 
+
+Note that the change does not affect the internal value of tributary
+area.  FAC has always affected that value.  The only change is in the
+value echoed to the user.  For example, if the area input for branch
+30 is 1.0 square miles, and FAC = -0.2 then the tributary area stored
+for branch 30 is 0.2 square miles and the area echoed to the user is
+0.2 square miles.  However, if FAC=0.2 then the area stored for
+branch 30 is 0.2 square miles but the area reported to the user is
+1.0 square miles.
+
+Also changed the totals for tributary area to reservoirs to include
+both the total for a reservoir and the cumulative total for
+reservoirs.  In previous versions only the cumulative total tributary
+area was given for reservoirs having tributary area. 
+
+
+Version 8.10
+
+March 20, 1995:   Extracted subprogram units that are common to both
+FEQ and FEQUTL so that only one copy exists.  
+
+
+Version 8.50
+
+March 31, 1995:   The following series of changes have been made:
+
+1. Blank lines are now discarded from all character input except for
+blank lines within a branch description.  
+
+2. Many messages that were in upper case have been converted to mixed
+upper and lower case.
+
+3. Access to HECDSS time series(path names) is now supported for
+input of flow or elevation at a boundary node, for output of flow or
+elevation from any node, and for the unit-area runoff intensity used
+to compute lateral inflow from a tributary area.    When the lateral
+inflow is defined using the HECDSS, FEQ operates as if DIFFUS=NO in
+past versions.  That is, the special multiple event processing with
+DIFFUS=YES is not provided.    In version 8.5 the use of DSS time
+series to supply lateral inflows is selected by using DIFFUS=DSS. 
+Only a single event is run; the one given by the starting and ending
+times.
+
+Changes have been made to the INPUT FILES and OUTPUT FILES block as
+well as to the TRIBUTARY AREA block.  
+
+
+Version 8.51
+
+April 21, 1995:  Corrected problem with different lengths of
+character strings for file names.  Also made minor changes to permit
+LF90 to compile properly at optimization level 2. 
+
+
+Version 8.53
+
+April 28 1995:  Modified Code 13 in Network Matrix Control Input to
+permit the explicit specification of one or two nodes for inflow.  If
+the nodes are given explicitly, then the user must give the effective
+angle of entry of the flow into the main channel.  The effective
+angle of entry is always less than the angle of entry of the channels
+themselves.  If no inflow nodes, also called side nodes, are given,
+then FEQ assumes that there is no downstream component of momentum
+flux entering the junction from the side node.  That is, FEQ assumes
+that the effective angle of entry is always 90 degrees.  This
+assumption is appropriate if the water plunges into the mainstream
+from above as in a side-channel spillway on a small slope.  
+
+Currently the side nodes must be on branches so that FEQ can find an 
+area of flow and a momentum-flux coefficient when it needs to compute
+the momentum flux.  Currently free nodes have no way of indicating a
+momentum flux.  This may be changed in the future. 
+
+
+Version 8.54
+
+May 10, 1995:  Blank lines are now echoed to the output file. 
+
+
+Version 8.56
+
+June 21, 1995: Modified formats in TRIBIN and TRBOUT to allow up to
+12 land uses per gage. 
+
+
+Version 8.57
+
+July 26, 1995: Suppressed some intermediate outputs that where
+overlooked earlier. 
+
+
+Version 8.58
+
+July 27, 1995: Modified screen output of event elapsed time so that
+overwriting would not occur. 
+
+
+Version 8.59
+
+August 1, 1995: Added code to detect missing water-surface elevation
+in the steady-flow computations when code=6 in the BACKWATER Block.
+
+
+Version 8.60
+
+September 1, 1995: FEQ was supposed to detect improper use of flow
+nodes.  However, a case occurred in which the detection code failed. 
+The detection code has been changed so that it counts relationships
+attached to a flow node and just not the available relationships
+attached to a flow node. This change will reduce the frequency of
+occurrence of the dreaded zero-pivot error message.  
+
+
+Version 8.61
+
+September 14, 1995: The use of time-series tables, that is 1-D
+function tables of types 7, 8, or 9 was not possible when DIFFUS=YES
+because the conversion from the year/month/day:hour time argument was
+converted to the elapsed time from the start of the event in the time
+series file being computed.  This meant that the internal argument
+began at 0.0 seconds at the start of each event.  This is hardly what
+is wanted in any application.  This was a hold-over from pre-TSF days
+when only a single event was computed.  This has been changed so that
+the internal conversion changes to an argument that is the elapsed
+time from the start of the first event.  This means that the time
+output field that appears when complete output at a time step is
+requested will have a value different than before for all events but
+the dummy event.  The internal argument for all one-D tables is
+single precision.  This entails that the argument will not be able to
+define a time point down to a few seconds when the time span of the
+TSF is significant.   The relative precision for a floating point
+number in Fortran, at single precision, is no better than 1.e-7.  In
+an elapsed time of 70 years, obtained if the dummy event is in 1925
+and the TSF runs through 1995, there will be potential uncertainty of
+about 270 seconds or 4.5 minutes.  This is probably suitable for most
+proposed applications.  Time series tables would not be a good choice
+for flows or stages for this time span.  Flows and stages are best
+stored in files when the time span of the TSF is large. However, time
+series tables are suitable for use in controlling capacity or
+elevation for head datum in Code 5 type 6 using 2-D function tables
+of type 13. 
+
+
+Version 8.65
+
+October 5, 1995: Special output has been modified to permit user
+specification of additional output variables.  The new values are
+given in an OPTIONS line.  The OPTIONS line must follow the UNIT line
+in the input.  The OPTIONS line must begin with "OPTIONS=" where the
+double quote marks are used to delimit the string here but not in the
+input.   The word, OPTIONS, must be in all upper case and must start
+in column 1.  The equal sign must not have any spaces preceding it. 
+The options must be in upper case and must have at least one blank
+ahead and one blank following each option.    The current options
+are:
+
+V  -output the mean velocity for the cross section.
+
+A  -output the area for the cross section.
+
+MCA- output the main channel area for the cross section.  The main channel
+     is defined by a user supplied cross-section function table given in
+     the Special Output Block for this cross section.   The table is
+     given in the right-most five of the six columns following the 14 
+     column heading for each output item.  
+
+MCQ- output the main channel flow.
+
+MCV- output the velocity in the main channel.
+
+FPA- output the area of flow in the flood plain.  The flood plain 
+     is all area in excess of the area in the main-channel cross-section
+     function table.  Neither FEQ nor FEQUTL know anything about a flood
+     plain.  The user defines the flood plain by the main-channel
+     cross-section function table.  If the main channel proves to have
+     larger values of top width, area, or conveyance, than does the
+     cross section given in the Branch Description Block, FEQ will
+     use the area as given in the cross-section function table
+     in the Branch Description Block.  The flood plain area will
+     be taken as zero. 
+
+FPQ - output the flow in the flood plain.
+
+
+FPV -output the velocity in the flood plain. 
+
+If the main-channel cross-section function table is not given, FEQ
+can only output the V and A options.  The other options will have
+blank values output.  
+
+The Special Output file will always have the water-surface elevation
+and the flow output.  The optional items follow with one line for
+each item.  The order of the lines is in the order in which the
+options were given on the OPTIONS= line.  The PAGE size used to
+control printing of headings in the Special Output file will be
+adjusted to be an integral multiple of the number of lines per time
+point.  FEQ first deducts two to account for the heading lines.  Then
+the remaining number of lines is rounded downward to be an integral
+multiple of the number of lines of output.  Two is added back to
+obtain the adjusted value for PAGE.  Note that this assumes that the
+PAGE value is always larger than the maximum number of lines that can
+be output.  Currently that limit is 10.  Thus PAGE should never be
+less than  10 + 2 = 12.  
+
+The options are only output for nodes on a branch.  Nodes not on a
+branch are skipped and only two lines of output are produced for
+them. 
+
+
+Version 8.70
+
+December 28, 1995: Added option for using difference in elevation
+between two exterior nodes as the argument for controlling structures
+in an Operation Control Block.  Also changed the format of the flow
+type in the special output file so that all flow type codes are right
+justified in their columns. 
+
+The specification of difference in elevation is given by placing
+the exterior node label, new style only, in the KEY column.  The 
+difference is computed as elevation at node in NODE minus the
+elevation at node in KEY.  
+
+
+Version 8.71
+
+January 8, 1996: Corrected a bug in the output of the date/time when
+the computations fail to converge.  This problem has apparently been
+present for some time but was not reported.  It has no effect on
+results and only involved an error in the hour of the day when the 
+iteration log for the failed time step was printed.  The hour of the
+day remained at the time of the previous successful time step. 
+
+
+Version 8.72
+
+February 1, 1996: Add checking of the station sequence for each
+branch to make sure that all stations are either increasing or
+decreasing.  It was possible for the user to make a mistake and have
+the direction of stationing change within  a branch.  As long as the
+element length was non-zero, FEQ did not complain.  However, the
+distribution of tributary area would be affected since the sum of the
+absolute values of the element lengths would be greater
+than the length of the branch.  
+
+
+Version 8.73
+
+May 6, 1996:  Fixed problem with zero array size when requesting
+special output when no control structures are present.
+
+Fixed problem with confusion between underflow and overflow gates
+under dynamic control. 
+
+Changed case of many error messages. 
+
+
+Version 8.74
+
+May 24, 1996:  Fixed problem with multiple control points for pumps
+introduced by work in progress on new options for dynamic control of
+gates and pumps.
+
+Removed more old carriage control characters from output.
+
+
+Version 8.76
+
+July 25, 1996: Implemented new format for Network Matrix Control
+Input block.  This format is optional and if you do nothing the old
+format is assumed.  The new format is signaled by putting the
+characters: NEW with the N in column 1, on the line that initiates
+the Network Matrix Control Input block.  This line is suggested to
+contain: NETWORK MATRIX CONTROL, in the input description for FEQ. In
+order to request the new input format this line becomes: NEW NETWORK
+MATRIX CONTROL.  
+
+In the process of making these changes the input processing routines
+were changed so that more than one trailing blank is not printed for
+comment lines.  In earlier versions comment lines were output with
+extra trailing white space.
+
+The new format is column independent but still order dependent.  All
+items must be in the same order as given in the input description but
+they do not have to be in the indicated columns.  The new rules are
+as follows:
+
+1. There must be at least one space or a single comma between
+successive items.  No spaces or commas allowed within an item.  
+
+2. If an optional item is skipped in either the integer/identifier or
+the fixed/float group, then a place holder must appear for that
+item.  This is required to keep the order of all items the same.  The
+place holder is a single asterisk.  It also must be separated from
+adjacent items by one or more spaces. 
+
+
+3. Continuation lines for Code 5 Type 6 are NO longer flagged in the
+input by placing a positive number in the N10 location.  Instead the
+continuation is signaled by putting a space-slash sequence after the
+last item is entered on the line.  
+
+4. All values appearing in the fixed/float part of the input must
+contain a decimal point.  FEQ uses the decimal point to distinguish
+the two groups.  If a decimal point is omitted, FEQ WILL get confused
+and will probably report an error message.  
+
+5. Names for pumps or gates must start with an alphabetic character. 
+They cannot start with a number and the only special character they
+should contain is the under bar. 
+
+6. All of the size restrictions still apply.  That is the branch
+number must not be larger than 999.  Free nodes cannot be larger than
+999 also.  I plan to make these limits larger but this requires
+changing many formats and internal string sizes.  That change will
+take some careful planning.  Changing function table number limits is
+simpler but must also be done for FEQUTL at the same time in order to
+be useful.  FEQUTL has the complication of containing special table
+numbers that also must be changed and this implies that TYPE5.TAB
+needs to be handled properly also. 
+
+7. All of the items for a given code must appear on a single line. 
+All items must appear within 112 columns of text.  This number was
+picked because there was already an input routine that supports it
+and because this should be long enough for now.  It will become
+increasingly useful to have an editor that can support a window with
+more than 80 characters on a line.  Support for at least 130 chars
+and preferably more like 150-160 chars should be sought.
+
+
+The following lines give a fragment of the Network-Matrix Control
+Input for an existing model.  Note how the table numbers have no
+spaces between them.  The node labels for branch numbers larger than
+99 also have no white space to set them off. The input becomes a bit
+difficult to read.   Also comments have been placed beyond column 80
+where FEQ will not encounter them when processing the input.    The
+code 5 type 2 entry has one fixed/float value that is skipped, F2. 
+
+-----------------------------------Fragment Start-----------------------------------------------------
+NETWORK-MATRIX CONTROL INPUT
+ CODE  N1  N2  N3  N4  N5  N6  N7  N8  N9 N10     F1     F2     F3     F4    F5
+    5   2  F8 U14  F81798  501798  50         748.16           5.0 743.80 745.5 SPECIAL ASSESSMENT POND
+    1  14
+    2   3  F8 U14 D13
+    5   6 D14 U15 D1413181318               1 742.47                            INDUSTRIAL DRIVE
+                     14221422               2 751.61
+                     15221522               3 749.33
+                     15231523                 752.05
+    5   6D109U110D10923122312               1 750.73                            ABANDONED RR SPUR
+                     24122412                 755.20
+-----------------------------------Fragment End--------------------------------------------------------
+
+If the FEQ  file for this model is processed by a new utility program, called NETUTL,
+the following fragment results.
+
+-----------------------------------Fragment Start-----------------------------------------------------
+NEW NETWORK-MATRIX CONTROL INPUT
+ CODE  N1  N2  N3  N4  N5  N6  N7  N8  N9 N10     F1     F2     F3     F4    F5
+    5    2   F8  U14   F8 1798   50 1798   50            748.16       *     5.0  743.80  745.5   'SPECIAL ASSESSMENT POND
+    1   14                                                       '
+    2    3   F8  U14  D13                                        '
+    5    6  D14  U15  D14 1318 1318                      742.47 /'INDUSTRIAL DRIVE
+                          1422 1422                      751.61 /'
+                          1522 1522                      749.33 /'
+                          1523 1523                      752.05  '
+    5    6 D109 U110 D109 2312 2312                      750.73 /'ABANDONED RR SPUR
+                          2412 2412                      755.20  '
+-----------------------------------Fragment End--------------------------------------------------------
+
+This utility takes the old input and adds a single space in front of
+each field except for the CODE field.  It also changes the
+continuation option for Code 5 Type 6 and inserts any needed place
+holder values.  Any following comments must be preceded by a single
+quote to prevent FEQ from viewing them as potential input.  NETUTL
+places the single quote after the first fixed/float field unless more
+fixed/float fields are used.  A comment can begin at any point after
+the last item in a line.  If there is no comment following a line a
+quote need not be present but may be present as shown.  Blank lines
+are permitted and will appear in the output.
+
+Also in the fragment as shown, all of the fixed/float values appear in
+a given column.  NETUTL does this in order to keep the input in
+column form but the columns are not used in processing the input.   
+NETUTL cannot adjust comment lines.  
+
+The above fragment is given again in which the spacing has been
+reduced and the comments have shifted.  
+
+-----------------------------------Fragment Start-----------------------------------------------------
+NEW NETWORK-MATRIX CONTROL INPUT
+CD N1   N2   N3   N4   N5   N6   N7   N8     F1 F2  F3     F4    F5
+ 5  2   F8  U14   F8 1798   50 1798   50 748.16  * 5.0 743.80 745.5 'SPECIAL ASSESSMENT POND
+ 1 14 'This is branch 14.
+ 2  3   F8  U14  D13 ' This instruction forces the sum of flows at the three nodes to be zero.
+;CD N1  N2   N3   N4   N5   N6      F1
+ 5  6  D14  U15  D14 1318 1318  742.47 /'INDUSTRIAL DRIVE
+                     1422 1422  751.61 /
+                     1522 1522  749.33 /
+                     1523 1523  752.05  
+ 5  6 D109 U110 D109 2312 2312  750.73 /'ABANDONED RR SPUR
+                     2412 2412  755.20  
+-----------------------------------Fragment End--------------------------------------------------------
+
+
+
+Version 8.80
+
+August 8, 1996: 
+--A problem when multiple references to a single type
+15 function table were made has been corrected.  Tables of type 15
+contain the table numbers for function tables of type 13 in order to
+represent a 3-D table for representing underflow gates.  In
+processing of these type 15 tables, FEQ converts the table numbers to
+the address of the table.  In versions previous to this one, FEQ did
+not have a way of remembering that the conversion had been done. Thus
+if the table of type 15 was used again to describe an identical gate,
+the conversion from table number to table address was done again--but
+this time it failed since the table numbers were no longer present in
+the type 15 table.  The work around this problem was to make a copy
+to the type 15 table and then change its table number.  Each of the
+type 15 tables would refer to the same set of type 13 tables and FEQ
+worked fine.  
+
+--A change was made to the internal format of the type 15 table so that
+FEQ could remember that the conversion from table numbers to table 
+addresses had been made.  Thus on second and subsequent appearances
+the conversion would not be made.  
+
+--Corrected a problem with writing HECDSS time series when the time
+step become small.  The routine for interpolation from FEQ's
+irregular time step to the HECDSS regular time step became confused
+at the boundaries of an internal buffer.  The boundary computations
+have been changed so that small time steps, less than 60 seconds do
+not cause problems. 
+
+
+--A major new option for the Network-Matrix Control Input has been
+completed.  This was made possible by the column-free option
+introduced in version 8.76 (not released to anyone).  Therefore,
+these new options only function when the first three characters of
+the heading for the block are: NEW. 
+
+The option is the creation of what are called macro instructions. 
+Each code number in the Network-Matrix Control Input is an 
+instruction, that is, it instructs FEQ on what to do at a particular
+point in a network of channels.  It turns out that many patterns of
+instructions in the input are the same.  For example, many junctions
+are described by the same three instructions.  A macro instruction is
+a name given to a particular group of instructions.  The macro
+instruction name is followed by one or more arguments that supply the
+information that varies from instance to instance.   The facility for
+supporting macro instructions also presents an opportunity to supply
+names for instructions instead of numbers.  
+
+An optional input block, DEFINE MACROS AND INSTRUCTIONS, has been 
+added to FEQ.  It appears just before the Network-Matrix Control
+Input block.  If macros are to be defined, this block must be
+present.  Also for any macro to come into play, the column-free input
+option for the Network-Matrix Control Input must be invoked as well. 
+An example of a Define Macros block is:
+
+
+ 1 DEFINE MACROS AND INSTRUCTIONS                                
+ 2                                                                  
+ 3 ; Here are instruction definitions.  The pattern is always    
+ 4 ; an identifier that becomes the instruction name followed    
+ 5 ; with one or more intervening spaces by the corresponding    
+ 6 ; FEQ Network-Matrix Control Input Code value.  The following 
+ 7 ; line defines the identifier: EqZ to have the value of 3.    
+ 8                                                               
+ 9  EqZ  3                                                       
+10  CS_2D 5                                                      
+11  CS_1D 4                                                      
+12  qsum 2  3
+13   FILE=TEST.MIF                                               
+14
+15  JUNCTION  n1  n2  n3
+16    EqZ  n1  n2
+17    SumQ  n1  n2  n3
+18    EqZ  n1  n3
+19  END JUNCTION 
+20
+21  Force_Q node table limit
+22    6  1 node  1 table  limit
+23  END Force_Q
+24
+25                                                               
+26 END MACROS                                                    
+ Note: the line numbers have been added to aid in referring to a 
+     particular line.  They are not part of the input!
+
+The block is used to define what are called instructions and macro
+instructions.  Both are instructions; a macro instruction is just a
+higher-level construct.  Line 9 is an example of defining an
+instruction.  This associates the identifier, EqZ, with the number
+3.  Code 3 is the equal-water-surface elevation instruction in FEQ. 
+Line 16 is an example of the use of the instruction defined in line
+9.  Line 17 is an example of the use of a special instruction to
+force the sum of flows at the exterior nodes at a junction to zero. 
+Notice that line 17 does not contain the number of nodes involved. 
+The instruction, SumQ, counts the number of arguments that it has and
+then supplies the number of nodes to FEQ.  Line 12 shows how to
+define an instruction name that does the same thing as SumQ.  The
+difference is that the instruction name is followed by two numbers
+instead of one number like the other instructions.  The first number
+is the Code value to be used, 2.  The second number is always 3. This
+defines the proper internal value so that the command being defined
+will place the number of nodes in the proper place for FEQ.  
+
+
+An example of a definition of a macro instruction appears in lines 15
+through 19.  It represents a junction involving three nodes.  There
+are then three arguments following the macro instruction name.  Each
+of these arguments appears one or more times in the body of the macro
+instruction, lines 16-18. The macro instruction definition is
+completed by the END statement in line 19.  
+
+Line 13 shows that the definitions can also appear in a file. The key
+word FILE is reserved.  You should not try to name an instruction
+using this word.  Neither should you try using the word END.  The
+contents of the file, TEST.MIF, follows:  (note: MIF or mif is the
+suggesting extension for a file containing macro instructions--Macro
+Instruction File.)
+
+
+ 1   Bran A1                                
+ 2   1  A1                                  
+ 3   END Bran                               
+ 4                                          
+ 5   Rating  node table  datum width        
+ 6    4  1 node  -1 node table  datum  width
+ 7   END Rating                             
+
+Lines 1-3 define a name for the branch code option.  Lines 5-7 
+define a name for the rating table option for a one-node control structure.
+
+Here is an example input that uses some of the above definitions:
+
+ 1  NEW NETWORK-MATRIX CONTROL INPUT                                                 
+ 2   CODE  N1  N2  N3  N4  N5  N6  N7  N8  N9 N10     F1     F2     F3     F4     F5 
+ 3  Force_Q U1  100  *
+ 4  Bran  1                                                                          
+ 5  Bran  2                                                                          
+ 6  Force_Q U2  102  *
+ 7  JUNCTION D1 D2 U3                                                                
+ 9  Bran  3                                                                          
+10  Rating D3 110 103.0 32.0                                                         
+11     -1                                                                            
+
+The first thing to notice is that the old headings don't work anymore.
+We will need to develop new methods for structuring the input.  With
+a careful choice of names and macros, the input should be much easier
+to develop and read.    Notice also that the place-holder, the
+asterisk, is required for the Force_Q macro if we want to leave a
+blank for the F1 value.  If a F1 value is supplied it must have a
+decimal point in it.  Otherwise FEQ will treat it as if it were a N5
+value which is not what we want!  A place holder is required because
+FEQ requires that the number of actual arguments, the items given
+after the macro name in the Network-Matrix Control Input, must be the
+same as the number of dummy arguments, the identifiers given after
+the macro name in the Define Macros block. 
+
+Here are the current general rules for defining instruction and using them:
+
+1. All names and dummy arguments must be identifiers.  A dummy
+argument is an argument following the macro name in the Define Macros
+block.  For example line 1, Bran A1, in file TEST.MIF has one dummy
+argument, A1.  The macro instruction in line 5, Rating, has four
+dummy arguments: node, table, datum, and width.  An identifier in FEQ
+is a sequence of alphabetic and numeric characters with the first
+character being an alphabetic character.  The following characters
+are added to the alphabet and are considered to be alphabetic: 
+underline, _, slash, /, and  back slash, \.  The colon, :, and
+period, ., are considered to be numeric.  This means that an
+identifier must have a first character taken from the letters a
+through z, underline, slash, or back slash.  After the first
+character the digits 0 through 9 and the colon and period plus any of
+the extended alphabet can appear.  Using this definition, a file name
+in either DOS or UNIX format can be treated as an identifier.   
+
+Here are some examples of valid identifiers for FEQ:
+
+ d:\usf\feq\test\test.mif  BRANCH    Branch  CS CS_2D
+
+Note that case is important.  BRANCH and Branch are NOT the same. 
+
+Here are some examples of invalid identifiers:
+
+   1234   (Invalid because first character is a digit.  This is a valid 
+           file name in the crazy world of DOS.)
+
+   CS-2D  (Invalid because the special character, -, is used. )
+
+   :a45   (Invalid because the first character is non-alphabetic.)
+
+
+2.  The current maximum length of an identifier used as a macro 
+instruction name, an instruction name, or a dummy argument is 16 
+characters.  If this proves too short, we can make it longer. 
+However, all instructions must be completed within 112 characters. 
+Making the instructions too long will counteract the benefit of using
+column-free input. 
+
+3. An identifier used as a file name can be up to 64 characters
+counting all character, that is the drive letter, colon, and slashes
+and the period are counted as part of the limit of 64.
+
+4. The actual arguments can be anything required by FEQ.  They can be
+table numbers, node labels, etc.  However, any number that is a
+measurement and not a counting value or label should have a decimal
+point. This is needed so that the column-free input can be processed 
+properly.  
+
+5. The number of actual arguments and dummy arguments must match.  If
+an actual argument in the sequence is to be passed over, use the 
+place-holder, the asterisk, for that argument.   
+
+6. Comments can appear in a macro definition but they will not be 
+transferred to the usage of the macro. 
+
+7. Currently the special instruction, SumQ also has the following
+aliases:  SUMQ, SQ, QSUM, and sumq.  These are coded within FEQ.  If
+you do not like any of these names, you can define your own as
+outlined above. 
+
+
+
+Version 8.86
+
+January 30, 1997:
+
+--Further extensions have been made to macro instruction processing. 
+Four operators have been defined for the construction of identifiers
+and numbers to use as arguments.  The operators are:
+
+     addition: denoted by  +
+
+     subtraction: denoted by -
+
+     replication: denoted by *
+
+     concatenation: denoted by |
+
+
+Here is an example of using some of these operators.  Again the
+numbers for each line are not part of the input to FEQ-they have been
+added for reference.
+
+1  ; Macro for a gravity connection via one path to a LPR
+2
+3   SWCG_1 nup ndn  swcid lprtab  hdatum
+4     13 D|nup  U|ndn
+5     SumQ D|nup U|ndn F|lprtab-7000
+6     LPR lprtab
+7     6  1 F|lprtab-6900  1  0  0.0
+8     5  6 F|lprtab-7000 D|nup F|lprtab-7000  2*swcid+4200  hdatum
+9   END SWCG_1 
+
+
+This macro has five dummy arguments.  They have the following meaning:
+
+   nup- branch number upstream of the two-branch junction
+
+   ndn- branch number downstream of the junction
+
+   swcid- surface water connection identification number.  Is in
+          the range of 1001 through 1099.  Identifies a culvert
+          under a levee.
+
+   lprtab- table number for a level-pool reservoir that will be 
+           connected to the two-branch junction using the culvert 
+           defined by the swcid number.
+
+   hdatum- datum for head for the 2-D table describing the flow
+           through the culvert. 
+
+Line 4 shows the use of the concatenation operator where we construct
+the labels for the nodes on the branches in this junction.  Notice
+that the concatenation operator appears with no spaces.  The
+concatenation operator must always be next to the items that are to
+be concatenated. 
+
+
+Line 5 shows an example of using the subtraction operator.  We need
+the downstream node on the level-pool reservoir.  The node ids have
+been selected so that we can compute them from the capacity table
+number of the level-pool reservoir.  In the current case all of the
+reservoir capacity tables have table numbers in the range 7200-7299. 
+This means that all level pool reservoirs to be used with this macro
+instruction will have downstream nodes in the range of F200 through
+F299.  The argument:  F|lprtab-7000 is evaluated in the following
+order:
+
+1. lprtab is replaced by its numeric value from the actual argument. 
+
+2. The subtraction is done to yield the value in the range 200
+through 299.
+
+3. The concatenation operation is done last to form the free node id
+in the range of F200 through F299. 
+
+Line 8 shows an example of all four of the operators.  The
+replication operator repeats an item.  The order of operation must be
+kept in mind.  The replication operator has the lowest precedence. 
+That is, it is always done last.  Thus the argument: 2*swcid+4200 is
+evaluated as follows:
+
+1. swcid is replaced by its numeric value from the actual argument.
+
+2. The subtraction is done to yield a number in the range of 5201
+through 5299.
+
+3. The replication operator is done to produce two instances of the
+argument.  
+
+
+Line 7 creates the upstream free node id for the level pool 
+reservoir.  In this case the upstream free node id has a numeric
+portion that exceeds the numeric portion of the downstream node id by
+100.  
+
+The rules for evaluation of the operators, including the implied
+operator of value replacement is as follows:
+
+1. Replace all identifiers with the proper numeric value.  If an 
+identifier has an unknown value it is retained and a warning message
+is issued indicating that the value is unknown and it may cause later
+errors.  
+
+2. Do the addition and subtraction operations.  Note that these must
+take place on numbers NOT on identifiers.
+
+3. Do the concatenation operation. 
+
+4. Do the replication operation. 
+
+There can be no spaces next to any of the four operators.  Also these
+operators are always binary; that is, they are between two items.
+
+
+--The output of the tributary area has been changed so that the format
+is varied to produce the maximum precision value that will fit in the
+available space.  
+
+
+--An additional option for controlling output of the iteration log has
+been added.  A value of 2 for MINPRT will output the iteration log
+whenever the non-convergence condition arises.
+
+
+
+--Two-way pumps have been added to FEQ.  A two-way pump is a pump
+designed such that the water can be moved in either direction.  This
+does not mean that the pump is reversible but that it has extra
+gates or valves near it that allow the water to flow through the pump
+in a single direction while directing the water in either direction,
+depending on the gate setting.
+
+The following assumptions are made to make implementation simple:
+
+1. The losses in conduits/channels used to connect the pump to the
+flow system are assumed to be such that they are the same for both
+directions.  That is, FEQ assumes that the pump, whatever its means
+for changing the direction of the flow, is symmetrical with regard to
+the losses. 
+ 
+
+2. The pump rating is the same in both directions. 
+
+The direction given in the Code 5 type 3 instruction for the pump
+defines the default direction.  That is, if the speed of the pump is
+> 0, then it is pumping in the default direction.  If the speed of
+the pump is < 0, then it is pumps opposite to the default direction. 
+
+The input for a two-way pump is the same as for a one-way pump. This
+was the reason for the simplifying assumptions:  to keep the changes to
+a minimum.  The major changes were made to permit user control of
+two-way pumps. 
+
+Recall that a one-way pump is controlled by using tables that give
+its speed as a function of the control value: flow or elevation of
+water surface. Let SPD be the value of found in these functions.  The
+following rules govern the speed setting for one-way pumps:
+
+1. If SPD > 0, then if the pump is off, it is turned on at the given
+speed, SPD.  If the pump is on, its speed is set to SPD.
+
+2. If SPD=0, then the speed of the pump is unchanged.
+
+
+3. If SPD < 0, then the pump is turned off if it was on and remains
+off if it was off. 
+
+These rules remain the same for one-way pumps.  However, control
+functions like this will no longer suffice for two-way pumps because
+the rules for speed of the pump must now define the direction of
+pumping as well.  Therefore, the rules for the control tables for
+two-way pumps have been changed.  This means there are now two kinds
+of control tables for pumps: those for one-way pumps and those for
+two-way pumps. 
+
+In order to control two-way pumps a tolerance value at near zero
+speed was defined.  This value is 0.01.  No pump will likely operate
+at 0.01 of its maximum speed and therefore this value has been taken
+as a special value for the control of two-way pumps. This value is
+called PUMP_EPS and is used in a pump-control table to define pump
+speed as well as direction.  
+
+A pump control table for a two-way pump can have speeds that are
+negative as well as positive, always limited so that -1 <= SPD <=+1. 
+However, we need a value that defines a null zone for both positive
+and negative speeds.  For a one-way pump the null zone is defined by
+SPD=0.0 but that is not adequate for two-way pumps because we have no
+way for turning the pump off and on.  
+
+The following rules for the meaning of a value from the pump control
+table (function) for a two-way pump is as follows:
+
+1. When SPD > PUMP_EPS the direction is the same as given by the user
+in the pump instruction. The pump speed is set to SPD.
+
+2. When SPD < -PUMP_EPS the direction is opposite to that given by
+the user and the pump speed is the absolute value of SPD.
+
+3. If SPD = -PUMP_EPS or SPD = +PUMP_EPS then the pump direction and
+speed remains unchanged.  This is the null zone value for control of
+a two-way pump.
+
+4. If  -PUMP_EPS < SPD < PUMP_EPS, that is, if SPF is within the
+tolerance interval about zero defined by PUMP_EPS, then the pump is
+turned off.
+
+
+An additional block type for two-way pumps has been added to the
+existing block types of PUMP and GATE.  The following input fragment
+from an existing model shows examples of a control block for a
+one-way pump and a two-way pump. The format of the block is the same
+for both but the contents of the control tables will differ. 
+
+
+
+
+
+BLK=00001
+BLKTYPE=PUMP     SPEEDS= 4
+MINDT=3600.
+PINIT=0.0
+ BRAN NODE  KEY MNRATE RISE FALL ONPR OFPR  C24T LPR 7224
+    0 D215 ELEV   0.10  101  101    4    1
+    0 F324 ELEV   0.10 4224 4224    3    2
+   -1
+BLK=00002
+BLKTYPE=PUMP2WAY SPEEDS= 4
+MINDT=3600.
+PINIT=0.0
+ BRAN NODE  KEY MNRATE RISE FALL ONPR OFPR C24F LPR 7207
+    0 D311 ELEV   0.10  102  102    5    2
+    0 F207 ELEV   0.10 4207 4207    3    4
+    0 F207 ELEV   0.10 6207 6207    1    6
+   -1
+
+ 
+The SPEEDS option has been added to the pump control blocks also.  It
+gives the number of speeds that are allowed and only those speeds
+will be used.  In these two examples, the number of speeds is 4. Thus
+the only non-zero speeds used will be 0.25, 0.50, 0.75, and 1.0.  If
+a control table requests a speed of 0.05, it will be rounded up to
+0.25.  Thus the minimum non-zero speed is 0.25.  Other speeds will be
+rounded to the nearest valid speed.    This avoids having the pump be
+set at some small value that represents only a trickle of water
+compared to its actual operation. 
+
+
+
+--Multiple control blocks can now be used for one control structure.
+Here-to-fore only one control block per structure was permitted. Thus
+seasonally varying rules for structure operation were cumbersome and
+required multiple runs of the model, each with the proper operation
+rule for the season being run.  There is still the restriction that
+only one control block is active at any given time. 
+
+Support for this option was added as follows:
+
+1. The block numbers for the control blocks to be used for the
+structure are placed in a time series table of type 7.  The block
+numbers are integers but function tables will treat these numbers as
+having a decimal point. To obtain a block number from these tables
+FEQ rounds the value obtained from table lookup to the nearest 
+integer. This insures that block numbers in the time series table
+will be integers before they are used as a block number in the
+operation of the control structure. 
+
+The block numbers are repeated in order to represent seasonal
+variation of operation rules.  FEQ implements the more general case
+where the operation rule may also change over time. Thus the special
+case of seasonal repetition of operation rules requires a small
+increment of effort in creating the table. The following table gives
+an example for control of a sluice gate with two different rules: one
+for the dry season and the other for the wet season. Notice that each
+rule appears twice in succession in the central part of the table
+body.  The transition between rules takes place over a one-day
+period.  The division point is then at noon in that day, since the
+interpolated value from the table will have a fractional value.  For
+example, on May 15, 1980, the day will begin with block number 32
+active.  At noon the interpolated value from the table will be 31.5
+with some small roundoff noise.  If that noise is such that the
+number is 31.5 or slightly greater, then the rounded value will
+become 32.  On the other hand, if the number is slightly less than
+31.5, the rounded value will become 31.   
+
+
+
+TABLE#=  200
+TYPE=   -7
+REFL=0.0
+YEAR MN DY      HOUR  OperBlk Select operation block for S-49
+1979 10 14       0.0     31.
+     10 15       0.0     32.
+1980 05 15       0.0     32.
+        16       0.0     31.
+1980 10 14       0.0     31.
+     10 15       0.0     32.
+1981 05 15       0.0     32.
+        16       0.0     31.
+1981 10 14       0.0     31.
+     10 15       0.0     32.
+1982 05 15       0.0     32.
+        16       0.0     31.
+1982 10 14       0.0     31.
+     10 15       0.0     32.
+1983 05 15       0.0     32.
+        16       0.0     31.
+1983 10 14       0.0     31.
+     10 15       0.0     32.
+1984 05 15       0.0     32.
+        16       0.0     31.
+1984 10 14       0.0     31.
+     10 15       0.0     32.
+1985 05 15       0.0     32.
+        16       0.0     31.
+1985 10 14       0.0     31.
+     10 15       0.0     32.
+1986 05 15       0.0     32.
+        16       0.0     31.
+1986 10 14       0.0     31.
+     10 15       0.0     32.
+1987 05 15       0.0     32.
+        16       0.0     31.
+1987 10 14       0.0     31.
+     10 15       0.0     32.
+1988 05 15       0.0     32.
+        16       0.0     31.
+1988 10 14       0.0     31.
+     10 15       0.0     32.
+1989 05 15       0.0     32.
+        16       0.0     31.
+1989 10 14       0.0     31.
+     10 15       0.0     32.
+1990 05 15       0.0     32.
+        16       0.0     31.
+1990 10 14       0.0     31.
+     10 15       0.0     32.
+1991 05 15       0.0     32.
+        16       0.0     31.
+1991 10 14       0.0     31.
+     10 15       0.0     32.
+1992 05 15       0.0     32.
+        16       0.0     31.
+1992 10 14       0.0     31.
+     10 15       0.0     32.
+1993 05 15       0.0     32.
+        16       0.0     31.
+1993 10 14       0.0     31.
+     10 15       0.0     32.
+1994 05 15       0.0     32.
+        14
+
+The control block selection table must cover the entire time span of
+the period being simulated.  If a new rule is introduced at some time
+during the simulation its number is added at the proper point in the
+selection table.  
+
+In the instruction for the control structure in the Network-Matrix
+Control Input (NMCI) the table number for the selection table is
+given instead of the block number for the control block. The table
+number must be larger than any valid control block number. Otherwise,
+FEQ will assume that you are providing the number of the control
+block and not a control-block selection table.  This number is given
+by the parameter, MNBLK, in the INCLUDE file ARSIZE.PRM.  Its current
+default value is 50. Thus with this default for the maximum number of
+control blocks, any table number larger than 50 will signal FEQ that
+a control-block selection table is being referenced instead of just a
+control-block number.  
+
+An example is given here, taken with comments from an existing
+model.  This example is of a sluice gate, not subject to tailwater
+influence, so that it could be represented by the Code 4 type 5
+instruction in the NMCI.   This example makes use of the
+column-independent input for the NMCI. 
+
+; Downstream boundary for C-24 at S-49.  This has a special
+; operation control block option that refers to time-series
+; table, id number 200, that gives the operation control block
+; as a function of time. 
+    4  5 D362   -1 D362  420 200 0 0 0 S_49   4.4   '
+
+
+
+--I/O unit numbers are no longer used in FEQ.  They were an artifact
+of Fortran on mainframes.  No user of FEQ is known to be on a
+mainframe at this time.  However, old inputs can be left as they
+are.  FEQ will detect the unit number and issue a warning message
+that they are no longer used and that the number given will be
+ignored. FEQ assigns unit numbers internally as needed and they 
+should not be of concern to the user.  The file name is all that is
+now required for input.  It can be moved to the left as desired.  
+
+
+--The conversion of all upper case error and warning messages to
+mixed case messages is essentially complete.  However, the
+documentation of these messages will still have some of them in all
+upper case.  Over a period of time these too will take on mixed
+case.  
+
+
+Version 8.87
+
+February 21, 1997:
+
+--Added argument scale factor to the input of function tables of type
+2, 3,and 4.  This can be useful when building a model in a region
+that has two differing unit systems. 
+
+--Changed the error reporting when function tables of type 3 are
+checked to make sure that the value of the function agrees with the
+derivative.  In previous versions discrepancies larger than 2 per
+cent for the function value as computed from the derivative by the
+trapezoidal rule caused a warning message to be issued.  If the
+function value is given as zero or left blank, NO warning is issued. 
+FEQ computes the value for the function from the derivatives and
+places the result in the table.  The first value of the function,
+that is the one for the smallest argument, is taken to be correct.
+If left blank its value is zero.  This is probably the preferred
+option and avoids computing the function value.
+
+
+--Added single line option to Special output.  Selected by using a
+heading that begins with the word "special" given as "Special" and
+not as "SPECIAL".  Optional output is not supported in single-line
+output because it conflicts intrinsically with it.  That is, a single
+line is a single line and the optional outputs are inherently
+multi-line. 
+
+
+Version 8.88
+
+April 23, 1997:
+
+--Added initial support for output to GENSCN and other similar
+programs.  Will be modified later. 
+
+
+Version 8.89
+
+May 5, 1997:
+
+--Added checks for missing FREE nodes input block based on problems
+at the introductory short course. 
+
+--Added checking for premature end of a function table to try to make
+error reporting more intelligible.  Again based on problems found at
+the DuPage introductory short course. 
+
+--Corrected error in one invocation of ERR:207 that caused a runtime
+Lahey error message.  Proved to be most disconcerting to new
+students!
+
+
+Version 8.90
+
+May 23, 1997:
+
+--Adjusted various output formats to better display the results when
+the metric system of units is used.  May affect programs that read
+the ASCII output for plotting or other actions. 
+
+--Changed the initialization for tracking the extreme values.  The
+minimum value was being missed because previous versions did not
+check the results at time zero but at the end of the first time
+step.  This should have a minor effect on any existing results since
+minimum flows are often of no interest. 
+
+--Checked a simple model using one LPR and two sets of units.  Values
+are equivalent at the points checked.  The metric option appears to
+function in FEQ. 
+
+
+Version 8.91
+
+June 4, 1997:
+
+--Output of the order of equations in the network matrix encountered
+a runtime error if more than 7 nodes were involved with a Code 2 
+instruction.   Increased support to 8 nodes by making the output
+string longer.  
+
+--Array for output of GenScn values, GENSCN_OUT_VEC, had too
+few elements.  Changed dimension to be twice the number of
+output node locations. 
+
+Version 8.92
+
+June 18, 1997:
+
+--Added a common block, version.com, to permit tracking and 
+printing the FEQ version at more than one place.  Currently
+used to place the current version into the GenScn files.
+
+April 7, 1999:
+
+--Found that the negative constant-flow boundary condition was
+incorrectly applied as zero flow for versions released after October 1,
+1997.  This condition is sometimes used to remove a constant positive
+base flow elsewhere in the system.  The necessary code changes in
+INPUTUF.FOR have been made.  Withdrawing flow by positive constant flow
+out of a dummy branch works in either case.
+
+--Found an undefined variable in TDLK15.  The undefined variable was used
+in the interpolation between tables of type 13 that define the flow for
+various gate openings in the flow regime between weir and orifice flow.
+This slightly affects models using underflow gates.
+
+--Found that SYSGN was undefined in TDTCHK for side-weir tables.  This
+only affected checking for overflow on a two-D table used in Code 14 at
+the end of the run.  Added the proper sign for this case.
+
+--Argument  TIME to SET_INITIAL_OPER_BLK when called in FEQ was of the
+wrong precision.  Added SNGL to the TIME argument at this call.
+
+--Found that HECDMY.FOR needed changes to permit null calls.  Some
+program units are called even if the HECDSS is not being used.  Added
+FULL = 0 to UPDATE_DSSOUT_JTIME in HECDMY.FOR.  FULL was undefined if
+HECDMY.FOR was linked into the files.
+
+
+Descriptions of changes made to FEQUTL
+--------------------------------------
+
+Version 4.12
+February 23, 1995: Corrected error in format statement for   
+the roadway momentum flux factor, RMFFAC.
+
+Version 4.14
+March 20, 1995:   Extracted subprogram units that are common to 
+both FEQ and FEQUTL so that only one copy exists.  
+
+Version 4.15
+April 21, 1995:  Corrected problem with varying lengths of character
+strings for file names. 
+
+Version 4.16
+April 28, 1995: Added support of flap gate losses for submerged flow
+from a culvert.  Needs further refinement for  losses when they are
+increased to account for heavier gates than those used to develop
+the formula. 
+
+Version 4.17
+May 10, 1995: Blank lines are now echoed to the output. 
+
+Version 4.18
+May 16, 1995: Correct HEC2X so that the NC card was processed 
+so that values left blank on the NC card remained unchanged
+instead of being set to some large positive value to signal 
+a missing value of Manning's n. 
+
+Version 4.30
+May 29, 1995:  Added support for culverts with risers and for
+flow through orifices for SFWMD. 
+
+Version 4.31
+July 3, 1995:  Changed manner of supporting flapgate losses.  
+Pervious method created abrupt changes in the submerged flows that
+did not make physical sense.  This abruptness resulted from applying
+the losses to full-conduit flow only.  Moved the losses to the
+departure reach and applied them to all submerged flows.  The part-full
+conduit losses were estimated using a loss coefficient and a velocity head
+as if the conduit was flowing full.  The head loss was applied to the 
+flow area in the conduit in order to estimate a force in the simple
+momentum balance used in the departure reach.  
+
+Version 4.32
+
+July 11, 1995: Corrected error in controlling input of multiple conduits
+in MULCON and MULPIPE.  Error caused misreading of pipes when the 
+number of pipes was an integer multiple of 6.
+
+Corrected error in computing normal depth in culvert barrels that caused
+an attempt to find the square root of a negative number when the 
+barrel invert had an adverse slope and the barrel was non-prismatic. 
+
+Version 4.33
+
+July 21, 1995:  Corrected Fortran 90 compiler detected errors in
+declarations in subroutine SCNPRO.  Apparently the errors had not
+caused problems to date.  
+
+Version 4.35
+
+August 14, 1995: Corrected problem with SFAC in CULVERT command when
+the unit of length for the culvert pipe required an SFAC different
+than 1.0.  This caused the routine that distributes the nodes along
+the barrel to fail.  
+
+Corrected error in determining coefficients of discharge.  Bell
+mouthed or beveled concrete pipe, denoted by culvert class, RCPTG,
+was corrected for projecting entrances when it should not have been. 
+Also the coefficient of discharge for RCPTG for types 4 and 6 was
+incorrectly given the value of 0.95.  The coefficient should be
+looked up in table 5 in the USGS  TWRI report.  The rounding/beveling
+value is then used based on the nature of the bell-mouthed or beveled
+end. 
+
+Version 4.36
+
+September 26, 1995:  Corrected problem in WSPROT14 caused by WSPRO's 
+outputting asterisks for Froude number and water surface elevation
+for flow over the road when there is no flow over the road. Also made
+code slightly more general to allow for user placing the cross
+sections labels off register with the field.
+
+Version 4.37
+
+November 14, 1995: Corrected problem caused by not turning off 
+computation of sinuosity elements before a call to FEQX in the main
+program.  This would lead to erroneous errors if an FEQX command
+followed a CHANNEL command. 
+
+Version 4.4
+
+January 23, 1996: CHANRAT was found to give a result for free flow
+that was invalid.  A problem in the SECANT subroutine used to solve
+the non-linear equation for the critical depth at the end of the
+prismatic channel would sometimes declare convergence when the
+residual was still much too large. The result was that the free flow
+would be too large and there would be an abrupt decrease in free flow
+value as the upstream head increased.  Also there would be an abrupt
+decrease between the free flow and the first value of submerged flow
+for the upstream heads that had this problem.  
+
+The problem was correcting by using a modified regula falsi root
+finding algorithm to find the critical depth instead of using the
+SECANT method. 
+
+The submerged-flow solution was also changed to use modified regula
+falsi to find the flow rate.  
+
+Version 4.42
+
+January 29, 1996: The option for saving a cross-section function
+table did not set the maximum unextrapolated argument value.  This
+would only affect FEQUTL computations.   This value only comes into
+use if cross sections are interpolated in FEQUTL using one or more
+cross-section function tables that were SAVED.  This can happen in
+the barrel of a culvert and it could happen in XSINTERP.   The error
+has appeared in one CULVERT example.
+
+Version 4.45
+
+February 2, 1996: Added estimated relative errors to CHANRAT tables. 
+The relative error is based on using a power function as the fit
+between to points and estimating the error as the error in linear
+interpolation in that power function.  Recall that a power function
+is a straight line on log-log graph paper when it is plotted.  If the
+local power, also called the local exponent, varies only slightly
+then the estimated error is probably quite good.  If the power varies
+significantly, then the estimate is subject to greater error.  The
+submerged flow estimates appear to have an error of about 20 per cent
+as full submergence is approached and the estimates are too small.  
+Work in progress will provide the option to have FEQUTL compute the
+distribution of partial free drops so that the interpolation error is
+more uniform and possibly more precise.  Clearly the current
+distribution for CHANRAT wastes lots of points since the initial
+effect of submergence is weak. 
+
+Version 4.50
+
+February 13, 1996:  Changed CHANRAT and EMBANKQ input to allow
+optional input of LIPREC and MINPFD to request optimization of the
+interpolation in 2-D tables of type 6 or 13.  LIPREC is a Linear
+Interpolation PRECision specification in terms of relative error. 
+That is, LIPREC= 0.02 requests a maximum relative error in linear
+interpolation in the 2-D table of 2 per cent.  MINPFD is the MINimum
+Partial Free Drop to be computed.  MINPFD=0.01 states that the
+minimum value of partial free drop should be 0.01 of the free drop
+for a given upstream head.  These two values follow after the
+specification of NFRAC and POWER and just before the first upstream
+head in the input.  For EMBANKQ, where NFRAC and POWER are optional,
+LIPREC and MINPFD may appear without NFRAC and POWER. 
+
+Here is an example for CHANRAT:
+
+CHANRAT
+TABLE#=  528
+TYPE=   13           0.01
+LABEL= Control for pond 6. U TO D
+XSTAB#= 6530
+BOTSLP=0.000
+LENGTH=000000100. MIDELEV= 643.
+HEAD SEQUENCE FOR TABLE
+NFRAC= 30
+POWER= 1.5
+LIPREC= 0.02
+MINPFD= 0.01
+0.3
+12.0
+-1.0
+
+Notes:
+
+1. NFRAC should have a value between 30 and 60 and is used to define
+a series of upstream heads as well as partial free drops to use in
+defining the final spacing.  
+
+2. POWER is not now used if table optimization is requested.
+However, it may be used in the future and is retained for consistency
+with past inputs.
+
+3. Only two heads need be given.  If more are given, only the first
+and last are used and all intermediate heads are skipped. 
+
+4. CHANRAT and EMBANKQ will try to meet the interpolation request but
+there may be some regions where it is exceeded.  All the techniques
+used are approximate including the estimates of the errors.  The
+techniques assume that the flow varies smoothly with head
+variations.  Discontinuous changes or abrupt small scale variations
+will probably not be detected. 
+
+
+5. The default integration error tolerance in CHANRAT is reduced to
+0.05 if table optimization is requested.  If you explicitly set the
+integration error tolerance to a value different than the default,
+that value will be used. The smaller tolerance is used to get greater
+consistency in error estimates.  Some of the lack of meeting the
+error tolerance is a result of the other tolerances in the
+computations.  If they are too loose, erratic results, on the order
+of a fraction of a per cent, result.  However, this is often enough
+to be a large part of a small relative error. Requesting relative
+errors smaller than 1 per cent is not wise and may not work.  A 1 per
+cent error may only work with CHANRAT because most of its
+computations are double precision.  
+
+6. MINPFD should not be too small. 0.01 is probably small enough. 
+This often gives a factor or four or so between the largest and
+smallest flow tabulated for a given upstream head. A MINPFD of 0.005
+or less will probably show many locations with LIPREC exceeded.  This
+is primarily the result of the difficulty of computing reliable flows
+when the drop is small, sometimes less than one-ten thousandth of a
+foot!
+
+7. Using small minimum heads can result in there being many upstream
+heads.  This is especially true in CHANRAT because the flow tends to
+increase with head roughly proportional to the cube of the head.  The
+same can happen in EMBANKQ if the crest of the overflow section is
+similar to a triangular or parabolic crest.  Again the flow increases
+close to the third power of the head.  This requires close spacing at
+small heads in order to maintain a small uniform relative error. 
+
+8. If the errors reported in the output are larger than LIPREC by
+significant amounts, try increasing NFRAC to 60 or so.  Do not go
+much larger because internal space may be exhausted. This can
+sometimes improve the results. 
+
+9. The methods used for EMBANKQ and CHANRAT are not yet available for
+CULVERT because the patterns in CULVERT are much more complex. 
+However, observing the distribution of heads and partial free drops
+from CHANRAT and EMBANKQ should permit assigning better values to
+CULVERT.  Currently, the partial free drops in CULVERT can only be
+controlled via POWER and NFRAC and that is somewhat limited.
+
+10.  The transition between high-head and low-head flows in EMBANKQ
+is somewhat rough, especially for GRAVEL surfaces.  This comes about
+because the definition makes no mention of what do when close to the
+transition.  The transition region may show larger errors because it
+is currently possible to have a discontinuity in flow at the point of
+transition.  This of course assumes that the standard tables are
+being used
+
+11. The standard tables in EMBWEIR.TAB and TYPE5.TAB have been refined. The
+coefficients for embankment-shaped weirs have been estimated with
+greater precision to avoid unwanted noise in the error computations. 
+Please note that the precision of these numbers is more than 100
+times the accuracy of the numbers.  However, if they are recorded in
+the tables according to accuracy, high order noise is increased in
+the error evaluation.  In the future these tables will be fitted with
+smooth function and then these functions will be evaluated and
+differentiated to full single precision before being tabulated in
+tables of type 4.  The accuracy will still be the same but this will
+further lower the noise in error estimation. Keep this in mind when
+supplying alternative tables for weirs of different shapes.  Make
+sure the coefficient variation is smooth and there are no sharp
+corners. Tables of type 4, those that have a continuous first
+derivative as well as the function, will probably work best. 
+
+
+If LIPREC and MINPFD are not given, then the input should be as in
+previous versions.  However, the output has been changed.  CHANRAT
+and EMBANKQ now compute intermediate values to estimate the maximum
+relative error as well as the root-mean-square relative error for the
+2-D table.  You will probably find that the errors in interpolation
+are larger than expected. 
+
+
+
+Version 4.51
+
+April 2, 1996:  Changed a convergence tolerance and extended the 
+convergence testing when computing the subcritical inverse of a
+specific energy value in INVSE.  Problems had arisen when the flow
+was close to critical.  
+
+Also changed the estimate of the momentum and energy flux over the
+roadway in CULVERT.  Problems were found when the roadway was really
+a weir that experienced submergence when the tailwater was at or near
+the crest.  Totally invalid values of flux over the road would
+occur.  The selection of the depth of flow used to estimate momentum
+and energy flux has been changed to make sure that the depth used is
+never less than the depth estimated for this purpose for free flow. 
+We take this course of action because submergence reduces the flow
+and the flux for submerged flow should never be greater than for free
+flow.  This change may affect the submerged flow fluxes in other
+cases.  However, the region of submerged flow for usual flow over
+roads is quite limited.  Thus only the last few flows might be
+affected. 
+
+Version 4.52
+
+May 18, 1996: Discovered that FLAP_FORCE was not set to zero in all
+cases in CULVERT computations when no flapgate was present.  May have
+affected some computations of type 7 flow, that is, cases where
+critical flow occurs at the end of the departure reach.  Appears to
+have been present since version 4.31. 
+
+
+Version 4.60
+
+October 18, 1996: Added command to compute pump rating curves for
+SFWMD project.    
+
+Version 4.65
+
+January 31, 1997: Added command to compute pump loss tables and
+modified the SFWMDPMP command to include unit choice for flow.
+
+Version 4.66
+
+February 21, 1997:
+
+--Added vertical scale factor, VSCALE, and horizontal shift amount,
+HSHIFT, to FEQX cross sections.
+
+--Added vertical scale factor, vertical shift, horizontal scale factor
+to EMBANKQ.  
+
+
+--Added an argument scale factor to the input of function tables of
+type 2, 3,and 4.  NOTE: The argument scale factor was placed after
+the function scale factor.  This moved the SHIFT input item to the
+right.  The SHIFT item is little used and may be discontinued.  In
+any case if you are using it you will have to move the SHIFT item to
+the right by 16 columns to leave space for the reading of the
+argument scale factor. 
+
+
+--Added two new commands to create a bottom slot in a cross section.
+The commands are SETSLOT and CLRSLOT.   The first command defines a
+bottom slot and this slot is add to ALL cross sections that FEQUTL
+encounters until the command CLRSLOT is found.  Thus the addition of
+a bottom slot to a cross section is like a switch: either on or off. 
+When it is on it will appear in all cross sections processed.  The
+following is an example of these commands:
+
+SETSLOT
+WSLOT= 2.0
+NSLOT= 0.02
+ESLOT= 20.0
+ 
+; Cross sections on the right-hand side of Sumas River upstream
+; Jones and Conchman Roads
+
+ 
+FEQX
+TABLE#= 1000 OUT22 EXTEND NEWBETAM
+STATION= 0.
+NAVM=    0
+NSUB   12     0.040     0.040     0.040     0.040     0.040     0.040
+              0.040     0.040     0.040     0.040     0.040     0.040
+    OFFSET ELEVATION SUBS RSR1
+     0.0      37.6      1
+     170.     37.4
+     350.     37.0      
+     500.     37.3      
+     770.     37.8      2
+     770.     40.      -1
+
+ .
+ .
+ .
+CLRSLOT
+
+The SETSLOT command has three associated values: 
+
+WSLOT gives the width of the slot at the top of the slot.  The bottom
+width of the slot is zero. 
+
+NSLOT gives the Manning's n for the slot.  
+
+ESLOT gives the bottom elevation of the slot. 
+
+
+The command CLRSLOT has no other values.  All sections that occur
+after it will NOT have a slot added to them. 
+
+The slot will be added to the cross section at the minimum elevation
+point in the cross section.  If there is more than one such minimum
+elevation point, the slot will be added at the minimum point that
+has the widest horizontal bottom adjacent to it.  The slot has
+its own subsection, that is, an additional subsection is added
+to the cross section. 
+
+Experience to date indicates the following:
+
+1. The roughness of the slot should be made small.  
+
+2. The slot should be small relative to the width of the section when
+flows of major interest are present.  
+
+3. A constant value of the elevation of the bottom of the slot can be
+used for several cross sections along a channel.  The slot should
+probably have a constant elevation between points of complete or
+partial control.  
+
+4. Expect additional computational problems as the water rises
+out of the slot.  The change in width at this point is 
+large.  
+
+5.  Do not make the slot too shallow.  Frequent messages about
+negative depths in a slotted section when the flow is in the slot or
+just emerging from the slot probably signals that the slot must be
+made deeper.  
+
+6. Expect that the slot option will be modified as experience with it
+accumulates.
+
+7. FEQ does not know about the slot.  FEQ will treat the bottom of
+the channel as being at the bottom of the slot.  This means that the
+TAB option should be used when the branch descriptions are given. You
+may have to vary the elevation of the bottom of the slot in the
+course of model development.  Explicit channel invert elevations in
+the branch description for a branch with a change in the bottom
+elevation of the slot must be changed manually--an onerous and error
+prone task.  Using the TAB option for elevation has FEQ do the work
+of extracting the current invert elevation from the cross sections. 
+
+8. Because FEQ treats the slot as part of the cross section, all
+depth values reported for a slotted section will be measured from the
+slot bottom.  They will not represent the depth of water in the
+unslotted section.  At a future release of FEQ and FEQUTL this may be
+changed so that FEQ does know that a slot is present and will
+remember the invert elevation of the section BEFORE the slot was
+added and will use that invert elevation in computing depth values
+reported to the user.  Then negative depths in the output would
+signal that the water is in the slot.  Internally FEQ would not use
+the negative depth in its computations because internally negative
+depths have no meaning.  The negative depths would only appear in the
+output for the user. 
+
+
+Version 4.67
+
+May 23, 1997
+
+--Changed convergence testing in subroutines SECANT and REGFAL so
+that argument convergence would be in relative terms.  This was done
+to bring these two root-finding routines into agreement with the
+others in FEQUTL. This also means that the convergence testing is
+independent of scale.  This may change the output tables from
+GRITTER, UFGATE,  and EXPCON.
+
+--Added use of global EPSF and EPSARG to CRITQ, INVTSE, and GRITTER. 
+These routines had local values of the convergence values.  May
+affect output tables from CRITQ, GRITTER and UFGATE.  
+
+--Changed returned value for FISE and FRIT to a residual in relative
+terms so that the root-finding routines will use a relative criterion
+for convergence.  These changes may change the output tables from
+CRITQ and GRITTER.
+
+--Added support for metric units to CHANRAT.  The default tolerance
+is now set depending on the value of GRAV, the acceleration due to
+gravity.  The convergence tolerance is retained as an absolute
+tolerance.  Thus the value given by the user, if the default is not
+used, must be in the units of length, feet or meters, in use.  The
+same is true of the absolute tolerance for detection of normal depth.
+
+
+--Added another global convergence tolerance to the header block for
+FEQUTL.  In previous versions there were two values:  EPSARG, a
+relative tolerance for changes to the root being sought.  That is,
+whenever the absolute value of the relative change to the current
+estimate of the root was less then EPSARG, the routine would declare
+convergence. EPSF, a relative tolerance for the residual function
+value.  This tolerance was to be used to decide if a residual
+function was essentially zero in a relative sense.  Thus the residual
+function itself had to return a relative value.   In some cases EPSF
+was used for functions that did not return a relative value.  This
+would cause problems when moving between units of measurement because
+some uses of EPSF would be independent of these units and others
+would be dependent on these units.  Consequently, EPSF could not
+describe both.  The new convergence tolerance, EPSABS, is to be used
+in those cases in which the residual function returns a length
+value.  Thus when switching to using meters for the length unit, EPSF
+will remain unchanged but EPSABS must be changed to reflect the
+larger length unit.  In the US standard unit system, EPSABS has the
+same numeric value as EPSF but has a different meaning.  
+
+
+--Comparisons were made for results from CULVERT, EMBANKQ, and
+CHANRAT after the various convergence tolerance changes were made. 
+Few differences were found and most of them were in the least
+significant digit of the output value.  Thus it appears that the
+changes had essentially no effect on the results.  
+
+--Changed some tolerances at the limit of near zero depth from EPSF
+to EPSABS.  This may change computational failure conditions slightly
+but should not affect successful runs.  Such small depths either case
+clearly indicate an error condition. 
+
+--Modified the Preissman slot, that is the slot in the top of a
+closed conduit, to reflect the unit system. The maximum slot level is
+150 meters, not quite the same as the 500 feet used in the US unit
+system.  However, a round number is indicative of a value set by fiat
+and not by measurement or method. The slot detection code was
+modified also to find the vertical diameter of closed conduits.  The
+slot width used for detection of closed conduits remains at 0.07 feet
+or 0.021336 meters.  A slot width larger than this will not be
+detected and FEQUTL will treat the cross-section function table as
+being a normal open channel and not a closed conduit in any context
+in which a closed conduit must be detected.   
+
+--Changed the means for eliminating close values of depth in
+computing cross section tables.  Previous versions had used an
+absolute tolerance for the minimum difference between adjacent
+depths.  This has been changed to a relative tolerance to be scale
+independent.
+
+--Added elimination of close values of depth when interpolating cross
+section tables using command XSINTERP.  Uses the same routine as in
+computing the cross section function tables. This avoids having depth
+entries in the interpolated table that differ from the previous depth
+by amounts that are often close to the limit of numeric
+representation in the hardware.  Such close values serve no purpose
+and only confuse review of the output. 
+
+--Closed conduits now output the computed value of invert elevation
+even if it is small.  Previous versions set the invert elevation to
+0.0 if the elevation was smaller than 0.001 in absolute value. Recall
+the replacing a closed conduit with a polygon that matches the area
+of the closed conduit, yields small excursions OUTSIDE the closed
+conduit boundary at some points.  At the invert of the closed conduit
+this means that the invert of the cross section function table will
+be slightly below the true invert.  Thus if the true invert was given
+as elevation 0.0, which is often done since the invert elevation in
+the cross-section function table is often overridden in the FEQ
+input, the invert elevation printed in the cross-section function
+table will be a small negative value. This value is now printed no
+matter how small it is. 
+
+--Modified the computation of the piezometric level at a culvert exit
+for flows of type 6.  The argument in the USGS basis document was
+scale dependent.  Added a factor to get the correct result when the
+METRIC unit option is used. 
+
+--Changed various output formats to gain greater precision in output
+of values.  In some cases the output values will have a precision far
+greater than the accuracy of the result can support.  This is done so
+that consistency of results can be checked and so that sufficient
+decimals will be output in both unit systems.  The process of
+changing formats is not complete and will take place over the next
+few versions as time permits.  
+
+
+--HEC2X command has been modified to convert units from metric to
+english or from english to metric under user control.  The default
+action is to NOT convert the elevations and offsets on the cross
+section.  Adding the word CONVERT after the MODE response will cause
+conversion of units.  The conversion of station values is governed by
+SFAC only and is set by the user.  
+
+--Provided additional options following the unit system selection in
+the standard header to force FEQUTL to use the more exact value for
+the factor in Manning's equation.  The factor is technically the
+cubic root of the number of feet in a meter which to single precision
+in a 32-bit IEEE floating point representation is about 1.485919. For
+nearly all practical purposes this can be taken as 1.49.  However, in
+the practical purpose of comparing output using the metric and the US
+standard set of units, we get annoying differences when using 1.49 in
+the US set because the metric set has the exact value of 1.0 in the
+metric form of the equation.  The differences are small but they
+confuse the search for other causes of differences in results.  
+
+--Also provided the option to use an equation to compute the value of
+g given a latitude and an elevation.  This happens whenever the more
+exact value for the factor in Manning's equation is requested.  Again
+for all practical purposes g is 32.2 f/s^2 or  9.815 m/s^2 with an
+error less than 0.2 per cent for the US.  However, when searching for
+the reason for differences between results using two sets of units,
+making sure that the value of GRAV is the same everywhere is helpful.
+
+--Comments on support for metric units:
+
+All the commands in the standard example file, FEQUTL.EXM, have been
+checked to some extent. Not every output value has been compared. 
+Only spot checks have been made.  The subdirectory METRIC under TEST
+under USF\FEQUTL contains the metric version of the standard example
+file and the metric version of the weir coefficients for
+embankment-shaped weirs. 
+
+Subtle differences can appear in the results even though the two sets
+of units are made as equal as the software and hardware will allow. 
+For example, in FEQX, DZLIM may cause different  spacing in a
+cross-section function table because small differences in internal
+value can cause one set of units to interpolate an additional point. 
+This effect is more significant with CULVERT. Flow in culverts
+involves several different flow patterns, not all of which agree in
+value at their adjacent limits.  Thus FEQUTL has many decision rules
+for detecting the limits and what to do at the limits to make the
+flow transition smoother.  These limits are, from the point of view
+of the software, exact.  Any small deviation beyond a limit invokes a
+new flow case.  Small differences, on the order of 0.001 foot or less
+can sometimes change the flow type that is reported.  In some cases
+the flow type will differ but the flows will be essentially the same.
+There maybe cases in which the difference results in a local
+difference in flows.  This just means that comparisons made between
+flows obtained from an identical structure using two different unit
+sets may not agree to the desired level of precision at all levels in
+all cases.  
+
+A difference could reflect the presence of a term  that is scale
+dependent that was not detected in my limited testing.  On the other
+hand, it could just reflect the effect of being close to one of the
+boundaries between flow types.  
+
+
+It is likely that some undetected scale dependent values remain at
+some points in the commands in FEQUTL.  Over time I will be checking
+additional options but only usage will detect the remaining scale
+dependent features in the software. 
+
+Version 4.68
+
+May 29, 1997
+
+--Modified SECANT to have both the relative and absolute 
+test for the changes to the current estimate of the root.
+
+--Modified FHPL in EXPCON to use the total head 
+

@@ -1,0 +1,24 @@
+C***********************************************************************
+      COMMON/RDCOM/ JTIN, JTVEC, VALBIN, OLD_CUM, NEW_CUM, VALAIN, 
+     A              NUM_TS_F, UNIN, ICDIN, LSTHD, LTRY, MINROW, MAXROW,
+     B              DSS_INDEX_IN, TIME_STEP_IN, TMPVEC, 
+     C              TS_CONVERSION_FACTOR, ID_KNT
+
+      COMMON/RDCOMC/ NAMIN, TS_ID_FOR_FILE_TABLE
+
+      CHARACTER NAMIN(MXN_TS_F)*80, TS_ID_FOR_FILE_TABLE(MXN_TS)*16
+
+      INTEGER NUM_TS_F, ID_KNT
+
+      INTEGER UNIN(MXN_TS_F), ICDIN(MXN_TS_F), LSTHD(MXN_TS_F), 
+     A        LTRY(MXN_TS_F), MINROW(MXN_TS_F), MAXROW(MXN_TS_F), 
+     B        DSS_INDEX_IN(MXN_TS_F), TIME_STEP_IN(MXN_TS_F)
+
+      REAL VALAIN(MRRBUF), TMPVEC(MRRBUF+5), 
+     A     TS_CONVERSION_FACTOR(MXN_TS)
+
+      DOUBLE PRECISION JTIN(MRRBUF), VALBIN(1), JTVEC(MRRBUF+5),
+     A                 OLD_CUM(MXN_TS_F), NEW_CUM(MXN_TS_F)
+C***********************************************************************
+
+                  

@@ -1,0 +1,6370 @@
+C Routines used in creating network matrix entries for internal                 
+C and external boundary conditions, that is those involving                     
+C exterior nodes.                                                               
+C
+C
+C
+      SUBROUTINE   ABREXP
+     I                   (IPNT, GRAV, STDOUT, JTIME, NEX, MREMC, EXNODT,
+     I                    QE2, YE2, ZE,
+     M                    EMC,
+     O                    RES, PYL, PQL, PYR, PQR)
+ 
+C     + + + PURPOSE + + +
+C     Compute flow through an abrupt expansion.  The expansion can be
+C     caused by an increase in cross section size or a drop in the
+C     bottom elevation.
+ 
+C     Assumptions:
+C     1. No reverse flow at the upstream node.  Routine will force
+C        this requirement.
+C     2. Nodes must be on branches in natural sense.  Error message
+C        will be issued if not true.
+C     3. Friction and gravity forces ignored in the control volume for
+C        the momentum balance.
+C     4. Flow node must be at the upstream node.  Used to detect
+C        reverse flow--will be relaxed later as required.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPNT, STDOUT, MREMC, NEX
+      INTEGER EMC(MREMC), EXNODT(9,NEX)
+      REAL GRAV, PQL, PQR, PYL, PYR, QE2(NEX), RES,  YE2(NEX),
+     A     ZE(NEX)
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPNT   - pointer into EMC for description of control structure
+C     GRAV   - value of acceleration due to gravity
+C     STDOUT   - Fortran unit number for user output and messages
+C     TIME   - elapsed time in seconds from start of run
+C     NEX    - number of exterior nodes in the model
+C     MREMC  - maximum length of EMC(*). Same as LEMC
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     QE2    - flow at exterior nodes at end of time step
+C     YE2    - depths at exterior nodes at end of time step
+C     ZE     - elevation of datum for depth at exterior node
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     RES    - value of the residual function
+C     PYL    - partial derivative of residual function wrt depth at
+C               left node
+C     PQL    - partial derivative of residual function wrt flow at left
+C               node
+C     PYR    - partial derivative of residual function wrt depth at
+C               right node
+C     PQR    - partial derivative of residual function wrt flow at right
+C               node
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADR, CFTAB, DNN, FSGN, NTAB, QNN, STATE, SYSGN, UNN
+      REAL AL, AR, ARL, BL, BR, CON, DBL, DBR, DCON, DTL, DTR, FAC, JL,
+     A     JR, JRL, PDV, QC, QL, QR, TL, TR, VL, VR, Y, YL, YR, ZL, ZR
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETUSN, LKTAB, XLKT21
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *WRN:05* ABRUPT EXPANSION CANNOT ALLOW REVERSE',
+     1       ' FLOW AT JTIME=',F14.2,/,4X,'WITH FLOW=',1PE12.4,
+     2       ' UPS NODE=',A5,' AND DNS NODE=',A5)
+ 52   FORMAT(/,' *WRN:06* INVALID CRITICAL DEPTH FACTOR AT UPS',
+     1       ' NODE=',A5,' IN ABRUPT EXPANSION.',/,4X,'DEPTH=',F10.1)
+ 54   FORMAT(/,' *WRN:07* INVALID CRITICAL DEPTH FACTOR AT DNS',
+     2       ' NODE=',A5,' IN ABRUPT EXPANSION.',/,4X,'DEPTH=',F10.1)
+C***********************************************************************
+C     GET KEY VALUES
+ 
+      UNN = EMC(IPNT+2)
+      DNN = EMC(IPNT+3)
+      QNN = EMC(IPNT+4)
+      SYSGN = EMC(IPNT+5)
+      STATE = EMC(IPNT+6)
+      CFTAB = EMC(IPNT+8)
+ 
+      YL = YE2(UNN)
+      YR = YE2(DNN)
+      QL = QE2(UNN)
+      QR = QE2(DNN)
+      ZL = ZE(UNN)
+      ZR = ZE(DNN)
+      IF(QE2(QNN).LT.0.0) THEN
+        FSGN = -SYSGN
+      ELSE
+        FSGN = SYSGN
+      ENDIF
+ 
+      IF(FSGN.LT.0) THEN
+C       REVERSE FLOW NOT PERMITTED
+ 
+        WRITE(STDOUT,50) JTIME, QE2(QNN), GETUSN(UNN), GETUSN(DNN)
+ 
+C       REPRESENT AS A CLOSED BOUNDARY
+ 
+        IF(QNN.EQ.UNN) THEN
+          PYL = 0.0
+          PQL = 1.0
+          PYR = 0.0
+          PQR = 0.0
+          RES = QL
+        ELSE
+          PYL = 0.0
+          PQL = 0.0
+          PYR = 0.0
+          PQR = 1.0
+          RES = QR
+        ENDIF
+ 
+      ELSE
+ 
+C       FLOW IS FROM THE UPSTREAM NODE TO THE DOWNSTREAM NODE
+C       BASE ACTION ON THE CURRENT FLOW STATE. CHANGE STATE AS NEEDED
+ 
+        IF(STATE.GT.0) THEN
+C         CRITICAL FLOW AT THE UPSTREAM NODE
+C         CHECK TO SEE IF STATE SHOULD BE CHANGED TO SUBCRITICAL.
+C         DONE IN TWO STAGES.  THE FIRST STAGE IS FAST BUT DOES NOT
+C         COVER THE WHOLE RANGE.
+ 
+          IF(YL+ZL.GE.YR+ZR) THEN
+C           REMAIN CRITICAL. ELEVATION AT CRITICAL DEPTH > DNS ELEV
+ 
+C           GET CRITICAL FLOW FROM THE TABLE
+ 
+            CALL LKTAB
+     I                (CFTAB, YL, 1,
+     O                 QC, NTAB, PDV)
+ 
+            RES = QL - QC
+            PYL = -PDV
+            PQL = 1.0
+            PYR = 0.0
+            PQR = 0.0
+            RETURN
+          ELSE
+C           STATE MAY SWITCH. COMPUTE THE SUBCRITICAL STATE COMPONENTS
+C           GET THE CROSS SECTION ELEMENT VALUES
+ 
+C           GET THE AREA AND FIRST MOMENT IN THE DOWNSTREAM SECTION AT
+C           THE UPSTREAM ELEVATION.
+ 
+            ADR = EXNODT(4,DNN)
+            Y = YL + ZL - ZR
+            CALL XLKT21
+     I                 (ADR,
+     M                  Y,
+     O                  ARL, TR, DTR, JRL, CON, DCON, BR, DBR)
+ 
+C           GET VALUES AT DOWNSTREAM SECTION AT DOWNSTREAM DEPTH
+            CALL XLKT21
+     I                 (ADR,
+     M                  YR,
+     O                  AR, TR, DTR, JR, CON, DCON, BR, DBR)
+ 
+C           GET VALUES AT UPSTREAM SECTION AT UPSTREAM DEPTH
+            ADR = EXNODT(4,UNN)
+            CALL XLKT21
+     I                 (ADR,
+     M                  YL,
+     O                  AL, TL, DTL, JL, CON, DCON, BL, DBL)
+ 
+C           COMPUTE RESIDUAL FOR THE MOMENTUM BALANCE
+ 
+            VL = QL/AL
+            VR = QR/AR
+ 
+            RES = GRAV*(JRL - JR) + BL*QL*VL - BR*QR*VR
+            IF(RES.GE.0.0) THEN
+C             REMAIN IN CRITICAL STATE
+              CALL LKTAB
+     I                  (CFTAB, YL, 1,
+     O                   QC, NTAB, PDV)
+ 
+              RES = QL - QC
+              PYL = -PDV
+              PQL = 1.0
+              PYR = 0.0
+              PQR = 0.0
+              RETURN
+            ELSE
+C             SWITCH TO SUBCRITCAL STATE
+ 
+              STATE = -STATE
+ 
+ 
+              FAC = AL*DBL - BL*TL
+              IF(FAC.GT.0.0) WRITE(STDOUT,52) GETUSN(UNN), YL
+              PYL = GRAV*ARL + VL*VL*FAC
+              PQL = 2.*BL*VL
+              FAC = AR*DBR - BR*TR
+              IF(FAC.GT.0.0) WRITE(STDOUT,54) GETUSN(DNN), YR
+              PYR = -GRAV*AR - VR*VR*FAC
+              PQR = -2.*BR*VR
+              EMC(IPNT+6) = STATE
+ 
+              RETURN
+            ENDIF
+          ENDIF
+        ELSE
+C         SUBCRITICAL FLOW - CHECK FOR SWITCH IN STATE
+ 
+          CALL LKTAB
+     I              (CFTAB, YL, 1,
+     O               QC, NTAB, PDV)
+          IF(QL.GE.QC) THEN
+C           SWITCH TO CRITICAL
+ 
+            STATE = -STATE
+            RES = QL - QC
+            PYL = -PDV
+            PQL = 1.0
+            PYR = 0.0
+            PQR = 0.0
+            EMC(IPNT+6) = STATE
+            RETURN
+          ELSE
+C           REMAIN SUBCRITICAL
+ 
+C           GET THE CROSS SECTION ELEMENT VALUES
+ 
+C           GET THE AREA AND FIRST MOMENT IN THE DOWNSTREAM SECTION AT
+C           THE UPSTREAM ELEVATION.
+ 
+            ADR = EXNODT(4,DNN)
+            Y = YL + ZL - ZR
+            CALL XLKT21
+     I                 (ADR,
+     M                  Y,
+     O                  ARL, TR, DTR, JRL, CON, DCON, BR, DBR)
+ 
+C           GET VALUES AT DOWNSTREAM SECTION AT DOWNSTREAM DEPTH
+            CALL XLKT21
+     I                 (ADR,
+     M                  YR,
+     O                  AR, TR, DTR, JR, CON, DCON, BR, DBR)
+ 
+C           GET VALUES AT UPSTREAM SECTION AT UPSTREAM DEPTH
+            ADR = EXNODT(4,UNN)
+            CALL XLKT21
+     I                 (ADR,
+     M                  YL,
+     O                  AL, TL, DTL, JL, CON, DCON, BL, DBL)
+ 
+C           COMPUTE RESIDUAL FOR THE MOMENTUM BALANCE
+ 
+            VL = QL/AL
+            VR = QR/AR
+ 
+            RES = GRAV*(JRL - JR) + BL*QL*VL - BR*QR*VR
+ 
+            FAC = AL*DBL - BL*TL
+            IF(FAC.GT.0.0) WRITE(STDOUT,52) GETUSN(UNN), YL
+            PYL = GRAV*ARL + VL*VL*FAC
+            PQL = 2.*BL*VL
+            FAC = AR*DBR - BR*TR
+            IF(FAC.GT.0.0) WRITE(STDOUT,54) GETUSN(DNN), YR
+            PYR = -GRAV*AR - VR*VR*FAC
+            PQR = -2.*BR*VR
+            RETURN
+          ENDIF
+        ENDIF
+      ENDIF
+ 
+      END
+C
+C
+C
+      SUBROUTINE   BDFTAB
+     I                   (IPNT, MLEMC, YE2, ZE, QE2, NEX, C52EPS,
+     M                    EMC,
+     O                    RES, PYL, PQL, PYR, PQR)
+ 
+C     + + + PURPOSE + + +
+C     Compute bidirectional flow using either tables giving
+C     flow as function of head together with a submergence
+C     correction or using a table of square root of conveyance
+C     together with the water surface slope.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPNT, MLEMC, NEX
+      INTEGER EMC(MLEMC)
+      REAL C52EPS, PQL, PQR, PYL, PYR, QE2(NEX), RES, YE2(NEX), ZE(NEX)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPNT   - pointer into EMC for description of control structure
+C     MLEMC  - maximum length of EMC(*)
+C     YE2    - depths at exterior nodes at end of time step
+C     ZE     - elevation of datum for depth at exterior node
+C     QE2    - flow at exterior nodes at end of time step
+C     NEX    - number of exterior nodes in the model
+C     C52EPS - tolerance for water level to prevent cycling of pump
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     RES    - value of the residual function
+C     PYL    - partial derivative of residual function wrt depth at
+C               left node
+C     PQL    - partial derivative of residual function wrt flow at left
+C               node
+C     PYR    - partial derivative of residual function wrt depth at
+C               right node
+C     PQR    - partial derivative of residual function wrt flow at right
+C               node
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER DNN, IDUM, KEY, NTAB, PONOFF, QNN, SWNODE, SYSGN, TQDU,
+     A        TQUD, TSDU, TSUD, UNN
+      REAL ARG, CS, D, DCS, DISCH, DK, DQF, DX, EL, ELVIN, ER, H, K,
+     A     PUMP, QF, QL, QR, QSW, RDUM, SH, T, TURNON, YL, YR, ZL, ZR,
+     B     ZW
+ 
+      INCLUDE 'stdun.cmn'
+
+      CHARACTER GETUSN*5
+
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM,RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS, SQRT
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL LKTAB, GETUSN
+C***********************************************************************
+C     OBTAIN BASIC INFORMATION FROM EMC
+ 
+      UNN = EMC(IPNT+2)
+      DNN = EMC(IPNT+3)
+      QNN = EMC(IPNT+4)
+      SYSGN = EMC(IPNT+5)
+      TQUD = EMC(IPNT+6)
+      TSUD = EMC(IPNT+7)
+      TQDU = EMC(IPNT+8)
+      TSDU = EMC(IPNT+9)
+      IDUM = EMC(IPNT+10)
+      ZW = RDUM
+      IDUM = EMC(IPNT+11)
+      DX = RDUM
+      IDUM = EMC(IPNT+12)
+      PUMP = RDUM
+      IF(PUMP.NE.0.0) THEN
+        IDUM = EMC(IPNT+13)
+        ELVIN = RDUM
+        IDUM = EMC(IPNT+14)
+        TURNON = RDUM
+        PONOFF = EMC(IPNT+15)
+        KEY = EMC(IPNT+16)
+        QR = QE2(DNN)
+        QL = QE2(UNN)
+        SWNODE = EMC(IPNT+17)
+        IF(SWNODE.GT.0) THEN
+          QSW = QE2(SWNODE)
+        ELSE
+          QSW = 0.0
+        ENDIF
+      ENDIF
+ 
+      YL = YE2(UNN)
+      YR = YE2(DNN)
+      ZL = ZE(UNN)
+      ZR = ZE(DNN)
+      EL = YL + ZL
+      ER = YR + ZR
+ 
+C     DETERMINE WHICH OPTION IS IN EFFECT
+ 
+C     TSUD = 0 IMPLIES NO SUBMERGENCE CORRECTION TABLES AND THEREFORE
+C      THE SLOPE DETERMINED FLOW OPTION IS SELECTED
+ 
+      IF(TSUD.EQ.0) GOTO 500
+ 
+C       COMPUTE THE FLOW AND DERIVATIVES AS GIVEN BY THE TABLES
+C       FOR THE TWO FLOW DIRECTIONS
+ 
+C       ASSUME POSITIVE FLOW I. E. YL+ZL>YR+ZR
+ 
+        H = EL - ZW
+        D = ER - ZW
+        IF(H.LT.0.) H = 0.0
+        IF(D.LT.0.) D = 0.0
+ 
+        IF(EL.LT.ER) GOTO 200
+ 
+C         POSITIVE CASE HERE-FLOW FROM UPSTREAM TO DOWNSTREAM OR
+C         ZERO FLOW.
+C         DO TABLE LOOKUP-SUBMERGENCE CORRECTION MAY BE OPTIONAL
+C         DEPENDING ON VALUE OF D.
+ 
+          IF(H.GT.0.0) THEN
+            CALL LKTAB
+     I                (TQUD, H, 0,
+     O                 QF, NTAB, DQF)
+          ELSE
+            QF = 0.0
+            DQF = 0.0
+          ENDIF
+ 
+          IF(D.GT.0.) THEN
+            ARG=D/H
+            CALL LKTAB
+     I                (TSUD, ARG, 0,
+     O                 CS, NTAB, DCS)
+          ELSE
+            CS = 1.
+            DCS = 0.
+            H = 1.
+          ENDIF
+          PYL = DQF*CS-QF*DCS*D/H**2
+          PYR = QF*DCS/H
+          DISCH = QF*CS
+          GOTO 400
+ 200    CONTINUE
+ 
+C         NEGATIVE CASE HERE-FLOW FROM DOWNSTREAM TO UPSTREAM
+C         SWITCH H AND D USING T AS TEMP LOCATION
+ 
+          T = H
+          H = D
+          D = T
+          IF(H.GT.0.0) THEN
+            CALL LKTAB
+     I                (TQDU, H, 0,
+     O                 QF, NTAB, DQF)
+          ELSE
+            QF = 0.0
+            DQF = 0.0
+          ENDIF
+          IF(D.GT.0) THEN
+            ARG = D/H
+            CALL LKTAB
+     I                (TSDU, ARG, 0,
+     O                 CS, NTAB, DCS)
+          ELSE
+            CS = 1.
+            DCS = 0.
+            H = 1.
+          ENDIF
+          PYL = -(QF*DCS/H)
+          PYR = -(DQF*CS-QF*DCS*D/H**2)
+          DISCH = -QF*CS
+ 400    CONTINUE
+ 
+C       CHECK IF PUMP IS PRESENT.  EL IS ELEV AT NOMINAL UPSTREAM NODE
+C       ER IS ELEVATION AT NOMINAL DOWNSTREAM NODE
+ 
+        IF(PUMP.NE.0.0) THEN
+C         MAKE ADJUSTMENTS FOR POSSIBLE PUMPED FLOWS.  ONLY THE FLOW IS
+C         AFFECTED.  DERIVATIVES ARE UNCHANGED BECAUSE PUMP RATE IS
+C         ONLY TURNED ON OR OFF BASED ON ELEVATION OR FLOW OR THE
+C         CONDITION AT A SWITCH NODE BUT IS OTHERWISE
+C         CONSTANT
+ 
+          IF(SWNODE.GT.0) THEN
+C           DOMINANT RULE FOR CONTROL OF PUMP
+            IF(QSW.GT.0.0) THEN
+C             SET PUMP TO OFF
+              EMC(IPNT+15) = 0
+              GOTO 1000
+            ENDIF
+          ENDIF
+ 
+          IF(PUMP.GT.0.0) THEN
+C           IF PUMP IS ON WATER IS TAKEN FROM THE NOMINAL UPSTREAM
+C           NODE AND DISCHARGED TO THE NOMINAL DOWNSTREAM NODE
+            IF(PONOFF.EQ.0) THEN
+C             PUMP IS OFF- SHALL IT BE TURNED ON?
+              IF(KEY.EQ.0) THEN
+                IF(EL.GT.ELVIN.AND.ER.LT.TURNON) THEN
+                  PONOFF =1
+                  DISCH = DISCH + PUMP
+                ENDIF
+              ELSE
+                IF(EL.GT.ELVIN.AND.QR.GT.0.0.AND.QR.LT.TURNON) THEN
+                  PONOFF = 1
+                  DISCH = DISCH + PUMP
+                ENDIF
+              ENDIF
+            ELSE
+              IF(KEY.EQ.0) THEN
+                IF(EL.LE.ELVIN-C52EPS.OR.ER.GE.ZW) THEN
+                  PONOFF = 0
+                ELSE
+                  DISCH = DISCH + PUMP
+                ENDIF
+              ELSE
+                IF(EL.LE.ELVIN-C52EPS.OR.QR.GT.TURNON+2.*PUMP) THEN
+                  PONOFF = 0
+                ELSE
+                  DISCH = DISCH + PUMP
+                ENDIF
+              ENDIF
+            ENDIF
+          ELSE
+C           IF PUMP IS ON WATER IS TAKEN FROM THE NOMINAL DOWNSTREAM NODE
+C           AND DISCHARGED TO THE NOMINAL UPSTREAM NODE.
+ 
+            IF(PONOFF.EQ.0) THEN
+C             PUMP IS OFF- SHALL IT BE TURNED ON?
+              IF(KEY.EQ.0) THEN
+                IF(ER.GT.ELVIN.AND.EL.LT.TURNON) THEN
+                  PONOFF = 1
+                  DISCH = DISCH + PUMP
+                ENDIF
+              ELSE
+                IF(ER.GT.ELVIN.AND.QL.GT.0.0.AND.QL.LT.TURNON) THEN
+                  PONOFF = 1
+                  DISCH = DISCH + PUMP
+                ENDIF
+              ENDIF
+            ELSE
+              IF(KEY.EQ.0) THEN
+                IF(ER.LE.ELVIN-C52EPS.OR.EL.GE.ZW) THEN
+                  PONOFF = 0
+                ELSE
+                  DISCH = DISCH + PUMP
+                ENDIF
+              ELSE
+                IF(ER.LE.ELVIN-C52EPS.OR.QL.GT.TURNON-2.*PUMP) THEN
+                  PONOFF = 0
+                ELSE
+                  DISCH = DISCH + PUMP
+                ENDIF
+              ENDIF
+            ENDIF
+          ENDIF
+          EMC(IPNT+15) = PONOFF
+        ENDIF
+        GOTO 1000
+ 500  CONTINUE
+ 
+C       CASE FOR WHICH CONVEYANCE AND SLOPE ARE COMPUTED TO FIND
+C       THE FLOW
+ 
+        H = EL - ER
+ 
+C       USE D TO DETECT ZERO FLOW CAUSED BY WATER SURFACE BEING
+C       BELOW THE MINIMUM POINT IN THE FLOW PATH CONNECTING THE
+C       TWO NODES.
+ 
+        D = 0.5*(EL + ER)-ZW
+ 
+        IF(D.LE.0.0.OR.H.EQ.0.0) GOTO 600
+ 
+C         NON-ZERO FLOW HERE-LOOKUP SQRT OF CONVEYANCE AND
+C         COMPUTE FLOW AND DERIVATIVE.
+ 
+          CALL LKTAB
+     I              (TQUD, D, 0,
+     O               K, NTAB, DK)
+          K = K*K
+          DK = 2.*K*DK
+          SH = H/DX
+          IF(ABS(SH).LE.1.E-4) THEN
+C           SPECIAL CASE FOR SMALL HEADS-MAKE LINEAR
+ 
+            DISCH = 100.*K*SH
+            PYL = 100.*(0.5*DK*SH + K/DX)
+            PYR = 100.*(0.5*DK*SH - K/DX)
+            GOTO 1000
+          ENDIF
+          SH = SQRT(ABS(SH))
+          DISCH = K*SH
+          IF(H.LT.0.0) DISCH = -DISCH
+          T = 0.5*DK*SH
+          IF(H.LT.0.0) T = -T
+          PYL = T +0.5*K/(SH*DX)
+          PYR = T -0.5*K/(SH*DX)
+          GOTO 1000
+ 
+ 600    CONTINUE
+ 
+C         ZERO FLOW CASE
+ 
+          PYR = 0.
+          PYL = 0.
+          RES = QE2(QNN)
+          IF(QNN.EQ.UNN) GOTO 602
+            PQR = 1.
+            PQL = 0.
+            GOTO 605
+ 602      CONTINUE
+            PQL = 1.
+            PQR = 0.
+ 605      CONTINUE
+          RETURN
+ 
+ 1000   CONTINUE
+ 
+C         APPLY EFFECT OF SYSGN TO VALUES
+ 
+          IF(SYSGN.GT.0) GOTO 1010
+            DISCH = -DISCH
+            PYL = -PYL
+            PYR = -PYR
+ 1010     CONTINUE
+          RES = QE2(QNN) -DISCH
+ 
+C         CHANGE SIGN OF DERIVATIVES TO BE CONSISTENT WITH
+C         DISCH IN COMPUTING RES
+ 
+          PYL = -PYL
+          PYR = -PYR
+ 
+C         SET FLOW DERIVATIVES
+ 
+          IF(QNN.EQ.UNN) GOTO 1020
+            PQR = 1.
+            PQL = 0.
+            GOTO 1030
+ 1020     CONTINUE
+            PQR = 0.
+            PQL = 1.
+ 1030     CONTINUE
+C        WRITE(STDOUT,*) 'BDFTAB: RES=',RES
+C        WRITE(STDOUT,*) ' DERV:',PYL, PQL, PYR, PQR
+C        WRITE(STDOUT,*) 'EL=',EL,' ER=',ER
+C        WRITE(STDOUT,*) ' QE2(QNN)=',QE2(QNN)
+        RETURN
+      END
+C
+C
+C
+      SUBROUTINE   BDFWR
+     I                  (IPNT, EMC, MLEMC, YE2, ZE, QE2, AE2, TE2, NEX,
+     I                   STDOUT, JTIME, GRAV,
+     O                   RES, PYL, PQL, PYR, PQR)
+ 
+C     + + + PURPOSE + + +
+C     Bi-directional flow over a weir of given crest length.  Both
+C     the elevation of the crest of the weir and the weir coefficient
+C     may be varied by the program under the control of an operation
+C     block.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPNT, STDOUT, MLEMC, NEX
+      INTEGER EMC(MLEMC)
+      REAL AE2(NEX), GRAV, PQL, PQR, PYL, PYR, QE2(NEX), RES, TE2(NEX),
+     A      YE2(NEX), ZE(NEX)
+      REAL*8 JTIME
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPNT   - pointer into EMC for description of control structure
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     MLEMC  - maximum length of EMC(*)
+C     YE2    - depths at exterior nodes at end of time step
+C     ZE     - elevation of datum for depth at exterior node
+C     QE2    - flow at exterior nodes at end of time step
+C     AE2    - area at exterior nodes.
+C     TE2    - top width at an exterior node on a branch
+C     NEX    - number of exterior nodes in the model
+C     STDOUT   - Fortran unit number for user output and messages
+C     TIME   - elapsed time in seconds from start of run
+C     GRAV   - value of acceleration due to gravity
+C     RES    - value of the residual function
+C     PYL    - partial derivative of residual function wrt depth at
+C               left node
+C     PQL    - partial derivative of residual function wrt flow at left
+C               node
+C     PYR    - partial derivative of residual function wrt depth at
+C               right node
+C     PQR    - partial derivative of residual function wrt flow at right
+C               node
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'gatcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER DNN, HPTAB, IDUM, ISPOUT, NCTAB, NTAB, OPCODE, PCTAB, QNN,
+     A        SUBTAB, SYSGN, UNN
+      REAL ALPHA, ARG, C, CD, CS, D, DC, DCS, DISCH, DTIME, DZW, EL, ER,
+     A     FAC, FACQ, FACQ2, H, L, P, QF, RDUM, T, TH, VHEAD, YL, YR,
+     B     ZL, ZR, ZW
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM,RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC IABS, SQRT
+ 
+C     + + + EXTERNAL NAMES + + +
+      CHARACTER GET_TABID*16
+      EXTERNAL LKTAB, GET_TABID
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:64* Table Id=',A,' has invalid values for',
+     A  ' structure setting.')
+C***********************************************************************
+C     OBTAIN BASIC INFORMATION FROM EMC
+ 
+      UNN = EMC(IPNT+2)
+      DNN = EMC(IPNT+3)
+      QNN = EMC(IPNT+4)
+      SYSGN = EMC(IPNT+5)
+      OPCODE = EMC(IPNT+6)
+      HPTAB = EMC(IPNT+7)
+      PCTAB = EMC(IPNT+8)
+      NCTAB = EMC(IPNT+9)
+      SUBTAB = EMC(IPNT+10)
+      IDUM = EMC(IPNT+11)
+      L = RDUM
+      IDUM = EMC(IPNT+12)
+      ALPHA = RDUM
+C     ISPOUT gives pointer into gate/pump table for possible later
+C     output to special output file.  If ISPOUT = 0 no name was
+C     given but there is a null slot so that IF statements are not
+C     needed.
+      ISPOUT = EMC(IPNT+15)
+ 
+C     DEFINE THE OPENING FRACTION FOR THIS TIME SETP
+ 
+      IF(OPCODE.GT.0) THEN
+C       OPERATION BLOCK HAS ALREADY SET THE OPENING FRACTION
+ 
+        IDUM = EMC(IPNT+13)
+        P = RDUM
+      ELSE
+C       LOOK UP VALUE IN TABLE BASED ON TIME AT START OF THE CURRENT
+C       STEP
+ 
+        CALL LKTSTAB
+     I            (IABS(OPCODE), JTIME,
+     O             P, NTAB, DTIME)
+        IF(P.LT.0.0.OR.P.GT.1.0) THEN
+          WRITE(STDOUT,50) GET_TABID(NTAB)
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+      ENDIF
+ 
+      YL = YE2(UNN)
+      YR = YE2(DNN)
+      ZL = ZE(UNN)
+      ZR = ZE(DNN)
+ 
+C     FIND CURRENT ELEVATION FOR POINT OF HEAD MEASUREMENT
+ 
+      CALL LKTAB
+     I          (HPTAB, P, 0,
+     O           ZW, NTAB, DZW)
+ 
+      GOPEN(ISPOUT) = ZW
+ 
+C     ASSUME POSITIVE FLOW
+ 
+      EL = YL + ZL
+      ER = YR + ZR
+      H = EL - ZW
+      D = ER - ZW
+ 
+      IF(EL.GE.ER) THEN
+C       FLOW FROM UPSTREAM NODE TO DOWNSTREAM NODE OR ZERO
+        IF(H.GT.0.0) THEN
+          CALL LKTAB
+     I              (PCTAB, P, 0,
+     O               C, NTAB, DC)
+          IF(AE2(UNN).GT.0.0.AND.ALPHA.GT.0.0) THEN
+C           VELOCITY HEAD CAN BE COMPUTED
+ 
+            VHEAD = 0.5*ALPHA*(QE2(UNN)/AE2(UNN))**2/GRAV
+ 
+            FACQ2 = ALPHA*QE2(UNN)/(GRAV*AE2(UNN)**2)
+            FACQ = 1.0 - ALPHA*QE2(UNN)**2*TE2(UNN)/(GRAV*AE2(UNN)**3)
+          ELSE
+            VHEAD = 0.0
+            FACQ = 1.0
+            FACQ2 = 0.0
+          ENDIF
+ 
+          TH = H + VHEAD
+ 
+          FAC = C*L*SQRT(TH)
+          QF = FAC*TH
+          IF(D.GT.0.0) THEN
+            ARG = D/H
+            CALL LKTAB
+     I                (SUBTAB, ARG, 0,
+     O                 CS, NTAB, DCS)
+            FCLASS(ISPOUT) = '      SW'
+            FCLASS_CODE(ISPOUT) = 1
+          ELSE
+            ARG = 0.0
+            CS = 1.0
+            DCS = 0.0
+            FCLASS(ISPOUT) = '      FW'
+            FCLASS_CODE(ISPOUT) = 2
+          ENDIF
+ 
+          PYR = QF*DCS/H
+          DISCH = QF*CS
+          PYL = 1.5*FAC*FACQ*CS - PYR*ARG
+          PQL = 1.5*FAC*FACQ2
+          PQR = 0.0
+        ELSE
+          DISCH = 0.0
+          PYL = 0.0
+          PQL = 0.0
+          PYR = 0.0
+          PQR = 0.0
+          FCLASS(ISPOUT) = ' NO FLOW'
+          FCLASS_CODE(ISPOUT) = 3
+        ENDIF
+      ELSE
+C       FLOW FROM DOWN STREAM NODE TO UPSTREAM NODE
+ 
+        T = H
+        H = D
+        D = T
+        IF(H.GT.0.0) THEN
+          CALL LKTAB
+     I              (NCTAB, P, 0,
+     O               C, NTAB, CD)
+          IF(AE2(DNN).GT.0.0.AND.ALPHA.GT.0.0) THEN
+C           VELOCITY HEAD CAN BE COMPUTED
+ 
+            VHEAD = 0.5*ALPHA*(QE2(DNN)/AE2(DNN))**2/GRAV
+ 
+            FACQ2 = ALPHA*QE2(DNN)/(GRAV*AE2(DNN)**2)
+            FACQ = 1.0 - ALPHA*QE2(DNN)**2*TE2(DNN)/(GRAV*AE2(DNN)**3)
+          ELSE
+            VHEAD = 0.0
+            FACQ = 1.0
+            FACQ2 = 0.0
+          ENDIF
+ 
+          TH = H + VHEAD
+ 
+          FAC = C*L*SQRT(TH)
+          QF = FAC*TH
+          IF(D.GT.0.0) THEN
+            ARG = D/H
+            CALL LKTAB
+     I                (SUBTAB, ARG, 0,
+     O                 CS, NTAB, DCS)
+            FCLASS(ISPOUT) = '      SW'
+            FCLASS_CODE(ISPOUT) = 1
+          ELSE
+            ARG = 0.0
+            CS = 1.0
+            DCS = 0.0
+            FCLASS(ISPOUT) = '      FW'
+            FCLASS_CODE(ISPOUT) = 2
+          ENDIF
+ 
+          PYL = QF*DCS/H
+          DISCH = -QF*CS
+          PYR = -(1.5*FAC*FACQ*CS - PYL*ARG)
+          PYL = -PYL
+          PQR = -1.5*FAC*FACQ2
+          PQL = 0.0
+        ELSE
+          DISCH = 0.0
+          PYL = 0.0
+          PQL = 0.0
+          PYR = 0.0
+          PQR = 0.0
+          FCLASS(ISPOUT) = ' NO FLOW'
+          FCLASS_CODE(ISPOUT) = 3
+        ENDIF
+      ENDIF
+ 
+C     APPLY EFFECT OF SYSGN VALUES
+ 
+      IF(SYSGN.LT.0.0) THEN
+        DISCH = -DISCH
+        PYL = -PYL
+        PYR = -PYR
+        PQL = -PQL
+        PQR = -PQR
+      ENDIF
+ 
+      RES = QE2(QNN) - DISCH
+ 
+C     CHANGE SIGNS TO REFLECT Y AND Q DERIVATIVES OF DISCH.  WE
+C     HAVE HERETOFOR TAKEN THE SIGN ON DISCH TO BE +
+ 
+      PYL = -PYL
+      PQL = -PQL
+      PYR = -PYR
+      PQR = -PQR
+ 
+C     SET THE FLOW DERIVATIVES
+      IF(QNN.EQ.UNN) THEN
+        PQL = PQL + 1.0
+      ELSE
+        PQR = PQR + 1.0
+      ENDIF
+ 
+ 
+C        WRITE(STDOUT,*) 'BDFWR: RES=',RES
+C        WRITE(STDOUT,*) ' DERV:',PYL, PQL, PYR, PQR
+C        WRITE(STDOUT,*) 'EL=',EL,' ER=',ER
+C        WRITE(STDOUT,*) ' QE2(QNN)=',QE2(QNN)
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CBFLOW
+     I                   (YU, ZU, TU, AU, BU, DBU, QU, HU, YD, ZD,
+     I                    TD, AD, BD, DBD, QD, HD, HSLOT,
+     O                    RES, PYL, PQL, PYR, PQR)
+ 
+C     + + + PURPOSE + + +
+C     Compute values for flow through a bridge opening
+C     and over the roadway.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      REAL AD, AU, BD, BU, DBD, DBU, HD, HSLOT, HU, PQL, PQR, PYL,
+     A     PYR, QD, QU, RES, TD, TU, YD, YU, ZD, ZU
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     YU     - depth at upstream section
+C     ZU     - bottom elevation at upstream section
+C     TU     - top width at the upstream section
+C     AU     - area in channel upstream of the bridge
+C     BU     - momentum flux coefficient at upstream section
+C     DBU    - derivative wrt depth of upstream momentum flux coef
+C     QU     - flow at upstream section
+C     HU     - head at upstream node
+C     YD     - depth at downstream section
+C     ZD     - bottom elevation at downstream section
+C     TD     - top width at downstream section
+C     AD     - Flow area in channel downstream of bridge opening.
+C     BD     - momentum flux correction coefficient in downstream
+C               section
+C     DBD    - derivative wrt depth of downstream momentum flux coef
+C     QD     - flow at downstream section
+C     HD     - head downstream
+C     HSLOT  - height of bottom slot.  Currently 0.0 always
+C     RES    - value of the residual function
+C     PYL    - partial derivative of residual function wrt depth at
+C               left node
+C     PQL    - partial derivative of residual function wrt flow at left
+C               node
+C     PYR    - partial derivative of residual function wrt depth at
+C               right node
+C     PQR    - partial derivative of residual function wrt flow at right
+C               node
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'cbcom.cmn'
+      INCLUDE 'grav.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      REAL COMFAC, DH, DHT, DIV, DK, DKED, DKEU, DQBT, FAC, K, KED, KEU,
+     A     PEDQD, PEDYD, PEUQU, PEUYU, PQBQD, PQBQU, PQBYD, PQBYU,
+     B     PQRQU, PQRYD, PQRYU, QB, QBT, QR, R, VD, VU
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC SQRT
+C***********************************************************************
+C   COMPUTE ALPHA FROM BETA VALUES
+ 
+      KEU = 1.+2.884*(BU-1.)
+      DKEU = 2.884*DBU
+ 
+      KED = 1.+2.884*(BD-1.)
+      DKED = 2.884*DBD
+ 
+C   COMPUTE ROADWAY FLOW AND ITS DERIVATIVES
+ 
+      QR = QRF*SBC
+      VU = QU/AU
+      PEUYU = 1.0+VU*VU*(DKEU/2.-KEU*TU/AU)/GRAV
+      PEUQU = KEU*QU/(GRAV*AU*AU)
+      IF(HR.GT.0.0) GOTO 20
+ 
+C   ROADWAY FLOW IS ZERO HERE.
+ 
+      PQRYU = 0.
+      PQRYD = 0.
+      PQRQU = 0.
+      GOTO 40
+ 20   CONTINUE
+ 
+C   ROADWAY FLOW NON-ZERO HERE
+ 
+      COMFAC = DQRF*SBC-HS*QRF*DSBC/HR**2
+      PQRYU = COMFAC
+      PQRYD = DSBC*QRF/HR
+C     PQRQU = PEUQU*COMFAC
+      PQRQU = 0.0
+ 40   CONTINUE
+ 
+C   ADJUST SIGN OF QR AND ITS DERIVATIVES
+ 
+      IF(SGN.GT.0) GOTO 50
+      QR = -QR
+      PQRYU = -PQRYU
+      PQRYD = -PQRYD
+      PQRQU = -PQRQU
+ 50   CONTINUE
+ 
+ 
+      R = (YU - HSLOT)/(YBMAX - HSLOT)
+      IF(R.GT.1.05) GOTO 100
+ 
+C   FREE FLOW THROUGH BRIDGE OPENING HERE
+ 
+      IF(KFREE.GT.0.005) GOTO 52
+        K = 0.005
+        DK = 0.0
+        GOTO 54
+ 52   CONTINUE
+        K = KFREE
+        DK = DKFREE
+ 54   CONTINUE
+ 
+      VD = QD/AD
+      PEDYD = 1.0+VD*VD*(DKED/2.-KED*TD/AD)/GRAV
+      PEDQD = KED*QD/(GRAV*AD*AD)
+      FAC = AB*AB/K
+      DH = HU-HD
+      DHT = 0.02
+      IF(DH.LT.DHT) GOTO 60
+      QB = SQRT(TWOG*FAC*DH)
+      DIV = QB
+      IF(DIV.LT.0.25) DIV = 0.25
+      QB = DIV
+      PQBYU = GRAV*FAC*PEUYU/DIV
+      PQBYD = GRAV*FAC*((HU-HD)*(2.*TB/AB-DK/K)-PEDYD)/DIV
+      PQBQU = GRAV*FAC*PEUQU/DIV
+ 
+      PQBQD = -GRAV*FAC*PEDQD/DIV
+      GOTO 65
+ 60   CONTINUE
+        QBT = SQRT(TWOG*FAC*DHT)
+        DQBT = QBT/DHT
+        QB = DH*DQBT
+        PQBYU = DQBT*PEUYU
+        PQBYD = -DQBT*(PEDYD-DH*TB/AB+0.5*DH*DK/K)
+        PQBQU = DQBT*PEUQU
+ 
+ 
+        PQBQD = -DQBT*PEDQD
+ 65   CONTINUE
+ 
+C     ADJUST SIGNS
+ 
+      IF(SGN.GT.0) GOTO 75
+        QB = -QB
+        PQBYU = -PQBYU
+        PQBYD = -PQBYD
+        PQBQU = -PQBQU
+        PQBQD = -PQBQD
+ 75   CONTINUE
+ 
+      RES = QD-QB-QR
+      PYL = -(PQBYU+PQRYU)
+      PYR = -(PQBYD+PQRYD)
+      PQL = -(PQBQU+PQRQU)
+      PQR = 1.0-PQBQD
+ 
+      RETURN
+ 
+ 
+ 
+ 100  CONTINUE
+      AB = MAXAB
+      IF(YD.GE.0.0) GOTO 200
+C   ONLY TWO CASES OF BRIDGE FLOW TREATED
+ 
+C   ONLY UPSTREAM END SUBMERGED
+ 
+      K = 0.19+0.2*R
+      DK = 0.2/YBMAX
+      COMFAC = HU-(ZU-YU)-0.5*YBMAX
+      QB = K*AB*SQRT(TWOG*COMFAC)
+      PQBYU = GRAV*AB*AB*(2.*K*DK*COMFAC+K*K*PEUYU)/QB
+      PQBQU = GRAV*AB*AB*K*K*PEUQU/QB
+ 
+C   ADJUST SIGNS
+ 
+      IF(SGN.GT.0) GOTO 150
+      QB = -QB
+      PQBYU = -PQBYU
+      PQBQU = -PQBQU
+ 150  CONTINUE
+      RES = QU-QB-QR
+      PYL = -(PQBYU+PQRYU)
+      PYR = -PQRYD
+      PQL = 1.0-(PQBQU+PQRQU)
+      PQR = 0.0
+      RETURN
+ 200  CONTINUE
+ 
+C   SUBMERGED UPSTREAM AND DOWNSTEAM
+ 
+      K = KSUB
+      DH = HU-ZD
+      DHT = 0.02
+      IF(DH.LT.DHT) GOTO 210
+      QB = K*AB*SQRT(TWOG*(HU-ZD))
+      COMFAC = GRAV*K*K*AB*AB/QB
+      PQBYU = COMFAC*PEUYU
+      PQBYD = -COMFAC
+      PQBQU = COMFAC*PEUQU
+      GOTO 220
+ 210  CONTINUE
+        QBT = K*AB*SQRT(TWOG*DHT)
+        DQBT = QBT/DHT
+        QB = DH*DQBT
+        PQBYU = DQBT*PEUYU
+        PQBYD = -DQBT
+        PQBQU = DQBT*PEUQU
+ 220  CONTINUE
+      IF(SGN.GT.0) GOTO 250
+         QB = -QB
+         PQBYU = -PQBYU
+         PQBYD = -PQBYD
+         PQBQU = -PQBQU
+ 250  CONTINUE
+      RES = QD-QB-QR
+      PYL = -(PQBYU+PQRYU)
+      PYR = -(PQBYD+PQRYD)
+      PQL = -(PQBQU+PQRQU)
+      PQR = 1.0
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CBRID
+     I                  (IPNT, GRAV, STDOUT, NEX, MLEMC, EMC, EXNODT, 
+     I                   QE2, YE2, ZE, HSLOT,
+     O                   RES, PYL, PQL, PYR, PQR)
+ 
+C     + + + PURPOSE + + +
+C     Subroutine to compute required values for bridge flow.
+C     Assumed: 1) flow is always subcritical in the bridge opening
+C              2) flow may take place over the roadway
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPNT, STDOUT, MLEMC, NEX
+      INTEGER EMC(MLEMC), EXNODT(9,NEX)
+      REAL GRAV, HSLOT, PQL, PQR, PYL, PYR, QE2(NEX), RES, YE2(NEX),
+     A     ZE(NEX)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPNT   - pointer into EMC for description of control structure
+C     GRAV   - value of acceleration due to gravity
+C     STDOUT   - Fortran unit number for user output and messages
+C     NEX    - number of exterior nodes in the model
+C     MLEMC  - maximum length of EMC(*)
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     QE2    - flow at exterior nodes at end of time step
+C     YE2    - depths at exterior nodes at end of time step
+C     ZE     - elevation of datum for depth at exterior node
+C     HSLOT  - height of bottom slot.  Currently 0.0 always
+C     RES    - value of the residual function
+C     PYL    - partial derivative of residual function wrt depth at
+C               left node
+C     PQL    - partial derivative of residual function wrt flow at left
+C               node
+C     PYR    - partial derivative of residual function wrt depth at
+C               right node
+C     PQR    - partial derivative of residual function wrt flow at right
+C               node
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'cbcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADR, BATAB, DNN, FSGN, IDUM, NRFTAB, NT, NTAB, PRFTAB,
+     A        PTAB, SBCTAB, SYSGN, UNN
+      REAL AD, AU, B, BD, BU, CON, DB, DBD, DBU, DCON, DTB, DTD, DTU,
+     A     HD, HU, KED, KEU, MAXELV, QD, QU, RDELEV, RDUM, RS, TD,
+     B     TRYBMX, TU, YB, YD, YU, ZD, ZU
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (RDUM,IDUM)
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL CBFLOW, GETUSN, LKTAB, XLKT20
+ 
+C     + + + OUTPUT FORMATS + + +
+ 49   FORMAT(/' UNN= ',A5,' DNN= ',A5)
+ 50   FORMAT(' *ERR:80* INVALID ROADWAY FLOW. ZU=',F8.3,' ZD=',
+     A       F8.3,' RDELEV=',F8.3,' RS=',F7.3)
+ 51   FORMAT(' YU=',F7.3,' YD=',F7.3)
+C***********************************************************************
+C     GET KEY VALUES FROM EMC(*)
+ 
+      UNN = EMC(IPNT+2)
+      DNN = EMC(IPNT+3)
+      SYSGN = EMC(IPNT+5)
+      PTAB = EMC(IPNT+6)
+      NTAB = EMC(IPNT+7)
+      BATAB = EMC(IPNT+8)
+      TRYBMX = FTAB(ITAB(BATAB))
+      PRFTAB = EMC(IPNT+9)
+      NRFTAB = EMC(IPNT+10)
+      SBCTAB = EMC(IPNT+11)
+      IDUM = EMC(IPNT+12)
+      MAXAB = RDUM
+      IDUM = EMC(IPNT+13)
+      MAXELV = RDUM
+      IDUM = EMC(IPNT+14)
+      KSUB = RDUM
+      IDUM = EMC(IPNT+15)
+      RDELEV = RDUM
+ 
+C     FIND THE UPSTREAM AND DOWNSTREAM VALUES
+ 
+      QU = QE2(UNN)
+      YU = YE2(UNN)
+      ADR = EXNODT(4,UNN)
+      CALL XLKT20
+     I           (ADR,
+     M            YU,
+     O            AU, TU, DTU, CON, DCON, BU, DBU)
+ 
+      ZU = YU + ZE(UNN)
+      KEU = 1.+2.884*(BU-1.)
+      HU = ZU+0.5*KEU*(QU/AU)**2/GRAV
+ 
+      YD = YE2(DNN)
+      ZD = YD+ZE(DNN)
+      ADR = EXNODT(4,DNN)
+      CALL XLKT20
+     I           (ADR,
+     M            YD,
+     O            AD, TD, DTD, CON, DCON, BD, DBD)
+      QD = QE2(DNN)
+      KED = 1. + 2.884*(BD-1.)
+      HD = ZD+0.5*KED*(QD/AD)**2/GRAV
+ 
+ 
+C     FIND THE DIRECTION OF FLOW.  THE DIRECTION MUST AGREE WITH THE
+C     DIFFERENCE IN TOTAL ENERGY LINE.  THE SIGN OF THE FLOW WILL BE
+C     SET PROPERLY IF THE DIRECTION IS PROPER.
+ 
+      FSGN = 1
+      IF(HU.LT.HD) FSGN = -1
+ 
+C     FSGN GIVE DIRECTION OF FLOW:
+C     FSGN > 0 FLOW FROM UPSTREAM TO DOWNSTREAM
+C     FSGN < 0 FLOW FROM DOWNSTREAM TO UPSTREAM
+ 
+      IF(FSGN.LT.0) GOTO 100
+ 
+C       FLOW FROM UPSTREAM NODE TO DOWNSTREAM NODE
+ 
+        YB = YD
+        YBMAX = MAXELV-ZE(UNN)
+ 
+C       FIND FREE FLOW LOSS COEF FOR BRIDGE.
+ 
+        IF(HSLOT.GE.YB) THEN
+          KFREE = 0.0
+          DKFREE = 0.0
+        ELSE
+          CALL LKTAB
+     I              (PTAB, YB-HSLOT, 0,
+     O               KFREE, NT, DKFREE)
+        ENDIF
+ 
+C       FIND THE FLOW AREA IN BRIDGE OPENING
+ 
+        IF(YB.GE.TRYBMX) GOTO 90
+        CALL XLKT20
+     I             (BATAB,
+     M              YB,
+     O              AB, TB, DTB, CON, DCON, B, DB)
+ 
+        GOTO 92
+ 90     CONTINUE
+          AB = MAXAB
+          TB = 0.0
+ 92     CONTINUE
+C       FIND HEAD ON ROADWAY AND SUBMERGENCE CONDITIONS.
+ 
+        HR = ZU - RDELEV
+        IF(HR.LT.0.0) HR = 0.0
+        HS = ZD-RDELEV
+        IF(HS.LT.0.0) HS = 0.0
+        RS = 0.0
+        IF(HR.GT.0.0) RS = HS/HR
+ 
+C       RS GIVES RATIO OF HEAD TO DOWNSTREAM SUBMERGENCE FOR THE FLOW
+C       OVER THE ROADWAY.
+ 
+C       FIND FLOW OVER ROADWAY WITH NO SUBMERGENCE-FREE FLOW.
+ 
+        CALL LKTAB
+     I            (PRFTAB, HR, 0,
+     O             QRF, NT, DQRF)
+ 
+C       FIND THE SUBMERGENCE CORRECTION.
+ 
+        SBC = 1.
+        DSBC = 0.0
+        IF(RS.GT.0.) THEN
+          IF(RS.GT.1.0) THEN
+            WRITE(STDOUT,49) GETUSN(UNN), GETUSN(DNN)
+            WRITE(STDOUT,50) ZU, ZD, RDELEV, RS
+            WRITE(STDOUT,51) YU, YD
+            RS = 1.0
+          ENDIF
+          CALL LKTAB
+     I              (SBCTAB, RS, 0,
+     O               SBC, NT, DSBC)
+        ENDIF
+C       SET SIGN FOR QB AND QR. FLOW DIRECTION IS +1.
+ 
+        SGN = +1*SYSGN
+ 
+ 
+        CALL CBFLOW
+     I             (YU, ZU, TU, AU, BU, DBU, QU, HU, YD, ZD, TD,
+     I              AD, BD, DBD, QD, HD, HSLOT,
+     O              RES, PYL, PQL, PYR, PQR)
+ 
+C        IF(NTAB.LT.0) THEN
+C         ADJUST THE DERIVATIVES
+ 
+C          PQL = PQL + PYL*DYRDQU
+C          PYL = PYL*DYRDYL
+C        ENDIF
+        RETURN
+ 100  CONTINUE
+ 
+C       FLOW FROM DOWNSTREAM TO UPSTREAM NODE.
+ 
+        YB = YU
+        YBMAX = MAXELV - ZE(DNN)
+ 
+C       FIND FREE FLOW LOSS COEF FOR BRIDGE.
+ 
+        IF(HSLOT.GE.YB) THEN
+          KFREE = 0.0
+          DKFREE = 0.0
+        ELSE
+          CALL LKTAB
+     I              (NTAB, YB-HSLOT, 0,
+     O               KFREE, NT, DKFREE)
+        ENDIF
+ 
+ 
+C       FIND FLOW AREA IN BRIDGE OPENING.
+ 
+        IF(YB.GE.TRYBMX) GOTO 190
+        CALL XLKT20
+     I             (BATAB,
+     M              YB,
+     O              AB, TB, DTB, CON, DCON, B, DB)
+        GOTO 192
+ 190    CONTINUE
+          AB = MAXAB
+          TB = 0.0
+ 192    CONTINUE
+ 
+C       FIND HEAD ON ROADWAY AND SUBMERGENCE CONDITIONS.
+ 
+        HR  = ZD - RDELEV
+        IF(HR.LT.0.0) HR = 0.
+        HS = ZU - RDELEV
+        IF(HS.LT.0.) HS =  0.
+        RS = 0.0
+        IF(HR.GT.0.0) RS = HS/HR
+ 
+C       FIND FLOW OVER ROAD WITH NO SUBMERGENCE-FREE FLOW.
+ 
+        CALL LKTAB
+     I            (NRFTAB, HR, 0,
+     O             QRF, NT, DQRF)
+ 
+C       FIND SUBMERGENCE EFFECT.
+ 
+        SBC = 1.
+        DSBC = 0.0
+        IF(RS.GT.0.) THEN
+          IF(RS.GT.1.0) THEN
+            WRITE(STDOUT,49) GETUSN(UNN), GETUSN(DNN)
+            WRITE(STDOUT,50) ZU, ZD, RDELEV, RS
+            WRITE(STDOUT,51) YU, YD
+            RS = 1.0
+          ENDIF
+          CALL LKTAB
+     I              (SBCTAB, RS, 0,
+     O               SBC, NT, DSBC)
+        ENDIF
+ 
+C       SET SIGN FOR QB AND QR -FLOW DIRECTION IS -1.
+ 
+        SGN =  -1*SYSGN
+ 
+ 
+        CALL CBFLOW
+     I             (YD, ZD, TD, AD, BD, DBD, QD, HD, YU, ZU, TU,
+     I              AU, BU, DBU, QU, HU, HSLOT,
+     O              RES, PYR, PQR, PYL, PQL)
+        RETURN
+      END
+C
+C
+C
+      SUBROUTINE   CONTRL
+     I                   (IPNT, STDOUT, NBN, NEX, OUTPUT, JTIME, EXNODT,
+     I                    EMC, Y1, ZVEC, DXVEC, EPT,
+     O                    PDV, DISCH)
+ 
+C     + + + PURPOSE + + +
+C     Handles look-up of depth-discharge relationships
+C     at control structures.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPNT, STDOUT, EPT, NBN, NEX, OUTPUT
+      INTEGER EMC(EPT), EXNODT(9,NEX)
+      REAL DISCH, DXVEC(NBN), PDV, Y1(NBN), ZVEC(NBN)
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPNT   - pointer into EMC for description of control structure
+C     STDOUT   - Fortran unit number for user output and messages
+C     NBN    - total number on nodes on branches in the model
+C     NEX    - number of exterior nodes in the model
+C     OUTPUT - output level for diagnostic work
+C     TIME   - elapsed time in seconds from start of run
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     MLEMCV - maximum length of EMC(*)
+C     Y1     - maximum depth for nodes on a branch at start of time step
+C     ZVEC   - bottom profile elevations for nodes on a branch
+C     DXVEC  - distance increments along the x-axis for the channel
+C     PDV    - partial derivative value
+C     DISCH  - value of discharge from the control structure
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+      INCLUDE 'enelem.cmn'
+      INCLUDE 'gatcom.cmn'
+
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADRS, CONTAB, IDUM, IFLAG, LIMTAB, ND, NSIGN, NTAB, QHTAB,
+     A        TYPE, UNN, XSAD, ISPOUT
+      REAL AREA, B, CONLEV, CONVEY, DB, DCONVY, DTOP, ELEV, HEAD, P,
+     A     PDVDUM, PWC, QFREE, QLIM, RDUM, SLOPE, TOP, WC, WL, Y, ZHEAD
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (RDUM,IDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC SQRT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GETUSN*5, GET_TABID*16
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETUSN, LKTAB, XLKT20, GET_TABID
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:64* Table Id=',A,' has invalid values for',
+     A  ' structure setting.')
+ 52   format(/,' *ERR:XXX* Slope for computing flow < 0.0 at node: ',a6,
+     a  '. Cannot continue computation.',/,'  Review source for the ',
+     b  'slope or change the nature of the control at this node')
+ 2010 FORMAT(/,'SUBROUTINE CONTRL RETURNS :',/,1X,
+     A           ' UNN =  ',I5,' PDV =  ',E12.5,' DISCH =  ',E12.5)
+C***********************************************************************
+      UNN = EMC(IPNT+2)
+      NSIGN = EMC(IPNT+3)
+C      QNODE = EMC(IPNT+4)
+      Y = YE2(UNN)
+C      Q = QE2(QNODE)
+      TYPE = EMC(IPNT+1)
+ 
+      GOTO(100, 200, 300, 400, 400, 600),TYPE
+        WRITE(STDOUT,*) ' *BUG:02* INVALID TYPE IN CONTRL. TYPE=',TYPE
+        STOP 'Abnormal stop: errors found.'
+ 100  CONTINUE
+ 
+C       FLOW GIVEN BY WEIR EQUATION
+ 
+        ADRS = EMC(IPNT+5)
+        IDUM = EMC(IPNT+6)
+        ELEV = RDUM
+        IDUM = EMC(IPNT+7)
+        WL = RDUM
+        HEAD = Y+ZE(UNN) -ELEV
+        IF(HEAD.GT.0.0) GOTO 110
+          PDV = 0.0
+          DISCH = 0.0
+          GOTO 9000
+ 110    CONTINUE
+ 
+C       FIND COEF. FOR WEIR
+ 
+        CALL LKTAB
+     I            (ADRS, HEAD, 1,
+     O             WC, NTAB, PWC)
+ 
+C       COMPUTE DISCHARGE
+ 
+        DISCH = WC*WL*HEAD*SQRT(HEAD)
+        PDV = WL*(PWC*HEAD*SQRT(HEAD) + 1.5*WC*SQRT(HEAD))
+        GOTO 9000
+ 200  CONTINUE
+      ADRS = EMC(IPNT+5)
+      IDUM = EMC(IPNT+6)
+      ELEV = RDUM
+ 
+C     HEAD OVER CONTROL STRUCTURE REFERENCE LEVEL
+ 
+      HEAD = Y + ZE(UNN) - ELEV
+ 
+C     CUT OFF NEGATIVE HEAD
+ 
+C      IF(HEAD.GE.0.) GOTO 220
+C      PDV = 0.
+C      DISCH = 0.0
+C      GOTO 9000
+ 
+ 220  CONTINUE
+      CALL LKTAB
+     I          (ADRS, HEAD, 1,
+     O           DISCH, NTAB, PDV)
+      GOTO 9000
+ 
+ 300  CONTINUE
+ 
+C     NORMAL DEPTH
+ 
+      IFLAG = EMC(IPNT+5)
+      IDUM = EMC(IPNT+6)
+      SLOPE = RDUM
+      XSAD = EXNODT(4,UNN)
+C      IF(XSAD.GT.0.) GOTO 310
+C      WRITE(STDOUT,2000) GETUSN(UNN)
+C      STOP 'Abnormal stop: errors found.'
+C 310  CONTINUE
+ 
+      IF(IFLAG.EQ.-1) GOTO 305
+C        IF(EXNODT(1,UNN).GT.0) GOTO 302
+C          WRITE(STDOUT,2005) GETUSN(UNN)
+C          STOP 'Abnormal stop: errors found.'
+C 302    CONTINUE
+          ND = EXNODT(2,UNN)
+          IF(IFLAG.EQ.0) SLOPE = (ZVEC(ND-1)-ZVEC(ND))/DXVEC(ND)
+          IF(IFLAG.EQ.1) SLOPE = (Y1(ND-1)+ZVEC(ND-1)-Y1(ND)-ZVEC(ND))
+     1                         /DXVEC(ND)
+ 305  CONTINUE
+ 
+      CALL XLKT20
+     I           (XSAD,
+     M            Y,
+     O            AREA, TOP, DTOP, CONVEY, DCONVY, B, DB)
+      if(slope <= 0.0) then
+        write(stdout,52) getusn(unn)
+        stop 'Abnormal stop: errors found.'
+      endif
+      DISCH = CONVEY*SQRT(SLOPE)
+      PDV = SQRT(SLOPE)*DCONVY
+      GOTO 9000
+ 400  CONTINUE
+ 
+C     GET ADRESS OF THE Q VS H TABLE
+ 
+      ADRS = EMC(IPNT+5)
+      IDUM = EMC(IPNT+7)
+      ELEV = RDUM
+      HEAD = Y +ZE(UNN) -ELEV
+ 
+      IF(HEAD.GE.0) GOTO 402
+         PDV = 0.0
+         DISCH = 0.0
+C         IF(TYPE.EQ.5) IPNT = IPNT+1
+         GOTO 9000
+ 402  CONTINUE
+      CALL LKTAB
+     I          (ADRS, HEAD, 1,
+     O           DISCH, NTAB, PDV)
+ 
+C     FIND THE OPENING FRACTION-USE HEAD AS A DUMMY FOR
+C     THE PDV LOCATION
+      IF(TYPE.EQ.5) GOTO 403
+ 
+      ADRS = EMC(IPNT+6)
+      CALL LKTSTAB
+     I          (ADRS, JTIME,
+     O           P, NTAB, HEAD)
+      IF(P.LT.0.0.OR.P.GT.1.0) THEN
+        WRITE(STDOUT,50) GET_TABID(NTAB)
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+      GOTO 404
+ 403  CONTINUE
+      IDUM = EMC(IPNT+8)
+      ISPOUT = EMC(IPNT+10)
+      P = RDUM
+      GOPEN(ISPOUT) = P
+      IF(P.EQ.0.0) THEN
+        FCLASS(ISPOUT) = '  Closed'
+        FCLASS_CODE(ISPOUT) = 4
+      ELSEIF(P.LT.1.0) THEN
+        FCLASS(ISPOUT) = '    Open'
+        FCLASS_CODE(ISPOUT) = 5
+      ELSE
+        FCLASS(ISPOUT) = 'Max Open'
+        FCLASS_CODE(ISPOUT) = 6
+      ENDIF
+ 404  CONTINUE
+ 
+      DISCH = P*DISCH
+      PDV = P*PDV
+      GOTO 9000
+ 
+ 600  CONTINUE
+C       GREEN RIVER PUMP STATION-- ONE-NODE CONTROL WITH LIMIT SET BY
+C       FLOW OBTAINED FROM A TIME SERIES TABLE.
+ 
+        QHTAB = EMC(IPNT+5)
+        CONTAB = EMC(IPNT+6)
+        LIMTAB = EMC(IPNT+7)
+        IDUM = EMC(IPNT+8)
+        ZHEAD = RDUM
+ 
+C       COMPUTE THE HEAD AVAILABLE
+ 
+        HEAD = Y + ZE(UNN) - ZHEAD
+        IF(HEAD.LT.0.0) HEAD = 0.0
+        CALL LKTAB
+     I            (QHTAB, HEAD, 1,
+     O             QFREE, NTAB, PDV)
+ 
+C       FIND THE CONTROLLING VALUE.
+ 
+        CALL LKTSTAB
+     I            (CONTAB, JTIME,
+     O             CONLEV, NTAB, PDVDUM)
+ 
+C       FIND THE LIMITING FLOWRATE
+ 
+        CALL LKTAB
+     I            (LIMTAB, CONLEV, 1,
+     O             QLIM, NTAB, PDVDUM)
+ 
+        IF(QFREE.LE.QLIM) THEN
+          DISCH = QFREE
+        ELSE
+          DISCH = QLIM
+          PDV = 0.0
+        ENDIF
+ 
+ 
+        GOTO 9000
+ 
+ 9000 CONTINUE
+C     SET THE PROPER SIGN FOR THE RETURNED VALUES
+      IF(NSIGN.LT.0) THEN
+        DISCH = -DISCH
+        PDV = -PDV
+      ENDIF
+ 
+      IF(OUTPUT.GT.4) WRITE(STDOUT,2010) UNN, PDV, DISCH
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   EXCON
+     I                  (IPNT, STDOUT, JTIME, NEX, MLEMCV, EXNODT,
+     I                   QE2, YE2, ZE,
+     M                   EMC,
+     O                   RES, PYL, PQL, PYR, PQR)
+ 
+C     + + + PURPOSE + + +
+C     Subroutine to compute required values for generalized
+C     expansion-contraction.  Transition between subcritical and
+C     critical flow is monitored and the critical depth control
+C     can be drowned by changing conditions downstream.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPNT, STDOUT, MLEMCV, NEX
+      INTEGER EMC(MLEMCV), EXNODT(9,NEX)
+      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES, YE2(NEX),
+     A     ZE(NEX)
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPNT   - pointer into EMC for description of control structure
+C     STDOUT   - Fortran unit number for user output and messages
+C     TIME   - elapsed time in seconds from start of run
+C     NEX    - number of exterior nodes in the model
+C     MLEMCV - maximum length of EMC(*)
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     QE2    - flow at exterior nodes at end of time step
+C     YE2    - depths at exterior nodes at end of time step
+C     ZE     - elevation of datum for depth at exterior node
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     RES    - value of the residual function
+C     PYL    - partial derivative of residual function wrt depth at
+C               left node
+C     PQL    - partial derivative of residual function wrt flow at left
+C               node
+C     PYR    - partial derivative of residual function wrt depth at
+C               right node
+C     PQR    - partial derivative of residual function wrt flow at right
+C               node
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'grav.cmn'
+
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADR, DNN, FSGN, IDUM, QNN, SADR, STATE, SYSGN, TRNSGN,
+     A        UNN
+      REAL AC, AL, ALPHL, ALPHR, AR, BC, BL, BR, CON, DALPHL, DALPHR,
+     A     DBC, DBL, DBR, DCON, DTC, DTL, DTR, FAC, K, KNEG, KPOS, LHS,
+     B     PQ, Q, QCSQ, RDUM, RHS, TC, TL, TR, VHL, VHR, VL, VR, YC,
+     C     YCL, YCR, YL, YR, ZC, ZL, ZR
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (RDUM,IDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC FLOAT, MAX
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL XLKT20
+ 
+C     + + + OUTPUT FORMATS + + +
+ 10     FORMAT(/,' *ERR:85*  Numeric problem in SUBROUTINE EXCON.',/,
+     1         3I5,F14.2,6(1PE13.5))
+C***********************************************************************
+C     GET KEY VALUES FROM EMC.  IPNT POINTS
+C     TO CODE.
+      UNN = EMC(IPNT+2)
+      DNN = EMC(IPNT+3)
+      QNN = EMC(IPNT+4)
+      TRNSGN = EMC(IPNT+6)
+      STATE = EMC(IPNT+8)
+      SADR = EMC(IPNT+7)
+      SYSGN = EMC(IPNT+5)
+      IDUM = EMC(IPNT+9)
+      KPOS = RDUM
+      IDUM = EMC(IPNT+10)
+      KNEG = RDUM
+      IDUM = EMC(IPNT+11)
+      ZC = RDUM
+      YL = YE2(UNN)
+      YR = YE2(DNN)
+      ZL = ZE(UNN)
+      ZR = ZE(DNN)
+ 
+C     GET FLOW RELATED VALUES
+ 
+      Q = QE2(QNN)
+ 
+C     SET DIRECTION OF FLOW
+ 
+      FSGN = SYSGN
+      IF(Q.LT.0.0) FSGN = -SYSGN
+ 
+C     CHECK FOR INVALID REVERSE FLOW
+ 
+C      IF(FSGN.GT.0) GOTO 50
+C
+C       FLOW FROM DOWNSTREAM TO UPSTREAM MAY NOT BE POSSIBLE
+ 
+C        IF(YR+ZR.GT.ZC) GOTO 40
+ 
+C         REVERSE FLOW IMPOSSIBLE-CHANGE SIGN OF Q AND FSGN
+ 
+C          FSGN = -FSGN
+C          Q = -Q
+C          QE2(QNN) = Q
+C          WRITE(STDOUT,2000) GETUSN(QNN), TIME, Q, YL, YR
+C40      CONTINUE
+C50    CONTINUE
+ 
+C     COMPUTE COMPONENTS OF FREE FLOWING RELATIONSHIP
+ 
+C     LOOKUP VALUES NEEDED AT UNN AND DNN
+ 
+      TL = 0.
+      AL = -1.
+      BL = 1.0
+      DBL = 0.0
+      IF(EXNODT(3,UNN).LE.0) GOTO 100
+ 
+C     CROSS SECTION INFORMATION EXISTS
+ 
+        ADR = EXNODT(4,UNN)
+        CALL XLKT20
+     I             (ADR,
+     M              YL,
+     O              AL, TL, DTL, CON, DCON, BL, DBL)
+ 100  CONTINUE
+      TR = 0.0
+      AR = -1.
+      BR = 1.0
+      DBR = 0.0
+      IF(EXNODT(3,DNN).LE.0) GOTO 200
+        ADR = EXNODT(4,DNN)
+        CALL XLKT20
+     I             (ADR,
+     M              YR,
+     O              AR, TR, DTR, CON, DCON, BR, DBR)
+ 200  CONTINUE
+ 
+C     DETERMINE THE VELOCITY AT EACH SECTION
+ 
+      VL = 0.0
+      IF(AL.GT.0.0) VL = Q/AL
+      VR = 0.0
+ 
+      IF(AR.GT.0.0) VR = Q/AR
+ 
+C     DETERMINE VELOCITY HEAD COEFFICIENTS AND DERIVATIVES OF THE
+C     COEFFICIENTS
+ 
+      ALPHL = -2.+3.*BL
+      DALPHL = 3.*DBL
+      ALPHR = -2.+3.*BR
+      DALPHR = 3.*DBR
+ 
+      VHL = ALPHL*VL**2/(TWOG)
+      VHR = ALPHR*VR**2/(TWOG)
+ 
+ 
+C     SET VALUE OF K
+ 
+      K = KPOS
+      IF(FSGN.LT.0) K = KNEG
+ 
+C     SET SIGN OF K
+ 
+      K = FLOAT(FSGN*TRNSGN)*K
+ 
+      LHS = ZL+YL+(1.-K)*VHL
+      RHS = ZR+YR+(1.-K)*VHR
+ 
+C     ESTABLISH CRITICAL CONTROL VALUES
+ 
+C     COMPUTE DEPTH AT THE CRITICAL SECTION
+ 
+      YCL = YL + ZL - ZC
+      YCR = YR + ZR - ZC
+      YC = MAX(YCL, YCR)
+      IF(YC.LE.0.0) THEN
+C       SPECIAL CASE--WATER SURFACE BELOW CONTROL ON BOTH SIDES
+C       FORCE FLOW AT FLOW NODE TO BE ZERO
+ 
+        RES = Q
+        PYL = 0.0
+        PYR = 0.0
+        IF(UNN.EQ.QNN) THEN
+          PQL = 1.0
+          PQR = 0.0
+        ELSE
+          PQL = 0.0
+          PQR = 1.0
+        ENDIF
+ 
+        RETURN
+      ELSE
+        CALL XLKT20
+     I             (SADR,
+     M              YC,
+     O              AC, TC, DTC, CON, DCON, BC, DBC)
+      ENDIF
+ 
+      IF(Q.EQ.0.0) THEN
+ 
+C       MAKE SURE FSGN IS CORRECT IN THE INDETERMINATE CASE
+ 
+        IF(YCL.GE.YCR) THEN
+          FSGN = 1
+        ELSE
+          FSGN = -1
+        ENDIF
+      ENDIF
+ 
+C     CHECK FOR VALIDITY OF CRITICAL SECTION VALUES
+C     FOR INITIAL WORK SET BETA AND DBETA/DY
+      BC = 1.0
+      DBC = 0.0
+      FAC = AC*DBC -BC*TC
+ 
+C     FAC MUST BE LESS THAN ZERO.  OTHERWISE THE CRITICAL FLOW BECOMES
+C      IMAGINARY......
+      IF(FAC.LT.0.0) GOTO 250
+ 
+C       ERROR HERE
+        WRITE(STDOUT,10) UNN, DNN, FSGN, JTIME, YC, TC, AC, BC, DBC
+        STOP 'Abnormal stop: errors found.'
+ 250  CONTINUE
+ 
+C     NOW COMPUTE DERIVATIVES FOR FREE FLOWING CONDITION
+ 
+      PYL = 1.-(1.-K)*VL**2*(ALPHL*TL/AL-0.5*DALPHL)/GRAV
+      PQL = ALPHL*(1.-K)*VL/(GRAV*AL)
+      PYR = -1.-(1.-K)*VR**2*(-ALPHR*TR/AR +0.5*DALPHR)/GRAV
+      PQR = -ALPHR*(1.-K)*VR/(GRAV*AR)
+ 
+C     COMPUTE RESIDUAL FOR FREE FLOWING CONDITION
+ 
+      RES = LHS-RHS
+ 
+ 
+C     NOW BEGIN THE PROCESS OF DETERMINING THE FLOW STATE AND THE
+C     NEED FOR CHANGING THE STATE.
+ 
+      IF(FSGN.LT.0) GOTO 1000
+ 
+C       FLOW IS FROM UPSTREAM NODE TO DOWNSTREAM NODE OF THE STRUCTURE
+ 
+        IF(STATE.NE.1) GOTO 400
+ 
+C         STATE IS CRITICAL HERE
+          IF(RHS.LT.LHS) GOTO 300
+ 
+C           THE CRITICAL SECTION HAS BEEN DROWNED FROM DOWNSTREAM.
+C           CHANGE STATE TO REFLECT THE LOSS OF CRITICAL FLOW
+ 
+            STATE = -STATE
+            GOTO 5000
+ 300      CONTINUE
+C         FLOW IS STILL CRITICAL. RECOMPUTE RESIDUAL AND DERIVIATIVES
+C         FOR CRITICAL CONTROL EXISTING AT UPSTREAM NODE.
+ 
+          RES = Q**2*FAC +GRAV*AC**3
+          PYL = Q**2*(-BC*DTC)+3.*GRAV*AC**2*TC
+          PQ = 2.*Q*FAC
+          IF(UNN.EQ.QNN) THEN
+            PQL = PQ
+            PQR = 0.0
+          ELSE
+            PQR = PQ
+            PQL = 0
+          ENDIF
+          PYR = 0.0
+          GOTO 5000
+ 400    CONTINUE
+C
+C         STATE IS NON-CRITICAL.  CHECK IF IT SHOULD BECOME CRITICAL
+C         FIND THE SQUARE OF THE CRITICAL FLOW AT THE CONTROLLING SECTION.
+ 
+          QCSQ = -GRAV*AC**3/FAC
+          IF(QCSQ.GT.Q**2) GOTO 500
+ 
+C           SHIFT CONTROL TO CRITICAL DEPTH AT UPSTREAM NODE
+ 
+            STATE = -STATE
+            RES = Q**2*FAC+GRAV*AC**3
+            PYL = Q**2*(-BC*DTC)+3.*GRAV*AC**2*TC
+            PQ = 2.*Q*FAC
+            IF(UNN.EQ.QNN) THEN
+              PQL = PQ
+              PQR = 0.0
+            ELSE
+              PQR = PQ
+              PQL = 0
+            ENDIF
+            PYR = 0.0
+            GOTO 5000
+ 500      CONTINUE
+ 
+C           REMAIN IN NON-CRITICAL STATE
+ 
+            GOTO 5000
+ 1000 CONTINUE
+ 
+C       FLOW IS NEGATIVE.  THAT IS FROM DOWNSTREAM NODE TO UPSTREAM NODE.
+C       NOTE: THE SIGN OF Q IS NOT NECESSARILY NEGATIVE......
+ 
+        IF(STATE.NE.1) GOTO 1400
+ 
+C         FLOW IS AT CRITICAL DEPTH
+ 
+          IF(RHS.GE.LHS) GOTO 1300
+ 
+C           RESET STATE TO NON-CRITICAL
+ 
+            STATE = -STATE
+            GOTO 5000
+ 1300     CONTINUE
+ 
+C           RETAIN CRITICAL FLOW STATE
+ 
+            RES = Q**2*FAC+GRAV*AC**3
+            PYR = Q**2*(-BC*DTC)+3.*GRAV*AC**2*TC
+            PQ = 2.*Q*FAC
+            PYL = 0.0
+            IF(UNN.EQ.QNN) THEN
+              PQL = PQ
+              PQR = 0.0
+            ELSE
+              PQR = PQ
+              PQL = 0
+            ENDIF
+            GOTO 5000
+ 1400   CONTINUE
+ 
+C         STATE IS NON-CRITICAL
+ 
+          QCSQ = -GRAV*AC**3/FAC
+          IF(QCSQ.GT.Q**2) GOTO 1500
+ 
+C           SHIFT CONTROL TO CRITICAL DEPTH AT DOWNSTREAM NODE
+ 
+            STATE = -STATE
+            RES = Q**2*FAC+GRAV*AC**3
+            PYR = Q**2*(-BC*DTC)+3.*GRAV**2*TC
+            PQ = 2.*Q*FAC
+            IF(UNN.EQ.QNN) THEN
+              PQL = PQ
+              PQR = 0.0
+            ELSE
+              PQR = PQ
+              PQL = 0
+            ENDIF
+            PYL = 0.0
+            GOTO 5000
+ 1500     CONTINUE
+ 
+ 
+ 5000 CONTINUE
+      EMC(IPNT+8) = STATE
+      RETURN
+       END
+C
+C
+C
+      SUBROUTINE   FINDCF
+     I                   (STDOUT, A, T, Q, HEAD,
+     O                    CF, DCFY, DCFQ)
+ 
+C     + + + PURPOSE + + +
+C     Compute HAGER'S side weir function with its derivatives.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER STDOUT
+      REAL A, CF, DCFQ, DCFY, Q, T, HEAD
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     A      - Area of flow in source channel
+C     T      - top width of the cross section in source channel
+C     Q      - flow rate in the source channel
+C     HEAD - piezometric head on weir crest 
+C     CF     - Hager's side weir function value
+C     DCFY   - derivative of Hager's weir function wrt depth
+C     DCFQ   - derivative of Hager's weir function wrt flow
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'grav.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      REAL  FRW2, TP, TP2, TP3
+C***********************************************************************
+      TP = A*A*HEAD
+      FRW2 = Q*Q/(GRAV*TP)
+      TP2 = 2. + 3.*FRW2
+      CF = SQRT((2. + FRW2)/TP2)
+      TP3 = (1. - 3.*CF**2)/(CF*TP*TP2)
+ 
+      DCFY = -0.5*FRW2*( 2.*A*T*HEAD + A**2 )*TP3
+      DCFQ = Q*TP3/GRAV
+ 
+C      WRITE(STDOUT,50) HEAD, A, T, Q, FRW2, CF, DCFY, DCFQ
+C50    FORMAT(' FINDCF: HEAD=',F10.5,' A=',F10.4,
+C     A   ' T=',F10.4,' Q=',F10.4,' FRW2=',1PE12.5,
+C     B   ' CF=',F10.4,' DCFY=',1PE12.4,' DCFQ=',1PE12.4)
+
+      RETURN
+      END
+C
+C
+C
+      REAL FUNCTION   FNDDQ
+     I                     (Y1, HG)
+ 
+C     + + + PURPOSE + + +
+C     Compute the derivative for free orifice flow.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      REAL HG, Y1
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     Y1     - maximum depth upstream of sluice gates
+C     HG     - sluice gate opening
+C***********************************************************************
+      FNDDQ = 157.89*HG**.91363*(Y1 - 1.)**(-.40437)
+      RETURN
+      END
+C
+C
+C
+      REAL FUNCTION   FNDNZM
+     I                      (IPT)
+ 
+C     + + + PURPOSE + + +
+C     Find the midpoint of the null zone when KEY=QVAR for
+C     an operation block sense point.  Computes weighted sum of the
+C     source nodes for the null-zone midpoint given by the
+C     user.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPT    - pointer to operation block values in FTAB/ITAB
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'enelem.cmn'
+      INCLUDE 'ftable.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER J, N
+      REAL SUM
+C***********************************************************************
+      SUM = 0.0
+      N = ITAB(IPT+14)
+      DO 100 J=1,N
+        ITMP = ITAB(IPT+13+2*J)
+        SUM = SUM + QE2(ITMP)*FTAB(IPT+14+2*J)
+ 100  CONTINUE
+ 
+      FNDNZM = SUM
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   FNDSO
+     I                  (Y1, Y3, HG,
+     O                   Q, DQH1, DQH3)
+ 
+C     + + + PURPOSE + + +
+C     Find submerged orifice flow and its derivatives.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      REAL DQH1, DQH3, HG, Q, Y1, Y3
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     Y1     - maximum depth upstream of sluice gates
+C     Y3     - maximum depth upstream of sluice gates
+C     HG     - sluice gate opening
+C     Q      - flow rate
+C     DQH1   - derivative of flow wrt to upstream head
+C     DQH3   - derivative of flow wrt to downstream head
+ 
+C     + + + SAVED VALUES + + +
+      REAL EPS
+      SAVE EPS
+ 
+C     + + + LOCAL VARIABLES + + +
+      REAL DX, QL, QR
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      REAL SO
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL SO
+ 
+C     + + + DATA INITIALIZATIONS + + +
+      DATA EPS/.01/
+C***********************************************************************
+      DX = EPS*(Y1 - 1.)
+ 
+      Q = SO(Y1, Y3, HG)
+ 
+C     IF THE  GATE OPENING AND TAILWATER ARE HELD CONSTANT AND
+C     WE ALREADY HAVE SUBMERGED ORIFICE FLOW, THEN A DECREASE IN
+C     HEADWATER HEAD MAINTAINS SUBMERGED ORIFICE FLOW.
+ 
+      IF(Y1 - DX. LE.Y3) THEN
+        DX = .7*(Y1 - Y3)
+      ENDIF
+ 
+      QL = SO(Y1 - DX, Y3, HG)
+      DQH1 = (Q - QL)/DX
+ 
+      DX = EPS*(Y3 - 1.)
+ 
+C     IF THE GATE OPENING AND THE HEADWATER HEAD ARE CONSTANT AND
+C     WE  ALREADY HAVE SUBMERGED ORIFICE FLOW, THEN AN INCREASE IN
+C     THE TAILWATER HEAD MAINTAINS SUBMERGED ORIFICE FLOW.
+ 
+      IF(Y3 + DX.GE.Y1) THEN
+        DX = .7*(Y1 - Y3)
+      ENDIF
+ 
+      QR = SO(Y1, Y3 + DX, HG)
+ 
+      DQH3 = (QR - Q)/DX
+ 
+      RETURN
+      END
+C
+C
+C
+      REAL FUNCTION   FO
+     I                  (H1, HG)
+ 
+C     + + + PURPOSE + + +
+C     Compute free orifice flow.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      REAL H1, HG
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     H1     - upstream head
+C     HG     - sluice gate opening
+C***********************************************************************
+C      DISABLED STATEMENT FUNCTIONS.
+C      A(Y) = 403.5 + Y*(144. + Y*2.75)
+C      C(HH,HHG) = .66516 + (HHG/HH)*(-.4525 + .70985*(HHG/HH))
+ 
+C      CON = C(H1,HG)
+C      D = 1.0/(CON*HG*BG)**2 - ALPHA/A(H1 + 1)**2
+ 
+C      FO = SQRT(2.*G*(H1 - CON*HG)/D)
+ 
+      FO = 265.082*HG**.91363*H1**.59563
+ 
+      RETURN
+      END
+C
+C
+C
+      REAL FUNCTION   FOBDY
+     I                     (QFO, Y1, HG)
+ 
+C     + + + PURPOSE + + +
+C     Find the value of Y3, Y3STAR, giving the depth at the end of the
+C     exit reach when the flow is at the boundary between free and
+C     submerged flow.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      REAL HG, QFO, Y1
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     QFO    - free orifice flow
+C     Y1     - maximum depth upstream of sluice gates
+C     HG     - sluice gate opening
+ 
+C     + + + SAVED VALUES + + +
+      REAL A0, BETA, BG, G, W
+      SAVE A0, BETA, BG, G, W
+ 
+C     + + + LOCAL VARIABLES + + +
+      REAL A3, AG, DIV, HH, HHG, P, RES, X, Y1LIM, Y2, Y3EST
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC SQRT
+ 
+C     + + + STATEMENT FUNCTION TYPES + + +
+      REAL C, FL, FM, FR
+ 
+C     + + + DATA INITIALIZATIONS + + +
+      DATA W/96.0/, BG/68.75/, A0/299.5/, G/32.2/
+     C     BETA/1.2373/
+ 
+C     + + + STATEMENT FUNCTION DEFINITIONS + + +
+      C(HH,HHG) = .66516 + (HHG/HH)*(-.4525 + .70985*(HHG/HH))
+      FL(X) = 1.1391 + X*(1.2673 - .0131*X) - .3682*X**.3
+      FM(X) = .6352 + X*(.2094 + .0159*X) + 2.1218*SQRT(X)
+      FR(X) = .9778 + X*(-1.6271 + .0268*X) + 4.422*X**.7
+C***********************************************************************
+C     STATEMENT FUNCTIONS
+ 
+C      FL(X) = 1.141 + X*(1.2569 - .0128*X) - .3668*X**.3
+ 
+C      FM(X) = .7184 + X*(.2805 + .0116*X) + 1.97*SQRT(X)
+ 
+C      FR(X) = .8279 + X*(-2.1345 + .052*X) + 5.0789*X**.7
+ 
+C     COMPUTE THE LOWER LIMIT FOR Y1 FOR FREE ORIFICE FLOW
+C     USED IN FITTING THE EQUATIONS
+ 
+      Y1LIM = 1.3*HG + 1
+ 
+C     COMPUTE RELATIVE POSITION RELATIVE TO THE MIDDLE FUNCTION OF
+C     GATE OPENING.  MAXIMUM VALUE OF Y1 USED IN DEFINING THE
+C     FUNCTIONS WAS 9 FEET.
+ 
+      P = 2.*(Y1 - Y1LIM)/(9. - Y1LIM) - 1
+ 
+C     COMPUTE ESTIMATE FOR Y3STAR USING THE FITTED FUNCTIONS
+ 
+      Y3EST = .5*P*(P-1)*FL(HG) + (1-P*P)*FM(HG)
+     A              + .5*P*(P + 1)*FR(HG)
+ 
+C     APPLY TWO ITERATIONS OF NEWTON'S METHOD TO REFINE THE ESTIMATE.
+ 
+      A3 = A0 + W*Y3EST
+      Y2 = C(Y1-1, HG)*HG
+      AG = Y2*BG
+      Y2 = Y2 + 1
+ 
+      RES = QFO**2*(1/AG - BETA/A3) + .5*G*W*(Y2 - Y3EST)*(Y2 + Y3EST)
+ 
+      DIV = W*(BETA*QFO**2/A3**2 - G*Y3EST)
+ 
+      Y3EST = Y3EST - RES/DIV
+ 
+      A3 = A0 + W*Y3EST
+      RES = QFO**2*(1/AG - BETA/A3) + .5*G*W*(Y2 - Y3EST)*(Y2 + Y3EST)
+ 
+      FOBDY = Y3EST - RES/DIV
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   FW
+     I               (H1,
+     O                QFW, DQFW)
+ 
+C     + + + PURPOSE + + +
+C     Compute free weir flow.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      REAL DQFW, H1, QFW
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     H1     - upstream head
+C     QFW    - free weir flow
+C     DQFW   - derivative of flow wrt to head for free weir flow
+C***********************************************************************
+      QFW = 213.82*H1**1.50942
+ 
+      DQFW = 322.74*H1**(.50942)
+ 
+      RETURN
+      END
+C
+C
+C
+      REAL FUNCTION   FWBDY
+     I                     (H, HG)
+ 
+C     + + + PURPOSE + + +
+C     Compute the boundary between free weir and submerged weir flow.
+C     Base on the orifice submergence relationship because they are
+C     so close.  Eliminates some abrupt transitions.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      REAL H, HG
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     H      - head
+C     HG     - sluice gate opening
+ 
+C     + + + LOCAL VARIABLES + + +
+      REAL H1LIM, H3STAR, QFO
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      REAL FO, FOBDY
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL FO, FOBDY
+C***********************************************************************
+C      FWBDY = H*(.6963918 + H*(.1831125 + H*(-.0636758 +
+C     A          H*(.0096066 + H*(-.000527)))))
+ 
+      H1LIM = 1.265*HG
+      QFO = FO(H1LIM, HG)
+      H3STAR = FOBDY(QFO, H1LIM + 1, HG) - 1
+ 
+      FWBDY = H*H3STAR/H1LIM
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   MCHEN
+     I                  (H1, H3, HG,
+     O                   Q, DQH1, DQH3)
+ 
+C     + + + PURPOSE + + +
+C     Compute the flow at the McHenry sluice gates.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      REAL DQH1, DQH3, H1, H3, HG, Q
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     H1     - upstream head
+C     H3     - head immediately below sluice gates
+C     HG     - sluice gate opening
+C     Q      - flow rate
+C     DQH1   - derivative of flow wrt to upstream head
+C     DQH3   - derivative of flow wrt to downstream head
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'mhenry.cmn'
+      INCLUDE 'gatcom.cmn'
+
+ 
+C     + + + LOCAL VARIABLES + + +
+      REAL DQFW, H1STAR, H3STAR, QFO, QFW, Y1, Y2, Y3, Y3STAR
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      REAL FNDDQ, FO, FOBDY, FWBDY, SOY2
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL FNDDQ, FNDSO, FO, FOBDY, FW, FWBDY, SOY2, SW
+C***********************************************************************
+C      TYPMCH          FLOW TYPE
+C          0            Q=0
+C          1            FO
+C          2            SO
+C          3            FW
+C          4            SW
+ 
+      TYPMCH = 0
+      HGMCH = HG
+      GOPEN(MNGATE+1) = HG
+C     CATCH LIMITING CASES
+      IF(H1.LE.0.0) THEN
+        Q = 0.0
+        DQH1 = 0.0
+        DQH3 = 0.0
+        FCLASS(MNGATE+1) = 'No Flow'
+        FCLASS_CODE(MNGATE+1) = 3
+        RETURN
+      ENDIF
+      IF(H3.GE.H1) THEN
+        Q = 0.0
+        DQH1 = 0.0
+        DQH3 = 0.0
+        FCLASS(MNGATE+1) = 'No Flow'
+        FCLASS_CODE(MNGATE+1) = 3
+        RETURN
+      ENDIF
+ 
+      IF(HG.LE.0.0) THEN
+        Q = 0.0
+        DQH1 = 0.0
+        DQH3 = 0.0
+        HGMCH = 0.0
+        FCLASS(MNGATE+1) = 'Closed'
+        FCLASS_CODE(MNGATE+1) = 3
+        RETURN
+      ENDIF
+ 
+ 
+C     DEFINE DEPTHS FOR LATER USE
+ 
+      Y1 = H1 + 1.
+      Y3 = H3 + 1.
+ 
+C     IS THE FLOW ORIFICE OR WEIR?
+ 
+      H1STAR = 1.265*HG
+      IF(H1.GT.H1STAR) THEN
+ 
+C       FLOW IS ORIFICE.  ASSUME FLOW IS FREE.
+ 
+        QFO = FO(H1, HG)
+ 
+C       COMPUTE THE VALUE OF Y3 WHICH IS AT THE FREE FLOW BOUNDARY
+ 
+        Y3STAR = FOBDY(QFO, Y1, HG)
+ 
+        IF(Y3.GT.Y3STAR) THEN
+C         SUBMERGED ORIFICE
+          CALL FNDSO
+     I              (Y1, Y3, HG,
+     O               Q, DQH1, DQH3)
+C          TYPE = '  SO'
+          TYPMCH = 2
+          FCLASS(MNGATE+1) = 'SO'
+          FCLASS_CODE(MNGATE+1) = 12
+        ELSE
+C         FREE ORIFICE
+C          TYPE = '  FO'
+          TYPMCH = 1
+          FCLASS(MNGATE+1) = 'FO'
+          FCLASS_CODE(MNGATE+1) = 11
+          Q = QFO
+          DQH3 = 0.0
+          DQH1 = FNDDQ(Y1, HG)
+        ENDIF
+      ELSE
+C       WEIR FLOW.
+ 
+C       WEIR FLOW
+        CALL FW
+     I         (H1,
+     O          QFW, DQFW)
+        Q = QFW
+        DQH1 = DQFW
+        DQH3 = 0.0
+C        TYPE = '  FW'
+        TYPMCH = 3
+        FCLASS(MNGATE+1) = 'FW'
+        FCLASS_CODE(MNGATE+1) = 2
+C       CHECK FOR SUBMERGENCE
+ 
+        H3STAR = FWBDY(H1, HG)
+ 
+        IF(H3.GT.H3STAR) THEN
+          IF(H1.GT.HG.AND.H3.GT.HG) THEN
+C           FLOW MIGHT BE SUBMERGED ORIFICE.  SOY2 COMPUTES THE DEPTH
+C           AT SECTION 2 ASSUMING SUBMERGED ORIFICE FLOW AND CHECKS
+C           TO SEE IF IT IS VALID.  IF VALID, SOY2 RETURNS Y2 > 0
+C           GIVING THE DEPTH.
+ 
+            Y2 = SOY2(Y1, Y3, HG)
+            IF(Y2.GT.0.0) THEN
+C             ASSUME THAT THE FLOW IS SUBMERGED ORIFICE.
+              CALL FNDSO
+     I                  (Y1, Y3, HG,
+     O                   Q, DQH1, DQH3)
+C              TYPE = '  SO'
+              TYPMCH = 2
+               FCLASS(MNGATE+1) = 'SO'
+               FCLASS_CODE(MNGATE+1) = 12
+            ELSE
+C             ASSUME SUBMERGED WEIR FLOW
+C              TYPE = '  SW'
+              TYPMCH = 4
+              FCLASS(MNGATE+1) = 'SW'
+              FCLASS_CODE(MNGATE+1) = 1
+              CALL SW
+     I               (H1, QFW, DQFW, H3, H3STAR,
+     O                Q, DQH1, DQH3)
+            ENDIF
+          ELSE
+C           FLOW IS SUBMERGED WEIR
+C            TYPE = '  SW'
+            TYPMCH = 4
+            FCLASS(MNGATE+1) = 'SW'
+            FCLASS_CODE(MNGATE+1) = 1
+            CALL SW
+     I             (H1, QFW, DQFW, H3, H3STAR,
+     O              Q, DQH1, DQH3)
+          ENDIF
+        ENDIF
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   MCHGAT
+     I                   (IPNT, EMC, MLEMC, YE2, ZE, QE2, NEX, STDOUT,
+     I                    JTIME,
+     O                    RES, PYL, PQL, PYR, PQR)
+ 
+C     + + + PURPOSE + + +
+C     Sluice gates at McHenry dam Fox River Illinois.  Flow is
+C     always downstream.  No reverse flow permitted.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPNT, STDOUT, MLEMC, NEX
+      INTEGER EMC(MLEMC)
+      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES, YE2(NEX), ZE(NEX)
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPNT   - pointer into EMC for description of control structure
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     MLEMC  - maximum length of EMC(*)
+C     YE2    - depths at exterior nodes at end of time step
+C     ZE     - elevation of datum for depth at exterior node
+C     QE2    - flow at exterior nodes at end of time step
+C     NEX    - number of exterior nodes in the model
+C     STDOUT   - Fortran unit number for user output and messages
+C     TIME   - elapsed time in seconds from start of run
+C     RES    - value of the residual function
+C     PYL    - partial derivative of residual function wrt depth at
+C               left node
+C     PQL    - partial derivative of residual function wrt flow at left
+C               node
+C     PYR    - partial derivative of residual function wrt depth at
+C               right node
+C     PQR    - partial derivative of residual function wrt flow at right
+C               node
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER DNN, IDUM, NTAB, OPCODE, QNN, SYSGN, UNN
+      REAL D, DISCH, DTIME, H, HG, MAXGAT, QFAC, RDUM, ZHEAD
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM,RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL NAMES + + +
+      CHARACTER GET_TABID*16
+      EXTERNAL LKTAB, MCHEN, GET_TABID
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:64* Table Id=',A,' has invalid values for',
+     A  ' structure setting.')
+C***********************************************************************
+C     OBTAIN BASIC INFORMATION FROM EMC
+ 
+      UNN = EMC(IPNT+2)
+      DNN = EMC(IPNT+3)
+      QNN = EMC(IPNT+4)
+      SYSGN = EMC(IPNT+5)
+      OPCODE = EMC(IPNT+6)
+      IDUM = EMC(IPNT+8)
+      ZHEAD = RDUM
+      IDUM = EMC(IPNT+9)
+      MAXGAT = RDUM
+      IDUM = EMC(IPNT+12)
+      QFAC = RDUM
+ 
+C     DEFINE THE GATE OPENING FOR THIS TIME SETP
+ 
+      IF(OPCODE.GT.0) THEN
+C       OPERATION BLOCK HAS ALREADY SET THE OPENING FRACTION
+ 
+        IDUM = EMC(IPNT+10)
+        HG = MAXGAT*RDUM
+      ELSE
+C       LOOK UP VALUE IN TABLE BASED ON TIME AT START OF THE CURRENT
+C       STEP
+ 
+        CALL LKTSTAB
+     I            (ABS(OPCODE), JTIME, 
+     O             HG, NTAB, DTIME)
+        IF(HG.LT.0.0.OR.HG.GT.MAXGAT) THEN
+          WRITE(STDOUT,50) GET_TABID(NTAB)
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+      ENDIF
+ 
+      H = YE2(UNN) + ZE(UNN) - ZHEAD
+      D = YE2(DNN) + ZE(DNN) - ZHEAD
+ 
+C     VELOCITY HEAD IS IMPLICIT IN THE RELATIONSHIPS INTERNAL TO
+C     SUBROUTINE MCHEN().  MCHEN ALSO SETS THE DERIVATIVES FOR
+C     REVERSE FLOW.
+ 
+      PQR = 0.0
+      PQL = 0.0
+ 
+      CALL MCHEN
+     I          (H, D, HG,
+     O           DISCH, PYL, PYR)
+      IF(QFAC.NE.1.0) THEN
+        DISCH = QFAC*DISCH
+        PYL = QFAC*PYL
+        PYR = QFAC*PYR
+      ENDIF
+ 
+C     APPLY EFFECT OF SYSGN VALUES
+ 
+      IF(SYSGN.LT.0.0) THEN
+        DISCH = -DISCH
+        PYL = -PYL
+        PYR = -PYR
+      ENDIF
+ 
+      RES = QE2(QNN) - DISCH
+ 
+C     CHANGE SIGNS TO REFLECT Y AND Q DERIVATIVES OF DISCH.  WE
+C     HAVE HERETOFOR TAKEN THE SIGN ON DISCH TO BE +
+ 
+      PYL = -PYL
+      PYR = -PYR
+ 
+C     SET THE FLOW DERIVATIVES
+      IF(QNN.EQ.UNN) THEN
+        PQL = PQL + 1.0
+      ELSE
+        PQR = PQR + 1.0
+      ENDIF
+ 
+ 
+C        WRITE(STDOUT,*) 'MCHGAT: RES=',RES
+C        WRITE(STDOUT,*) ' DERV:',PYL, PQL, PYR, PQR
+C        WRITE(STDOUT,*) 'HG=',HG
+C        WRITE(STDOUT,*) ' H=',H,' D=',D,' DISCH=',DISCH
+C        WRITE(STDOUT,*) ' QE2(QNN)=',QE2(QNN)
+ 
+      RETURN
+      END
+C
+C     
+C
+      SUBROUTINE DO_GATETABL(STDOUT, JTIME,
+     M                       ipt,  EMC)
+
+C     Find the gate opening for the GATETABL control of gates.
+
+      IMPLICIT NONE
+      INCLUDE 'arsize.prm'
+      INTEGER STDOUT, IPT, EMC(MREMC)
+
+      REAL*8 JTIME
+
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'stdun.cmn'
+      INCLUDE 'enelem.cmn'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'ftable.cmn'
+ 
+C     Local
+
+      INTEGER PADRS, ROLE, TABLE_ADRS, DOMINANT_RULE,
+     A        AUX_RULE, IDUM, AUX_KNT, CONTROL_NODE, UPSN, DNSN,
+     B        TABN, TABLE_OFFSET, CONTROL_NODE_STATE, NTAB
+
+      REAL LEVU, LEVD, AUX_MIN, AUX_MAX, PT, DFDR, DFDC, DOMINANT_P,
+     B     AUX_P, RDUM, P, HDATUM, H, HA, LEVC, DTIME, VALUE,
+     C     OLD_LEV, DIRECTION_EPS
+
+C     IDUM and RDUM are used to store a floating point number(REAL
+C     mumber) in an integer location and vice versa.      
+      EQUIVALENCE(IDUM, RDUM)
+
+C     Called program units.
+      REAL GETHDD
+
+      EXTERNAL GETHDD, LKTAB
+C***********************************************************************
+C     Clear the auxilliary gate openings.  We will use it to find
+C     the user selected extreme value of all auxillary gate tables.
+
+      AUX_MAX = 0.0
+      AUX_MIN = 1.0
+
+C     We must count the auxilliary tables to detect their absence.
+      AUX_KNT = 0
+C     Get the pointer into EMC where the gate opening is stored. 
+      PADRS = ITAB(IPT)
+
+C     Increment to the first sense point.
+      IPT = IPT + 12
+100   CONTINUE
+C       Node gives the location to sense. If it is zero it signals the
+C       end of this block.  All sense points have then been processed. 
+        CONTROL_NODE = ITAB(IPT)
+        IF(CONTROL_NODE.NE.0) THEN
+          IF(CONTROL_NODE.GT.0) THEN
+            WRITE(STDOUT,*) ' Problem in DO_GATETABL. NODE > 0'
+            STOP ' Abnormal stop.  Bug found.'
+          ELSE
+            CONTROL_NODE = ABS(CONTROL_NODE)
+          ENDIF
+C         Get elevation at control node
+          LEVC = ZE(CONTROL_NODE) + YE1(CONTROL_NODE)
+
+C         The control node may not be a node involved with the 
+C         operation of the structure.  Get the node upstream of
+C         the structure.
+          UPSN = ITAB(IPT+2)
+C         Get the elevation at the upstream node
+          LEVU = ZE(UPSN) + YE1(UPSN)
+C         Get the node dns of the structure and its elevation.
+          DNSN = ITAB(IPT+3)
+          IF(DNSN.GT.0) THEN
+            LEVD = ZE(DNSN) + YE1(DNSN)
+          ELSE
+            LEVD = 0.0
+          ENDIF
+       
+C         Get the items we need to decide what to do about the two
+C         water levels.
+          OLD_LEV = FTAB(IPT+4)
+          DIRECTION_EPS = FTAB(IPT+6)
+          CONTROL_NODE_STATE = ITAB(IPT+5)
+c          WRITE(STDOUT,*) ' CONTROL_NODE_STATE=', CONTROL_NODE_STATE
+
+          IF( CONTROL_NODE_STATE.GT.0) THEN
+C           State is rising.  Check to see if we
+C           have declined enough from the last update of the gate
+C           opening to change the state.
+c            WRITE(STDOUT,*) ' '
+c            WRITE(STDOUT,*) ' Current state is rising.'
+c            WRITE(STDOUT,*) ' LEVC=',LEVC,' OLD_LEV=',OLD_LEV
+c            WRITE(STDOUT,*) ' DIRECTION_EPS=',DIRECTION_EPS
+            IF(LEVC.LE. OLD_LEV - DIRECTION_EPS) THEN
+C             Change state to falling
+c              WRITE(STDOUT,*) ' Changing state to falling.'
+              ITAB(IPT+5) = -1
+C             Table offset selects the table for the 
+C             just detected direction of motion. 
+              TABLE_OFFSET = 10
+            ELSE
+              TABLE_OFFSET = 7
+            ENDIF
+          ELSE
+C           State is falling.  Check to see if we have risen enough from
+C           the last update  to change the state. 
+c            WRITE(STDOUT,*) ' '
+c            WRITE(STDOUT,*) ' Current state is falling.'
+c            WRITE(STDOUT,*) ' LEVC=',LEVC,' OLD_LEV=',OLD_LEV
+c            WRITE(STDOUT,*) ' DIRECTION_EPS=',DIRECTION_EPS
+            IF(LEVC.GT.OLD_LEV + DIRECTION_EPS) THEN
+C             Change state to rising.
+c              WRITE(STDOUT,*) ' Changing state to rising.'
+              ITAB(IPT+5) = 1
+C             Table offset selects the table for the 
+C             just detected direction of motion. 
+              TABLE_OFFSET = 7
+            ELSE
+              TABLE_OFFSET = 10
+            ENDIF
+          ENDIF  
+C          WRITE(STDOUT,*) ' TABLE_OFFSET=',TABLE_OFFSET            
+           TABLE_ADRS = ITAB(IPT+TABLE_OFFSET)
+C          WRITE(STDOUT,*) ' TABLE_ADRS=',TABLE_ADRS
+          IF(TABLE_ADRS.LT.0) THEN
+C           We have a selection table.  Look up the table number
+C           in the selection table and get the address of the 
+C           control table from the table number and FTPNT.
+      
+            TABLE_ADRS = -TABLE_ADRS
+            CALL LKTSTAB
+     I                (TABLE_ADRS, JTIME, 
+     O                 VALUE, NTAB, DTIME)
+            NTAB = INT(VALUE + 0.5)
+            TABLE_ADRS = FTPNT(NTAB)
+          ENDIF
+      
+          HDATUM = GETHDD(TABLE_ADRS)
+          H = LEVC - HDATUM
+          IF(DNSN.GT.0) THEN
+            HA =  LEVU - LEVD
+          ELSE
+            HA = LEVU - HDATUM
+          ENDIF
+C          WRITE(STDOUT,*) ' DO_GATE...: LEVC=',LEVC, 
+C     A            ' LEVU=',LEVU, ' LEVD=',LEVD
+     
+C          WRITE(STDOUT,*) ' H=',H,' HA=',HA
+C         Get the gate opening from the current table.
+          CALL TDLK10
+     I              (STDOUT, TABLE_ADRS, 10, H, HA,
+     O                  PT, DFDR, DFDC)
+C          WRITE(STDOUT,*) ' TABLE GIVES PT=',PT
+          ROLE = ITAB(IPT+TABLE_OFFSET+1)
+          IF(ROLE.EQ.1) THEN
+C           This is the dominant table. 
+            DOMINANT_RULE = ITAB(IPT+TABLE_OFFSET+2)
+            DOMINANT_P = PT
+C            WRITE(STDOUT,*) ' DOMINANT_P=',DOMINANT_P
+          ELSE
+C           This is an auxilliary table.
+            AUX_KNT = AUX_KNT + 1
+            AUX_RULE = ITAB(IPT+TABLE_OFFSET+2)
+            IF(AUX_RULE.EQ.1) THEN
+C             Sense is minimum value.  Seek the smallest value of 
+C             all the aux tables. 
+              AUX_MIN = MIN(AUX_MIN, PT)
+            ELSE
+              AUX_MAX = MAX(AUX_MAX, PT)
+            ENDIF
+          ENDIF
+
+C         Go get the next sensing point.         
+          IPT = IPT + 17        
+          GOTO 100
+        ENDIF
+
+   
+C     At this point make the final selection of the gate opening to use.
+C     The AUX_RULE is the same for all AUX_TABLES.  Thus the last value set
+C     is the same as the value for all.
+      IF(AUX_KNT.GT.0) THEN
+        IF(AUX_RULE.EQ.1) THEN
+          AUX_P = AUX_MIN
+        ELSE
+          AUX_P = AUX_MAX
+        ENDIF
+        IF(DOMINANT_RULE.EQ.1) THEN
+C         The dominant table's opening represents the minimum opening in
+C         in any case.  Therefore, any opening that is larger will be taken
+C         as THE opening.
+          IF(AUX_P.GT.DOMINANT_P) THEN
+            P = AUX_P
+          ELSE
+            P = DOMINANT_P
+          ENDIF
+        ELSE
+C         The dominant table's opening represents the maximum opening
+C         in any case.  Therefore, any opening that is smaller will be
+C         taken as THE opening. 
+          IF(AUX_P.LT.DOMINANT_P) THEN
+            P = AUX_P
+          ELSE
+            P = DOMINANT_P
+          ENDIF
+        ENDIF
+      ELSE
+C       Only one table is present.  
+        P = DOMINANT_P
+      ENDIF
+C      WRITE(STDOUT,*) ' Relative gate opening=',P
+C     Now put the opening its proper location in EMC
+      RDUM = P
+      EMC(PADRS) = IDUM
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   OPER
+     I                 (JTIME, NBLK, OPBLK, DTHR,
+     M                  EMC)
+ 
+C     + + + PURPOSE + + +
+C     Compute the opening for dynamically varied control structures.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER NBLK
+      INTEGER EMC(MREMC), OPBLK(NBLK)
+      REAL DTHR
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     TIME   - time in seconds from run start
+C     NBLK   - number of operation blocks
+C     OPBLK  - pointer into the function table storage(FTAB/ITAB) for
+C               each operation block.
+C     DTHR   - time step in hours
+C     EMC    - vector containing coded form of the Matrix Control Input
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'enelem.cmn'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'ftable.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER BLKTYP, I, IDUM, IPT, IPTOLD, KEY, MODE, ND, NODE, NTAB,
+     A        PADRS, PRI, PRIG, TBFALL, TBRISE, TBUSE, NFLAG,
+     B        TABLE_ADRS, TS_BLK_NUMBER, EMC_PNT, OLD_BLK, OLD_IPT,
+     C        EMC_DIR_PNT, SPEEDS, IPT5
+      REAL DLEV, DPDOT, DPDT, ET, LEV, LEVOLD, LL, LU, ML,
+     A     MNRATE, MU, NZMID, PDOT, PDOTG, POLD, RDUM, SPD,
+     B     LLOW, LML, LMU, LUP, VALUE, PDV, PUMP_EPS, PUMP_EPS_TOL
+
+C     Try to solve bug in LF90 compiler
+      CHARACTER*10 DUMMY
+
+      PARAMETER(PUMP_EPS=0.01, PUMP_EPS_TOL=0.00001)
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM,RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS, IABS, SIGN
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      REAL FNDNZM
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL FNDNZM, LKTAB
+C***********************************************************************
+      IF(DTHR.LT.0.0) THEN
+C       RESTORE PREVIOUS VALUE OF P SO THAT WE CAN TAKE A SHORTER
+C       TIME STEP
+ 
+        DO 200 I=1,NBLK
+          IPT = OPBLK(I)
+          TABLE_ADRS = ITAB(IPT+7)
+          IF(TABLE_ADRS.LT.0) GOTO 200
+          FTAB(IPT+1) = FTAB(IPT+2)
+C         Correct the elapsed time
+          FTAB(IPT+5) = FTAB(IPT+5) + DTHR
+          IF(FTAB(IPT+5).LT.0.0) FTAB(IPT+5) = 0.0
+ 200    CONTINUE
+        RETURN
+      ENDIF
+
+c      WRITE(STD6,*) ' NBLK=',NBLK 
+      DO 500 I=1,NBLK
+        PRIG = 999999
+        IPT = OPBLK(I)
+        IPT5 = IPT + 5
+c       WRITE(STD6,*) ' Current Blk#=',I, ' IPT=',IPT
+        TABLE_ADRS = ITAB(IPT+7)
+c        write(std6,*) 'In OPER: table_adrs=',table_adrs
+
+        IF(TABLE_ADRS.EQ.0) THEN
+C         Fall through.  This is the current most frequent instance.
+c         therefore, chk it first to reduce overhead.
+        ELSEIF(TABLE_ADRS.LT.0) THEN
+C         Skip the block. It is inactive. 
+          GOTO 500
+        ELSEIF(TABLE_ADRS.GT.0) THEN
+C         Check if this block should be used now.  
+          CALL LKTSTAB
+     I              (TABLE_ADRS, JTIME,
+     O               VALUE, NTAB, PDV)
+          TS_BLK_NUMBER = INT(VALUE+0.5)
+c          write(std6,9123) i, ts_blk_number, jtime
+c9123  format('In OPER: i=',i5,' ts_blk_number=',i5,' jtime=',f20.7)
+          IF(TS_BLK_NUMBER.EQ.I) THEN
+C           This block should be used now.  Is it at its first
+C           time step?
+            EMC_PNT = ITAB(IPT+8)
+            OLD_BLK = EMC(EMC_PNT)
+            IF(TS_BLK_NUMBER.NE.OLD_BLK) THEN
+C             This is first time step. Set the structure setting
+C             to be the same as the block last used.  Also must
+C             transfer elapsed time since last change.
+              OLD_IPT = OPBLK(OLD_BLK)
+              FTAB(IPT+1) = FTAB(OLD_IPT+1)
+              FTAB(IPT+2) = FTAB(OLD_IPT+2)
+              FTAB(IPT+5) = FTAB(OLD_IPT+5)
+              EMC(EMC_PNT) = I
+            ENDIF
+          ELSE
+C           This block is not selected by the time series table.
+C           Skip it.  The various levels are kept current in
+C           subroutine OPINIT
+            GOTO 500
+          ENDIF
+        ENDIF        
+C       
+        PADRS = ITAB(IPT)
+        POLD = FTAB(IPT+1)
+        IPTOLD = IPT + 1
+ 
+C       Update the elapsed time since the last adjustment was
+C       attempted.
+C        WRITE(STD6,*) ' Old elapsed time=',FTAB(IPT+5)
+C        FTAB(IPT+5) = FTAB(IPT+5) + DTHR
+        FTAB(IPT5) = FTAB(IPT5) + DTHR
+C       The statement below is present to force the old Lahey F90 compiler
+C       to produce proper code.  If the statement is not present
+C       then the elapsed time is not updated properly. 
+        WRITE(DUMMY,'(F10.4)') FTAB(IPT5)
+C        WRITE(STD6,*) ' New elapsed time=',FTAB(IPT+5)
+        ET = FTAB(IPT5)
+        IF(ET.LT.FTAB(IPT+4)) THEN
+C         Insufficient time elapsed since we last attempted an
+C         adjustment of operation.
+          GOTO 500
+        ENDIF
+ 
+C       Extract the operation block type.
+ 
+        BLKTYP = ITAB(IPT+3)
+c        write(std6,*) 'OPER: BLKTYP=',blktyp
+c        write(std6,*) ' old P=',ftab(ipt+1),' current P=',ftab(ipt+2)
+c        write(std6,*) ' Elapsed time=',ftab(ipt+5)
+        IF(BLKTYP.EQ.3) THEN
+C         This is GATETABL.  Based on different rules than any 
+C         other.  Therefore, it sets its gate opening internally.
+          CALL DO_GATETABL(STD6, JTIME,
+     M                     ipt, EMC)
+C         Branch to the end of the loop over control blocks. 
+          GOTO 500
+        ENDIF
+
+        SPEEDS = ITAB(IPT+11)
+C        WRITE(STD6,*) ' SPEEDS=',SPEEDS 
+        IPT = IPT + 12
+ 100    CONTINUE
+          NODE = ITAB(IPT)
+          IF(NODE.EQ.0) GOTO 410
+            KEY = ITAB(IPT+1)
+            MODE = ITAB(IPT+2)
+            MNRATE = FTAB(IPT+3)
+            LEVOLD = FTAB(IPT+4)
+            IF(BLKTYP.EQ.1) THEN
+              ML = FTAB(IPT+5)
+              LL = FTAB(IPT+6)
+              LU = FTAB(IPT+7)
+              MU = FTAB(IPT+8)
+              DPDT = FTAB(IPT+12)
+              LLOW = FTAB(IPT+13)
+              LML = FTAB(IPT+14)
+              LMU = FTAB(IPT+15)
+              LUP = FTAB(IPT+16)
+            ELSE
+              TBRISE = ITAB(IPT+5)
+              TBFALL = ITAB(IPT+6)
+              TBUSE = ITAB(IPT+7)
+            ENDIF
+C            WRITE(STD6,*) '  '
+C            WRITE(STD6,*) '  '
+C            WRITE(STD6,*) ' KEY=',KEY,' MODE=',MODE,' MNRATE=',MNRATE
+C            IF(BLKTYP.EQ.1) THEN
+C              WRITE(STD6,*) ' LEVOLD=',LEVOLD,' ML=',ML,' LL=',LL
+C              WRITE(STD6,*) ' LU=',LU,' MU=',MU
+C            ELSE
+C              WRITE(STD6,*) ' LEVOLD=',LEVOLD, ' TBRISE=',
+C     A             ITAB(TBRISE+1),' TBFALL=',ITAB(TBFALL+1),
+C     B             ' TBUSE=',ITAB(TBUSE+1)
+C            ENDIF
+ 
+ 
+            IF(NODE.GT.0) THEN
+C             INTERIOR NODE
+              IF(KEY.EQ.0) THEN
+                LEV = ZVEC(NODE) + Y1(NODE)
+              ELSE
+                LEV = Q1(NODE)
+              ENDIF
+            ELSE
+C             EXTERIOR NODE
+              NODE = IABS(NODE)
+              IF(KEY.LT.0) THEN
+C               Elevation difference
+                ND = ABS(KEY)
+                LEV = ZE(NODE) + YE1(NODE) -
+     A                (ZE(ND) + YE1(ND))
+              ELSEIF(KEY.EQ.0) THEN
+                LEV = ZE(NODE) + YE1(NODE)
+              ELSE
+                LEV = QE1(NODE)
+                IF(KEY.EQ.2) THEN
+C                 RECOMPUTE THE NULL ZONE LIMITS.
+ 
+                  NZMID = FNDNZM(IPT)
+C                 SET THE NULL ZONE LIMITS
+ 
+                  LL = NZMID - FTAB(IPT+13)
+                  LU = NZMID + FTAB(IPT+13)
+C      WRITE(STD6,*) ' QVAR LIMITS: NZMID=',NZMID,' LL=',LL,' LU=',LU
+                ENDIF
+              ENDIF
+            ENDIF
+ 
+C            WRITE(STD6,*) '  '
+C            WRITE(STD6,*) ' LEV=',LEV
+ 
+            IF(BLKTYP.EQ.1) THEN
+C             Gate mode of operation.  Compute the rate of opening.
+          
+C             Set flag as if we are in the null zone.  If we are not
+C             clear the flag. 
+              NFLAG = 1 
+              IF(LEV.LT.LL) THEN
+C               WE ARE BELOW THE NULL ZONE-- WE WANT TO MOVE TOWARD THE
+C               NULL ZONE
+ 
+                NFLAG = 0
+C               Set the lower end of the null zone to the
+C               middle value.  Also set the upper end to the 
+C               mormal value.  Note that these changes are actually
+C               equivalent to X = X if option is GATE and not GATEVNZ.
+
+                LL = LML
+                LU = LUP
+
+                PRI = ITAB(IPT+9)
+                IF(MODE.EQ.1) THEN
+C                 CHECK ON DIRECTION OF MOVEMENT SINCE THE END OF THE
+C                 LAST TIME STEP
+ 
+                  IF(LEV.LE.LEVOLD) THEN
+C                   MOVING IN WRONG DIRECTION
+ 
+                    PDOT = (LEV - LL)*ML
+                  ELSE
+C                   MOVING IN THE CORRECT DIRECTION
+                    IF(LEV - LEVOLD.LE.DTHR*MNRATE) THEN
+C                     MOVING TOO SLOWLY
+                      PDOT = (LEV - LL)*ML
+                    ELSE
+                      PDOT = 0.0
+                    ENDIF
+                  ENDIF
+                ELSE
+                  PDOT = (LEV - LL)*ML
+                ENDIF
+              ELSE
+C               Reset lower limit to normal value because we have gone above
+C               the middle value.
+                LL = LLOW
+              ENDIF
+        
+              IF (LEV.GT.LU) THEN
+C               WE ARE ABOVE THE NULL ZONE AND WE WANT TO MOVE TOWARD IT
+C               Set the upper end of the null zone to the middle value.
+C               Also set the lower end to its normal value.  Note
+C               that these changes are equivalent to X=X if option is GATE
+C               and not GATEVNZ.
+
+                NFLAG = 0
+                LU = LMU
+                LL =LLOW
+ 
+                PRI = ITAB(IPT+11)
+ 
+                IF(MODE.EQ.1) THEN
+C                 CHECK DIRECTION OF MOVEMENT
+                  IF(LEV.GE.LEVOLD) THEN
+C                   MOVING IN THE WRONG DIRECTION
+                    PDOT = (LEV - LU)*MU
+                  ELSE
+C                   MOVING IN CORRECT DIRECTION
+                    IF(LEVOLD - LEV.LE.DTHR*MNRATE) THEN
+C                     MOVING TOO SLOWLY
+                      PDOT = (LEV - LU)*MU
+                    ELSE
+                      PDOT = 0.0
+                    ENDIF
+                  ENDIF
+                ELSE
+                  PDOT = (LEV - LU)*MU
+                ENDIF
+              ELSE
+C               Set upper limit to the standard value because we have
+C               gone below even the middle value.
+                LU = LUP
+              ENDIF
+              IF(NFLAG.EQ.1) THEN
+C               We are in the current null zone.  Keep gate at 
+C               its current position.
+C                PDOT = 0.5*(LEV - LEVOLD)/DTHR
+                PDOT = 0.0
+                PRI = ITAB(IPT+10)
+              ENDIF
+
+C             Save the current values of LL and LU.
+              FTAB(IPT+6) = LL
+              FTAB(IPT+7) = LU
+ 
+C             RETAIN THE ACTION WITH THE HIGHER PRIORITY
+ 
+C             CHECK FOR PDOT BEING TOO LARGE
+ 
+              IF(ABS(PDOT).GT.DPDT) THEN
+                PDOT = SIGN(DPDT, PDOT)
+              ENDIF
+ 
+C              WRITE(STD6,*) ' '
+C              WRITE(STD6,*) ' PRI=',PRI,' PDOT=',PDOT
+ 
+              IF(PRI.LT.PRIG) THEN
+                PRIG = PRI
+                PDOTG = PDOT
+              ENDIF
+ 
+C              WRITE(STD6,*) ' RETAINED SETTING: PRIG=',PRIG,
+C     A                     ' PDOTG=',PDOT
+              IF(KEY.LE.1) THEN
+                IPT = IPT + 17
+              ELSE
+                ITMP = ITAB(IPT+14)
+                IPT = IPT + 15 +2*ITMP
+              ENDIF
+            ELSEIF(BLKTYP.EQ.2.OR.BLKTYP.EQ.4) THEN
+C             Pump control model here.  Decide which table to
+C             use.  Look at change of water level since the
+C             last time an adjustment was attempted.
+ 
+              DLEV = LEV - LEVOLD
+              IF(DLEV.GT.0.0) THEN
+C               Level is rising but has it risen enough.
+                IF(ABS(DLEV).GT.ET*MNRATE) THEN
+C                 Use the rising stage table
+                  TBUSE = TBRISE
+                ENDIF
+              ELSE
+C               Level is falling but has it fallen enough.
+                IF(ABS(DLEV).GT.ET*MNRATE) THEN
+C                 Use the falling stage table
+                  TBUSE = TBFALL
+                ENDIF
+              ENDIF
+ 
+C             Save the table used.  May have changed.
+              ITAB(IPT+7) = TBUSE
+ 
+C              WRITE(STD6,*) ' Using table#=',ITAB(TBUSE+1)
+C             Find the speed given by the table for the current level.
+             
+              CALL LKTAB
+     I                  (TBUSE, LEV, 1,
+     O                   PDOT, NTAB, DPDOT)
+ 
+C              WRITE(STD6,*) ' Table speed=',PDOT
+              IF(BLKTYP.EQ.2) THEN
+C               One-way pump.
+C               Select the action for this control point
+                IF(PDOT.LT.0.0) THEN
+C                 Turn off the pump
+                  SPD = 0
+                ELSEIF(PDOT.EQ.0.0) THEN
+C                 Leave the pump at its current setting
+                  SPD = POLD
+                ELSE
+C                 Turn pump on at relative speed PDOT
+                  SPD = PDOT
+                ENDIF
+          
+              ELSE
+C               Two-way pump
+C               When speed is > PUMP_EPS the direction remains the same
+C               as originally given by the user.  When speed < -PUMP_EPS
+C               the direction is opposite to that first given by the user.
+C               If the speed is = + or - PUMP_EPS then the existing speed
+C               is retained.  If the speed is within (-PUMP_EPS, PUMP_EPS)
+C               then the pump is turned off.  
+C               Select the action for this control point
+                IF(PDOT.LT.PUMP_EPS-PUMP_EPS_TOL.AND.
+     A             PDOT.GT.-PUMP_EPS+PUMP_EPS_TOL) THEN
+C                 Turn off the pump
+                  SPD = 0
+                ELSEIF(ABS(PDOT-PUMP_EPS).LT.PUMP_EPS_TOL.OR.
+     A                 ABS(PDOT+PUMP_EPS).LT.PUMP_EPS_TOL) THEN
+C                 Leave the pump at its current setting.  We must make
+C                 sure to set the sign.  POLD only remembers the
+C                 absolute value of the speed.  
+                  SPD = POLD
+                  IF(PDOT.LT.0.0) SPD = -SPD
+                ELSE
+C                 Turn pump on at relative speed PDOT
+                  SPD = PDOT
+                ENDIF
+C               Set the direction in EMC and then make speed positive.
+                EMC_DIR_PNT = ITAB(IPTOLD+9)
+C               ITAB(IPTOLD+8) contains the original pump direction
+C               as given by the user.  The directions in the pump-speed
+C               tables are relative to the original direction: SPD>0 
+C               means keep the same direction; SPD<0 means change to
+C               other direction. 
+                EMC(EMC_DIR_PNT) = ITAB(IPTOLD+8)*SIGN(1.0,SPD)
+
+                SPD = ABS(SPD)
+C                WRITE(STD6,*) ' Direction in EMC=',EMC(EMC_DIR_PNT)
+              ENDIF
+C              WRITE(STD6,*) ' Speed used=',SPD
+C             Select the priority for this control point.  Based on
+C             state of the action requested.
+              IF(SPD.GT.0.0) THEN
+C               Select the pump-on priority
+                PRI = ITAB(IPT+9)
+C               Make the speed value discrete.
+                SPD = SPEEDS*SPD + 0.99
+                SPD = INT(SPD)
+                SPD  = SPD/SPEEDS
+                IF(SPD.GT.1.0) SPD = 1.0
+              ELSE
+                PRI = ITAB(IPT+10)
+              ENDIF
+              
+C              WRITE(STD6,*) ' PRI=',PRI,' Discretized SPD=',SPD
+C             Retain the speed that has the highest priority.
+              IF(PRI.LT.PRIG) THEN
+                PRIG = PRI
+                PDOTG = SPD
+C                WRITE(STD6,*) ' RETAINED SETTING: PRIG=',PRIG,
+C     A                     ' PDOTG=',SPD
+              ENDIF
+              IPT = IPT + 17
+ 
+            ENDIF
+ 
+            GOTO 100
+ 
+ 410      CONTINUE
+C          WRITE(STD6,*) ' '
+C          WRITE(STD6,*) ' PRIG=',PRIG,' PDOTG=',PDOTG
+C          WRITE(STD6,*) ' POLD=',POLD
+ 
+C         SAVE THE OLD VALUE FOR BACKUP OF TIME
+          FTAB(IPTOLD+1) = POLD
+          IF(BLKTYP.EQ.1) THEN
+            IF(PDOT.GT.0.0) THEN
+C             If the action is to open the gate and the gate is out of
+C             the water, then ignore the request and reset the gate
+C             using values left in EMC by UFGATE.  Note: Only UFGATE
+C             sets this location in EMC to a non-zero value.  The location
+C             is always relative to the opening fraction.  
+              IDUM = EMC(PADRS+1)
+              IF(RDUM.GT.0.0) THEN
+C               Gate was out of the water at end of last time step.
+                FTAB(IPTOLD) = RDUM
+                EMC(PADRS) = IDUM
+                GOTO 500
+              ENDIF
+            ENDIF
+            POLD = POLD + PDOTG*DTHR
+            IF(POLD.LT.0.0) POLD = 0.0
+            IF(POLD.GT.1.0) POLD = 1.0
+            FTAB(IPTOLD) = POLD
+          ELSE
+            POLD = PDOTG
+            FTAB(IPTOLD) = PDOTG
+          ENDIF
+C         Put the current setting in the control structure
+C         description.
+ 
+          RDUM = POLD
+          EMC(PADRS) = IDUM
+C          WRITE(STD6,*) ' Value set in EMC=', POLD
+C          WRITE(STD6,*) ' '
+ 
+ 500  CONTINUE
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   PUMP
+     I                 (IPNT, EMC, MLEMC, GRAV, TWOG, YE2, ZE, QE2, NEX,
+     I                  JTIME, STDOUT,
+     O                  RES, PYL, PQL, PYR, PQR)
+ 
+C     + + + PURPOSE + + +
+C     Compute flow through a variable-head variable-speed pump.  Only
+C     pumps with a unique value of flow for each head are valid.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPNT, MLEMC, NEX, STDOUT
+      INTEGER EMC(MLEMC)
+      REAL GRAV, PQL, PQR, PYL, PYR, QE2(NEX), RES, TWOG,
+     A     YE2(NEX), ZE(NEX)
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPNT   - pointer into EMC for description of control structure
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     MLEMC  - maximum length of EMC(*)
+C     GRAV   - value of acceleration due to gravity
+C     TWOG   - twice gravitational acceleration
+C     YE2    - depths at exterior nodes at start of time step
+C     ZE     - elevation of datum for depth at exterior node
+C     QE2    - flow at exterior nodes at end of time step
+C     NEX    - number of exterior nodes in the model
+C     TIME   - elapsed time in seconds from start of run
+C     RES    - value of the residual function
+C     PYL    - partial derivative of residual function wrt depth at
+C               left node
+C     PQL    - partial derivative of residual function wrt flow at left
+C               node
+C     PYR    - partial derivative of residual function wrt depth at
+C               right node
+C     PQR    - partial derivative of residual function wrt flow at right
+C               node
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'gatcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER DIR, DNN, IDUM, ISPOUT, NTAB, QNN, SPDTAB, SYSGN, TBEXIT,
+     A        TBFLOW, TBLOSS, UNN
+      REAL AEXIT, AL, ALPL, ALPR, AR, B, DALPL, DALPR, DB, DDHQL, DDHQR,
+     A     DDHYL, DDHYR, DH, DHN, DK, DKVH, DLFORQ, DQFORH, DQP, DQPLS,
+     B     DSPD, DT, DVHEQP, DVHLQL, DVHLYL, DVHRQR, DVHRYR, EL, ER,
+     C     HSUB, J, K, KVH, LFORQ, QFORH, QL, QP, QR, RDUM, RELSPD, TL,
+     D     TR, VHDFAC, VHEXIT, VHL, VHR, VHUFAC, YL, YR, ZEXIT, ZIN,
+     E     ZWL, ZWR
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM,RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS, SIGN
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL LKTAB, XLKTAL
+C***********************************************************************
+C     OBTAIN BASIC INFORMATION FROM EMC
+ 
+      UNN = EMC(IPNT+2)
+      DNN = EMC(IPNT+3)
+      QNN = EMC(IPNT+4)
+C     ISPOUT gives the pointer into the gate/pump name table for
+C     possible output to the special output file.  If no name
+C     is given ISPOUT is zero.  However slots exist for zero subscript
+C     in the vectors.  Therefore no testing need be done.
+ 
+      ISPOUT = EMC(IPNT+21)
+ 
+      IDUM = EMC(IPNT+19)
+      RELSPD = RDUM
+C      WRITE(STDOUT,*) ' Entering PUMP: RELSPD=',RELSPD
+      SPDTAB = EMC(IPNT+10)
+      IF(SPDTAB.LT.0) THEN
+C       Pump speed given directly by a time series table.
+        CALL LKTSTAB
+     I            (-SPDTAB, JTIME,
+     O             RELSPD, NTAB, DSPD)
+      ELSEIF(SPDTAB.EQ.0) THEN
+C       Force pump to operate at normal speed at all times.
+        RELSPD = 1.0
+C       SPDTAB < 0 means that the relative speed has been set by
+C       an operation control block.  The current value is already
+C       in RELSPD
+      ENDIF
+ 
+C     Get the current flow through the pump
+ 
+      QP = QE2(QNN)
+ 
+C      WRITE(STDOUT,*) ' Entering PUMP: QP=',QP
+C     Is the pump on?
+      IF(RELSPD.EQ.0.0) THEN
+C       No.  Force flow at the flow node to be zero.
+C       Store the current speed for possible reporting in Special
+C       Output.  Set the sign to reflect the changes in flow 
+C       direction. 
+        GOPEN(ISPOUT) = RELSPD
+        RES = QP
+        PQL = 0.0
+        PYL = 0.0
+        PQR = 0.0
+        PYR = 0.0
+        IF(QNN.EQ.UNN) THEN
+          PQL = 1.0
+        ELSE
+          PQR = 1.0
+        ENDIF
+C        WRITE(STDOUT,*) ' PUMP IS OFF'
+        FCLASS(ISPOUT) = '     OFF'
+        FCLASS_CODE(ISPOUT) = 7
+      ELSE
+C       Yes, the pump is on.
+        DIR = EMC(IPNT+6)
+C       Store the current speed for possible reporting in Special
+C       Output.  Set the sign to reflect the changes in flow 
+C       direction. 
+        IF(DIR*EMC(IPNT+22).GT.0) THEN
+          GOPEN(ISPOUT) = RELSPD
+        ELSE
+          GOPEN(ISPOUT) = -RELSPD
+        ENDIF
+
+        IDUM = EMC(IPNT+15)
+        ZIN = RDUM
+        YL = YE2(UNN)
+        YR = YE2(DNN)
+        ZWL = ZE(UNN) + YL
+        ZWR = ZE(DNN) + YR
+C       Is the intake under water?
+        IF((DIR.GT.0.AND.ZWL.LT.ZIN).OR.
+     A     (DIR.LT.0.AND.ZWR.LT.ZIN)) THEN
+C         No, the intake is not under water.  Force the flow to zero.
+          RES = QP
+          PQL = 0.0
+          PYL = 0.0
+          PQR = 0.0
+          PYR = 0.0
+          FCLASS(ISPOUT) = '  NO H2O'
+          FCLASS_CODE(ISPOUT) = 8
+          IF(QNN.EQ.UNN) THEN
+            PQL = 1.0
+          ELSE
+            PQR = 1.0
+          ENDIF
+C          WRITE(STDOUT,*) ' Intake above water!'
+C          WRITE(STDOUT,*) ' DIR=',DIR,' ZWL=',ZWL,' ZWR=',ZWR,' ZIN='
+C     A                     ,ZIN
+        ELSE
+ 
+C          WRITE(STDOUT,*) ' PUMP SPEED=',RELSPD
+C         Here the pump is on and water is available to pump.
+          SYSGN = EMC(IPNT+5)
+          TBFLOW = EMC(IPNT+7)
+          TBLOSS = EMC(IPNT+8)
+          TBEXIT = EMC(IPNT+9)
+C         Offsets 11 and 12 used directly for velocity head computation.
+          IDUM = EMC(IPNT+13)
+          ZEXIT = RDUM
+          IDUM = EMC(IPNT+14)
+          AEXIT = RDUM
+          IDUM = EMC(IPNT+16)
+          VHUFAC = RDUM
+          IDUM = EMC(IPNT+17)
+          VHDFAC = RDUM
+C          WRITE(STDOUT,*) ' VHUFAC=',VHUFAC,' VHDFAC=',VHDFAC
+C         At this point the pump speed has already been normalized rel-
+C         ative to the pumps standard speed.  Thus if the pump is
+C         constant speed, RELSPD=1.0 if the pump is on, and zero
+C         otherwise.  A pump at half standard speed has RELSPD = 0.5.
+ 
+C         In this routine the designations of U and L refer to the
+C         upstream node as given by the user and D and R refer to
+C         the downstream node.  The direction of flow is independent
+C         of these designations.  Thus the outlet of the pump could
+C         be at the upstream node.  The sign of the flow at the flow
+C         node may be negative.   This does not mean reverse flow
+C         through the pump.
+ 
+          QL = QE2(UNN)
+          QR = QE2(DNN)
+          EL = ZWL
+          ER = ZWR
+C         Compute the velocity heads if required.
+          IF(VHUFAC.GT.0.0) THEN
+            CALL XLKTAL
+     I                 (EMC(IPNT+11),
+     M                  YL,
+     O                  AL, TL, DT, J, K, DK, B, DB, ALPL, DALPL)
+            VHL = (QL/AL)**2/TWOG
+C           Compute the derivatives of the velocity head with respect
+C           to the depth on the left and the flow on the left.
+            DVHLYL = VHUFAC*VHL*(DALPL- 2.*ALPL*TL/AL)
+            DVHLQL = VHUFAC*ALPL*QL/(GRAV*AL**2)
+            VHL = VHUFAC*ALPL*VHL
+            EL = EL + VHL
+          ELSE
+            DVHLYL = 0.0
+            DVHLQL = 0.0
+            VHL = 0.0
+          ENDIF
+          IF(VHDFAC.GT.0.0) THEN
+            CALL XLKTAL
+     I                 (EMC(IPNT+12),
+     M                  YR,
+     O                  AR, TR, DT, J, K, DK, B, DB, ALPR, DALPR)
+            VHR = (QR/AR)**2/TWOG
+            DVHRYR = VHDFAC*VHR*(DALPR- 2.*ALPR*TR/AR)
+            DVHRQR = VHDFAC*ALPR*QR/(GRAV*AR**2)
+            VHR = VHDFAC*ALPR*VHR
+            ER = ER + VHR
+          ELSE
+            DVHRYR = 0.0
+            DVHRQR = 0.0
+            VHR = 0.0
+          ENDIF
+ 
+C         Find the losses from entrance and conduits if given.
+          IF(TBLOSS.GT.0) THEN
+            CALL LKTAB
+     I                (TBLOSS, ABS(QP), 1,
+     O                 LFORQ, NTAB, DLFORQ)
+          ELSE
+            LFORQ = 0.0
+            DLFORQ = 0.0
+          ENDIF
+ 
+C         Compute the exit velocity head.
+ 
+          VHEXIT = (QP/AEXIT)**2/TWOG
+ 
+C         Compute derivative with respect to the pump flow
+C         excluding exit losses
+          DVHEQP = QP/(GRAV*AEXIT**2)
+          DQP = SIGN(1.0,QP)*DLFORQ + DVHEQP
+ 
+          IF(DIR.GT.0) THEN
+C           Pumping from upstream node to downstream node.  Compute
+C           the head difference on the pump using the current estimate
+C           of pump flow for any flow dependent terms.
+ 
+            IF(ZWR.LT.ZEXIT) THEN
+C             Discharge is unsubmerged.
+              FCLASS(ISPOUT) = '      FP'
+              FCLASS_CODE(ISPOUT) = 9
+
+              DH = LFORQ + ZEXIT + VHEXIT - VHL - ZWL
+C              WRITE(STDOUT,*) ' U to D free: LFORQ=',LFORQ,' ZEXIT=',
+C     A           ZEXIT,' VHEXIT=',VHEXIT,' VHL=',VHL,' ZWL=',ZWL,
+C     B           ' DH=',DH
+              DDHYL = -DVHLYL - 1.0
+              DDHQL = -DVHLQL
+              DDHYR = 0.0
+              DDHQR = 0.0
+              IF(QNN.EQ.UNN) THEN
+                DDHQL = DDHQL + DQP
+              ELSE
+                DDHQR = DDHQR + DQP
+              ENDIF
+            ELSE
+C             Discharge is submerged.
+              FCLASS(ISPOUT) = '      SP'
+              FCLASS_CODE(ISPOUT) = 10
+              HSUB = ZWR - ZEXIT
+              IF(TBEXIT.GT.0) THEN
+                CALL LKTAB
+     I                    (TBEXIT, HSUB, 1,
+     O                     KVH, NTAB, DKVH)
+              ELSE
+                KVH = 1.0
+                DKVH = 0.0
+              ENDIF
+C             Compute derivative with respect to pump flow
+C             including the loss term on the exit velocity head
+              DQPLS = SIGN(1.0,QP)*DLFORQ + KVH*DVHEQP
+ 
+              DH = LFORQ + ZWR + VHR + KVH*(VHEXIT - VHR) -
+     A               VHL - ZWL
+C              WRITE(STDOUT,*) ' U to D sub: LFORQ=',LFORQ,' ZWR=',
+C     A           ZWR,' VHR=',VHR, ' VHEXIT=',VHEXIT,' VHL=',VHL,
+C     B           ' ZWL=',ZWL,' DH=',DH
+ 
+              DDHYL = -DVHLYL - 1.0
+              DDHQL = -DVHLQL
+              DDHYR = 1.0 + DVHRYR*(1.0 - KVH) + DKVH*(VHEXIT - VHR)
+              DDHQR = DVHRQR*(1. - KVH)
+              IF(QNN.EQ.UNN) THEN
+                DDHQL = DDHQL + DQPLS
+              ELSE
+                DDHQR = DDHQR + DQPLS
+              ENDIF
+            ENDIF
+          ELSE
+C           Pumping from downstream node to upstream node.
+            IF(ZWL.LT.ZEXIT) THEN
+C             Discharge is unsubmerged.
+              FCLASS(ISPOUT) = '      FP'
+              FCLASS_CODE(ISPOUT) = 9
+              DH = LFORQ + ZEXIT + VHEXIT - VHR - ZWR
+ 
+C              WRITE(STDOUT,*) ' D to U free: LFORQ=',LFORQ,' ZEXIT=',
+C     A           ZEXIT,' VHEXIT=',VHEXIT,' VHR=',VHR,' ZWR=',ZWR,
+C     B           ' DH=',DH
+ 
+              DDHYR = -DVHRYR - 1.0
+              DDHQR = -DVHRQR
+              DDHYL = 0
+              DDHQL = 0
+              IF(QNN.EQ.UNN) THEN
+                DDHQL = DDHQL + DQP
+              ELSE
+                DDHQR = DDHQR + DQP
+              ENDIF
+            ELSE
+C             Discharge is submerged.
+                FCLASS(ISPOUT) = '      SP'
+                FCLASS_CODE(ISPOUT) = 10
+              HSUB = ZWL - ZEXIT
+              IF(TBEXIT.GT.0) THEN
+                CALL LKTAB
+     I                    (TBEXIT, HSUB, 1,
+     O                     KVH, NTAB, DKVH)
+              ELSE
+                KVH = 1.0
+                DKVH = 0.0
+              ENDIF
+C             Compute derivative with respect to pump flow
+C             including the loss term on the exit velocity head
+              DQPLS = SIGN(1.0,QP)*DLFORQ + KVH*DVHEQP
+ 
+              DH = LFORQ + ZWL + VHL + KVH*(VHEXIT - VHL) -
+     A               VHR - ZWR
+ 
+C              WRITE(STDOUT,*) ' D to U sub: LFORQ=',LFORQ,' ZWR=',
+C     A           ZWR,' VHR=',VHR, ' VHEXIT=',VHEXIT,' VHL=',VHL,
+C     B           ' ZWL=',ZWL,' DH=',DH
+ 
+              DDHYR = -DVHRYR - 1.0
+              DDHQR = -DVHRQR
+              DDHYL = 1.0 + DVHLYL*(1.0 - KVH) + DKVH*(VHEXIT - VHL)
+              DDHQL = DVHLQL*(1. - KVH)
+              IF(QNN.EQ.UNN) THEN
+                DDHQL = DDHQL + DQPLS
+              ELSE
+                DDHQR = DDHQR + DQPLS
+              ENDIF
+            ENDIF
+          ENDIF
+ 
+C         Now find the residual and its derivatives.  Find the
+C         flow for the current speed and head difference.
+ 
+C          WRITE(STDOUT,*) ' PUMP: DH=',DH, ' RELSPD=',RELSPD
+          DHN = DH/RELSPD**2
+          CALL LKTAB
+     I              (TBFLOW, DHN, 1,
+     O               QFORH, NTAB, DQFORH)
+C          WRITE(STDOUT,*) ' PUMP:at rescaled head=',DHN,' Flow=',QFORH,
+C     A       ' DQFORH=',DQFORH
+ 
+C         Use the relative speed to set the sign for values.
+          IF(DIR*SYSGN.GT.0) THEN
+C           Pump flow > 0 at the flow node.
+            RELSPD = -RELSPD
+          ENDIF
+ 
+          RES = QP + RELSPD*QFORH
+          DQFORH = DQFORH/RELSPD
+          PYL = DDHYL*DQFORH
+          PQL = DDHQL*DQFORH
+          PYR = DDHYR*DQFORH
+          PQR = DDHQR*DQFORH
+          IF(QNN.EQ.UNN) THEN
+            PQL = PQL + 1.0
+          ELSE
+            PQR = PQR + 1.0
+          ENDIF
+        ENDIF
+      ENDIF
+C      WRITE(STDOUT,*) 'Exit from PUMP:'
+C      WRITE(STDOUT,*) ' RES=',RES
+C      WRITE(STDOUT,*) ' PQL=',PQL,' PYL=',PYL,' PQR=',PQR,' PYR=',PYR
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   RDGET
+     I                  (I, STDOUT, JT, DT,
+     O                   VAL)
+ 
+C     + + + PURPOSE + + +
+C     Get value from the I-th connection file or HECDSS pathname.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER I, STDOUT
+      REAL VAL
+      REAL*8 JT, DT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     I      - index of the file in the time-series file data structure
+C     STDOUT   - Fortran unit number for user output and messages
+C     JT     - modified julian time
+C     DT     - current time step
+C     VAL    - return value found in the file
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'rdcom.cmn'
+ 
+C     + + + SAVED VALUES + + +
+      REAL*8 TEPS, DSS_EPS
+      SAVE TEPS, DSS_EPS
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER J, L, LH, LL, LM1, LP1, LR, MAXR, MINR, NVALUES, LT,
+     A        KNT, DESIRED_N, TMPVEC_SIZE
+      REAL*8 P, JTBASE
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + DATA INITIALIZATIONS + + +
+      DATA TEPS/1.D-6/, DSS_EPS/5.2E-4/
+C     ******************************formats*****************************
+50    FORMAT(/,' *BUG:XXX Need to backspace file attached to unit=',I5,
+     A  /,11X,'Probable cause is a read buffer that is too small.')
+51    FORMAT(' Above message issued while searching buffer for HECDSS',
+     A     ' access in RDGET.')
+C***********************************************************************
+      TMPVEC_SIZE = MRRBUF + 5
+C      WRITE(STDOUT,*) 'FILE POINTER = ', I
+      MINR = MINROW(I)
+      MAXR = MAXROW(I)
+      L = LTRY(I)
+      LH = LSTHD(I)
+ 
+C      WRITE(STDOUT,*) 'IN RDGET:'
+C      WRITE(STDOUT,*) 'VALAIN = ',VALAIN(L)
+C      WRITE(STDOUT,*) 'JT = ',JT,' JTIN(L) = ',JTIN(L)
+C      WRITE(STDOUT,*) 'L = ',L,' LH = ',LH
+ 
+      IF(JT.GE.JTIN(L) - TEPS) THEN
+        IF(ABS(JT - JTIN(L)).LE.TEPS ) THEN
+C         Special case here to avoid boundary problems.
+C         Equality is taken to be true if the match is within
+C         TEPS day.
+          VAL = VALAIN(L)
+          RETURN
+        ENDIF
+ 
+C       Search clockwise
+ 100    CONTINUE
+          LP1 = L + 1
+          IF(LP1.GT.MAXR) LP1 = MINR
+ 
+          IF(LP1.EQ.LH) THEN
+C           Passing list head pointer clockwise means we have
+C           caught the buffer head, that is, the data in the
+C           buffer does not span enough time.
+            IF(DSS_INDEX_IN(I).EQ.0) THEN
+C             Traditional connection file.
+              READ(UNIN(I),rec=rd_rec(i)) JTIN(LH), VALAIN(LH)
+              rd_rec(i) = rd_rec(i) + 1
+              LH = LH + 1
+              IF(LH.GT.MAXR) LH = MINR
+            ELSE
+C             Path name in HECDSS.  Find out how many
+C             values need to be retained in the buffer so that
+C             time step reductions due to convergence difficulties
+C             do not require reading data already past.
+C              WRITE(STDOUT,*) ' JT FOLLOWS'
+C              CALL JTIME_OUT(STDOUT, JT)
+ 
+              JTBASE = JT - DT/86400.D0 - TEPS
+C              WRITE(STDOUT,*) ' JTBASE FOLLOWS'
+C              CALL JTIME_OUT(STDOUT, JTBASE)
+C              WRITE(STDOUT,*) ' State of buffer before refresh'
+C              CALL DUMP_STATE(MINR, MAXR, LH, L)
+ 
+              LT = LH - 1
+              IF(LT.LT.MINR) LT = MAXR
+C             LT gives index to the last item placed in the
+C             buffer.
+              KNT = 1
+110           CONTINUE
+                IF(JTIN(LT).GE.JTBASE) THEN
+C                 Continue searching backwards.
+                  LT = LT - 1
+                  IF(LT.LT.MINR) LT = MAXR
+                  IF(LT.EQ.LH) THEN
+                    WRITE(STDOUT,50)  UNIN(I)
+                    WRITE(STDOUT,51)
+                    STOP 'Abnormal stop: errors found.'
+                  ENDIF
+ 
+                  KNT = KNT + 1
+                  GOTO 110
+                ENDIF
+C             KNT  gives the number of values in the buffer that
+C             must be retained.
+              DESIRED_N = MAXR - MINR + 1 - KNT
+C              WRITE(STDOUT,*) ' RDGET: KNT=',KNT,' DESIRED_N=',
+C     A                     DESIRED_N
+C             Set the desired julian time so that we do not
+C             get a value twice.  JTIN(L) gives the last
+C             value in the buffer.  DSS_EPS adds 0.75 minute
+C             to force getting the value following the one
+C             already in the buffer at index L.
+              JTBASE =  JTIN(L) + DSS_EPS
+C              WRITE(STDOUT,*) ' JTBASE  FOR HECDSS LOOKUP FOLLOWS'
+C              CALL JTIME_OUT(STDOUT, JTBASE)
+              CALL GET_HECDSS_BLOCK(STDOUT, NAMIN(I), DSS_INDEX_IN(I),
+     A               TIME_STEP_IN(I), 'INST-VAL', JTBASE, DESIRED_N,
+     B               NVALUES, JTVEC, TMPVEC, TMPVEC_SIZE)
+ 
+ 
+C             Transfer to the buffer. Slot at LH is the start
+C             point.
+              DO 120 J=1,NVALUES
+                JTIN(LH) = JTVEC(J)
+                VALAIN(LH) = TMPVEC(J)
+                LH = LH + 1
+                IF(LH.GT.MAXR) LH = MINR
+120           CONTINUE
+C             At completion of loop LH will point to the first
+C             invalid value as the loop is searched clockwise.
+ 
+C              WRITE(STDOUT,*) ' State of buffer after refresh'
+C              CALL DUMP_STATE(MINR, MAXR, LH, L)
+ 
+            ENDIF
+          ENDIF
+C          WRITE(STDOUT,*) 'LP1 = ',LP1,' JTIN(LP1) = ',JTIN(LP1)
+          IF(JT.LE.JTIN(LP1) + TEPS) THEN
+C           Found interval
+            LL = L
+            LR = LP1
+            GOTO 1000
+          ELSE
+            L = LP1
+            GOTO 100
+          ENDIF
+        ELSE
+C         Search counter clockwise.  Note:buffer will be filled
+C         at start of run.
+ 200      CONTINUE
+            IF(L.EQ.LH) THEN
+              WRITE(STDOUT,50)  UNIN(I)
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+ 
+            LM1 = L - 1
+            IF(LM1.LT.MINR) LM1 = MAXR
+ 
+            IF(JT.GE.JTIN(LM1) + TEPS) THEN
+C             Found interval.
+ 
+              LL = LM1
+              LR = L
+              GOTO 1000
+            ELSE
+              L = LM1
+              GOTO 200
+            ENDIF
+          ENDIF
+ 
+ 1000   CONTINUE
+ 
+        LTRY(I) = L
+        LSTHD(I) = LH
+ 
+C       Interpolate for the value
+ 
+        P = (JT - JTIN(LL))/(JTIN(LR) - JTIN(LL))
+ 
+        VAL = VALAIN(LL) + P*(VALAIN(LR) - VALAIN(LL))
+ 
+        VAL = VAL*TS_CONVERSION_FACTOR(I)
+C     WRITE(STDOUT,*) 'RDGET RETURNS VALUE = ', VAL
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   SETEXT
+     I     (DT, DTDY, WT, NBN, NBRA, NEX, BRPT, HSLOT, EPT, QEPS, jtime,
+     M                    EMC, EXNODT,
+     O                    RNORM, MXRES, LMXRES, ERRP, ERRQ, BERRQ,
+     O                    NERRQ, NERRP, BERRP)
+ 
+C     + + + PURPOSE + + +
+C     This subroutine creates the matrix for the jacobian.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER BERRP, BERRQ, LMXRES, NBN, NBRA, NERRP, NERRQ, NEX, EPT
+      INTEGER BRPT(8,NBRA), EMC(MREMC), EXNODT(9,NEX)
+      REAL ERRP, ERRQ, HSLOT, MXRES, QEPS, RNORM, WT
+      REAL*8 dt, DTDY, jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     DT     - time step in seconds
+C     WT     - weight factor for approximating time integrals
+C     NBN    - total number on nodes on branches in the model
+C     NBRA   - number of branches in the model
+C     NEX    - number of exterior nodes in the model
+C     BRPT   - branch pointer table.  Values for each branch are:
+C              ROW       Meaning
+C              1         upstream user node number
+C              2         downstream user node number
+C              3         pointer into branch vector for upstream node
+C              4         pointer into branch vector for downstream node
+C              5         upstream exterior node number
+C              6         downstream exterior node number
+C              7         pointer to address in EMC for the branch
+C              8         number of unknowns at a node for the branch
+C     HSLOT  - height of bottom slot.  Currently 0.0 always
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     EXNODT - exterior node table.  Contains the following items
+C              for each exterior node.
+C              Row   Content
+C               1    sign of the node
+C               2    pointer into vectors for nodes on a branch
+C               3    descriptive code: if -1 then a reservoir;
+C                    if  0 then not on a branch and not a reservoir;
+C                    if > 0 then a branch number
+C               4    pointer to a cross section table if on a branch, 
+C                    to storage table if a reservoir, to other node if
+C                    a dummy branch
+C               5    gives the variable number(in the system matrix) for
+C                    the flow at the exterior node. Also a junction
+C                    pointer in initial processing of input
+C     RNORM  - sum of squares of the residuals
+C     MXRES  - maximum value of the residuals in the matrix
+C     LMXRES - location of the maximum residual
+C     ERRP   - current maximum relative change in surcharge storage
+C     ERRQ   - maximum value of the ratio of lateral inflow to the
+C               average flow in the element
+C     BERRQ  - records the branch number(internal) that has the
+C               greatest value of the ratio of lateral inflow
+C               to average flow in an element
+C     NERRQ  - node at which maximum relative lateral inflow occurs
+C     NERRP  - node at which maximum correction to surcharge storage
+C               occurs
+C     BERRP  - records the branch number(internal) that has the
+C               greatest absolute value of the change in surcharge
+C               storage relative to the storage in the storm sewer
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'misccon.cmn'
+      INCLUDE 'enelem.cmn'
+      INCLUDE 'bnelem.cmn'
+      INCLUDE 'bnothr.cmn'
+      INCLUDE 'matcom.cmn'
+      INCLUDE 'xscom.cmn'
+      INCLUDE 'grav.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER ADR1, ADR2, ADR3, ADR4, ADRS, CODE, DNN, I, IATDF, IDUM,
+     A        IENTRY, IEQ, II, IPNT, IROW, ITYPE, JCOL, MDN, NBR, NL,
+     B        NND, NR, NSIGN, NTAB, NUM, NUM1, NUM2, TYPE, UNN, AFLAG
+      REAL AL, ALPL, ALPR, AR, AREA, ARG, ASUR, BL, BN, BR, CON, CONVEY,
+     A     DALPL, DALPR, DBL, DBN, DBR, DC, DCONVY, DISCH, DIV, DTL,
+     B     DTOP, DTR, FAC, FUNC, KFAC, PDV, PQL, PQM, PQR, PYL, PYM,
+     C     PYR, QBASE, QCR, QCL, QCSQR, QL, QN, QR, RDUM, RES, RSGN, 
+     D     TEMP, TL, TOP, TP, TR, VL, VR, W, WC, WTC, YBAL,
+     E     YBAR, YBL, YBR, YL, YR, INOUT,
+     F     FB_ADJ_FACTOR
+      real*8 tptime
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM,RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS, SNGL, SQRT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      CHARACTER GETUSN*5
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL ABREXP, BDFTAB, BDFWR, CBRID, CONTRL, EXCON, GETUSN,
+     A         LKTAB, MCHGAT, PUMP, SETICW, SETICX, SETINW, SETINX,
+     B         SIDEWR, TWOD14, TWOD6, UFGATE, XLKT20, XLKT21, XLKT22
+ 
+C     + + + OUTPUT FORMATS + + +
+ 57   FORMAT(/,' *ERR:196* Reservoir at node=',A5,' has surf. area =',
+     A       F10.2,' at elev.=',F10.2,/,11X, 'Unable to continue ',
+     B       ' computations with surf. area <= 0.' )
+C***********************************************************************
+C     EXPLORE MATRIX FOR SPECIAL PROBLEM AT NEAR ZERO DEPTH
+C      WRITE(STD6,9245)
+C9245  FORMAT(1X,8X,'dQL',8X,'dYL',8X,'dQR',8X,'dYR',8X,'RES')
+ 
+C     INITIALIZE VARIABLES
+ 
+C     SET THE ERROR MONITORS FOR BRANCHES.
+C        ERRP--POND TERM. ERRQ-LATERAL INFLOW
+ 
+      ERRP = 0.0
+      ERRQ = 0.0
+      BERRQ = 0
+      NERRQ = 0
+      NERRP = 0
+      BERRP = 0
+ 
+C     SET THE RESIDUAL NORMS
+      MXRES = -1.E25
+ 
+C     SET THE ARRAY OF PARTIAL DERIVATIVES VECTOR TO ZERO
+      DO 10 I=1,C(NUMEQ)
+        PDAVEC(I) = 0.
+ 10   CONTINUE
+ 
+      IPNT = EMC(1)
+      IEQ = 0
+      IENTRY = 1
+      RES = 0.0
+ 
+ 
+C     GET NEXT CODE
+ 
+ 20   CONTINUE
+      IPNT = ADD(IENTRY)
+      IENTRY = IENTRY + 1
+      CODE = EMC(IPNT)
+      IF(CODE.EQ.-1) GOTO 9000
+      GOTO(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100,
+     A     1200, 1300, 1400,1500),CODE
+        WRITE(STDOUT,*) ' *BUG:16*INVALID EMC CODE IN SETEXT. CODE=',
+     A              CODE
+        STOP 'Abnormal stop: errors found.'
+ 
+C     CODE 1 GIVES BRANCH NUMBERS
+ 
+ 100  CONTINUE
+        NBR = EMC(IPNT+1)
+ 
+ 
+        GOTO(1, 2, 3, 4), GEQVEC(NBR)
+ 
+          WRITE(STDOUT,*) ' *BUG:XXX* INVALID GEQOPT IN SETEXT'
+          STOP 'Abnormal stop: errors found.'
+ 1      CONTINUE
+          CALL SETINX
+     I               (DT, NBR, NBRA, WT, BRPT,
+     M                IEQ, ERRP, ERRQ,
+     O                BERRP, NERRP, BERRQ, NERRQ)
+          GOTO 9
+ 2      CONTINUE
+          CALL SETINW
+     I               (DT, NBR, NBRA, WT, BRPT,
+     M                IEQ, ERRP, ERRQ,
+     O                BERRP, NERRP, BERRQ, NERRQ)
+          GOTO 9
+ 
+ 3      CONTINUE
+          CALL SETICX
+     I               (DT, NBR, NBRA, WT, BRPT,
+     M                IEQ, ERRP, ERRQ,
+     O                BERRP, NERRP, BERRQ, NERRQ)
+          GOTO 9
+ 
+ 4      CONTINUE
+          CALL SETICW
+     I               (DT, NBR, NBRA, WT, BRPT,
+     M                IEQ, ERRP, ERRQ,
+     O                BERRP, NERRP, BERRQ, NERRQ)
+          GOTO 9
+ 
+ 9      CONTINUE
+ 
+      GOTO 8000
+ 
+C     CODE 2 GIVES DISCHARGE CONTINUITY AT JUNCTIONS
+ 
+ 200  CONTINUE
+        NND = EMC(IPNT+1)
+        RES = 0.
+        IEQ = IEQ + 1
+C        WRITE(STD6,*) ' DOING CODE=2 NND=',NND
+        DO 220 I=1,NND
+          NUM = EMC(IPNT+I+1)
+C          FAC = SIGN(1.0, FLOAT(NUM))
+C          NUM = ABS(NUM)
+          RSGN = EXNODT(1,NUM)
+          QN = QE2(NUM)
+          RES = RES + RSGN*QN
+          JCOL = EXNODT(5,NUM)
+C          WRITE(STD6,*) ' JCOL=',JCOL
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = RSGN
+          ELSE
+            PDAVEC(C(JCOL) + II) = RSGN
+          ENDIF
+ 220    CONTINUE
+        RHS(IEQ) = -RES
+        IPNT = IPNT+NND
+      GOTO 8000
+ 
+C     CODE 3 GIVES ELEVATION EQUALITY
+ 
+ 300  CONTINUE
+        UNN = EMC(IPNT+1)
+        DNN = EMC(IPNT+2)
+        RES = YE2(UNN) + ZE(UNN)
+        IEQ = IEQ + 1
+        JCOL = EXNODT(5,UNN) + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = 1.
+        ELSE
+          PDAVEC(C(JCOL) + II) = 1.
+        ENDIF
+        RES = RES - YE2(DNN)   - ZE(DNN)
+        JCOL = EXNODT(5,DNN) + 1
+C        WRITE(STD6,*) ' JCOL=',JCOL
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = -1.
+        ELSE
+          PDAVEC(C(JCOL) + II) = -1.
+        ENDIF
+        RHS(IEQ) = -RES
+      GOTO 8000
+ 
+C     CODE 4 CONTROL STRUCTURE 1 NODE HEAD DISCHARGE
+C     FLOW IS A FUNCTION OF HEAD
+ 
+ 400  CONTINUE
+        UNN = EMC(IPNT+2)
+        DNN = EMC(IPNT+4)
+        NSIGN = EMC(IPNT+3)
+        CALL CONTRL
+     I             (IPNT, STDOUT, NBN, NEX, OUTPUT, jtime, EXNODT,
+     I              EMC, Y1, ZVEC, DXVEC, EPT,
+     O              PDV, DISCH)
+        IEQ = IEQ + 1
+        RES = QE2(DNN) -DISCH
+        JCOL = EXNODT(5,DNN)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = 1.
+        ELSE
+          PDAVEC(C(JCOL) + II) = 1.
+        ENDIF
+        JCOL = EXNODT(5,UNN) + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = -PDV
+        ELSE
+          PDAVEC(C(JCOL) + II) = -PDV
+        ENDIF
+ 
+        RHS(IEQ) = -RES
+C        WRITE(STD6,9246) 1.0, -PDV,RES
+C9246    FORMAT(1X,22X,3(1PE11.3))
+ 
+        GOTO 8000
+ 
+C     TWO NODE CONTROL
+ 
+ 500  CONTINUE
+        TYPE = EMC(IPNT+1)
+        UNN = EMC(IPNT+2)
+        DNN = EMC(IPNT+3)
+ 
+C       BRANCH ON TYPE
+ 
+        GOTO(501, 502, 503, 504, 505, 506, 507, 508, 509),TYPE
+          WRITE(STDOUT,*) ' *BUG:17* INVALID CODE=5 TYPE IN SETEXT.',
+     A                  ' TYPE=', TYPE
+          STOP 'Abnormal stop: errors found.'
+ 
+ 501    CONTINUE
+ 
+C         EXPANSION/CONTRACTION WITH CRITICAL DEPTH POSSIBLE
+ 
+          CALL EXCON
+     I              (IPNT, STDOUT, jtime, NEX, MREMC, EXNODT,
+     I               QE2, YE2, ZE,
+     M               EMC,
+     O               RES, PYL, PQL, PYR, PQR)
+          GOTO 599
+ 
+ 502    CONTINUE
+ 
+C         BIDIRECTIONAL FLOW WITH TABLES AND SLOPE
+ 
+          CALL BDFTAB
+     I               (IPNT, MREMC, YE2, ZE, QE2, NEX, C52EPS,
+     M                EMC,
+     O                RES, PYL, PQL, PYR, PQR)
+ 
+          GOTO 599
+ 
+ 503    CONTINUE
+          CALL PUMP
+     I             (IPNT, EMC, MREMC, GRAV, TWOG, YE2, ZE, QE2, NEX,
+     I              jtime, STDOUT,
+     O              RES, PYL, PQL, PYR, PQR)
+ 
+          GOTO 599
+ 
+ 504    CONTINUE
+          CALL CBRID
+     I              (IPNT, GRAV, STDOUT, NEX, MREMC, EMC, EXNODT, QE2,
+     I               YE2, ZE, HSLOT,
+     O               RES, PYL, PQL, PYR, PQR)
+ 
+          GOTO 599
+ 505    CONTINUE
+          CALL ABREXP
+     I               (IPNT, GRAV, STDOUT, jtime, NEX, MREMC, 
+     I                EXNODT, QE2, YE2, ZE,
+     M                EMC,
+     O                RES, PYL, PQL, PYR, PQR)
+ 
+          GOTO 599
+ 506    CONTINUE
+C         BRANCH ON THE SIGN OF THE NUMBER OF PATHS
+          IF(EMC(IPNT+6).GT.0) THEN
+            CALL TWOD6
+     I                (IPNT, STDOUT, jtime, NEX, EPT, EMC, QE2,
+     I                 YE2, ZE,
+     O                 RES, PYL, PQL, PYR, PQR)
+          ELSE
+            CALL TWOD14
+     I                 (IPNT, STDOUT, jtime, NEX, EPT, EMC, QE2,
+     I                  YE2, ZE,
+     O                  RES, PYL, PQL, PYR, PQR)
+          ENDIF
+ 
+          GOTO 599
+ 
+ 507    CONTINUE
+          TPTIME = JTIME - DTDY
+          CALL BDFWR
+     I              (IPNT, EMC, MREMC, YE2, ZE, QE2, AE2, TE2, NEX,
+     I               STDOUT, TPTIME, GRAV,
+     O               RES, PYL, PQL, PYR, PQR)
+ 
+          GOTO 599
+ 
+ 508    CONTINUE
+          TPTIME = JTIME - DTDY
+          CALL MCHGAT
+     I               (IPNT, EMC, MREMC, YE2, ZE, QE2, NEX, STDOUT, 
+     I                TPTIME,
+     O                RES, PYL, PQL, PYR, PQR)
+ 
+          GOTO 599
+ 
+ 509    CONTINUE
+          TPTIME = JTIME - DTDY
+          CALL UFGATE
+     I               (IPNT, EMC, MREMC, YE2, ZE, QE2, NEX, STDOUT, 
+     I                TPTIME, QE1,
+     O                RES, PYL, PQL, PYR, PQR)
+ 
+          GOTO 599
+ 
+ 599    CONTINUE
+ 
+        IEQ = IEQ + 1
+        RHS(IEQ) = -RES
+        JCOL = EXNODT(5,UNN)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = PQL
+        ELSE
+          PDAVEC(C(JCOL) + II) = PQL
+        ENDIF
+        JCOL = JCOL + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = PYL
+        ELSE
+          PDAVEC(C(JCOL) + II) = PYL
+        ENDIF
+        JCOL = EXNODT(5,DNN)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = PQR
+        ELSE
+          PDAVEC(C(JCOL) + II) = PQR
+        ENDIF
+        JCOL = JCOL + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = PYR
+        ELSE
+          PDAVEC(C(JCOL) + II) = PYR
+        ENDIF
+ 
+      GOTO 8000
+ 
+C     CODE 6 FORCED BOUNDARY
+ 
+ 600  CONTINUE
+C        WRITE(STD6,*) ' DOING CODE=6 IN SETEXT'
+        TYPE = EMC(IPNT+1)
+        ITYPE = TYPE
+        IF(TYPE.EQ.3) ITYPE = 1
+        NUM = EMC(IPNT+2)
+        NSIGN = EMC(IPNT+3)
+        NTAB = EMC(IPNT+4)
+        IDUM = EMC(IPNT+6)
+        FUNC = RDUM
+        IDUM = EMC(IPNT+8)
+        QBASE = RDUM
+C       APPLY THE MULTIPLIER TO BOTH BASE AND TIME VARIABLE VALUE-Changed April 26, 2002
+        IDUM = EMC(IPNT+9)
+C        QBASE = QBASE*RDUM
+        FUNC = FUNC*RDUM
+ 
+        IF(EMC(IPNT+10).GT.0) THEN
+          CALL LKTSTAB
+     I              (EMC(IPNT+10), jtime, 
+     O               FB_ADJ_FACTOR, NTAB, PDV)
+
+C          QBASE = FB_ADJ_FACTOR*QBASE
+          FUNC = FB_ADJ_FACTOR*FUNC
+        ENDIF
+
+        IEQ = IEQ + 1
+        JCOL = EXNODT(5,NUM) + ITYPE - 1
+C        WRITE(STD6,*) ' CODE=6: IEQ=',IEQ,' JCOL=',JCOL,' RDUM=',RDUM
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = 1.
+        ELSE
+          PDAVEC(C(JCOL) + II) = 1.
+        ENDIF
+ 
+        IF(TYPE.EQ.3) THEN
+          WRITE(STDOUT,*)  ' CODE 6 TYPE 3 NO LONGER SUPPORTED'
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+ 
+        IF(TYPE.EQ.2) GOTO 601
+          IF(FUNC.LT.QBASE) THEN
+C           IF THE FLOW IS LESS THAN THE USER SUPPLIED STEADY FLOW VALUE
+C           THEN USE THE STEADY FLOW VALUE AS THE LOWER LIMIT.  OTHERWISE
+C           USE THE VALUE AS DEFINED BY THE TABLE OR FILE.
+            FUNC = QBASE
+          ENDIF
+          IF(NSIGN.LT.0) FUNC = -FUNC
+          IF(TYPE.EQ.1) THEN
+            RES = QE2(NUM) - FUNC
+C            WRITE(STD6,*) ' CODE 6: NUM=',NUM,' QE2(NUM)=',QE2(NUM),
+C     A             ' FUNC=',FUNC
+          ENDIF
+          GOTO 602
+ 601    CONTINUE
+ 
+        IF(FUNC.LT.QBASE) THEN
+          FUNC = QBASE
+        ENDIF
+        IF(EXNODT(3,NUM).LE.0) THEN
+C         FREE NODE- FLOW CANNOT BE CRITICAL. NO AREA KNOWN
+ 
+          RES = YE2(NUM) + ZE(NUM) - FUNC
+          GOTO 650
+        ENDIF
+ 
+        IF(EMC(IPNT+5).GT.0) GOTO 620
+ 
+C         FORCED VALUE VALID HERE-FLOW IS SUBCRITICAL
+ 
+C         CHECK IF CHANGE OF STATE IS NEEDED
+ 
+          TOP = T2(EXNODT(2,NUM))
+          QCSQR = GRAV*AE2(NUM)**3/TOP
+          IF(QE2(NUM)**2.GT.QCSQR) GOTO 610
+            RES =  YE2(NUM) + ZE(NUM) - FUNC
+            GOTO 650
+ 610      CONTINUE
+            EMC(IPNT+5) = 1
+            ADRS = EXNODT(4,NUM)
+            CALL XLKT20
+     I                 (ADRS,
+     M                  YE2(NUM),
+     O                  AREA, TOP, DTOP, CONVEY, DCONVY, BN, DBN)
+            RES = QE2(NUM)**2-GRAV*AREA**3/TOP
+            TP = -(GRAV*AREA**2)*(3.-AREA*DTOP/TOP**2)
+            II = IEQ - JCOL
+            IF(II.GT.0) THEN
+              PDAVEC(R(IEQ) - II +1) = TP
+            ELSE
+              PDAVEC(C(JCOL) + II) = TP
+            ENDIF
+            JCOL = JCOL - 1
+            II = IEQ - JCOL
+            IF(II.GT.0) THEN
+              PDAVEC(R(IEQ) - II +1) = 2.*QE2(NUM)
+            ELSE
+              PDAVEC(C(JCOL) + II) = 2.*QE2(NUM)
+            ENDIF
+            GOTO 650
+ 620    CONTINUE
+ 
+C         CRITICAL STATE HERE
+ 
+C         CHECK IF CHANGE IN STATE IS NEEDED
+ 
+          IF(FUNC.GT.YE2(NUM)+ZE(NUM)) GOTO 630
+ 
+C           STAY IN CRITICAL STATE HERE
+ 
+            ADRS = EXNODT(4,NUM)
+            CALL XLKT20
+     I                 (ADRS,
+     M                  YE2(NUM),
+     O                  AREA, TOP, DTOP, CONVEY, DCONVY, BN, DBN)
+            RES = QE2(NUM)**2-GRAV*AREA**3/TOP
+            TP = -(GRAV*AREA**2)*(3.-AREA*DTOP/TOP**2)
+            II = IEQ - JCOL
+            IF(II.GT.0) THEN
+              PDAVEC(R(IEQ) - II +1) = TP
+            ELSE
+              PDAVEC(C(JCOL) + II) = TP
+            ENDIF
+            JCOL = JCOL - 1
+            II = IEQ - JCOL
+            IF(II.GT.0) THEN
+              PDAVEC(R(IEQ) - II +1) = 2.*QE2(NUM)
+            ELSE
+              PDAVEC(C(JCOL) + II) = 2.*QE2(NUM)
+            ENDIF
+            GOTO 650
+ 630      CONTINUE
+ 
+C           SWITICH STATE HERE
+ 
+            EMC(IPNT+5) = -1
+            RES = YE2(NUM) + ZE(NUM) - FUNC
+            GOTO 650
+ 650    CONTINUE
+ 
+ 602    CONTINUE
+      RHS(IEQ) = -RES
+C      WRITE(STD6,9247) 1.0, 0.0, RES
+C9247  FORMAT(1X,2(1PE11.3),22X,1PE11.3)
+ 
+      GOTO 8000
+ 
+C     CODE 7 - LEVEL POOL RESERVOIR
+ 
+ 700  CONTINUE
+        DNN = EMC(IPNT+1)
+        NTAB = EMC(IPNT+2)
+        UNN = EMC(IPNT+5)
+        IDUM = EMC(IPNT+7)
+        KFAC = RDUM
+ 
+C       DO THE LINEAR KINEMATIC EQUATION
+        IEQ = IEQ + 1
+        JCOL = EXNODT(5,UNN)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = -KFAC
+        ELSE
+          PDAVEC(C(JCOL) + II) = -KFAC
+        ENDIF
+        JCOL = JCOL + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = 1.0
+        ELSE
+          PDAVEC(C(JCOL) + II) = 1.0
+        ENDIF
+        JCOL = EXNODT(5,DNN)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = -KFAC
+        ELSE
+          PDAVEC(C(JCOL) + II) = -KFAC
+        ENDIF
+        JCOL = JCOL + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = -1.0
+        ELSE
+          PDAVEC(C(JCOL) + II) = -1.0
+        ENDIF
+        RHS(IEQ) = -(YE2(UNN) + ZE(UNN) - YE2(DNN) - ZE(DNN) -
+     A               (QE2(UNN) + QE2(DNN))*KFAC)
+ 
+        RES = 0.0
+        WTC = 1. - WT
+ 
+C       ONLY ONE INFLOW NODE IN CURRENT VERSION.
+ 
+        IEQ = IEQ + 1
+        JCOL = EXNODT(5,UNN)
+ 
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = WT*DT
+        ELSE
+          PDAVEC(C(JCOL) + II) = WT*DT
+        ENDIF
+        RES = RES + (WTC*QE1(UNN) + WT*QE2(UNN))
+ 
+ 
+C       INCLUDE THE RESERVOIR NODE. OUTFLOW BY SIGN CONVENTION
+ 
+        JCOL = EXNODT(5,DNN)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = -WT*DT
+        ELSE
+          PDAVEC(C(JCOL) + II) = -WT*DT
+        ENDIF
+        RES = RES-(WTC*QE1(DNN)+WT*QE2(DNN))
+ 
+C       INCLUDE TIME DEPENDENT FLOWS AS COMPUTED IN SUBROUTINE LOAD
+ 
+        IATDF = EMC(IPNT+3)
+        IF(IATDF.GT.0) THEN
+          RES = RES + QPVEC(IATDF)
+        ENDIF
+ 
+C       Include the rainfall and evaporation on the water surface.  Computed
+C       in LOAD and stuffed into fixed slots in EMC.
+C       RES NOW GIVES THE ALGEBRAIC SUM OF THE FLOWS INTO THE RESERVOIR
+C       Rainfall on the surface.  Set using the surface area at start of time step.
+        IDUM = EMC(IPNT+8)
+        RES = RES + RDUM
+C       Evaporation on the surface. Set using the surface area at start of time step.
+        IDUM = EMC(IPNT+9)
+        RES = RES - RDUM
+
+ 
+        RES = RES*DT
+C       USE THE ARITHMETIC AVERAGE OF THE UPSTREAM AND DOWNSTREAM
+C       ARGUMENTS.
+        ARG = 0.5*(YE2(UNN) + YE2(DNN))
+        CALL LKTAB
+     I            (NTAB, ARG, 0,
+     O             FUNC, NUM, PDV)
+        IF(PDV.LT.LPRMIN) PDV = LPRMIN
+        JCOL = JCOL + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = -0.5*PDV
+        ELSE
+          PDAVEC(C(JCOL) + II) = -0.5*PDV
+        ENDIF
+        JCOL = EXNODT(5,UNN) + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = -0.5*PDV
+        ELSE
+          PDAVEC(C(JCOL) + II) = -0.5*PDV
+        ENDIF
+ 
+        IF(PDV.LE.0.0) THEN
+          WRITE(STDOUT,57) GETUSN(DNN), PDV, ARG
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+        RES = RES -FUNC + ABS(AE1(DNN))
+        AE2(DNN) = -FUNC
+C       STORE THE SURFACE AREA IN TE2.  
+        TE2(DNN) = PDV
+ 
+        RHS(IEQ) = -RES
+ 
+      GOTO 8000
+ 
+C     CODE 8 - CRITICAL DEPTH
+ 
+ 800  CONTINUE
+        NUM = EMC(IPNT+1)
+        IEQ = IEQ + 1
+        JCOL = EXNODT(5,NUM)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = 1.
+        ELSE
+          PDAVEC(C(JCOL) + II) = 1.
+        ENDIF
+        ADRS = EXNODT(4,NUM)
+        CALL XLKT20
+     I             (ADRS,
+     M              YE2(NUM),
+     O              AREA, TOP, DTOP, CONVEY, DCONVY, BN, DBN)
+        CON = SQRT(GRAV*AREA/TOP)
+        IF(EXNODT(1,NUM).LT.0) CON = -CON
+        RES = QE2(NUM) - AREA*CON
+        RHS(IEQ) = -RES
+        JCOL = JCOL + 1
+        II = IEQ - JCOL
+        TP = CON*(0.5*AREA*DTOP/TOP - 1.5*TOP)
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = TP
+        ELSE
+          PDAVEC(C(JCOL) + II) = TP
+        ENDIF
+      GOTO 8000
+ 
+C     CODE 9- MOMENTUM JUNCTION
+ 
+ 900  CONTINUE
+        WRITE(STDOUT,*) ' SHOULD NOT REACH HERE- SETEXT'
+        STOP 'Abnormal stop: errors found.'
+C        GOTO 8000
+ 
+C     CODE 10 - EQUALITY OF TOTAL ENERGY LINE ELEVATION
+ 
+ 1000 CONTINUE
+        NUM1 = EMC(IPNT+1)
+        NUM2 = EMC(IPNT+2)
+        IEQ = IEQ + 1
+        RES = -YE2(NUM1) - ZE(NUM1) + YE2(NUM2) + ZE(NUM2)
+        RHS(IEQ)  = RES
+        JCOL = EXNODT(5,NUM1)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          ADR1 = R(IEQ) - II + 1
+          PDAVEC(ADR1) = 0.
+        ELSE
+          ADR1 = C(JCOL) + II
+          PDAVEC(ADR1) = 0.
+        ENDIF
+        JCOL = JCOL + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          ADR2 = R(IEQ) - II + 1
+          PDAVEC(ADR2) = 1.
+        ELSE
+          ADR2 = C(JCOL) + II
+          PDAVEC(ADR2) = 1.
+        ENDIF
+ 
+        JCOL = EXNODT(5,NUM2)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          ADR3 = R(IEQ) - II +1
+          PDAVEC(ADR3) = 0.
+        ELSE
+          ADR3 = C(JCOL) + II
+          PDAVEC(ADR3) = 0.
+        ENDIF
+        JCOL = JCOL + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          ADR4 = R(IEQ) - II +1
+          PDAVEC(ADR4) = -1.
+        ELSE
+          ADR4 = C(JCOL) + II
+          PDAVEC(ADR4) = -1.
+        ENDIF
+ 
+ 
+C       IF NODE IS NOT ON A BRANCH AREA UNDEFINED - SKIP NEXT SECT.
+ 
+        IF( AE2(NUM1).GT.0.) THEN
+          CON = QE2(NUM1)*QE2(NUM1)/(GRAV*AE2(NUM1)*AE2(NUM1))
+          RES =RHS(IEQ) - 0.5*CON
+          RHS(IEQ) = RES
+          DIV = QE2(NUM1)
+          IF(DIV.EQ.0.0) DIV = 1.0
+ 
+          PDAVEC(ADR1) = CON/DIV
+          PDAVEC(ADR2) = 1. - CON*T2(EXNODT(2,NUM1))/AE2(NUM1)
+        ENDIF
+ 
+        IF(AE2(NUM2).GT.0.) THEN
+          CON = QE2(NUM2)*QE2(NUM2)/(GRAV*AE2(NUM2)*AE2(NUM2))
+          RES = RHS(IEQ) + 0.5*CON
+          RHS(IEQ) = RES
+          DIV = QE2(NUM2)
+          IF(DIV.EQ.0.0) DIV = 1.0
+          PDAVEC(ADR3) =  -CON/DIV
+          PDAVEC(ADR4) =  CON*T2(EXNODT(2,NUM2))/AE2(NUM2)  - 1.
+        ENDIF
+      GOTO 8000
+ 
+ 1100 CONTINUE
+C       IMPULSE + MOMENTUM  CONSERVATION IGNORING BOTTOM SLOPE AND
+C       FRICTION.  CROSS SECTIONS MUST EXIST AT BOTH NODES AND
+C       THEY MUST BE THE SAME SIZE.  BOTTOM ELEVATIONS MUST BE THE
+C       SAME.  FLOW IS ASSUMED TO BE ADDED OR ABSTRACTED AT RIGHT
+C       ANGLES TO THE CHANNEL.
+ 
+        NL = EMC(IPNT+1)
+        NR = EMC(IPNT+2)
+ 
+        YL = YE2(NL)
+        YR = YE2(NR)
+        QL = QE2(NL)
+        QR = QE2(NR)
+ 
+        IEQ = IEQ + 1
+ 
+C       IS THERE INFLOW OR OUTFLOW TO THE JUNTION?
+ 
+        IF(QL*EXNODT(1,NL) + QR*EXNODT(1,NR).LT.0.0) THEN
+ 
+C         INFLOW TO THE JUNCTION FROM THE UNKNOWN EXTERIOR NODE
+C         APPLY MOMENTUM BALANCE
+ 
+          CALL XLKT21
+     I               (EXNODT(4,NL),
+     M                YL,
+     O                AL, TL, DTL, YBAL, CONVEY, DC, BL, DBL)
+          CALL XLKT21
+     I               (EXNODT(4,NR),
+     M                YR,
+     O                AR, TR, DTR, YBAR, CONVEY, DC, BR, DBR)
+ 
+ 
+          VL = QL/AL
+          VR = QR/AR
+ 
+          RHS(IEQ) = -(BL*VL*QL + GRAV*(YBAL - YBAR) -BR*VR*QR)
+ 
+ 
+          JCOL = EXNODT(5,NL)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = 2.*BL*VL
+          ELSE
+            PDAVEC(C(JCOL) + II) = 2.*BL*VL
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = (AL*DBL - BL*TL)*VL**2 + GRAV*AL
+          ELSE
+            PDAVEC(C(JCOL) + II) = (AL*DBL - BL*TL)*VL**2 + GRAV*AL
+          ENDIF
+ 
+ 
+          JCOL = EXNODT(5,NR)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) =  -2.*BR*VR
+          ELSE
+            PDAVEC(C(JCOL) + II) =  -2.*BR*VR
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = -(AR*DBR - BR*TR)*VR**2 - GRAV*AR
+          ELSE
+            PDAVEC(C(JCOL) + II) = -(AR*DBR - BR*TR)*VR**2 - GRAV*AR
+          ENDIF
+ 
+ 
+ 
+        ELSE
+C         FORCE EQUALITY OF DEPTH.  BOTTOM ELEVATIONS FORCED TO BE THE
+C         SAME IN CHECKING
+ 
+          RHS(IEQ) = -(YL - YR)
+ 
+ 
+          JCOL = EXNODT(5,NL)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = 0.
+          ELSE
+            PDAVEC(C(JCOL) + II) = 0.
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = 1.
+          ELSE
+            PDAVEC(C(JCOL) + II) = 1.
+          ENDIF
+ 
+ 
+          JCOL = EXNODT(5,NR)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = 0.
+          ELSE
+            PDAVEC(C(JCOL) + II) =   0.
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = -1.
+          ELSE
+            PDAVEC(C(JCOL) + II) =  -1.
+          ENDIF
+        ENDIF
+        GOTO 8000
+ 
+C     MATCH AVERAGE ELEVATION
+ 
+ 1200 CONTINUE
+        UNN = EMC(IPNT+1)
+        DNN = EMC(IPNT+2)
+        MDN = EMC(IPNT+3)
+        IDUM = EMC(IPNT+4)
+        W = RDUM
+ 
+        IEQ = IEQ + 1
+        RES = W*(YE2(UNN) + ZE(UNN))
+ 
+        JCOL = EXNODT(5,UNN) + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = W
+        ELSE
+          PDAVEC(C(JCOL) + II) = W
+        ENDIF
+ 
+        RES = RES + (1.0 - W)*( YE2(DNN)  + ZE(DNN))
+ 
+        JCOL = EXNODT(5,DNN) + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = 1. - W
+        ELSE
+          PDAVEC(C(JCOL) + II) = 1. - W
+        ENDIF
+ 
+        RES = RES - (YE2(MDN) + ZE(MDN))
+        RHS(IEQ) = -RES
+ 
+        JCOL = EXNODT(5,MDN) + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = -1.
+        ELSE
+          PDAVEC(C(JCOL) + II) = -1.
+        ENDIF
+        GOTO 8000
+ 
+ 
+ 1300 CONTINUE
+C       CONSERVATION OF MOMENTUM DURING INFLOW AND CONSERVATION OF
+C       SPECIFIC ENERGY DURING OUTFLOW.  BOTTOM ELEVATIONS AND
+C       CROSS SECTIONS MUST BE THE SAME AND THE NODES MUST BE ON
+C       BRANCHES IN NATURAL SENSE.
+ 
+        NL = EMC(IPNT+1)
+        NR = EMC(IPNT+2)
+ 
+        YL = YE2(NL)
+        YR = YE2(NR)
+        QL = QE2(NL)
+        QR = QE2(NR)
+ 
+        AFLAG = EMC(IPNT+4)
+
+        IEQ = IEQ + 1
+ 
+C       IS THERE INFLOW OR OUTFLOW TO THE JUNCTION?
+        INOUT = (QL*EXNODT(1,NL) + QR*EXNODT(1,NR))/
+     A           (ABS(QL) + ABS(QR) + QEPS)
+ 
+        IF(ABS(INOUT).LE.1.E-4) THEN 
+C         Ignore inflow and outflow and force equality of 
+C         elevation. Code 13 already requires matching inverts
+C         so we need only work with depth
+
+          RHS(IEQ) = -(YL - YR)
+ 
+          JCOL = EXNODT(5,NL)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = 0.0
+          ELSE
+            PDAVEC(C(JCOL) + II) = 0.0
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = 1.0
+          ELSE
+            PDAVEC(C(JCOL) + II) =  1.0
+          ENDIF
+ 
+          JCOL = EXNODT(5,NR)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) =  0.0
+          ELSE
+            PDAVEC(C(JCOL) + II) =  0.0
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = -1.0
+          ELSE
+            PDAVEC(C(JCOL) + II) = -1.0
+          ENDIF
+
+        ELSEIF(INOUT.LT.0.0) THEN
+ 
+C         INFLOW TO THE JUNCTION FROM THE UNKNOWN EXTERIOR NODE(S)
+C         APPLY MOMENTUM BALANCE. Feb. 15, 2001: require critical flow
+C         be tablulated 
+
+          IF(AFLAG.GT.0) THEN
+            CALL XLKT22
+     I                 (EXNODT(4,NL),
+     M                  YL,
+     O                  AL, TL, DTL, YBAL, CONVEY, DC, BL, DBL, ALPL,
+     O                  DALPL, QCL)
+            CALL XLKT22
+     I                 (EXNODT(4,NR),
+     M                  YR,
+     O                  AR, TR, DTR, YBAR, CONVEY, DC, BR, DBR, ALPR,
+     O                  DALPR, QCR)
+ 
+          ELSE
+C            stop 'setext: should not be here!'
+            CALL XLKT21
+     I                 (EXNODT(4,NL),
+     M                  YL,
+     O                  AL, TL, DTL, YBAL, CONVEY, DC, BL, DBL)
+            CALL XLKT21
+     I                 (EXNODT(4,NR),
+     M                  YR,
+     O                  AR, TR, DTR, YBAR, CONVEY, DC, BR, DBR)
+            ALPL = 1.0
+            ALPR = 1.0
+            DALPL = 0.0
+            DALPR = 0.0
+            QCL = AL*SQRT(GRAV*AL/TL)
+            QCR = AR*SQRT(GRAV*AR/TR)
+          ENDIF
+          VL = QL/AL
+          VR = QR/AR
+ 
+          RHS(IEQ) = -(BL*VL*QL + GRAV*(YBAL - YBAR) - BR*VR*QR)
+ 
+          JCOL = EXNODT(5,NL)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = BL*(VL + VL)
+          ELSE
+            PDAVEC(C(JCOL) + II) = BL*(VL + VL)
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = GRAV*AL*(1. - (QL/QCL)**2)
+          ELSE
+            PDAVEC(C(JCOL) + II) = GRAV*AL*(1. - (QL/QCL)**2)
+          ENDIF
+ 
+          JCOL = EXNODT(5,NR)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) =  -BR*(VR + VR)
+          ELSE
+            PDAVEC(C(JCOL) + II) =  -BR*(VR + VR)
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = -GRAV*AR*(1. - (QR/QCR)**2)
+          ELSE
+            PDAVEC(C(JCOL) + II) = -GRAV*AR*(1. - (QR/QCR)**2)
+          ENDIF
+ 
+C         Do values for any side nodes that were given.
+          DO 1301 I=1,EMC(IPNT+6)
+            NL = EMC(IPNT+6+I)
+            YL = YE2(NL)
+            CALL XLKT20
+     I                 (EXNODT(4,NL),
+     M                  YL,
+     O                  AL, TL, DTL, CONVEY, DC, BL, DBL)
+            QL = QE2(NL)
+            VL = QL/AL
+C           Get the cosine of the entry angle for this side node.
+            IDUM = EMC(IPNT+8+I)
+            TP = VL*RDUM
+            RHS(IEQ) = RHS(IEQ) - BL*QL*TP
+            JCOL = EXNODT(5,NL)
+            II = IEQ - JCOL
+            IF(II.GT.0) THEN
+              PDAVEC(R(IEQ) - II +1) = BL*(TP + TP)
+            ELSE
+              PDAVEC(C(JCOL) + II) =  BL*(TP + TP)
+            ENDIF
+            JCOL = JCOL + 1
+            II = IEQ - JCOL
+            IF(II.GT.0) THEN
+              PDAVEC(R(IEQ) - II +1) = (AL*DBL - BL*TL)*VL*TP
+            ELSE
+              PDAVEC(C(JCOL) + II) = (AL*DBL - BL*TL)*VL*TP
+            ENDIF
+1301      CONTINUE
+        ELSE
+C         CONSERVATION OF SPECIFIC ENERGY. Find the cross section
+C         elements.
+ 
+C         Get the complement of the loss coefficient.
+          IDUM = EMC(IPNT+5)
+          WC =  1.0 - RDUM
+ 
+          IF(AFLAG.EQ.0) THEN
+C           ALPHA not tabulated.
+C           No longer supported
+C            WRITE(STDOUT,*) 
+C     A         ' Bug found. SETEXT: Code 13- should not get here'
+C            STOP 'Abnormal stop. Bug found.'
+            CALL XLKT21
+     I                 (EXNODT(4,NL),
+     M                  YL,
+     O                  AL, TL, DTL, YBAL, CONVEY, DC, BL, DBL)
+            CALL XLKT21
+     I                 (EXNODT(4,NR),
+     M                  YR,
+     O                  AR, TR, DTR, YBAR, CONVEY, DC, BR, DBR)
+            ALPL = 1.0
+            ALPR = 1.0
+            DALPL = 0.0
+            DALPR = 0.0
+            QCL = AL*SQRT(GRAV*AL/TL)
+            QCR = AR*SQRT(GRAV*AR/TR)
+          ELSE
+C           ALPHA is tabulated.
+            CALL XLKT22
+     I                 (EXNODT(4,NL),
+     M                  YL,
+     O                  AL, TL, DTL, YBL, CONVEY, DC, BL, DBL, ALPL,
+     O                  DALPL, QCL)
+            CALL XLKT22
+     I                 (EXNODT(4,NR),
+     M                  YR,
+     O                  AR, TR, DTR, YBR, CONVEY, DC, BR, DBR, ALPR,
+     O                  DALPR, QCR)
+          ENDIF
+ 
+          VL = QL/AL
+          VR = QR/AR
+ 
+          RHS(IEQ) =-(YL - YR  + WC*(ALPL*VL**2 - ALPR*VR**2)/TWOG)
+
+C          IF(IEQ.EQ.2453) THEN
+C            WRITE(STDOUT,60) IEQ, WC, TWOG
+C60    FORMAT(/,' EQ=',I5,' WC=',F10.3,' TWOG=',F10.4)
+C            WRITE(STDOUT,61)'left :', QL, VL, YL, TL, AL, ALPL, DALPL,
+C     A              QCL 
+C            WRITE(STDOUT,61)'right:', QR, VR, YR, TR, AR, ALPR, DALPR,
+C     A              QCR
+C61    FORMAT(A6,1X,' Q=',F10.3,' V=',F10.3,' Y=',F10.4,' T=',F10.3,
+C     A      ' A=',F10.3,' ALPL=',F10.3,' DALPL=',F10.5,' QC=',F10.3)
+C          ENDIF
+ 
+          JCOL = EXNODT(5,NL)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = WC*ALPL*VL/(GRAV*AL)
+          ELSE
+            PDAVEC(C(JCOL) + II) = WC*ALPL*VL/(GRAV*AL)
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+C            PDAVEC(R(IEQ) - II +1) = 1.0 + WC*VL**2*(0.5*DALPL -
+C     A                                    ALPL*TL/AL)/GRAV
+            PDAVEC(R(IEQ) - II +1) = 1.0 - (QL/QCL)**2
+          ELSE
+C            PDAVEC(C(JCOL) + II) = 1.0 + WC*VL**2*(0.5*DALPL -
+C     A                                  ALPL*TL/AL)/GRAV
+            PDAVEC(C(JCOL) + II) = 1.0  - (QL/QCL)**2
+          ENDIF
+ 
+ 
+          JCOL = EXNODT(5,NR)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = -WC*ALPR*VR/(GRAV*AR)
+          ELSE
+            PDAVEC(C(JCOL) + II) = -WC*ALPR*VR/(GRAV*AR)
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+C            PDAVEC(R(IEQ) - II +1) = -1.0 - WC*VR**2*(0.5*DALPR -
+C     A                                    ALPR*TR/AR)/GRAV
+            PDAVEC(R(IEQ) - II +1) = -1.0 + (QR/QCR)**2
+          ELSE
+C            PDAVEC(C(JCOL) + II) = -1.0 - WC*VR**2*(0.5*DALPR -
+C     A                                  ALPR*TR/AR)/GRAV
+            PDAVEC(C(JCOL) + II) = -1.0  + (QR/QCR)**2
+          ENDIF
+        ENDIF
+        GOTO 8000
+ 
+ 1400 CONTINUE
+ 
+        CALL SIDEWR
+     I             (IPNT, STDOUT, JTIME, NEX, MREMC, EMC,
+     I              EXNODT, QE2, YE2, ZE,
+     O              RES, PYL, PQL, PYR, PQR, PYM, PQM)
+ 
+        NL = EMC(IPNT+1)
+        NR = EMC(IPNT+2)
+        MDN = EMC(IPNT+3)
+ 
+        IEQ = IEQ + 1
+ 
+        RHS(IEQ) = -RES
+ 
+        JCOL = EXNODT(5,NL)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = PQL
+        ELSE
+          PDAVEC(C(JCOL) + II) = PQL
+        ENDIF
+        JCOL = JCOL + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = PYL
+        ELSE
+          PDAVEC(C(JCOL) + II) = PYL
+        ENDIF
+ 
+        JCOL = EXNODT(5,NR)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = PQR
+        ELSE
+          PDAVEC(C(JCOL) + II) = PQR
+        ENDIF
+        JCOL = JCOL + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = PYR
+        ELSE
+          PDAVEC(C(JCOL) + II) = PYR
+        ENDIF
+ 
+        JCOL = EXNODT(5,MDN)
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = PQM
+        ELSE
+          PDAVEC(C(JCOL) + II) = PQM
+        ENDIF
+        JCOL = JCOL + 1
+        II = IEQ - JCOL
+        IF(II.GT.0) THEN
+          PDAVEC(R(IEQ) - II +1) = PYM
+        ELSE
+          PDAVEC(C(JCOL) + II) = PYM
+        ENDIF
+        GOTO 8000
+ 
+ 1500   CONTINUE
+C         DUMMY BRANCH. TWO EQUATIONS.
+          UNN = EMC(IPNT+1)
+          DNN = EMC(IPNT+2)
+          IDUM = EMC(IPNT+4)
+          KFAC = RDUM
+          IDUM = EMC(IPNT+5)
+          ASUR = RDUM
+ 
+C         DO THE LINEAR KINEMATIC EQUATION
+          IEQ = IEQ + 1
+          JCOL = EXNODT(5,UNN)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = -KFAC
+          ELSE
+            PDAVEC(C(JCOL) + II) = -KFAC
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = 1.0
+          ELSE
+            PDAVEC(C(JCOL) + II) = 1.0
+          ENDIF
+          JCOL = EXNODT(5,DNN)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = -KFAC
+          ELSE
+            PDAVEC(C(JCOL) + II) = -KFAC
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = -1.0
+          ELSE
+            PDAVEC(C(JCOL) + II) = -1.0
+          ENDIF
+          RHS(IEQ) = -(YE2(UNN) + ZE(UNN) - YE2(DNN) - ZE(DNN) -
+     A                 (QE2(UNN) + QE2(DNN))*KFAC)
+ 
+C         DO CONTINUITY EQUATION NEXT.  USE FULLY FORWARD WEIGHTING.
+ 
+          FAC = -ASUR/DT
+ 
+          IEQ = IEQ + 1
+          JCOL = EXNODT(5,UNN)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = 1.0
+          ELSE
+            PDAVEC(C(JCOL) + II) = 1.0
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = FAC
+          ELSE
+            PDAVEC(C(JCOL) + II) = FAC
+          ENDIF
+          JCOL = EXNODT(5,DNN)
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = -1.0
+          ELSE
+            PDAVEC(C(JCOL) + II) = -1.0
+          ENDIF
+          JCOL = JCOL + 1
+          II = IEQ - JCOL
+          IF(II.GT.0) THEN
+            PDAVEC(R(IEQ) - II +1) = FAC
+          ELSE
+            PDAVEC(C(JCOL) + II) = FAC
+          ENDIF
+ 
+          RHS(IEQ) = -(QE2(UNN) - QE2(DNN) +
+     A         FAC*(YE2(DNN) + YE2(UNN) - YE1(DNN) - YE1(UNN)) )
+ 
+          GOTO 8000
+ 
+ 8000 CONTINUE
+        GOTO 20
+ 9000 CONTINUE
+ 
+      RNORM = 0.0
+      DO 9500 IROW=1,NUMEQ
+        TEMP = RHS(IROW)
+        IF(ABS(TEMP).GT.1.E15) TEMP = 1.E15
+        RNORM = RNORM + TEMP**2
+        IF(ABS(TEMP).GT.MXRES) THEN
+          MXRES = ABS(TEMP)
+          LMXRES = IROW
+        ENDIF
+ 9500 CONTINUE
+      RETURN
+      END
+C
+C
+C
+      REAL FUNCTION   SO
+     I                  (Y1, Y3, HG)
+ 
+C     + + + PURPOSE + + +
+C     Compute submerged orifice flow.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      REAL HG, Y1, Y3
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     Y1     - maximum depth upstream of sluice gates
+C     Y3     - maximum depth immediately downstream of sluice gates
+C     HG     - sluice gate opening
+ 
+      INCLUDE 'stdun.cmn'
+
+C     + + + SAVED VALUES + + +
+      REAL A0, ALPHA, BETA, BG, G, W
+      SAVE A0, ALPHA, BETA, BG, G, W
+ 
+C     + + + LOCAL VARIABLES + + +
+      REAL A1, A3, AG, D, E, HH, HHG, Y, Y2, TEMP
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC SQRT
+ 
+C     + + + STATEMENT FUNCTION TYPES + + +
+      REAL A, C
+ 
+C     + + + DATA INITIALIZATIONS + + +
+      DATA W/96.0/, BG/68.75/, A0/299.5/, G/32.2/, ALPHA/1.55/,
+     C     BETA/1.2373/
+ 
+C     + + + STATEMENT FUNCTION DEFINITIONS + + +
+      A(Y) = 403.5 + Y*(144. + Y*2.75)
+      C(HH,HHG) = .66516 + (HHG/HH)*(-.4525 + .70985*(HHG/HH))
+C***********************************************************************
+      AG = C(Y1 - 1, HG)*HG*BG
+      A1 = A(Y1)
+ 
+      E = (AG*A1)**2/(A1**2 - ALPHA*AG**2)
+ 
+      A3 = A0 + W*Y3
+ 
+      D = (AG*A3)/(A3 - BETA*AG)
+
+      TEMP = 4.*E**2/(W*D)**2 - (4.*E*Y1)/(W*D) + Y3**2
+ 
+C      IF(TEMP.LT.0.0) THEN
+C        WRITE(STD6,50) TEMP
+C50    FORMAT(' NEGATIVE ARGUMENT TO SQRT IN FUNCTION SO=',1PE15.6)
+C        TEMP = 0.0
+C      ENDIF
+      Y2 = 2.*E/(W*D) + SQRT(TEMP)
+ 
+      SO = SQRT(2.*G*(Y1 - Y2)*E)
+ 
+      RETURN
+      END
+C
+C
+C
+      REAL FUNCTION   SOY2
+     I                    (Y1, Y3, HG)
+ 
+C     + + + PURPOSE + + +
+C     Compute the depth at section 2 assuming submerged orifice flow
+C     and a constant contraction coefficient and signal if
+C     submerged orifice flow is valid.  If valid, returns depth at
+C     section 2 as a positive number.  Otherwise returns a -1.
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      REAL HG, Y1, Y3
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     Y1     - maximum depth upstream of sluice gates
+C     Y3     - maximum depth immediately downstream of sluice gates
+C     HG     - sluice gate opening
+ 
+C     + + + SAVED VALUES + + +
+      REAL A0, ALPHA, BETA, BG, W
+      SAVE A0, ALPHA, BETA, BG, W
+ 
+C     + + + LOCAL VARIABLES + + +
+      REAL A1, A3, AG, D, DD, E, HH, HHG, Y, Y2, Y2LIM
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC SQRT
+ 
+C     + + + STATEMENT FUNCTION TYPES + + +
+      REAL A, C
+ 
+C     + + + DATA INITIALIZATIONS + + +
+      DATA W/96.0/, BG/68.75/, A0/299.5/, ALPHA/1.55/,
+     C     BETA/1.2373/
+ 
+C     + + + STATEMENT FUNCTION DEFINITIONS + + +
+      A(Y) = 403.5 + Y*(144. + Y*2.75)
+      C(HH,HHG) = .66516 + (HHG/HH)*(-.4525 + .70985*(HHG/HH))
+C***********************************************************************
+      Y2LIM = C(Y1 - 1, HG)*HG
+      AG = Y2LIM*BG
+      A1 = A(Y1)
+      Y2LIM = Y2LIM + 1.
+ 
+      E = (AG*A1)**2/(A1**2 - ALPHA*AG**2)
+ 
+      A3 = A0 + W*Y3
+ 
+      D = (AG*A3)/(A3 - BETA*AG)
+ 
+      DD = 4.*E**2/(W*D)**2 - (4.*E*Y1)/(W*D) + Y3**2
+      IF(DD.LT.0.0) THEN
+        SOY2 = -1.
+      ELSE
+        Y2 = 2.*E/(W*D) + SQRT(DD)
+        IF(Y2.GT.Y2LIM) THEN
+          SOY2 = Y2
+        ELSE
+          SOY2 = -1.0
+        ENDIF
+      ENDIF
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   SW
+     I               (H1, QFW, DQFW, H3, H3STAR,
+     O                Q, DQH1, DQH3)
+ 
+C     + + + PURPOSE + + +
+C     Find submerged weir flow given the free flow and its derivative
+C     with respect to H1.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      REAL DQFW, DQH1, DQH3, H1, H3, H3STAR, Q, QFW
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     H1     - upstream head
+C     QFW    - free weir flow
+C     DQFW   - derivative of flow wrt to head for free weir flow
+C     H3     - head immediately below sluice gates
+C     H3STAR - value of head immediately below sluice gates
+C               at boundary of free orifice flow
+C     Q      - flow rate
+C     DQH1   - derivative of flow wrt to upstream head
+C     DQH3   - derivative of flow wrt to downstream head
+ 
+C     + + + LOCAL VARIABLES + + +
+      REAL FAC, SUBFAC
+C***********************************************************************
+      FAC = (H3 - H3STAR)/(H1 - H3STAR)
+      SUBFAC = 1. - FAC**1.5
+ 
+      Q = QFW*SUBFAC
+ 
+      DQH1 = DQFW*SUBFAC + 3.*QFW*H3/(H1**2-H1*H3STAR)*FAC**2
+ 
+      DQH3 = -3.*QFW*FAC**2/(H1 - H3STAR)
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   TWOD14
+     I                   (IPNT, STDOUT, JTIME, NEX, EPT, EMC, QE2,    
+     I                    YE2, ZE,
+     O                    RES, PYL, PQL, PYR, PQR)
+ 
+C     + + + PURPOSE + + +
+C     Compute flow for a 2-d table when the arguments
+C     are downstream water level and the flow rate.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPNT, STDOUT, EPT, NEX
+      INTEGER EMC(EPT)
+      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES, YE2(NEX), ZE(NEX)
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPNT   - pointer into EMC for description of control structure
+C     STDOUT   - Fortran unit number for user output and messages
+C     TIME   - elapsed time in seconds from start of run
+C     NEX    - number of exterior nodes in the model
+C     EPT    - length of EMC(*)
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     QE2    - flow at exterior nodes at end of time step
+C     YE2    - depths at exterior nodes at end of time step
+C     ZE     - elevation of datum for depth at exterior node
+C     RES    - value of the residual function
+C     PYL    - partial derivative of residual function wrt depth at
+C               left node
+C     PQL    - partial derivative of residual function wrt flow at left
+C               node
+C     PYR    - partial derivative of residual function wrt depth at
+C               right node
+C     PQR    - partial derivative of residual function wrt flow at right
+C               node
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER DNN, DUTAB, FREE, FSGN, IDUM, NTAB, QNN, SYSGN, UDTAB,
+     A        UNN, ZTAB
+      REAL DHUED, DHUQ, DQTHU, ED, HBASE, HD, HU, HUTAB, PDV, Q, QT,
+     A     RDUM
+
+      character*5  getusn, unn_char*5, dnn_char*5
+c      integer verbose
+c      common/debug/ verbose
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM, RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL LKTAB, TDLK14
+C***********************************************************************
+C     GET KEY VALUES
+ 
+      UNN = EMC(IPNT+2)
+      DNN = EMC(IPNT+3)
+
+c     extract user node labels for debug output to appear later
+c      unn_char = getusn(unn)
+c      if(unn_char.eq.'F3998') then
+c        dnn_char = getusn(dnn)
+c        verbose = 1
+c      else
+c        verbose = 0
+c      endif 
+
+c      if(verbose.eq.1) then
+c        write(stdout,91) unn_char, dnn_char
+c91      format(/,' Debug type 14 table btwn: Ups Node=',A5,
+c     a          ' and Dns Node=',A5)
+c      endif
+
+      QNN = EMC(IPNT+4)
+      SYSGN = EMC(IPNT+5)
+      Q = QE2(QNN)
+      IF(Q.LT.0.0) THEN
+        FSGN = -SYSGN
+      ELSE
+        FSGN = SYSGN
+      ENDIF
+c      if(verbose.eq.1) then 
+c        WRITE(STDOUT,*) 'First: SYSGN=',SYSGN, ' FSGN=',FSGN
+c      endif
+ 
+
+C     GET TABLE ADDRESSES
+      UDTAB = EMC(IPNT+7)
+      DUTAB = EMC(IPNT+8)
+      ZTAB = EMC(IPNT+10)
+ 
+      IDUM = EMC(IPNT+11)
+      HBASE = RDUM
+ 
+C     ESTABLISH THE BASE ELEVATION FOR HEAD
+      IF(ZTAB.GT.0) THEN
+        CALL LKTSTAB
+     I            (ZTAB, JTIME,
+     O             HBASE, NTAB, PDV)
+      ENDIF
+ 
+C     TRAP THE SPECIAL CASE WHEN BOTH HEADS ARE LESS THAN ZERO.  THERE
+C     IS NO FLOW AND THERE IS NO RELATIONSHIP BETWEEN THE HEADS NOR
+C     BETWEEN HEAD AND FLOW.
+ 
+      HU = YE2(UNN) + ZE(UNN) - HBASE
+      HD = YE2(DNN) + ZE(DNN) - HBASE
+      
+c      if(verbose.eq.1) then 
+c        WRITE(STDOUT,*) ' TWOD14-from args: HU=', HU, ' HD=',HD,' Q=',Q
+c      endif
+
+      IF(HU.LE.0.0.AND.HD.LE.0.0) THEN
+C       SPECIAL CASE.  FORCE FLOW AT FLOW NODE TO BE ZERO.
+ 
+        RES = QE2(QNN)
+ 
+        PYL = 0.0
+        PYR = 0.0
+        IF(UNN.EQ.QNN) THEN
+C         FLOW NODE AT NOMINAL UPSTREAM NODE
+          PQR = 0.0
+          PQL = 1.0
+        ELSE
+C         FLOW NODE AT NOMINAL DOWNSTREAM NODE
+          PQR = 1.0
+          PQL = 0.0
+        ENDIF
+c        if(verbose.eq.1) then
+c          WRITE(STDOUT,*) ' TWOD14 SPECIAL CASE Q forced to 0: RES=',RES
+c          WRITE(STDOUT,*) ' PYL=',PYL,' PQL=',PQL,' PYR=',PYR,
+c     a                    ' PQR=',PQR
+c        endif
+        RETURN
+      ENDIF
+
+c     We must check to make sure that Q not zero is consistent with the
+c     heads.  Roundoff and convergence noise can result in a Q in a direction
+c     contrary to the head pattern.  Here we will check for the physical 
+c     upstream head being positive before we accept the flow as valid. 
+c     There may be cases in which both heads are positive but the flow
+c     is inconsistent with the head difference.  That case should be 
+c     handled properly below.  Typically the flows are quite small, 
+c     negligible in fact, that cause the problems detected in testing
+c     so far.  We will see if this additional code solves the severe
+c     convergence problems enountered when tables of type 14 operate
+c     on flows that vary between zero and non-zero.  
+
+c     The FSGN gives the physical direction of flow.  If FSGN > 0 
+c     then the flow is moving from the nominal upstream node
+c     to the nominal dns node, no matter what those nodes are. 
+      if(FSGN.gt.0) then 
+c       flow from unn to dnn.  HU must be > 0 in this case. 
+        if(HU.le.0.0) then
+c         force the flow to zero and set FSGN to SYSGN 
+          q = 0.0
+          QE2(QNN) = q
+
+          fsgn = sysgn
+c          if(verbose.eq.1) then
+c            write(stdout,*) 'Q inconsistent with heads a. forced to 0.'
+c          endif
+        endif
+      else
+c       flow from dnn  to unn.  HD must be > 0 in this case.
+        if(HD.le.0.0) then
+c         force flow to zero and set fsgn to sysgn
+          q = 0.0
+          QE2(QNN) = q
+          fsgn = sysgn
+c          if(verbose.eq.1) then
+c            write(stdout,*) 'Q inconsistent with heads b. forced to 0.'
+c          endif
+        endif
+      endif
+      
+      IF(Q.EQ.0.0.AND.HU.NE.HD) THEN
+C       SECOND SPECIAL CASE.  STANDARD LOOKUP DOES NOT WORK.
+ 
+        IF(HU.GT.HD) THEN
+C         ASSUME FREE FLOW AT HU FROM NOMINAL UPSTREAM TO NOMINAL
+C         DOWNSTREAM NODE.
+ 
+          HUTAB = HU
+          QT = 0.0
+          ED = ZE(DNN) + YE2(DNN)
+          CALL TDLK14
+     I               (STDOUT, UDTAB, 14, ED, HBASE,
+     M                QT,
+     O                HUTAB, DQTHU, DHUQ, FREE)
+ 
+C         NOTE: ON RETURN QT IS THE FREE FLOW at HUTAB.
+ 
+          PYL = DHUQ
+          PYR = 0.0
+          IF(QNN.EQ.UNN) THEN
+            PQL = -1.0
+            PQR = 0.0
+          ELSE
+            PQL = 0.0
+            PQR = -1.0
+          ENDIF
+ 
+C         SET THE SIGN TO WHAT THE FLOW AT THE FLOW NODE SHOULD HAVE.
+C         FOR FLOW FROM NOMINAL UP TO NOMINAL DOWN, THE FLOW AT THE
+C         FLOW NODE HAS THE SAME SIGN AS SYSGN.
+ 
+          IF(SYSGN.LT.0) THEN
+            RES = -QT
+          ELSE
+            RES = QT
+          ENDIF
+
+        ELSE
+C         ASSUME FREE FLOW AT HD FROM NOMINAL DOWNSTREAM TO NOMINAL
+C         UPSTREAM
+ 
+          HUTAB = HD
+          QT = 0.0
+          ED = ZE(UNN) + YE2(UNN)
+          CALL TDLK14
+     I               (STDOUT, DUTAB, 14, ED, HBASE,
+     M                QT,
+     O                HUTAB, DQTHU, DHUQ, FREE)
+ 
+          PYR = DHUQ
+          PYL = 0.0
+          IF(QNN.EQ.UNN) THEN
+            PQL = -1.0
+            PQR = 0.0
+          ELSE
+            PQL = 0.0
+            PQR = -1.0
+          ENDIF
+ 
+C         SET THE SIGN THAT THE FLOW AT THE FLOW NODE SHOULD HAVE
+C         HERE THE FLOW AT THE FLOW NODE SHOULD HAVE A SIGN OPPOSITE
+C         FROM THE SYSGN
+          IF(SYSGN.GT.0) THEN
+            RES = -QT
+          ELSE
+            RES = QT
+          ENDIF
+        ENDIF
+c        if(verbose.eq.1) then
+c          write(stdout,*) ' Second special case: HU ne HD and Q=0'
+c          write(stdout,*) ' QT=',qt,' PYL=',pyl,' PQL=',pql,' PYR=',pyr,
+c     a                   ' PQR=',pqr
+c          write(stdout,*) ' RES=',res
+c        endif
+
+        RETURN
+      ENDIF
+ 
+C     THERE ARE FOUR DIFFERENT CASES IF AT LEAST ONE OF THE HEADS IS
+C     POSITIVE AND THE FLOW IS NON-ZERO.  The flow argument is
+C     not changed in TDLK14 in this case.
+ 
+      IF(FSGN.GT.0) THEN
+C       FLOW FROM UNN -> DNN.
+C       COMPUTE VALUE FROM THE TABLE
+ 
+        ED = YE2(DNN) + ZE(DNN)
+        QT = ABS(Q)
+        CALL TDLK14
+     I             (STDOUT, UDTAB, 14, ED, HBASE,
+     M              QT,
+     O              HUTAB, DHUED, DHUQ, FREE)
+        RES = HUTAB - YE2(UNN) - ZE(UNN) + HBASE
+ 
+        IF(QNN.EQ.UNN) THEN
+C         FLOW NODE AT PHYSICAL UPSTREAM LOCATION
+ 
+          PYL = -1.0
+          IF(Q.GT.0.0) THEN
+            PQL = DHUQ
+          ELSE
+            PQL = -DHUQ
+          ENDIF
+          PYR = DHUED
+          PQR = 0.0
+        ELSE
+C         FLOW NODE AT PHYSICAL DOWNSTREAM LOCATION
+ 
+          PYL = -1.0
+          PQL = 0.0
+          PYR = DHUED
+          IF(Q.GT.0.0) THEN
+            PQR = DHUQ
+          ELSE
+            PQR = -DHUQ
+          ENDIF
+        ENDIF
+c        if(verbose.eq.1) then
+c          write(stdout,*) 'unn->dnn',' Q=',Q,' RES=',RES
+c          write(stdout,*) ' PYL=',pyl,' PQL=',pql,' PYR=',pyr,
+c     a                   ' PQL=',pql
+c        endif
+      ELSE
+C       FLOW FROM DNN -> UNN.
+ 
+        ED = YE2(UNN) + ZE(UNN)
+        QT = ABS(Q)
+        CALL TDLK14
+     I             (STDOUT, DUTAB, 14, ED, HBASE,
+     M              QT,
+     O              HUTAB, DHUED, DHUQ, FREE)
+        RES = HUTAB - YE2(DNN) - ZE(DNN) + HBASE
+ 
+        IF(QNN.EQ.UNN) THEN
+ 
+          PYL = DHUED
+          IF(Q.GT.0.0) THEN
+            PQL = DHUQ
+          ELSE
+            PQL = -DHUQ
+          ENDIF
+          PYR = - 1.0
+          PQR = 0.0
+        ELSE
+ 
+          PYL = DHUED
+          PQL = 0.0
+          PYR = -1.0
+          IF(Q.GT.0.0) THEN
+            PQR = DHUQ
+          ELSE
+            PQR = -DHUQ
+          ENDIF
+        ENDIF
+c        if(verbose.eq.1) then
+c          write(stdout,*) 'dnn->unn',' Q=',Q,' RES=',RES
+c          write(stdout,*) ' PYL=',pyl,' PQL=',pql,' PYR=',pyr,
+c     a                   ' PQL=',pql
+c        endif
+      ENDIF
+ 
+c      if(verbose.eq.1) then
+c        WRITE(STDOUT,*) ' TWOD14: RES=',RES,' HUTAB=',HUTAB, 'Q=',Q
+c        WRITE(STDOUT,*) ' PYL=',PYL,' PQL=',PQL,' PYR=',PYR,' PQR=',PQR
+c      endif
+
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   TWOD6
+     I                  (IPNT, STDOUT, JTIME, NEX, EPT, EMC, QE2, YE2,
+     I                   ZE,
+     O                   RES, PYL, PQL, PYR, PQR)
+ 
+C     + + + PURPOSE + + +
+C     Compute flow for a 2-D table when the arguments
+C     to the table are elevation.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPNT, STDOUT, EPT, NEX
+      INTEGER EMC(EPT)
+      REAL PQL, PQR, PYL, PYR, QE2(NEX), RES,  YE2(NEX), ZE(NEX)
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPNT   - pointer into EMC for description of control structure
+C     STDOUT   - Fortran unit number for user output and messages
+C     TIME   - elapsed time in seconds from start of run
+C     NEX    - number of exterior nodes in the model
+C     EPT    - length of EMC(*)
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     QE2    - flow at exterior nodes at end of time step
+C     YE2    - depths at exterior nodes at end of time step
+C     ZE     - elevation of datum for depth at exterior node
+C     RES    - value of the residual function
+C     PYL    - partial derivative of residual function wrt depth at
+C               left node
+C     PQL    - partial derivative of residual function wrt flow at left
+C               node
+C     PYR    - partial derivative of residual function wrt depth at
+C               right node
+C     PQR    - partial derivative of residual function wrt flow at right
+C               node
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'gatcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER DNN, DUTAB, FREE, I, IDUM, IOFF, MFTAB, NTAB, QNN, SYSGN,
+     A        TYPE, UDTAB, UNN, ZTAB, ispout
+      REAL DQED, DQEU, EL, ER, HBASE, PDV, Q, RDUM, YL, YR, cap_fac
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM, RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER GETTYP
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL GETTYP, LKTAB, TDLK13, TDLK6, tdlk43
+C***********************************************************************
+C     GET KEY VALUES
+ 
+      UNN = EMC(IPNT+2)
+      DNN = EMC(IPNT+3)
+      QNN = EMC(IPNT+4)
+      SYSGN = EMC(IPNT+5)
+ 
+      YL = YE2(UNN)
+      YR = YE2(DNN)
+      EL = YL + ZE(UNN)
+      ER = YR + ZE(DNN)
+ 
+C     SET THE DERIVATIVE WRT FLOW.
+ 
+      IF(QNN.EQ.UNN) THEN
+        PQL = 1.0
+        PQR = 0.0
+      ELSE
+        PQL = 0.0
+        PQR = 1.0
+      ENDIF
+ 
+      IOFF = 0
+      RES = 0.0
+      PYL = 0.0
+      PYR = 0.0
+      DO 1000 I=1,ABS(EMC(IPNT+6))
+        UDTAB = EMC(IPNT+IOFF+7)
+        DUTAB = EMC(IPNT+IOFF+8)
+        MFTAB = EMC(IPNT+IOFF+9)
+        ZTAB = EMC(IPNT+IOFF+10)
+ 
+        IDUM = EMC(IPNT+IOFF+11)
+        HBASE = RDUM
+c        write(stdout,*) ' In TWOD6: HBASE=',HBASE,' IDUM=',IDUM,
+c     a                  ' ipnt+ioff+11=',ipnt+ioff+11
+        ispout = EMC(IPNT+IOFF+12)
+
+ 
+C       ESTABLISH THE BASE ELEVATION FOR HEAD
+        IF(ZTAB.GT.0) THEN
+          CALL LKTSTAB
+     I              (ZTAB, JTIME,
+     O               HBASE, NTAB, PDV)
+        ENDIF
+ 
+c       Process possible capacity factors
+        if(mftab > 0 ) then 
+c         this structure is controled by an operation block
+          IDUM = EMC(IPNT+ioff+13)
+          cap_fac = RDUM
+          GOPEN(ispout) = cap_fac
+          if(cap_fac == 1.0) then
+            fclass(ispout) = '  FllOpn'
+            FCLASS_CODE(ispout) = 13
+          elseif(cap_fac == 0.0) then
+            fclass(ispout) = '  Closed'
+            FCLASS_CODE(ispout) = 14
+          else
+            fclass(ispout) = '  PrtOpn'
+            FCLASS_CODE(ispout) = 15
+          endif             
+        elseif(mftab < 0) then
+c         Capacity factor given in a time series table.
+          CALL LKTSTAB
+     I              (-mftab, JTIME,
+     O               cap_fac, NTAB, PDV)
+          GOPEN(ispout) = cap_fac
+          fclass(ispout) = '   FrmTS'
+          FCLASS_CODE(ispout) = 16
+          
+        else
+          cap_fac = 1.0
+        endif
+
+        IOFF = IOFF + CD5TY6
+ 
+C       BASE FLOW DIRECTION ON WATER SURFACE ELEVATION FOR NOW.
+C       EXTEND LATER IF NEEDED
+ 
+        IF(EL.GE.ER) THEN
+C         FLOW FROM NOMINAL UPSTREAM NODE TO DOWNSTREAM NODE
+ 
+          TYPE = GETTYP(UDTAB)
+          IF(TYPE.EQ.43) THEN
+            call tdlk43
+     I                 (STDOUT, udtab, 43, MFTAB, JTIME, er, el, hbase,
+     O                  Q, DQed, DQeu, FREE)
+c      write(stdout,9143) er, el, Q, DQED, DQEU, FREE
+c9143  format(' tdlk43 on return: EDA=',f10.3,' EUA=',f10.3,' Q=',f10.3,
+c     a       ' DQED=',f10.3,'DQEU=',f10.3,' FREE=',i5)
+
+          ELSEif(type.eq.13) then
+            CALL TDLK13
+     I                 (STDOUT, UDTAB, 13, MFTAB, JTIME, ER, EL, HBASE,
+     O                  Q, DQED, DQEU, FREE)
+          else
+            CALL TDLK6
+     I                (STDOUT, UDTAB, 6, MFTAB, JTIME, ER, EL, HBASE,
+     O                 Q, DQED, DQEU, FREE)
+          ENDIF
+
+          if(cap_fac .ne. 1.0) then
+            q = cap_fac*q
+            dqeu = cap_fac*dqeu
+            dqed = cap_fac*dqed
+          endif
+          IF(SYSGN.GT.0) THEN
+            RES = RES - Q
+            PYL = PYL - DQEU
+            PYR = PYR - DQED
+          ELSE
+            RES = RES + Q
+            PYL = PYL + DQEU
+            PYR = PYR + DQED
+          ENDIF
+        ELSE
+C         FLOW FROM NOMINAL DOWNSTREAM NODE TO UPSTREAM NODE
+          TYPE = GETTYP(DUTAB)
+          IF(TYPE.EQ.43) THEN
+            call tdlk43
+     I               (STDOUT, dutab, 43, MFTAB, JTIME, el, er, hbase,
+     O                Q, DQed, DQeu, FREE)
+c      write(stdout,9143) er, el, Q, DQED, DQEU, FREE
+          ELSEif(type.eq.13) then
+            CALL TDLK13
+     I                 (STDOUT, DUTAB, 13, MFTAB, JTIME, EL, ER, HBASE,
+     O                  Q, DQED, DQEU, FREE)
+          else
+            CALL TDLK6
+     I                (STDOUT, DUTAB, 6, MFTAB, JTIME, EL, ER, HBASE,
+     O                 Q, DQED, DQEU, FREE)
+          ENDIF
+          if(cap_fac .ne. 1.0) then
+            q = cap_fac*q
+            dqeu = cap_fac*dqeu
+            dqed = cap_fac*dqed
+          endif
+          IF(SYSGN.GT.0) THEN
+            RES = RES + Q
+            PYL = PYL + DQED
+            PYR = PYR + DQEU
+          ELSE
+            RES = RES - Q
+            PYL = PYL - DQED
+            PYR = PYR - DQEU
+          ENDIF
+        ENDIF
+ 
+ 1000 CONTINUE
+ 
+      RES = RES + QE2(QNN)
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   UFGATE
+     I                   (IPNT, EMC, MLEMC, YE2, ZE, QE2, NEX, STDOUT,
+     I                    JTIME, QE1,
+     O                    RES, PYL, PQL, PYR, PQR)
+ 
+C     + + + PURPOSE + + +
+C     Underflow gate.
+ 
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER IPNT, MLEMC, NEX, STDOUT
+      INTEGER EMC(MLEMC)
+      REAL PQL, PQR, PYL, PYR, QE2(NEX), QE1(NEX), RES,  YE2(NEX),
+     A     ZE(NEX)
+      real*8 jtime
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     IPNT   - pointer into EMC for description of control structure
+C     EMC    - vector containing coded form of the Matrix Control Input
+C     MLEMC  - maximum length of EMC(*)
+C     YE2    - depths at exterior nodes at end of time step
+C     ZE     - elevation of datum for depth at exterior node
+C     QE2    - flow at exterior nodes at end of time step
+C     NEX    - number of exterior nodes in the model
+C     STDOUT - standard output unit for user messages
+C     TIME   - elapsed time in seconds from start of run
+C     QE1    - flow at exterior nodes at start of time step.
+C     RES    - value of the residual function
+C     PYL    - partial derivative of residual function wrt depth at
+C               left node
+C     PQL    - partial derivative of residual function wrt flow at left
+C               node
+C     PYR    - partial derivative of residual function wrt depth at
+C               right node
+C     PQR    - partial derivative of residual function wrt flow at right
+C               node
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'gatcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER DNN, DUTAB, IDUM, ISPOUT, MFTAB, NTAB, OPCODE, QNN, SYSGN,
+     A        UDTAB, UNN, GATE_FACTOR_TABLE, GATE_FACTOR_EXN,
+     B        FTYPE_CODE
+      REAL DQED, DQEU, DTIME, EL, ER, HBASE, HG, MAXGAT, NEWHG, Q,
+     A        RDUM, YL, YR, GATE_FACTOR, PDV
+      CHARACTER FTYPE*8
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE (IDUM,RDUM)
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC ABS
+ 
+C     + + + EXTERNAL NAMES + + +
+      CHARACTER GET_TABID*16
+      EXTERNAL LKTAB, TDLK15, GET_TABID
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *ERR:64* Table Id=',A,' has invalid values for',
+     A  ' structure setting.')
+52    format(' Gate opening in ufgate=',f8.2,' Max. opening=',f8.2)
+C***********************************************************************
+C     OBTAIN BASIC INFORMATION FROM EMC
+ 
+      UNN = EMC(IPNT+2)
+      DNN = EMC(IPNT+3)
+      QNN = EMC(IPNT+4)
+      SYSGN = EMC(IPNT+5)
+      OPCODE = EMC(IPNT+6)
+      UDTAB = EMC(IPNT+8)
+      DUTAB = EMC(IPNT+9)
+C     ISPOUT is the pointer into the vectors used to allow output
+C     of the gate opening and the flow class to the special output file.
+      ISPOUT = EMC(IPNT+10)
+      IDUM = EMC(IPNT+11)
+      HBASE = RDUM
+      IDUM = EMC(IPNT+12)
+      MAXGAT = RDUM
+      MFTAB = 0
+      GATE_FACTOR_TABLE = EMC(IPNT+15)
+
+      IF(GATE_FACTOR_TABLE.GT.0) THEN
+C       Lookup the factor.
+        GATE_FACTOR_EXN = EMC(IPNT+16)
+        CALL LKTAB
+     I            (GATE_FACTOR_TABLE, QE1(GATE_FACTOR_EXN), 0,
+     O             GATE_FACTOR, NTAB, PDV)
+      ELSE
+        GATE_FACTOR = 1.0
+      ENDIF
+ 
+C     DEFINE THE GATE OPENING FOR THIS TIME STEP
+ 
+      IF(OPCODE.GT.0) THEN
+C       OPERATION BLOCK HAS ALREADY SET THE OPENING FRACTION
+ 
+        IDUM = EMC(IPNT+13)
+        HG = MAXGAT*RDUM
+      ELSE
+C       LOOK UP VALUE IN TABLE BASED ON TIME AT START OF THE CURRENT
+C       STEP
+ 
+        CALL LKTSTAB
+     I            (ABS(OPCODE), JTIME,
+     O             HG, NTAB, DTIME)
+        IF(HG.LT.0.0.OR.HG.GT.MAXGAT) THEN
+          WRITE(STDOUT,50) GET_TABID(NTAB)
+          write(stdout,52) hg, maxgat
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+      ENDIF
+ 
+      GOPEN(ISPOUT) = HG
+ 
+      YL = YE2(UNN)
+      YR = YE2(DNN)
+      EL = YL + ZE(UNN)
+      ER = YR + ZE(DNN)
+ 
+C     SET THE DERIVATIVE WRT FLOW.
+ 
+      IF(QNN.EQ.UNN) THEN
+        PQL = 1.0
+        PQR = 0.0
+      ELSE
+        PQL = 0.0
+        PQR = 1.0
+      ENDIF
+ 
+C     BASE FLOW DIRECTION ON WATER SURFACE ELEVATION FOR NOW.
+C     EXTEND LATER IF NEEDED
+ 
+ 
+      IF(EL.GE.ER) THEN
+C       FLOW FROM NOMINAL UPSTREAM NODE TO DOWNSTREAM NODE
+ 
+        CALL TDLK15
+     I             (STDOUT, UDTAB, MFTAB, JTIME, ER, EL, HG, HBASE,
+     O              Q, DQED, DQEU, NEWHG, FTYPE, FTYPE_CODE)
+        Q = GATE_FACTOR*Q
+        DQEU = GATE_FACTOR*DQEU
+        DQED = GATE_FACTOR*DQED
+        IF(SYSGN.GT.0) THEN
+          RES = -Q
+          PYL =  -DQEU
+          PYR =  -DQED
+        ELSE
+          RES = Q
+          PYL = DQEU
+          PYR = DQED
+        ENDIF
+ 
+      ELSE
+C       FLOW FROM NOMINAL DOWNSTREAM NODE TO UPSTREAM NODE
+ 
+        CALL TDLK15
+     I             (STDOUT, DUTAB, MFTAB, JTIME, EL, ER, HG, HBASE,
+     O              Q, DQED, DQEU, NEWHG, FTYPE, FTYPE_CODE)
+        Q = GATE_FACTOR*Q
+        DQEU = GATE_FACTOR*DQEU
+        DQED = GATE_FACTOR*DQED
+        IF(SYSGN.GT.0) THEN
+          RES =  Q
+          PYL = DQED
+          PYR = DQEU
+        ELSE
+          RES = -Q
+          PYL = -DQED
+          PYR = -DQEU
+        ENDIF
+      ENDIF
+ 
+      RES = RES + QE2(QNN)
+      FCLASS(ISPOUT) = FTYPE
+      FCLASS_CODE(ISPOUT) = FTYPE_CODE
+      IF(FTYPE.EQ.'      FW'.OR.FTYPE.EQ.'      SW') THEN
+C       Set the special gate opening to the weir condition so that
+C       the gate opening will not be larger than needed.
+        RDUM = NEWHG/MAXGAT
+        IF(RDUM.GT.1.0) RDUM = 1.0
+        EMC(IPNT+14) = IDUM
+      ELSE
+        RDUM = 0.0
+        EMC(IPNT+14) = IDUM
+      ENDIF
+C      WRITE(STDOUT,*) ' UFGATE: EL=',EL,' ER=',ER
+C      WRITE(STDOUT,*) ' HG=',HG,' FTYPE=',FTYPE,' RES=',RES
+C      WRITE(STDOUT,*) ' PYL=',PYL,' PYR=',PYR
+C      WRITE(STDOUT,*) ' '
+      RETURN
+      END

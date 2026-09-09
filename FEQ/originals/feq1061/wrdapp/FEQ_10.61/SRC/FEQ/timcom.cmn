@@ -1,0 +1,9 @@
+
+      COMMON/TIMCOM/ ITICK, ITICK0, ITICK1, ITICK2, CMPEXT, CMPINT,
+     A               SLVEXT, SLVINT, min_time_step
+
+      INTEGER ITICK, ITICK0, ITICK1, ITICK2, CMPEXT, CMPINT, SLVEXT,
+     A        SLVINT
+
+      real min_time_step
+

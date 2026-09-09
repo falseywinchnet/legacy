@@ -1,0 +1,25 @@
+C***********************************************************************
+C     COMMON BLOCK FOR PROFILE MATRIX SOLUTION.
+
+      COMMON/MATCOM/ MATBLK, NUMEQ, NENTRY, R, C, EQEND, VARID, 
+     A    BEGROW, ENDCON, MBTYPE, ADD
+
+      COMMON/MATCOMD/ PDAVEC, RHS
+      COMMON/MATCOM2/ PDAVEC2, RHS2
+
+      INTEGER MATBLK, NUMEQ, NENTRY
+
+C      INTEGER R(MRMAT), C(0:MRMAT), BEGROW(MRMBLK), ENDCON(MRMBLK),
+C     A        MBTYPE(MRMBLK), ADD(MNETRY), WORK(MLPDA), EQEND(MRMAT),
+C     B        VARID(MRMAT)
+      INTEGER R(MRMAT), C(0:MRMAT), BEGROW(MRMBLK), ENDCON(MRMBLK),
+     A        MBTYPE(MRMBLK), ADD(MNETRY), EQEND(MRMAT),
+     B        VARID(MRMAT)
+
+      REAL*8 PDAVEC(MLPDA), RHS(MRMAT)
+
+C     Add second set to help in diagnostics-at least as a trial.
+      REAL*8 PDAVEC2(MLPDA), RHS2(MRMAT)
+
+C      EQUIVALENCE (PDAVEC(1), WORK(1))
+C***********************************************************************

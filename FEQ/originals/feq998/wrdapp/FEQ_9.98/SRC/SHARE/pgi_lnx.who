@@ -1,0 +1,54 @@
+C     Create a routine that can be called at runtime
+C     that will report the compiler and the operating
+C     system.  Also include a routine that will 
+C     report the operating system when called at runtime. 
+C     Fortran has not builtin means for reporting this 
+C     info so we create a system at compile time 
+C     that will do that.  A file file like this one
+C     will exist for each compiler-os supported.  The
+C     script or batch file used to compile will then 
+C     select the correct one to include. 
+
+      INTEGER FUNCTION WHAT_OS()
+
+C     Return a coded value that gives the OS. 
+
+      IMPLICIT NONE
+      INTEGER MS, LINUX
+      PARAMETER (MS=1, LINUX=2)
+      
+
+C***********************************************************************
+      WHAT_OS = Linux
+      RETURN
+      END
+
+C
+C
+C     
+      SUBROUTINE REPORT_CMP_OS(STDOUT)
+
+C     Report the compiler and the OS for this executable.
+      IMPLICIT NONE
+
+      INTEGER STDOUT
+
+C     Local
+      INTEGER OS
+
+      CHARACTER*16 OS_NAME(2)
+
+C     Called routines
+      INTEGER WHAT_OS
+
+      DATA OS_NAME/'MS Windows', 'Linux'/
+
+C     **************************Formats*********************************
+50    FORMAT(/,' Executable compiled with: PGI F90 to run under: ',A)
+C***********************************************************************
+      OS = WHAT_OS()
+
+      WRITE(STDOUT,50) OS_NAME(OS)
+
+      RETURN
+      END

@@ -1,0 +1,170 @@
+C     ***********
+C     *         *
+C     * TS_CHK_AND_UPDATE
+C     *         *
+C     ***********
+
+      SUBROUTINE TS_CHK_AND_UPDATE(STDOUT, NEW_FORM, NC_LONGA, DST_CAT,
+     I                             DST_PNT, 
+     M                             TAB_NUM, LDCALL, EFLAG)
+
+C     Process a possible time-series reference.  If present,
+C     check ranges and update the time-series management data
+C     structure.
+
+      CHARACTER*16 NC_LONGA
+
+      INTEGER NEW_FORM, TAB_NUM, DST_CAT, DST_PNT, EFLAG, STDOUT
+
+C     Definitions:
+
+C     STDOUT- standard output unit number.
+C     NEW_FORM - flag for new input form for Network Matrix: 0 old
+C               form, not 0- new form.
+C     TAB_NUM - table number from old form
+C     NC_LONG - identifier string from new form as well as the
+C               character sequence of the old form.
+C     DST_CAT- destination category for values taken from the time series:
+C              forced boundary, lpr evaporation,etc.
+C     DST_PNT- integer index giving the location that will contain
+C              the value taken from the time series.  Its nature
+C              may depend on the destination category. 
+C     LDCALL - flag for calling the LOAD subroutine to process
+C              time series.
+ 
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ts_mngt.prm'
+      INCLUDE 'ts_mngt.com'
+
+      EXTERNAL KIL, LSATAB
+
+C     Local
+
+      CHARACTER*16 NC_LONG
+
+      INTEGER  TS_INDEX, LOCAL_EFLAG, IPNT, IT
+
+C     ******************************Formats*****************************
+50    FORMAT(/,' *ERR:277* Count of time-series=',I5,' > ',I5,', the',
+     A         ' current limit.')
+52    FORMAT(/,' *ERR:278* Count of time-series references=',I5,' > ',
+     A         I5,', the current limit.')
+C***********************************************************************
+      NC_LONG = NC_LONGA
+      LOCAL_EFLAG = 0
+      IF(NEW_FORM.EQ.0) THEN
+C       This is the old form of input.  TAB_NUM < 0: id number
+C       for a time series taken from a file and appearing in the
+C       time-series input block.  TAB_NUM = 0: no time series
+C       is given.  TAB_NUM > 0: function table number.
+
+ 
+        IF(TAB_NUM.NE.0) THEN
+          IF(TAB_NUM.GT.0) THEN
+C           Convert to internal form
+            CALL GET_INTERNAL_TAB_NUMBER
+     I                                  (STDOUT, NC_LONG,
+     M                                   EFLAG,
+     O                                   TAB_NUM)
+          ENDIF
+
+          IF(TAB_NUM.GT.MFTNUM) CALL KIL
+     I                                   (9,
+     M                                    TAB_NUM, EFLAG)
+ 
+          IF(TAB_NUM.LT.0) THEN
+C           Treat the number as a time-series id.  However,
+C           strip the minus sign from the character string.
+            NC_LONG = NC_LONGA(2:16)
+          ENDIF            
+        ENDIF
+      ELSE
+C       This is the new form of input.  On entry TAB_NUM has
+C       no meaning.  The id for the time-series source is
+C       in NC_LONG.  If the first character of the id is
+C       a minus, then the source is known to be a file.
+C       The minus sign MUST be present to identify a reference to 
+C       a file. 
+        TAB_NUM = 0
+        IF(NC_LONG.NE.' ') THEN
+          IF(NC_LONG(1:1).EQ.'-') THEN
+C           This is a file reference.
+            TAB_NUM = -1
+            NC_LONG = NC_LONGA(2:16)
+          ELSE
+C           The field could have been left blank but it also could
+C           have an explicit character '0' in it.  It would then 
+C           be non-blank but would NOT indicate a time series table.
+C           Try to read the number as an integer to check this case.
+            READ(NC_LONG,*,ERR=100) TAB_NUM
+            
+C           Ignore the value of a successful conversion.  We need to 
+C           convert a postive number to an internal form.
+            CALL GET_INTERNAL_TAB_NUMBER
+     I                                  (STDOUT, NC_LONG,
+     M                                   EFLAG,
+     O                                   TAB_NUM)
+            GOTO 110
+100         CONTINUE
+C             Conversion error branch here. 
+              TAB_NUM = 0
+110         CONTINUE
+          ENDIF
+        ENDIF
+      ENDIF  
+      IF(TAB_NUM.NE.0) THEN
+        LDCALL = 1
+C       We have a reference to a time-series. Check the 
+C       time-series id table for the reference. If not
+C       seen before, add it; in any case return the
+C       index. 
+        NUM_DEST = NUM_DEST + 1
+        CALL  LSATAB
+     I             (STDOUT, NC_LONG, MXN_TS,
+     M                TS_ID, NUM_TS,
+     O                TS_INDEX, LOCAL_EFLAG)
+        IF(LOCAL_EFLAG.GT.0) THEN
+          WRITE(STDOUT,50) NUM_TS, MXN_TS
+          EFLAG = 1
+        ENDIF
+C       Is this the first occurrence or another occurence?
+        IF(DEST_CAT(TS_INDEX).EQ.0) THEN
+C         First time for this time-series.
+
+          IF(TAB_NUM.GT.0) THEN
+            SOURCE_CAT(TS_INDEX) = TS_FROM_TABLE
+          ELSE
+            SOURCE_CAT(TS_INDEX) = TS_FROM_FILE
+          ENDIF
+          SOURCE_ADDRESS(TS_INDEX) = TAB_NUM
+          DEST_CAT(TS_INDEX) = DST_CAT
+          DEST_PNT(TS_INDEX) = DST_PNT
+          DEST_LINK(TS_INDEX) = 0
+        ELSE
+C         We have another reference to the same time series
+C         with a different destination.
+          IPNT = TS_INDEX
+200       CONTINUE
+            IT = DEST_LINK(IPNT)
+            IF(IT.EQ.0) THEN
+C             Store in the next open location.
+              DEST_LINK(IPNT) = NEXT_LINK
+              
+              DEST_CAT(NEXT_LINK) = DST_CAT
+              DEST_PNT(NEXT_LINK) = DST_PNT
+              DEST_LINK(NEXT_LINK) = 0
+              NEXT_LINK = NEXT_LINK + 1
+              IF(NEXT_LINK.GT.MXN_DEST) THEN
+                WRITE(STDOUT,52) NEXT_LINK, MXN_DEST
+                EFLAG = 1
+                NEXT_LINK = MXN_DEST
+              ENDIF
+            ELSE
+              IPNT = IT
+              GOTO 200
+            ENDIF
+        ENDIF
+
+      ENDIF
+      RETURN
+      END  

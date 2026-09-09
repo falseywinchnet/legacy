@@ -1,0 +1,11 @@
+--- 9.98/fequtl/xs3com.cmn
++++ 10.61/fequtl/xs3com.cmn
+@@ -70,7 +70,7 @@
+ C            inducing level at section 43.  
+ C     Y3LTY2- depth at section 3 at the type 2 limit, that is, 
+ C             critical depth. 
+-C     Y3LTY1- submergence depth at section 3 for at the limit of
++C     Y3LTY1- submergence depth at section 3  at the limit of
+ C             type 1 flow. 
+ C     Y3LTY5- the full-flow-inducing value of piezometric level
+ C             relative to the invert at section 3 for flow types

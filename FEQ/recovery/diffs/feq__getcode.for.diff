@@ -1,0 +1,195 @@
+--- 9.98/feq/getcode.for
++++ 10.61/feq/getcode.for
+@@ -15,7 +15,7 @@
+       INTEGER STDOUT, NVAL, MAX_NVAL, MODE, CLEN(MAX_NVAL),
+      A        ITEM_TYPE(MAX_NVAL), EFLAG
+ 
+-      CHARACTER CVAL(MAX_NVAL)*64
++      CHARACTER CVAL(MAX_NVAL)*(*)
+ 
+ C     Local
+ 
+@@ -132,21 +132,20 @@
+      A        ITEM_TYPE(MAX_NVAL), TERML(MAX_NVAL), 
+      B        TERMCLS(MAX_NVAL), IVAL(MAX_NVAL), EFLAG
+ 
+-      CHARACTER CVAL(MAX_NVAL)*64, TERM(MAX_NVAL)*1
++      CHARACTER CVAL(MAX_NVAL)*(*), TERM(MAX_NVAL)*1
+ 
+ C     Local
+ 
+       INTEGER IGET, IS, LEFT, RIGHT, ASTERISK, PLUS_OR_MINUS,
+      A        VERTICAL_BAR, INTVAL, CHRVAL, IDFLAG,
+-     B        N, N_ADD, REPLICATE, IPUT, I
++     B        N, N_ADD, REPLICATE, IPUT, I, REAVAL, DPRVAL
+ 
+       PARAMETER (ASTERISK=2, PLUS_OR_MINUS=3, VERTICAL_BAR=17)
+-      PARAMETER(INTVAL=1, CHRVAL=4)
+-
+-      CHARACTER CHR*1, WORK*64
+-
+-      INTEGER LENSTR
+-      EXTERNAL LENSTR
++      PARAMETER(INTVAL=1, REAVAL=2, DPRVAL=3, CHRVAL=4)
++
++      CHARACTER CHR*1, WORK*128, increment*15
++
++      INTEGER len_trim
+ C     ***********************FORMATS************************************
+ 50    FORMAT(/,' *ERR:288* Argument: ',A,' before a + or - is not a',
+      A        ' valid exterior-node label.')
+@@ -184,6 +183,7 @@
+             READ(CVAL(IGET),*) LEFT
+           ELSEIF(ITEM_TYPE(IGET).EQ.CHRVAL) THEN
+ C           Item must be a exterior node label.
++c           Maybe a TAB or tab-trying to get this implemented
+             IDFLAG = 1
+             CHR = CVAL(IGET)(1:1)
+             IF(CHR.EQ.'F'.OR.CHR.EQ.'D'.OR.CHR.EQ.'U') THEN
+@@ -194,7 +194,13 @@
+                 WRITE(STDOUT,50) CVAL(IGET)(1:CLEN(IGET))
+                 STOP 'Abnormal stop: errors found.'
+ 120           CONTINUE
+-            ELSE
++            ELSEIF(cval(iget)(1:3) == 'TAB'.or.
++     a             cval(iget)(1:3) == 'tab') then
++c             Process adjustment to a datum not yet known. 
++c             We will combine into a single string and pass
++c             it on to the next level for processing.
++              idflag = 2
++            else         
+               WRITE(STDOUT,50) CVAL(IGET)(1:CLEN(IGET))
+               STOP 'Abnormal stop: errors found.'
+             ENDIF
+@@ -203,36 +209,48 @@
+             STOP 'Abnormal stop: errors found.'
+           ENDIF
+ 
+-C         Convert the second operand.  Must be an integer.
++C         Convert the second operand.  Could be integer, real, or double
+           IF(ITEM_TYPE(IGET+1).EQ.INTVAL) THEN
+             READ(CVAL(IGET+1),*) RIGHT
++          elseif(ITEM_TYPE(IGET+1).EQ.REAVAL.or.
++     a           ITEM_TYPE(IGET+1).EQ.DPRVAL) then
++c           Extract the string 
++            increment =  CVAL(IGET+1)
+           ELSE
+             WRITE(STDOUT,52) CVAL(IGET+1)(1:CLEN(IGET+1))
+             STOP 'Abnormal stop: errors found.'
+           ENDIF
+ 
+ C         Now do the operation.
+-          IF(TERM(IGET).EQ.'+') THEN
+-            LEFT = LEFT + RIGHT
+-          ELSE
+-            LEFT = LEFT - RIGHT
+-            IF(LEFT.LE.0) THEN
+-              WRITE(STDOUT,54) LEFT, RIGHT
+-              STOP 'Abnormal stop: errors found.'
+-            ENDIF
+-          ENDIF
+-
+-C         Now create the character-string form of the result.
+-          WRITE(WORK,'(I10)') LEFT
+-          CALL STRIP_L_BLANKS(
++          if(idflag /= 2) then
++            IF(TERM(IGET).EQ.'+') THEN
++              LEFT = LEFT + RIGHT
++            ELSE
++              LEFT = LEFT - RIGHT
++              IF(LEFT.LE.0) THEN
++                WRITE(STDOUT,54) LEFT, RIGHT
++                STOP 'Abnormal stop: errors found.'
++              ENDIF
++            ENDIF
++          
++
++C           Now create the character-string form of the result.
++            WRITE(WORK,'(I10)') LEFT
++            CALL STRIP_L_BLANKS(
+      M                        WORK)
+-          IF(IDFLAG.EQ.0) THEN
+-            CVAL(IS) = WORK
+-          ELSE
+-            CVAL(IS)(1:1) = CHR
+-            CVAL(IS)(2:) = WORK
+-          ENDIF
+-          CLEN(IS) = LENSTR(CVAL(IS))
++            IF(IDFLAG.EQ.0) THEN
++              CVAL(IS) = WORK
++            ELSE
++              CVAL(IS)(1:1) = CHR
++              CVAL(IS)(2:) = WORK
++            ENDIF
++          else
++c           concatenate the increment back onto the 
++c           TAB or tab so that it is passed to the next level
++            
++            cval(is) = 'TAB'//term(iget)//increment
++          endif
++          CLEN(IS) = len_trim(CVAL(IS))
+           ITEM_TYPE(IS) = ITEM_TYPE(IGET)
+           TERM(IS) = TERM(IGET+1)
+           TERMCLS(IS) = TERMCLS(IGET+1)
+@@ -281,7 +299,7 @@
+ C         Do the operation. 
+           CVAL(IS) = CVAL(IGET)
+           CVAL(IS)(CLEN(IGET)+1:) = CVAL(IGET+1)
+-          CLEN(IS) = LENSTR(CVAL(IS))
++          CLEN(IS) = len_trim(CVAL(IS))
+           ITEM_TYPE(IS) = ITEM_TYPE(IGET)
+           TERM(IS) = TERM(IGET+1)
+           TERMCLS(IS) = TERMCLS(IGET+1)
+@@ -468,7 +486,7 @@
+      A        TERML(MAX_NVAL), TERMCLS(MAX_NVAL)
+       REAL RVAL(MAX_NVAL)
+       REAL*8 DPVAL(MAX_NVAL)
+-      CHARACTER CVAL(MAX_NVAL)*64, TERM(MAX_NVAL)*1, INSTRUCTION*16
++      CHARACTER CVAL(MAX_NVAL)*256, TERM(MAX_NVAL)*1, INSTRUCTION*16
+ 
+ 
+       INTEGER LENSTR
+@@ -710,12 +728,15 @@
+               IF(ITEM_TYPE(I).EQ.PLACE_HOLDER) THEN
+                 F(FKNT) = 0.0
+                 FC(FKNT) = ' '
+-              ELSEIF(CVAL(I)(1:3).EQ.'TAB') THEN
++              ELSEIF(CVAL(I)(1:3).EQ.'TAB'.or.
++     a               CVAL(I)(1:3).EQ.'tab') THEN
+                 FC(FKNT) = 'LKUP'
+-                F(FKNT) = 0.0
+-              ELSEIF(CVAL(I)(1:3).EQ.'tab') THEN
+-                FC(FKNT) = 'LKUP'
+-                F(FKNT) = 0.0
++                if(clen(i) > 3) then
++c                 An increment to the eventual datum is present. 
++                  read(cval(i)(4:clen(i)),*) f(fknt)
++                else
++                  F(FKNT) = 0.0
++                endif
+               ELSE
+                 READ(CVAL(I),*) F(FKNT)
+                 FC(FKNT) = ' '
+@@ -752,11 +773,11 @@
+      A        ITEM_LENGTH(MAX_KNT), ITEM_TYPE(MAX_KNT),
+      B        TERM_CLASS(MAX_KNT)
+ 
+-      CHARACTER ITEMS(MAX_KNT)*64, LINE_IN*112
++      CHARACTER ITEMS(MAX_KNT)*(*), LINE_IN*(*)
+ 
+ C     Local variables
+ 
+-      CHARACTER LINE*115
++      CHARACTER LINE*256
+ 
+       INTEGER MAX_NVAL
+ 
+@@ -768,7 +789,7 @@
+      A        TERML(MAX_NVAL), TERMCLS(MAX_NVAL)
+       REAL RVAL(MAX_NVAL)
+       REAL*8 DPVAL(MAX_NVAL)
+-      CHARACTER CVAL(MAX_NVAL)*64, TERM(MAX_NVAL)*1
++      CHARACTER CVAL(MAX_NVAL)*256, TERM(MAX_NVAL)*1
+ 
+       INTEGER LENSTR
+       EXTERNAL GETVAL, LENSTR

@@ -1,0 +1,8 @@
+c     Store info to make a summary of the equations types
+c     in FEQ
+
+      integer eqsum_knt(15)
+
+      common /eqsum/ eqsum_knt
+
+      save /eqsum/

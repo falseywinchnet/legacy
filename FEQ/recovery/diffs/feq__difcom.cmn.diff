@@ -1,0 +1,10 @@
+--- 9.98/feq/difcom.cmn
++++ 10.61/feq/difcom.cmn
+@@ -2,6 +2,6 @@
+ 
+       COMMON/DIFCOM/ CLSR1,CLSR2
+ 
+-      REAL CLSR1(MNDIFA),CLSR2(MNDIFA)
++      REAL*8 CLSR1(MNDIFA),CLSR2(MNDIFA)
+ 
+ C**********************************************************************

@@ -1,0 +1,12 @@
+C     These I/O units will NOT have the number implied by their name.
+C     The number will be assigned in FEQ/FEQUTL and will not be the same
+C     as the old historic standard numbers. 
+C     This common block is retained in order to make transition to
+C     internal assignment of I/O unit numbers easier.
+
+      INTEGER STD5, STD6, STD7, STD10, STD48, STD49, STD50
+
+      COMMON/STDUN_COM/STD5, STD6, STD7, STD10, STD48, STD49, STD50
+
+      SAVE /STDUN_COM/
+

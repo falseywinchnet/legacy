@@ -1,0 +1,14 @@
+--- 9.98/share/pgi_lnx.who
++++ 10.61/share/pgi_lnx.who
+@@ -2,9 +2,9 @@
+ C     that will report the compiler and the operating
+ C     system.  Also include a routine that will 
+ C     report the operating system when called at runtime. 
+-C     Fortran has not builtin means for reporting this 
++C     Fortran has no builtin means for reporting this 
+ C     info so we create a system at compile time 
+-C     that will do that.  A file file like this one
++C     that will do that.  A file like this one
+ C     will exist for each compiler-os supported.  The
+ C     script or batch file used to compile will then 
+ C     select the correct one to include. 

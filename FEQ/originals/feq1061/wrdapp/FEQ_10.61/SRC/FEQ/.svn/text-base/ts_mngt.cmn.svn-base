@@ -1,0 +1,49 @@
+C     Common block for management of time series in FEQ.  Keeps track
+C     of time series references as well as the places where the
+C     time-series values are needed. 
+
+      INTEGER NUM_TS, NUM_DEST, NEXT_LINK
+
+      INTEGER SOURCE_CAT(MXN_TS), DEST_CAT(MXN_DEST), 
+     A        DEST_PNT(MXN_DEST), DEST_LINK(MXN_DEST), 
+     B        SOURCE_ADDRESS(MXN_TS)
+
+      CHARACTER*16 TS_ID(MXN_TS)
+      
+      COMMON/TS_MNGT_N/ NUM_TS, NUM_DEST, NEXT_LINK, SOURCE_CAT, 
+     A                  SOURCE_ADDRESS, DEST_CAT, DEST_PNT, DEST_LINK
+
+      COMMON/TS_MNGT_C/ TS_ID
+
+      SAVE /TS_MNGT_N/, /TS_MNGT_C/
+
+C     Definitions:
+
+C     TS_ID-  unique label used for refering to a time series that will
+C             be referenced in FEQ.  
+
+C     SOURCE_CAT- category of the source of the time series: from table 
+C                 or from a file.
+
+C     SOURCE_ADDRESS- "address" of the source.  This will contain the
+C                  index into the time-series file table for time-series
+C                  found in files.  For time series found in tables it
+C                  will be the table number and later the address
+C                  of the table. 
+C     DEST_CAT- category of the destination: level-pool reservoir rainfall/
+C              evaporation or branch evaporation/rainfall, forced bdy.
+
+C     DEST_LINK- pointer that allows there to be more than one destination
+C                from a time-series.  If DEST_LINK(i) is 0, then the
+C                destination in row i is the last one in the list.
+C                If DEST_LINK(i) > 0, then the next destination is
+C                described in row DEST_LINK(i).  We reserve one value for each of
+C                the MXN_TS time series. Therefore MXN_DEST > MXN_TS if
+C                a time series is to have more than one destination 
+
+C     NEXT_LINK- Next open link in the destination overflow area.
+
+C     The file handling routines will keep track of the different file
+C     systems that may be used for the time series. 
+
+

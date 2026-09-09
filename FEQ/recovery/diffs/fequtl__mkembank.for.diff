@@ -1,0 +1,177 @@
+--- 9.98/fequtl/mkembank.for
++++ 10.61/fequtl/mkembank.for
+@@ -45,7 +45,7 @@
+ 
+       TPA = AI*BJ
+       TPB = AJ*BI
+-      DIV = MAX(ABS(TPA), ABS(TPB), 1.0)
++      DIV = MAX(ABS(TPA), ABS(TPB), 1.0d0)
+       D = TPA - TPB
+ 
+       IF(ABS(D)/DIV.LE.1.D-12) THEN
+@@ -151,13 +151,15 @@
+       INCLUDE 'arsize.prm'
+ 
+ C     Called program units
+-      EXTERNAL INL80, STRIP_L_BLANKS
++      EXTERNAL inline, STRIP_L_BLANKS
+ 
+ C     Local variables.
+ 
+       INTEGER NC, NA, I, FLAG, REVERSE
+ 
++      character*8 zone, hgrid, vdatum, unitsys, basis
+       REAL WIDTH
++      real*8 easting, northing, shift, zmin, xatzmin, yatzmin
+ 
+ C     XC, YC, and ZC give the trace of the crest and XA, YA, and ZA give
+ C     the trace for the approach.  The X and Y are in the horizontal plane 
+@@ -181,6 +183,7 @@
+ 51    FORMAT(/,' Minimum weir height=',F10.3)
+ 52    FORMAT(/,' SURFACE=',A8)
+ 54    FORMAT(/,' *ERR:772* Line:',A,/,11X,' is unknown in MKEMBANK.')
++55    format(/,' SHIFT=',f10.3)
+ 56    FORMAT(/,' *ERR:773* No approach trace intersection at X=',
+      A       F12.2,' Y=',F12.2)
+ 58    FORMAT('    OFFSET     CREST     WIDTH  APPROACH SURFACE')
+@@ -189,14 +192,35 @@
+      A  'App. surface <',F5.2,' below crest. Shifted ',F5.2,' down.')
+ 62    FORMAT(F10.1, F10.3, F10.1,' -99999.0 ' ,1X,A8)
+ 64    FORMAT('  Processing MKEMBANK')
++ 65   format('ZONE=',a8,' HGRID=',a8,' VDATUM=',a8,' UNITSYS=',a8,
++     a        ' BASIS=',a8,/, 'EASTING=',0PF15.3,' NORTHING=',F15.3)
+ 
+ C***********************************************************************
+ 
+       WRITE(*,64)
++
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++
++
++      CALL inline
++     I          (STDIN, STDOUT,
++     O           LINE)
++      shift = 0.0
++      if(line(1:5) == 'SHIFT') then
++        read(line,'(6x,f10.0)') shift
++      else
++        backspace(stdin)
++      endif
++      
++      write(stdout,55) shift
+ 
+ C     Input the constant width for the weir crest.  May add option for 
+ C     varying width later
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,'(6X,F10.0)') WIDTH
+@@ -206,7 +230,7 @@
+ C     with a message as to how much the approach surface was depressed to
+ C     attain it. 
+ 
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       IF(LINE(1:7).EQ.'SURFACE') THEN
+@@ -221,7 +245,7 @@
+ 
+ 
+ C     Input the constant surface type.  Two types: PAVED, or  GRAVEL
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,'(8X,A8)') SURFACE
+@@ -231,7 +255,7 @@
+ 
+ 
+ C     Now get the points on the crest of the weir.  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+     
+@@ -241,8 +265,9 @@
+       
+       NC = 0
+       NA = 0
++      zmin = 1.d50
+ 100   CONTINUE
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         IF(LINE(1:3).NE.'END') THEN
+@@ -250,9 +275,16 @@
+           NC = NC + 1
+           XC(NC) = X
+           YC(NC) = Y
+-          ZC(NC) = Z
++          ZC(NC) = Z + shift
++          if(zc(nc) < zmin) then
++            zmin = zc(nc)
++            xatzmin = xc(nc)
++            yatzmin = yc(nc)
++          endif
+           GOTO 100
+         ENDIF
++        easting = xatzmin
++        northing = yatzmin
+ C       Check on reversing the order of the points on the crest trace
+         IF(REVERSE.GT.0) THEN
+           WRITE(STDOUT,*) ' REVERSING CREST TRACE. NC=', NC
+@@ -262,7 +294,7 @@
+         ENDIF
+ 
+ C     Get the next line of input.  Check for action to take.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       WRITE(STDOUT,'(/,A)') LINE
+@@ -274,7 +306,7 @@
+ C       crest trace so that we can find the proper point for computing the
+ C       approach elevation. 
+ 110     CONTINUE
+-          CALL INL80
++          CALL inline
+      I              (STDIN, STDOUT,
+      O               LINE)
+           IF(LINE(1:3).NE.'END') THEN
+@@ -282,7 +314,7 @@
+             NA = NA + 1
+             XA(NA) = X
+             YA(NA) = Y
+-            ZA(NA) = Z
++            ZA(NA) = Z + shift
+             GOTO 110
+           ENDIF
+ 
+@@ -295,7 +327,7 @@
+         ENDIF
+       
+ C       Read the final END
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         
+@@ -323,6 +355,11 @@
+       ENDIF
+ 
+       WRITE(STDOUT,*) ' '
++      if(zone /= 'NONE') then
++        write(stdout,65) zone, hgrid, vdatum, unitsys, basis,
++     a          easting, northing
++      endif
++
+       WRITE(STDOUT,58)
+ 
+ C     The basic data is now available.   

@@ -1,0 +1,216 @@
+--- 9.98/fequtl/ufgate.for
++++ 10.61/fequtl/ufgate.for
+@@ -546,12 +546,15 @@
+      E     LIPREC, LIPVEC(PMXNHG), MAXHU, MINHU, MINPFD, MNHVEC(PMXNHG),
+      F     OFFSET, OLDHG, OLDY3, P, PFDTMP(PMXFRC), PFDVEC(PMXFRC), POW,
+      G     POWER, PREC, Q, QFO, QFREE, QHAT, QMAT(PMXNHU,PMXFRC), RERR,
+-     H     RG, RHS, RMS, T4, WORK(PMXFRC), XBRK(PMXNHU), Y, Y2FO, Y2FW,
++     H     RG, RHS, RMS, T4, WORK(PMXFRC), XBRK(PMXFRC), Y, Y2FO, Y2FW,
+      I     Y2OLD, Y4F, Y4SW, Y4SWSO, YLEFT, YRIGHT, Z1FWUL, ZW4, ZW4F,
+-     J     TP, RGFWUL
++     J     TP, RGFWUL, zrhufd
++
++      real*8 easting, northing
+       CHARACTER CHAR6*6, FTYPE*2, HGLAB*10, LAB2*50, LABEL*50, LINE*80,
+      A          CQ*10, KEY*16, TABID*16, APPTABID*16, DEPTABID*16,
+-     B          CCTABID*16, JUST*5, IDOUT*32, ID*16
++     B          CCTABID*16, JUST*5, IDOUT*32, ID*16,
++     c   zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, FLOAT, LOG, SQRT
+@@ -562,7 +565,7 @@
+       CHARACTER PUT10*10, GET_TABID*16
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL CHKTAB, FDROOT, FINDCC, FNDELV, FNDFOQ, FOTOSO, INL80,
++      EXTERNAL CHKTAB, FDROOT, FINDCC, FNDELV, FNDFOQ, FOTOSO, inline,
+      A         INVTSE, LKTJ, LSTOPF, REGFAL, RSOMY3, RSOMY4, RSWMY3, 
+      B         RSWMY4, TABCHK, TWDOUT, XLKT22, PUT10,
+      C         GET_INTERNAL_TAB_NUMBER, READ_TABID, LENSTR,
+@@ -663,7 +666,7 @@
+       ENDIF
+       G = GRAV
+       TWOG = 2.*GRAV
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -676,13 +679,22 @@
+      I           (STDOUT, PMXTAB,
+      M            TAB, TABDIR, EFLAG)
+  
+-      CALL INL80
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2,ERR=991) LAB2
+       WRITE(STDOUT,52) LAB2
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -711,7 +723,7 @@
+       ENDIF
+  
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -749,7 +761,7 @@
+  
+       Z3B = Z4B
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,8,ERR=991) Z2B
+@@ -765,7 +777,7 @@
+         EFLAG = 1
+       ENDIF
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,10,ERR=991)  BG
+@@ -776,7 +788,7 @@
+         EFLAG = 1
+       ENDIF
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,12,ERR=991) CD
+@@ -787,7 +799,7 @@
+       ENDIF
+  
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -805,7 +817,7 @@
+       ENDIF
+  
+ C     Get the size of the transition between FW and FO flow.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,19,ERR=991)  FWFOTR
+@@ -813,14 +825,14 @@
+       WRITE(STDOUT,79) FWFOTR
+  
+ C     Get the maximum upstream head
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,20,ERR=991)  MAXHU
+       WRITE(STDOUT,80) MAXHU
+  
+ C     Get the smallest non-zero upstream head
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,21,ERR=991)  MINHU
+@@ -828,7 +840,7 @@
+       WRITE(STDOUT,81) MINHU
+  
+ C     Get the global linear interpolation precisions
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,22,ERR=991)  LIPREC
+@@ -836,7 +848,7 @@
+       WRITE(STDOUT,82) LIPREC
+  
+ C     Process the gate opening table.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       WRITE(STDOUT,*) ' '
+@@ -853,7 +865,7 @@
+       NHG = 1
+       IDLEN = 0
+  100  CONTINUE
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         CALL READ_UFGATE_ITEMS(
+@@ -906,31 +918,31 @@
+  
+ C     INPUT THE FACTORS CONTROLLING THE DISTRIBUTION OF DROPS
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       WRITE(STDOUT,*) ' '
+       WRITE(STDOUT,'(A)') LINE
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,16,ERR=991) MINPFD
+       WRITE(STDOUT,66) MINPFD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,16,ERR=991) BRKPFD
+       WRITE(STDOUT,67) BRKPFD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,18,ERR=991) LIMPFD
+       WRITE(STDOUT,68) LIMPFD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,16,ERR=991) FINPOW
+@@ -1604,11 +1616,14 @@
+           JBASE = JBASE + 1
+  910    CONTINUE
+         PFDTMP(JBASE) = PFDVEC(NFRAC)
+- 
++          
++        zrhufd = 0.0
+         CALL TWDOUT
+      I             (STDOUT, STDTAB, TAB2D(IHG), LABEL, NHU, JBASE,
+      I              HUVEC, FDVEC, PFDTMP, QMAT, HDATUM,
+-     I              13, '  UFGATE',
++     I              13, '  UFGATE', zrhufd,
++     i              zone, hgrid, vdatum, unitsys, basis,
++     i              easting, northing,
+      O              EFLAG)
+  
+         IF(ELFLAG.GT.0) THEN

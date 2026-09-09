@@ -1,0 +1,8 @@
+--- 9.98/share/fqshrtim.for
++++ 10.61/share/fqshrtim.for
+@@ -151,3 +151,5 @@
+       MJD = (36525*Y)/100 + INT(30.6001*(M+1)) + DY + B - 679006
+       RETURN
+       END
++
++

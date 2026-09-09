@@ -1,0 +1,6 @@
+c     common for passing info for table upgrading-going from one form
+c     to one that is smoother in its representation
+
+      character ty13_to_ty43*4, twod_cubic_out*4, upgrade_xsec_tab*4
+
+      common/upgrdc/ ty13_to_ty43, twod_cubic_out, upgrade_xsec_tab

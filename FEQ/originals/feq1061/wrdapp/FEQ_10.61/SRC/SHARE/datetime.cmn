@@ -1,0 +1,9 @@
+c     String that contains a string giving the version and date
+c     of a run.  Will use to label output files that contain
+c     text.  Binary file will require another approach!
+
+      character*95 version_run_date_time_string
+
+      common /datetime/ version_run_date_time_string
+
+      save /datetime/

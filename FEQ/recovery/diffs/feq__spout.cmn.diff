@@ -1,0 +1,21 @@
+--- 9.98/feq/spout.cmn
++++ 10.61/feq/spout.cmn
+@@ -14,7 +14,8 @@
+ 
+       INTEGER SPOUT_KNT, LINE_KNT, SPOUT_ITEM(MNSPROW),
+      A        SPOUT_ITEM_VALUE(MNSPROW), SPOUT_STYLE,
+-     B        SPOUT_MAIN_CHANNEL_TABLE(MNSOUT), NEED_LOOKUP
++     B        SPOUT_MAIN_CHANNEL_TABLE(MNSOUT), NEED_LOOKUP,
++     c        stdspo, spo_knt, stdspout
+ 
+ 
+       CHARACTER  SPOUT_ITEM_NAME(MNSPROW)*8, 
+@@ -23,7 +24,7 @@
+ 
+       COMMON/SPOUTA/ LINE_KNT, SPOUT_KNT, SPOUT_ITEM, NEED_LOOKUP,
+      A               SPOUT_ITEM_VALUE, SPOUT_MAIN_CHANNEL_TABLE,
+-     B               SPOUT_STYLE
++     B               SPOUT_STYLE, stdspo, spo_knt, stdspout
+ 
+       COMMON/SPOUTC/ SPOUT_ITEM_LABEL, SPOUT_ITEM_NAME,
+      A               EXTRA_BUFFER

@@ -1,0 +1,166 @@
+C     Values for management of tributary area
+
+      INTEGER TAM_IPNT, TAM_FPNT, DTEN_KNT, DLAY_KNT,
+     A        TUNIT_KNT, DTEN_ORIF_TAB_NUM,
+     B        DTEN_UNIT_AREA_VOL_TAB_NUM
+                                                                          
+      INTEGER TAM_ITAB(TAM_MXNI)                                        
+                                                                        
+      REAL TAM_FTAB(TAM_MXNF)                                           
+                                                                        
+
+C     Variables to use in computing a water balance.
+
+      REAL*8 L_TAI, L_TAQ, L_TAQBN, L_WSI, L_WSQ
+
+C     Description of detention reservoirs
+
+      INTEGER  DTEN_ROUT_TAB(MXN_DTEN)
+      INTEGER DTEN_UADV_TAB(MXN_DTEN),
+     A        DTEN_ORF_TAB(MXN_DTEN)
+      REAL 
+     A     DTEN_ORFCD(MXN_DTEN), DTEN_YD(MXN_DTEN),DTEN_WZ(MXN_DTEN),
+     B     DTEN_BZ(MXN_DTEN), DTEN_WC(MXN_DTEN), DTEN_UAQ(MXN_DTEN),  
+     B     DTEN_AVDA(MXN_DTEN), 
+     D     DTEN_Q1(MXN_DTEN), DTEN_Q1P(MXN_DTEN), DTEN_S1(MXN_DTEN), 
+     E     DTEN_Q2(MXN_DTEN), DTEN_Q2P(MXN_DTEN),DTEN_S2(MXN_DTEN)
+
+C     Description of delay reservoirs.
+
+      INTEGER DLAY_QPNT(MXN_DLAY), DLAY_NLR(0:MXN_DLAY)
+
+      REAL*8 DLAY_Q1(MXN_DLAY), DLAY_Q2(MXN_DLAY),
+     A       DLAY_K(0:MXN_DLAY), DLAY_K_OVER_DT(MXN_DLAY),
+     B       DLAY_EXP_OF_DT_OVER_K(MXN_DLAY)
+
+      COMMON/TAMCOM/L_TAI, L_TAQ, L_TAQBN, L_WSI, L_WSQ,
+     A              DLAY_K, DLAY_Q1, DLAY_Q2,  DLAY_K_OVER_DT, 
+     A              DLAY_EXP_OF_DT_OVER_K, TAM_IPNT, TAM_FPNT, 
+     B              DTEN_KNT, DLAY_KNT, TUNIT_KNT, TAM_ITAB, TAM_FTAB, 
+     C              DTEN_ORFCD, DTEN_UADV_TAB, DTEN_ORF_TAB,
+     D              DTEN_ROUT_TAB, DTEN_YD, DTEN_WZ,
+     E              DTEN_Q1, DTEN_Q1P, DTEN_S1, DTEN_Q2, DTEN_Q2P, 
+     F              DTEN_S2, DLAY_QPNT, DLAY_NLR, 
+     G              DTEN_BZ, DTEN_WC, DTEN_UAQ,  
+     H              DTEN_AVDA, DTEN_ORIF_TAB_NUM,
+     I              DTEN_UNIT_AREA_VOL_TAB_NUM
+
+
+      SAVE /TAMCOM/
+
+C     Definitions
+
+
+C     TAM_IPNT  - pointer to next open slot in TAM_ITAB
+C     TAM_FPNT  - pointer to next open slot in in  TAM_FTAB
+C     DTEN_KNT  - count of the number of detention reservoirs
+C     DLAY_KNT  - count of the number of delay reservoirs
+C     DTEN_ORFCD - coefficient of discharge for the orifice
+C     DTEN_ROUT_TAB - address of the type 4 routing table
+C     DTEN_YD  - design depth for the reservoir
+C     DTEN_WZ  - slope of the overflow weir in horizontal extent
+C                per unit vertical extent.
+C     DTEN_BZ  - design size slope for basin
+C     DTEN_WC  - dimensionless weir coef for overflow
+C     DTEN_UAQ - design unit-area flow
+C     DTEN_AVDA- average drainage area for a basin. Also becomes the
+C                number of average basins in the unit. 
+C     DTEN_UAVD_TAB- table number and later table addres for
+C                   the table of type 10 giving the unit-area
+C                   detention volume. 
+C     DTEN_ORF_TAB- table number and later table address for
+C                   table of type 4 giving the orifice 
+C                   flow function. 
+
+C     DTEN_Q1  - outflow at start of time step
+C     DTEN_Q1P - derivative of Q1 wrt S at start of time step, ie. Q1
+C     DTEN_Q2  - outflow at end of time step
+C     DTEN_Q2P - derivative of Q2 wrt S at end of time step, ie. Q1
+C     DTEN_S1  - storage at start of time step
+C     DTEN_S2  - storage at end of time step
+
+C     DLAY_NLR - number of linear reservoirs in the delay
+C     DLAY_K   - storage constant for each of the reservoirs.
+C     DLAY_Q1  - outflow at start of time step for single 
+C                reservoir.  The one reservoir case is 
+C                distinct from the multiple reservoir case.
+C     DLAY_Q2  - outflow at end of time step for a single
+C                reservoir.
+C     DLAY_QPNT - pointer into TAM_FTAB for the outflows for
+C                 multiple reservoir case. There are two 
+C                 outflow values per reservoir.  Multiple 
+C                 reservoir case does NOT use the single
+C                 reservoir locations for outflow.  May not 
+C                 implemented. 
+
+
+C     Patterns in TAM_ITAB.  TAM_ITAB is an integer vector that contains
+C     descriptions of the various tributary-area units (TAM's) in the
+C     model.  There are currently three categories of TAM's: tributary areas
+C     to branches, tributary areas to leve-pool reservoirs, and tributary
+C     areas to boundary nodes.   Each of these categories has its own
+C     pattern in TAM_ITAB.  These are all described in a generic sense
+C     as tributary area units.  At tributary area unit could be as small
+C     as the area tributary to a single computational element on a branch
+C     or as large as the tributary area to the whole branch.  Thus the number
+C     tributary-area units in a model depends on how the user has described
+C     the tributary area.  Each tributary-area unit has a number assigned
+C     sequentially in order of appearance of the unit as the input is
+C     processed.  This pointer is an index into TAM_ITAB.  Offsets from
+C     this index are then used to access information describing a
+C     tributary-area unit.  
+
+C     For tributary areas to a branch. 
+
+C     Offset from   Description of contents of location in TAM_ITAB
+C     pointer
+C     -----------   -------------------------------------------------
+C        0          Internal branch number
+C        1          Cat. Code: for a branch = 1
+C        2          Pointer to next tributary-unit description
+C        3          Pointer into array TRIBA for the land-use areas
+C        4          gage number for this tributary area
+C        5          pointer to detention description, 0 if none
+C        6          pointer to delay description, 0 if none
+C        7          internal node number of dns end of first computational
+C                   element to get flow
+C        8          internal node number of dns end of last computational
+C                   element to get flow
+C        9          pointer into TAM_FTAB for the first distribution factor.
+C                   There will be as many factors as there are computational
+C                   elements in this tributary-area unit.
+
+C     For tributary areas to a level-pool reservoir (LPR)
+
+C     Offset from   Description of contents of location in TAM_ITAB
+C     pointer
+C     -----------   -------------------------------------------------
+C        0          Internal node number for the LPR
+C        1          Cat. Code: for a LPR = 2
+C        2          Pointer to next tributary-unit description
+C        3          Pointer into array TRIBA for the land-use areas
+C        4          gage number for this tributary area
+C        5          pointer to detention description, 0 if none
+C        6          pointer to delay description, 0 if none
+C        7          pointer into vector QPVEC for storing the flow
+C                   that goes to the LPR
+C        8          pointer into RWTA, RTAB, etc. to maintain
+C                   pre-existing systems.
+
+C     For tributary areas to a boundary node
+
+C     For tributary areas to a level-pool reservoir (LPR)
+
+C     Offset from   Description of contents of location in TAM_ITAB
+C     pointer
+C     -----------   -------------------------------------------------
+C        0          Internal node number for the LPR
+C        1          Cat. Code: for a LPR = 2
+C        2          Pointer to next tributary-unit description
+C        3          Pointer into array TRIBA for the land-use areas
+C        4          gage number for this tributary area
+C        5          pointer to detention description, 0 if none
+C        6          pointer to delay description, 0 if none
+C        7          pointer into QPVEC for summation of flows
+C        8          pointer to location in EMC where the boundary
+C                   flow is stored. 

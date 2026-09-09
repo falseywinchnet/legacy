@@ -1,0 +1,15 @@
+--- 9.98/feq/title.cmn
++++ 10.61/feq/title.cmn
+@@ -1,8 +1,10 @@
+ C     Common blocks for handling the expanded title for output labeling
+ 
+-      INTEGER TITLE_N
++      INTEGER TITLE_N, max_title_n
++      parameter (max_title_n=201)
+ 
+-      CHARACTER*120 TITLE(51)
++
++      CHARACTER*120 TITLE(max_title_n)
+ 
+ 
+       COMMON/TITLEC/ TITLE

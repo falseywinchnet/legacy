@@ -1,0 +1,15 @@
+C***********************************************************************
+      COMMON/TSFCOM/TSFBUF, BJTIME, TSFRAT, BWYR, BORD, TRIBA, LENTRY, 
+     A              NDFVAL, TSFDSN, NBUFF, NLUSE, SEFLAG, DTEND, LHEAD, 
+     B              GSTART, GEND, TSFTYP, LAGTSF, TAFAC, dtsf_rec, frcst
+
+      INTEGER LENTRY, NDFVAL, TSFDSN, NBUFF, NLUSE, SEFLAG, LHEAD,
+     A        TSFTYP, LAGTSF, dtsf_rec, frcst
+      INTEGER BWYR(MNDBUF), BORD(MNDBUF),  
+     A        GEND(0:MXGAGE), GSTART(0:MXGAGE)
+      REAL DTEND
+      REAL TRIBA(MXR_TRIBA,MXN_LU_G), TSFRAT(MNDBUF,MNDIFA),
+     A     TAFAC(MNBRA)
+
+      REAL*8 TSFBUF(MNDBUF,MNDIFA), BJTIME(MNDBUF)
+C***********************************************************************

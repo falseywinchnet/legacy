@@ -1,0 +1,2903 @@
+--- 9.98/feq/inputuf.for
++++ 10.61/feq/inputuf.for
+@@ -1,4 +1,72 @@
+ C Routines used in input of the user input file
++
++c
++c
++c
++      subroutine set_time_step_tables(stdout,
++     o                                 eflag)
++
++c     Set values for time-step table handling.
++
++      implicit none
++      integer stdout, eflag
++      
++      include 'arsize.prm'
++      include 'timetab.cmn'
++      include 'ftable.cmn'
++
++      integer get_unit
++
++
++c     Local
++
++      integer ioflag, it
++
++c***********************************************************************
++      if(make_dt_tab.eq.' ') then
++        stddtout = 0
++      else
++        stddtout = get_unit(stdout)
++        CALL MAYBE_ADD_GHOME_OUT(
++     M                      make_dt_tab)
++        call maybe_add_ext(
++     m                      make_dt_tab)
++
++        call os_file_style(
++     m                              make_dt_tab)
++        OPEN(UNIT=stddtout, FILE=make_dt_tab, 
++     a                   STATUS='UNKNOWN',IOSTAT=IOFLAG)
++        IF(IOFLAG.NE.0) THEN
++          IT = LEN_TRIM(make_dt_tab)
++          WRITE(STDOUT,*) ' Problem in opening file: ',make_dt_tab(1:IT)
++          WRITE(STDOUT,*) ' Check path for making a time step table.'
++          STOP 'Abnormal stop: errors found.'
++        ENDIF
++
++      endif
++      if(use_maxdt_tab.ne.' ') then
++        call FIND_INTERNAL_TAB_NUMBER
++     I                               (use_maxdt_tab,
++     O                                 tab_for_maxdt)
++        if(tab_for_maxdt.gt.0) then
++          call CHKTAB
++     I               (2, STDOUT, FTPNT, MFTnum,
++     M               tab_for_maxdt,
++     O               EFLAG)
++        else
++          write(stdout,*) ' Max. time-step table not found'
++          stop 'Abnormal stop.  Missing max time step table.'
++        endif
++
++      else
++        tab_for_maxdt = 0
++        
++      endif
++
++      return
++      end
++  
++
+ C
+ C
+ C
+@@ -94,11 +162,11 @@
+ 
+ C       Check to make sure that the land-use indices make
+ C       sense for this tributary-area unit.
+-        WRITE(STDOUT,*) ' IRRIG_CHK: GAGE=',GAGE,
+-     A        ' GSTART=',GSTART(GAGE),' GEND=',GEND(GAGE)
+-
+-        WRITE(STDOUT,*) ' IRRIG_LUI_APPLY=',IRRIG_LUI_APPLY(I)
+-        WRITE(STDOUT,*) ' IRRIG_LUI_COMPUTE=',IRRIG_LUI_COMPUTE(I)
++c        WRITE(STDOUT,*) ' IRRIG_CHK: GAGE=',GAGE,
++c     A        ' GSTART=',GSTART(GAGE),' GEND=',GEND(GAGE)
++c
++c        WRITE(STDOUT,*) ' IRRIG_LUI_APPLY=',IRRIG_LUI_APPLY(I)
++c        WRITE(STDOUT,*) ' IRRIG_LUI_COMPUTE=',IRRIG_LUI_COMPUTE(I)
+         IF(IRRIG_LUI_APPLY(I).LT.1.OR.IRRIG_LUI_APPLY(I).GT.
+      A      GEND(GAGE) - GSTART(GAGE) + 1) THEN
+           WRITE(STDOUT,54) IRRIG_LUI_APPLY(I), BRANCH_NODE
+@@ -158,7 +226,7 @@
+ 
+       INTEGER I, LUI, NODE, IRRIG_INDEX, TAB_NUMBER, SOURCE_NODE
+ 
+-      EXTERNAL INL80, STRIP_L_BLANKS, GET_INTERNAL_TAB_NUMBER
++      EXTERNAL inline, STRIP_L_BLANKS, GET_INTERNAL_TAB_NUMBER
+ C     **************************FORMATS*********************************
+ 50    FORMAT(' ',A80)
+ 52    FORMAT(/,'*ERR:XXX* Number of tributary-area units with',
+@@ -170,17 +238,17 @@
+       IRRIG_KNT = 0
+ 
+ C     Read the two heading lines
+-      CALL INL80(IN, STDOUT,
++      CALL inline(IN, STDOUT,
+      O           LINE)
+       WRITE(STDOUT,50) LINE
+-      CALL INL80(IN, STDOUT,
++      CALL inline(IN, STDOUT,
+      O           LINE)
+       WRITE(STDOUT,50) LINE
+ 
+ C     Read lines of input until the -1 termination flag is found
+       I= 0
+ 100   CONTINUE
+-        CALL INL80(IN, STDOUT,
++        CALL inline(IN, STDOUT,
+      O             LINE)
+         READ(LINE,'(A5,I5,I5,A5,A16)') EXN_BRA, LUI, IRRIG_INDEX,
+      A             H2O_SOURCE, TABID
+@@ -379,13 +447,13 @@
+ C     the following forms: 
+ C         TAB 
+ C         tab
+-C         TAB + num
+-C         TAB - num 
+-C         tab + num 
+-C         tab - num
++C         TAB+num
++C         TAB-num 
++C         tab+num 
++C         tab-num
+ C         num
+-C         num + num
+-C         num - num
++C         num+num
++C         num-num
+ 
+ C     A blank value is NOT taken to be zero.  It is given a large
+ C     negative value.
+@@ -466,7 +534,7 @@
+       SUBROUTINE   BRIN
+      I                 (SFAC, IN, STDOUT, MNBN, NEX, 
+      I                  MFTNUM, ISTYLE, GISID_TO_NODEID, 
+-     I                  TABID_TO_NODEID,
++     I                  TABID_TO_NODEID, dz_for_output,
+      M                  EFLAG, USBRIN, ENODEN, NBRA,
+      O                  NBN, BRPT, NSEC, UVX, UVY, XVEC, ZVEC, KA, KD,
+      O                  HLTAB, COEFIN, YCUT, BNODID, ZIVEC, STDFLD,
+@@ -485,7 +553,7 @@
+       REAL COEFIN(MNBN), KA(MNBN), KADJVEC(MNBN), KD(MNBN), 
+      A     SFAC, STDFLD(MNBN), UVX(MNBN), UVY(MNBN), 
+      B     WDFVEC(NBRA), XVEC(MNBN), YCUT(MNBN), 
+-     C     ZIVEC(NBRA), ZVEC(MNBN)
++     C     ZIVEC(NBRA), ZVEC(MNBN), dz_for_output
+       CHARACTER BNODID(MNBN)*16, ENODID(NEX)*16, INENUS(NEX)*5, 
+      A          ISTYLE*4, GISID_TO_NODEID*4, TABID_TO_NODEID*4
+  
+@@ -585,7 +653,7 @@
+       CHARACTER GETTOK*10, MAKENN*5, GET_TABID*16, GET_GISID
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL FNDSTA, GETTOK, INL120, INL120B, INSNOD, KIL,
++      EXTERNAL FNDSTA, GETTOK, inline, inlineb, INSNOD, KIL,
+      A         MAKENN, GET_BRANCH_ITEMS,  GET_GISID,
+      B         GET_ITEM_LIMITS, GET_TABID, LENSTR, GET_BRHD, SET_BRHD,
+      C         PROCESS_INVERT_SPEC
+@@ -659,9 +727,13 @@
+           EXNODT(J,I) = 0
+  98     CONTINUE
+ C       Set rows 6, 7, and 8 to the most negative integer number
+-        EXNODT(6,I) = -(2**31 - 1)
+-        EXNODT(7,I) = -(2**31 - 1)
+-        EXNODT(8,I) = -(2**31 - 1)
++c        EXNODT(6,I) = -(2**31 - 1)
++c        EXNODT(7,I) = -(2**31 - 1)
++c        EXNODT(8,I) = -(2**31 - 1)
++        EXNODT(6,I) = -2147483647
++        EXNODT(7,I) = -2147483647
++        EXNODT(8,I) = -2147483647
++
+ C       Set the latest row, 9 to zero
+         EXNODT(9,I) = 0
+  99   CONTINUE
+@@ -686,7 +758,7 @@
+         ZCFLAG = 0
+         YC = 0.0
+         YCOLD = 0.0
+-        CALL INL120
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         IF(LINE(1:4).NE.'BNUM'.AND.LINE(1:6).NE.'BRANCH') THEN
+@@ -757,7 +829,7 @@
+  
+         BRPT(8,BNUM) = 2
+  
+-        CALL INL120
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,1) HEAD
+@@ -770,7 +842,7 @@
+ C       error of only one node on the branch. April 26, 2000.
+         OLD_NBN = NBN
+  100    CONTINUE
+-          CALL INL120B
++          CALL inlineb
+      I               (IN, STDOUT,
+      O                 LINE)
+           CALL GET_BRANCH_ITEMS(
+@@ -1337,7 +1409,7 @@
+               DXOUT = ' '
+             ENDIF
+             WRITE(STDOUT,18000) NODE, BNODID(J), TABID(1:IDLEN), 
+-     A       XVEC(J), ZVEC(J), KA(J), KD(J), HLTABID(1:HLIDLEN),
++     A XVEC(J), ZVEC(J)+dz_for_output, KA(J), KD(J), HLTABID(1:HLIDLEN),
+      B       AZMOUT, COEFIN(J), YCUT(J), STDFLD(J), KADJVEC(J), DXOUT
+           CASE(1)
+             IF(DX.NE.0.0) THEN
+@@ -1346,7 +1418,7 @@
+               DXOUT = ' '
+             ENDIF
+             WRITE(STDOUT,18100) NODE, BNODID(J), TABID(1:IDLEN), 
+-     A       XVEC(J), ZVEC(J), KA(J), KD(J), HLTABID(1:HLIDLEN),
++     A XVEC(J), ZVEC(J)+dz_for_output, KA(J), KD(J), HLTABID(1:HLIDLEN),
+      B       AZMOUT, COEFIN(J), YCUT(J), STDFLD(J), KADJVEC(J), DXOUT
+           CASE(2)
+             IF(DX.NE.0.0) THEN
+@@ -1355,7 +1427,7 @@
+               DXOUT = ' '
+             ENDIF
+             WRITE(STDOUT,18200) NODE, BNODID(J), TABID(1:IDLEN), 
+-     A       XVEC(J), ZVEC(J), KA(J), KD(J), HLTABID(1:HLIDLEN),
++     A XVEC(J), ZVEC(J)+dz_for_output, KA(J), KD(J), HLTABID(1:HLIDLEN),
+      B       AZMOUT, COEFIN(J), YCUT(J), STDFLD(J), KADJVEC(J), DXOUT
+           CASE(3)
+             IF(DX.NE.0.0) THEN
+@@ -1364,7 +1436,7 @@
+               DXOUT = ' '
+             ENDIF
+             WRITE(STDOUT,18300) NODE, BNODID(J), TABID(1:IDLEN), 
+-     A       XVEC(J), ZVEC(J), KA(J), KD(J), HLTABID(1:HLIDLEN),
++     A XVEC(J), ZVEC(J)+dz_for_output, KA(J), KD(J), HLTABID(1:HLIDLEN),
+      B       AZMOUT, COEFIN(J), YCUT(J), STDFLD(J), KADJVEC(J), DXOUT
+           CASE DEFAULT
+             IF(DX.NE.0.0) THEN
+@@ -1373,7 +1445,7 @@
+               DXOUT = ' '
+             ENDIF
+             WRITE(STDOUT,18400) NODE, BNODID(J), TABID(1:IDLEN), 
+-     A       XVEC(J), ZVEC(J), KA(J), KD(J), HLTABID(1:HLIDLEN),
++     A XVEC(J), ZVEC(J)+dz_for_output, KA(J), KD(J), HLTABID(1:HLIDLEN),
+      B       AZMOUT, COEFIN(J), YCUT(J), STDFLD(J), KADJVEC(J), DXOUT
+ 
+           END SELECT
+@@ -1470,14 +1542,102 @@
+       TABID =TEMP(1:LENSTR(TEMP))
+       RETURN
+       END
++c
++c 
++c 
++      subroutine chk_dummy_branches
++     i                             (stdout, nex, exnodt, inenus,
++     o                              hit)
++
++c     Seek to find free nodes not connected properly..  
++      IMPLICIT NONE
++
++      include 'arsize.prm'
++
++      integer stdout, nex, hit
++      integer exnodt(9,MNEX)
++      character inenus(MNEX)*5
++
++c     Local
++      integer i
++
++c     **********************Formats*************************************
++50    format(' Exterior node: ',a5,' has no dummy branch.') 
++c***********************************************************************
++C     EXNODT - exterior node table.  Contains the following items
++C              for each exterior node.
++C              Row   Content
++C               1    sign of the node
++C               2    pointer into vectors for nodes on a branch, 
++C                    pointer to the other node if on a level-pool reservoir,
++C                    0 if on a dummy branch.
++C               3    descriptive code: if -1 then a reservoir node;
++C                    if  0 then not on a branch and not a reservoir node;
++C                    if > 0 then a branch number.  The inflow node
++C                    to a reservoir has the value of 0.  The way it is
++C                    distinguished from a free node on a dummy branch
++C                    is that EXNODT(4, ) is zero for a reservoir-inflow
++C                    node but is positive for a free node on a dummy 
++C                    branch. 
++C               4    pointer to a cross section table if on a branch, 
++C                    to storage table if a reservoir, to other node if
++C                    a dummy branch, 0 if the inflow node to a reservoir.
++C               5    gives the variable number(in the system matrix) for
++C                    the flow at the exterior node. Also a junction
++C                    pointer in initial processing of input
++C               6    X location of the node in a cartesian coordinate system
++C               7    Y location of the node in a cartesian coordinate system. 
++C                   The (X,Y) are scaled upward by 100.  That is 
++C                   a coordinate value of 1234.51 becomes then integer
++C                   123451.  If the coordinate value is -(2**31 -1) it
++C                   indicates that no value for a coordinate exists. 
++C                   The scaling permits a maximum value of 2**31/100 
++C                   distance units.  When the length unit is feet the 
++C                   maximum coordinate is 21,474,836.48 feet or
++C                   about 4067 miles.  This appears to be adequate 
++C                   for any reasonable purpose!
++C                8  Contains the station for the free node.  These
++C                   stations are assigned by the user.  The utility
++C                   program OVERFLOW, used to compute outflows/inflows
++C                   between adjacent flow paths, assigns the station
++C                   of the source location to the upstream node
++C                   and the station of the sink to the downstream 
++C                   node, if either exist.  If neither exists it 
++C                   assigns -(2**31 - 1).  The station is 
++C                   multiplied by 10,000 and rounded before 
++C                   being placed in the integer location.  This
++C                   gives a maximum station of at least 40 miles
++C                   if feet are being used for the stations.  This
++C                   should be adequate because using feet for stationing
++C                   over such a distance would be unusual. 
++c 
++c     Here are the items of information that we will use to sniff out the
++c     errant nodes:
++c 
++c     exnodt(2,i) is 0 if the node is on a dummy branch. 
++c     exnodt(4,i) should then be > 0 and give the index in 
++c                 exnodt of the other node
++      hit = 0
++      do i=1,nex
++        if(exnodt(2,i) == 0) then
++c         We think we have a node on a dummy branch.
++          if(exnodt(4,i) < 1 .or. exnodt(4,i) > nex) then
++c           Something is wrong with this exterior node
++            write(stdout,50) inenus(i)
++            hit = hit + 1
++          endif
++        endif
++      end do 
+       
++      return
++      end
+    
+ C
+ C
+ C
+       SUBROUTINE   EXIN
+      I                 (IN, STDOUT, MFT, NBRA, MLEMC, USBRIN, 
+-     I                  INBRUS, NEW_FORM,
++     I                  INBRUS, NEW_FORM, dz_for_output,
+      M                  EFLAG, EXNODT, USENIN, ENODEN,
+      O                  NEX, EPT, EMC, QE2, YE2, LDCALL, 
+      O                  NENTRY, ADD, CHKSQ, INENUS)
+@@ -1494,7 +1654,7 @@
+       INTEGER ADD(MNETRY), CHKSQ(MNETRY), EMC(MLEMC),
+      A        EXNODT(9,MNEX), INBRUS(NBRA), USBRIN(9999),
+      B        USENIN(-9999:19998)
+-      REAL QE2(MNEX), YE2(MNEX)
++      REAL QE2(MNEX), YE2(MNEX), dz_for_output
+       CHARACTER INENUS(MNEX)*5
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -1547,6 +1707,7 @@
+       INCLUDE 'macro.cmn'
+       INCLUDE 'ts_mngt.prm'
+       INCLUDE 'code14.cmn'
++      INCLUDE 'eqsum.cmn'
+ 
+ C     + + + LOCAL PARAMETERS + + +
+       INTEGER NEGOFF
+@@ -1555,9 +1716,9 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER CODE, I, IDUM, IENTRY, II, IOFF, IP, J, LN, M, MCODE,
+-     A        MLOC, MODE, N2EQ, NGTMP, NT, USBR, STATUS
++     A        MLOC, MODE, N2EQ, NGTMP, NT, USBR, STATUS, hit
+       INTEGER N(10)
+-      REAL F(5), RDUM, HDATUM
++      REAL F(5), RDUM, HDATUM, datum_shift
+       CHARACTER  NAME*16, NC(10)*5, NC_LONG(10)*16,
+      A          LONG_LINE*196, FC(5)*4, CHR10*10
+  
+@@ -1572,8 +1733,8 @@
+       INTEGER LENSTR
+ 
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL CNVRTN, GETTOK, INL80, KIL, KILC, LSATAB, POP_LINE,
+-     A         LENSTR, FIND_TABIDL, INL196, FIND_HDD_FROM_TABN
++      EXTERNAL CNVRTN, GETTOK, inline, KIL, KILC, LSATAB, POP_LINE,
++     A         LENSTR, FIND_TABIDL, FIND_HDD_FROM_TABN
+  
+ C     + + + INPUT FORMATS + + +
+  20   FORMAT(5X,16X,6I4,F7.0)
+@@ -1596,7 +1757,7 @@
+  33   FORMAT(4X,'Critical depth at node=',A5)
+  34   FORMAT(4X,'Forced value at boundary: ',4X,/,
+      1'  Type=',A5,'   Ups node=',A5,' Dir=',A5,
+-     2' Time-series Id= ',A,'  Flow=',F10.2,/,4X,' Factor=',F5.2)
++     2' Time-series Id= ',A,'  Value=',F10.2,/,4X,' Factor=',F5.2)
+  35   FORMAT(4X,'Energy head equality between nodes ',A5,' AND ',A5)
+  36   FORMAT(4X,'Weir coef. Tab Id=',A,' Weir elev.=',A10,
+      1        ' Weir length=',F10.1)
+@@ -1619,7 +1780,7 @@
+      3       ' Dist. for slope=',F10.1,/,4X,'Pump rate=',F10.1,
+      4       ' Inlet elev.=',F10.2,' Turnon elev.=',F10.2)
+  43   FORMAT(4X,' Q vs. Head table Id=',A,' Controlling level vs.',
+-     1     ' Time source=',S,/,4X,'Limiting Q vs. Controlling level',
++     1     ' Time source=',A,/,4X,'Limiting Q vs. Controlling level',
+      2     ' Table Id=',A,/,4X,'Elevation of zero head=',F10.2)
+  44   FORMAT(4X,'Variable-head, variable-speed pump: ',A5,/,
+      1       4X,'Flow direction=',I5,' TabId for pump curve=',A,
+@@ -1645,8 +1806,9 @@
+  55   FORMAT(4X,'Impulse+momentum equality between nodes ',A5,' AND '
+      A       ,A5)
+  56   FORMAT(4X,'TabId for pos flow=',A,' TabId for neg flow=',A,
+-     2 /,4X,'TabId for adjustment factor=',A,' Base elev.=',A10,
+-     3 /,4X,'TabId for variable base elevation=',A)
++     2 /,4X,'Source for capacity fraction=',A,' Base elev.=',A10,
++     3 /,4X,'TabId for variable base elevation=',A, 
++     4      ' Structure name=',a)
+  57   FORMAT(/,' *ERR:124* flow node for Code 5 Type 5 must be the',
+      1       ' upstream node')
+  58   FORMAT(4X,' Abrupt expansion.  TabId for critical flow=',A)
+@@ -1655,7 +1817,7 @@
+      2       ' TabId for C pos=',A,
+      3       /,4X,' TabId for C neg=',A,' TabId for sub. corr.=',A,
+      4       /, ' Weir length=',F9.2,' Vel head factor=',F7.2)
+- 60   FORMAT(4X,'Match average of elevations at nodes:',2A5,' with',
++ 60   FORMAT(4X,'Match average of elevations at nodes:',2A6,' with',
+      A        /,4X,'elevation at node:',A5,' using weight of:',F6.2,
+      B        ' on node:',A5)
+  61   FORMAT(4X,' Oper. code=',A,' Datum for heads=',F10.2,
+@@ -1690,6 +1852,8 @@
+      B ' head=',F10.2)
+  72   FORMAT(' *ERR:179* Branch number=',I5,' does not appear in NMC',
+      A       ' input.')
++ 73   FORMAT('    Base elev  shifted ',f8.3,
++     a        ' relative to datum in table.')
+  74   FORMAT(' *ERR:180* Expected ',I5,' entries in NMC input but',
+      A   ' found',I5,' entries.')
+  76   FORMAT(' *ERR:185* Exterior node=',A5,' never appears in',
+@@ -1710,12 +1874,20 @@
+ 94    FORMAT
+      A(/,' *ERR:410* Number of exterior nodes=',I5,
+      B  ' is odd. Must be even.')
++95    format(
++     a' *ERR:XXX* Add dummy branches to correct the errant free nodes.')
++
+  2000 FORMAT(/,' *ERR:83* Node for channel control depth ', A5,
+      A           ' not on a branch')
+  2005 FORMAT(/,' *ERR:84* Channel control node',A5,
+      1      ' not at downstream end of branch')
+  3003 FORMAT(/,' *ERR:121* Bottom slope for normal depth < 0. S=',F10.4)
+ C***********************************************************************
++c     Clear the count for each code
++      do i=1,15
++        eqsum_knt(i) = 0
++      end do
++
+ C     SET QE2 TO ZERO FOR FLOW NODE CHECKING
+ C     ALSO SET CHKSQ(*) TO ZERO FOR COUNTING OCCURRENCES OF NODES
+ C     IN CODES 2, 4, 6, 8 FOR ERROR CHECKING
+@@ -1766,21 +1938,12 @@
+       EMC(15+1) = 6 + NEGOFF
+  1000 CONTINUE
+       IF(NEW_FORM.EQ.0) THEN
+-C        CALL INL80
+-C     I            (IN, STDOUT,
+-C     O             LINE)
+-C        READ(LINE,24,ERR=991) CODE, NC, F
+-C        DO 1001 I=1,10
+-C          NC_LONG(I) = NC(I)
+-C          CALL STRIP_L_BLANKS(
+-C     M                        NC_LONG(I))
+-C1001    CONTINUE
+         WRITE(STDOUT,*) ' Bug in EXIN. NEW_FORM=0'
+         STOP 'Abnormal stop.  Bug found.'
+       ELSE
+ C       New format for Network Matrix input.
+         IF(MACRO_STACK_TOP.EQ.0) THEN
+-          CALL INL196
++          CALL inline
+      I                (IN, STDOUT,
+      O                 LONG_LINE)
+         ELSE
+@@ -1828,6 +1991,9 @@
+  
+          EMC(EPT-1) = IENTRY
+          EMC(EPT) = CODE
++
++c        Count the code numbers
++         eqsum_knt(code) = eqsum_knt(code) + 1
+          GOTO(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),CODE
+            WRITE(STDOUT,*) ' *BUG:11* INVALID EMC CODE IN EXIN. CODE=',
+      A                   CODE
+@@ -1983,7 +2149,7 @@
+              F(1) = 3.E30
+              CHR10 = 'missing'
+            ELSE 
+-             WRITE(CHR10,'(F10.3)') F(1)
++             WRITE(CHR10,'(F10.3)') F(1) +dz_for_output
+            ENDIF
+  
+            WRITE(STDOUT,36) NC_LONG(5), CHR10, F(2)
+@@ -2008,7 +2174,7 @@
+                F(1) = 3.E30
+                CHR10 = 'missing'
+              ELSE 
+-               WRITE(CHR10,'(F10.3)') F(1)
++               WRITE(CHR10,'(F10.3)') F(1) + dz_for_output
+              ENDIF
+              WRITE(STDOUT,37) NC_LONG(5), CHR10
+              IF(EPT+7.GT.MLEMC) CALL KIL
+@@ -2072,7 +2238,7 @@
+                F(1) = 3.E30
+                CHR10 = 'missing'
+              ELSE 
+-               WRITE(CHR10,'(F10.3)') F(1)
++               WRITE(CHR10,'(F10.3)') F(1) + dz_for_output
+              ENDIF
+ 
+              WRITE(STDOUT,39) NC_LONG(5), NC_LONG(6), CHR10
+@@ -2097,7 +2263,7 @@
+                F(1) = 3.E30
+                CHR10 = 'missing'
+              ELSE 
+-               WRITE(CHR10,'(F10.3)') F(1)
++               WRITE(CHR10,'(F10.3)') F(1) + dz_for_output
+              ENDIF
+  
+              WRITE(STDOUT,40) NC_LONG(5), NC_LONG(6), CHR10
+@@ -2153,7 +2319,8 @@
+ C            TABLE NUMBER, F(1) = ELEVATION OF ZERO HEAD FOR RATING
+ C            TABLE
+ 
+-             WRITE(STDOUT,43) NC_LONG(5), NC_LONG(6), NC_LONG(7), F(1)
++             WRITE(STDOUT,43) NC_LONG(5), NC_LONG(6), NC_LONG(7), 
++     a                   F(1) + dz_for_output
+  
+              EMC(EPT+5) = N(5)
+              EMC(EPT+6) = N(6)
+@@ -2219,7 +2386,8 @@
+ C            FLOW FROM DOWNSTREAM NODE TO UPSTREAM NODE; F(3) =  BASE
+ C            ELEVATION FOR DEFINING DEPTH AT THE CRITICAL SECTION.
+  
+-             WRITE(STDOUT,41) N(5), NC_LONG(6), F(1), F(2), F(3)
++             WRITE(STDOUT,41) N(5), NC_LONG(6), F(1), F(2), 
++     a                 F(3) + dz_for_output
+  
+              IF(N(6).LE.0.OR.N(6).GT.MFT) CALL KIL
+      I                                             (9,
+@@ -2272,7 +2440,7 @@
+                F(1) = 3.E30
+                CHR10 = 'missing'
+              ELSE 
+-               WRITE(CHR10,'(F10.3)') F(1)
++               WRITE(CHR10,'(F10.3)') F(1) + dz_for_output
+              ENDIF
+ 
+ 
+@@ -2348,7 +2516,9 @@
+ C               value given by the user is used.
+  
+           WRITE(STDOUT,44) NC(10), N(5), (NC_LONG(J), J=6,9), 
+-     A                    (F(J), J=1,5)
++     a             f(1) + dz_for_output, f(2), f(3) + dz_for_output,
++     b             f(4), f(5)
++c     A                    (F(J), J=1,5)
+  
+           IF(EPT+EMC(CODE+1)+CD5TY3.GT.MLEMC) CALL KIL
+      I                                                 (13,
+@@ -2490,12 +2660,17 @@
+ C
+ C           N(5) = TABLE NUMBER FOR FLOW FROM U TO D
+ C           N(6) = TABLE NUMBER FOR FLOW FROM D TO U
+-C           N(7) = OPTIONAL TABLE NUMBER FOR TABLE GIVING THE FACTOR
++C           N(7) =  if > 0 then an operation control block number
++c                   if < 0 then a table id for a time-series table
++c                   giving the multiplying factor on the flow. 
++c                   Only makes sense if flow tables are of type 13
+ C                  TO USE TO MULTIPLY THE VALUE DERIVED FROM THE TABLES.
+ C                  IF ZERO FACTOR IS TAKEN AS 1.0
+ C           N(8) = OPTIONAL TABLE NUMBER FOR TABLE GIVING THE ELEVATION
+ C                  FOR COMPUTING HEAD VERSUS TIME.  IF ZERO THE ELEVATION
+ C                  FOR COMPUTING HEAD IS THE VALUE IN F(1)
++C           N(9) = Name for structure when it is dynamically varied with 
++c                  an operation control block
+ C           N(10) = IF GT 0 THEN INDICATES A CONTINUATION LINE FOLLOWS
+ C                   THE CONTINUATION LINE WILL HAVE ONLY N(5:10), AND
+ C                   F(1) ON IT IN THE SAME FORMAT AS THE FIRST LINE OF
+@@ -2504,13 +2679,16 @@
+ C           F(1) = ELEVATION FOR COMPUTING HEADS
+  
+ C         Establish the head datum
++          datum_shift = 0.0
+           IF(FC(1).EQ.'LKUP') THEN
+             CALL FIND_HDD_FROM_TABN(
+      I                             N(5), STDOUT,
+      O                             STATUS, HDATUM)
+             IF(STATUS.EQ.1) THEN
+-              WRITE(CHR10,'(F10.3)') HDATUM
+-              F(1) = HDATUM
++c             Add increment.  f(1) is 0.0 if none was given
++              datum_shift = f(1)
++              F(1) = datum_shift + HDATUM
++              WRITE(CHR10,'(F10.3)') f(1) + dz_for_output
+             ELSE
+               CHR10 = 'from table'
+               F(1) = 2.E30
+@@ -2522,13 +2700,17 @@
+               F(1) = 3.E30
+               CHR10 = 'missing'
+             ELSE 
+-              WRITE(CHR10,'(F10.3)') F(1)
++              WRITE(CHR10,'(F10.3)') F(1) + dz_for_output
+             ENDIF
+           ENDIF
+ 
+           MLOC = EPT + 6
+           WRITE(STDOUT,56) NC_LONG(5), NC_LONG(6), NC_LONG(7), CHR10, 
+-     A                                                     NC_LONG(8)
++     A                     NC_LONG(8), nc_long(9)
++          if(datum_shift.ne.0.0) then
++            write(stdout,73) datum_shift
++          endif
++
+           IF(CHR10.EQ.'from table') THEN
+             WRITE(STDOUT,92)
+             EFLAG = 1
+@@ -2546,13 +2728,35 @@
+             EMC(EPT + IOFF + 8) = N(6)
+             EMC(EPT + IOFF + 9) = N(7)
+             EMC(EPT + IOFF + 10) = N(8)
+-            RDUM = F(1)
+-            EMC(EPT + IOFF + 11) = IDUM
++
++c           22 Jan 2007: try the TRANSFER function
++            EMC(EPT + IOFF + 11) = TRANSFER(F(1), IDUM)
++
++c            RDUM = F(1)
++c            EMC(EPT + IOFF + 11) = IDUM
++c           The following line is needed to force g95 0.91 of Jan 9, 2007
++c           to properly process the information in the preceding statements.
++c           The stored value of F(1) is incorrect in at least one critcal 
++c           instance if this superfluous write is not here!
++c            write(long_line,'(f10.0,i10,i10)')  rdum, idum, ept+ioff+11
++
++c           Set the pointer into the gate-name table. If 
++c           no gate name was given this value is zero and the 
++c           table contains a blank entry at an index of 0!
++            EMC(EPT + IOFF + 12) = n(9)
++c           Set the opening fraction to 1.0
++            rdum = 1.0
++            EMC(EPT + IOFF + 13) = idum
++c           Set the extra location required to zero
++            rdum = 0.0
++            EMC(EPT + IOFF + 14) = idum
++            
++c           
+  
+             IF(N(10).GT.0) THEN
+ C             New format for Network Matrix input.
+               IF(MACRO_STACK_TOP.EQ.0) THEN
+-                CALL INL196
++                CALL inline
+      I                     (IN, STDOUT,
+      O                      LONG_LINE)
+               ELSE
+@@ -2577,8 +2781,12 @@
+      I                           N(5), STDOUT,
+      O                           STATUS, HDATUM)
+                 IF(STATUS.EQ.1) THEN
+-                  WRITE(CHR10,'(F10.3)') HDATUM
+-                  F(1) = HDATUM
++c                 Add increment.  f(1) is 0.0 if none was given
++                  datum_shift = f(1)
++                  F(1) = datum_shift + HDATUM
++                  WRITE(CHR10,'(F10.3)') f(1) + dz_for_output
++c                  WRITE(CHR10,'(F10.3)') HDATUM
++c                  F(1) = f(1) + HDATUM
+                 ELSE
+                   CHR10 = 'from table'
+                   F(1) = 2.E30
+@@ -2591,13 +2799,13 @@
+                   F(1) = 3.E30
+                   CHR10 = 'missing'
+                 ELSE 
+-                  WRITE(CHR10,'(F10.3)') F(1)
++                  WRITE(CHR10,'(F10.3)') F(1) + dz_for_output
+                 ENDIF
+               ENDIF
+               M = M + 1
+               WRITE(STDOUT,'(''   M = '',I5)') M
+               WRITE(STDOUT,56) NC_LONG(5), NC_LONG(6), NC_LONG(7), 
+-     A                         CHR10, NC_LONG(8)
++     A                         CHR10, NC_LONG(8), nc_long(9)
+               IF(CHR10.EQ.'from table') THEN
+                 WRITE(STDOUT,92)
+                 EFLAG = 1
+@@ -2743,7 +2951,7 @@
+                F(1) = 3.E30
+                CHR10 = 'missing'
+              ELSE 
+-               WRITE(CHR10,'(F10.3)') F(1)
++               WRITE(CHR10,'(F10.3)') F(1) + dz_for_output
+              ENDIF
+ 
+              WRITE(STDOUT,63) NC(6), NC_LONG(5), NC_LONG(7), 
+@@ -3209,13 +3417,16 @@
+ C       Signal that code 14 is present
+         CODE14_PRESENT = 1
+ C       Establish the head datum
++        datum_shift = 0.0
+         IF(FC(2).EQ.'LKUP') THEN
+           CALL FIND_HDD_FROM_TABN(
+      I                           N(4), STDOUT,
+      O                           STATUS, HDATUM)
+           IF(STATUS.EQ.1) THEN
+-            WRITE(CHR10,'(F10.3)') HDATUM
+-            F(2) = HDATUM
++c           Add the increment.  f(2) is 0.0 if none was given
++            datum_shift = f(2)
++            F(2) =  f(2) + HDATUM
++            WRITE(CHR10,'(F10.3)') f(2) + dz_for_output
+           ELSE
+             CHR10 = 'from table'
+             F(2) = 2.E30
+@@ -3227,7 +3438,7 @@
+             F(2) = 3.E30
+             CHR10 = 'missing'
+           ELSE 
+-            WRITE(CHR10,'(F10.3)') F(2)
++            WRITE(CHR10,'(F10.3)') F(2) + dz_for_output
+           ENDIF
+         ENDIF
+ 
+@@ -3236,6 +3447,10 @@
+ 
+           WRITE(STDOUT,66) NC(1), NC(2), NC(3), NC_LONG(4), NC_LONG(5), 
+      A                     NC_LONG(6),  F(1), CHR10
++          if(datum_shift.ne.0.0) then
++            write(stdout,73) datum_shift
++          endif
++
+         ELSE 
+ C         Check for computation of the elevation of the toe of the levee. 
+ C         This is used to force a standard false levee height so that the
+@@ -3253,7 +3468,8 @@
+             F(3) = F(2) - F(4)
+           ENDIF
+           WRITE(STDOUT,68) NC(1), NC(2), NC(3), NC_LONG(4), NC_LONG(5), 
+-     A                     NC_LONG(6), NC_LONG(7), F(1), CHR10, F(3)
++     A                     NC_LONG(6), NC_LONG(7), F(1), CHR10, 
++     b                    F(3) + dz_for_output
+         ENDIF
+         IF(F(1).LT.0.0.OR.F(1).GT.1.0) THEN
+           WRITE(STDOUT,62) F(1)
+@@ -3375,8 +3591,19 @@
+ C     Set the exterior node count.
+       NEX = ENODEN
+       WRITE(STDOUT,93) NEX
++c     Check if there are some unattached free nodes.  Could be an 
++c     even number of these and nex would still be even but the 
++c     information would be flawed!
++      call chk_dummy_branches
++     i                  (stdout, nex, exnodt, inenus,
++     o                   hit)
++      if(hit > 0) then
++        write(stdout, 95) 
++        STOP 'Abnormal stop.  Error(s) found.'
++      endif
+       IF(MOD(NEX,2).NE.0) THEN
+         WRITE(STDOUT,94) NEX
++
+         STOP 'Abnormal stop.  Error(s) found.'
+       ENDIF 
+ C     CHECK FOR MISSING BRANCHES
+@@ -3406,7 +3633,7 @@
+  
+       IF(IENTRY-1.NE.2*NEX-N2EQ) THEN
+         WRITE(STDOUT,74) 2*NEX - N2EQ, IENTRY-1
+-        EFLAG = 1
++C        EFLAG = 1
+       ENDIF
+       NENTRY = IENTRY - 1
+       RETURN
+@@ -3428,6 +3655,7 @@
+ C     PARAMTERS
+  
+       IMPLICIT NONE
++
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER EFLAG, FTP, MLFT, TYPE, XOFF
+       REAL EXT
+@@ -3451,7 +3679,7 @@
+       SAVE JID, QCID
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER IOFF
++      INTEGER IOFF, it
+       REAL A2, A3, ALP2, ALP3, B2, B3, DA, DAEXT, DALP, DALPDA, DB,
+      A     DBDA, DKH, DKHDA, DMA, DMADA, DMQ, DMQDA, DQC, DQCDA, DT,
+      B     DTDY, DY, KH2, KH3, MA2, MA3, MQ2, MQ3, QC2, QC3, T2, T3, Y2,
+@@ -3542,14 +3770,20 @@
+ C     THE CORE SET HAS BEEN DONE.  NOW DO THE TABLES THAT CONTAIN
+ C     ADDITIONAL ELEMENTS
+  
+-      IF(JID(TYPE).EQ.1) THEN
++      if(type.gt.25) then
++        it = type - 10
++      else
++        it = type
++      endif
++
++      IF(JID(it).EQ.1) THEN
+ C       FIRST MOMENT EXISTS IN THESE TABLES.
+         YB2 = FTAB(FTP-XOFF+5)
+         YB3 = YB2 + 0.5*EXT*(A2 + A3) - EXT*EXT*(T3 - T2)/12.
+         FTAB(FTP+5) = YB3
+       ENDIF
+  
+-      IF(QCID(TYPE).EQ.1) THEN
++      IF(QCID(it).EQ.1) THEN
+ C       ALP AND QC EXISTS IN THESE TABLES.
+         ALP2 = FTAB(FTP-XOFF+6)
+         QC2 = FTAB(FTP-XOFF+7)
+@@ -3565,13 +3799,13 @@
+         FTAB(FTP+7) = QC3
+       ENDIF
+  
+-      IF(TYPE.GE.23) THEN
++      IF(it.GE.23) THEN
+ C       WE HAVE THE WEIGHT COEFFICIENTS TO EXTRAPOLATE.  THESE
+ C       VARY IN POSITION AND MUST BE DONE INDIVIDUALLY.  COMPUTE
+ C       THE RATES OF CHANGE FOR EACH TYPE.  THEN EXTRAPOLATE
+ C       AND THEN STORE FOR EACH TYPE
+  
+-        IF(TYPE.EQ.23) THEN
++        IF(it.EQ.23) THEN
+ C         MA AND MQ ARE AT OFFSETS OF 5 AND 6
+           MA2 = FTAB(FTP-XOFF+5)
+           DMA = MA2 - FTAB(FTP-IOFF+5)
+@@ -3584,7 +3818,7 @@
+           MQ3 = MQ2 + DMQDA*DAEXT
+           FTAB(FTP+5) = MA3
+           FTAB(FTP+6) = MQ3
+-        ELSEIF(TYPE.EQ.24) THEN
++        ELSEIF(it.EQ.24) THEN
+ C         MA AND MQ ARE AT OFFSETS OF 6 AND 7
+           MA2 = FTAB(FTP-XOFF+6)
+           DMA = MA2 - FTAB(FTP-IOFF+6)
+@@ -3597,7 +3831,7 @@
+           MQ3 = MQ2 + DMQDA*DAEXT
+           FTAB(FTP+6) = MA3
+           FTAB(FTP+7) = MQ3
+-        ELSEIF(TYPE.EQ.25) THEN
++        ELSEIF(it.EQ.25) THEN
+ C         MA AND MQ ARE AT OFFSETS OF 8 AND 9
+           MA2 = FTAB(FTP-XOFF+8)
+           DMA = MA2 - FTAB(FTP-IOFF+8)
+@@ -3613,6 +3847,35 @@
+         ENDIF
+       ENDIF
+  
++c     Make adjustments to the derivatives wrt depth if 30 <= type <=35
++      if(type.eq.30) then
++        ftab(ftp+5) = (kh3 - kh2)/(y3 - y2)
++        ftab(ftp+6) = (b3 - b2)/(y3 - y2)
++      elseif(type.eq.31) then
++        ftab(ftp+6) = (kh3 - kh2)/(y3 - y2)
++        ftab(ftp+7) = (b3 - b2)/(y3 - y2)
++      elseif(type.eq.32) then
++        ftab(ftp+8) = (kh3 - kh2)/(y3 - y2)
++        ftab(ftp+9) = (alp3 - alp2)/(y3 - y2)
++        ftab(ftp+10) = (b3 - b2)/(y3 - y2)
++      elseif(type.eq.33) then
++        ftab(ftp+7) = (kh3 - kh2)/(y3 - y2)
++        ftab(ftp+8) = (b3 - b2)/(y3 - y2)
++        ftab(ftp+9) = (ma3 - ma2)/(y3 - y2)
++        ftab(ftp+10) = (mq3 - mq2)/(y3 - y2)
++      elseif(type.eq.34) then
++        ftab(ftp+8) = (kh3 - kh2)/(y3 - y2)
++        ftab(ftp+9) = (b3 - b2)/(y3 - y2)
++        ftab(ftp+10) = (ma3 - ma2)/(y3 - y2)
++        ftab(ftp+11) = (mq3 - mq2)/(y3 - y2)
++      elseif(type.eq.35) then
++        ftab(ftp+10) = (kh3 - kh2)/(y3 - y2)
++        ftab(ftp+11) = (alp3 - alp2)/(y3 - y2)
++        ftab(ftp+12) = (b3 - b2)/(y3 - y2)
++        ftab(ftp+13) = (ma3 - ma2)/(y3 - y2)
++        ftab(ftp+14) = (mq3 - mq2)/(y3 - y2)
++      endif
++
+       FTP = FTP + XOFF
+  
+       RETURN
+@@ -3627,7 +3890,12 @@
+      O                  VUNIT, ABSTOL, HSLOT, WSLOT, NSLOT, NUMLIM,
+      O                  BNODE, BDYNUM, RESNUM, RTAFAC, OLD_SUMMARY,
+      O                  CD14_TAB_DATUM, CD5T6_TAB_DATUM,
+-     O                  START_EQ, END_EQ, DTMIN_OUT)
++     O                  START_EQ, END_EQ, DTMIN_OUT, hi_iq_ns, 
++     o                  hi_iq_ns_dwn, hi_iq_ns_up, hi_iq_ns_lmt,
++     o                  ty13_to_ty43, upgrade_xsec_tab, 
++     O                  make_dt_tab, use_maxdt_tab, hi_iq_ns_numgt, 
++     o                  hi_iq_ns_knt, hi_iq_ns_dt,frcst_wth_dtsf,
++     o                  make_tab_index, dz_for_output)
+  
+ C     + + + PURPOSE + + +
+ C     Read the input to FEQ.
+@@ -3637,12 +3905,19 @@
+  
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER BDYNUM, BNODE, LAGTSF, LDCALL, MINPRT, 
+-     A        NFREE, NRWTA, NUMLIM, QPN, RESNUM, START_EQ, END_EQ
++     A        NFREE, NRWTA, NUMLIM, QPN, RESNUM, START_EQ, END_EQ,
++     B        hi_iq_ns_numgt, hi_iq_ns_knt
+       INTEGER  RTAP(MNFREE), RWTA(MNFREE)
+       REAL ABSTOL, HSLOT, NSLOT, RTAFAC(MNFREE), VUNIT, WSLOT,
+-     A     DTMIN_OUT
++     A     DTMIN_OUT, hi_iq_ns_dwn, hi_iq_ns_up, hi_iq_ns_lmt, 
++     B     hi_iq_ns_dt, dz_for_output
+       CHARACTER GCHK*4, NODEID*4, OLD_SUMMARY*4, CD14_TAB_DATUM*4,
+-     A          CD5T6_TAB_DATUM*4, FNAME2*64, FNAME1*64
++     A          CD5T6_TAB_DATUM*4, FNAME2*64, FNAME1*64, hi_iq_ns*4,
++     a          ty13_to_ty43*4, upgrade_xsec_tab*4, make_dt_tab*256,
++     b          use_maxdt_tab*16, frcst_wth_dtsf*4,
++     *          make_tab_index*4
++
++
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     QPN    - number of lateral inflows
+@@ -3694,11 +3969,11 @@
+       REAL ZIY
+       CHARACTER ISTYLE*4,
+      A     GISID_TO_NODEID*4, TABID_TO_NODEID*4, DO_SCHEMATIC*4,
+-     B     NEW_GENSCN_FEO*4, GHOME*64
++     B     NEW_GENSCN_FEO*4
+  
+ C     + + + EXTERNAL NAMES + + +
+       INTEGER GET_UNIT
+-      EXTERNAL INFO1, INFO2, INL80, KIL, FREE_UNIT,
++      EXTERNAL INFO1, INFO2, inline, KIL, FREE_UNIT,
+      A         SET_DTEN_DEF, GET_UNIT
+  
+ C     + + + DATA INITIALIZATIONS + + +
+@@ -3742,31 +4017,34 @@
+       CALL INFO1
+      I          (IN, FNAME2, FNAME1,
+      O           STDOUT, 
+-     O           EFLAG, SSEPS, GRAV, VUNIT, ABSTOL, OUTPUT, PROUT, TIME,
++     O           EFLAG, SSEPS, GRAV, VUNIT, ABSTOL, OUTPUT, PROUT, 
+      O           LDCALL, ZIY, NODEID, MINPRT, LAGTSF, GEQOPT, NUMLIM,
+      O           GEQVEC, OLD_SUMMARY, GISID_TO_NODEID,
+      O           TABID_TO_NODEID, DO_SCHEMATIC, CD14_TAB_DATUM,
+      O           CD5T6_TAB_DATUM, NEW_GENSCN_FEO, START_EQ, END_EQ,
+-     O           DTMIN_OUT)
++     O           DTMIN_OUT, hi_iq_ns, hi_iq_ns_dwn, hi_iq_ns_up, 
++     o           hi_iq_ns_lmt, ty13_to_ty43, upgrade_xsec_tab,
++     o           make_dt_tab, use_maxdt_tab, hi_iq_ns_numgt, 
++     o           hi_iq_ns_knt, hi_iq_ns_dt, frcst_wth_dtsf,
++     o           make_tab_index, dz_for_output)
++
+ C     Set the default values for detention storage sizing.
+       CALL SET_DTEN_DEF(GRAV)
+  
++
+ C     DEFINE GRAVATATIONAL CONSTANTS
+  
+       TWOG = GRAV + GRAV
+       HALFG = .5*GRAV
+  
+-      DO 100 I=1,NBRA
+-        ZILIM(I) = ZIY
+- 100  CONTINUE
+  
+ 
+       CALL SET_RCB2(
+      O                   IFRZ, DTVEC,
+-     O                   MAXDT, MINDT, AUTO, SITER,                                     
+-     O                   HIGH, LOW, HFAC, LFAC, MRE, FAC, HSLOT,                                   
+-     O                   WSLOT, NSLOT, DWT, BWT, EXTTOL, SQREPS,                                   
+-     O                   BWFNAM, GCHK, ISTYLE,                                   
++     O                   MAXDT, MINDT, AUTO, SITER,                    
++     O                   HIGH, LOW, HFAC, LFAC, MRE, FAC, HSLOT,       
++     O                   WSLOT, NSLOT, DWT, BWT, EXTTOL, SQREPS,     
++     O                   BWFNAM, GCHK, ISTYLE,                     
+      O                   GETNAM, PUTNAM)
+ 
+  
+@@ -3840,13 +4118,16 @@
+       CALL INFO2
+      I          (IN, STDOUT, OUTPUT, NODEID, VUNIT, HSLOT, ISTYLE,
+      I           GRAV, GISID_TO_NODEID, TABID_TO_NODEID,
+-     I           DO_SCHEMATIC, NEW_GENSCN_FEO,
++     I           DO_SCHEMATIC, NEW_GENSCN_FEO, dz_for_output,
+      M           EFLAG,
+      O           QPN, NRWTA, RTAP, RWTA, LDCALL, 
+      O           NFREE, BNODE, BDYNUM, RESNUM, RTAFAC)
+  
+       LAPD = 2*(NBN-NBRA)
+  
++      DO 100 I=1,NBRA
++        ZILIM(I) = ZIY
++ 100  CONTINUE
+  
+  
+       RETURN
+@@ -3858,11 +4139,16 @@
+      I                  (STDIN, FNAME2, FNAME1,
+      O                   STDOUT, 
+      O                   EFLAG, SSEPS, GRAV, VUNIT, ABSTOL, OUTPUT,
+-     O                   PROUT, TIME, LDCALL, ZIY, NODEID, MINPRT,
++     O                   PROUT, LDCALL, ZIY, NODEID, MINPRT,
+      O                   LAGTSF, GEQOPT, NUMLIM, GEQVEC, OLD_SUMMARY,
+      O                   GISID_TO_NODEID, TABID_TO_NODEID,
+      O                   DO_SCHEMATIC, CD14_TAB_DATUM, CD5T6_TAB_DATUM,
+-     O                   NEW_GENSCN_FEO, START_EQ, END_EQ, DTMIN_OUT)
++     O                   NEW_GENSCN_FEO, START_EQ, END_EQ, DTMIN_OUT,
++     o                   hi_iq_ns, hi_iq_ns_dwn, hi_iq_ns_up, 
++     o                   hi_iq_ns_lmt, ty13_to_ty43, upgrade_xsec_tab,
++     o                   make_dt_tab, use_maxdt_tab, hi_iq_ns_numgt, 
++     o                   hi_iq_ns_knt, hi_iq_ns_dt, frcst_wth_dtsf,
++     o                   make_tab_index, dz_for_output)
+  
+ C     + + + PURPOSE + + +
+ C     Input much of the Run Control Block in FEQ.
+@@ -3873,14 +4159,18 @@
+  
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER EFLAG, GEQOPT, STDIN, LAGTSF, LDCALL, STDOUT, MINPRT, 
+-     A        NUMLIM, OUTPUT, PROUT, START_EQ, END_EQ
++     A        NUMLIM, OUTPUT, PROUT, START_EQ, END_EQ, hi_iq_ns_numgt, 
++     b        hi_iq_ns_knt
+       INTEGER GEQVEC(MNBRA)
+-      REAL ABSTOL, GRAV, SSEPS, VUNIT, ZIY, DTMIN_OUT
+-      REAL*8 TIME
++      REAL ABSTOL, GRAV, SSEPS, VUNIT, ZIY, DTMIN_OUT, hi_iq_ns_dwn, 
++     *     hi_iq_ns_up, hi_iq_ns_lmt, hi_iq_ns_dt, dz_for_output
+       CHARACTER NODEID*4, OLD_SUMMARY*4, GISID_TO_NODEID*4,
+      A          TABID_TO_NODEID*4, DO_SCHEMATIC*4,
+      B          CD14_TAB_DATUM*4, CD5T6_TAB_DATUM*4,
+-     C          NEW_GENSCN_FEO*4, FNAME2*64, FNAME1*64
++     C          NEW_GENSCN_FEO*4, FNAME2*64, FNAME1*64,
++     *          hi_iq_ns*4, ty13_to_ty43*4, upgrade_xsec_tab*4,
++     *          make_dt_tab*256, use_maxdt_tab*16, frcst_wth_dtsf*4,
++     *          make_tab_index*4
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IN     - unit number for the user input file
+@@ -3934,6 +4224,8 @@
+       INCLUDE 'version.cmn'
+       INCLUDE 'home.cmn'
+       INCLUDE 'stdun.cmn'
++      include 'datetime.cmn'
++      include 'grid_datum.cmn'
+ 
+ C     + + + SAVED VALUES + + +
+       CHARACTER NO*4, YES*4
+@@ -3943,10 +4235,10 @@
+       INTEGER GEQLOC, I, IT, IOFLAG, KMLDUM, N, VALUES(8), STDTMP
+       REAL EPSFAC
+       REAL*8 HR
+-      CHARACTER  GENAME*5, NAME*4, GLB_HOME*64,
+-     A          LINE120*120, DATE*8, ZEIT*10, ZONE*5,
++      CHARACTER  GENAME*5, NAME*4, GLB_HOME*128,
++     A          LINE120*120, DATE*8, ZEIT*10, TZONE*5,
+      B          LONGLINE*196, TEMP_FILE_NAME*128,
+-     C          SB_HOME*64, WORK*128
++     C          SB_HOME*128, WORK*256
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC DBLE, SQRT
+@@ -3955,8 +4247,8 @@
+       INTEGER MJD, GET_UNIT
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL CHKDAT, CHKMJD, INL80, INL120B, KIL, MJD,
+-     A         INL196_ALL, STRIP_L_BLANKS, GET_UNIT,
++      EXTERNAL CHKDAT, CHKMJD, inline, inlineb, KIL, MJD,
++     A         inline_ALL, STRIP_L_BLANKS, GET_UNIT,
+      B      WHAT_EXECUTABLE
+  
+ C     + + + DATA INITIALIZATIONS + + +
+@@ -3974,6 +4266,12 @@
+      B         ' any value of NEX that you give.')
+  8    FORMAT(/,' Zero inertia limit = ',F10.2,' feet')
+  10   FORMAT(' ',80A)
++11    format(/,' High IQ Newton-solution option is:',A4)
++12    format(/,' High IQ Newton-solution reduction factor =',F10.3)
++13    format(/,' High IQ Newton-solution increase factor =',F10.3)
++14    format(/,' High IQ Newton-solution lower limit =',F10.3)
++15    format(/,' High IQ Newton-solution time step =',F10.3)
++16    format(/,' High IQ Newton-solution number greater than=',i7)
+  20   FORMAT(/,' Gravity = ',F10.2)
+  22   FORMAT(/,' Convergence limit(surcharge storage)  = ',1PE10.3)
+  23   FORMAT(/,' ',A4,'= ',I5)
+@@ -3984,7 +4282,7 @@
+  25   FORMAT(/,' Maximum no. of iterations in system solution  = ',
+      A       I5,' Max. NUMGT=',I5)
+  26   FORMAT(/,' Print out option is: OUTPUT = ',I5)
+- 27   FORMAT(/,' Print out will be given every ',I5,' time steps')
++ 27   FORMAT(/,' Print out will be given every ',I8,' time steps')
+  28   FORMAT(/,' Detailed print out starts at time interval ',I5)
+  29   FORMAT(/,' Detailed print out ends at time interval ',I5)
+  30   FORMAT(/,' Point flow option = ',A4)
+@@ -4038,16 +4336,23 @@
+  74   FORMAT(/,' Gov. Eqs.: curvilinear axis, WX variable, NZD option')
+  75   FORMAT(/,' *WRN:30* UNKNOWN OPTION=',A5,' FOR GEQOPT. ',
+      A       ' STDX OPTION ASSUMED.')
++76    format(/,' Make function-table index: ',a)
++77    format(/,
++     a  ' Elevation increment to add for datum shift on output: ',f10.4)
+  79   FORMAT(/,' Tributary area unit factor=',1PE12.5)
+-80    FORMAT(' Version: ',F6.2,' Version date: ',A17,10X,
++80    FORMAT(' Version: ',F6.2,' Version date: ',A17,5X,
+      A          'Date/time of run: ',A4,'/',A2,'/',A2,': ',
+      B          A2,'.',A2,'.',A6)
+ 81    FORMAT(/,' *ERR:376* Too many lines in the title block or ',
+      A          'Run-Control Block heading is missing.') 
+ 82    FORMAT(/,' Run Control Block Summary')
++83    format(/,' Horizontal grid: Zone:',a,' Name:',a)  
+ 84    FORMAT(/,' Summary of Extremes is in pre-version 9.5 format.')
+-86    FORMAT(/,' Summary of Extremes is in version 9.5 format.')                                                                             
++85    format(/,' Vertical-datum: ',a)
++86    FORMAT(/,' Summary of Extremes is in version 9.5 format.') 
++87    format(/,' Unit system: ',a)                                                                            
+ 88    FORMAT(/,' GISID placed into NODEID for branch nodes.')
++89    format(/,' Function-table basis: ',a)
+ 90    FORMAT(/,' TABID placed into NODEID for branch nodes.')
+ 91    FORMAT(/,' Script file for schematic will be created.')
+ 92    FORMAT(/,' Script file for schematic is not created.')
+@@ -4080,9 +4385,13 @@
+ C     and then preprocess the master input file to create the 
+ C     one to be used. 
+       
+-      CALL  INL196_ALL
+-     I                (STDIN,
+-     O                 LONGLINE)
++c     skip blank lines at the start of the file
++101   continue      
++        CALL  inline_ALL
++     I                  (STDIN,
++     O                   LONGLINE)
++        if(longline.eq.' ') goto 101
++
+       CALL STRIP_L_BLANKS(
+      M             LONGLINE)
+       IF(LONGLINE(1:13).EQ.'SET SELECTORS') THEN
+@@ -4109,7 +4418,8 @@
+           WORK = SB_HOME
+           IT = LEN_TRIM(WORK)
+           WORK = WORK(1:IT)//'/'//FNAME2
+-
++          call os_file_style(
++     m                         work)
+           OPEN(UNIT=STDTMP, FILE=WORK, STATUS='UNKNOWN',IOSTAT=IOFLAG)
+           IF(IOFLAG.NE.0) THEN
+             IT = LEN_TRIM(WORK)
+@@ -4136,9 +4446,9 @@
+       
+  
+       WRITE(STDOUT, *) ' '
+-      DO 100 I=1,51
+-
+-        CALL INL120B
++      DO 100 I=1,max_title_n
++
++        CALL inlineb
+      I              (STDIN, STDOUT,
+      O               LINE120)
+         IF(LINE120(1:7).NE.'RUN CON') THEN
+@@ -4150,17 +4460,22 @@
+           TITLE_N = I
+ C         Write the version, date of version, and the current date on the
+ C         last line of the title block. 
+-          CALL DATE_AND_TIME(DATE, ZEIT, ZONE, VALUES)
++          CALL DATE_AND_TIME(DATE, ZEIT, TZONE, VALUES)
+           WRITE(TITLE(I),80) VERSION_NUMBER, VERSION_DATE, DATE(1:4), 
+      A          DATE(5:6), DATE(7:8), ZEIT(1:2), ZEIT(3:4), ZEIT(5:10)
++c         Save the version/run date time
++          version_run_date_time_string = title(i)
++
+           WRITE(STDOUT,'(A)') TITLE(I)
+           CALL WHAT_EXECUTABLE(STDOUT)
++          call svn_report(stdout, 0)   !Report the repository loc, etc.
++                                       
+           WRITE(STDOUT,*) ' '
+           WRITE(STDOUT,'(A)') LINE120
+           GOTO 105
+         ENDIF
+ 100   CONTINUE
+-C     If we get here, the user has  used more than 50 lines for the header or
++C     If we get here, the user has  used more than 200 lines for the header or
+ C     has forgotten the run-control block heading line.
+        WRITE(STDOUT,81)
+        STOP 'Abnormal stop: errors found.'
+@@ -4171,25 +4486,38 @@
+ 
+       CALL SET_RCB1(
+      O             NBRA, NEX, MINPRT, LAGTSF, DMYEAR, DMMN,
+-     O             ZIY, SYR, SMN, SDY, SFRAC, EYR, EMN, EDY,                       
+-     O             EFRAC, GRAV, SSEPS, PAGESP, EPSSYS, ABSTOL,                     
+-     O             EPSFAC, MKNT, NUMLIM, OUTPUT, PROUT,                            
+-     O             PRTINT, YR, MN, DY, HR, EPSB, MAXIT, SFAC,                      
++     O             ZIY, SYR, SMN, SDY, SFRAC, EYR, EMN, EDY,            
++     O             EFRAC, GRAV, SSEPS, PAGESP, EPSSYS, ABSTOL,          
++     O             EPSFAC, MKNT, NUMLIM, OUTPUT, PROUT,                 
++     O             PRTINT, YR, MN, DY, HR, EPSB, MAXIT, SFAC,          
+      O             TAUFAC, QEPS, QCHOP, SOPER, POINT, DIFFUS, WIND,
+      O             UNDERF, NODEID, GENAME, OLD_SUMMARY,
+      O             GISID_TO_NODEID, TABID_TO_NODEID, DO_SCHEMATIC,
+      O             CD14_TAB_DATUM, CD5T6_TAB_DATUM, NEW_GENSCN_FEO,
+-     O             START_EQ, END_EQ, DTMIN_OUT, GLB_HOME)
++     O             START_EQ, END_EQ, DTMIN_OUT, GLB_HOME, hi_iq_ns,
++     o             hi_iq_ns_dwn, hi_iq_ns_up, hi_iq_ns_lmt,
++     o             ty13_to_ty43, upgrade_xsec_tab, make_dt_tab,
++     o             use_maxdt_tab, hi_iq_ns_numgt, hi_iq_ns_knt, 
++     o             hi_iq_ns_dt, frcst_wth_dtsf,
++     o             g_zone, g_hgrid, g_vdatum, g_unitsys, g_basis, 
++     o             make_tab_index, dz_for_output)
++
+                       
+ C     Set global home in common block home.cmn.  Note the HOME value 
+ C     given in the RCB over rides the one given in the SET Selectors block. 
+-
++c     8 Dec 2005:  Added a global home name for output.  Thus the global home
++c     name given in the run-control block only applies to input files.  Also,
++c     the getic file is an exception.  It is given the global output home name
++c     because it is created by FEQ in a previous run and will appear in the 
++c     global output home name!  As of this date, the user can only create a 
++c     global home name using the set-selectors block.  If there is a need, 
++c     we can add the ability to give output home names elsewhere.  
+ 
+       IF(SB_HOME.NE.' ') THEN
+-        GHOME = SB_HOME
++        GHOME_OUT = SB_HOME
+       ENDIF
+       IF(GLB_HOME.NE.' ') THEN
+-        GHOME = GLB_HOME                                                                   
++        GHOME = GLB_HOME                                                
+       ENDIF
+         
+       
+@@ -4198,7 +4526,7 @@
+         WRITE(STDOUT,4)
+       ENDIF 
+             
+-      IF(NEX.GT.0) THEN                                                                       
++      IF(NEX.GT.0) THEN                       
+         WRITE(STDOUT,6)
+       ENDIF
+       IF(EFLAG.NE.0) STOP 'Abnormal stop: errors found.'
+@@ -4260,12 +4588,13 @@
+      I           (STDOUT, EYR, EMN,
+      O            EFLAG)
+  
+-      SJTIME = DBLE(MJD(SYR,SMN,SDY)) + SFRAC/24.D0
++      dyfrac = sfrac/24.d0
++      SJTIME = DBLE(MJD(SYR,SMN,SDY)) + dyfrac
+       UJTIME = SJTIME
+       JTIME = SJTIME
+       EJTIME = DBLE(MJD(EYR,EMN,EDY)) + EFRAC/24.D0
+       VJTIME = EJTIME
+- 
++
+ C     Set the base time for tables of types 7, 8, and 9.
+ C     The only time multiple events are done in sequence is
+ C     when DIFFUS=YES.
+@@ -4435,6 +4764,38 @@
+         WRITE(STDOUT,97) GLB_HOME(1:N)
+       ENDIF
+ 
++      write(stdout,11) hi_iq_ns
++      if(hi_iq_ns.ne.'NO') then
++c       Check for special values.
++        if(hi_iq_ns_up.lt.0.0) then
++c         Compute value from hi_iq_ns_dwn
++          hi_iq_ns_up = (1.0/hi_iq_ns_dwn)**(1.0/abs(hi_iq_ns_up))
++        endif
++        write(stdout,12) hi_iq_ns_dwn
++        write(stdout,16) hi_iq_ns_numgt
++        write(stdout,13) hi_iq_ns_up
++        write(stdout,14) hi_iq_ns_lmt
++        write(stdout,15) hi_iq_ns_dt
++      endif
++
++      if(g_zone /= 'NONE') then
++        write(stdout,83) g_zone, g_hgrid
++      endif
++      if(g_vdatum /= 'NONE') then
++        write(stdout,85) g_vdatum
++      endif
++      if(g_unitsys /= 'NONE') then
++        write(stdout,87) g_unitsys
++      endif
++      if(g_basis /= 'NONE') then
++        write(stdout,89) g_basis
++      endif
++      if(make_tab_index == 'YES') then
++        write(stdout,76) make_tab_index
++      endif
++      if(dz_for_output /= 0.0) then
++        write(stdout,77) dz_for_output
++      endif
+       RETURN
+       END
+ C
+@@ -4472,14 +4833,13 @@
+       RETURN
+       END
+ 
+-
+ C
+ C
+ C
+       SUBROUTINE   INFO2
+      I                  (IN, STDOUT, OUTPUT, NODEID, VUNIT, HSLOT, 
+      I                   ISTYLE, GRAV, GISID_TO_NODEID, TABID_TO_NODEID,
+-     I                   DO_SCHEMATIC, NEW_GENSCN_FEO,
++     I                   DO_SCHEMATIC, NEW_GENSCN_FEO, dz_for_output,
+      M                   EFLAG,
+      O                   QPN, NRWTA, RTAP, RWTA, LDCALL, 
+      O                   NFREE, BNODE, BDYNUM, RESNUM,
+@@ -4496,7 +4856,7 @@
+       INTEGER BDYNUM, BNODE, EFLAG, IN, LDCALL, STDOUT, 
+      A        NFREE, NRWTA, OUTPUT, QPN, RESNUM
+       INTEGER  RTAP(MNFREE), RWTA(MNFREE)
+-      REAL GRAV, HSLOT, RTAFAC(MNFREE), VUNIT
++      REAL GRAV, HSLOT, RTAFAC(MNFREE), VUNIT, dz_for_output
+       CHARACTER ISTYLE*4, NODEID*4, GISID_TO_NODEID*4, 
+      A          DO_SCHEMATIC*4, TABID_TO_NODEID*4,
+      B          NEW_GENSCN_FEO*4
+@@ -4546,6 +4906,8 @@
+       INCLUDE 'irrig.cmn'
+       INCLUDE 'tabid.cmn'
+       INCLUDE 'dtendef.cmn'
++      include 'maketabindex.cmn'
++      include 'svn.cmn'
+  
+ C     + + + SAVED VALUES + + +
+       CHARACTER  NEW*4, NO*4, YES*4
+@@ -4554,12 +4916,13 @@
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER BDYFLG, EMCADR, ENODEN, FTKNT, FUNFLG, I, IS, J, JUNKNT,
+      A        LBUFF, LEN, LIM, LJUNC, LVAR, MINLEN, MINNOD, N, NEW_FORM, 
+-     B        SPOUT_STYLE, TABLE, TWON, DEFKNT
+-      INTEGER CHKSQ(MNETRY), BASE_NODE_VEC(MNEX), WORK(MLPDA)
++     B        SPOUT_STYLE, TABLE, TWON, DEFKNT, ioflag, it
++      INTEGER CHKSQ(MNETRY), BASE_NODE_VEC(MNEX), WORK(MLPDA) 
+       
+       REAL AIRSPW, WATSPW
+-      CHARACTER CHR5*5, CHR6*6, HEAD*80, LINE*80, NXTNAM*128,
+-     A          C5VEC(MNEX)*5, KEY*16
++      CHARACTER CHR5*5, CHR6*6, HEAD*196, LINE*196, NXTNAM*256,
++     A          C5VEC(MNEX)*5, KEY*16, current_file*256, 
++     b          index_filename*256
+       LOGICAL THERE
+  
+ C     + + + INTRINSICS + + +
+@@ -4571,27 +4934,30 @@
+  
+ C     + + + EXTERNAL NAMES + + +
+       EXTERNAL BRIN, CHKBR, CHKEX, CHKPT, CHKWIN, DMPJUN, EXIN,
+-     A         EXINIT, FTABIN, GETINN, GETUSN, INL80, KIL, MAKEMC,
+-     B         MAKJUN, MAKMAT, NZDCON, OPIN, OUTIN, PFIN, PMPCTB, RDFIN,
++     A         EXINIT, FTABIN, GETINN, GETUSN, inline, KIL, MAKEMC,
++     B         MAKJUN, MAKMAT, NZDCON, OPIN, OUTIN, PMPCTB, RDFIN,
+      C         RTBADJ, SCAN, SETCON, SORTCI, STEXAG, TABRC, TRIBIN, 
+      D         VALLEY, WRFIN, GET_UNIT, FREE_UNIT, 
+      E         FIND_GATE_TABLE_ADDRESS, IRRIG_INPUT, 
+      F         OUTPUT_BALANCE_LEGEND, EXTRACT_SLOT_DEPTH,
+      G         SEEK_FREE_NODE_STATIONS, FREE_NODE_LOCATION_DEFINE,
+-     H         OUTPUT_SCHEMATIC_SCRIPT, STAT_TRAN
++     H         OUTPUT_SCHEMATIC_SCRIPT, MAYBE_ADD_gHOME_out,
++     i         maybe_add_ext, os_file_style, braxy_to_exnodt 
++
+  
+ C     + + + DATA INITIALIZATIONS + + +
+       DATA YES/'YES'/, NO/'NO'/, NEW/'NEW'/
++      DATA index_filename/'/ftab_index'/
+  
+ C     + + + INPUT FORMATS + + +
+- 1    FORMAT(A80)
++ 1    FORMAT(A)
+  15   FORMAT(7X,F10.0)
+  16   FORMAT(7X,A)
+  17   FORMAT(6X,F10.0)
+  
+ C     + + + OUTPUT FORMATS + + +
+- 11   FORMAT(/,' ',A80)
+- 12   FORMAT(' ',A80)
++ 11   FORMAT(/,' ',A)
++ 12   FORMAT(' ',A)
+  40   FORMAT(/,' Wind Table Id  = ',A,/,1X,
+      A           'Air Sp Wt  = ',1PE10.3,/,1X,
+      B           'Water Sp Wt  = ',1PE10.3,/,1X,
+@@ -4600,12 +4966,13 @@
+      E           'Velocity at max Cd =',0PF7.2,/,1X,
+      F           'Max Cd =',1PE10.3)
+  50   FORMAT(/,' Run TERMINATED. Errors encountered.')
++58    format(/,' File name for funtion-table index is:',/,5x,a)
+  59   FORMAT(' ','Number of branches:',I5,/
+      A     ,' Number of exterior nodes:',I5,/
+      B     ,' Number of nodes on branches:',I5,/
+      C     ,' Number of operation blocks:',I5,/
+-     D     ,' Function table number:',I5,/
+-     E     ,' Length of the function table:',I7,/
++     D     ,' Function table count:',I5,/
++     E     ,' Length of the function-table vector:',I7,/
+      G     ,' Number of point flows:',I5,/
+      H     ,' Length of Network-Matrix Control:',I7,/
+      I     ,' Number of rows in array of partial deriv.:',I5,/
+@@ -4644,7 +5011,37 @@
+      C/,' somewhere in the input.  One or more tables may also be',
+      D ' missing.')
+ C***********************************************************************
+-C     INPUT THE BRANCH DESCRIPTION TABLES
++c     Setup for a possible index for the function tables.
++
++      index_knt = 0  !We track everything for the index even if the 
++                     !user does not request its output.  Propably 
++                     ! should make output of an index the default:)
++      if(make_tab_index == 'YES') then
++c       open a file with a standard name for the function-table index
++        stdindex = get_unit(stdout)
++        call maybe_add_ghome_out(
++     m                          index_filename)
++        call maybe_add_ext(
++     m                      index_filename)
++
++        call os_file_style(
++     m                      index_filename)
++        write(stdout,58) index_filename(1:len_trim(index_filename))
++        OPEN(UNIT=stdindex, FILE=index_filename, 
++     a                   STATUS='UNKNOWN',IOSTAT=IOFLAG)
++        IF(IOFLAG.NE.0) THEN
++          WRITE(STDOUT,*) 
++     a          ' Problem in opening file: ', 
++     b          index_filename(1:LEN_TRIM(index_filename))
++          WRITE(STDOUT,*) 
++     a          ' Check path for making the function-table index.'
++          STOP 'Abnormal stop: errors found.'
++        ENDIF
++c       Clear the counter of tables in the index.
++        index_knt = 0
++      endif
++
++C     INPUT THE BRANCH DESCRIPTION TABLES or maybe the function tables
+  
+ C     CLEAR THE TRANSLATION VECTORS FOR USER BRANCHES AND
+ C     USER EXTERIOR NODES.
+@@ -4658,7 +5055,7 @@
+ C     CLEAR THE EXTERIOR NODE COUNTER FOR INTERNAL EXTERIOR NODE NUMBERS
+       ENODEN = 0
+  
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,1) HEAD
+@@ -4673,7 +5070,7 @@
+         NEX = MNEX
+         CALL BRIN
+      I           (SFAC, IN, STDOUT, MNBN, NEX, MFTNUM, ISTYLE,
+-     I            GISID_TO_NODEID, TABID_TO_NODEID,
++     I            GISID_TO_NODEID, TABID_TO_NODEID, dz_for_output,
+      M            EFLAG, USBRIN, ENODEN, NBRA, 
+      O            NBN, BRPT, NSEC, UVX, UVY, XVEC, ZVEC, KA, KD, HLTAB,
+      O            COEFIN, YCUT, BNODID, ZIVEC, STDFLD, PNDFLG, WDFVEC,
+@@ -4695,37 +5092,59 @@
+  202     CONTINUE
+  
+         IS = IN
++        current_file = 'master_input_file'  ! Set the current file for reading function tables
+  1002   CONTINUE
+           CALL FTABIN
+      I               (IS, IN, STDOUT, OUTPUT, FTP, MFTNUM, MRFTAB, 
+-     I                HSLOT,
++     I                HSLOT, current_file,
+      M                EFLAG, FTKNT, FTPNT,
+      O                TABLE, NXTNAM)
+  
+           IF(TABLE.EQ.-1) GOTO 302
++
++C          write(stdout,*) ' At return from ftabin: is=',is,' in=',in
+           IF(IS.NE.IN) THEN
++C            write(stdout,*) ' Freeing unit=',is
+             CALL FREE_UNIT(STDOUT, IS)
++c           Make sure that IS is not longer active.
++            is = in
++            current_file = 'master_input_file'
+           ENDIF
+ 
+           IF(TABLE.EQ.-15) THEN
+             IS = GET_UNIT(STDOUT)
++C            write(stdout,*) ' After get_unit: is=', is
++C            write(stdout,*) ' File name=',nxtnam
+             INQUIRE(FILE=NXTNAM, EXIST=THERE)
+             IF(THERE) THEN
+               OPEN(UNIT=IS, FILE=NXTNAM, STATUS='OLD')
++              current_file = nxtnam  ! reset the current file for input of function tables.
+             ELSE
+-              WRITE(STDOUT,*) ' FILE NAMED:', NXTNAM,' NOT FOUND.'
++              it = len_trim(nxtnam)
++              WRITE(STDOUT,*) ' FILE NAMED:', NXTNAM(1:it),' NOT FOUND.'
+               WRITE(STDOUT,*) ' CHECK SPELLING OF TABLE INPUT FILE.'
+               STOP 'Abnormal stop: errors found.'
+             ENDIF
+           ELSEIF(TABLE.EQ.-16) THEN
+ C           Set the local value of the home directory
+             CALL SET_HOME(NXTNAM)
++c           Check for version control and report
++            call getsvn_rev(stdout, nxtnam,
++     o                      svn_rev, svn_mod)
++            
+           ELSE
+             IS = IN
++            current_file = 'master_input_file'  ! Set the current file for reading function tables
+           ENDIF
+ 
+           GOTO 1002
+  302    CONTINUE
++        if(make_tab_index == 'YES') then
++          call output_ftab_index(stdout)
++        endif
++
++C        write(stdout,*) 
++C     a     ' At end of function-table input: is=',is,' in=',in
+         IF(IS.NE.IN) THEN
+           CALL FREE_UNIT(STDOUT, IS)
+         ENDIF
+@@ -4734,7 +5153,7 @@
+  
+ C       NOW INPUT THE BRANCH TABLE AFTER THE INPUT OF FUNCTION
+ C       TABLES.
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,1) HEAD
+@@ -4743,7 +5162,7 @@
+         NEX = MNEX
+         CALL BRIN
+      I           (SFAC, IN, STDOUT, MNBN, NEX, MFTNUM, ISTYLE,
+-     I            GISID_TO_NODEID, TABID_TO_NODEID,
++     I            GISID_TO_NODEID, TABID_TO_NODEID, dz_for_output,
+      M            EFLAG, USBRIN, ENODEN, NBRA, 
+      O            NBN, BRPT, NSEC, UVX, UVY, XVEC, ZVEC, KA, KD, HLTAB,
+      O            COEFIN, YCUT, BNODID, ZIVEC, STDFLD, PNDFLG, WDFVEC,
+@@ -4764,13 +5183,13 @@
+      O              NLUSE, TSFDSN, FFFDSN, TRIBA, QPN, NRWTA, RTAP,
+      O              RWTA, GEND, GSTART, RTAFAC, TAFAC)
+ C       If irrigation has been requested, input the control values
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         IF(LINE(1:10).EQ.'IRRIGATION') THEN
+           WRITE(STDOUT,'(/,A)') LINE
+ C         The user has requested irrigation computations.  
+-          CALL IRRIG_INPUT(IN, STDOUT, NEX,
++          CALL IRRIG_INPUT(IN, STDOUT, 
+      M                     ENODEN, EFLAG)
+         ELSE
+           BACKSPACE(IN)
+@@ -4818,7 +5237,7 @@
+ C  110  CONTINUE  Looks like it is no longer used.
+ 
+ 
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+ 
+@@ -4831,7 +5250,7 @@
+ C       Upon return we have terminated with the END MACROS line.
+ C       The next non-comment, non-blank line should be the 
+ C       heading for the network-matrix block.
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+ 
+@@ -4848,7 +5267,7 @@
+         WRITE(STDOUT,85)
+         STOP 'Abnormal stop.  Errors found.'
+       ENDIF
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,1) HEAD
+@@ -4856,7 +5275,7 @@
+  
+       CALL EXIN
+      I         (IN, STDOUT, MFTNUM, NBRA, MREMC, USBRIN, INBRUS,
+-     I          NEW_FORM,
++     I          NEW_FORM, dz_for_output,
+      M          EFLAG, EXNODT, USENIN, ENODEN,
+      O          NEX, EPT, EMC, QE2, YE2, LDCALL, 
+      O          NENTRY, ADD, CHKSQ, INENUS)
+@@ -4906,7 +5325,7 @@
+      I           (NEX, EMC, EXNODT,
+      O            BDYNUM, RESNUM)
+  
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,'(A6,A5)',ERR=991) CHR6, CHR5
+@@ -5085,34 +5504,41 @@
+         GOTO 1199
+       ENDIF
+  
++c     Output a summary of the sources, and types of equations 
++c     in the model
++
++      call eqsummary
++     i              (STDOUT, nbn)
++
+ C     INPUT THE POINT FLOW INFORMATION
+- 
+-      IF(POINT.EQ.NO) GOTO 120
+-      CALL INL80
+-     I          (IN, STDOUT,
+-     O           LINE)
+-      READ(LINE,1) HEAD
+-      WRITE(STDOUT,11) HEAD
+-      CALL INL80
+-     I          (IN, STDOUT,
+-     O           LINE)
+-      READ(LINE,1) HEAD
+-      WRITE(STDOUT,12) HEAD
+-      CALL PFIN
+-     I         (IN, STDOUT, MCPFPT, NBRA, BRPT,
+-     O          EFLAG, LPNT, MF, PFPNT)
+- 
++c     Disabled at version 9.84
++c 
++c      IF(POINT.EQ.NO) GOTO 120
++c      CALL inline
++c     I          (IN, STDOUT,
++c     O           LINE)
++c      READ(LINE,1) HEAD
++c      WRITE(STDOUT,11) HEAD
++c      CALL inline
++c     I          (IN, STDOUT,
++c     O           LINE)
++c      READ(LINE,1) HEAD
++c      WRITE(STDOUT,12) HEAD
++c      CALL PFIN
++c     I         (IN, STDOUT, MCPFPT, NBRA, BRPT,
++c     O          EFLAG, LPNT, MF, PFPNT)
++c 
+ C     INPUT WIND INFORMATION
+  
+  120  CONTINUE
+       IF(WIND.EQ.NO) GOTO 130
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,1) HEAD
+         WRITE(STDOUT,11) HEAD
+  
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,16,ERR=991) KEY
+@@ -5121,28 +5547,28 @@
+      M                               EFLAG,
+      O                               WINTAB)
+         
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,15,ERR=991) AIRSPW
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,15,ERR=991) WATSPW
+         AIRWAT = AIRSPW/WATSPW
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,17,ERR=991) VAMIN
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,17,ERR=991) CDMIN
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,17,ERR=991) VAMAX
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,17,ERR=991) CDMAX
+@@ -5156,7 +5582,7 @@
+  130  CONTINUE
+ 
+ 
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+ 
+@@ -5172,6 +5598,14 @@
+       CALL OUTIN
+      I          (BRPT, NBRA, NRWTA, RWTA, RTAP, SPOUT_STYLE,
+      O           POUT, NOUT, UNIT)
++
++c     Put the dual-source block here.  If it is not present we
++c     should get the block title for input files.  Backspace
++c     the file and return. 
++
++      call dual_source 
++     i                (in, stdout,
++     m                 eflag)
+  
+ C     READ THE INPUT FILE SPECIFICATION
+  
+@@ -5198,7 +5632,7 @@
+       IF(FUNFLG.EQ.0) THEN
+         CALL CLEAR_HOME()
+         FTKNT = 0
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,1) HEAD
+@@ -5209,10 +5643,11 @@
+  200     CONTINUE
+  
+         IS = IN
++        current_file = 'master_input_file'  ! Set the current file for reading function tables
+  1000   CONTINUE
+           CALL FTABIN
+      I               (IS, IN, STDOUT, OUTPUT, FTP, MFTNUM, MRFTAB, 
+-     I                HSLOT,
++     I                HSLOT, current_file,
+      M                EFLAG, FTKNT, FTPNT,
+      O                TABLE, NXTNAM)
+  
+@@ -5226,6 +5661,7 @@
+             INQUIRE(FILE=NXTNAM, EXIST=THERE)
+             IF(THERE) THEN
+               OPEN(UNIT=IS, FILE=NXTNAM, STATUS='OLD')
++              current_file = nxtnam 
+             ELSE
+               WRITE(STDOUT,*) ' FILE NAMED:', NXTNAM,' NOT FOUND.'
+               WRITE(STDOUT,*) ' CHECK SPELLING OF TABLE INPUT FILE.'
+@@ -5233,13 +5669,22 @@
+             ENDIF
+           ELSEIF(TABLE.EQ.-16) THEN
+ C           Set the local value of the home directory
++C           Set the local value of the home directory. This is for function-table
++c           files.  nxtnam contains the home name directory.  If 
+             CALL SET_HOME(NXTNAM)            
++            call getsvn_rev(stdout, nxtnam,
++     o                      svn_rev, svn_mod)
+           ELSE
+             IS = IN
++            current_file = 'master_input_file'  ! Set the current file for reading function tables
+           ENDIF
+  
+           GOTO 1000
+  300    CONTINUE
++        if(make_tab_index == 'YES') then
++          call output_ftab_index(stdout)
++        endif
++
+         IF(IS.NE.IN) THEN
+           CALL FREE_UNIT(STDOUT, IS)
+         ENDIF
+@@ -5275,11 +5720,11 @@
+       DEFKNT = 0
+       IF(DIFFUS.EQ.YES.OR.DIFFUS.EQ.'DSS ') THEN
+         DEFKNT = 2
+-        IF(FTPNT(DEF_DTEN_UNIT_AREA_VOL_TAB_NUM).GT.0) THEN
++        IF(ftpnt(DEF_DTEN_UNIT_AREA_VOL_TAB_NUM).GT.0) THEN
+ C         The default function table has been input. 
+           DEFKNT = DEFKNT - 1
+         ENDIF
+-        IF(FTPNT(DEF_DTEN_ORIF_TAB_NUM).GT.0) THEN
++        IF(ftpnt(DEF_DTEN_ORIF_TAB_NUM).GT.0) THEN
+ C         The default function table has been input.
+           DEFKNT = DEFKNT - 1
+         ENDIF
+@@ -5288,9 +5733,7 @@
+                       
+ 
+       IF(FTKNT+DEFKNT.NE.NUM_TABID) THEN
+-        WRITE(STDOUT,88) FTKNT, NUM_TABID
+-
+-       
++        WRITE(STDOUT,88) FTKNT+defknt, NUM_TABID
+       ENDIF
+ 
+       CALL OUTPUT_BALANCE_LEGEND(STDOUT)
+@@ -5337,12 +5780,13 @@
+         CALL CHKSPOUT(STDOUT, NOUT, MFTNUM, FTPNT, 
+      M                                            EFLAG)
+  
+-        IF(POINT.EQ.NO) GOTO 2100
+-
+-          CALL CHKPT
+-     I             (STDOUT, LPNT, MFTNUM, FTPNT,
+-     M              PFPNT,
+-     O              EFLAG)
++c       Disabled in version 9.84
++c        IF(POINT.EQ.NO) GOTO 2100
++c
++c          CALL CHKPT
++c     I             (STDOUT, LPNT, MFTNUM, FTPNT,
++c     M              PFPNT,
++c     O              EFLAG)
+  2100   IF(DIFFUS.EQ.NO) GOTO 2200
+ C         Check for detention storage and compute the 
+ C         values needed during simulation. 
+@@ -5399,10 +5843,6 @@
+       CALL EXTRACT_SLOT_DEPTH
+      I                       (STDOUT, NBRA, BRPT)
+ 
+-C     Adjust the arguments for reservoir storage tables.
+-C      CALL RTBADJ
+-C     I           (STDOUT, NEX, EXNODT, MREMC, EMC,
+-C     M            ZE, YE1)
+  
+ C     SET THE MAXIMUM ARGUMENT VALUE FOR NODES ON BRANCHES AND
+ C     FOR RESERVOIR NODES.  OTHER FREE NODES WILL HAVE MAX ARGUMENT
+@@ -5437,6 +5877,11 @@
+       ENDIF
+  
+ 
++C     Transfer the (x,y) locations known from branches to 
++c     exnodt for the exterior nodes on branches. 
++      call braxy_to_exnodt(NEX, 
++     M                        EXNODT)
++
+       IF(DO_SCHEMATIC.EQ.'YES') THEN
+ C       Process the possible schematic output here.  First do the
+ C       location definitions for free nodes. 
+@@ -5446,6 +5891,7 @@
+      O                                   EFLAG)
+         ENDIF
+ 
++
+         CALL OUTPUT_SCHEMATIC_SCRIPT(STDOUT, NBRA, NEX, BRPT, 
+      I              EXNODT, EMC)
+       ENDIF
+@@ -5460,7 +5906,7 @@
+ C     tables will be known. If the block is NOT present, we should get 
+ C     the backwater title line.  We must put it back. 
+ 
+-      CALL INL80
++      CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+ 
+@@ -5477,11 +5923,6 @@
+ C       Upon return we have terminated with the last line of the
+ C       GENSCN input
+       ELSEIF(LINE(1:17).EQ.'NEW GENSCN OUTPUT') THEN
+-C       Transfer station values for the exterior nodes on branches
+-C       so that they follow the same pattern as the other exterior
+-C       nodes.
+-        CALL STAT_TRAN(NEX, 
+-     M                    EXNODT)
+ C       The revised GNSCN output block is present
+         READ(LINE,1) HEAD
+         WRITE(STDOUT,11) HEAD
+@@ -5551,7 +5992,7 @@
+       INTEGER GETUSB
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL GETINB, GETNXT, GETUSB, INL80
++      EXTERNAL GETINB, GETNXT, GETUSB, inline
+  
+ C     + + + INPUT FORMATS + + +
+  2    FORMAT(A80)
+@@ -5574,7 +6015,7 @@
+  101  CONTINUE
+  
+ C     READ AND ECHO THE BLOCK HEADING LINE
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,2) CARD
+@@ -5582,14 +6023,14 @@
+  
+ C     READ AND ECHO THE COLUMN HEADING LINE
+  
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,2) CARD
+       WRITE(STDOUT,51) CARD
+  
+       DO 100 III=1,NBRA
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+ C        READ(LINE,4,ERR=991) BRAN, YATONE(I), YATHAF(I), CHAR8
+@@ -5629,7 +6070,7 @@
+         ENDIF
+  100  CONTINUE
+ C     READ THE TERMINATING -1
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       WRITE(STDOUT,'(1X,A)') LINE
+@@ -5699,6 +6140,9 @@
+       CALL STRIP_L_BLANKS(
+      M                    TPC)
+       READ(TPC,'(I10)',ERR=991) USBRA
++      
++c     If branch number is < 0 go to end and return
++      if(usbra < 0) goto 990
+ 
+ C     Process the node
+       N = 2
+@@ -5776,6 +6220,8 @@
+       CALL STRIP_L_BLANKS(
+      M                    TPC)
+       READ(TPC,'(I10)',ERR=991) OFFPRI
++
++990   continue
+ 
+       RETURN
+ 
+@@ -6019,7 +6465,7 @@
+       CHARACTER GETTOK*5, GET_TABID*16
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL GETINB, GETINN, GETTOK, INL80, KIL, STRIP_L_BLANKS,
++      EXTERNAL GETINB, GETINN, GETTOK, inline, KIL, STRIP_L_BLANKS,
+      A         GET_TABID, READ_PUMP_ITEMS, LENSTR
+  
+ C     + + + INPUT FORMATS + + +
+@@ -6061,7 +6507,7 @@
+  66   FORMAT(/,' Minimum elapsed time for changing setting=',F7.1,
+      A       ' seconds.')
+  68   FORMAT(' ',I5,2A5,F7.2,A,A,2I5)
+- 70   FORMAT(/,' *ERR:238* Variable null zone for PUMP or GATEVNZ '
++ 70   FORMAT(/,' *ERR:238* Variable null zone for PUMP or GATEVNZ ',
+      A         'operation invalid.')
+  71   FORMAT(/,' *ERR:92* Null zone lower limit=',F8.2,' >= null',
+      A         ' zone upper limit=',F8.2)
+@@ -6076,14 +6522,14 @@
+         OPBLK(I) = 0
+  89   CONTINUE
+  
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,1) HEAD
+       WRITE(STDOUT,2) HEAD
+  
+  90   CONTINUE
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,3,ERR=991) BLK
+@@ -6102,7 +6548,7 @@
+      M                            FTP, EFLAG)
+  
+ C     Input the block type: PUMP, GATE, GATEVNZ, PUMP2WAY, GATETABL
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,11,ERR=991) BLKTYP, SPEEDS
+@@ -6136,27 +6582,24 @@
+       ITAB(FTP+11) = SPEEDS
+  
+ C     Input the minimum elapsed time before changing setting
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,12,ERR=991) MINDT
+       WRITE(STDOUT,66) MINDT
+       FTAB(FTP+4) = MINDT/3600.
+  
+-C     Set the elapsed time since last change in setting to a large
+-C     value to ensure that a change takes place
++C     Set the elapsed time since last change  to a large
++C     value to ensure that a change takes place at the start of the run
+       FTAB(FTP+5) = 1.E30
+  
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,5,ERR=991) PINIT
+       WRITE(STDOUT,6) PINIT
+       FTAB(FTP+1) = PINIT
+       FTAB(FTP+2) = PINIT
+-C     UPDATE POINTER TO START OF BODY OF THE OPERATION BLOCK
+-C     Note that the the first items are a header block and
+-C     numerical offsets are from a new base value for FTP.
+ 
+ C     Set the active flag to -2 to signal inactive block.  
+ C     Initialization operation will change the setting for 
+@@ -6175,9 +6618,12 @@
+       ITAB(FTP+9) = 0
+       ITAB(FTP+10) = 0
+ 
++C     UPDATE POINTER TO START OF BODY OF THE OPERATION BLOCK
++C     Note that the the first items are a header block and
++C     numerical offsets are from a new base value for FTP.
+       FTP = FTP + 12
+ 
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,1) HEAD
+@@ -6192,7 +6638,7 @@
+       FIRST = 1
+ 
+  100  CONTINUE
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       IF(BLKTYP.EQ.'GATE') THEN
+@@ -6580,13 +7026,13 @@
+ C       PROCESS THE INFORMATION DEFINING THE SOURCE NODES FOR THE
+ C       DEFINITION OF THE VARIABLE FLOW NULL ZONE.
+  
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,1) HEAD
+         WRITE(STDOUT,2) HEAD
+  
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE, 10,ERR=991) NUMB, NZHW,(NDVECC(J), NDWT(J), J=1,NUMB)
+@@ -6797,6 +7243,8 @@
+       INCLUDE 'gatcom.cmn'
+       INCLUDE 'spout.cmn'
+       INCLUDE 'home.cmn'
++      include 'datetime.cmn'
++      include 'svn.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+ 
+@@ -6805,19 +7253,20 @@
+       INTEGER BRA, BRAIN, FA, FN, I, IOFLAG, IP, IT, ITT, J, LN, 
+      A        NDE, NODE, TABLE_NUMBER, NITEM, NXT, ITEM_START(MAXN),
+      B        ITEM_END(MAXN)
+-      CHARACTER  HEAD*120, HEAD1*7, HEAD2*7, LINE*120, NAME*16,
+-     A          OUTNAM*64, CHAR80*80, TABID*16, JUST*5, CHAR5*5
++      CHARACTER  HEAD*196, HEAD1*7, HEAD2*7, LINE*196, NAME*16,
++     A          OUTNAM*256, tpc*196, TABID*16, JUST*5, CHAR5*5,
++     b          sponam*256
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS
+  
+ C     + + + EXTERNAL FUNCTIONS + + +
+-C      CHARACTER GETTOK*5
++      integer get_unit
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL GETINB, GETINN, GETTOK, INL120, KIL, LSTAB, FREE_UNIT,
++      EXTERNAL GETINB, GETINN, GETTOK, inline, KIL, LSTAB, FREE_UNIT,
+      A         GET_INTERNAL_TAB_NUMBER, STRIP_L_BLANKS,
+-     B         GET_ITEM_LIMITS, READ_SPOUT_ITEMS
++     B         GET_ITEM_LIMITS, READ_SPOUT_ITEMS, get_unit
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(5X,A)
+@@ -6830,7 +7279,11 @@
+  6    FORMAT(I6,1X,A16,1X,A7,1X,A7,1X,A16)
+  7    FORMAT(' *ERR:147* Output requested at too many nodes. NOUT = ',
+      1   I5)
+- 50   FORMAT(2I5,2F15.8,I5)
++ 8    format('Q brnch ',i5,' nd ',a7, 2x,2a8)
++ 9    format('Z brnch ',i5,' nd ',a7, 2x,2a8)
++
++
++ 50   FORMAT(2I5,2F15.7,I5)
+  52   FORMAT(' *ERR:172* Exterior node',A5,' does not have trib.',
+      A    ' area or is not a reservoir.')
+ 54    FORMAT(/,' *ERR:279* Special output style must be multi-line for',
+@@ -6838,11 +7291,20 @@
+ 58    FORMAT(/,' *WRN:58* No home name found following HOME=. ',
+      A         ' Home name cleared.')
+ 59    FORMAT(/,' Home directory/drive is: ',A)
++86    format(';Version number is ',i8,' for the Subversion working ',
++     a         'copy') 
++87    format(';*WRN:XXX* The working copy contains local ',
++     a 'modifications.',/,';',5x,
++     b 'The version number given is therefore',
++     b' not current and may not properly',/,';',5x,
++     b  'provide the version',
++     c' number required to retrieve all the same files ',
++     d'at a later time.')
+ C***********************************************************************
+       CALL CLEAR_HOME()
+       JUST = 'RIGHT'
+       SPOUT_STYLE = STYLE
+-      CALL INL120
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       CALL STRIP_L_BLANKS(
+@@ -6864,25 +7326,67 @@
+         IT = LEN_TRIM(HOME)
+         WRITE(STDOUT,59) HOME(1:IT)
+ 
+-        CALL INL120
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+       ENDIF
+ 
+-      READ(LINE,1,ERR=991) CHAR80
+-      CALL PROCESS_OLD_IOUNITS(STDOUT, CHAR80,
+-     O                               UNIT, OUTNAM)
+-      CALL MAYBE_ADD_HOME(
++      READ(LINE,1,ERR=991) tpc
++      CALL PROCESS_OLD_IOUNITS(STDOUT, tpc,
++     O                               stdspout, OUTNAM)
++      CALL MAYBE_ADD_GHOME_OUT(
+      M                    OUTNAM)
++      call maybe_add_ext(
++     m                    outnam)
++
++      call os_file_style(
++     m                       outnam)
+       WRITE(STDOUT,2) OUTNAM
+-      IF(UNIT.NE.0) THEN
+-        OPEN(UNIT=UNIT, FILE=OUTNAM, STATUS='UNKNOWN',IOSTAT=IOFLAG)
++      IF(stdspout.NE.0) THEN
++        OPEN(UNIT=stdspout, FILE=OUTNAM, STATUS='UNKNOWN',IOSTAT=IOFLAG)
+         IF(IOFLAG.NE.0) THEN
+           IT = LEN_TRIM(OUTNAM)
+           WRITE(STDOUT,*) ' Problem in opening file: ',OUTNAM(1:IT)
+           WRITE(STDOUT,*) ' Check path for Special Output File.'
+           STOP 'Abnormal stop: errors found.'
+         ENDIF
++c       create the descriptor file.
++        stdspo = get_unit(stdout)
++        call trim_last_extension(outnam, 
++     o                         sponam)
++        it = len_trim(sponam)
++        sponam = sponam(1:it)//'.spi'
++        call maybe_add_ext(
++     m                     sponam)
++
++        OPEN(UNIT=stdspo, FILE=sponam, STATUS='UNKNOWN',IOSTAT=IOFLAG)
++        IF(IOFLAG.NE.0) THEN
++          IT = LEN_TRIM(sponam)
++          WRITE(STDOUT,*) ' Problem in opening file: ',sponam(1:IT)
++          WRITE(STDOUT,*) ' Check path for Special Output File.'
++          STOP 'Abnormal stop: errors found.'
++        ENDIF
++
++c       Output the version/run date-time string.  Note:  Only written to 
++c       this file.  Users must keep this file in order to document the 
++c       special-output file:)
++        write(stdspo,'(a)') '; Written by program feq:'
++        write(stdspo,'(a1,a)') ';',version_run_date_time_string
++        write(stdspo,
++     a    "('; Source code repository location and revision are:')")
++        it = len_trim(url)
++        write(stdspo,"(';',a)") url(1:it)
++        it = len_trim(revision)
++        write(stdspo,"(';',a)") revision(1:it)
++        if(svn_rev >0 ) then
++          write(stdspo,86) svn_rev
++          if(svn_mod > 0) then
++            write(stdspo,87)
++          endif
++        endif
++        
++        write(stdspo,2) outnam(1:len_trim(outnam))
++        write(stdspo,4)
+       ENDIF
+  
+ C     Clear the counter for extra output items.  Flow and elevation
+@@ -6891,7 +7395,7 @@
+  
+       SPOUT_KNT = 0
+  
+-      CALL INL120
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+  
+@@ -6905,7 +7409,7 @@
+         WRITE(STDOUT,'(A)') LINE
+         CALL SET_SPOUT_OPTIONS(STDOUT, LINE(9:80), EFLAG)
+  
+-        CALL INL120
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+       ENDIF
+@@ -6923,7 +7427,7 @@
+  
+       NOUT = 0
+  100    CONTINUE
+-        CALL INL120
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+ C        READ(LINE,5,ERR=991) BRAIN, CHAR5, HEAD1, HEAD2,
+@@ -6936,6 +7440,8 @@
+         IF(BRAIN.LT.0) GOTO 150
+         IF(TABID.EQ.' ') THEN
+           WRITE(STDOUT,6) BRAIN, NAME, HEAD1, HEAD2
++          WRITE(stdspo,8) BRAIN, NAME, HEAD1, HEAD2
++          WRITE(stdspo,9) BRAIN, NAME, HEAD1, HEAD2
+           TABLE_NUMBER = 0
+         ELSE
+           WRITE(STDOUT,6) BRAIN, NAME, HEAD1, HEAD2, TABID
+@@ -7039,9 +7545,14 @@
+         PAGESP = IT + 2
+       ENDIF
+ C     WRITE CURRENT VALUE OF PAGESP TO THE FIRST LINE OF THE FILE
+-      IF(NOUT.GT.0)  WRITE(UNIT,50) PAGESP, NOUT, UJTIME, VJTIME,
+-     A                              LINE_KNT
+- 
++      IF(NOUT.GT.0)  then
++        WRITE(stdspout,50) PAGESP, NOUT, UJTIME, VJTIME, LINE_KNT
++        write(stdspo,'(a)') 'end'
++        WRITE(stdspo,50) PAGESP, NOUT, UJTIME, VJTIME, LINE_KNT
++c       clear the record count
++        spo_knt = 0      
++      endif
++
+       IF(SPOUT_KNT.GT.0) THEN
+ C       Clear the extra buffer space so that only those items
+ C       that are meaningfull need to be set in subroutine OUTSP.
+@@ -7061,109 +7572,109 @@
+ C
+ C
+ C
+-      SUBROUTINE   PFIN
+-     I                 (IN, STDOUT, MLPNT, NBRA, BRPT,
+-     O                  EFLAG, LPNT, MF, PFPNT)
+- 
+-C     + + + PURPOSE + + +
+-C     Input the point load information.
+- 
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER EFLAG, IN, STDOUT, LPNT, MLPNT, NBRA
+-      INTEGER BRPT(8,NBRA), PFPNT(3,MLPNT)
+-      REAL MF(MLPNT)
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     IN     - unit number for the user input file
+-C     STDOUT   - Fortran unit number for user output and messages
+-C     MLPNT  - maximum length of the point load pointer arrays
+-C     NBRA   - number of branches in the model
+-C     BRPT   - branch pointer table.  Values for each branch are:
+-C              ROW       Meaning
+-C              1         upstream user node number
+-C              2         downstream user node number
+-C              3         pointer into branch vector for upstream node
+-C              4         pointer into branch vector for downstream node
+-C              5         upstream exterior node number
+-C              6         downstream exterior node number
+-C              7         pointer to address in EMC for the branch
+-C              8         number of unknowns at a node for the branch
+-C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+-C     LPNT   - length of the point load point load array
+-C     MF     - momentum flux value
+-C     PFPNT  - point flow pointer array
+- 
+-C     + + + LOCAL VARIABLES + + +
+-      INTEGER BRA, BRAIN, NODE, TABLE, TYPE
+-      REAL MFAC
+-      CHARACTER LINE*80, NODEIN*5, TABID*16
+- 
+-C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL GETINB, GETINN, INL80, KIL, KILC,
+-     A         STRIP_L_BLANKS, GET_INTERNAL_TAB_NUMBER
+- 
+-C     + + + INPUT FORMATS + + +
+- 35   FORMAT(I5,A5,I5,A16,F10.0)
+- 
+-C     + + + OUTPUT FORMATS + + +
+- 36   FORMAT(' ',I5,A5,I5,1X,A16,F10.5)
+-C***********************************************************************
+-      LPNT = 1
+- 1000 CONTINUE
+-         CALL INL80
+-     I             (IN, STDOUT,
+-     O              LINE)
+-         READ(LINE,35,ERR=991) BRAIN, NODEIN, TYPE, TABID, MFAC
+-         IF(BRAIN.EQ.-1) GOTO 2000
+-         WRITE(STDOUT,36) BRAIN, NODEIN, TYPE, TABID, MFAC
+-         CALL GETINB
+-     M              (BRAIN,
+-     O               EFLAG, BRA)
+-          CALL GETINN
+-     M               (NODEIN,
+-     O                EFLAG, NODE)
+-          CALL STRIP_L_BLANKS(
+-     M                        TABID)
+-          CALL GET_INTERNAL_TAB_NUMBER
+-     I                                (STDOUT, TABID,
+-     M                                 EFLAG,
+-     O                                 TABLE)
+-          
+-         IF(NODE.LT.BRPT(1,BRA).OR.NODE.GT.BRPT(2,BRA))
+-     1      CALL KILC
+-     I                (NODEIN, -2,
+-     M                 EFLAG)
+-         IF(TYPE.LE.0.OR.TYPE.GT.2) CALL KIL
+-     I                                       (18,
+-     M                                        TYPE, EFLAG)
+-         IF(NODE.EQ.BRPT(1,BRA)) CALL KILC
+-     I                                     (NODEIN, -28,
+-     M                                      EFLAG)
+- 
+-C     TABLE IDS WILL BE CHECKED ELSEWHERE
+- 
+-         IF(LPNT.GE.MLPNT) CALL KIL
+-     I                              (19,
+-     M                               LPNT, EFLAG)
+-         PFPNT(1,LPNT) = TYPE
+-         PFPNT(2,LPNT) = TABLE
+-         MF(LPNT) = MFAC
+- 
+-C     COMPUTE THE NODE LOCATION IN THE BRANCH VECTORS
+- 
+-         PFPNT(3,LPNT) = BRPT(3,BRA)-BRPT(1,BRA)+NODE
+-         LPNT = LPNT+1
+-         GOTO 1000
+- 2000 CONTINUE
+-      PFPNT(1,LPNT) = -1
+-      LPNT = LPNT-1
+-      RETURN
+- 991  CONTINUE
+-        WRITE(STDOUT,*) ' *ERR:500* Conversion error in line:'
+-        WRITE(STDOUT,*) LINE
+-        STOP 'Abnormal stop: errors found.'
+-      END
++c      SUBROUTINE   PFIN
++c     I                 (IN, STDOUT, MLPNT, NBRA, BRPT,
++c     O                  EFLAG, LPNT, MF, PFPNT)
++c 
++cC     + + + PURPOSE + + +
++cC     Input the point load information.
++c 
++c      IMPLICIT NONE
++cC     + + + DUMMY ARGUMENTS + + +
++c      INTEGER EFLAG, IN, STDOUT, LPNT, MLPNT, NBRA
++c      INTEGER BRPT(8,NBRA), PFPNT(3,MLPNT)
++c      REAL MF(MLPNT)
++c 
++cC     + + +DUMMY ARGUMENT DEFINITIONS + + +
++cC     IN     - unit number for the user input file
++cC     STDOUT   - Fortran unit number for user output and messages
++cC     MLPNT  - maximum length of the point load pointer arrays
++cC     NBRA   - number of branches in the model
++cC     BRPT   - branch pointer table.  Values for each branch are:
++cC              ROW       Meaning
++cC              1         upstream user node number
++cC              2         downstream user node number
++cC              3         pointer into branch vector for upstream node
++cC              4         pointer into branch vector for downstream node
++cC              5         upstream exterior node number
++cC              6         downstream exterior node number
++cC              7         pointer to address in EMC for the branch
++cC              8         number of unknowns at a node for the branch
++cC     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
++cC     LPNT   - length of the point load point load array
++cC     MF     - momentum flux value
++cC     PFPNT  - point flow pointer array
++c 
++cC     + + + LOCAL VARIABLES + + +
++c      INTEGER BRA, BRAIN, NODE, TABLE, TYPE
++c      REAL MFAC
++c      CHARACTER LINE*80, NODEIN*5, TABID*16
++c 
++cC     + + + EXTERNAL NAMES + + +
++c      EXTERNAL GETINB, GETINN, inline, KIL, KILC,
++c     A         STRIP_L_BLANKS, GET_INTERNAL_TAB_NUMBER
++c 
++cC     + + + INPUT FORMATS + + +
++c 35   FORMAT(I5,A5,I5,A16,F10.0)
++c 
++cC     + + + OUTPUT FORMATS + + +
++c 36   FORMAT(' ',I5,A5,I5,1X,A16,F10.5)
++cC***********************************************************************
++c      LPNT = 1
++c 1000 CONTINUE
++c         CALL inline
++c     I             (IN, STDOUT,
++c     O              LINE)
++c         READ(LINE,35,ERR=991) BRAIN, NODEIN, TYPE, TABID, MFAC
++c         IF(BRAIN.EQ.-1) GOTO 2000
++c         WRITE(STDOUT,36) BRAIN, NODEIN, TYPE, TABID, MFAC
++c         CALL GETINB
++c     M              (BRAIN,
++c     O               EFLAG, BRA)
++c          CALL GETINN
++c     M               (NODEIN,
++c     O                EFLAG, NODE)
++c          CALL STRIP_L_BLANKS(
++c     M                        TABID)
++c          CALL GET_INTERNAL_TAB_NUMBER
++c     I                                (STDOUT, TABID,
++c     M                                 EFLAG,
++c     O                                 TABLE)
++c          
++c         IF(NODE.LT.BRPT(1,BRA).OR.NODE.GT.BRPT(2,BRA))
++c     1      CALL KILC
++c     I                (NODEIN, -2,
++c     M                 EFLAG)
++c         IF(TYPE.LE.0.OR.TYPE.GT.2) CALL KIL
++c     I                                       (18,
++c     M                                        TYPE, EFLAG)
++c         IF(NODE.EQ.BRPT(1,BRA)) CALL KILC
++c     I                                     (NODEIN, -28,
++c     M                                      EFLAG)
++c 
++cC     TABLE IDS WILL BE CHECKED ELSEWHERE
++c 
++c         IF(LPNT.GE.MLPNT) CALL KIL
++c     I                              (19,
++c     M                               LPNT, EFLAG)
++c         PFPNT(1,LPNT) = TYPE
++c         PFPNT(2,LPNT) = TABLE
++c         MF(LPNT) = MFAC
++c 
++cC     COMPUTE THE NODE LOCATION IN THE BRANCH VECTORS
++c 
++c         PFPNT(3,LPNT) = BRPT(3,BRA)-BRPT(1,BRA)+NODE
++c         LPNT = LPNT+1
++c         GOTO 1000
++c 2000 CONTINUE
++c      PFPNT(1,LPNT) = -1
++c      LPNT = LPNT-1
++c      RETURN
++c 991  CONTINUE
++c        WRITE(STDOUT,*) ' *ERR:500* Conversion error in line:'
++c        WRITE(STDOUT,*) LINE
++c        STOP 'Abnormal stop: errors found.'
++c      END
+ 
+ C
+ C
+@@ -7203,21 +7714,21 @@
+       INTEGER ITEM_LENGTH(MAX_KNT), ITEM_TYPE(MAX_KNT),
+      A        TERM_CLASS(MAX_KNT), UN
+ 
+-      CHARACTER HEAD*80, LINE*112, NAME*80, 
+-     A          ITEMS(MAX_KNT)*64, TS_ID_FOR_FILE*16,
+-     B          C_FACTOR*10, WORK*196
++      CHARACTER HEAD*196, LINE*196, NAME*256, 
++     A          ITEMS(MAX_KNT)*128, TS_ID_FOR_FILE*16,
++     B          C_FACTOR*10, WORK*256
+ 
+       REAL FACTOR
+ 
+ C     + + + EXTERNAL NAMES + + +
+       INTEGER GET_UNIT
+-      EXTERNAL INL112, KIL, GET_UNIT
++      EXTERNAL inline, KIL, GET_UNIT
+  
+ C     + + + INPUT FORMATS + + +
+- 1    FORMAT(A80)
++ 1    FORMAT(A)
+  
+ C     + + + OUTPUT FORMATS + + +
+- 50   FORMAT(/,' ',A80)
++ 50   FORMAT(/,' ',A)
+  51   FORMAT(1X,A)
+  52   FORMAT(/,' *ERR:150* Number of input files requested is larger',
+      A       'than the current maximum of:',I3)
+@@ -7249,22 +7760,22 @@
+      A         ' Home name cleared.')
+ C***********************************************************************
+       CALL CLEAR_HOME()
+-      CALL INL112
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,1) HEAD
+-      WRITE(STDOUT,50) HEAD
+-      CALL INL112
++      WRITE(STDOUT,50) HEAD(1:len_trim(head))
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,1) HEAD
+-      WRITE(STDOUT,50) HEAD
++      WRITE(STDOUT,50) HEAD(1:len_trim(head))
+ 
+       ID_KNT = 0 
+       NUM_TS_F = 0
+       HECDSS = 0
+  100  CONTINUE
+-        CALL INL112
++        CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       
+@@ -7282,12 +7793,12 @@
+             HECDSS = 1
+             CALL PROCESS_HECDSS_NAME(STDOUT, LINE(8:71), DSS_INDEX,
+      A                     'INPUT', EFLAG)
+-            WRITE(STDOUT,50) HEAD
++            WRITE(STDOUT,50) HEAD(1:len_trim(head))
+           ELSE
+             HECDSS = 0
+           ENDIF
+ C         Get the next line.
+-          CALL INL112
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+         ELSEIF(WORK(1:4).EQ.'HOME'.OR.WORK(1:4).EQ.'home') THEN
+@@ -7307,7 +7818,7 @@
+           IT = LEN_TRIM(HOME)
+           WRITE(STDOUT,73) HOME(1:IT)
+ 
+-          CALL INL112 
++          CALL inline 
+      I              (IN, STDOUT,
+      O               LINE)
+           
+@@ -7338,54 +7849,56 @@
+ C           line was not blank but had only non-printing characters          
+ C           or has a quoted comment on it.                                   
+ C           If there is one item it should be the terminating flag.          
+-                                                                             
+-            IF(ITEM_KNT.EQ.1) THEN                                           
+-C             Should be terminating signal.                                  
+-              IF(ITEM_TYPE(1).EQ.INTVAL) THEN                                
+-                READ(ITEMS(1)(1:3), '(I3)') UN                               
+-                IF(UN.EQ.-1) THEN                                            
+-                  GOTO 900                                                   
+-                ELSE                                                         
+-                  WRITE(STDOUT,64) UN                                        
+-                  STOP 'Abnormal stop: errors found.'                        
+-                ENDIF                                                        
+-                                                                             
+-              ELSE                                                           
+-                WRITE(STDOUT,54) ITEMS(1)(1:ITEM_LENGTH(1))                  
+-                STOP 'Abnormal stop: errors found.'                          
+-              ENDIF                                                          
+-            ELSEIF(ITEM_KNT.EQ.2.OR.ITEM_KNT.EQ.3) THEN                      
+-C             This would be the time series id plus the                      
++                                                                        
++            IF(ITEM_KNT.EQ.1) THEN                                      
++C             Should be terminating signal.                             
++              IF(ITEM_TYPE(1).EQ.INTVAL) THEN                           
++                READ(ITEMS(1)(1:3), '(I3)') UN                          
++                IF(UN.EQ.-1) THEN                                       
++                  GOTO 900                                              
++                ELSE                                                    
++                  WRITE(STDOUT,64) UN                                   
++                  STOP 'Abnormal stop: errors found.'                   
++                ENDIF                                                   
++                                                                        
++              ELSE                                                      
++                WRITE(STDOUT,54) ITEMS(1)(1:ITEM_LENGTH(1))             
++                STOP 'Abnormal stop: errors found.'                     
++              ENDIF                                                     
++            ELSEIF(ITEM_KNT.EQ.2.OR.ITEM_KNT.EQ.3) THEN                 
++C             This would be the time series id plus the                 
+ C             file name,  or conver. factor.               
+-              IF(ITEM_TYPE(1).EQ.INTVAL.OR.                                  
+-     A           ITEM_TYPE(1).EQ.CHRVAL) THEN                                
+-                 TS_ID_FOR_FILE = ITEMS(1)                                   
+-              ELSE                                                           
+-                WRITE(STDOUT,56) ITEMS(1)(1:ITEM_LENGTH(1))                  
+-                STOP 'Abnormal stop: errors found.'                          
+-              ENDIF                                                          
+-              IF(ITEM_TYPE(2).EQ.CHRVAL) THEN                                
++              IF(ITEM_TYPE(1).EQ.INTVAL.OR.                             
++     A           ITEM_TYPE(1).EQ.CHRVAL) THEN                           
++                 TS_ID_FOR_FILE = ITEMS(1)                              
++              ELSE                                                      
++                WRITE(STDOUT,56) ITEMS(1)(1:ITEM_LENGTH(1))             
++                STOP 'Abnormal stop: errors found.'                     
++              ENDIF                                                     
++              IF(ITEM_TYPE(2).EQ.CHRVAL) THEN                           
+                  NAME = ITEMS(2)
+                  CALL MAYBE_ADD_HOME(
+-     M                               NAME)                                             
+-              ELSE                                                           
+-                WRITE(STDOUT,58) ITEMS(2)(1:ITEM_LENGTH(2))                  
+-                STOP 'Abnormal stop: errors found.'                          
+-              ENDIF                                                          
+-              IF(ITEM_KNT.EQ.3) THEN                                         
+-                IF(ITEM_TYPE(3).NE.CHRVAL) THEN                              
+-                  READ(ITEMS(3)(1:ITEM_LENGTH(3)),*) FACTOR                  
+-                ELSE                                                         
+-                  WRITE(STDOUT,60) ITEMS(3)(1:ITEM_LENGTH(2))                
+-                  STOP 'Abnormal stop: errors found.'                        
+-                ENDIF                                                        
+-              ELSE                                                           
+-                FACTOR = 1.0                                                 
+-              ENDIF                                                          
++     M                               NAME) 
++                 call os_file_style(
++     m                                name)                             
++              ELSE                                                      
++                WRITE(STDOUT,58) ITEMS(2)(1:ITEM_LENGTH(2))             
++                STOP 'Abnormal stop: errors found.'                     
++              ENDIF                                                     
++              IF(ITEM_KNT.EQ.3) THEN                                    
++                IF(ITEM_TYPE(3).NE.CHRVAL) THEN                         
++                  READ(ITEMS(3)(1:ITEM_LENGTH(3)),*) FACTOR             
++                ELSE                                                    
++                  WRITE(STDOUT,60) ITEMS(3)(1:ITEM_LENGTH(2))           
++                  STOP 'Abnormal stop: errors found.'                   
++                ENDIF                                                   
++              ELSE                                                      
++                FACTOR = 1.0                                            
++              ENDIF                                                     
+             ELSE
+               WRITE(STDOUT, 72) ITEM_KNT
+               STOP 'Abnormal stop: errors found.'
+-            ENDIF                                                            
++            ENDIF                                                       
+           ENDIF
+ 
+         ELSE
+@@ -7744,13 +8257,13 @@
+  
+ C     + + + EXTERNAL FUNCTIONS + + +
+       INTEGER FNDNOD, INDEX, GET_UNIT
+-      CHARACTER GETTOK*5
++      CHARACTER GETTOK*5 
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL FNDINN, FNDNOD, GETINB, GETTOK, INl80, INL112, KIL, 
++      EXTERNAL FNDINN, FNDNOD, GETINB, GETTOK, inline, KIL, 
+      A         TRBOUT, PROCESS_OLD_IOUNITS, FILL_VAR_DECIMAL_VECTOR, 
+      B         VAR_DECIMAL, GET_INTERNAL_TAB_NUMBER, GET_TABHD,
+-     C         GET_TABBRH, GET_LUSE_ITEMS, GET_UNIT
++     C         GET_TABBRH, GET_LUSE_ITEMS, GET_UNIT, os_file_style
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(A80)
+@@ -7876,7 +8389,7 @@
+      M                              EFLAG,
+      O                              DEF_DTEN_ORIF_TAB_NUM)
+       
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,                              
+      O           LINE)                                    
+       READ(LINE,1) HEAD
+@@ -7893,11 +8406,20 @@
+         CALL SET_TABHD(
+      O                 TSFNAM, FFFNAM, NLUSE, NGAGE, HOME)
+ 
+-C       Perhaps add home directory to the file names.
++C       Perhaps add home directory to the file name.  This file gets
++c       the input home name that is active. 
+         CALL MAYBE_ADD_HOME(
+      M                      TSFNAM)
+-        CALL MAYBE_ADD_HOME(
++        call os_file_style(
++     m                         tsfnam)
++c       We add the global output home name here and also the extension, if 
++c       any, from the master-output file
++        CALL MAYBE_ADD_GHOME_OUT(
+      M                      FFFNAM)
++        call maybe_add_ext(
++     m                      fffnam)
++        call os_file_style(
++     m                         fffnam)
+ 
+ 
+         WRITE(STDOUT,55) TSFNAM
+@@ -7916,7 +8438,7 @@
+           WRITE(STDOUT,79) MNDIFA
+           EFLAG = 1
+         ENDIF
+-C        CALL INL80
++C        CALL inline
+ C     I            (IN, STDOUT,
+ C     O             LINE)
+ C        READ(LINE,6,ERR=992) NGAGE
+@@ -7927,7 +8449,7 @@
+           NGAGE = 1
+         ENDIF
+  
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+ C        READ(LINE,1) HEAD
+@@ -7942,7 +8464,7 @@
+         IT = 1
+         GLU = 0
+         DO 300 I=1,NGAGE
+-          CALL INL80
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+ 
+@@ -7983,7 +8505,7 @@
+ C       Source of flows is from HECDSS files with a single path
+ C       name associated with each land use and gage combination
+ C       in the model.
+-        CALL INL80
++        CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+         READ(LINE,1) HEAD
+@@ -7993,7 +8515,7 @@
+         NLUSE = 0
+         DSS_INDEX = 0
+ 310     CONTINUE
+-          CALL INL80
++          CALL inline
+      I              (IN, STDOUT,
+      O              LINE)
+           IF(LINE(1:4).EQ.'GAGE') THEN
+@@ -8116,7 +8638,7 @@
+ C       tributary area. 
+  100    CONTINUE
+ 
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         IF(LINE(1:6).EQ.'BRANCH'.OR.
+@@ -8178,7 +8700,7 @@
+             WRITE(STDOUT,63)
+           ENDIF
+  
+-          CALL INL112
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE112)
+           READ(LINE112,1,ERR=991) HEAD
+@@ -8216,7 +8738,7 @@
+             DO 107 J=1,NLUSE
+               A1(J) = 0.0
+  107        CONTINUE
+-            CALL INL112
++            CALL inline
+      I                (IN, STDOUT,
+      O                 LINE112)
+ C           Try to read the line as if it described 
+@@ -8390,7 +8912,7 @@
+  
+         TAFAC(ABS(IBRA)) = NEGFAC*FAC
+  
+-        CALL INL112
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE112)
+         READ(LINE112,1,ERR=991) HEAD
+@@ -8421,7 +8943,7 @@
+ C         PROCESS THE STATION RANGE INPUT OPTION
+  400      CONTINUE
+  
+-            CALL INL112
++            CALL inline
+      I                (IN, STDOUT,
+      O                 LINE112)
+ 
+@@ -8492,7 +9014,7 @@
+ C       Start loop over the values for the branch. 
+         I = FNODE
+ 117     CONTINUE         
+-          CALL INL112
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE112)
+           IF(LINE112(1:6).EQ.'BRANCH'.OR.
+@@ -8757,13 +9279,13 @@
+       PARAMETER (MAXN=6)
+       INTEGER BRA, HECDSS, NODE, UN, USBRA, DSS_INDEX, TIME_STEP,
+      A        NITEM, ITEM_START(MAXN), ITEM_END(MAXN), IT, NXT
+-      CHARACTER HEAD*120, ITEM*4, LINE*120, NAME*80, TYPE*4, USNODE*6,
++      CHARACTER HEAD*196, ITEM*4, LINE*196, NAME*256, TYPE*4, USNODE*6,
+      A          JUST*5, ACTION*4
+  
+ C     + + + EXTERNAL NAMES + + +
+       INTEGER GET_UNIT, LENSTR
+ 
+-      EXTERNAL GETINB, GETINN, INL120, KIL, GET_UNIT, LENSTR,
++      EXTERNAL GETINB, GETINN, inline, KIL, GET_UNIT, LENSTR,
+      A         GET_ITEM_LIMITS
+     
+  
+@@ -8790,12 +9312,12 @@
+       DSS_OUT_COUNT = 0
+       IRR_DT = 0
+       JUST = 'RIGHT'
+-      CALL INL120
++      CALL inline
+      I          (IN, STDOUT,
+      O           HEAD)
+ C      READ(LINE,1) HEAD
+       WRITE(STDOUT,50) HEAD(1:LENSTR(HEAD))
+-      CALL INL120
++      CALL inline
+      I          (IN, STDOUT,
+      O           HEAD)
+ C      READ(LINE,1) HEAD
+@@ -8811,7 +9333,7 @@
+  
+  100  CONTINUE
+  
+-        CALL INL120
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         IF(LINE(1:6).EQ.'HECDSS') THEN
+@@ -8825,7 +9347,7 @@
+             HECDSS = 0
+           ENDIF
+ C         Get the next line.
+-          CALL INL120
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+         ELSEIF(LINE(1:4).EQ.'HOME'.OR.LINE(1:4).EQ.'home') THEN
+@@ -8845,7 +9367,7 @@
+           IT = LEN_TRIM(HOME)
+           WRITE(STDOUT,73) HOME(1:IT)
+ 
+-          CALL INL120
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+ 
+@@ -8861,12 +9383,17 @@
+         IF(ACTION(1:2).NE.'-1') THEN
+           WRITE(STDOUT,52)  USBRA, USNODE, ITEM, TYPE, NAME
+           IF(HECDSS.EQ.0) THEN
+-C           Assign an I/O unit but only if action is OUT in first three characters or blank
++C           Assign an I/O unit but only if action is OUT in first three characters. blank,
++c           or QUAD
+             IF(ACTION(1:3).EQ.'OUT'.OR.ACTION.EQ.' '
+      A         .OR.ACTION.EQ.'QUAD') THEN
+               UN = GET_UNIT(STDOUT)
+-              CALL MAYBE_ADD_HOME(
++              CALL MAYBE_ADD_GHOME_OUT(
+      M                            NAME)
++              call maybe_add_ext( 
++     m                            name)
++              call os_file_style(
++     m                             name)
+             ELSE
+               UN = 0
+             ENDIF
+@@ -8952,6 +9479,8 @@
+           BRAOUT(NFOUT) = BRA
+           NODOUT(NFOUT) = NODE
+           NAMOUT(NFOUT) = NAME
++c         Set the record number to the first record in the file. 
++          wr_rec(nfout) = 1
+           IF(ITEM.EQ.'ELEV') THEN
+             ICDOUT(NFOUT) = 2
+           ELSE
+@@ -9005,7 +9534,7 @@
+       IMPLICIT NONE
+       INTEGER STDOUT, UNIT
+ 
+-      CHARACTER UNIT_STRING*80, NAME_STRING*64
++      CHARACTER UNIT_STRING*(*), NAME_STRING*(*)
+ 
+ C     Local
+ 

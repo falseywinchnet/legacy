@@ -1,0 +1,7 @@
+c     Common to pass the os flag 
+
+      integer osis
+      common /whatos/ osis
+
+      save /whatos/
+

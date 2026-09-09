@@ -1,0 +1,681 @@
+--- 9.98/feq/select.for
++++ 10.61/feq/select.for
+@@ -43,7 +43,7 @@
+       DO 10 I = 1, IEND
+         ICH = ICHAR(STRING(I:I))
+         IF(ICH.GE.65 .AND. ICH.LE.90) THEN
+-C         Character is lower case.
++C         Character is upper case.
+           STRING(I:I)= CHAR(ICH+32)
+         ENDIF
+  10   CONTINUE
+@@ -68,15 +68,13 @@
+       RETURN
+       END
+ 
+-
+-
+ C     ***********
+ C     *         *
+-C     * LSA_SELECT
++C     * LSUA_SELECT
+ C     *         *
+ C     ***********
+ 
+-      SUBROUTINE   LSA_SELECTOR
++      SUBROUTINE   LSUA_SELECTOR
+      I                         (STDOUT, KEY, 
+      M                         CLASS, VALUE, 
+      O                         INDEX, FLAG)
+@@ -84,8 +82,8 @@
+ C     + + + PURPOSE + + +
+ C     Do a linear search for KEY in the entries in the selector
+ C     symbol table and add to the table if KEY is not found.
+-C     Otherwise, return the index to KEY and the value of
+-C     CLASS and VALUE found for the symbol in KEY. 
++C     Otherwise, update values at  KEY.  Return Index  and 
++C     Flag
+  
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+@@ -108,7 +106,75 @@
+  
+ C     + + + OUTPUT FORMATS + + +
+  50   FORMAT(/,' *ERR:414* Too many entries in selector-symbol table.',
+-     A         ' Number=',I5)
++     A         ' Number=',I5, '  Limit=',i5)
++C***********************************************************************
++      DO 100 I=1,LAST_SYMBOL
++        IF(KEY.EQ.SYMBOL(I)) THEN
++C         FOUND MATCH
++          INDEX = I
++          SYMBOL_CLASS(I) = CLASS  
++          SYMBOL_VALUE(I) = VALUE  
++          FLAG = 1
++          RETURN
++        ENDIF
++ 100  CONTINUE
++C     MATCH NOT FOUND
++      LAST_SYMBOL = LAST_SYMBOL + 1
++
++      FLAG = 0
++      IF(LAST_SYMBOL.GT.MAX_SYMBOL) THEN
++        WRITE(STDOUT,50) LAST_SYMBOL, max_symbol
++        FLAG = 2
++        LAST_SYMBOL = MAX_SYMBOL
++      ENDIF
++      SYMBOL(LAST_SYMBOL) = KEY
++      SYMBOL_CLASS(LAST_SYMBOL) = CLASS
++      SYMBOL_VALUE(LAST_SYMBOL) = VALUE
++      INDEX = LAST_SYMBOL
++      RETURN
++      END
++
++
++
++C     ***********
++C     *         *
++C     * LSA_SELECT
++C     *         *
++C     ***********
++
++      SUBROUTINE   LSA_SELECTOR
++     I                         (STDOUT, KEY, 
++     M                         CLASS, VALUE, 
++     O                         INDEX, FLAG)
++ 
++C     + + + PURPOSE + + +
++C     Do a linear search for KEY in the entries in the selector
++C     symbol table and add to the table if KEY is not found.
++C     Otherwise, return the index to KEY and the value of
++C     CLASS and VALUE found for the symbol in KEY. 
++ 
++      IMPLICIT NONE
++C     + + + DUMMY ARGUMENTS + + +
++      INTEGER FLAG, INDEX, STDOUT, CLASS, VALUE
++      CHARACTER KEY*16
++ 
++C     + + +DUMMY ARGUMENT DEFINITIONS + + +
++C     STDOUT - standard output unit for user messages
++C     KEY    - search value
++C     CLASS  - Class code for the symbol.
++C     VALUE  - numeric value for the symbol.
++C     INDEX  - index into the table at the match point
++C     FLAG  -  0: KEY not in the table; 1: Key in the table;
++C              2: error encountered.
++
++      INCLUDE 'selector.cmn'
++ 
++C     + + + LOCAL VARIABLES + + +
++      INTEGER I
++ 
++C     + + + OUTPUT FORMATS + + +
++ 50   FORMAT(/,' *ERR:414* Too many entries in selector-symbol table.',
++     A         ' Number=',I5,' Limit=',i5)
+ C***********************************************************************
+       DO 100 I=1,LAST_SYMBOL
+         IF(KEY.EQ.SYMBOL(I)) THEN
+@@ -123,12 +189,12 @@
+ C     MATCH NOT FOUND
+       LAST_SYMBOL = LAST_SYMBOL + 1
+ 
++      FLAG = 0
+       IF(LAST_SYMBOL.GT.MAX_SYMBOL) THEN
+-        WRITE(STDOUT,50) LAST_SYMBOL
++        WRITE(STDOUT,50) LAST_SYMBOL, max_symbol
+         FLAG = 2
+         LAST_SYMBOL = MAX_SYMBOL
+       ENDIF
+-      FLAG = 0
+       SYMBOL(LAST_SYMBOL) = KEY
+       SYMBOL_CLASS(LAST_SYMBOL) = CLASS
+       SYMBOL_VALUE(LAST_SYMBOL) = VALUE
+@@ -278,8 +344,9 @@
+ 
+       INTEGER STDIN, STDOUT
+ 
+-      CHARACTER FILE_NAME*128, SB_HOME*64
+-
++      CHARACTER FILE_NAME*128, SB_HOME*(*)
++
++      external mkdir
+ C     Local 
+ 
+       INTEGER IT, NXT, VALUE, CLASS, FORCE_LC 
+@@ -292,7 +359,7 @@
+      A ' characters.')
+ 54    FORMAT(/,' *ERR:417* No selector name found.')
+ 56    FORMAT(/,' *ERR:418* No selector value found.')
+-58    FORMAT(/,' *ERR:419* ' A,' is an invalid selector value.  ',
++58    FORMAT(/,' *ERR:419* ', A,' is an invalid selector value.  ',
+      A  'Must be TRUE, true, FALSE, or false.')
+ 60    FORMAT(/,' Home directory for output files is: ',A)
+ C***********************************************************************
+@@ -300,7 +367,7 @@
+ C     the leading blank IS important.  Operating system will ignore
+ C     leading blanks in file names and we need the space to possibly 
+ C     insert a slash later.  If this default name is changed be
+-C     sure to chaNge the test for the default name about 30 lines
++C     sure to change the test for the default name about 30 lines
+ C     below!
+       FILE_NAME = ' f_e_q_i_n_temp.default'
+ C     Set the default select-block home name to blank
+@@ -308,7 +375,7 @@
+ C     Clear the lower-case flag
+       FORCE_LC = 0
+ 100   CONTINUE
+-        CALL  INL196
++        CALL  inline
+      I             (STDIN, STDOUT,
+      O              LINE)
+         IT = LEN_TRIM(LINE)
+@@ -324,7 +391,14 @@
+               CALL TO_LOWER(
+      M                      SB_HOME)
+             ENDIF
+-            WRITE(STDOUT,60) SB_HOME 
++            it = len_trim(sb_home)
++            WRITE(STDOUT,60) SB_HOME(1:it) 
++
++            call os_file_style(
++     m                          sb_home)
++
++            call  mkdir(stdout, sb_home)
++
+ C           Adjust default file name if it still applies.  Note:
+ C           the code that gets the user-given file name does not
+ C           leave any leading blanks.  Thus we can tell if the 
+@@ -406,13 +480,14 @@
+ C
+ C
+ C
+-      SUBROUTINE PUSH_TOKEN(TOKEN, STATE, LEVEL,
++      SUBROUTINE PUSH_TOKEN(TOKEN, STATE, LEVEL, line,
+      O                      PNT)
+ 
+ C     Put token set on the token stack
+ 
+       IMPLICIT NONE
+       INTEGER TOKEN, STATE, LEVEL, PNT
++      character*(*) line
+ 
+       INCLUDE 'selectstack.cmn'
+ 
+@@ -424,6 +499,7 @@
+         SELECT_STACK(1,TOP) = TOKEN
+         SELECT_STACK(2,TOP) = STATE
+         SELECT_STACK(3,TOP) = LEVEL
++        select_stack_line(top) = line
+         PNT = TOP
+       ENDIF
+       RETURN
+@@ -432,12 +508,13 @@
+ C
+ C
+       SUBROUTINE POP_TOKEN(
+-     O                     TOKEN, STATE, LEVEL, PNT)
++     O                     TOKEN, STATE, LEVEL, line, PNT)
+ 
+ C     Get last token set from stack and drop top of stack.
+ 
+       IMPLICIT NONE
+       INTEGER TOKEN, STATE, LEVEL, PNT
++      character*(*) line
+ 
+       INCLUDE 'selectstack.cmn'
+ 
+@@ -448,7 +525,7 @@
+         TOKEN = SELECT_STACK(1,TOP)
+         STATE = SELECT_STACK(2,TOP)
+         LEVEL = SELECT_STACK(3,TOP)
+-   
++        line = select_stack_line(top)
+         TOP = TOP - 1
+         PNT = TOP
+       ENDIF
+@@ -459,13 +536,13 @@
+ C
+ 
+       SUBROUTINE GET_TOP_OF_STACK(
+-     O                     TOKEN, STATE, LEVEL, PNT)
++     O                     TOKEN, STATE, LEVEL, line, PNT)
+ 
+ C     Get last token set from stack
+ 
+       IMPLICIT NONE
+       INTEGER TOKEN, STATE, LEVEL, PNT
+-
++      character*(*) line
+       INCLUDE 'selectstack.cmn'
+ 
+ C***********************************************************************
+@@ -475,6 +552,7 @@
+         TOKEN = SELECT_STACK(1,TOP)
+         STATE = SELECT_STACK(2,TOP)
+         LEVEL = SELECT_STACK(3,TOP)
++        line = select_stack_line(top)
+         PNT = TOP
+       ENDIF
+       RETURN
+@@ -502,7 +580,7 @@
+ 
+ C     Given a line, seek selection keywords, define the token values, 
+ C     determine the value for the STATE of the keyword if it has one,
+-C     and adjust the level as required.  If the keywork has no STATE
++C     and adjust the level as required.  If the keyword has no STATE
+ C     return STATE as true. 
+ 
+       IMPLICIT NONE
+@@ -531,7 +609,6 @@
+      E 0, 0,-1,-1,-1/
+       
+ C     **********************Formats*************************************
+-50    FORMAT(/,' *ERR:420* Selector name=',A,' has unknown value.')
+ C*******************************************************************************
+       WORK = LINE
+       NXT = 1
+@@ -567,8 +644,9 @@
+         
+         IF(INDX.EQ.0) THEN
+           IT = LEN_TRIM(SELECTOR)
+-          WRITE(STDOUT,50) SELECTOR(1:IT)
+-          STOP 'Abnormal stop. Error(s) found.'
++           selector_value = FALSE
++           class = 1024
++c          STOP 'Abnormal stop. Error(s) found.'
+         ENDIF
+         IF(NOT.EQ.TRUE) THEN
+           IF(SELECTOR_VALUE.EQ.TRUE) THEN
+@@ -578,6 +656,7 @@
+           ENDIF
+         ENDIF
+         STATE = SELECTOR_VALUE
++
+       ELSEIF(RESULT(1:6).EQ.'ELSEIF') THEN
+ C       Found the elseif statement
+         TOKEN = ELSEIF_TOKEN
+@@ -599,8 +678,10 @@
+         
+         IF(INDX.EQ.0) THEN
+           IT = LEN_TRIM(SELECTOR)
+-          WRITE(STDOUT,50) SELECTOR(1:IT)
+-          STOP 'Abnormal stop. Error(s) found.'
++c          WRITE(STDOUT,50) SELECTOR(1:IT)
++           selector_value = FALSE
++           class = 1024
++c          STOP 'Abnormal stop. Error(s) found.'
+         ENDIF
+         IF(NOT.EQ.TRUE) THEN
+           IF(SELECTOR_VALUE.EQ.TRUE) THEN
+@@ -672,7 +753,7 @@
+ C*******************************************************************************
+ C      WRITE(STDOUT,*) 'Entering Discard lines'
+ 100   CONTINUE
+-        CALL  INL196_ALL
++        CALL  inline_ALL
+      I                  (STDIN,
+      O                   LINE)
+         IF(LINE(1:7).EQ.'ENDFILE') THEN
+@@ -719,7 +800,7 @@
+ C      WRITE(STDOUT,*) 'Entering Discard lines to endif'
+ 
+ 100   CONTINUE
+-        CALL  INL196_ALL
++        CALL  inline_ALL
+      I                  (STDIN,
+      O                   LINE)
+         IF(LINE(1:7).EQ.'ENDFILE') THEN
+@@ -739,6 +820,63 @@
+         ENDIF
+         GOTO 100
+       END
++c
++c
++c
++      subroutine set_or_update_selector(stdout, stdtmp, 
++     m                                    work,
++     o                                    flag)
++
++c     Process a set selector line outside of the set selector's block
++      implicit none
++      integer stdout, stdtmp
++      character*(*) work
++
++c     Local variables
++      integer k, class, value, key_pnt, flag, nxt
++      character key*16, result*5
++
++c     *****************************formats******************************
++50    format(/,' *ERR:441*  Selector variable=',A16,
++     a   ' has invalid value=',A5,'.  Should be true or false.')
++c***********************************************************************
++c      write(stdtmp,*) ' SET statement found'
++c     Find the equal sign. 
++      k = index(work, '=')
++      if(k == 0) then
++        flag = 10
++        return
++      endif
++c     Get the selector name
++      key = adjustl(work(1:k-1))
++
++c     Class not used yet but set to 0
++      class = 0
++
++c     get the value for the selector
++
++      result = adjustl(work(k+1:))
++      CALL TO_LOWER(
++     M              result)
++      if(result(1:4) == 'true') then
++        value = 1
++      elseif(result == 'false') then
++        value = 0
++      else
++        write(stdout,50) key, result
++        STOP 'Abnormal stop: errors found.'
++      endif
++      call LSUA_SELECTOR
++     I                  (STDOUT, KEY, 
++     M                  CLASS, VALUE, 
++     O                  key_pnt, FLAG)
++      if(flag > 1) then
++        STOP 'Abnormal stop: errors found.'
++      endif
++        
++      return
++      end
++
+ C
+ C
+ C
+@@ -752,24 +890,23 @@
+ 
+       INTEGER STDIN, STDOUT, EFLAG
+ 
+-      CHARACTER FILE_NAME*128, SB_HOME*64, FNAME1*64
++      CHARACTER FILE_NAME*128, SB_HOME*(*), FNAME1*64
+ 
+ 
+ C     Called program units
+       INTEGER GET_UNIT
+-      EXTERNAL GET_UNIT
++      EXTERNAL GET_UNIT, os_file_style
+ 
+ C     Local
+ 
+       INTEGER STDTMP, IT, TRUE, FALSE,
+      A        STACK_TOKEN, STACK_STATE, STACK_LEVEL, 
+      B        INHAND_TOKEN, INHAND_STATE, INHAND_LEVEL,
+-     C        TOP_PNT, INHAND, OLD_LEVEL, ACT, I, J,
++     C        TOP_PNT, INHAND, OLD_LEVEL, ACT, I, J, k,
+      D        IOFLAG, OLD_TOKEN, DISCARD_TOKEN, DISCARD_LEVEL,
+-     E        DISCARD_STATE
+-
+-
+-      CHARACTER LINE*196, WORK*196
++     E        DISCARD_STATE, len_stack_line, flag
++
++      CHARACTER LINE*196, WORK*196, stack_line*196
+ 
+       INTEGER NONE_TOKEN, IF_TOKEN, ELSE_TOKEN, ELSEIF_TOKEN,
+      A  ENDIF_TOKEN, ENDFILE_TOKEN
+@@ -825,7 +962,7 @@
+ C  Token on                        Token in 
+ C  Stack                           Hand
+ C ----------  -------------------------------------------------------------------------------------------
+-C     -       NONE           IF             ELSE*          ELSEIF*        ENDIF*         ENDFILE
++C     -       NONE           IF             ELSE*          ELSEIF*        ENDIF*         ENDFILE         
+ C     -      |--------------|--------------|--------------|--------------|--------------|---------------|
+ C NONE       |Transfer line |Put on stack  |Error         |Error         |Error         |Close workfile.|
+ C            |              |              |    5         |   8          |              |Close master   |
+@@ -833,11 +970,11 @@
+ C            |     1        |              |              |              |              |Open workfile  |
+ C            |              |              |              |              |              | as input file.|
+ C            ____________________________________________________________________________________________
+-C            |top stack:F   |top stack:F   |Pop stack. If |Pop stack. If |Pop stack.    |Error.         |
+-C IF         | Discard lines| Discard lines|T,dscrd lns to|T,dscrd lns to|              |               |
+-C            | until level  | until level  |ENDIF@crrntlvl|ENDIF@crrntlvl|    12        |       14      |
+-C            | matches stck | mtchs stcklvl|If F,psh ELSE |If F,psh      |              |               |
+-C            | level        |else          |as T          |ELSEIF        |              |               |
++C            |top stack:F   |top stack:F   |Pop stack. If |Pop stack. If |Pop stack.    |Error.         | 
++C IF         | Discard lines| Discard lines|T,dscrd lns to|T,dscrd lns to|              |               | 
++C            | until level  | until level  |ENDIF@crrntlvl|ENDIF@crrntlvl|    12        |       14      | 
++C            | matches stck | mtchs stcklvl|If F,psh ELSE |If F,psh      |              |               | 
++C            | level        |else          |as T          |ELSEIF        |              |               | 
+ C            |else      2   | Put on stck  |          .   |              |              |               |
+ C            | transfer line|     4        |      6       |        9     |              |               |
+ C            ____________________________________________________________________________________________
+@@ -889,6 +1026,9 @@
+      A' for ELSE found.')
+ 516   FORMAT(/,' *ERR:432* At end of master-input file and no ENDIF',
+      A' for ELSEIF found.')
++518   format(/,' *ERR:442* Equal sign missing from a set selector line',
++     a  'outside of the set selectors block.')
++520   format(/,' Line is:',A)
+ C***********************************************************************
+ C     Open a file for holding the new input sequence. 
+ 
+@@ -905,6 +1045,9 @@
+         ENDIF
+         FILE_NAME = WORK
+       ENDIF
++
++      call os_file_style(
++     m                          file_name)
+ 
+ C     Try to prevent a disaster-overwriting the primary master-input file!
+ C     We assume that the user will be running FEQ in the directory that 
+@@ -937,7 +1080,7 @@
+       INHAND_TOKEN = NONE_TOKEN
+       INHAND_STATE = TRUE
+       INHAND_LEVEL = OLD_LEVEL
+-      CALL PUSH_TOKEN(INHAND_TOKEN, INHAND_STATE, INHAND_LEVEL,
++      CALL PUSH_TOKEN(INHAND_TOKEN, INHAND_STATE, INHAND_LEVEL, '  ',
+      O                      TOP_PNT)
+ 
+ C     Enable reading input lines to start the process. We have nothing
+@@ -953,7 +1096,7 @@
+         IF(INHAND.EQ.FALSE) THEN
+ C         Get next line from master input file and define the 
+ C         inhand values.
+-          CALL  INL196_ALL
++          CALL  inline_ALL
+      I                    (STDIN,
+      O                     LINE)
+ 
+@@ -964,7 +1107,8 @@
+ 
+ C       Get the top of stack values. This does not pop the stack!
+         CALL GET_TOP_OF_STACK(
+-     O       STACK_TOKEN, STACK_STATE, STACK_LEVEL, TOP_PNT)
++     O       STACK_TOKEN, STACK_STATE, STACK_LEVEL, stack_line, TOP_PNT)
++        len_stack_line = len_trim(stack_line)
+        
+ C        WRITE(STDOUT,*) ' STACK_TOKEN=',STACK_TOKEN,
+ C     A                  ' INHAND_TOKEN=',INHAND_TOKEN
+@@ -990,7 +1134,24 @@
+             WRITE(STDTMP,'(A)') ' '
+           ELSE
+ C           Line is not blank
+-            WRITE(STDTMP,'(A)') LINE(1:IT)
++c           Check if this line is a SET on a selector variable. 
++c            write(stdout,'(a2,a)') 'x ',work(1:it)
++            work = adjustl(line)
++            if(work(1:4) == 'SET ') then
++              work = adjustl(work(5:))
++              call set_or_update_selector(stdout, stdtmp, 
++     m                                    work,
++     o                                    flag)
++              if(flag == 10) then
++                write(stdout,518)
++                write(stdout,520) line
++                STOP 'Abnormal stop: errors found.'
++              endif
++
++              write(stdtmp,'(a1,a)') '*',line(1:it)
++            else
++              WRITE(STDTMP,'(A)') LINE(1:IT)
++            endif
+           ENDIF
+           INHAND = FALSE
+           GOTO 9999
+@@ -1013,7 +1174,24 @@
+               WRITE(STDTMP,'(A)') ' '
+             ELSE
+ C             Line is not blank
+-              WRITE(STDTMP,'(A)') LINE(1:IT)
++c             Check if this line is a SET on a selector variable. 
++              work = adjustl(line)
++c            write(stdout,'(a2,a)') 'y ',work
++              if(work(1:4) == 'SET ') then
++                work = adjustl(work(5:))
++                call set_or_update_selector(stdout,stdtmp, 
++     m                                      work,
++     o                                      flag)
++                if(flag == 10) then
++                  write(stdout,518)
++                  write(stdout,520) line
++                  STOP 'Abnormal stop: errors found.'
++                endif
++          
++                write(stdtmp,'(a1,a)') '*',line(1:it)
++              else
++                WRITE(STDTMP,'(A)') LINE(1:IT)
++              endif
+             ENDIF
+             INHAND = FALSE
+           ENDIF
+@@ -1021,7 +1199,7 @@
+ 
+ 300     CONTINUE
+ C         Push in-hand values onto the stack.
+-          CALL PUSH_TOKEN(INHAND_TOKEN, INHAND_STATE, INHAND_LEVEL,
++          CALL PUSH_TOKEN(INHAND_TOKEN, INHAND_STATE, INHAND_LEVEL,LINE,
+      O                    TOP_PNT)
+           INHAND = FALSE
+           GOTO 9999
+@@ -1038,23 +1216,27 @@
+           ELSE
+ C           Push in-hand values onto the stack.
+             CALL PUSH_TOKEN(INHAND_TOKEN, INHAND_STATE, INHAND_LEVEL,
++     i                      line,
+      O                      TOP_PNT)
+             INHAND = FALSE
+           ENDIF
+           GOTO 9999
+ 
+ 500     CONTINUE
+-C         Error- ELSE found but matching IF or ELSEIF
++C         Error- ELSE found but no matching IF or ELSEIF
+           WRITE(STDOUT,505) 
++          write(stdout,520) stack_line(1:len_stack_line)
+           STOP 'Abnormal stop.  Error(s) found.'
+ 
+ 600     CONTINUE
+ C         process an in-hand ELSE with a matching IF or ELSEIF
+           CALL POP_TOKEN(
+-     O                   STACK_TOKEN, STACK_STATE, STACK_LEVEL, TOP_PNT)
++     O                   STACK_TOKEN, STACK_STATE, STACK_LEVEL, line,
++     o                    TOP_PNT)
+           IF(STACK_LEVEL.NE.INHAND_LEVEL) THEN
+ C           Possible user error.
+             WRITE(STDOUT,506)
++            write(stdout,520) stack_line(1:len_stack_line)
+             STOP 'Abnormal stop.  Error(s) found.'
+           ENDIF
+ 
+@@ -1068,6 +1250,7 @@
+           ELSE
+             INHAND_STATE = TRUE
+             CALL PUSH_TOKEN(INHAND_TOKEN, INHAND_STATE, INHAND_LEVEL,
++     i                      line,
+      O                      TOP_PNT)
+           ENDIF
+           INHAND = FALSE
+@@ -1076,20 +1259,24 @@
+ 700     CONTINUE
+ C         Error- ELSE found  after a matching ELSE
+           WRITE(STDOUT,507)
++          write(stdout,520) stack_line(1:len_stack_line)
+           STOP 'Abnormal stop.  Error(s) found.'
+ 
+ 800     CONTINUE
+ C         Error- ELSEIF found with no preceding IF or ELSEIF
+           WRITE(STDOUT,508)
++          write(stdout,520) stack_line(1:len_stack_line)
+           STOP 'Abnormal stop.  Error(s) found.'
+              
+ 900     CONTINUE
+ C         Process an ELSEIF with a matching IF or ELSEIF
+           CALL POP_TOKEN(
+-     O                   STACK_TOKEN, STACK_STATE, STACK_LEVEL, TOP_PNT)
++     O                   STACK_TOKEN, STACK_STATE, STACK_LEVEL, line, 
++     o                   TOP_PNT)
+           IF(STACK_LEVEL.NE.INHAND_LEVEL) THEN
+ C           Possible user error.
+             WRITE(STDOUT,506)
++            write(stdout,520) stack_line(1:len_stack_line)
+             STOP 'Abnormal stop.  Error(s) found.'
+           ENDIF
+ C         If the stack state is true, discard lines until we find
+@@ -1100,7 +1287,8 @@
+      O                  DISCARD_TOKEN, DISCARD_STATE, DISCARD_LEVEL)
+           
+           ELSE
+-            CALL PUSH_TOKEN(INHAND_TOKEN, INHAND_STATE, INHAND_LEVEL,
++            CALL PUSH_TOKEN(INHAND_TOKEN, INHAND_STATE, INHAND_LEVEL, 
++     i                      line,
+      O                      TOP_PNT)
+           ENDIF
+           INHAND = FALSE
+@@ -1109,22 +1297,25 @@
+ 1000    CONTINUE
+ C         Error- ELSEIF after matching ELSE
+           WRITE(STDOUT,510)
++          write(stdout,520) stack_line(1:len_stack_line)
+           STOP 'Abnormal stop.  Error(s) found.'
+ 
+ 
+ 1100    CONTINUE
+ C         Error-ENDIF found but no matching statement exists
+           WRITE(STDOUT,511)
+-          WRITE(STDOUT,'(A)') LINE
++          write(stdout,520) stack_line(1:len_stack_line)
+           STOP 'Abnormal stop.  Error(s) found.'
+ 
+ 1200    CONTINUE
+ C         Process an ENDIF with a matching IF, ELSE, or ELSEIF
+           CALL POP_TOKEN(
+-     O                   STACK_TOKEN, STACK_STATE, STACK_LEVEL, TOP_PNT)
++     O                   STACK_TOKEN, STACK_STATE, STACK_LEVEL, line,
++     o                    TOP_PNT)
+           IF(STACK_LEVEL.NE.INHAND_LEVEL) THEN
+ C           Possible user error.
+             WRITE(STDOUT,506)
++            write(stdout,520) stack_line(1:len_stack_line)
+             STOP 'Abnormal stop.  Error(s) found.'
+           ENDIF
+           INHAND = FALSE
+@@ -1143,18 +1334,21 @@
+ C         Error-End of Master input file found before ENDIF for 
+ C               IF was found.
+           WRITE(STDOUT,514)
++          write(stdout,520) stack_line(1:len_stack_line)
+           STOP 'Abnormal stop.  Error(s) found.'
+ 
+ 1500    CONTINUE
+ C         Error-End of Master input file found before ENDIF for 
+ C               ELSE was found.
+           WRITE(STDOUT,515)
++          write(stdout,520) stack_line(1:len_stack_line)
+           STOP 'Abnormal stop.  Error(s) found.'
+ 
+ 1600    CONTINUE
+ C         Error-End of Master input file found before ENDIF for 
+ C               ELSEIF was found.
+           WRITE(STDOUT,516)
++          write(stdout,520) stack_line(1:len_stack_line)
+           STOP 'Abnormal stop.  Error(s) found.'
+ 
+ 9999    CONTINUE

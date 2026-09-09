@@ -1,0 +1,528 @@
+--- 9.98/feq/timeman.for
++++ 10.61/feq/timeman.for
+@@ -79,14 +79,14 @@
+       EXTERNAL INVMJD
+  
+ C     + + + OUTPUT FORMATS + + +
+- 50   FORMAT(I3,I2,I2,':',F6.3)
++ 50   FORMAT(I3.2,I2.2,I2.2,':',F6.3)
+ C***********************************************************************
+       MJD = INT(JTIME)
+       FRAC = JTIME - DBLE(MJD)
+       CALL INVMJD
+      I           (MJD,
+      O            YR, MN, DY)
+-      HR = 24.0*FRAC
++      HR = sngl(24.d0*FRAC)
+  
+ C      IF(YR.LT.2000) THEN
+ C        YR = YR - 1900
+@@ -104,10 +104,10 @@
+      I                   (BRPT, BWFDSN, DIFFUS, VUNIT, DTVEC, EXNODT,
+      I                    NBLK, NBN, NBRA, NODEID, NEX, OPBLK, RESNUM,
+      I                    RESVEC, SFAC, FFFDSN, MINPRT, HSLOT, PUTDSN,
+-     I                    BNODE, QCHOP, BNI, BNQ, TAI, TAQ, TAQBN, 
+-     I                    WSI, WSQ, OLD_SUMMARY,
+-     M                    CFLAG, DT, IFRZ, WT, SEFLAG,
+-     O                    EMC, SUMITR, S1, D1)
++     I                    getdsn, BNODE, QCHOP, BNI, BNQ, TAI, TAQ, 
++     i                    TAQBN, WSI, WSQ, OLD_SUMMARY,
++     M                    CFLAG, DT, DTDY, IFRZ, WT, SEFLAG, 
++     O                    EMC, SUMITR, S1, D1, dt_adjust, dz_for_output)
+  
+ C     + + + PURPOSE + + +
+ C     Subroutine to manage time, time step, and time-integrating
+@@ -119,11 +119,12 @@
+  
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER BNODE, BWFDSN, CFLAG, FFFDSN, IFRZ, MINPRT, NBLK, NBN,
+-     A        NBRA, NEX, PUTDSN, RESNUM, SEFLAG, SUMITR
++     A        NBRA, NEX, PUTDSN, RESNUM, SEFLAG, SUMITR,
++     a        dt_adjust, getdsn
+       INTEGER BRPT(8, NBRA), EMC(MREMC), EXNODT(9,NEX), OPBLK(MNBLK),
+      A        RESVEC(NEX)
+-      REAL DTVEC(MNFRDT), HSLOT, QCHOP, SFAC, VUNIT, WT
+-      REAL*8 D1, DT, S1, BNI, BNQ, TAI, TAQ, TAQBN, WSI, WSQ
++      REAL DTVEC(MNFRDT), HSLOT, QCHOP, SFAC, VUNIT, WT, dz_for_output
++      REAL*8 D1, DT, dtdy, S1, BNI, BNQ, TAI, TAQ, TAQBN, WSI, WSQ
+       CHARACTER DIFFUS*4, NODEID*4, OLD_SUMMARY*4
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -195,6 +196,10 @@
+ C           level-pool reservoirs and branches
+ C     D1  - initial storage of water in the model in detention and delay
+ C           reservoirs
++c     dt_adjust - pass value of TFLAG to FEQ so that small time steps
++c                 resulting from adjustment to synchronize time with
++c                 even increments of the hour do not get used in 
++c                 computing the minimum time step for the run.
+  
+ C     + + + COMMON BLOCKS + + +
+       INCLUDE 'stdun.cmn'
+@@ -218,6 +223,7 @@
+       SAVE TFLAG, YES
+  
+ C     + + + LOCAL VARIABLES + + +
++      integer bwrec
+       REAL BAL, DTHR, ET, HR, RBAL, WTOLD
+       REAL*8 D2, DTOLD, DTT, S2
+  
+@@ -239,8 +245,8 @@
+  2080 FORMAT(/,' SIMULATION COMPLETED')
+  2100 FORMAT(/,6X,'Time step reset to',F10.2,' sec',' WT = ',F5.3)
+  2110 FORMAT(6X,'Time step too small. RUN TERMINATED.')
+- 2120 FORMAT(/,' TIME STEP RESET IN MANTIM TO',F10.2,' SECS TO MATCH',
+-     A       ' EVENT END')
++ 2120 FORMAT(/,' Time step reset in mantim to',F10.2,' secs to match',
++     a       ' event end')
+  2150 FORMAT(' Balance 1: S1=',1PE9.3,' S2=',1PE9.3,' BNI=',1PE9.3,
+      A       ' BNQ=',1PE9.3,' TAQ=',1PE9.3,' WSI=',1PE9.3,
+      B       ' WSQ=',1PE9.3)
+@@ -252,11 +258,15 @@
+      A       ' Rel Bal=BAL/(D2+TAQ+TAQBN)=',1PE10.0)
+  2149 FORMAT(/,' Balance for current runoff event:')
+  3018 FORMAT(/,' IFRZ = ',I5)
+- 3020 FORMAT(/,' Computation time=',F10.2,' secs or ',F10.4,' mins')
+- 3021 FORMAT(' Comp time=',F9.2,' secs ',F8.3,' mins')
++ 3020 FORMAT(/,' Computation time=',F10.2,' secs or ',F10.4,' mins',/,
++     a          5x,'Minimum time step=',f10.2,' secs')
++ 3021 FORMAT(/,' Comp time=',F9.2,' secs ',F8.3,' mins',/,
++     a          5x,'Minimum time step=',f10.2,' secs')
+ C 3022 FORMAT(' TIME IN COMPUTING NETWORK MATRIX=',F10.2,' SECS.')
+ C 3023 FORMAT(' TIME IN SOLVING NETWORK MATRIX=',F10.2,' SECS.')
+ C***********************************************************************
++c       set signal for non-computational adjustment of time step
++        dt_adjust = tflag
+ C       SAVE THE OLD TIME STEP FOR POSSIBLE USE LATER
+         DTOLD = DT
+         WTOLD = WT
+@@ -281,9 +291,13 @@
+ C             FROZEN TIME OVER. SAVE STATE OF SYSTEM AS NEEDED.
+  
+               IF(DIFFUS.EQ.YES) THEN
+-                CALL BWPUT
+-     I                (BWFDSN, WT, NBRA, NBN, NEX, NBLK, OPBLK)
+-                WRITE(STD6,*) ' BWF BEING WRITTEN AT IFRZ=0'
++                if(getdsn+putdsn == 0) then
++                  bwrec = 1
++                  CALL BWPUT
++     I                  (BWFDSN, WT, NBRA, NBN, NEX, NBLK, OPBLK,
++     m                   bwrec)
++                  WRITE(STD6,*) ' BWF being written at IFRZ=0 in MANTIM'
++                endif
+               ENDIF
+  
+               IF(NFOUT.GT.0) CALL WRINIT
+@@ -299,20 +313,31 @@
+ 
+               IF(FEO_UNIT.GT.0) THEN 
+                 CALL OUT_GENSCN
+-     I                          (STDOUT, SJTIME)
++     I                          (STDOUT, SJTIME, dz_for_output)
+               ENDIF
+               CALL NWDTWT
+      I                   (SITER, MAXDT, MINDT, LOW, HIGH, LFAC, HFAC,
+-     I                    BWT, DWT, STDOUT, MINPRT, TIME,
++     I                    BWT, DWT, STDOUT, MINPRT, JTIME, TIME,
+      M                    WT, TFLAG,
+-     O                    DT)
++     O                    DT, DTDY)
+ 
+               IF(DT.LT.MINDT) THEN
+ C               Close any GENSCN files. -1 signals normal termination
+                 CALL GENSCN_CLOSE(STDOUT, -1) 
++c               Close any special output file and its description file
++                 call spo_close(stdout)
++
+                 WRITE(STDOUT,2110)
+                 CALL NON_CONV_SUMMARY(STDOUT, NEX, NBN, NBRA, BRPT)
+-                STOP 'Time step too small.'
++                CALL TIMERL(ITICK1)
++                IF(ITICK1.LT.ITICK0) THEN
++                  ITICK1 = ITICK1 + 100*86400
++                ENDIF
++                ET = FLOAT(ITICK1 - ITICK0)/100.0
++                WRITE(STDOUT,3020) ET, ET/60., min_time_step
++                WRITE(*,3021) ET, ET/60., min_time_step
++
++                STOP 'Abnormal stop: time step too small.'
+               ENDIF
+  
+ C             UPDATE THE TIME
+@@ -327,6 +352,7 @@
+ C             FROZEN TIME STILL ACTIVE
+  
+               DT = DTVEC(IFRZ)
++              dtdy = dt/86400.d0
+             ENDIF
+           ELSE
+  
+@@ -334,16 +360,26 @@
+  
+             CALL NWDTWT
+      I                 (SITER, MAXDT, MINDT, LOW, HIGH, LFAC, HFAC, BWT,
+-     I                  DWT, STDOUT, MINPRT, TIME,
++     I                  DWT, STDOUT, MINPRT, JTIME, TIME,
+      M                  WT, TFLAG,
+-     O                  DT)
++     O                  DT, DTDY)
+  
+             IF(DT.LT.MINDT.AND.SEFLAG.EQ.0) THEN
+ C             Close any GENSCN files. -1 signals normal termination
+               CALL GENSCN_CLOSE(STDOUT, -1) 
++c             Close any special output file and its description file
++              call spo_close(stdout)
+               WRITE(STDOUT,2110)
+               CALL NON_CONV_SUMMARY(STDOUT, NEX, NBN, NBRA, BRPT)
+-              STOP 'Time step too small.'
++              CALL TIMERL(ITICK1)
++              IF(ITICK1.LT.ITICK0) THEN
++                ITICK1 = ITICK1 + 100*86400
++              ENDIF
++              ET = FLOAT(ITICK1 - ITICK0)/100.0
++              WRITE(STDOUT,3020) ET, ET/60., min_time_step
++              WRITE(*,3021) ET, ET/60., min_time_step
++              STOP 'Abnormal stop: time step too small.'
++
+             ENDIF
+ 
+             TIME = TIME + DT
+@@ -356,15 +392,16 @@
+ C         CLEAR THE TIME ADJUSTMENT FLAG
+  
+           TFLAG = 0
++          dt_adjust = tflag
+  
+ C         NON-CONVERVENCE ON LAST TIME POINT.
+  
+ C         MOVE BACK ANY OPERATED CONTROL STRUCTURES
+  
+           IF(NBLK.GT.0) THEN
+-            DTHR = -DT/3600.
++            DTHR = sngl(-DT/3600.d0)
+             CALL OPER
+-     I               (SNGL(TIME), NBLK, OPBLK, DTHR,
++     I               (jtime, NBLK, OPBLK, DTHR,
+      O                EMC)
+           ENDIF
+  
+@@ -381,7 +418,7 @@
+ C         DECREASE THE TIME STEP
+  
+           DT = DT*LFAC
+- 
++
+           SEFLAG = 0
+  
+           WT = WT + DWT
+@@ -395,7 +432,16 @@
+             CALL GENSCN_CLOSE(STDOUT, -1) 
+             WRITE(STDOUT,2110)
+             CALL NON_CONV_SUMMARY(STDOUT, NEX, NBN, NBRA, BRPT)
+-            STOP 'Time step too small.'
++
++            CALL TIMERL(ITICK1)
++            IF(ITICK1.LT.ITICK0) THEN
++              ITICK1 = ITICK1 + 100*86400
++            ENDIF
++            ET = FLOAT(ITICK1 - ITICK0)/100.0
++            WRITE(STDOUT,3020) ET, ET/60., min_time_step
++            WRITE(*,3021) ET, ET/60., min_time_step
++            STOP 'Abnormal stop: time step too small.'
++
+           ENDIF
+  
+           IF(IFRZ.EQ.0) THEN
+@@ -435,6 +481,7 @@
+             IF(ABS(DT).LT.0.01) THEN
+               GOTO 100
+             ENDIF
++            dt_adjust = tflag
+             RETURN
+           ENDIF
+  
+@@ -456,6 +503,7 @@
+ C         AND NOT THE LAST ONE SET!
+  
+           DT = DTOLD
++          dtdy = dt/86400.d0
+           WT = WTOLD
+  
+           IF(DIFFUS.EQ.YES) THEN
+@@ -471,7 +519,7 @@
+               RESET = -1
+             ELSE
+               RESET = 1
+-              CALL BFINIT
++              CALL BFINIT(DT)
+             ENDIF
+  
+ C           Compute a water balance for the segment just ended.
+@@ -482,14 +530,14 @@
+      I              DLAY_K, DTEN_S2, DTEN_AVDA,
+      O              S2, D2)
+  
+-            BAL = S2 + BNQ + WSQ - 
+-     A           (S1 +  BNI + TAQ + WSI)
++            BAL = sngl(S2 + BNQ + WSQ - 
++     A           (S1 +  BNI + TAQ + WSI))
+             RBAL = BAL/(S2 + BNQ)
+             WRITE(STDOUT,2149)
+             WRITE(STDOUT,2150) S1, S2, BNI, BNQ, TAQ, WSI, WSQ
+             WRITE(STDOUT,2152)  BAL, RBAL
+             WRITE(STDOUT,2153) D1, D2, TAI, TAQBN
+-            BAL = D2 + TAQ + TAQBN - (D1 + TAI)
++            BAL = sngl(D2 + TAQ + TAQBN - (D1 + TAI))
+             RBAL = BAL/(D2 + TAQ + TAQBN + 1.0)
+             WRITE(STDOUT,2154) BAL, RBAL
+ 
+@@ -502,20 +550,22 @@
+      I                 (BRPT, DT, EXNODT, FFFDSN, NBN, NBRA, NODEID,
+      I                  NEX, SFAC, MINPRT, HSLOT, VUNIT, PUTDSN, EMC,
+      I                  NBLK, OPBLK, WT, SITER, BNODE, QCHOP,
+-     I                  OLD_SUMMARY)
++     I                  OLD_SUMMARY, dz_for_output)
+  
+ C           WRITE THE CONDITIONS AT THE END OF THE DUMMY SEGMENT.
+ C           CURRENT YEAR AND MONTH FOR DUMMY SEGMENT IS MONTH: DMMN
+ C           AND YEAR: DMYEAR
+  
+             IF(YR.EQ.DMYEAR.AND.MN.EQ.DMMN) THEN
+-              REWIND(BWFDSN)
++c              REWIND(BWFDSN)
++              bwrec = 1
+               CALL BWPUT
+-     I                (BWFDSN, WT, NBRA, NBN, NEX, NBLK, OPBLK)
++     I                (BWFDSN, WT, NBRA, NBN, NEX, NBLK, OPBLK,
++     m                 bwrec)
+               WRITE(STD6,*) ' BWF BEING WRITTEN: YR=',YR,' MN=',MN
+             ENDIF
+ 
+-
++            dt_adjust = tflag
+             RETURN
+           ENDIF
+  
+@@ -525,25 +575,27 @@
+ C         OUTPUT RESULT AND MAX ELEVATION SUMMARY
+  
+           IF(OUTPUT.GT.2) WRITE(STDOUT,2010)
+-          HR = 24.*DYFRAC
++          HR = sngl(24.d0*DYFRAC)
+           WRITE(STDOUT,2020) YR, MN, DY, HR
+           CALL RESOUT
+-     I               (GRAV, VUNIT, STDOUT, NBRA, NODEID, NEX, TIME,
+-     I                SFAC, BRPT, EXNODT, QCHOP)
++     I               (GRAV, VUNIT, STDOUT, NBRA, NODEID, NEX, time,
++     I                SFAC, BRPT, EXNODT, QCHOP, dz_for_output)
+  
+           WRITE(STDOUT,2080)
+  
+           IF(OLD_SUMMARY.NE.'YES') THEN
+             CALL ZSUMRY
+-     I                 (STDOUT, NBRA, NODEID, SNGL(TIME), SFAC, EMC,     
+-     I                  BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP)
++     I                 (STDOUT, NBRA, NODEID,  SFAC, EMC,     
++     I                  BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP,
++     i                  dz_for_output)
+           ELSE
+             CALL ZSUMRY_OLD
+-     I                 (STDOUT, NBRA, NODEID, SNGL(TIME), SFAC, EMC,     
+-     I                  BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP)
++     I                 (STDOUT, NBRA, NODEID, SFAC, EMC,     
++     I                  BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP,
++     i                  dz_for_output)
+           ENDIF 
+ C         Close time series output files.
+-          IF(NFOUT.GT.0) CALL WRQUIT(STDOUT)
++          IF(NFOUT.GT.0) CALL WRQUIT(STDOUT, jtime)
+  
+ C         Close time series input files.
+           CALL RDQUIT(STDOUT)
+@@ -551,6 +603,8 @@
+ C         Close any HECDSS files.
+           CALL HECDSS_QUIT(STDOUT)
+  
++c         Close any special output file and its description file
++          call spo_close(stdout)
+ 
+ C         Close any GENSCN files. 1 signals normal termination
+           CALL GENSCN_CLOSE(STDOUT, 1) 
+@@ -569,16 +623,17 @@
+             ITICK1 = ITICK1 + 100*86400
+           ENDIF
+           ET = FLOAT(ITICK1 - ITICK0)/100.0
+-          WRITE(STDOUT,3020) ET, ET/60.
+-          WRITE(*,3021) ET, ET/60.
++          WRITE(STDOUT,3020) ET, ET/60., min_time_step
++          WRITE(*,3021) ET, ET/60., min_time_step
+ C          WRITE(STDOUT,3022) FLOAT(CMPEXT)/100.
+ C          WRITE(STDOUT,3023) FLOAT(SLVEXT)/100.
+  
+ C          CLOSE(45)
+ 
+-          STOP ' Normal stop'
++          STOP ' Normal stop in MANTIM'
+  
+         ENDIF
++      dt_adjust = tflag
+       RETURN
+       END
+ C
+@@ -586,9 +641,9 @@
+ C
+       SUBROUTINE   NWDTWT
+      I                   (SITER, MAXDT, MINDT, LOW, HIGH, LFAC, HFAC,
+-     I                    BWT, DWT, STDOUT, MINPRT, TIME,
++     I                    BWT, DWT, STDOUT, MINPRT, JTIME, TIME,
+      M                    WT, TFLAG,
+-     O                    DT)
++     O                    DT, DTDY)
+  
+ C     + + + PURPOSE + + +
+ C     Adjust time step and time integrating weight factor.
+@@ -597,7 +652,7 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER STDOUT, MINPRT, TFLAG
+       REAL BWT, DWT, HFAC, HIGH, LFAC, LOW, MAXDT, MINDT, SITER, WT
+-      REAL*8 DT, TIME
++      REAL*8 DT, dtdy, JTIME, TIME
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     SITER  - weighted sum of iterations to convergence
+@@ -619,6 +674,8 @@
+ C     TFLAG  - signal to force maximum type step
+ C     DT     - time step in seconds
+  
++      INCLUDE 'timetab.cmn'
++
+ C     + + + INTRINSICS + + +
+       INTRINSIC DBLE, MOD
+ 
+@@ -631,6 +688,14 @@
+  2101 format(6x,'Reducing time step to synchronize time.')
+  2110 FORMAT(6X,'Time step too samll. RUN TERMINATED.')
+ C***********************************************************************
++
++      if(tab_for_maxdt.gt.0) then
++        CALL LKTSTAB
++     I            (tab_for_maxdt, JTIME,
++     O             maxdt, NTAB, DF)
++      endif
++
++        
+       IF(SITER.LE.LOW) THEN
+  
+ C       INCREASE THE TIME STEP
+@@ -691,6 +756,8 @@
+         endif
+       ENDIF
+ 
++      dtdy = dt /86400.d0
++
+       RETURN
+       END
+ C
+@@ -700,7 +767,7 @@
+      I                   (BRPT, DT, EXNODT, FFFDSN, NBN, NBRA, NODEID,
+      I                    NEX, SFAC, MINPRT, HSLOT, VUNIT, PUTDSN, EMC,
+      I                    NBLK, OPBLK, WT, SITER, BNODE, QCHOP,
+-     I                    OLD_SUMMARY)
++     I                    OLD_SUMMARY, dz_for_output)
+  
+ C     + + + PURPOSE + + +
+ C     Process the end of a time segment when DIFFUS = YES
+@@ -712,7 +779,7 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER BNODE, FFFDSN, MINPRT, NBLK, NBN, NBRA, NEX, PUTDSN
+       INTEGER BRPT(8,NBRA), EMC(MREMC), EXNODT(9,NEX), OPBLK(1)
+-      REAL HSLOT, QCHOP, SFAC, SITER, VUNIT, WT
++      REAL HSLOT, QCHOP, SFAC, SITER, VUNIT, WT, dz_for_output
+       REAL*8 DT
+       CHARACTER NODEID*4, OLD_SUMMARY*4
+  
+@@ -791,7 +858,8 @@
+      A        F14.6,' IS COMPLETED')
+  3020 FORMAT(' Total elapsed time=',F10.2,' secs or ',F10.4,' mins')
+  3021 FORMAT(' Elapsed time=',F9.2,' secs ',F8.3,' mins')
+- 3022 FORMAT(' Event computation time=',F10.2,' secs or ',F10.4,' mins')
++ 3022 FORMAT(/,' Event computation time=',F10.2,' secs or ',
++     a      F10.4,' mins')
+ C 3024 FORMAT(' Time in computing network matrix=',F10.2,' secs.')
+ C 3025 FORMAT(' Time in solving network matrix=',F10.2,' secs.')
+  3030 FORMAT(' Elapsed time=',F10.2,' secs or ',F10.4,' mins')
+@@ -800,31 +868,35 @@
+ C         WAS NOT DONE BECAUSE THE END OF TIME SEGMENT WAS
+ C         ENCOUNTERED. THEREFORE, DECREASE TIME.
+  
+-C          TIME = TIME - DT
+-C          CALL TIMINC(-DT, JTIME, YR, MN, DY, DYFRAC, LEAP)
+-          HR = 24.*DYFRAC
++c          TIME = TIME - DT
++c          CALL TIMINC(-DT, JTIME, YR, MN, DY, DYFRAC, LEAP)
++          HR = sngl(24.d0*DYFRAC)
+           IF(FFFDSN.GT.0) THEN
+             WRITE(FFFDSN,2190) YR, MN, DY, HR, JTIME
+             IF(OLD_SUMMARY.NE.'YES') THEN
+               CALL ZSUMRY
+-     I                   (FFFDSN, NBRA, NODEID, SNGL(TIME), SFAC, EMC,
+-     I                    BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP)
++     I                   (FFFDSN, NBRA, NODEID,  SFAC, EMC,
++     I                    BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP,
++     i                    dz_for_output)
+             ELSE
+               CALL ZSUMRY_OLD
+-     I                   (FFFDSN, NBRA, NODEID, SNGL(TIME), SFAC, EMC,
+-     I                    BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP)
++     I                   (FFFDSN, NBRA, NODEID,  SFAC, EMC,
++     I                    BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP,
++     i                    dz_for_output)
+             ENDIF
+           ENDIF
+           IF(MINPRT.EQ.0) THEN
+             WRITE(STDOUT,2190) YR, MN, DY, HR, JTIME
+             IF(OLD_SUMMARY.NE.'YES') THEN
+               CALL ZSUMRY
+-     I                   (STDOUT, NBRA, NODEID, SNGL(TIME), SFAC, EMC, 
+-     I                    BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP)
++     I                   (STDOUT, NBRA, NODEID, SFAC, EMC, 
++     I                    BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP,
++     i                    dz_for_output)
+             ELSE
+               CALL ZSUMRY_OLD
+-     I                   (STDOUT, NBRA, NODEID, SNGL(TIME), SFAC, EMC, 
+-     I                    BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP)
++     I                   (STDOUT, NBRA, NODEID,  SFAC, EMC, 
++     I                    BRPT, EXNODT, NEX, HSLOT, VUNIT, QCHOP,
++     i                    dz_for_output)
+             ENDIF
+           ENDIF
+  
+@@ -856,7 +928,7 @@
+ C           CLOSE ANY OUTPUT PTSF FILES. MUST WRITE THE TERMINATING
+ C           RECORD
+  
+-            IF(NFOUT.GT.0) CALL WRQUIT(STDOUT)
++            IF(NFOUT.GT.0) CALL WRQUIT(STDOUT, jtime)
+  
+ C           Close any time series input files.
+             CALL RDQUIT(STDOUT)
+@@ -866,6 +938,9 @@
+  
+ C           Close any GENSCN files. 1 signals normal termination
+             CALL GENSCN_CLOSE(STDOUT, 1) 
++
++c           Close any special output file and its description file
++            call spo_close(stdout)
+ 
+             IF(PUTDSN.GT.0) THEN
+ C             SAVE FINAL CONDITION TO FILE
+@@ -888,7 +963,7 @@
+ C            WRITE(STDOUT,3025) FLOAT(SLVEXT)/100.
+  
+  
+-            STOP 'Normal stop'
++            STOP 'Normal stop in SEGEND'
+           ENDIF
+  
+       RETURN

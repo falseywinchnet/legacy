@@ -1,0 +1,3952 @@
+--- 9.98/share/fqshrftb.for
++++ 10.61/share/fqshrftb.for
+@@ -1,45 +1,3 @@
+-C
+-C
+-C
+-      SUBROUTINE MAYBE_ADD_HOME(
+-     M                          NAME)
+-
+-C     Add home to front of file names that start with 
+-C     a / or \ but only if HOME or GHOME are not blank.
+-C     Also set local home to global home if local home is blank.
+-
+-      IMPLICIT NONE
+-
+-      CHARACTER*(*) NAME
+-
+-      INCLUDE 'home.cmn'
+-
+-C     Called program units
+-      EXTERNAL STRIP_L_BLANKS
+-C     Local
+-      INTEGER N
+-      CHARACTER*200 TEMP_LINE
+-C***********************************************************************
+-      IF(NAME.NE.' ') THEN
+-        CALL STRIP_L_BLANKS(
+-     M                      NAME)
+-
+-        IF(NAME(1:1).EQ.'/'.OR.NAME(1:1).EQ.'\') THEN
+-C         Check for global home if HOME is blank
+-          IF(HOME.EQ.' ') THEN
+-            IF(GHOME.NE.' ') THEN
+-              HOME = GHOME
+-            ENDIF
+-          ENDIF
+-          IF(HOME.NE.' ') THEN
+-            N = LEN_TRIM(HOME)
+-            TEMP_LINE = HOME(1:N)//NAME
+-            NAME = TEMP_LINE
+-          ENDIF
+-        ENDIF
+-      ENDIF
+-      RETURN
+-      END
+ C
+ C
+ C
+@@ -104,7 +62,7 @@
+       REAL BARG
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/0,1,2,2,0,0,1,2,2,0,2,24*0/
++      DATA VTYPE/0,1,2,2,0,0,0,0,0,0,0,24*0/
+  
+ C     + + + OUTPUT FORMATS + + +
+  50   FORMAT(/,' *ERR:694* PUT1D needs limit of ',I8,' for function',
+@@ -124,7 +82,7 @@
+         STOP 'Abnormal stop. Bug found.'
+       ELSE
+ C       Is there room in FTAB
+-        SPACE = 4 + N*(NFUN + 1)
++        SPACE = 21 + N*(NFUN + 1)
+         IF(SPACE + NEXT.GT. MRFTAB) THEN
+           WRITE(STDOUT,50)  SPACE + NEXT, NEXT
+           STOP 'Abnormal stop. Error found.'
+@@ -140,9 +98,12 @@
+         ITAB(PNT+1) = TABNUM
+         ITAB(PNT+2) = TYPE
+ C       INITIALIZE LAST ADDRESS ACCESSED
+-        ITAB(PNT+3) = PNT + 5
++        ITAB(PNT+3) = PNT + OFF234
+         FTAB(PNT+4) = 0.0
+-        PNT = PNT + 5
++        FTAB(PNT+5) = 1.0
++        itab(pnt+18) = 0
++        ftab(pnt+19) = 0.0
++        PNT = PNT + OFF234
+  
+ C       Set the monotone increasing argument flag.
+         BARG = ARG(1) - 100.
+@@ -203,8 +164,9 @@
+         GET_GISID = '                '
+       ELSE        
+         TYPE = ITAB(ADRS+2)
+-        IF(TYPE.LE.25.AND.TYPE.GE.20) THEN
+-C         Cross section table.  Only cross section tables have GISID's!
++        IF(TYPE.LE.25.AND.TYPE.GE.20.or.
++     a     type.le.35.and.type.ge.30) THEN
++C         Cross-section table.  Only cross-section tables have GISID's!
+           GET_GISID = GET_STRING_FROM_FT(ADRS+12)
+         ELSE
+           GET_GISID = '                '
+@@ -212,6 +174,43 @@
+       ENDIF
+       RETURN
+       END
++C     ***********
++C     *         *
++C     * PUT_chr8_IN_FT
++C     *         *
++C     ***********
++
++      SUBROUTINE PUT_chr8_IN_FT(FTP, STRING)
++
++C     Put the characters in STRING into a function-table header block
++C     with the first character being stored in the first byte of 
++C     the four-byte word at FTP.  STRING is of fixed length.
++
++      IMPLICIT NONE
++      CHARACTER*8 STRING
++
++      INTEGER FTP
++
++      INCLUDE 'arsize.prm'
++      INCLUDE 'ftable.cmn'
++
++C     Local
++
++      CHARACTER  CS8*8
++      REAL*4 SP(2)
++      REAL*8 DP
++
++      REAL*8 CHAR_TO_DP
++
++      EQUIVALENCE (SP(1), DP)
++C***********************************************************************
++      CS8 = STRING(1:8)
++      DP = CHAR_TO_DP(CS8)
++      FTAB(FTP) = SP(1)
++      FTAB(FTP+1) = SP(2)
++      RETURN
++      END
++
+ C     ***********
+ C     *         *
+ C     * PUT_STRING_IN_FT
+@@ -254,6 +253,44 @@
+       FTAB(FTP+3) = SP(2)
+       RETURN
+       END
++C     ***********
++C     *         *
++C     * GET_chr8_FROM_FT
++C     *         *
++C     ***********
++
++      CHARACTER*8 FUNCTION GET_chr8_FROM_FT(FTP)
++
++C     Get a string stored in a function-table header block  and
++C     return it. 
++
++      IMPLICIT NONE
++      INTEGER FTP
++
++      INCLUDE 'arsize.prm'
++      INCLUDE 'ftable.cmn'
++      
++C     Called program units
++      CHARACTER*8  DP_TO_CHAR
++      EXTERNAL DP_TO_CHAR
++
++C     Local
++
++      CHARACTER CS8*8
++      REAL*4 SP(2)
++      REAL*8 DP
++
++
++      EQUIVALENCE (SP(1), DP)
++C***********************************************************************
++C     Get upper half of string.
++      SP(1) = FTAB(FTP)
++      SP(2) = FTAB(FTP+1)
++      CS8 = DP_TO_CHAR(DP)
++      GET_chr8_FROM_FT = CS8
++      RETURN
++      END      
++
+ C     ***********
+ C     *         *
+ C     * GET_STRING_FROM_FT
+@@ -307,7 +344,7 @@
+ 
+ C     Put the real*8 value in DPIN into a function-table header block
+ C     with the first byte being stored in the first byte of 
+-C     the four-byte word at FTP.  STRING is of fixed length.
++C     the four-byte word at FTP. 
+ 
+       IMPLICIT NONE
+       REAL*8 DPIN
+@@ -357,7 +394,277 @@
+       SP(2) = FTAB(FTP+1)
+       GET_DP_FROM_FT = DP
+       RETURN
+-      END      
++      END 
++
++      subroutine get_zone_etc(
++     i                        stdout, tabadrs,
++     o        zone, hgrid, vdatum, unitsys, basis)
++
++c     Get the zone... info from a function table.
++
++      implicit none
++
++      integer stdout, tabadrs
++      character*8 zone, hgrid, vdatum, unitsys, basis
++     
++      integer gettbn, gettyp
++      character*8 get_chr8_from_ft
++      character*16 get_tabid
++      external get_chr8_from_ft, get_tabid, gettbn, gettyp
++      
++c     Local
++      integer ip, type
++c     **********************Formats*************************************
++50    format(/,'*BUG* Table id=',a,' has invalid type=',i7,
++     a         ' in subroutine get_zone_etc')
++c***********************************************************************
++      ip = tabadrs
++      type = gettyp(ip)
++      select case(type)
++
++      case default
++        write(stdout,50) get_tabid(gettbn(tabadrs)), type
++        stop 'Abnormal stop.  Bug found'
++
++      case(2,3,4,7,8,9,11)
++c       These are one-d function tables.
++        zone = GET_chr8_FROM_FT(ip+6)   
++        hgrid = GET_chr8_FROM_FT(ip+8)  
++        vdatum = GET_chr8_FROM_FT(ip+10) 
++        unitsys = GET_chr8_FROM_FT(ip+12)
++        basis = GET_chr8_FROM_FT(ip+20)  
++
++      case(6,10,13,14,43)
++c       These are two-d function tables:  6, 10,13,14 are
++c       created manually or by fequtl.  43 is from conversion
++c       right after input in feq. 
++        zone = GET_chr8_FROM_FT(ip+12)   
++        hgrid = GET_chr8_FROM_FT(ip+14)  
++        vdatum = GET_chr8_FROM_FT(ip+16) 
++        unitsys = GET_chr8_FROM_FT(ip+18)
++        basis = GET_chr8_FROM_FT(ip+24)  
++
++      case(20,21,22,23,24,25,
++     a     30,31,32,33,34,35)
++c       20-25 are for cross-section function tables as input. 
++c       Types 30-35 are  generated internally on user option
++c       immediately after input of types 20-25.
++        zone = GET_chr8_FROM_FT(ip+22)   
++        hgrid = GET_chr8_FROM_FT(ip+24)  
++        vdatum = GET_chr8_FROM_FT(ip+26) 
++        unitsys = GET_chr8_FROM_FT(ip+28)
++        basis = GET_chr8_FROM_FT(ip+30)  
++
++      end select 
++      return
++      end      
++C
++C
++C
++      INTEGER FUNCTION   GETTYP
++     I                         (ADRS)
++ 
++C     + + + PURPOSE + + +
++C     Get the table type of the table at ADRS.
++ 
++      IMPLICIT NONE
++C     + + + DUMMY ARGUMENTS + + +
++      INTEGER ADRS
++ 
++C     + + +DUMMY ARGUMENT DEFINITIONS + + +
++C     ADRS   - address of the function table in FTAB/ITAB
++ 
++C     + + + COMMON BLOCKS + + +
++      INCLUDE 'arsize.prm'
++      INCLUDE 'ftable.cmn'
++C***********************************************************************
++      GETTYP = ITAB(ADRS+2)
++      RETURN
++      END
++c 
++c 
++c 
++      subroutine get_east_north(
++     i                        stdout, tabadrs,
++     o                        easting, northing)
++
++c     Get the easting and northing values from a function table.
++      implicit none
++
++      integer stdout, tabadrs
++      real*8 easting, northing
++
++      integer gettbn, gettyp
++      real*8 get_dp_from_ft
++      character*16 get_tabid
++      external get_dp_from_ft, get_tabid, gettbn, gettyp
++
++c     Local
++      integer type
++c     **********************Formats*************************************
++50    format(/,'*BUG* Table id=',a,' has invalid type=',i7,
++     a         ' in subroutine get_east_north')
++c***********************************************************************
++      type = gettyp(tabadrs)
++      select case(type)
++
++      case default
++        write(stdout,50) get_tabid(gettbn(tabadrs)), type
++        stop 'Abnormal stop.  Bug found'
++
++      case(2,3,4,7,8,9,11)
++c       These are one-d function tables.
++        easting = get_dp_from_ft(tabadrs+14)
++        northing = get_dp_from_ft(tabadrs+16)
++
++      case(6,10,13,14,43)
++c       These are two-d function tables:  6, 10,13,14 are
++c       created manually or by fequtl.  43 is from conversion
++c       right after input. 
++        easting = get_dp_from_ft(tabadrs+20)
++        northing = get_dp_from_ft(tabadrs+22)
++
++      case(20,21,22,23,24,25,
++     a     30,31,32,33,34,35)
++c       20-25 are for cross-section function tables as input. 
++c       Types 30-35 are  generated internally on user option
++c       immediately after input of types 20-25
++        easting = get_dp_from_ft(tabadrs+8)
++        northing = get_dp_from_ft(tabadrs+10)
++ 
++      end select 
++      return
++      end      
++c
++c 
++c 
++      subroutine put_east_north(
++     i                        stdout, tabadrs, 
++     i                        easting, northing)
++
++c     Put the easting and northing values into a function table.
++      implicit none
++
++      integer stdout, tabadrs
++      real*8 easting, northing
++
++      integer gettbn, gettyp
++      character*16 get_tabid
++      external put_dp_in_ft, get_tabid, gettbn, gettyp
++
++c     Local
++      integer type
++c     **********************Formats*************************************
++50    format(/,'*BUG* Table id=',a,' has invalid type=',i7,
++     a         ' in subroutine put_east_north')
++
++c***********************************************************************
++      type = gettyp(tabadrs)
++      select case(type)
++
++      case default
++        write(stdout,50) get_tabid(gettbn(tabadrs)), type
++        stop 'Abnormal stop.  Bug found'
++
++      case(2,3,4,7,8,9,11)
++c       These are one-d function tables.
++        call put_dp_in_ft(tabadrs+14, easting)
++        call put_dp_in_ft(tabadrs+16, northing)
++
++      case(6,10,13,14,43)
++c       These are two-d function tables:  6, 10,13,14 are
++c       created manually or by fequtl.  43 is from conversion
++c       right after input. 
++        call put_dp_in_ft(tabadrs+20, easting)
++        call put_dp_in_ft(tabadrs+22, northing)
++
++      case(20,21,22,23,24,25,
++     a     30,31,32,33,34,35)
++c       20-25 are for cross-section function tables as input. 
++c       Types 30-35 are  generated internally on user option
++c       immediately after input of types 20-25
++        call put_dp_in_ft(tabadrs+8, easting)
++        call put_dp_in_ft(tabadrs+10, northing)
++ 
++      end select 
++      return
++      end      
++c
++c 
++c 
++      subroutine put_location_1dtab(
++     i     adrs, zone, hgrid, vdatum, unitsys, basis, easting, northing)
++      
++c     Store the location, datum, basis information in a one-d table.
++
++      implicit none
++
++      INCLUDE 'arsize.prm'
++      INCLUDE 'ftable.cmn'
++
++      integer adrs
++      real*8 easting, northing
++      character*8 zone, hgrid, vdatum, unitsys, basis
++
++c     External program units
++      External put_chr8_in_ft, put_dp_in_ft
++c     ******************************************************************
++c     Store the zone, grid, datum, and unitsys information
++      call put_chr8_in_ft(adrs+6, zone)
++      call put_chr8_in_ft(adrs+8, hgrid)
++      call put_chr8_in_ft(adrs+10, vdatum)
++      call put_chr8_in_ft(adrs+12, unitsys)
++      call put_chr8_in_ft(adrs+20, basis)
++      CALL PUT_DP_IN_FT(adrs+14, EASTING)
++      CALL PUT_DP_IN_FT(adrs+16, NORTHING)
++      return
++      end
++c
++c 
++c 
++      subroutine  chk_vdatum_unitsys(stdout, vdatum, unitsys, source)
++
++c     Check that the value of vdatum and unitsys matches what  
++c     has been set in the global values.
++
++      implicit none
++
++      integer stdout
++
++      character*8 vdatum, unitsys
++      character*(*) source
++
++      include 'grid_datum.cmn'
++
++c     ******************************formats*****************************
++50    format(/,'*ERR:XXX* Required vertical datum is: ',a,
++     a      ' but vertical datum: ',a,' found ',a)
++52    format(/,'*ERR:XXX* Required unit system is: ',a,
++     a      ' but unit system: ',a,' found ',a)
++c     ******************************************************************
++      if(g_vdatum /= 'NONE') then
++c       Every value of vdatum must agree with g_vdatum unless it has 
++c       been called not applicable  
++        if(vdatum /= 'NA') then
++          if(vdatum /= g_vdatum ) then
++            write(stdout,50) g_vdatum, vdatum, source
++            stop 'Abnormal stop: Vertical datum error'
++          endif
++        endif
++      endif
++      if(g_unitsys /= 'NONE') then
++c       Every value of unitsys must agree with g_unitsys unless it has
++c       been called not applicable  
++        if(unitsys /= 'NA') then
++          if(unitsys /= g_unitsys) then
++            write(stdout,52) g_unitsys, unitsys, source
++            stop 'Abnormal stop: Unit system error'
++          endif
++        endif
++      endif
++      return
++      end
++      
+ C
+ C
+ C
+@@ -370,7 +677,6 @@
+ C     TYPE = 2 - single function - linear interpolation
+ C     TYPE = 3 - 2 function - quadratic
+ C     TYPE = 4 - 2 function - hermite interpolation
+-C     TYPE = 6 - not read by atabin- read by twodin
+ C     TYPE=  7 - single function, linear interpolation but time argument
+ C                given in yr mn dy hr with hr allowed to be fractional
+ C     TYPE = 8 - like type 3 but with argument like 7
+@@ -378,8 +684,6 @@
+ C     TYPE =11 - like type 7 but two functions not related by any
+ C                simple rule. Reserved for wind, giving speed and
+ C                direction.
+-C     TYPE =15-  1-D table of 2-D table numbers to represent a
+-C                simple form of 3-D table.
+  
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+@@ -400,14 +704,16 @@
+       INCLUDE 'julian.cmn'
+  
+ C     + + + SAVED VALUES + + +
+-      INTEGER DPM(12,2), STEP(4)
++      INTEGER DPM(12,2), STEP(11)
+       SAVE DPM, STEP
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER ARGFLG, FTPOLD, I, LP, N, OLDDY, OLDMN, OLDYR, OUT
++      INTEGER ARGFLG, FTPOLD, I, LP, N, OLDDY, OLDMN, OLDYR, OUT,
++     a        dtp, reflev_active
+       REAL AFAC, ARG, BARG, F(7), FAC, REFLEV, SHIFT
+-      DOUBLE PRECISION HR, JT
+-      CHARACTER HEAD*80, LINE*80
++      real*8 HR, JT, bjt, easting, northing, dnull
++      CHARACTER HEAD*80, LINE*80, reflev_string*10,
++     a  zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC DBLE, IABS
+@@ -417,188 +723,357 @@
+       CHARACTER GET_TABID*16
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL INL80, KIL, LPYEAR, MJD, GET_TABID
++      EXTERNAL inline, KIL, LPYEAR, MJD, GET_TABID,
++     a  put_chr8_in_ft, PUT_DP_IN_FT, put_location_1dtab
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA STEP/0,2,3,3/
++      data dnull/-33d6/
++      DATA STEP/0,2,3,3,0,0,2,3,3,0,3/
+       DATA DPM/31,28,31,30,31,30,31,31,30,31,30,31,
+      1         31,29,31,30,31,30,31,31,30,31,30,31/
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(80A)
+- 46   FORMAT(5X,F10.0,5X,F10.0,6X,F10.0,7X,F10.0)
++ 2    format(5X,A8,7X,A8,8X,A8,9X,A8,7X,A8)
++ 4    format(8X,f15.0, 10X,f15.0)
++ 46   FORMAT(5X,A10,5X,F10.0,6X,F10.0,7X,F10.0)
+  48   FORMAT(8F10.0)
+  50   FORMAT(I4,1X,I2,1X,I2,7F10.0)
+  
+ C     + + + OUTPUT FORMATS + + +
+  11   FORMAT(' ',80A)
+- 47   FORMAT(' Function scale fac= ',1PE12.5,
+-     B     ' Arg scale fac=',1PE12.5,' Arg shift=',1PE12.5)
++ 47   FORMAT(' Shift for function value after scaling=',1PE12.5,
++     a       ' Scale factor for function= ',1PE12.5,/,
++     B     ' Arg scale factor=',1PE12.5,' Arg shift=',1PE12.5)
+  49   FORMAT(' ',F10.2,7(1PE10.3))
+  51   FORMAT(' ',I4,1X,I2,1X,I2,F10.3,5(1PE10.3))
++ 52   format(/,
++     a  ' *WRN:XXX* Non-zero REFL found without a prefix of h or s.',/,
++     b  '   The value is ignored.  If the value is',
++     c  ' a shift to be  applied to the function,',/'   then prefix',
++     d  ' it with an s, otherwise prefix it with an h.')
++ 53   format(' Reference level=',1PE12.5,
++     a       ' Scale factor for function= ',1PE12.5,/,
++     B     ' Arg scale factor=',1PE12.5,' Arg shift=',1PE12.5)
+ 58    FORMAT(/,' *WRN:53* Unexpected end of a function table.')
+  60   FORMAT(/,' *WRN:55* End of file found before end of table.')
+ C***********************************************************************
+-      OLDYR = 1925
++      zone = 'NONE'
++      hgrid = 'NONE'
++      vdatum ='NONE'
++      unitsys = 'NONE'
++      basis = 'NONE'
++      easting = dnull
++      northing= dnull
++      
++      OLDYR = 1900
+       OLDMN = 1
+       OLDDY = 1
+-      CALL INL80
+-     I          (IN, STDOUT,
+-     O           LINE)
+-      READ(LINE,46,ERR=991) REFLEV, FAC, AFAC, SHIFT
+-      IF(FAC.EQ.0.0) FAC = 1.0
+-      IF(AFAC.EQ.0.0) AFAC = 1.0
+-      WRITE(STDOUT,47) FAC, AFAC, SHIFT
+- 
+-      IF((FTP+4).GE.MLFT) CALL KIL
+-     I                             (10,
+-     M                              FTP, EFLAG)
+- 
+-C     FTP RESERVED FOR THE HIGH ADDRESS OF THE TABLE
+- 
++
+       OUT = 1
+       IF(TYPE.LT.0) OUT = 0
+       TYPE = IABS(TYPE)
+- 
+-C     CONVERT TYPES 7, 8, AND 9 TO 2, 3, AND 4 AND SET AN ARGUMENT FLAG
++
++C     For TYPES 7, 8, 9, and 11 SET AN ARGUMENT FLAG. 
+  
+       IF(TYPE.GE.7.AND.TYPE.LE.9) THEN
+-        TYPE = TYPE - 5
++        ARGFLG = 1
++      ELSEIF(TYPE.EQ.11) THEN
+         ARGFLG = 1
+       ELSE
+         ARGFLG = 0
+       ENDIF
+-      IF(TYPE.EQ.11) THEN
+-        ARGFLG = 1
+-      ENDIF
++
++      CALL inline
++     I          (IN, STDOUT,
++     O           LINE)
++      if(line(1:4) == 'ZONE') then
++c       We have a line of information on zone, hgrid, vdatum, and unitsys.
++c       If present it will ALWAYS be followed by a line giving the hgrid location!
++        read(line,2,err=991) zone, hgrid, vdatum, unitsys, basis
++        zone = adjustl(zone)
++        hgrid = adjustl(hgrid)
++        vdatum = adjustl(vdatum)
++        unitsys = adjustl(unitsys)
++        basis = adjustl(basis)
++        CALL inline
++     I            (IN, STDOUT,
++     O             LINE)
++        if(zone == 'NA') then
++c         Horizontal location has no meaning.
++          easting = dnull
++          northing = dnull
++          ft_loc_status(ntab) = 'N'
++        elseif(line(9:23) == ' ') then
++c         The easting value was blank.  This means that it was
++c         missing.  We treat the northing as missing too.
++          easting = dnull
++          northing = dnull
++          ft_loc_status(ntab) = 'M'
++        else
++          read(line,4,err=991) easting, northing
++          if(easting > dnull) then
++c           We assume valid value for both.
++            ft_loc_status(ntab) = 'I'
++          else
++c           Values are missing
++            ft_loc_status(ntab) = 'M'
++          endif
++        endif
++        CALL inline
++     I            (IN, STDOUT,
++     O             LINE)
++      else
++c       We assume complete lack of the two header lines indicates
++c       missing information.  Most tables from models prior to this
++c       software change, will have no information on location.  Most
++c       function tables will have a meaningful location.  Any that
++c       do not, will have to be manually changed with the proper
++c       header info:  ZONE =NONE etc, to suppress location information. 
++        ft_loc_status(ntab) = 'M'
++        easting = dnull
++        northing = dnull
++      endif
++      READ(LINE,46,ERR=991) REFLEV_string, FAC, AFAC, SHIFT
++c     Process reference level.  Once ignored, is active now!
++
++      reflev_string =  adjustl(reflev_string)
++      if(reflev_string(1:1) == 's') then
++c       This is a shift value for the first function only.  That is, 
++c       we add this value to whatever we read for the first function. 
++        reflev_string = reflev_string(2:)
++        read(reflev_string,'(f10.0)', err=991) reflev
++        reflev_active = 1
++        ftab(ftp+19) = reflev
++      elseif(reflev_string(1:1) == 'h') then
++c       This is a value for head NOT added to the first function, but
++c       stored for later access by FEQ for setting the head datum to match
++c       what is in the table.
++        reflev_string = reflev_string(2:)
++        read(reflev_string,'(f10.0)', err=991) reflev
++        reflev_active = 2
++        ftab(ftp+19) = reflev
++        reflev = 0.0  !Set to zero so that it does not change values below
++      else
++c       If non-zero ignore treat it a head reference value.  If zero
++c       it is taken to be an unused value.
++        read(reflev_string,'(f10.0)', err=991) reflev
++        if(reflev == 0.0) then
++          reflev_active = 0
++          ftab(ftp+19) = reflev
++        else
++          write(stdout, 52)
++          reflev_active = 2
++          ftab(ftp+19) = reflev
++          reflev = 0.0  !Set to zero so that it does not affect function values as we read them.
++        endif
++      endif
++      itab(ftp+18) = reflev_active
++
++      IF(FAC.EQ.0.0) FAC = 1.0
++      IF(AFAC.EQ.0.0) AFAC = 1.0
++      if(reflev == 1) then
++        WRITE(STDOUT,47) reflev, FAC, AFAC, SHIFT
++      else
++        WRITE(STDOUT,53) ftab(ftp+19), FAC, AFAC, SHIFT
++      endif
++        
++ 
++      call chk_vdatum_unitsys(stdout, vdatum, unitsys, 
++     a    ' during input of type 2, 3, 4, 7, 8, 9, or 11 table')
++
++      IF((FTP+OFF234).GE.MLFT) CALL KIL
++     I                             (10,
++     M                              FTP, EFLAG)
++ 
++C     FTP RESERVED FOR THE HIGH ADDRESS OF THE TABLE
++ 
++ 
++   
+       ITAB(FTP+1) = NTAB
+       ITAB(FTP+2) = TYPE
+-      IF(TYPE.LE.4) N = STEP(TYPE) - 1
+-      IF(TYPE.EQ.11) N = 2
++      IF(TYPE.LE.11) N = STEP(TYPE) - 1
++      if(type == 15) n = 1
+  
+ C     INITIALIZE LAST ADDRESS ACCESSED
+  
+-      ITAB(FTP+3) = FTP + 5
+-C     FTAB(FTP+4) = REFLEV
++      if(argflg == 0) then
++c       Types 2, 3, and 4
++        ITAB(FTP+3) = FTP + OFF234
++      else
++c       Point into the dtab and NOT ftab!!
++        itab(ftp+3) = (ftp + OFF234)/2
++      endif
++c     Remember the shift and the function factor. 
+       FTAB(FTP+4) = SHIFT
++      ftab(ftp+5) = fac
++
++      call put_location_1dtab(
++     i     ftp, zone, hgrid, vdatum, unitsys, basis, easting, northing)
++ 
++      
++c     Remember the address of the table
+       FTPOLD = FTP
+-      FTP = FTP+5
+- 
+-      CALL INL80
++
++c     point to the location for the first time point for single-precision
++c     arguments. 
++      FTP = FTP + OFF234
++c     Initialize the pointer into dtab.  
++      dtp = ftp/2
++ 
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,1) HEAD
+       WRITE(STDOUT,11) HEAD
+  
+       BARG = -1.0E37
+- 
++      bjt = -1.d37
++ 
++      
+  1000 CONTINUE
+  
+-         CALL INL80
+-     I             (IN, STDOUT,
+-     O              LINE)
+-         IF(LINE(1:6).EQ.'TABLE#'.OR.LINE(1:5).EQ.'TABID') THEN
+-          WRITE(STDOUT,58) 
+-          BACKSPACE IN
+-          GOTO 1500
+-         ENDIF
+-
+-         IF(LINE(1:7).EQ.'ENDFILE') THEN
+-            WRITE(STDOUT,60)
+-            STOP 'Abnormal stop.  End of file before end of table!'
+-         ENDIF
++        CALL inline
++     I            (IN, STDOUT,
++     O             LINE)
++        IF(LINE(1:6).EQ.'TABLE#'.OR.LINE(1:5).EQ.'TABID') THEN
++         WRITE(STDOUT,58) 
++         BACKSPACE IN
++         GOTO 1500
++        ENDIF
++
++        IF(LINE(1:7).EQ.'ENDFILE') THEN
++           WRITE(STDOUT,60)
++           STOP 'Abnormal stop.  End of file before end of table!'
++        ENDIF
+     
+-         IF(ARGFLG.EQ.0) THEN
+-           READ(LINE,48,ERR=991) ARG, (F(I), I=1,N)
+-C          Apply scale factor to argument.  Scale factor
+-C          does not apply to time series tables.
+-           ARG = ARG*AFAC
+-         ELSE
+-           READ(LINE,50,ERR=991) YR, MN, DY, HR, (F(I), I=1,N)
+- 
+-C          PROPAGATE YR, MN, AND DY. FIRST VALUES ASSUMED TO BE
+-C          CORRECT
+- 
+-            IF(YR.EQ.0) YR = OLDYR
+-            IF(MN.EQ.0) MN = OLDMN
+-            IF(DY.EQ.0) DY = OLDDY
+-            LP = LPYEAR(YR)
+- 
+-C            WRITE(STDOUT,*) 'ATABIN: DATE=',YR, MN, DY, HR
+-            OLDYR = YR
+-            OLDMN = MN
+-            OLDDY = DY
+-            IF(MN.LT.1.OR.MN.GT.12) THEN
+-              WRITE(STDOUT,*) 
+-     A    ' *ERR:74* INVALID MONTH IN TABLE#=',GET_TABID(NTAB)
+-              EFLAG = 1
+-            ENDIF
+-            IF(DY.LT.1.OR.DY.GT.DPM(MN,LP)) THEN
+-              WRITE(STDOUT,*) 
+-     A     ' *ERR:75* Invalid DAY in TABID=',GET_TABID(NTAB)
+-              EFLAG = 1
+-            ENDIF
+-            IF(YR.LE.1859) THEN
+-              WRITE(STDOUT,*) 
+-     A     ' *ERR:76* Invalid YEAR in TABID=',GET_TABID(NTAB)
+-              EFLAG = 1
+-            ENDIF
+-
+-            IF(HR.GT.24.D0.OR.HR.LT.0.D0) THEN
+-              WRITE(STDOUT,*) 
+-     A     ' *ERR:119* Invalid HOUR in TABID=',GET_TABID(NTAB)
+-              EFLAG = 1
+-            ENDIF
+-
+- 
+- 
+-C           CONVERT THE DATE AND TIME TO JULIAN DAY
+-            JT = DBLE(MJD(YR,MN,DY)) + HR/24.D0
+-C           CONVERT JULIAN TIME TO THE NUMBER OF SECONDS ELAPSED
+-C           FROM THE START of the first event if DIFFUS=YES or
+-C           the start of the run if not.
+- 
+-            ARG = 86400.*(JT - TAB_789_JTBASE)
+-C            WRITE(STDOUT,*) ' ATABIN: ARG=',ARG, ' JT=',JT,
+-C     A                 ' TAB_789_JTBASE=', TAB_789_JTBASE
+-         ENDIF
+- 
+-         IF(ARG.LE.BARG) GOTO 1500
+-         BARG = ARG
+-         IF(OUT.EQ.1) THEN
+-           IF(ARGFLG.EQ.0) THEN
+-             WRITE(STDOUT,49) ARG, (F(I), I=1,N)
+-           ELSE
+-             WRITE(STDOUT,51) YR, MN, DY, HR, (F(I), I=1,N)
+-           ENDIF
+-         ENDIF
+-         IF((FTP+N).GE.MLFT) CALL KIL
+-     I                                (10,
+-     M                                 FTP, EFLAG)
+-         FTAB(FTP) = ARG + SHIFT
+-         IF(TYPE.NE.11) THEN
+-           DO 1200 I=1,N
+-              FTP = FTP + 1
++
++        IF(ARGFLG.EQ.0) THEN
++          READ(LINE,48,ERR=991) ARG, (F(I), I=1,N)
++C         Apply scale factor to argument.  Scale factor on argument
++C         does not apply to time series tables.
++          ARG = ARG*AFAC
++          IF(ARG.LE.BARG) GOTO 1500
++          BARG = ARG
++          IF(OUT.EQ.1) THEN
++            WRITE(STDOUT,49) ARG, (F(I), I=1,N)
++          ENDIF
++          IF((FTP+N+1).GE.MLFT) CALL KIL
++     I                                 (10,
++     M                                  FTP, EFLAG)
++          FTAB(FTP) = ARG + SHIFT
++          do  I=1,N
++            FTP = FTP + 1
++            if(i == 1) then
++              FTAB(FTP) = F(I)*FAC +reflev
++            else
+               FTAB(FTP) = F(I)*FAC
+- 1200      CONTINUE
+-         ELSE
+-           FTP = FTP + 1
+-           FTAB(FTP) = F(1)*FAC
+-           FTP = FTP + 1
+-C          ADJUST THE AZIMUTH TO ACCOUNT FOR THE MANNER OF REFERING
+-C          TO WIND DIRECTION.  WE NEED THE DIRECTION THE WIND IS
+-C          GOING AND NOT THE DIRECTION IT IS COMING FROM.
+- 
+-           F(2) = F(2) + 180.0
+-           IF(F(2).GE.360.0) F(2) = F(2) - 360.
+-           FTAB(FTP) = F(2)*1.745329E-2
+-         ENDIF
+-         FTP = FTP + 1
+-         GOTO 1000
++            endif
++          enddo
++          FTP = FTP + 1
++          GOTO 1000
++
++        ELSE
++          READ(LINE,50,ERR=991) YR, MN, DY, HR, (F(I), I=1,N)
++ 
++C         PROPAGATE YR, MN, AND DY. FIRST VALUES ASSUMED TO BE
++C         CORRECT
++ 
++          IF(YR.EQ.0) YR = OLDYR
++          IF(MN.EQ.0) MN = OLDMN
++          IF(DY.EQ.0) DY = OLDDY
++          LP = LPYEAR(YR)
++ 
++c          WRITE(STDOUT,*) 'ATABIN2: DATE=',YR, MN, DY, HR
++
++          OLDYR = YR
++          OLDMN = MN
++          OLDDY = DY
++          IF(MN.LT.1.OR.MN.GT.12) THEN
++            WRITE(STDOUT,*) 
++     A   '*ERR:74* INVALID MONTH IN TABLE#=',GET_TABID(NTAB)
++            EFLAG = 1
++          ENDIF
++          IF(DY.LT.1.OR.DY.GT.DPM(MN,LP)) THEN
++            WRITE(STDOUT,*) 
++     A    ' *ERR:75* Invalid DAY in TABID=',GET_TABID(NTAB)
++            EFLAG = 1
++          ENDIF
++          IF(YR.LE.1859) THEN
++            WRITE(STDOUT,*) 
++     A    ' *ERR:76* Invalid YEAR in TABID=',GET_TABID(NTAB)
++            EFLAG = 1
++          ENDIF
++
++          IF(HR.GT.24.D0.OR.HR.LT.0.D0) THEN
++            WRITE(STDOUT,*) 
++     A    ' *ERR:119* Invalid HOUR in TABID=',GET_TABID(NTAB)
++            EFLAG = 1
++          ENDIF
++
++ 
++ 
++C         CONVERT THE DATE AND TIME TO JULIAN DAY
++          JT = DBLE(MJD(YR,MN,DY)) + HR/24.D0
++
++          IF(jt.LE.bjt) GOTO 1500
++          bjt = jt
++          IF(OUT.EQ.1) THEN
++            WRITE(STDOUT,51) YR, MN, DY, HR, (F(I), I=1,N)
++          ENDIF
++          IF((FTP+2*(N+1)).GE.MLFT) CALL KIL
++     I                                 (10,
++     M                                  FTP, EFLAG)
++          DTAB(dtp) = jt + SHIFT/86400.d0
++          IF(TYPE.NE.11) THEN
++            do  I=1,N
++              FTP = FTP + 2
++              dtp = dtp + 1
++              if(i == 1) then
++                DTAB(dtp) = F(I)*FAC + reflev
++              else
++                DTAB(dtp) = F(I)*FAC
++              endif
++            enddo
++          ELSE
++            FTP = FTP + 2
++            dtp = dtp + 1
++            DTAB(dtp) = F(1)*FAC
++            FTP = FTP + 2
++            dtp = dtp + 1
++C           ADJUST THE AZIMUTH TO ACCOUNT FOR THE MANNER OF REFERING
++C           TO WIND DIRECTION.  WE NEED THE DIRECTION THE WIND IS
++C           GOING AND NOT THE DIRECTION IT IS COMING FROM.
++        
++            F(2) = F(2) + 180.0
++            IF(F(2).GE.360.0) F(2) = F(2) - 360.
++            DTAB(dtp) = F(2)*1.745329E-2
++          ENDIF
++          FTP = FTP + 2
++          dtp = dtp + 1
++          GOTO 1000
++
++        ENDIF
++ 
+  
+  1500 CONTINUE
+-      ITAB(FTPOLD) = FTP - N - 1
++c     Set the address of the last point in the table into the first element of 
++c     the table.  Again we must make sure that we use the right pointer!
++      if(argflg == 0) then
++c       Table types 2, 3, 4
++        ITAB(FTPOLD) = FTP - N - 1
++      else
++c       Table types: 7, 8, 9, and 11
++        itab(ftpold) = dtp - n - 1
++      endif
++
++c      write(stdout,*) ' '
++c      write(stdout,*) ' ATABIN: exit-- tab address=', ftpold, 
++c     a   ' internal tab number=',itab(ftpold+1),' tab type=',
++c     b   itab(ftpold+2)
++
+       RETURN
++
+  991  CONTINUE
+         WRITE(STDOUT,*) ' *ERR:500* Conversion error in line:'
+         WRITE(STDOUT,*) LINE
+@@ -631,12 +1106,12 @@
+       INCLUDE 'ftable.cmn'
+ 
+ C     + + + SAVED VALUES + + +
+-      INTEGER VRTYPE(100)
++      INTEGER VRTYPE(130)
+       SAVE VRTYPE
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER J, LSTVAL, N, PNT, TAB, TYPE
+-      INTEGER VALID(10)
++      INTEGER VALID(20)
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS
+@@ -646,16 +1121,19 @@
+       EXTERNAL GET_TABID
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA (VRTYPE(J), J=  1, 10)/36,45, 0, 0, 0,54, 0, 0, 0,96/
++      DATA (VRTYPE(J), J=  1, 10)/36,45, 0, 0, 0,54,48, 0, 0,96/
+       DATA (VRTYPE(J), J= 11, 20)/60,63, 0, 0,98, 0, 0, 0, 0,68/
+       DATA (VRTYPE(J), J= 21, 30)/76,83,87,91,94, 0, 0, 0, 0, 0/
+       DATA (VRTYPE(J), J= 31, 40)/ 0, 0, 0, 0, 0, 1,12,21,22,24/
+       DATA (VRTYPE(J), J= 41, 50)/25, 0, 0, 0, 2, 3, 4, 7, 8, 9/
+-      DATA (VRTYPE(J), J= 51, 60)/ 0, 0, 0, 6,13,14, 0, 0, 0,11/
+-      DATA (VRTYPE(J), J= 61, 70)/ 0, 0,12,22,25, 0, 0,20,21,22/
+-      DATA (VRTYPE(J), J= 71, 80)/23,24,25, 0, 0,21,22,24,25, 1/
+-      DATA (VRTYPE(J), J= 81, 90)/12, 0,22,25,12, 0,23,24,25, 0/
+-      DATA (VRTYPE(J), J= 91,100)/24,25, 0,25, 0,10, 0,15, 0, 0/
++      DATA (VRTYPE(J), J= 51, 60)/ 0, 0, 0, 6,13,14,43, 0, 0,11/
++      DATA (VRTYPE(J), J= 61, 70)/ 0, 0,12,22,25,32, 0,20,21,22/
++      DATA (VRTYPE(J), J= 71, 80)/23,24,25,30,-103,21,22,24,25, 1/
++      DATA (VRTYPE(J), J= 81, 90)/31,-109,22,25,32,-113,23,24,25,-101/
++      DATA (VRTYPE(J), J= 91,100)/24,25,118,25,-121,10, 0,15, 0, 0/
++      DATA (VRTYPE(J), J=101,110)/33,-115,31,32,33,34,35, 0,32,34/
++      DATA (VRTYPE(J), J=111,120)/35, 0,35, 0,34,35, 0,34,35, 0/
++      DATA (VRTYPE(J), J=121,130)/35, 0, 0, 0, 0, 0, 0, 0, 0, 0/
+  
+ C     + + + OUTPUT FORMATS + + +
+  50   FORMAT(/,' *ERR:174* Table  Id=',A,' of type=',I3,' invalid in ',
+@@ -678,37 +1156,37 @@
+  
+ C     CONTENTS OF VRTYPE(*,*)
+  
+-C  INDEX VRTYPE  INDEX VRTYPE  INDEX VRTYPE  INDEX VRTYPE
+-C      1     36     31      0     61      0     91     24
+-C      2     45     32      0     62      0     92     25
+-C      3      0     33      0     63     12     93      0
+-C      4      0     34      0     64     22     94     25
+-C      5      0     35      0     65     25     95      0
+-C      6     54     36      1     66      0     96     10
+-C      7      0     37     12     67      0     97      0
+-C      8      0     38     21     68     20     98     15
+-C      9      0     39     22     69     21     99      0
+-C     10     96     40     24     70     22    100      0
+-C     11     60     41     25     71     23    101
+-C     12     63     42      0     72     24    102
+-C     13      0     43      0     73     25    103
+-C     14      0     44      0     74      0    104
+-C     15     98     45      2     75      0    105
+-C     16      0     46      3     76     21    106
+-C     17      0     47      4     77     22    107
+-C     18      0     48      7     78     24    108
+-C     19      0     49      8     79     25    109
+-C     20     68     50      9     80      1    110
+-C     21     76     51      0     81     12    111
+-C     22     83     52      0     82      0    112
+-C     23     87     53      0     83     22    113
+-C     24     91     54      6     84     25    114
+-C     25     94     55     13     85     12    115
+-C     26      0     56     14     86      0    116
+-C     27      0     57      0     87     23    117
+-C     28      0     58      0     88     24    118
+-C     29      0     59      0     89     25    119
+-C     30      0     60     11     90      0    120
++C  INDEX VRTYPE  INDEX VRTYPE  INDEX VRTYPE  INDEX VRTYPE  INDEX VRTYPE 
++C      1     36     31      0     61      0     91     24    121     35
++C      2     45     32      0     62      0     92     25    122      0
++C      3      0     33      0     63     12     93   -118    123    
++C      4      0     34      0     64     22     94     25    124    
++C      5      0     35      0     65     25     95   -121    125    
++C      6     54     36      1     66     32     96     10    126    
++C      7     48     37     12     67      0     97      0    127    
++C      8      0     38     21     68     20     98     15    128    
++C      9      0     39     22     69     21     99      0    129    
++C     10     96     40     24     70     22    100      0    130    
++C     11     60     41     25     71     23    101     33
++C     12     63     42      0     72     24    102   -115
++C     13      0     43      0     73     25    103     31
++C     14      0     44      0     74     30    104     32
++C     15     98     45      2     75   -103    105     33
++C     16      0     46      3     76     21    106     34
++C     17      0     47      4     77     22    107     35
++C     18      0     48      7     78     24    108      0
++C     19      0     49      8     79     25    109     32
++C     20     68     50      9     80      1    110     34
++C     21     76     51      0     81     31    111     35
++C     22     83     52      0     82   -109    112      0
++C     23     87     53      0     83     22    113     35
++C     24     91     54      6     84     25    114      0
++C     25     94     55     13     85     32    115     34
++C     26      0     56     14     86   -113    116     35
++C     27      0     57     43     87     23    117      0
++C     28      0     58      0     88     24    118     34
++C     29      0     59      0     89     25    119     35
++C     30      0     60     11     90   -101    120      0
+  
+       IF(CTYPE.LT.1.OR.CTYPE.GT.35) THEN
+         WRITE(STDOUT,56) CTYPE
+@@ -867,12 +1345,12 @@
+ C     Get the next table id and the optional NXTNAM from LINE.
+       IMPLICIT NONE
+       INTEGER EFLAG, STDOUT, TABLE
+-      CHARACTER LINEA*(*), TABID*16, NXTNAM*128
++      CHARACTER LINEA*(*), TABID*16, NXTNAM*(*)
+ 
+       INCLUDE 'home.cmn'
+ 
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL STRIP_L_BLANKS, MAYBE_ADD_HOME
++      EXTERNAL STRIP_L_BLANKS, MAYBE_ADD_HOME, os_file_style
+ 
+ C     Local
+ 
+@@ -922,6 +1400,8 @@
+ C       Add the prefix of HOME here if conditions are right. 
+         CALL MAYBE_ADD_HOME(
+      M                      NXTNAM)
++        call os_file_style(
++     m                              nxtnam)
+       ELSEIF(LINE(1:4).EQ.'HOME'.OR.LINE(1:4).EQ.'Home') THEN
+ C       We have a home name given.  No TabId given.
+         NXT = IT + 1
+@@ -984,14 +1464,203 @@
+         ENDIF  
+       ENDIF     
+       RETURN
+-      END      
++      END
++c
++c 
++c 
++      SUBROUTINE qsrt_alpha_plus_pointer(a, ap, N)                                                  
++
++c     Use quicker sort to sort the character array, a, into whatever
++c     order Fortran happens to take.  Move the elements of the pointer
++c     array, ap, at the same time, N is the number of elements in
++c     each.  Based on QSORTA-obtained from a collegue more than 30
++c     years ago!
++
++      implicit none                                                                             
++C                
++      integer n
++      character*16 a(n), t, x
++      integer ap(n), tp, xp
++
++C       THE DIMENSIONS FOR LT AND UT HAVE TO BE AT LEAST LOG  N.              
++C                                                           2                 
++C        WAS CHOSEN TO HANDLE N <524288.                                    
++      INTEGER LT(19), UT(19), I, J, K, M, P, Q  
++c***********************************************************************                                   
++C                                                                             
++      J=N                                                                     
++      M=1                                                                     
++      I=1                                                                     
++C                                                                             
++C       IF THIS SEGMENT HAS MORE THAN TWO ELEMENTS  WE SPLIT IT               
++ 10   continue
++      IF (J-I-1) 100,90,15                                                    
++C                                                                             
++C       P IS THE POSITION OF AN ARBITRARY ELEMENT IN THE SEGMENT              
++C       WE CHOOSE THE MIDDLE ELEMENT. UNDER CERTAIN CIRCUMSTANCES             
++C       IT MAY BE ADVANTAGEOUS TO CHOOSE P AT RANDOM.                         
++ 15   continue
++      P=(J+I)/2                                                               
++      T=A(P) 
++      tp = ap(p)                                                                 
++      A(P)=A(I)
++      ap(p) = ap(i)                                                               
++C                                                                             
++C       STARTING AT THE BEGINNING OF THE SEGMENT, SEARCH FOR K                
++C       SUCH THAT A(K)>T                                                      
++      Q=J                                                                     
++      K=I                                                                     
++ 20   continue
++      K=K+1                                                                   
++      IF (K.GT.Q) GO TO 60                                                    
++       IF (A(K).LE.T) GO TO 20                                                
++C                                                                             
++C        SUCH AN ELEMENT HAS NOW BEEN FOUND                                   
++C        NOW SEARCH FOR A Q SUCH THAT A(Q)<T STARTING AT THE END OF THE       
++C        SEGMENT.                                                             
++ 30    continue
++       IF (A(Q).LT.T) GO TO 40                                                
++       Q=Q-1                                                                  
++       IF (Q.GT.K) GO TO 30                                                   
++       GO TO 50                                                               
++C                                                                             
++C        A(Q) HAS NOW BEEN FOUND. WE INTERCHANGE A(Q) AND A(K)                
++ 40    continue
++       X=A(K)                                                                 
++       A(K)=A(Q)                                                               
++       A(Q)=X  
++       
++       Xp=Ap(K)                                                                 
++       Ap(K)=Ap(Q)                                                               
++       Ap(Q)=Xp  
++                                                         
++C                                                                             
++C        UPDATE Q AND SEARCH FOR ANOTHER PAIR TO INTERCHANGE                  
++       Q=Q-1                                                                  
++       GO TO 20 
++50     continue                                                              
++       Q=K-1                                                                  
++ 60   CONTINUE                                                                
++C                                                                             
++C        THE UPWARDS SEARCH HAS NOW MET THE DOWNWARDS SEARCH                  
++      A(I)=A(Q)                                                               
++      A(Q)=T                                                                  
++
++      Ap(I)=Ap(Q)                                                               
++      Ap(Q)=Tp                                                                  
++
++C                                                                             
++C       THE SEGMENT IS NOW DIVIDED IN THREE PARTS: (I,Q-1),(Q),(Q+1,J)        
++C       STORE THE POSITION OF THE LARGEST SEGMENT IN LT AND UT                
++      IF (2*Q.LE.I+J) GO TO 70                                                
++        LT(M)=I                                                               
++        UT(M)=Q-1                                                             
++        I=Q+1                                                                 
++      GO TO 80                                                                
++ 70   continue  
++        LT(M)=Q+1                                                             
++        UT(M)=J                                                               
++        J=Q-1                                                                 
++C                                                                             
++C       UPDATE M AND SPLIT THE NEW SMALLER SEGMENT                            
++ 80   continue
++      M=M+1                                                                   
++      GO TO 10                                                                
++C                                                                             
++C       WE ARRIVE HERE IF THE SEGMENT HAS  TWO ELEMENTS                       
++C       WE TEST TO SEE IF THE SEGMENT IS PROPERLY ORDERED                     
++C       IF NOT, WE PERFORM AN INTERCHANGE                                     
++ 90   continue
++      IF (A(I).LE.A(J)) GO TO 100                                             
++      X=A(I)                                                                  
++      A(I)=A(J)                                                               
++      A(J)=X                                                                  
++
++      Xp=Ap(I)                                                                  
++      Ap(I)=Ap(J)                                                               
++      Ap(J)=Xp                                                                  
++
++C                                                                             
++C       IF LT AND UT CONTAIN MORE SEGMENTS TO BE SORTED REPEAT PROCESS        
++ 100  continue
++      M=M-1                                                                   
++      IF (M.LE.0) RETURN                                                      
++      I=LT(M)                                                                 
++      J=UT(M)                                                                 
++      GO TO 10                                                                
++      END                                                                     
+       
++    
++c
++c 
++c 
++      subroutine output_ftab_index(stdout)
++
++c     Sort and output function-table information to create an index to
++c     the file names for each function table id
++      
++      implicit none
++
++      integer stdout
++
++      include 'arsize.prm'
++      include 'maketabindex.cmn'
++
++c     Local
++
++      integer i
++
++c     ********************formats***************************************
++50    format(/,' FEQ found ',i5,' tables for the function-table index.')
++52    format(' Function-table index for the current scenario.')
++54    format( 'TABID',11x,1x,' Type',2x,'File name for the table')
++56    format(a16,1x,i5,2x,a)
++c***********************************************************************
++      write(stdout,50) index_knt
++
++      write(stdindex,52)
++      write(stdindex,50) index_knt
++      write(stdindex,54)
++
++c     Sort the tabids.
++      call qsrt_alpha_plus_pointer(ftabid, data_pnt, index_knt) 
++      do i=1,index_knt
++        write(stdindex,56) ftabid(i), ftab_type(data_pnt(i)), 
++     a          ftab_fn(data_pnt(i))(1:len_trim(ftab_fn(data_pnt(i))))
++      end do
++     
++      call free_unit(stdout,stdindex)
++      return
++      end
++
++c
++c 
++c 
++      subroutine set_knt_of_ftabs( 
++     i                  ftknt)
++
++c     Set the count of function tables in the function-table 
++c     common block.  We have some duplication because this value
++c     was added to the function-table common block many years too
++c     late.  Will eventually fix:)
++
++      implicit none
++
++      integer ftknt
++
++      include 'arsize.prm'
++      include 'ftable.cmn'
++c***************************************************************************
++      knt_of_ftabs = ftknt
++      return
++      end                                                   
++
+ C
+ C
+ C
+       SUBROUTINE   FTABIN
+      I                   (IN, INA, STDOUT, OUTPUT, FTP, MFT, MLFT, 
+-     I                    HSLOT,
++     I                    HSLOT, current_file,
+      M                    EFLAG, FTKNT, FTPNT,
+      O                    TABLE, NXTNAM)
+  
+@@ -1003,7 +1672,7 @@
+      A        TABLE
+       INTEGER FTPNT(MFT)
+       REAL HSLOT
+-      CHARACTER NXTNAM*128
++      CHARACTER NXTNAM*(*), current_file*(*)
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IN     - unit number for the user input file
+@@ -1023,32 +1692,36 @@
+ C     TABLE  - table number
+ C     NXTNAM - next file name for function table input
+ 
+- 
++      include 'arsize.prm'
++      include 'tabupgrade.cmn'
++      include 'maketabindex.cmn'
++
+ C     + + + LOCAL PARAMETERS + + +
+       INTEGER MAXOUT, MAXTYP
+-      PARAMETER(MAXTYP=35, MAXOUT=18)
++      PARAMETER(MAXTYP=35, MAXOUT=24)
+  
+ C     + + + SAVED VALUES + + +
+       INTEGER OUTTYP(MAXOUT), VTYPE(MAXTYP)
+       SAVE OUTTYP, VTYPE
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER IT, TYPE
+-      REAL HDATUM
++      INTEGER IT, TYPE, tabadr, verbose, ftpold
++      REAL HDATUM, zrhufd
+       CHARACTER CHR69*69, LINE*196, TABID*16, GARBAGE*1
++
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC IABS
+  
+ C     + + + EXTERNAL NAMES + + +
+       INTEGER LENSTR
+-      EXTERNAL ATABIN, INL80, KIL, STRIP_L_BLANKS, TWODIN, TY15IN, 
++      EXTERNAL ATABIN, KIL, STRIP_L_BLANKS, TWODIN, TY15IN, 
+      A         XSECIN, GET_INTERNAL_TAB_NUMBER, LENSTR, GET_NEXT_TABID,
+-     B         INL196, CLEAR_HOME
+- 
++     B         inline, CLEAR_HOME 
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/0,3*1,0, 4*1, 1, 1, 0,2*1,1,4*0,6*1,   10*0/
+-      DATA OUTTYP/2,3,4,6,7,8,9,10,11,13,14,15,20,21,22,23,24,25/
++      DATA VTYPE/0,3*1,0, 4*1, 1, 1, 0,2*1,1,4*0,6*1,4*0,6*1/
++      DATA OUTTYP/2,3,4,6,7,8,9,10,11,13,14,15,20,21,22,23,24,25,
++     A        30,31,32,33,34,35/
+  
+ C     + + + INPUT FORMATS + + +
+  2    FORMAT(5X,I5,1X,A69)
+@@ -1063,7 +1736,7 @@
+  51   FORMAT(/,' *ERR:175* Table type=',I3,' unimplemented in FTABIN.',
+      A       /,10X,' Valid types are:',25I3)
+  52   FORMAT(/,' Cannot continue with invalid table types.')
+-53    FORMAT(/,' *ERR:366* Expected to find: TABLE#, TABID, FILE,'
++53    FORMAT(/,' *ERR:366* Expected to find: TABLE#, TABID, FILE,',
+      A         ' or HOME but found',
+      A       /,5X, A20,' instead.  Check for invalid end in the',
+      B       ' current function table.')
+@@ -1075,16 +1748,16 @@
+ C     DEFINITION OF CONTENTS OF VTYPE
+ C     CURRENTLY VALID TABLE TYPES HAVE A VALUE OF
+ C     1 IN VTYPE(ABS(TYPE))
+-C                                                20
+-C                                                21
+-C                         6                  16  22
+-C                    2    7                  17  23
+-C                    3    8            13    18  24
+-C                1   4 5  9   10 11 12 14 15 19  25    26-35
+-C     DATA VTYPE/0,3*1,0, 4*1, 1, 1, 0,2*1,1,4*0,6*1,   10*0/
+- 
++C                                                20      30
++C                                                21      31
++C                         6                  16  22  29  32
++C                    2    7                  17  23  28  33
++C                    3    8            13    18  24  27  34
++C                1   4 5  9   10 11 12 14 15 19  25  26  35
++C     DATA VTYPE/0,3*1,0, 4*1, 1, 1, 0,2*1,1,4*0,6*1,4*0,6*1/
++  
+  1000 CONTINUE
+-        CALL INL196
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         CALL STRIP_L_BLANKS(
+@@ -1092,7 +1765,7 @@
+         IF(LINE(1:1).EQ.GARBAGE) THEN
+           LINE = 'ENDFILE'
+         ENDIF
+-        IF(LINE(1:7).EQ.'ENDFILE') GOTO 3000
++        IF(LINE(1:7).EQ.'ENDFILE') GOTO 3000      ! Jump to read the next file name.
+         IF(LINE(1:6).NE.'TABLE#'.AND.LINE(1:5).NE.'TABID'.AND.
+      A     LINE(1:4).NE.'FILE'.AND.LINE(1:4).NE.'File'.AND.
+      B     LINE(1:4).NE.'HOME'.AND.LINE(1:4).NE.'Home') THEN
+@@ -1104,8 +1777,8 @@
+      O                      EFLAG, TABID, TABLE, NXTNAM)
+         
+ 
+-        IF(TABLE.LT.0) GOTO 2000
+-        FTKNT = FTKNT+1
++        IF(TABLE.LT.0) GOTO 2000   ! Jump out of loop
++        FTKNT = FTKNT + 1
+ C        WRITE(STDOUT,38) TABID(1:LENSTR(TABID)), TABLE
+  
+ C       STORE THE TABLE POINTER
+@@ -1116,9 +1789,9 @@
+      I              (25,
+      M               TABLE, EFLAG)
+  300    CONTINUE
+-        FTPNT(TABLE) = FTP
+- 
+-        CALL INL196
++
++        
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,2,ERR=991) TYPE, CHR69
+@@ -1146,10 +1819,36 @@
+      M                          CHR69)
+ C            WRITE(STDOUT,*) ' FTABIN: CHR69=',CHR69(1:5)
+           ELSE  
++c           Seek possible zero-ups head free drop value.  May not be present.
++            it = index(chr69,'zrhufd')
++            if(it.gt.0) then
++c             We have a hit!  Read it and pass it on to subroutine twodin.
++              read(chr69(it+7:it+17),'(f10.0)') zrhufd
++            else
++              zrhufd = 0.0
++            endif
+             CHR69 = ' '
+           ENDIF
+         ENDIF
+         IT = IABS(TYPE)
++
++c       Record the file name and type for each table found.
++        index_knt = index_knt + 1
++        ftabid(index_knt) = tabid
++        ftab_type(index_knt) = it
++        ftab_fn(index_knt) = current_file
++        data_pnt(index_knt) = index_knt
++
++c       Make sure that the table address is even if the table is of type 7, 8
++c       9, or 11
++        if(it > 6 .and. it < 10 .or. it == 11) then
++          if(mod(ftp,2) /= 0) then
++            ftp = ftp + 1
++          endif
++        endif
++        FTPNT(TABLE) = FTP
++ 
++
+         IF(VTYPE(IT).EQ.0) THEN
+ C         UNSUPPORTED TYPE FOUND.  CANNOT CONTINUE WITH PROCESSING
+           WRITE(STDOUT,51) TYPE, OUTTYP
+@@ -1158,8 +1857,9 @@
+         ENDIF
+  
+         GOTO(110,102,102,102,105,106,102,102,102,106,102,110,
+-     A       106,106, 107, 110, 110, 110, 110, 101,
+-     B        101,101,101,101,101),IT
++     A       106,106,107,110,110,110, 110, 
++     B       101,101,101,101,101,101, 110, 110, 110, 110,
++     C       101,101,101,101,101,101),IT
+           WRITE(STDOUT,*) ' *BUG:14* INVALID TABLE TYPE IN FTABIN.',
+      A                    ' TYPE=', IT
+           STOP 'Abnormal stop: errors found.'
+@@ -1167,9 +1867,27 @@
+  101    CONTINUE
+ C          CROSS-SECTION TABLE HERE
+            IF(HSLOT.EQ.0.0) THEN
++
++c            save ftp value for possible function-table upgrade
++             ftpold = ftp
+              CALL XSECIN
+      I                  (IN, STDOUT, MLFT, TABLE, OUTPUT,
+      M                   EFLAG, FTP, TYPE)
++             if(upgrade_xsec_tab.eq.'YES'.or.
++     a          upgrade_xsec_tab.eq.'YESO') then
++               tabadr = ftpnt(table)
++               if(upgrade_xsec_tab.eq.'YESO') then
++                 verbose = 1
++               else
++                 verbose = 0
++               endif
++               call do_upgrade_xsec_tab(stdout, tabadr, 
++     i                         verbose,
++     m                         ftpold, eflag)
++               ftp = ftpold
++             endif
++ 
++
+            ELSE
+              WRITE(STDOUT,*) ' AUTOMATIC SLOT ADDITION NO LONGER ',
+      A                  'SUPPORTED'
+@@ -1191,8 +1909,23 @@
+  106    CONTINUE
+ C          TWO-D TABLE INPUT
+            CALL TWODIN
+-     I                (IN, STDOUT, MLFT, TABLE, HDATUM, CHR69,
++     I                (IN, STDOUT, MLFT, TABLE, HDATUM, CHR69, zrhufd,
+      M                 EFLAG, FTP, TYPE)
++           if(type.eq.13) then
++             if(ty13_to_ty43.eq.'YES'.or. 
++     a          ty13_to_ty43.eq.'YESO') then
++c              Convert to type 43. 
++               tabadr = FTPNT(TABLE) 
++               if(ty13_to_ty43.eq.'YESO') then
++                 verbose = 1
++               else
++                 verbose = 0
++               endif
++               call convert_to_43(stdout, mlft, table, tabadr, hdatum,
++     i                  verbose,
++     m                 ftp, eflag)
++            endif
++           endif
+            GOTO 1500
+  107    CONTINUE
+ C          Simple 3-D table via table type 15
+@@ -1208,7 +1941,9 @@
+            STOP 'Abnormal stop: errors found.'
+  
+  1500   CONTINUE
+-           GOTO 1000
++
++           GOTO 1000   ! Back to top of loop
++
+  2000 CONTINUE
+       IF(NXTNAM.NE.' ') THEN
+         IF(TABLE.EQ.-15) THEN
+@@ -1217,13 +1952,15 @@
+           WRITE(STDOUT,54) NXTNAM(1:LENSTR(NXTNAM))
+         ENDIF
+       ENDIF
++
++      call set_knt_of_ftabs( 
++     i                  ftknt)
+       RETURN
+  3000 CONTINUE
+ C     READ THE NEXT TABLE VALUE FROM INA
+-      CALL INL196
++      CALL inline
+      I          (INA, STDOUT,
+      O           LINE)
+-C      READ(LINE,37,ERR=991) TABID, NXTNAM
+       CALL GET_NEXT_TABID
+      I                   (STDOUT, LINE,
+      O                    EFLAG, TABID, TABLE, NXTNAM)
+@@ -1243,6 +1980,8 @@
+         ENDIF
+       ENDIF
+  
++      call set_knt_of_ftabs( 
++     i                  ftknt)
+       RETURN
+  
+  991  CONTINUE
+@@ -1352,12 +2091,14 @@
+       SAVE JID, NEWTYP, QCID
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER I, IJ, ISP, ISR, IT, J, TYPE, TYPEL, TYPER, XOFF
++      INTEGER I, IJ, ISP, ISR, IT, J, TYPE, TYPEL, TYPER, XOFF,
++     a        dcrmntl, dcrmntr, dcrmnt, jj
+       INTEGER IP(MNMID)
+       REAL A, AL, ALP, ALPL, ALPR, AR, B, BL, BR, DALPL, DALPR, DBL,
+      A     DBR, DKL, DKR, DMAL, DMAR, DMQL, DMQR, DTL, DTR, DX, FAC, H,
+      B     K, KL, KR, MA, MAL, MAR, MQ, MQL, MQR, QC, QCL, QCR, T, TL,
+-     C     TR, XM, YAL, YAR, YB, YBL, YBR, YMAX, SDL, SDR
++     C     TR, XM, YAL, YAR, YB, YBL, YBR, YMAX, SDL, SDR,
++     d     dk, db, dalp, dma, dmq 
+  
+       REAL*8 EASTL, EASTR, NORTHL, NORTHR, EAST, NORTH
+ 
+@@ -1397,7 +2138,17 @@
+      2   11X,' UPS TABID=',A,' DNS TABID=',A)
+ C***********************************************************************
+       TYPEL = ITAB(TABL+2)
++      if(typel.ge.30.and.typel.le.35) then
++        dcrmntl = 10
++      else
++        dcrmntl = 0
++      endif
+       TYPER = ITAB(TABR+2)
++      if(typer.ge.30.and.typer.le.35) then
++        dcrmntr = 10
++      else
++        dcrmntr = 0
++      endif
+       SDL = GET_SLOT_DEPTH(TABL)
+       SDR = GET_SLOT_DEPTH(TABR)
+       EASTL = GET_DP_FROM_FT(TABL+8)
+@@ -1408,20 +2159,28 @@
+ C      XOFFL = OFFVEC(TYPEL)
+ C      XOFFR = OFFVEC(TYPER)
+  
+-      IF(TYPEL.LT.20.OR.TYPEL.GT.25) THEN
++      IF(TYPEL-dcrmntl.LT.20.OR.TYPEL-dcrmntl.GT.25) THEN
+         WRITE(STDOUT,51) TYPEL
+         STOP 'Abnormal stop: errors found.'
+       ENDIF
+-      IF(TYPER.LT.20.OR.TYPER.GT.25) THEN
++      IF(TYPER-dcrmntr.LT.20.OR.TYPER-dcrmntr.GT.25) THEN
+         WRITE(STDOUT,52) TYPER
+         STOP 'Abnormal stop: errors found.'
+       ENDIF
+  
+ C     SET THE TYPE OF THE TABLE THAT CAN BE INTERPOLATED BETWEEN THE
+ C     TWO GIVEN TABLES.
+-      TYPE = NEWTYP(TYPEL-19,TYPER-19)
+- 
+-      XOFF = OFFVEC(TYPE)
++      TYPE = NEWTYP(TYPEL-19-dcrmntl,TYPER-19-dcrmntr)
++ 
++      if(dcrmntl.gt.0.and.dcrmntr.gt.0) then
++c       Both tables have extra derivatives
++        dcrmnt = 10
++        type = type + dcrmnt
++        XOFF = OFFVEC(TYPE)
++      else
++        dcrmnt = 0
++        XOFF = OFFVEC(TYPE)
++      endif
+  
+ C     SET MAXIMUM ARGUMENT FOR TABLES AS IF THEY HAD NOT BEEN
+ C     EXTRAPOLATED VERTICALLY.  YMAX GIVES THE MAXIMUM DEPTH
+@@ -1496,6 +2255,22 @@
+ C       Set source flag to interpolated 
+         ITAB(IT+20) = 1
+ 
++c       Set the derivative flag
++        if(type.le.25) then
++          itab(it+21) = 0
++        else
++          itab(it+21) = offvec(type-10)
++        endif
++
++c       Transfer the zone, hgrid, vdatum, unitsys data from the left table.
++c       Values should be the same in all tables at this point in processing!
++        do jj=22,29
++          itab(it+jj) = itab(tabl+jj)
++        end do
++c       Transfer basis
++        itab(it+30) = itab(tabl+30)
++        itab(it+31) = itab(tabl+31)
++
+         IJ = TAB(J)
+         IF(FTPNT(IJ).EQ.0) GOTO 120
+ C         ERROR-DUPLICATE INTERPOLATION TABLE NUMBER
+@@ -1524,7 +2299,7 @@
+ C       FIND THE ELEMENTS ON THE RIGHT AND LEFT.  LOOKUP ROUTINE
+ C       IS BASED ON THE TABLE TYPE AT THAT LOCATION.
+  
+-        GOTO(20, 21, 22, 23, 24, 25), TYPEL-19
++        GOTO(20, 21, 22, 23, 24, 25), TYPEL-19 - dcrmntl
+  
+  20     CONTINUE
+           CALL XLKT20
+@@ -1568,7 +2343,7 @@
+           GOTO  30
+  30     CONTINUE
+  
+-        GOTO(40, 41, 42, 43, 44, 45), TYPER-19
++        GOTO(40, 41, 42, 43, 44, 45), TYPER-19-dcrmntr
+  
+  40     CONTINUE
+           CALL XLKT20
+@@ -1614,6 +2389,17 @@
+  
+         KL = SQRT(KL)
+         KR = SQRT(KR)
++c       adjust derivatives as well
++        if(kl.gt.0.0) then
++          dkl = 0.5*dkl/kl
++        else
++          dkl = 0.0
++        endif
++        if(kr.gt.0.0) then
++          dkr = 0.5*dkr/kr
++        else
++          dkr = 0.0
++        endif
+         DO 160 J=1,NIN
+           IT = IP(J)
+           H = X(J) - XL
+@@ -1634,13 +2420,13 @@
+ C         THE CORE SET HAS BEEN DONE.  NOW DO THE TABLES THAT CONTAIN
+ C         ADDITIONAL ELEMENTS
+  
+-          IF(JID(TYPE).EQ.1) THEN
++          IF(JID(TYPE-dcrmnt).EQ.1) THEN
+ C           FIRST MOMENT EXISTS IN THESE TABLES.
+             YB = YBL + FAC*(YBR - YBL)
+             FTAB(IT+5) = YB
+           ENDIF
+  
+-          IF(QCID(TYPE).EQ.1) THEN
++          IF(QCID(TYPE-dcrmnt).EQ.1) THEN
+ C           ALP AND QC EXISTS IN THESE TABLES.
+             ALP = ALPL + FAC*(ALPR - ALPL)
+             QC = QCL + FAC*(QCR - QCL)
+@@ -1648,24 +2434,97 @@
+             FTAB(IT+7) = QC
+           ENDIF
+  
+-          IF(TYPE.GE.23) THEN
++          IF(TYPE-dcrmnt.GE.23) THEN
+ C           WE HAVE THE WEIGHT COEFFICIENTS TO INTERPOLATE.
+  
+             MA = MAL + FAC*(MAR - MAL)
+             MQ = MQL + FAC*(MQR - MQL)
+  
+-            IF(TYPE.EQ.23) THEN
++            IF(TYPE-dcrmnt.EQ.23) THEN
+               FTAB(IT+5) = MA
+               FTAB(IT+6) = MQ
+-            ELSEIF(TYPE.EQ.24) THEN
++            ELSEIF(TYPE-dcrmnt.EQ.24) THEN
+               FTAB(IT+6) = MA
+               FTAB(IT+7) = MQ
+-            ELSEIF(TYPE.EQ.25) THEN
++            ELSEIF(TYPE-dcrmnt.EQ.25) THEN
+               FTAB(IT+8) = MA
+               FTAB(IT+9) = MQ
+             ENDIF
+           ENDIF
+- 
++
++c         Process extra derivatives. 
++          if(type.ge.30) then
++            select case (type)
++
++              case(30)
++                dk = dkl + fac*(dkr - dkl)
++                db = dbl + fac*(dbr - dbl)
++                if(abs(dk).lt.1.01e-9)  dk = 0.0
++                if(abs(db).lt.1.01e-9)  db = 0.0
++                ftab(it+5) = dk
++                ftab(it+6) = db
++
++              case(31)
++                dk = dkl + fac*(dkr - dkl)
++                db = dbl + fac*(dbr - dbl)
++                if(abs(dk).lt.1.01e-9)  dk = 0.0
++                if(abs(db).lt.1.01e-9)  db = 0.0
++                ftab(it+6) = dk
++                ftab(it+7) = db
++              case(32)
++                dk = dkl + fac*(dkr - dkl)
++                db = dbl + fac*(dbr - dbl)
++                dalp = dalpl + fac*(dalpr - dalpl)
++                if(abs(dk).lt.1.01e-9)  dk = 0.0
++                if(abs(db).lt.1.01e-9)  db = 0.0
++                if(abs(dalp).lt.1.01e-9)  dalp = 0.0
++                ftab(it+8) = dk
++                ftab(it+9) = db
++                ftab(it+10) = dalp
++              case(33)
++                dk = dkl + fac*(dkr - dkl)
++                db = dbl + fac*(dbr - dbl)
++                dma = dmal + fac*(dmar - dmal)
++                dmq = dmql + fac*(dmqr - dmql)
++                if(abs(dk).lt.1.01e-9)  dk = 0.0
++                if(abs(db).lt.1.01e-9)  db = 0.0
++                if(abs(dma).lt.1.01e-9)  dma = 0.0
++                if(abs(dmq).lt.1.01e-9)  dmq = 0.0
++                ftab(it+7) = dk
++                ftab(it+8) = db
++                ftab(it+9) = dma
++                ftab(it+10) = dmq
++              case(34)
++                dk = dkl + fac*(dkr - dkl)
++                db = dbl + fac*(dbr - dbl)
++                dma = dmal + fac*(dmar - dmal)
++                dmq = dmql + fac*(dmqr - dmql)
++                if(abs(dk).lt.1.01e-9)  dk = 0.0
++                if(abs(db).lt.1.01e-9)  db = 0.0
++                if(abs(dma).lt.1.01e-9)  dma = 0.0
++                if(abs(dmq).lt.1.01e-9)  dmq = 0.0
++                ftab(it+8) = dk
++                ftab(it+9) = db
++                ftab(it+10) = dma
++                ftab(it+11) = dmq
++              case(35)
++                dk = dkl + fac*(dkr - dkl)
++                db = dbl + fac*(dbr - dbl)
++                dalp = dalpl + fac*(dalpr - dalpl)
++                dma = dmal + fac*(dmar - dmal)
++                dmq = dmql + fac*(dmqr - dmql)
++                if(abs(dk).lt.1.01e-9)  dk = 0.0
++                if(abs(db).lt.1.01e-9)  db = 0.0
++                if(abs(dalp).lt.1.01e-9)  dalp = 0.0
++                if(abs(dma).lt.1.01e-9)  dma = 0.0
++                if(abs(dmq).lt.1.01e-9)  dmq = 0.0
++                ftab(it+10) = dk
++                ftab(it+11) = db
++                ftab(it+12) = dma
++                ftab(it+13) = dmq
++                ftab(it+14) = dalp
++            end select
++          endif
+           IP(J) = IP(J) + XOFF
+  
+   160   CONTINUE
+@@ -1808,8 +2667,8 @@
+      O                   FUNC, NTAB, PDV)
+  
+ C     + + + PURPOSE + + +
+-C     Do function table look up for all but cross-section tables
+-C     and two-d tables.
++C     Do function table look up for all but cross-section tables,
++C     two-d tables, and time-series tables. 
+ 
+       IMPLICIT NONE 
+ C     + + + DUMMY ARGUMENTS + + +
+@@ -1834,9 +2693,9 @@
+       SAVE STEP
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER HA, INC, LA, LSTA, TYPE
++      INTEGER HA, INC, LA, LSTA, TYPE, i, datum_is_active
+       REAL A2, A3, ADIFF, AONE, ARG, ARG2, AZERO, DF, FACT, FONE, FPONE,
+-     A     FPZERO, FZERO, H, P, PH, SHIFT
++     A     FPZERO, FZERO, H, P, PH, SHIFT, datum
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC EXP, LOG
+@@ -1866,12 +2725,14 @@
+ C     LSTA = LAST ADDRESS
+  
+       HA = ITAB(ADRS)
+-      LA = ADRS + 5
++      LA = ADRS + OFF234
+       LSTA = ITAB(ADRS+3)
+       TYPE = ITAB(ADRS+2)
+       NTAB = ITAB(ADRS+1)
+-      SHIFT = FTAB(ADRS+4)
+-      ARG = ARGA + SHIFT
++c      datum_is_active = itab(adrs+18)       !Not needed, at least not yet:)
++c      datum = ftab(adrs+19)
++c      SHIFT = FTAB(ADRS+4)                !Shift is applied during input of the table
++      
+       ARG = ARGA
+       IF(TYPE.GT.4) THEN
+         INC = 3
+@@ -1923,7 +2784,7 @@
+  
+  300  CONTINUE
+  
+-      GOTO (1,2,3,4,5,1,1,1,1,1,11), TYPE
++      GOTO (1,2,3,4,5,1,1,1,1,1,1), TYPE
+  
+  1    CONTINUE
+         WRITE(STDOUT,50) TYPE, GET_TABID(NTAB)
+@@ -2004,15 +2865,202 @@
+         PDV = FUNC*FPZERO/ARG2
+         GOTO 1000
+  
++ 
++ 1000 CONTINUE
++ 
++C     RESET POINTER TO LAST ADDRESS
++ 
++      ITAB(ADRS+3) = LSTA
++ 
++ 
++      RETURN
++ 
++      END
++C
++C
++C
++      SUBROUTINE   LKTSTAB
++     I                  (ADRS, jta, 
++     O                   FUNC, NTAB, PDV)
++ 
++C     + + + PURPOSE + + +
++C     Do function table look up for time-series tables: types
++c     7, 8, 9, and 11.  All use full double precision in order 
++c     to have a precise argument. 
++
++C     Note: Only type 11 need return a value of pdv because that
++c     is the second value.  Other time series do not need a value
++c     of the derivative.  Thus do not comput and return a value of
++c     zero.  Also we still return single precision values--the
++c     use of double precision is only for the benefit of the 
++c     argument. 
++
++      IMPLICIT NONE 
++C     + + + DUMMY ARGUMENTS + + +
++      INTEGER ADRS, NTAB
++      REAL  FUNC, PDV
++      real*8 jta
++ 
++C     + + +DUMMY ARGUMENT DEFINITIONS + + +
++C     ADRS   - address of the function table in FTAB/ITAB/DTAB
++C     jta   - argument for finding values in a function table
++C     FUNC   - value of function found at ARGA
++C     NTAB   - table number
++C     PDV    - partial derivative value
++ 
++C     + + + COMMON BLOCKS + + +
++      INCLUDE 'arsize.prm'
++      INCLUDE 'ftable.cmn'
++      INCLUDE 'xscom.cmn'
++ 
++C     + + + SAVED VALUES + + +
++      INTEGER STEP(11)
++      SAVE STEP
++ 
++C     + + + LOCAL VARIABLES + + +
++      INTEGER HA, INC, LA, LSTA, TYPE
++      REAL*8 A2, A3, ADIFF, AONE, ARG, AZERO, DF, FACT, 
++     a       FONE, FPONE, FPZERO, FZERO, H, P, PH, tp        
++ 
++C     + + + INTRINSICS + + +
++      INTRINSIC ishft
++ 
++
++C     Called subprograms
++      CHARACTER*16 GET_TABID
++      EXTERNAL GET_TABID
++      
++C     + + + DATA INITIALIZATIONS + + +
++      DATA STEP/0,0,0,0,0,0,2,3,3,0,3/
++ 
++C     + + + OUTPUT FORMATS + + +
++ 50   FORMAT(/,'*BUG:XXX* Invalid TYPE=',I5,' in LKTSTAB for TABID=',A)
++ 2000 FORMAT('0','*ERR:70* Argument below range in LKTSTAB',
++     A       /,1X,' Table Id   = ',A,
++     B       /,1X,' Min tab arg           = ',F16.5,
++     C       /,1X,' Arguument      = ',F16.5)
++ 2010 FORMAT('0','*ERR:71* Argument above range in LKTSTAB',
++     A       /,1X,' Table Id   = ',A,
++     B       /,1X,' Max tab arg           = ',F16.5,
++     C       /,1X,' Argument       = ',F16.5)
++C***********************************************************************
++C     HA = HIGH ADDRESS
++C     LA = LOW ADDRESS
++C     ITAB(ADRS+1) = TABLE NUMBER
++C     LSTA = LAST ADDRESS
++ 
++      HA = ITAB(ADRS)
++      LA = (ADRS + OFF234)/2
++      LSTA = ITAB(ADRS+3)
++      TYPE = ITAB(ADRS+2)
++      NTAB = ITAB(ADRS+1)
++      ARG = jta
++      INC = STEP(TYPE)
++ 
++C     INITIALIZE
++ 
++      ADIFF = ARG - dtab(LSTA)
++      IF(ADIFF) 100,300,200
++ 
++C     ARGUMENT PASSED LESS THAN AT PREVIOUS ACCESS TO TABLE
++ 
++ 100  IF( LSTA.GE.LA ) GOTO 110
++ 
++        WRITE(STDOUT,2000) GET_TABID(ITAB(ADRS+1)), dtab(la), ARG
++        EFLAG = 1
++        STOP 'Abnormal stop: errors found.'
++ 
++ 110  IF( ARG.GE.dtab(LSTA) ) GOTO 300
++      LSTA = LSTA - INC
++      GOTO 100
++ 
++C     ARGUMENT PASSED GREATER THAN AT PREVIOUS ACCESS TO TABLE
++ 
++ 200  IF( LSTA.LT.HA ) GOTO 210
++      WRITE(STDOUT,2010) GET_TABID(ITAB(ADRS+1)), dtab(ha), ARG
++      EFLAG = 1
++      LSTA = HA - INC
++      ARG = dtab(HA)
++      GOTO 300
++ 210  IF( ARG.LE.dtab(LSTA+INC) ) GOTO 300
++      LSTA = LSTA + INC
++      GOTO 200
++ 
++ 300  CONTINUE
++ 
++      GOTO (1,1,1,1,1,1,7,8,9,1,11), TYPE
++ 
++ 1    CONTINUE
++        WRITE(STDOUT,50) TYPE, GET_TABID(NTAB)
++        STOP 'Abnormal stop: errors found.'
++ 
++ 7    CONTINUE
++ 
++C     SINGLE FUNCTION - LINEAR INTERPOLATION
++ 
++C       FETCH VALUES FROM DTAB
++ 
++        AZERO = DTAB(LSTA)
++        FZERO = DTAB(LSTA+1)
++        AONE = DTAB(LSTA+2)
++        FONE = DTAB(LSTA+3)
++ 
++C       INTERPOLATE
++ 
++        FACT = (ARG - AZERO)/(AONE - AZERO)
++        FUNC = FZERO + FACT*(FONE - FZERO)
++c        PDV  = (FONE - FZERO)/(AONE - AZERO)
++        pdv = 0.0
++        GOTO 1000
++ 
++C     Dual value- trapezoidal rule interpolation
++ 
++ 8    CONTINUE
++ 
++C       FETCH VALUES
++        AZERO = DTAB(LSTA)
++        FZERO = DTAB(LSTA+1)
++        FPZERO = DTAB(LSTA+2)
++        AONE = DTAB(LSTA+3)
++        FONE = DTAB(LSTA+4)
++        FPONE = DTAB(LSTA+5)
++        PH = ARG - AZERO
++        H = AONE - AZERO
++        P = PH/H
++        tp = FPZERO + P*(FPONE- FPZERO)
++        FUNC = FZERO + 0.5*PH*(FPZERO+ tp)
++        pdv = 0.0
++        GOTO 1000
++ 
++C     HERMITE CUBIC  INTERPOLATION
++ 
++ 9    CONTINUE
++        AZERO = DTAB(LSTA)
++        FZERO = DTAB(LSTA+1)
++        FPZERO = DTAB(LSTA+2)
++        AONE = DTAB(LSTA+3)
++        FONE = DTAB(LSTA+4)
++        FPONE = DTAB(LSTA+5)
++        PH = ARG - AZERO
++        H = AONE - AZERO
++        P = PH/H
++        DF = FONE - FZERO
++        A2 = 3.*DF - H*(FPZERO + FPZERO + FPONE)
++        A3 = H*(FPZERO+FPONE) - 2.*DF
++c        pdv = FPZERO + P*(A2 + A2 + 3.*A3*P)/H
++        FUNC = FZERO + PH*FPZERO + P*P*(A2 + P*A3)
++        pdv = 0.d0
++        GOTO 1000
++ 
+ C     TIME SERIES WITH TWO VALUES PER TIME POINT
+  
+  11   CONTINUE
+-        AZERO = FTAB(LSTA)
+-        FZERO = FTAB(LSTA+1)
+-        FPZERO = FTAB(LSTA+2)
+-        AONE = FTAB(LSTA+3)
+-        FONE = FTAB(LSTA+4)
+-        FPONE = FTAB(LSTA+5)
++        AZERO = DTAB(LSTA)
++        FZERO = DTAB(LSTA+1)
++        FPZERO = DTAB(LSTA+2)
++        AONE = DTAB(LSTA+3)
++        FONE = DTAB(LSTA+4)
++        FPONE = DTAB(LSTA+5)
+         PH = ARG- AZERO
+         H = AONE - AZERO
+         P = PH/H
+@@ -2023,7 +3071,7 @@
+  
+  1000 CONTINUE
+  
+-C     RESET POINTER TO LAST ADDRESS
++C     RESET POINTER TO LAST ADDRESS accessed 
+  
+       ITAB(ADRS+3) = LSTA
+  
+@@ -2736,7 +3784,7 @@
+ 
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER FN, IB, ITAB, LN, N, NEWN, ND, NIN, TABL, TABR,
+-     A        START_KNT, END_KNT, I
++     A        START_KNT, END_KNT, I, sloteq
+      
+       INTEGER NODE(MNMID), TAB(MNMID)
+ 
+@@ -2748,6 +3796,7 @@
+  
+ C     + + + EXTERNAL FUNCTIONS + + +
+       INTEGER GETUSB, NEXTN, GET_KOUNT_OF_INTERNAL_TABIDS, GETTBN
++      REAL GET_SLOT_DEPTH
+       CHARACTER*16 GET_TABID
+       
+  
+@@ -2809,10 +3858,34 @@
+ C           PROCESS THE REQUESTS FOR INTERPOLATION.
+ C           ESTABLISH THE DEPTH VALUES FOR INTERPOLATION
+  
+-            CALL MERGE_WITH_SLOT
+-     I                  (STDOUT, TABL, TABR,
+-     O                   EFLAG, N, Y, SDL, SDR)
+-
++            sdl = abs(get_slot_depth(tabl))
++            sdr = abs(get_slot_depth(tabr))
++            if(sdl.gt.0.0.and.sdr.gt.0.0) then
++c             both have a slot.  If the slots are of equal depth 
++c             we will taken the depth sequence as is.  The machinations
++c             we go thrhough when the slot depths are unequal are needed
++c             to make sense in that situation.  However, in practice, we 
++c             avoid having slots that are of unequal depth. 
++
++              if(2.*abs(sdl - sdr)/(sdr + sdl).le.0.0001) then 
++c               take the slots to be equal!
++                sloteq = 1
++
++                call merge
++     i                  (stdout, tabl, tabr,
++     o                   eflag, n, y)
++              else
++                sloteq = 0
++                CALL MERGE_WITH_SLOT
++     I                              (STDOUT, TABL, TABR,
++     O                                EFLAG, N, Y, SDL, SDR)
++              endif
++            else
++c             neither has a slot
++              call merge
++     i                (stdout, tabl, tabr,
++     o                 eflag, n, y)
++            endif
+ 
+             CALL RDUP
+      I               (N,
+@@ -2822,7 +3895,10 @@
+             N = NEWN
+ 
+ C           Y(*) contains the unique series of depth values, relative to
+-C           the real invert.  Construct a vector for each of the two tables
++C           the real invert but only if both have a slot and the slots are of
++c           unequal depth. 
++
++c           Construct a vector for each of the two tables
+ C           that contains a depth sequence relative to the bottom elevation
+ C           of the slot if both have a slot.  If only one has a slot, it 
+ C           is an error.  Mixtures potentially create interpolated sections
+@@ -2845,14 +3921,23 @@
+      A               GET_TABID(GETTBN(TABR)), SDR
+                 STOP 'Abnormal stop.  Error(s) found.'
+               ELSE
+-C               Both have a slot here.  
+-                CALL MAKE_YSLOT(MAXNDEP, NPSLOT, N,
++C               Both have a slot here. 
++                if(sloteq.eq.1) then
++c                 slots are of equal depth.  Y(*) already contains the merged depths
++c                 for the section INCLUDING the slots.
++                  do i=1,n
++                    yslot_left(i) = y(i)
++                    yslot_right(i) = y(i)
++                  end do
++                else
++                  CALL MAKE_YSLOT(MAXNDEP, NPSLOT, N,
+      I                          SDL, Y,
+      O                          NEWN, YSLOT_LEFT)   
+-                CALL MAKE_YSLOT(MAXNDEP, NPSLOT, N,
++                  CALL MAKE_YSLOT(MAXNDEP, NPSLOT, N,
+      I                          SDR, Y,
+      O                          NEWN, YSLOT_RIGHT) 
+-                N = NEWN
++                  N = NEWN
++                endif
+               ENDIF
+             ENDIF  
+ 
+@@ -2895,11 +3980,41 @@
+   200 CONTINUE
+       RETURN
+       END
++c
++c 
++c 
++      subroutine put_location_2dtab(
++     i     adrs, zone, hgrid, vdatum, unitsys, basis, easting, northing)
++      
++c     Store the location, datum, basis information in a two-d table.
++
++      implicit none
++
++      INCLUDE 'arsize.prm'
++      INCLUDE 'ftable.cmn'
++
++      integer adrs
++      real*8 easting, northing
++      character*8 zone, hgrid, vdatum, unitsys, basis
++
++c     External program units
++      External put_chr8_in_ft, put_dp_in_ft
++c     ******************************************************************
++      call put_chr8_in_ft(adrs+12, zone)
++      call put_chr8_in_ft(adrs+14, hgrid)
++      call put_chr8_in_ft(adrs+16, vdatum)
++      call put_chr8_in_ft(adrs+18, unitsys)
++      CALL PUT_DP_IN_FT(adrs+20, EASTING)
++      CALL PUT_DP_IN_FT(adrs+22, NORTHING)
++      call put_chr8_in_ft(adrs+24, basis)
++      return
++      end
+ C
+ C
+ C
+       SUBROUTINE   TWODIN
+-     I                   (IN, STDOUT, MLFT, TABLE, HDATUM, CHR69,
++     I                   (IN, STDOUT, MLFT, TABLE, HDATUM, CHR69, 
++     i                    zrhufd,
+      M                    EFLAG, FTP, TYPE)
+  
+ C     + + + PURPOSE + + +
+@@ -2908,7 +4023,7 @@
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER EFLAG, FTP, IN, STDOUT, MLFT, TABLE, TYPE
+-      REAL HDATUM
++      REAL HDATUM, zrhufd
+       CHARACTER CHR69*69
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -2918,6 +4033,7 @@
+ C     TABLE  - table number
+ C     HDATUM - datum for heads
+ C     CHR69  - optional format for reading function tables of type 10
++c     zrhufd - free drop at zero ups head if it makes sense in context.
+ C     EFLAG  - flag for errors. 0- no errors, > 0 one or more errors
+ C     FTP    - next open location in the function table storage
+ C     TYPE   - table type
+@@ -2925,6 +4041,7 @@
+ C     + + + COMMON BLOCKS + + +
+       INCLUDE 'arsize.prm'
+       INCLUDE 'ftable.cmn'
++      INCLUDE 'tabupgrade.cmn'
+  
+ C     + + + SAVED VALUES + + +
+       CHARACTER BLANK*8
+@@ -2936,23 +4053,28 @@
+      B        MAX_COL
+       REAL COLVEC(MCDT10), DROP, FDVEC(10), HU, HUPVEC(10), OLDARG,
+      A     OLDHU, P, PFD, POLD, Q, QVEC(10), ROWARG
++      real*8 easting, northing, dnull
+       CHARACTER COLARG(MCDT10)*8, HDIN*24, HDITEM*24, HDOUT*24, HEAD*80,
+      A          LINE*80, ROWIN*24, ROWLAB*8, ROWOUT*24, LINE120*120,
+-     B          CHR3*3
++     B          CHR3*3, zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC MIN
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL INL80, INL120, KIL, STRIP_L_BLANKS
++      EXTERNAL  inline, KIL, STRIP_L_BLANKS, put_location_2dtab,
++     a         chk_vdatum_unitsys
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA BLANK/'      '/
++      DATA BLANK/'      '/, dnull/-33d6/
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(80A)
+  2    FORMAT(2F10.0)
+  4    FORMAT(2F10.0)
++ 6    format(5X,A8,7X,A8,8X,A8,9X,A8,7X,A8)
++ 8    format(8X,f15.0, 10X,f15.0)
++
+  10   FORMAT(5X,I5)
+  12   FORMAT(7X,10F7.0)
+  14   FORMAT(11F7.0)
+@@ -2974,7 +4096,16 @@
+  72   FORMAT(/,' *ERR:367* Conversion error in reading user format for',
+      A         ' Type 10 table:',A)
+ C***********************************************************************
+-      IF(FTP+10.GE.MLFT) CALL KIL
++      zone = 'NONE'
++      hgrid = 'NONE'
++      vdatum ='NONE'
++      unitsys = 'NONE'
++      basis = 'NONE'
++
++      easting = dnull
++      northing= dnull
++c
++      IF(FTP+TDTIOFF.GE.MLFT) CALL KIL
+      I                            (10,
+      M                             FTP, EFLAG)
+  
+@@ -2991,15 +4122,58 @@
+       ENDIF
+       ITAB(FTP+2) = TYPE
+       FTPOLD = FTP
+- 
++
++      CALL inline
++     I          (IN, STDOUT,
++     O           LINE)
++
++      if(line(1:4) == 'ZONE') then
++c       We have a line of information on zone, hgrid, vdatum, and unitsys.
++c       If present it will ALWAYS be followed by a line giving the hgrid location!
++        read(line,6,err=991) zone, hgrid, vdatum, unitsys, basis
++        CALL inline
++     I            (IN, STDOUT,
++     O             LINE)
++        if(adjustl(zone) == 'NA') then
++c         Horizontal location has no meaning.
++          easting = dnull
++          northing = dnull
++          ft_loc_status(table) = 'N'
++        elseif(line(9:23) == ' ') then
++c         The easting value was blank.  This means that it was
++c         missing.  We treat the northing as missing too.
++          easting = dnull
++          northing = dnull
++          ft_loc_status(table) = 'M'
++        else
++          read(line,8,err=991) easting, northing
++          if(easting > dnull) then
++c           We assume valid value for both.
++            ft_loc_status(table) = 'I'
++          else
++            ft_loc_status(table) = 'M'
++          endif
++        endif
++      else
++c       Put the line back!  Zone, hgrid, etc, not present.
++        backspace(in)
++        ft_loc_status(table) = 'M'
++      endif
++
++      call put_location_2dtab(ftp, zone, hgrid, vdatum, unitsys, basis,
++     a                        easting, northing)
++ 
++      call chk_vdatum_unitsys(stdout, vdatum, unitsys, 
++     a          ' during input of twod tables')
++
+       IF(TYPE.EQ.6) THEN
+-        FTP = FTP + 10
++        FTP = FTP + TDTIOFF
+  
+ C       SET POINTER VALUES FOR THE UPSTREAM LEVELS
+         ITAB(FTPOLD+3) = FTP
+         ITAB(FTPOLD+4) = FTP
+  
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,1) HEAD
+@@ -3011,7 +4185,7 @@
+         INC = 5
+         OLDHU = -1.0
+  100    CONTINUE
+-          CALL INL80
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+           READ(LINE,2,ERR=991) HU, DROP
+@@ -3042,7 +4216,7 @@
+  
+         IP = ITAB(FTPOLD+3)
+  
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,1) HEAD
+@@ -3052,7 +4226,7 @@
+           IF(FTP+2.GE.MLFT) CALL KIL
+      I                               (10,
+      M                                FTP, EFLAG)
+-          CALL INL80
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+           READ(LINE,4,ERR=991) P, Q
+@@ -3076,7 +4250,7 @@
+             IF(FTP+2.GE.MLFT) CALL KIL
+      I                                 (10,
+      M                                  FTP, EFLAG)
+-            CALL INL80
++            CALL inline
+      I                (IN, STDOUT,
+      O                 LINE)
+             READ(LINE,4,ERR=991) P, Q
+@@ -3097,32 +4271,6 @@
+           FTAB(IP+4) = Q
+           IP = IP + INC
+  300    CONTINUE
+- 
+- 
+-C       CHECK TABLE CONTENTS
+- 
+-C        WRITE(STDOUT,*) ' TABLE#=',ITAB(FTPOLD+1)
+-C        WRITE(STDOUT,*) ' TYPE=',ITAB(FTPOLD+2)
+-C        WRITE(STDOUT,*) ' HU BASE=',ITAB(FTPOLD+3)
+-C        WRITE(STDOUT,*) ' HU LAST=',ITAB(FTPOLD+4)
+-C        WRITE(STDOUT,*) ' HU MAX=',FTAB(FTPOLD+9)
+-C
+-C        IP = ITAB(FTPOLD+3)
+-C
+-C        DO 500 I=1,NHU
+-C          WRITE(STDOUT,60) FTAB(IP), FTAB(IP+1), ITAB(IP+2),
+-C     A                   ITAB(IP+3), FTAB(IP+4)
+-C
+-C          IPQ = ITAB(IP+2)
+-C400       CONTINUE
+-C            WRITE(STDOUT,*) '    P=',FTAB(IPQ),' Q=',FTAB(IPQ+1)
+-C            IF(FTAB(IPQ).EQ.1.0) GOTO 410
+-C            IPQ = IPQ + 2
+-C            GOTO 400
+-C410       CONTINUE
+-C
+-C          IP = IP + INC
+-C500     CONTINUE
+  
+       ELSE IF(TYPE.EQ.10) THEN
+ C       PROCESS TABLE TYPE=10. TRADITIONAL TWO-D TABLE
+@@ -3170,14 +4318,14 @@
+ C       READ AND ECHO THE LABEL FOR THE TABLE, this might also be the
+ C       optional line giving the head datum for the table.
+  
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         IF(LINE(1:6).EQ.'HDATUM') THEN
+           READ(LINE(8:17),'(F10.0)', ERR=991) HDATUM 
+ C         Store HDATUM
+           FTAB(FTPBASE) = HDATUM
+-          CALL INL80
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+         ENDIF
+@@ -3187,7 +4335,7 @@
+ C       READ argument heading and count the number of arguments on the
+ C       columns of the table.
+ 
+-        CALL INL120
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE120)
+         READ(LINE120,HDIN,ERR=992) ROWLAB, (COLARG(J), J=1,MAX_COL)
+@@ -3208,7 +4356,7 @@
+  
+ C       STORE THE COLUMN ARGUMENTS
+  
+-        FTP = FTP + 11
++        FTP = FTP + TDTIOFF
+  
+ C       ESTABLISH PARGC, HARGC, LARGC, AND NARGC IN THE HEADER
+         ITAB(FTPOLD+7) = FTP
+@@ -3237,7 +4385,7 @@
+         NARGR = 0
+         OLDARG = -1.E35
+  700    CONTINUE
+-        CALL INL120
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE120)
+           READ(LINE120, ROWIN,ERR=992) ROWARG, (COLVEC(J), J=1,NARGC)
+@@ -3269,7 +4417,7 @@
+  
+  
+ C       SET POINTER VALUES FOR THE UPSTREAM HEAD
+-        PHU = FTP + 10
++        PHU = FTP + TDTIOFF
+  
+ C        WRITE(STDOUT,*) ' PHU=',PHU
+ C       STORE POINTER TO THE START OF THE DOWNSTREAM HEADS.
+@@ -3283,28 +4431,28 @@
+         ITAB(FTPOLD+4) = PHU
+  
+ C       READ AND ECHO THE LABEL
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,1) HEAD
+         WRITE(STDOUT,51) HEAD
+  
+ C       GET THE NUMBER OF NON-ZERO UPSTREAM HEADS
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,10,ERR=991) NHUP
+         IF(OUT.EQ.1) WRITE(STDOUT,70) NHUP
+  
+ C       GET NUMBER OF NON-ZERO PARTIAL FREE DROPS
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+         READ(LINE,10,ERR=991) NPFD
+         IF(OUT.EQ.1) WRITE(STDOUT,71) NPFD
+  
+ C       CHECK FOR SPACE
+-        N = 10 + 4*(NHUP+1) + (NHUP + 2)*(NPFD + 1)
++        N = TDTIOFF + 4*(NHUP+1) + (NHUP + 2)*(NPFD + 1)
+         IF(FTP+N.GE.MLFT) CALL KIL
+      I                             (10,
+      M                              FTP, EFLAG)
+@@ -3355,6 +4503,16 @@
+         FTAB(PHU) = 0.0
+         FTAB(PHU+1) = 0.0
+         FTAB(PHU+2) = 0.0
++        if(type.eq.13) then
++c         set the free drop at zero upstream head  if we are going to convert to type 43
++          if(ty13_to_ty43.eq.'YES'.or.
++     a       ty13_to_ty43.eq.'YESO') then
++            ftab(phu+1) = zrhufd
++          else
++            ftab(phu+1) = 0.0
++          endif
++        endif
++          
+ C       STORE THE OFFSET BETWEEN THE ORIGIN OF THE PARTIAL FREE
+ C       DROP SEQUENCE AND THE ORIGIN OF THE FLOWS AT ZERO UPSTREAM
+ C       HEAD SO THAT A SINGLE ADDITION CAN BE USED TO FIND THE
+@@ -3397,7 +4555,7 @@
+  
+ C         READ LINE OF UPSTREAM HEADS FOR THIS BLOCK.  FREE FLOW
+ C         FOR TYPE 14
+-          CALL INL80
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+           READ(LINE,1) HEAD
+@@ -3405,7 +4563,7 @@
+           READ(LINE,12,ERR=991) (HUPVEC(J), J=JS,JE)
+  
+ C         READ LINE OF FREE DROPS.  DOWNSTREAM HEADS FOR TYPE 14
+-          CALL INL80
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+           READ(LINE,1) HEAD
+@@ -3444,7 +4602,7 @@
+  
+ C         READ HEADING FOR BODY OF TABLE
+  
+-        CALL INL80
++        CALL inline
+      I            (IN, STDOUT,
+      O             LINE)
+           READ(LINE,1) HEAD
+@@ -3455,7 +4613,7 @@
+ C         UPSTREAM HEAD AT FREE FLOW FOR TYPE 14.
+  
+           DO 810 K=1,NPFD
+-            CALL INL80
++            CALL inline
+      I                (IN, STDOUT,
+      O                 LINE)
+             READ(LINE,1) HEAD
+@@ -3674,7 +4832,7 @@
+       INTRINSIC IABS
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL INL80, KIL, READ_TABTY15_ITEMS
++      EXTERNAL inline, KIL, READ_TABTY15_ITEMS
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(80A)
+@@ -3687,7 +4845,7 @@
+  49   FORMAT(' ',F10.3,I5,3F10.3)
+ C***********************************************************************
+       JUST = 'RIGHT'
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,46,ERR=991) REFLEV, LABEL
+@@ -3712,11 +4870,11 @@
+  
+ C     INITIALIZE LAST ADDRESS ACCESSED
+  
+-      ITAB(FTP+4) = FTP + 5
++      ITAB(FTP+4) = FTP + OFF234
+       FTPOLD = FTP
+-      FTP = FTP + 5
+- 
+-      CALL INL80
++      FTP = FTP + OFF234
++ 
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,1) HEAD
+@@ -3731,7 +4889,7 @@
+  
+  1000 CONTINUE
+  
+-         CALL INL80
++         CALL inline
+      I             (IN, STDOUT,
+      O              LINE)
+          READ(LINE,48,ERR=991) ARG, TAB2D, F
+@@ -3768,7 +4926,7 @@
+ C
+ C
+ C
+-      SUBROUTINE   XLKT20
++      SUBROUTINE   XLKT20BAK
+      I                   (ADRS,
+      M                    YA,
+      O                    A, T, DT, K, DK, B, DB)
+@@ -3914,6 +5072,198 @@
+ C
+ C
+ C
++      SUBROUTINE   XLKT20
++     I                   (ADRS,
++     M                    YA,
++     O                    A, T, DT, K, DK, B, DB)
++ 
++C     + + + PURPOSE + + +
++C     Given depth find area, top-width, conveyance, etc.
++C     using direct linear interpolation for top width.
++ 
++      IMPLICIT NONE
++C     + + + DUMMY ARGUMENTS + + +
++      INTEGER ADRS
++      REAL A, B, DB, DK, DT, K, T, YA
++ 
++C     + + +DUMMY ARGUMENT DEFINITIONS + + +
++C     ADRS   - address of the function table in FTAB/ITAB
++C     YA     - depth to use for table look up
++C     A      - Cross sectional area from the cross section table
++C     T      - top width of the cross section
++C     DT     - derivative of the top width with respect to depth
++C     K      - conveyance
++C     DK     - derivative of conveyance with respect to depth
++C     B      - the value of the momentum flux correction coef. from the
++C               table
++C     DB     - derivative of B with respect to depth
++ 
++C     + + + COMMON BLOCKS + + +
++      INCLUDE 'arsize.prm'
++      INCLUDE 'ftable.cmn'
++      INCLUDE 'xscom.cmn'
++      INCLUDE 'offcom.cmn'
++ 
++C     + + + SAVED VALUES + + +
++      INTEGER VTYPE(35)
++      SAVE VTYPE
++ 
++C     + + + LOCAL VARIABLES + + +
++      INTEGER HA, IT, L, LA, TYPE, XOFF, DOFF
++      REAL B0, DY, DYI, H, HH, K0, T0, Y, Y0, b1, k1,
++     a    db0, db1, dk0, dk1
++      real  flp, frp, fl, fr, dlp, drp, dmf, p
++
++      CHARACTER CS*16
++
++C     + + + EXTERNAL NAMES + + +
++      CHARACTER*16 GET_STRING_FROM_FT
++      EXTERNAL GET_STRING_FROM_FT, XSTYPE
++ 
++C     + + + DATA INITIALIZATIONS + + +
++      DATA VTYPE/1,10*0,1,7*0,6*1,4*0,6*1/
++ 
++C     + + + OUTPUT FORMATS + + +
++ 2000 FORMAT(' ','*WRN:02* X-SECTION BELOW RANGE IN XLKT20',
++     A      /,1X,' TABLE ID   = ',A,
++     B      /,1X,' STATION NUMBER = ',F10.3
++     C      /,1X,' TIME           = ',F14.0,
++     D      /,1X,' DEPTH          = ',F10.2)
++ 2010 FORMAT(' ','*WRN:03* X-SECTION ABOVE RANGE IN XLKT20',
++     A      /,1X,' TABLE ID   = ',A,
++     B      /,1X,' STATION NUMBER = ',F10.3
++     C      /,1X,' TIME           = ',F14.0,
++     D      /,1X,' DEPTH          = ',F10.2)
++C***********************************************************************
++C     HA = HIGH ADDRESS
++C     LA = LOW ADDRESS
++C     L = ADDRESS FOUND ON THE LAST CALL TO XLKT20
++C     XOFF - number of items stored per line in the table.  includes
++C            depth and all other elements.  
++C     DOFF - offset from depth to the first tabulated derivative if 
++c            derivatives are available.  They may not be!
++
++c     Note: all tables types in the range of 20-25 and 30-35 are valid
++c           here because they contain the data required. 
++ 
++      Y = YA
++      HA = ITAB(ADRS)
++      LA = ADRS + XTIOFF
++      L = ITAB(ADRS+3)
++      doff = itab(adrs+21)
++ 
++      TYPE = ITAB(ADRS+2)
++      XOFF = OFFVEC(TYPE)
++      IF(VTYPE(TYPE).EQ.0) THEN
++        CALL XSTYPE
++     I             (STDOUT, VTYPE, ADRS)
++        STOP 'Abnormal stop: errors found.'
++      ENDIF
++ 
++      IF(Y.GE.FTAB(L)) THEN
++C       CHECK FOR ARGUMENT ABOVE MAX ARG IN THE TABLE
++        IF(Y.GT.FTAB(HA)) THEN
++          CS = GET_STRING_FROM_FT(ADRS+16)
++          WRITE(STDOUT,2010) CS, FTAB(ADRS+4), 
++     A                       TIME, Y
++          L = HA - XOFF
++          Y = FTAB(HA)
++          YA = Y
++        ELSE
++ 100      CONTINUE
++            IF(Y.GT.FTAB(L+XOFF)) THEN
++              L = L + XOFF
++              GOTO 100
++            ENDIF
++        ENDIF
++      ELSE
++C       CHECK FOR ARGUMENT BELOW MIN ARG IN THE TABLE
++        IF(Y.LT.FTAB(LA)) THEN
++          CS = GET_STRING_FROM_FT(ADRS+16)
++          WRITE(STDOUT,2000) CS, FTAB(ADRS+4), 
++     A              TIME, Y
++          L = LA
++          Y = FTAB(L+XOFF)
++          YA = Y
++        ELSE
++ 110      CONTINUE
++            L = L - XOFF
++            IF(Y.LT.FTAB(L)) GOTO 110
++        ENDIF
++      ENDIF
++C     AT THIS POINT L DEFINES THE LOW ARGUMENT END OF THE
++C     INTERVAL CONTAINING THE ARGUMENT, PERHAPS ADJUSTED
++C     FOR ARGUMENT OUT OF RANGE.
++ 
++C     RESET POINTER FOR LAST ADDRESS
++ 
++      ITAB(ADRS+3) = L
++ 
++C     FETCH VALUES FROM FTAB
++ 
++      Y0 = FTAB(L)
++      T0 = FTAB(L+1)
++      K0 = FTAB(L+3)
++      B0 = FTAB(L+4)
++      IT = L + XOFF
++
++C     DIRECT LINEAR INTERPOLATION FOR T AND SQRT(CONVEYANCE)
++C     N.B. K IN FTAB IS SQRT(CONVEYANCE)
++ 
++      DY = FTAB(IT) - Y0
++      H = Y - Y0
++      HH = 0.5*H
++      DYI = 1.0/DY
++      DT =  (FTAB(IT+1) - T0)*DYI
++      T = T0 + H*DT
++      A = FTAB(L+2) + HH*(T + T0)
++
++      if(doff.eq.0) then
++        DB = (ftab(it+4) - B0)*DYI
++        B = B0 + H*DB
++        DK = (ftab(it+3) - K0)*DYI
++        K = K0 + H*DK
++      else
++      b1 = ftab(it+4)
++      k1 = ftab(it+3) 
++        p = h*dyi
++c       compute factors on left and right derivative. 
++        flp = (1.0 - p)*p*dy
++        frp = -flp*p
++        flp = flp*(1.0 - p)
++c       compute factors on left and right function value
++        fl = 2.*p + 1.0
++        fr = (4.0 - fl)*p*p
++        fl = fl*(1.0 - p)**2
++c       compute the factors based on relative interval for computing derivatives. 
++        dlp = 1. - 3.*p
++        drp = -(1. + dlp)*p
++        dlp = dlp*(1.0 - p)
++        dmf = 6.*(1.0 - p)*p*dyi
++
++        l = l + doff
++        it = it + doff
++        dk0 = ftab(l)
++        dk1 = ftab(it)
++
++        db0 = ftab(l+1)
++        db1 = ftab(it+1)
++
++        b =  flp*db0 + frp*db1 + fl*b0 + fr*b1
++        db = dlp*db0 + drp*db1 + dmf*(b1 - b0)
++
++        k =  flp*dk0 + frp*dk1 + fl*k0 + fr*k1
++        dk = dlp*dk0 + drp*dk1 + dmf*(k1 - k0)
++      endif
++
++      DK = (K + K)*DK
++      K = K*K
++ 
++      RETURN
++      END
++C
++C
++C
+       SUBROUTINE   XLKT21
+      I                   (ADRS,
+      M                    YA,
+@@ -3952,8 +5302,10 @@
+       SAVE VTYPE
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER HA, L, LA, TYPE, XOFF
+-      REAL A0, B0, DY, DYI, H, HH, J0, K0, T0, Y, Y0
++      INTEGER HA, L, LA, TYPE, XOFF, doff, IT
++      REAL A0, B0, DY, DYI, H, HH, J0, K0, T0, Y, Y0, b1, k1,
++     a    db0, db1, dk0, dk1
++      real  flp, frp, fl, fr, dlp, drp, dmf, p
+       CHARACTER CS*16
+ 
+ C     + + + EXTERNAL NAMES + + +
+@@ -3961,7 +5313,7 @@
+       EXTERNAL GET_STRING_FROM_FT, XSTYPE
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/1,10*0,1,7*0,0,2*1,0,2*1,10*0/
++      DATA VTYPE/1,10*0,1,7*0,0,2*1,0,2*1,4*0,0,2*1,0,2*1/
+  
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT(' ','*WRN:02* X-SECTION BELOW RANGE IN XLKT21',
+@@ -3983,6 +5335,7 @@
+       HA = ITAB(ADRS)
+       LA = ADRS + XTIOFF
+       L = ITAB(ADRS+3)
++      doff = itab(adrs+21)
+  
+       TYPE = ITAB(ADRS+2)
+       XOFF = OFFVEC(TYPE)
+@@ -4039,22 +5392,58 @@
+       K0 = FTAB(L+3)
+       B0 = FTAB(L+4)
+       J0 = FTAB(L+5)
++
++      b1 = FTAB(L+XOFF+4)
++      k1 = FTAB(L+XOFF+3)
+  
+ C     DIRECT LINEAR INTERPOLATION FOR T AND SQRT(CONVEYANCE)
+-C     N.B. K IN FTAB IS SQRT(CONVEYANCE)
+  
+       DY = FTAB(L+XOFF) - Y0
+       H = Y - Y0
+       HH = 0.5*H
+       DYI = 1.0/DY
+-      DB = (FTAB(L+XOFF+4) - B0)*DYI
+       DT =  (FTAB(L+XOFF+1) - T0)*DYI
+-      DK = (FTAB(L+XOFF+3) - K0)*DYI
+       T = T0 + H*DT
+-      B = B0 + H*DB
+       A = A0 + HH*(T + T0)
+       J = J0 + HH*(A + A0 - H*(T - T0)*0.1666667)
+-      K = K0 + H*DK
++
++      if(doff.eq.0) then
++        DB = (b1 - B0)*DYI
++        B = B0 + H*DB
++        DK = (k1 - K0)*DYI
++        K = K0 + H*DK
++      else
++        p = h*dyi
++c       compute factors on left and right derivative. 
++        flp = (1.0 - p)*p*dy
++        frp = -flp*p
++        flp = flp*(1.0 - p)
++c       compute factors on left and right function value
++        fl = 2.*p + 1.0
++        fr = (4.0 - fl)*p*p
++        fl = fl*(1.0 - p)**2
++c       compute the factors based on relative interval for computing derivatives. 
++        dlp = 1. - 3.*p
++        drp = -(1. + dlp)*p
++        dlp = dlp*(1.0 - p)
++        dmf = 6.*(1.0 - p)*p*dyi
++
++        it = l + xoff
++        l = l + doff
++        it = it + doff
++        dk0 = ftab(l)
++        dk1 = ftab(it)
++
++        db0 = ftab(l+1)
++        db1 = ftab(it+1)
++
++        b =  flp*db0 + frp*db1 + fl*b0 + fr*b1
++        db = dlp*db0 + drp*db1 + dmf*(b1 - b0)
++
++        k =  flp*dk0 + frp*dk1 + fl*k0 + fr*k1
++        dk = dlp*dk0 + drp*dk1 + dmf*(k1 - k0)
++      endif
++
+       DK = (K +K)*DK
+       K = K*K
+  
+@@ -4108,8 +5497,11 @@
+       SAVE VTYPE
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER HA, L, LA, TYPE, XOFF
+-      REAL A0, ALP0, B0, DY, H, HH, J0, K0, P, QC0, QC1, T0, Y, Y0, Y1
++      INTEGER HA, L, LA, TYPE, XOFF, doff, IT
++      REAL A0, ALP0, B0, DY, H, HH, J0, K0, P, QC0, QC1, T0, Y, Y0, Y1,
++     a b1, k1, alp1, db0, db1, dk0, dk1, dalp0, dalp1
++      real  flp, frp, fl, fr, dlp, drp, dmf
++
+       CHARACTER CS*16 
+ C     + + + INTRINSICS + + +
+       INTRINSIC EXP, LOG
+@@ -4119,7 +5511,8 @@
+       EXTERNAL GET_STRING_FROM_FT, XSTYPE
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/11*0,1,9*0,1,0,0,1,10*0/
++      DATA VTYPE/11*0,1,9*0,1,0,0,1,4*0,0,0,1,0,0,1/
++c      DATA VTYPE/11*0,1,9*0,1,0,0,1,4*0,0,0,1,0,0,0/
+  
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT(' ','*WRN:33* X-SECTION BELOW RANGE IN XLKT22',
+@@ -4141,6 +5534,12 @@
+       HA = ITAB(ADRS)
+       LA = ADRS + XTIOFF
+       L = ITAB(ADRS+3)
++      doff = itab(adrs+21)
++c      WRITE(STDOUT,*) ' XLKT22: doff=', doff
++c      if(doff.ne.0) then
++c        write(stdout,*) 'doff not zero!!!'
++c        stop
++c      endif
+  
+       TYPE = ITAB(ADRS+2)
+       XOFF = OFFVEC(TYPE)
+@@ -4199,6 +5598,10 @@
+       J0 = FTAB(L+5)
+       ALP0 = FTAB(L+6)
+       QC0 = FTAB(L+7)
++      
++      k1 = FTAB(L+XOFF+3)
++      b1 = FTAB(L+XOFF+4)
++      alp1 = FTAB(L+XOFF+6)
+  
+ C     DIRECT LINEAR INTERPOLATION FOR T AND SQRT(CONVEYANCE)
+ C     N.B. K IN FTAB IS SQRT(CONVEYANCE)
+@@ -4207,27 +5610,21 @@
+       DY = Y1 - Y0
+       H = Y - Y0
+       HH = 0.5*H
+-      DB = (FTAB(L+XOFF+4) - B0)/DY
+       DT =  (FTAB(L+XOFF+1) - T0)/DY
+-      DK = (FTAB(L+XOFF+3) - K0)/DY
+-      DALP = (FTAB(L+XOFF+6) - ALP0)/DY
+       QC1 = FTAB(L+XOFF+7)
+       T = T0 + H*DT
+-      B = B0 + H*DB
+-      ALP = ALP0 + H*DALP
+       A = A0 + HH*(T + T0)
+-      J = J0 + HH*(A + A0 -H*(T - T0)/6.)
+-      K = K0 + H*DK
+-      DK = 2.*K*DK
+-      K = K*K
++      J = J0 + HH*(A + A0 -H*(T - T0)*0.1666667)
++
++
+ C     COMPUTE VALUE OF QC USING LOGARITHMS
+  
+       IF(Y0.EQ.0.0) THEN
+-        L = L + XOFF
+-        Y0 = FTAB(L)
+-        Y1 = FTAB(L+XOFF)
+-        QC0 = FTAB(L+7)
+-        QC1 = FTAB(L+XOFF+7)
++        LA = L + XOFF
++        Y0 = FTAB(LA)
++        Y1 = FTAB(LA+XOFF)
++        QC0 = FTAB(LA+7)
++        QC1 = FTAB(LA+XOFF+7)
+       ENDIF
+  
+       IF(Y.GT.0.0) THEN
+@@ -4236,6 +5633,63 @@
+       ELSE
+         QC = 0.0
+       ENDIF
++
++      if(doff.eq.0) then
++        DB = (b1 - B0)/DY
++        B = B0 + H*DB
++        DALP = (alp1 - ALP0)/DY
++        ALP = ALP0 + H*DALP
++        DK = (k1 - K0)/DY
++        K = K0 + H*DK
++      else
++c       types 32 and 35 are valid here
++        p = h/dy
++c       compute factors on left and right derivative. 
++        flp = (1.0 - p)*p*dy
++        frp = -flp*p
++        flp = flp*(1.0 - p)
++c       compute factors on left and right function value
++        fl = 2.*p + 1.0
++        fr = (4.0 - fl)*p*p
++        fl = fl*(1.0 - p)**2
++c       compute the factors based on relative interval for computing derivatives. 
++        dlp = 1. - 3.*p
++        drp = -(1. + dlp)*p
++        dlp = dlp*(1.0 - p)
++        dmf = 6.*(1.0 - p)*p/dy
++
++        it = l + xoff
++        l = l + doff
++        it = it + doff
++        dk0 = ftab(l)
++        dk1 = ftab(it)
++
++        db0 = ftab(l+1)
++        db1 = ftab(it+1)
++
++        if(type.eq.32) then
++          dalp0 = ftab(l+2)
++          dalp1 = ftab(it+2)
++        else
++c         Only other valid type is 35
++          dalp0 = ftab(l+4)
++          dalp1 = ftab(it+4)
++        endif
++
++
++        b =  flp*db0 + frp*db1 + fl*b0 + fr*b1
++        db = dlp*db0 + drp*db1 + dmf*(b1 - b0)
++
++        alp =  flp*dalp0 + frp*dalp1 + fl*alp0 + fr*alp1
++        dalp = dlp*dalp0 + drp*dalp1 + dmf*(alp1 - alp0)
++
++        k =  flp*dk0 + frp*dk1 + fl*k0 + fr*k1
++        dk = dlp*dk0 + drp*dk1 + dmf*(k1 - k0)
++
++      endif
++
++      DK = 2.*K*DK
++      K = K*K
+  
+       RETURN
+       END
+@@ -4290,15 +5744,19 @@
+       SAVE VTYPE
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER HA, IT, L, LA, TYPE, XOFF
+-      REAL B0, DY, DYI, H, HH, K0, MA0, MQ0, T0, Y, Y0
++      INTEGER HA, IT, L, LA, TYPE, XOFF, doff
++      REAL B0, DY, DYI, H, HH, K0, T0, Y, Y0, b1, k1,
++     a    db0, db1, dk0, dk1, ma0, ma1, dma0, dma1, 
++     b    mq0, mq1, dmq0, dmq1
++      real  flp, frp, fl, fr, dlp, drp, dmf, p
++
+       CHARACTER CS*16
+ C     + + + EXTERNAL NAMES + + +
+       CHARACTER*16 GET_STRING_FROM_FT
+       EXTERNAL GET_STRING_FROM_FT, XSTYPE
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/22*0,1,1,1,10*0/
++      DATA VTYPE/22*0,1,1,1,4*0,3*0,3*1/
+  
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT(' ','*WRN:02* X-SECTION BELOW RANGE IN XLKT23',
+@@ -4320,6 +5778,7 @@
+       HA = ITAB(ADRS)
+       LA = ADRS + XTIOFF
+       L = ITAB(ADRS+3)
++      doff = itab(adrs+21)
+  
+       TYPE = ITAB(ADRS+2)
+       XOFF = OFFVEC(TYPE)
+@@ -4374,58 +5833,129 @@
+       T0 = FTAB(L+1)
+       K0 = FTAB(L+3)
+       B0 = FTAB(L+4)
+- 
++      IT = L + XOFF
++
+ C     DIRECT LINEAR INTERPOLATION FOR T AND SQRT(CONVEYANCE)
+ C     N.B. K IN FTAB IS SQRT(CONVEYANCE)
+  
+-      IT = L + XOFF
+       DY = FTAB(IT) - Y0
+       H = Y - Y0
+       HH = 0.5*H
+       DYI = 1.0/DY
+-      DB = (FTAB(IT+4) - B0)*DYI
+       DT =  (FTAB(IT+1) - T0)*DYI
+-      DK = (FTAB(IT+3) - K0)*DYI
+       T = T0 + H*DT
+-      B = B0 + H*DB
+       A = FTAB(L+2) + HH*(T + T0)
+-      K = K0 + H*DK
+-      DK = (K +K)*DK
++
++      if(doff.eq.0) then
++        DB = (FTAB(IT+4) - B0)*DYI
++        B = B0 + H*DB
++        DK = (FTAB(IT+3) - K0)*DYI
++        K = K0 + H*DK
++        goto (23, 24, 25), type-22
++23        continue
++c           Find the curvilinear elements from type 23     
++            ma0 = ftab(l+5)                                
++            mq0 = ftab(l+6)                                
++            ma1 = ftab(it+5)                                
++            mq1 = ftab(it+6)                                
++            dma = (ma1 - ma0)*dyi                   
++            dmq = (mq1 - mq0)*dyi                   
++            ma = ma0 + dma*h                               
++            mq = mq0 + dmq*h  
++            goto 26                             
++24        continue
++c           Find the curvilinear elements from type 24     
++            ma0 = ftab(l+6)                                
++            mq0 = ftab(l+7)                                
++            ma1 = ftab(it+6)                                
++            mq1 = ftab(it+7)                                
++            dma = (ma1 - ma0)*dyi                   
++            dmq = (mq1 - mq0)*dyi                   
++            ma = ma0 + dma*h                               
++            mq = mq0 + dmq*h  
++            goto 26                             
++25        continue
++c           Find the curvilinear elements from type 25     
++            ma0 = ftab(l+8)                                
++            mq0 = ftab(l+9)                                
++            dma = (ftab(it+8) - ma0)*dyi                   
++            dmq = (ftab(it+9) - mq0)*dyi                   
++            ma = ma0 + dma*h                               
++            mq = mq0 + dmq*h  
++26      continue
++      else
++        k1 = FTAB(IT+3)
++        b1 = FTAB(IT+4)
++        p = h*dyi
++c       compute factors on left and right derivative. 
++        flp = (1.0 - p)*p*dy
++        frp = -flp*p
++        flp = flp*(1.0 - p)
++c       compute factors on left and right function value
++        fl = 2.*p + 1.0
++        fr = (4.0 - fl)*p*p
++        fl = fl*(1.0 - p)**2
++c       compute the factors based on relative interval for computing derivatives. 
++        dlp = 1. - 3.*p
++        drp = -(1. + dlp)*p
++        dlp = dlp*(1.0 - p)
++        dmf = 6.*(1.0 - p)*p*dyi
++
++        goto (33, 34, 35), type-32
++33        continue
++c           Find the remaining elements from type 33     
++            ma0 = ftab(l+5)                                
++            mq0 = ftab(l+6)                                
++            ma1 = ftab(it+5)                                
++            mq1 = ftab(it+6)  
++            goto 36                             
++34        continue
++c           Find the remaining elements from type 34     
++            ma0 = ftab(l+6)                                
++            mq0 = ftab(l+7)                                
++            ma1 = ftab(it+6)                                
++            mq1 = ftab(it+7)                                
++            goto 36                             
++35        continue
++c           Find the remaining elements from type 35     
++            ma0 = ftab(l+8)                                
++            mq0 = ftab(l+9)                                
++            ma1 = ftab(it+8)                                
++            mq1 = ftab(it+9)                                
++36      continue
++
++        l = l + doff
++        it = it + doff
++        dk0 = ftab(l)
++        dk1 = ftab(it)
++     
++        db0 = ftab(l+1)
++        db1 = ftab(it+1)
++     
++        dma0 = ftab(l+2)
++        dma1 = ftab(it+2)
++     
++        dmq0 = ftab(l+3)
++        dmq1 = ftab(it+3)
++
++        k =  flp*dk0 + frp*dk1 + fl*k0 + fr*k1
++        dk = dlp*dk0 + drp*dk1 + dmf*(k1 - k0)
++
++        b =  flp*db0 + frp*db1 + fl*b0 + fr*b1
++        db = dlp*db0 + drp*db1 + dmf*(b1 - b0)
++
++        ma =  flp*dma0 + frp*dma1 + fl*ma0 + fr*ma1
++        dma = dlp*dma0 + drp*dma1 + dmf*(ma1 - ma0)
++
++        mq =  flp*dmq0 + frp*dmq1 + fl*mq0 + fr*mq1
++        dmq = dlp*dmq0 + drp*dmq1 + dmf*(mq1 - mq0)
++      endif
++
++      DK = (K + K)*DK
+       K = K*K
+  
+-      GOTO(23, 24, 25), TYPE-22
+- 
+- 23   CONTINUE
+-C       FIND THE CURVILINEAR ELEMENTS FROM TYPE 23
+-        MA0 = FTAB(L+5)
+-        MQ0 = FTAB(L+6)
+-        DMA = (FTAB(IT+5) - MA0)*DYI
+-        DMQ = (FTAB(IT+6) - MQ0)*DYI
+-        MA = MA0 + DMA*H
+-        MQ = MQ0 + DMQ*H
+- 
+-        RETURN
+- 
+- 24   CONTINUE
+-C       FIND THE CURVILINEAR ELEMENTS FROM TYPE 24
+-        MA0 = FTAB(L+6)
+-        MQ0 = FTAB(L+7)
+-        DMA = (FTAB(IT+6) - MA0)*DYI
+-        DMQ = (FTAB(IT+7) - MQ0)*DYI
+-        MA = MA0 + DMA*H
+-        MQ = MQ0 + DMQ*H
+-        RETURN
+-
+- 25   CONTINUE
+-C       FIND THE CURVILINEAR ELEMENTS FROM TYPE 25
+-        MA0 = FTAB(L+8)
+-        MQ0 = FTAB(L+9)
+-        DMA = (FTAB(IT+8) - MA0)*DYI
+-        DMQ = (FTAB(IT+9) - MQ0)*DYI
+-        MA = MA0 + DMA*H
+-        MQ = MQ0 + DMQ*H
+-        RETURN
+- 
++      return
++
+       END
+ C
+ C
+@@ -4473,8 +6003,12 @@
+       SAVE VTYPE
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER HA, IT, L, LA, TYPE, XOFF
+-      REAL A0, B0, DY, DYI, H, HH, J0, K0, MA0, MQ0, T0, Y, Y0
++      INTEGER HA, IT, L, LA, TYPE, XOFF, doff
++      REAL A0, B0, DY, DYI, H, HH, J0, K0, T0, Y, Y0, b1, k1,
++     a    db0, db1, dk0, dk1, ma0, ma1, dma0, dma1, 
++     b    mq0, mq1, dmq0, dmq1
++      real  flp, frp, fl, fr, dlp, drp, dmf, p
++
+       CHARACTER CS*16
+  
+ C     + + + EXTERNAL NAMES + + +
+@@ -4482,7 +6016,7 @@
+       EXTERNAL GET_STRING_FROM_FT, XSTYPE
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/23*0,1,1,10*0/
++      DATA VTYPE/23*0,1,1,4*0,4*0,1,1/
+  
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT(' ','*WRN:02* X-SECTION BELOW RANGE IN XLKT24',
+@@ -4504,6 +6038,7 @@
+       HA = ITAB(ADRS)
+       LA = ADRS + XTIOFF
+       L = ITAB(ADRS+3)
++      doff = itab(adrs+21)
+  
+       TYPE = ITAB(ADRS+2)
+       XOFF = OFFVEC(TYPE)
+@@ -4560,43 +6095,109 @@
+       K0 = FTAB(L+3)
+       B0 = FTAB(L+4)
+       J0 = FTAB(L+5)
+- 
++      IT = L + XOFF
++      k1 = FTAB(it+3)
++      b1 = FTAB(it+4)
+ C     DIRECT LINEAR INTERPOLATION FOR T AND SQRT(CONVEYANCE)
+ C     N.B. K IN FTAB IS SQRT(CONVEYANCE)
+  
+-      IT = L + XOFF
+       DY = FTAB(IT) - Y0
+       H = Y - Y0
+       HH = 0.5*H
+       DYI = 1.0/DY
+-      DB = (FTAB(L+XOFF+4) - B0)*DYI
+-      DT =  (FTAB(L+XOFF+1) - T0)*DYI
+-      DK = (FTAB(L+XOFF+3) - K0)*DYI
++      DT =  (FTAB(it+1) - T0)*DYI
+       T = T0 + H*DT
+-      B = B0 + H*DB
+       A = A0 + HH*(T + T0)
+       J = J0 + HH*(A + A0 - H*(T - T0)*0.1666667)
+-      K = K0 + H*DK
+-      DK = (K +K)*DK
+-      K = K*K
+- 
+-      IF(TYPE.EQ.24) THEN
+-C       FIND THE CURVILINEAR ELEMENTS FROM TYPE 24
+-        MA0 = FTAB(L+6)
+-        MQ0 = FTAB(L+7)
+-        DMA = (FTAB(IT+6) - MA0)*DYI
+-        DMQ = (FTAB(IT+7) - MQ0)*DYI
+-        MA = MA0 + DMA*H
+-        MQ = MQ0 + DMQ*H
+-      ELSE
+-C       FIND THE CURVILINEAR ELEMENTS FROM TYPE 25
+-        MA0 = FTAB(L+8)
+-        MQ0 = FTAB(L+9)
+-        DMA = (FTAB(IT+8) - MA0)*DYI
+-        DMQ = (FTAB(IT+9) - MQ0)*DYI
+-        MA = MA0 + DMA*H
+-        MQ = MQ0 + DMQ*H
+-      ENDIF
++
++      if(doff.eq.0) then
++        DB = (b1 - B0)*DYI
++        B = B0 + H*DB
++        DK = (k1 - K0)*DYI
++        K = K0 + H*DK
++        if(type.eq.24) then
++c         find the curvilinear elements from type 24
++          ma0 = ftab(l+6)
++          mq0 = ftab(l+7)
++          dma = (ftab(it+6) - ma0)*dyi
++          dmq = (ftab(it+7) - mq0)*dyi
++          ma = ma0 + dma*h
++          mq = mq0 + dmq*h
++        else
++c         find the curvilinear elements from type 25
++          ma0 = ftab(l+8)
++          mq0 = ftab(l+9)
++          dma = (ftab(it+8) - ma0)*dyi
++          dmq = (ftab(it+9) - mq0)*dyi
++          ma = ma0 + dma*h
++          mq = mq0 + dmq*h
++        endif
++      else
++        p = h*dyi
++c       compute factors on left and right derivative. 
++        flp = (1.0 - p)*p*dy
++        frp = -flp*p
++        flp = flp*(1.0 - p)
++c       compute factors on left and right function value
++        fl = 2.*p + 1.0
++        fr = (4.0 - fl)*p*p
++        fl = fl*(1.0 - p)**2
++c       compute the factors based on relative interval for computing derivatives. 
++        dlp = 1. - 3.*p
++        drp = -(1. + dlp)*p
++        dlp = dlp*(1.0 - p)
++        dmf = 6.*(1.0 - p)*p*dyi
++
++        goto ( 34, 35), type-33
++34        continue
++c           Find the remaining elements from type 34     
++            ma0 = ftab(l+6)                                
++            mq0 = ftab(l+7)                                
++            ma1 = ftab(it+6)                                
++            mq1 = ftab(it+7)                                
++            goto 36                             
++35        continue
++c           Find the remaining elements from type 35     
++            ma0 = ftab(l+8)                                
++            mq0 = ftab(l+9)                                
++            ma1 = ftab(it+8)                                
++            mq1 = ftab(it+9)                                
++
++36      continue
++
++        l = l + doff
++        it = it + doff
++
++        dk0 = ftab(l)
++        dk1 = ftab(it)
++    
++        db0 = ftab(l+1)
++        db1 = ftab(it+1)
++    
++        dma0 = ftab(l+2)
++        dma1 = ftab(it+2)
++    
++        dmq0 = ftab(l+3)
++        dmq1 = ftab(it+3)
++
++
++        k =  flp*dk0 + frp*dk1 + fl*k0 + fr*k1
++        dk = dlp*dk0 + drp*dk1 + dmf*(k1 - k0)
++
++        b =  flp*db0 + frp*db1 + fl*b0 + fr*b1
++        db = dlp*db0 + drp*db1 + dmf*(b1 - b0)
++
++        ma =  flp*dma0 + frp*dma1 + fl*ma0 + fr*ma1
++        dma = dlp*dma0 + drp*dma1 + dmf*(ma1 - ma0)
++
++        mq =  flp*dmq0 + frp*dmq1 + fl*mq0 + fr*mq1
++        dmq = dlp*dmq0 + drp*dmq1 + dmf*(mq1 - mq0)
++      endif
++
++      dk = (k + k)*dk
++      k = k*k
++      return
++ 
+  
+       RETURN
+       END
+@@ -4658,9 +6259,13 @@
+       SAVE VTYPE
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER HA, L, LA, TYPE, XOFF
+-      REAL A0, ALP0, B0, DY, H, HH, J0, K0, MA0, MQ0, P, QC0, QC1, T0,
+-     A     Y, Y0, Y1
++      INTEGER HA, L, LA, TYPE, XOFF, doff, it
++      REAL A0, B0, DY, H, HH, J0, K0, QC0, QC1, T0, dyi,
++     A     Y, Y0, Y1, b1, k1,
++     a    db0, db1, dk0, dk1, ma0, ma1, dma0, dma1, 
++     b    mq0, mq1, dmq0, dmq1, alp0, alp1, dalp0, dalp1
++      real  flp, frp, fl, fr, dlp, drp, dmf, p
++
+       CHARACTER CS*16 
+ C     + + + INTRINSICS + + +
+       INTRINSIC EXP, LOG
+@@ -4670,7 +6275,7 @@
+       EXTERNAL  GET_STRING_FROM_FT, XSTYPE
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/24*0,1,10*0/
++      DATA VTYPE/24*0,1,4*0,5*0,1/
+  
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT(' ','*WRN:33* X-SECTION BELOW RANGE IN XLKT25',
+@@ -4692,6 +6297,7 @@
+       HA = ITAB(ADRS)
+       LA = ADRS + XTIOFF
+       L = ITAB(ADRS+3)
++      doff = itab(adrs+21)
+  
+       TYPE = ITAB(ADRS+2)
+       XOFF = OFFVEC(TYPE)
+@@ -4752,40 +6358,101 @@
+       QC0 = FTAB(L+7)
+       MA0 = FTAB(L+8)
+       MQ0 = FTAB(L+9)
+- 
++
++      it = l + xoff
++      k1 = FTAB(it+3)
++      b1 = FTAB(it+4)
++      alp1 = FTAB(it+6)
++      ma1 = FTAB(it+8)
++      mq1 = FTAB(it+9)
+ C     DIRECT LINEAR INTERPOLATION FOR T AND SQRT(CONVEYANCE)
+ C     N.B. K IN FTAB IS SQRT(CONVEYANCE)
+  
+-      Y1 = FTAB(L+XOFF)
++      Y1 = FTAB(it)
+       DY = Y1 - Y0
++      dyi = 1.0/dy
+       H = Y - Y0
+       HH = 0.5*H
+-      DB = (FTAB(L+XOFF+4) - B0)/DY
+-      DT =  (FTAB(L+XOFF+1) - T0)/DY
+-      DK = (FTAB(L+XOFF+3) - K0)/DY
+-      DALP = (FTAB(L+XOFF+6) - ALP0)/DY
+-      QC1 = FTAB(L+XOFF+7)
+-      DMA = (FTAB(L+XOFF+8) - MA0)/DY
+-      DMQ = (FTAB(L+XOFF+9) - MQ0)/DY
++      DT =  (FTAB(it+1) - T0)*dyi
++      QC1 = FTAB(it+7)
+       T = T0 + H*DT
+-      B = B0 + H*DB
+-      ALP = ALP0 + H*DALP
+-      MA = MA0 + H*DMA
+-      MQ = MQ0 + H*DMQ
+       A = A0 + HH*(T + T0)
+       J = J0 + HH*(A + A0 -H*(T - T0)/6.)
+-      K = K0 + H*DK
+-      DK = 2.*K*DK
++
++C     COMPUTE VALUE OF QC USING LOGARITHMS
++ 
++      IF(Y0.EQ.0.0) THEN
++        LA = L + XOFF
++        Y0 = FTAB(LA)
++        Y1 = FTAB(LA+XOFF)
++        QC0 = FTAB(LA+7)
++        QC1 = FTAB(LA+XOFF+7)
++      ENDIF
++
++      if(doff.eq.0) then
++        DB = (b1 - B0)*dyi
++        B = B0 + H*DB
++        DALP = (alp1 - ALP0)*dyi
++        ALP = ALP0 + H*DALP
++        DMA = (ma1 - MA0)*dyi
++        MA = MA0 + H*DMA
++        DMQ = (mq1 - MQ0)*dyi
++        MQ = MQ0 + H*DMQ
++        DK = (k1 - K0)*dyi
++        K = K0 + H*DK
++      else
++        p = h*dyi
++c       compute factors on left and right derivative. 
++        flp = (1.0 - p)*p*dy
++        frp = -flp*p
++        flp = flp*(1.0 - p)
++c       compute factors on left and right function value
++        fl = 2.*p + 1.0
++        fr = (4.0 - fl)*p*p
++        fl = fl*(1.0 - p)**2
++c       compute the factors based on relative interval for computing derivatives. 
++        dlp = 1. - 3.*p
++        drp = -(1. + dlp)*p
++        dlp = dlp*(1.0 - p)
++        dmf = 6.*(1.0 - p)*p*dyi
++
++
++        l = l + doff
++        it = it + doff
++
++        dk0 = ftab(l)
++        dk1 = ftab(it)
++
++        db0 = ftab(l+1)
++        db1 = ftab(it+1)
++
++        dma0 = ftab(l+2)
++        dma1 = ftab(it+2)
++
++        dmq0 = ftab(l+3)
++        dmq1 = ftab(it+3)
++
++        dalp0 = ftab(l+4)
++        dalp1 = ftab(it+4)
++
++        k =  flp*dk0 + frp*dk1 + fl*k0 + fr*k1
++        dk = dlp*dk0 + drp*dk1 + dmf*(k1 - k0)
++
++        b =  flp*db0 + frp*db1 + fl*b0 + fr*b1
++        db = dlp*db0 + drp*db1 + dmf*(b1 - b0)
++
++        ma =  flp*dma0 + frp*dma1 + fl*ma0 + fr*ma1
++        dma = dlp*dma0 + drp*dma1 + dmf*(ma1 - ma0)
++
++        mq =  flp*dmq0 + frp*dmq1 + fl*mq0 + fr*mq1
++        dmq = dlp*dmq0 + drp*dmq1 + dmf*(mq1 - mq0)
++
++        alp =  flp*dalp0 + frp*dalp1 + fl*alp0 + fr*alp1
++        dalp = dlp*dalp0 + drp*dalp1 + dmf*(alp1 - alp0)
++      endif
++
++      DK = (K + K)*DK
+       K = K*K
+-C     COMPUTE VALUE OF QC USING LOGARITHMS
+- 
+-      IF(Y0.EQ.0.0) THEN
+-        L = L + XOFF
+-        Y0 = FTAB(L)
+-        Y1 = FTAB(L+XOFF)
+-        QC0 = FTAB(L+7)
+-        QC1 = FTAB(L+XOFF+7)
+-      ENDIF
+  
+       IF(Y.GT.0.0) THEN
+         P = LOG(Y/Y0)*LOG(QC1/QC0)/LOG(Y1/Y0)
+@@ -4843,7 +6510,7 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER HA, L, LA, TYPE, XOFF
+-      REAL A0, ALP0, B0, DY, H, HH, J0, K0, T0, Y, Y0
++      REAL A0, ALP0, B0, DY, H, HH, J0, K0, T0, Y, Y0, QC
+       CHARACTER CS*16
+  
+ C     + + + EXTERNAL NAMES + + +
+@@ -4851,7 +6518,7 @@
+       EXTERNAL  GET_STRING_FROM_FT, XSTYPE
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/21*0,1,0,0,1,10*0/
++      DATA VTYPE/21*0,1,0,0,1,4*0,0,0,1,0,0,1/
+  
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT(' ','*WRN:31* X-SECTION BELOW RANGE IN XLKTAL',
+@@ -4865,6 +6532,13 @@
+      C      /,1X,' TIME           = ',F14.0,
+      D      /,1X,' DEPTH          = ',F10.2)
+ C***********************************************************************
++      CALL   XLKT22
++     I             (ADRS,
++     M              YA,
++     O              A, T, DT, J, K, DK, B, DB, ALP, DALP, QC)
++
++      RETURN
++
+ C     HA = HIGH ADDRESS
+ C     LA = LOW ADDRESS
+ C     L = ADDRESS FOUND ON THE LAST CALL TO XLKTAL
+@@ -4996,7 +6670,7 @@
+       EXTERNAL GET_STRING_FROM_FT, XSTYPE
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/11*0,1,9*0,1,0,0,1,10*0/
++      DATA VTYPE/11*0,1,9*0,1,0,0,1,4*0,0,0,1,0,0,1/
+  
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT('0','*WRN:35* X-SECTION BELOW RANGE IN LKTQC',
+@@ -5124,76 +6798,102 @@
+       INCLUDE 'offcom.cmn'
+  
+ C     + + + SAVED VALUES + + +
+-      INTEGER FORM(25), HDLEN(25)
+-      CHARACTER INFORM(6)*51, PRFORM(6)*63
++      INTEGER FORM(35), HDLEN(35)
++      CHARACTER INFORM(12)*80, PRFORM(12)*80
+       SAVE FORM, HDLEN, INFORM, PRFORM
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER FORMID, FTPOLD, HEADL, J, OUT, XOFF
+-      REAL CUTOFF, DROP, ELEM(10), ELEV, EXT, FAC, KHOLD, STAT,
++      INTEGER FORMID, FTPOLD, HEADL, it, J, OUT, XOFF
++      REAL CUTOFF, DROP, ELEM(15), ELEV, EXT, FAC, KHOLD, STAT,
+      A     SLOT_DEPTH
+-      REAL*8 EASTING, NORTHING     
+-      CHARACTER HEAD*112, LINE*112, GISID*16, TABID*16
++      REAL*8 EASTING, NORTHING, dnull     
++      CHARACTER HEAD*196, LINE*196, GISID*16, TABID*16,
++     a zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, SQRT
+  
+ C     + + + EXTERNAL NAMES + + +
+       CHARACTER*16 GET_TABID
+-      EXTERNAL EXTRAP, INL112, INL80, KIL, PUT_DP_IN_FT,
+-     A         PUT_STRING_IN_FT, GET_TABID
++      EXTERNAL EXTRAP, inline,  KIL, PUT_DP_IN_FT,
++     A         PUT_STRING_IN_FT, GET_TABID, put_chr8_in_ft,
++     b         chk_vdatum_unitsys
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA  FORM/2,10*0,3,7*0,1,2,3,4,5,6/,
+-     A     HDLEN/80,10*0,92,7*0,80,80,92,80,92,112/
++      data dnull/-33d6/
++      DATA  FORM/2,10*0,3,7*0,1,2,3,4,5,6,4*0,7,8,9,10,11,12/,
++     A     HDLEN/80,10*0,92,7*0,80,80,92,80,92,112,4*0,
++     b           76,89,122,116,129,162/
+       DATA INFORM/
+      1'(F10.0,F10.0,2E13.0,F10.0)',
+      2'(F10.0,F10.0,2E13.0,F10.0,E13.0)',
+      3'(F10.0,F10.0,2E13.0,F10.0,E13.0,F10.0,E13.0)',
+      4'(F10.0,F10.0,2E13.0,3F10.0)',
+      5'(F10.0,F10.0,2E13.0,F10.0,E13.0,2F10.0)',
+-     6'(F10.0,F10.0,2E13.0,F10.0,E13.0,F10.0,E13.0,2F10.0)'/
++     6'(F10.0,F10.0,2E13.0,F10.0,E13.0,F10.0,E13.0,2F10.0)',
++     7'(F10.0,F10.0,2E13.0,F10.0,2f10.0)',
++     8'(F10.0,F10.0,2E13.0,F10.0,E13.0,2f10.0)',
++     9'(F10.0,F10.0,2E13.0,F10.0,E13.0,F10.0,E13.0,3f10.0)',
++     A'(F10.0,F10.0,2E13.0,3F10.0,4f10.0)',
++     B'(F10.0,F10.0,2E13.0,F10.0,E13.0,2F10.0,4f10.0)',
++     C'(F10.0,F10.0,2E13.0,F10.0,E13.0,F10.0,E13.0,2F10.0,5f10.0)'/
++
++
+       DATA PRFORM/
+      1'(F10.5,F10.3,1P2E13.5,0PF10.4)',
+      2'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5)',
+      3'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5)',
+      4'(F10.5,F10.3,1P2E13.5,0P3F10.4)',
+      5'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0P2F10.4)',
+-     6'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5,0P2F10.4)'/
++     6'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5,0P2F10.4)',
++     7'(F10.5,F10.3,1P2E13.5,0PF10.4,2(1pe10.4e1))',
++     8'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,2(1pe10.4e1))',
++     9'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5,3(1pe10.4e1
++     *))',
++     a'(F10.5,F10.3,1P2E13.5,0P3F10.4,4(1pe10.4e1))',
++     b'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0P2F10.4,4(1pe10.4e1))',
++     c'(F10.5,F10.3,1P2E13.5,0PF10.4,1PE13.5,0PF10.4,1PE13.5,0P2F10.4,5(
++     *1pe10.4e1))'/
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(A)
++ 2    format(5X,A8,7X,A8,8X,A8,9X,A8, 7X,A8)
++ 39   FORMAT(8X,E12.0)
+  40   FORMAT(8X,E12.0,7X,A16,9X,F15.0,10X,F15.0)
+- 39   FORMAT(8X,E12.0)
+  42   FORMAT(10X,E12.0,7X,F10.0,5X,F10.0,5X,F5.0,6X,F10.0)
+  
+ C     + + + OUTPUT FORMATS + + +
+- 41   FORMAT(' ','STATION=',F10.3,' GISID=',A16,' EASTING=',F15.3,
+-     A         ' NORTHING=',F15.3)
+- 43   FORMAT(' ','ELEVATION=',F10.2,' CUTOFF=',F10.2,' EXT=',F10.2,
+-     1  ' FAC=',F5.3,' SLOT=',F10.3)
+- 46   FORMAT(/,' *WRN:09* CONVEYANCE NONINCREASING AT DEPTH=',F8.3)
+- 48   FORMAT(/,' *WRN:11* DROP OF',F4.0, ' PER CENT IN CONVEYANCE',
+-     A       ' AT DEPTH=',F8.3)
++ 41   format(' ','Station=',f10.3,' Gisid=',a16,' Easting=',f15.3,
++     a         ' Northing=',f15.3)
++ 43   format(' ','Elevation=',f10.2,' Cutoff=',f10.2,' Ext=',f10.2,
++     1  ' Fac=',f5.3,' Slot=',f10.3)
++ 46   format(/,' *WRN:09* Conveyance nonincreasing at depth=',f8.3)
++ 48   format(/,' *WRN:11* Drop of',f4.0, ' per cent in conveyance',
++     a       ' at depth=',f8.3)
+  76   FORMAT(/,' *BUG:XXX* Type=',I3,' has zero offset in XSECIN.')
+ C***********************************************************************
+-C     The values in each of the 8 tables are in the following
++C     The values in each of the 14 tables are in the following
+ C     order in the tables.  This is also the order in which the
+ C     values are stored in FTAB.
+  
+ C              Cross Section Function Table Type
+-C     Order   1   12   20   21   22   23   24   25
+-C       1     Y    Y    Y    Y    Y    Y    Y    Y
+-C       2     T    T    T    T    T    T    T    T
+-C       3     A    A    A    A    A    A    A    A
+-C       4    KH   KH   KH   KH   KH   KH   KH   KH
+-C       5     B    B    B    B    B    B    B    B
+-C       6     J    J    -    J    J   MA    J    J
+-C       7     -  ALP    -    -  ALP   MQ   MA  ALP
+-C       8     -   QC    -    -   QC    -   MQ   QC
+-C       9     -    -    -    -    -    -    -   MA
+-C      10     -    -    -    -    -    -    -   MQ
+-C      In this table Y= maximum depth in the section; T= top
++C     Order   1   12   20   21   22   23   24   25      30      31      32      33      34      35
++C       1     Y    Y    Y    Y    Y    Y    Y    Y       Y       Y       Y       Y       Y       Y  
++C       2     T    T    T    T    T    T    T    T       T       T       T       T       T       T  
++C       3     A    A    A    A    A    A    A    A       A       A       A       A       A       A  
++C       4    KH   KH   KH   KH   KH   KH   KH   KH      KH      KH      KH      KH      KH      KH  
++C       5     B    B    B    B    B    B    B    B       B       B       B       B       B       B  
++C       6     J    J    -    J    J   MA    J    J  dkh/dy       J       J      MA       J       J  
++C       7     -  ALP    -    -  ALP   MQ   MA  ALP   db/dy  dkh/dy     ALP      MQ      MA     ALP  
++C       8     -   QC    -    -   QC    -   MQ   QC       -   db/dy      QC  dkh/dy      MQ      QC  
++C       9     -    -    -    -    -    -    -   MA       -       -  dkh/dy   db/dy  dkh/dy      MA  
++C      10     -    -    -    -    -    -    -   MQ       -       -   db/dy  dma/dy   db/dy      MQ  
++C      11     -    -    -    -    -    -    -    -       -       - dalp/dy   dmq/dy  dma/dy  dkh/dy
++C      12     -    -    -    -    -    -    -    -       -       -       -       -  dmq/dy    db/dy
++C      13     -    -    -    -    -    -    -    -       -       -       -       -       -   dma/dy
++C      14     -    -    -    -    -    -    -    -       -       -       -       -       -   dmq/dy
++C      15     -    -    -    -    -    -    -    -       -       -       -       -       -  dalp/dy
++C      In this table Y= maximum depth in the section; T= top                                
+ C      width of the wetted area; A= the wetted area;, KH=
+ C      square root of conveaycne; B= momentum flux coefficient;
+ C      J= first moment of area about the water surface;
+@@ -5205,6 +6905,13 @@
+ C      12 are the same as types 21 and 22.  Types 1 and 12 are
+ C      being phased out.  They are given the new type numbers when
+ C      they are encountered during input.
++
++c     Set defaults for the grid, datum, and units
++      zone = 'NONE'
++      hgrid = 'NONE'
++      vdatum = 'NONE'
++      unitsys= 'NONE'
++      basis = 'NONE'
+  
+       OUT = OUTPUT
+       IF(TYPE.LT.0) THEN
+@@ -5219,7 +6926,7 @@
+         STOP 'Abnormal stop: errors found.'
+       ENDIF
+  
+-      CALL INL112
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       IF(LINE(26:31).EQ.'Interp') THEN
+@@ -5227,12 +6934,44 @@
+         GISID = ' '
+         EASTING = 0.D0
+         NORTHING = 0.D0
+-      ELSE
++      ELSEif(line(1:4) == 'ZONE') then
++c       We have a line of information about horizontal grid, vertical datum, and units
++        read(line,2,ERR=991) zone, hgrid, vdatum, unitsys, basis
++        CALL inline
++     I            (IN, STDOUT,
++     O             LINE)
++        READ(LINE,40,ERR=991) STAT, GISID, EASTING, NORTHING
++      else  
+         READ(LINE,40,ERR=991) STAT, GISID, EASTING, NORTHING
+       ENDIF
++
++c     If zone = NA, then the cross-section table has no meaning 
++c     for location.  This could be the case for a prismatic channel
++c     in which a single cross section table is reused at many nodes
++c     on a branch.  Or it might be a case in which the user does not
++c     want to supply the information.
++
++      if(zone == 'NA') then
++        easting = dnull
++        northing = dnull
++        ft_loc_status(ntab) = 'N'
++      else
++c       Check if the easting value was blank.  If so, set both
++c       to the standard null value.
++        
++        ft_loc_status(ntab) = 'I'
++        if(line(53:67) == ' ') then
++c         No value given for easting.  Both values assumed missing.
++          easting = dnull
++          northing = dnull
++          ft_loc_status(ntab) = 'M'
++        endif
++      endif
++
++ 
+       IF(OUT.GT.0) WRITE(STDOUT,41) STAT, GISID, EASTING, NORTHING
+  
+-      CALL INL80
++      CALL inline
+      I          (IN, STDOUT,
+      O           LINE)
+       READ(LINE,42,ERR=991) ELEV, CUTOFF, EXT, FAC, SLOT_DEPTH
+@@ -5265,26 +7004,45 @@
+       TABID = GET_TABID(NTAB)
+       CALL PUT_STRING_IN_FT(FTP+16, TABID)
+ 
++
+ C     Set the source flag to input source
+       ITAB(FTP+20) = 0
++
++C     Set the offset value to the start of the extra derivatives for the 
++c     upgraded tables. 
++      if(type.le.25) then
++        itab(ftp+21) = 0
++      else
++        itab(ftp+21) = offvec(type-10)
++      endif
++
++c     Store the zone, grid, datum, unitsys, and basis information
++      call put_chr8_in_ft(ftp+22, zone)
++      call put_chr8_in_ft(ftp+24, hgrid)
++      call put_chr8_in_ft(ftp+26, vdatum)
++      call put_chr8_in_ft(ftp+28, unitsys)
++      call put_chr8_in_ft(ftp+30, basis)
++
+ 
+       FTPOLD = FTP
+ C     POINT TO FIRST DEPTH ENTRY IN THE TABLE
+       FTP = FTP + XTIOFF
+  
+- 
+-      CALL INL112
++      CALL inline
+      I           (IN, STDOUT,
+      O            LINE)
+       READ(LINE,1) HEAD(1:HEADL)
+       IF(OUT.GT.0)  WRITE(STDOUT,'(A)') HEAD(1:HEADL)
+  
++      call chk_vdatum_unitsys(stdout, vdatum, unitsys, 
++     a          ' during input of a cross-section table')
++
+ C       SET OLD VALUES
+  
+         KHOLD = -1.
+  
+  1000 CONTINUE
+-        CALL INL112
++        CALL inline
+      I             (IN, STDOUT,
+      O              LINE)
+         READ(LINE,INFORM(FORMID),ERR=991) (ELEM(J),J=1,XOFF)
+@@ -5295,9 +7053,19 @@
+ C       SUPPORT THE CUTOFF OPTION.  NOT USED RECENTLY.
+         IF(ELEM(1).LT.CUTOFF) GOTO 1000
+  
+-C       APPLY THE FACTOR ADJUSTMENT TO THE SQRT OF CONVEYANCE
++C       APPLY THE FACTOR ADJUSTMENT TO THE SQRT OF CONVEYANCE and to 
++c       dkh/dy if   30 =type<= 35
+  
+         ELEM(4) = ELEM(4)/FAC
++        if(type.ge.30.and.type.le.35) then
++c         dkh/dy is always stored first after the last item for
++c         the corresponding type: 20-25.  Thus we can compute the offset 
++c         of dkh/dy in the elem vector.
++          it = offvec(type - 10) + 1
++          elem(it) = elem(it)/fac
++        endif
++            
++
+         IF(OUT.GT.0) THEN
+           WRITE(STDOUT,PRFORM(FORMID)) (ELEM(J), J=1,XOFF)
+         ENDIF
+@@ -5346,7 +7114,8 @@
+  
+  991  CONTINUE
+         WRITE(STDOUT,*) ' *ERR:500* Conversion error in line:'
+-        WRITE(STDOUT,'(A)') LINE(1:HEADL)
++        it = len_trim(line)
++        WRITE(STDOUT,'(A)') LINE(1:it)
+         STOP 'Abnormal stop: errors found.'
+       END
+ C

@@ -1,0 +1,8 @@
+C     Standard unit number to avoid having to pass 
+C     them in argument lists. 
+
+      INTEGER STD5, STD6
+
+      COMMON/STDUN_COM/STD6
+
+      SAVE /STDUN_COM/

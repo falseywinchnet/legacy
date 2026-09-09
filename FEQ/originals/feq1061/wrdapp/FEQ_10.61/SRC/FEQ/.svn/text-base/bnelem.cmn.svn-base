@@ -1,0 +1,22 @@
+C**********************************************************************
+
+      COMMON/BNELEM/ STFLAG, FTID, A1, A2, B1, B2,
+     1     DXVEC, DZVEC, K1, K2,
+     2     KA, KD, MY, MQ, 
+     3     Q1, Q2, Q3, T1, T2,
+     4     XVEC, Y1, Y2, Y3, ZVEC, MOMVEC, IMPVEC, VOLVEC, FLWVEC,
+     5     WXVEC1, WXVEC2, WXVEC, MA1, MQ1, MA2, MQ2, SUMVEC,
+     6     SDVEC
+
+      INTEGER STFLAG, FTID
+
+      REAL A1(MNBN), A2(MNBN), B1(MNBN), B2(MNBN),
+     1     DXVEC(MNBN), DZVEC(MNBN), K1(MNBN), K2(MNBN),
+     2     KA(MNBN), KD(MNBN), MY(MNBN), MQ(MNBN), 
+     3     Q1(MNBN), Q2(MNBN), Q3(MNBN), T1(MNBN), T2(MNBN),
+     4     XVEC(MNBN), Y1(MNBN), Y2(MNBN), Y3(MNBN), ZVEC(MNBN),
+     5     MOMVEC(MNBN), IMPVEC(MNBN), VOLVEC(MNBN), FLWVEC(MNBN),
+     6     WXVEC1(MNBN), WXVEC2(MNBN), WXVEC(MNBN),
+     7     MA1(MNBN), MQ1(MNBN), MA2(MNBN), MQ2(MNBN), SUMVEC(MNBN),
+     8     SDVEC(MNBN)
+C**********************************************************************

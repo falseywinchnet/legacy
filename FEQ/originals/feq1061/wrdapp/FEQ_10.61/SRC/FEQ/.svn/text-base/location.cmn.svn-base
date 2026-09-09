@@ -1,0 +1,9 @@
+c     Values used in stating the target or desired values 
+c     for location, unit system, and basis for function 
+c     tables used in a model.  
+
+      character*8 zone, hgrid, vdatum, unitsys, basis
+
+      common /locationc/ zone, hgrid, vdatum, unitsys, basis
+
+

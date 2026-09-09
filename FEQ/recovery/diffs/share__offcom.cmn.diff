@@ -1,0 +1,11 @@
+--- 9.98/share/offcom.cmn
++++ 10.61/share/offcom.cmn
+@@ -2,7 +2,7 @@
+ 
+       COMMON/OFFCOM/ OFFVEC
+ 
+-      INTEGER OFFVEC(25)
++      INTEGER OFFVEC(35)
+ 
+       SAVE /OFFCOM/
+ C     INITIALIZED IN A BLOCK DATA UNIT AS REQUIRED BY FORTRAN

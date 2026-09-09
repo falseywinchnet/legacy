@@ -1,0 +1,405 @@
+--- 9.98/fequtl/hec2x.for
++++ 10.61/fequtl/hec2x.for
+@@ -120,7 +120,8 @@
+      I                   (STDIN, STDOUT,
+      O                    SAVOPT, OUTOPT, BETOPT, MONFLG, EFLAG, MODE,
+      O                    BEGTAB, TABINC, BEGSTA, STADIR, SFAC,
+-     O                    CONFLG)
++     O                    CONFLG, zone, hgrid, vdatum, unitsys, basis,
++     O                    easting, northing)
+  
+ C     + + + PURPOSE + + +
+ C     Input controlling information for HEC2X processing
+@@ -130,8 +131,9 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER BEGTAB, EFLAG, STDIN, STDOUT, TABINC
+       REAL BEGSTA, SFAC, STADIR
++      real*8 easting, northing
+       CHARACTER BETOPT*8, MODE*8, MONFLG*8, OUTOPT*8, SAVOPT*8,
+-     A          CONFLG*8
++     A          CONFLG*8, zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDIN  - Fortran unit number for user input file
+@@ -163,7 +165,7 @@
+       CHARACTER GETTOK*8
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL GETTOK, INL80, SETOPT
++      EXTERNAL GETTOK, inline, SETOPT, os_file_style
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(A4,1X,A8,1X,A8)
+@@ -192,7 +194,18 @@
+  94   FORMAT(' *WRN:515 NO OUTPUT FILE NAME FOR MODE=CHANNEL.',
+      A     '  USING NAME:CHANNEL')
+ C***********************************************************************
+-      CALL INL80
++
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++ 
++
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,1,ERR=991) CHAR4, MODE, CONFLG
+@@ -211,10 +224,15 @@
+       ENDIF
+  
+ C     INPUT THE INPUT FILE NAME FOR THE HEC2 DATA
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2,ERR=991) INFILE
++      CALL MAYBE_ADD_HOME(
++     M                    infile)
++
++      call os_file_style(
++     m                            infile)
+       WRITE(STDOUT,52) INFILE
+  
+ C     CHECK IF THE FILE EXISTS
+@@ -229,10 +247,15 @@
+  
+ C     INPUT THE OUTPUT FILE NAME. USED ONLY IF MODE IS INDIRECT BUT INPUT
+ C     IN ANY CASE.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,3,ERR=991)  OUTFIL
++      CALL MAYBE_ADD_HOME(
++     M                    outfil)
++      call os_file_style(
++     m                            outfil)
++
+       WRITE(STDOUT,53) OUTFIL
+  
+       IF(MODE.EQ.'INDIRECT'.OR.MODE.EQ.'indirect') THEN
+@@ -252,7 +275,7 @@
+       ENDIF
+ C     GET THE FEQUTL OPTIONS FOR PROCESSING THE CROSS SECTIONS
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,4,ERR=991) CIN
+@@ -270,7 +293,7 @@
+  
+ C     INPUT THE BEGINING TABLE NUMBER AND THE TABLE INCREMENT
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,5,ERR=991) BEGTAB, TABINC
+@@ -278,7 +301,7 @@
+  
+ C     INPUT THE BEGINNING STATION AND THE STATIONING DIRECTION
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,6,ERR=991) BEGSTA, STADIR
+@@ -288,7 +311,7 @@
+ C     INPUT THE STATIONING FACTOR TO CONVERT FEET TO THE DESIRED UNITS
+ C     BY DIVISION
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,7,ERR=991) CHAR4, SFAC
+@@ -308,7 +331,9 @@
+       SUBROUTINE   INSFPX
+      I                   (STDIN, STDOUT, SFPNAM, SFPN,
+      O                    SAVOPT, OUTOPT, BETOPT, MONFLG, EFLAG, MODE,
+-     O                    BEGTAB, TABINC, BEGSTA, STADIR, SFAC)
++     O                    BEGTAB, TABINC, BEGSTA, STADIR, SFAC,
++     O                    zone, hgrid, vdatum, unitsys, basis,
++     O                    easting, northing)
+  
+ C     + + + PURPOSE + + +
+ C     Input controlling information for processing cross section
+@@ -319,8 +344,10 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER BEGTAB, EFLAG, SFPN, STDIN, STDOUT, TABINC
+       REAL BEGSTA, SFAC, STADIR
++      real*8 easting, northing
+       CHARACTER BETOPT*8, MODE*8, MONFLG*8, OUTOPT*8, SAVOPT*8,
+-     A          SFPNAM*8
++     A          SFPNAM*8, zone*8, hgrid*8, vdatum*8, unitsys*8,
++     b          basis*8
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDIN  - Fortran unit number for user input file
+@@ -351,7 +378,7 @@
+       CHARACTER GETTOK*8
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL GETTOK, INL80, SETOPT
++      EXTERNAL GETTOK, inline, SETOPT, os_file_style
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(A4,1X,A8)
+@@ -379,10 +406,19 @@
+      A     '  using name:INDIRECT')
+  94   FORMAT(' *WRN:515 No output file name for MODE=CHANNEL.',
+      A     '  using name:CHANNEL')
+- 96   FORMAT(/,' File named:',A,' not found.  check spelling of'
++ 96   FORMAT(/,' File named:',A,' not found.  check spelling of',
+      A       ' file name.')
+ C***********************************************************************
+-      CALL INL80
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++ 
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,1,ERR=991) CHAR4, MODE
+@@ -401,10 +437,14 @@
+       ENDIF
+  
+ C     INPUT THE INPUT FILE NAME FOR THE SFP INPUT DATA STREAM
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2,ERR=991)  INFILE
++      CALL MAYBE_ADD_HOME(
++     M                     infile)
++      call os_file_style(
++     m                            infile)
+       WRITE(STDOUT,52) SFPNAM(1:SFPN), INFILE
+  
+ C     CHECK IF THE FILE EXISTS
+@@ -418,10 +458,14 @@
+  
+ C     INPUT THE OUTPUT FILE NAME. USED ONLY IF MODE IS INDIRECT BUT INPUT
+ C     IN ANY CASE.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,3,ERR=991)  OUTFIL
++      CALL MAYBE_ADD_HOME(
++     M                    outfil)
++      call os_file_style(
++     m                            outfil)
+       WRITE(STDOUT,53) OUTFIL
+  
+       IF(MODE.EQ.'INDIRECT'.OR.MODE.EQ.'indirect') THEN
+@@ -445,7 +489,7 @@
+       ENDIF
+ C     GET THE FEQUTL OPTIONS FOR PROCESSING THE CROSS SECTIONS
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,4,ERR=991) CIN
+@@ -463,7 +507,7 @@
+  
+ C     INPUT THE BEGINING TABLE NUMBER AND THE TABLE INCREMENT
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,5,ERR=991)  BEGTAB, TABINC
+@@ -471,7 +515,7 @@
+  
+ C     INPUT THE BEGINNING STATION AND THE STATIONING DIRECTION
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,6,ERR=991)  BEGSTA, STADIR
+@@ -481,7 +525,7 @@
+ C     INPUT THE STATIONING FACTOR TO CONVERT FEET TO THE DESIRED UNITS
+ C     BY DIVISION
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,7,ERR=991) CHAR4, SFAC
+@@ -650,7 +694,7 @@
+       INTRINSIC MIN
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL FIXNH, INL80, SORT2R
++      EXTERNAL FIXNH, inline, SORT2R
+  
+ C     + + + OUTPUT FORMATS + + +
+  50   FORMAT(' *WRN:586* Left overbank n$=$0.0 on first NC card.',
+@@ -674,7 +718,7 @@
+  
+  90   CONTINUE
+         IF(LNFLAG.EQ.0) THEN
+-          CALL INL80
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+         ELSE
+@@ -759,7 +803,7 @@
+  
+ C         LOOK AHEAD FOR AN X4 CARD.  MUST FOLLOW X1 CARD IMMEDIATELY.
+  
+-          CALL INL80
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+           IF(LINE(1:2).EQ.'X4') THEN
+@@ -782,7 +826,7 @@
+  
+  230        CONTINUE
+               IF(NELT.GT.4+J) THEN
+-                CALL INL80
++                CALL inline
+      I                    (IN, STDOUT,
+      O                     LINE)
+                 IF(LINE(1:2).NE.'X4') THEN
+@@ -836,7 +880,7 @@
+             READ(LINE,'(2X,F6.0,9F8.0)',ERR=991) (EL(J),STA(J),J=JS,JE)
+             IF(JE.LT.NUMST) THEN
+ C             GET THE NEXT CARD
+-              CALL INL80
++              CALL inline
+      I                  (IN, STDOUT,
+      O                   LINE)
+               IF(LINE(1:2).NE.'GR') THEN
+@@ -885,7 +929,7 @@
+  
+  200      CONTINUE
+             IF(NUMNH.GT.4+J) THEN
+-              CALL INL80
++              CALL inline
+      I                  (IN, STDOUT,
+      O                   LINE)
+               IF(LINE(1:2).NE.'NH') THEN
+@@ -1077,11 +1121,15 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER BEGTAB, GRFLAG, I, IN, J, JJ, LIM, LNFLAG, MESG, NCFLAG, 
+-     A        NHFLAG, TABINC, X4FLAG, ITEMP
++     A        NHFLAG, TABINC, X4FLAG, ITEMP, locflag
+       REAL BEGSTA, LEFT, RIGHT, SCALE, SFAC, SHIFT, STADIR, STATT, TP,
+      A     XOLD, ZMAX, UFAC
+       CHARACTER BETOPT*8, F10X*5, MODE*8, MONFLG*8, OUTOPT*8, SAVOPT*8,
+-     A          SECID*8, CONFLG*8, COFF*10, CELEV*10
++     A          SECID*8, CONFLG*8, COFF*10, CELEV*10,
++     a khflag(pmxpnt)*1, alphaflag(pmxpnt)*1, betaflag(pmxpnt)*1,
++     b     maflag(pmxpnt)*1, mqflag(pmxpnt)*1,
++     c     zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
++
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, MAX, MIN
+@@ -1122,11 +1170,20 @@
+  82   FORMAT(2A10,I5)
+  83   FORMAT(9X,6F10.3)
+  84   FORMAT(I10)
++ 85   format(' ZONE=',a8,' HGRID=',a8,' VDATUM=',a8,' UNITSYS=',a8,
++     a' BASIS=',a8,/,' EASTING=',f15.3,' NORTHING=',f15.3)
++ 86   format('ZONE=',a8,' HGRID=',a8,' VDATUM=',a8,' UNITSYS=',a8,
++     a' BASIS=',a8,/,'EASTING=',f15.3,' NORTHING=',f15.3)
+ C***********************************************************************
+ C     Clear the flags for values not set
+       GISID = ' '
+       NORTHING = 0.D0
+       EASTING = 0.D0
++      zone = 'NONE'
++      hgrid = 'NONE'
++      vdatum = 'NONE'
++      unitsys = 'NONE'
++      basis = 'NONE'
+ 
+ C     CLEAR THE ERROR FLAG.  USED TO DETECT PROBLEMS THAT REQUIRE
+ C     EARLY EXITS FROM PROCESSING
+@@ -1152,7 +1209,18 @@
+       CALL INHECX
+      I           (STDIN, STDOUT,
+      O            SAVOPT, OUTOPT, BETOPT, MONFLG, EFLAG, MODE, BEGTAB,
+-     O            TABINC, BEGSTA, STADIR, SFAC, CONFLG)
++     O            TABINC, BEGSTA, STADIR, SFAC, CONFLG,
++     O            zone, hgrid, vdatum, unitsys, basis,
++     O            easting, northing)
++c     Location information only supplied if vdatum or unit system is
++c     active!
++      locflag = 0
++      if(vdatum /= 'NONE' .or. vdatum /= 'NA') then
++        locflag = 1
++      endif
++      if(unitsys /= 'NONE' .or. unitsys /= 'NA') then
++        locflag =1 
++      endif
+  
+       IF(EFLAG.EQ.1) RETURN
+ 
+@@ -1247,6 +1315,8 @@
+         ELSE
+           WRITE(STDOUT,53) STATU/SFAC, LEFT, RIGHT
+         ENDIF
++        write(stdout,85)  zone, hgrid, vdatum, unitsys, basis,
++     a                    easting, northing
+         WRITE(STDOUT,52) NAVMU, SCALE, SHIFT
+  
+         IF(NSUBU.GT.PMXSUB) THEN
+@@ -1291,7 +1361,6 @@
+           XOLD = XU(J)
+  
+  110    CONTINUE
+- 
+  
+         IF(NPNTU.LE.1) THEN
+           WRITE(STDOUT,61)
+@@ -1394,10 +1463,19 @@
+      I                                  (STDOUT, TABID,
+      M                                   EFLAG,
+      O                                   ITEMP)
++c           compute derivatives of square root of conveyance, alpha, beta, 
++c           da, and dq
++
++            call xsecfit
++     I            (STDOUT, 0,
++     M             NDEPU, XSTU, 
++     o             khflag, alphaflag, betaflag, maflag, mqflag)
+ 
+             CALL TABOUT
+      I                 (STDOUT, STDTAB, ITEMP, STATT, ZMINU, MESG,
+-     I                  SAVOPT, OUTOPT, BETOPT,
++     I                  SAVOPT, OUTOPT, BETOPT, 
++     i                  zone, hgrid, vdatum, unitsys, basis,
++     i                    khflag, alphaflag, betaflag, maflag, mqflag,
+      M                  NDEPU, XSTU, FTP)
+  200      CONTINUE
+         ELSE
+@@ -1417,6 +1495,9 @@
+      O               F10X)
+           STAOUT(13:18) = F10X//')'
+           WRITE(STD49,STAOUT) TP
++          write(std49,86)  zone, hgrid, vdatum, unitsys, basis,
++     a                    easting, northing
++
+           WRITE(STD49,79)
+     
+           WRITE(STD49,80) NSUBU, (NU(J),J=1,MIN(6,NSUBU))

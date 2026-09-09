@@ -1,0 +1,300 @@
+--- 9.98/fequtl/embank.for
++++ 10.61/fequtl/embank.for
+@@ -6,8 +6,7 @@
+  
+ C     + + + PURPOSE + + +
+ C     Find the submergence ratio for the submergence table
+-C     stored at address ADR and store in the reference level
+-C     slot for the table.
++C     stored at address ADR
+  
+       IMPLICIT NONE
+ 
+@@ -42,7 +41,7 @@
+      A     ' table.')
+ C***********************************************************************
+       TYPE = ITAB(ADR+2)
+-      BADR = ADR + 5
++      BADR = ADR + OFF234
+       HADR = ITAB(ADR)
+       IF(TYPE.LT.2.OR.TYPE.GT.4) THEN
+ C       INVALID TYPE FOR SUBMERGENCE
+@@ -1043,7 +1042,7 @@
+       CHARACTER HEAD*80, LINE*80
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL INL80
++      EXTERNAL inline
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(A80)
+@@ -1063,7 +1062,7 @@
+ C***********************************************************************
+ C     INPUT THE WEIR DEFINITION
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,1,ERR=991) HEAD
+@@ -1074,7 +1073,7 @@
+       MINCRS = 1.E30
+  200  CONTINUE
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+         READ(LINE,2,ERR=991) OFF(I), CREST(I), WIDTH(I),
+@@ -1193,14 +1192,14 @@
+       REAL FSBRAT
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL CHKTAB, FSBRAT, INL80, STRIP_L_BLANKS,
++      EXTERNAL CHKTAB, FSBRAT, inline, STRIP_L_BLANKS,
+      A         GET_INTERNAL_TAB_NUMBER
+  
+ C     + + + OUTPUT FORMATS + + +
+  52   FORMAT('0*ERR:593* Weir Coef. Table Id must be given.')
+ C***********************************************************************
+       DO 100 I=1,6
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,'(A7,A)',ERR=991) NAME, TABID(I)
+@@ -1255,7 +1254,7 @@
+ C
+       SUBROUTINE   EMBANK
+      I                   (STDIN, STDOUT, STDTAB, MINQ,
+-     M                    EFLAG)
++     M                    EFLAG, FTP)
+  
+ C     + + + PURPOSE + + +
+ C     Compute flow over embankment shaped weirs using the USGS
+@@ -1265,7 +1264,7 @@
+ 
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER EFLAG, STDIN, STDOUT, STDTAB
++      INTEGER EFLAG, FTP, STDIN, STDOUT, STDTAB
+       REAL MINQ
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -1280,20 +1279,23 @@
+       INCLUDE 'ftable.cmn'
+       INCLUDE 'embcom.cmn'
+       INCLUDE 'embwrq.cmn'
++      INCLUDE 'tabupgrade.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER I, J, K, N, NFRAC, NFRAC2, NHU, SFLAG, TABLE, TYPE, HFLAG,
+-     A        LOCATION_HU, LOCATION_PFD, N_GT, N_GT_TWICE
++     A        LOCATION_HU, LOCATION_PFD, N_GT, N_GT_TWICE, ftpup,
++     b        verbose
+       REAL EFREE, EU, FDROP(PMXNHU), FREED, HUP, HUVEC(PMXNHU), MFREE,
+      A     PFDVEC(PMXFRC), POWER, Q(PMXNHU,PMXFRC), QFREE,
+      B     QSBVEC(PMXFRC), ZDATUM, LIPREC, MINPFD, XMID, FMID,
+      C     GLOBAL_ERROR, RERR, RMS_ERROR, QD_SPAN, DROP, VSCALE,
+-     D     HSCALE, CSHIFT, LOCAL_MINQ
+-
+-      REAL*8 SIESQR
++     D     HSCALE, CSHIFT, LOCAL_MINQ, zrhufd
++
++      REAL*8 SIESQR, easting, northing
+ 
+       CHARACTER CHAR5*5, CHAR5A*5, HEAD*80, LABEL*50, LINE*120,
+-     A          CHAR6*6, CQ*8, TABID*16, RLINE*80
++     A          CHAR6*6, CQ*8, TABID*16, RLINE*80,
++     b  zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC FLOAT
+@@ -1301,7 +1303,7 @@
+ C     + + + EXTERNAL NAMES + + +
+       INTEGER LENSTR
+       CHARACTER GET_TABID*16
+-      EXTERNAL ETABIN, FRFEMB, INL120, INPRDP, KIL, SBFEMB, TWDOUT,
++      EXTERNAL ETABIN, FRFEMB, inline, INPRDP, KIL, SBFEMB, TWDOUT,
+      A         VAR_DECIMAL, LENSTR, GET_EMBK_ITEMS, SET_EMBK_ITEMS,
+      B          GET_TABID
+  
+@@ -1339,11 +1341,9 @@
+  80   FORMAT(/,' Minimum partial free drop=',F8.3)
+  81   FORMAT(/,' Upstream Head=',F9.4,'  Free Flow=',F10.3)
+  90   FORMAT('  Processing EMBANKQ TabId= ',A)
++ 92   format('; Flow defining minimum head=',f10.3)
+  94   FORMAT(/,1X,A5,'=',I5)
+ C***********************************************************************
+-C      CALL INL120
+-C     I          (STDIN, STDOUT,
+-C     O           LINE)
+       CALL GET_EMBK_ITEMS(STDIN, STDOUT,
+      M                    EFLAG)
+       CALL SET_EMBK_ITEMS(
+@@ -1360,28 +1360,19 @@
+         WRITE(STDOUT,71)
+         TYPE = 13
+       ENDIF
+-C      IF(CHAR5.EQ.'     ') THEN
+-C        HLCRIT = 0.15
+-C      ELSE
+-C        READ(CHAR5,'(F5.0)') HLCRIT
+         IF(HLCRIT.LT.0.0) THEN
+           WRITE(STDOUT,*) ' *ERR:611* H/L CRIT RATIO < 0.0 IN EMBANK.'
+           HLCRIT = 0.15
+         ENDIF
+-C      ENDIF
+-C      IF(CHAR5A.EQ.'     ') THEN
+-C        HLMAX = 0.32
+-C      ELSE
+-C        READ(CHAR5A,'(F5.0)') HLMAX
+         IF(HLMAX.LT.0.0) THEN
+           WRITE(STDOUT,*) ' *ERR:612* H/L MAX RATIO < 0.0 IN EMBANK.'
+           HLMAX = 0.32
+         ENDIF
+-C      ENDIF
+       TABID = GET_TABID(TABLE)
+       WRITE(STDOUT,50) TABID(1:LENSTR(TABID)), 
+      A                  TYPE, HLCRIT, HLMAX, HSCALE, VSCALE, CSHIFT,
+      B                  LOCAL_MINQ
++      write(stdtab,92) local_minq
+  
+       WRITE(*,90) TABID
+  
+@@ -1390,6 +1381,14 @@
+       IF(FTPNT(TABLE).NE.0) CALL TAB_IN_USE
+      I                                     (TABID,
+      M                                       EFLAG)
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
+  
+  
+ C     INPUT THE STANDARD TABLE NUMBERS
+@@ -1406,7 +1405,7 @@
+  
+ C     INPUT THE LABEL FOR THE TABLE
+  
+-      CALL INL120
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,'(6X,A50)',ERR=991) LABEL
+@@ -1452,7 +1451,7 @@
+ 
+ C     Clear the linear interpolation precision to use as a flag
+       LIPREC = 0.0
+-      CALL INL120
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,'(A80)',ERR=991) HEAD
+@@ -1463,7 +1462,7 @@
+ C     fractions of free drop TO USE or it may contain linear
+ C     interpolation precision.
+  
+-      CALL INL120
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       IF(LINE(1:5).EQ.'NFRAC') THEN
+@@ -1473,20 +1472,20 @@
+         WRITE(STDOUT,94) CHAR5, NFRAC
+  
+ C       Get the power to use
+-        CALL INL120
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,16,ERR=991) CHAR5, POWER
+         WRITE(STDOUT,66) CHAR5,POWER
+  
+-        CALL INL120
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         IF(LINE(1:6).EQ.'LIPREC') THEN
+ C         The user wants table optimization.
+           READ(LINE,8, ERR=991) CHAR6, LIPREC
+           WRITE(STDOUT,79) LIPREC
+-          CALL INL120
++          CALL inline
+      I              (STDIN, STDOUT,
+      O               LINE)
+           READ(LINE,8, ERR=991) CHAR6, MINPFD
+@@ -1499,7 +1498,7 @@
+ C       The user  wants table optimization.
+         READ(LINE,8, ERR=991) CHAR6, LIPREC
+         WRITE(STDOUT,79) LIPREC
+-        CALL INL120
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,8, ERR=991) CHAR6, MINPFD
+@@ -1512,7 +1511,7 @@
+       I = 1 
+  300  CONTINUE
+         IF(HFLAG.EQ.0) THEN
+-          CALL INL120
++          CALL inline
+      I              (STDIN, STDOUT,
+      O               LINE)
+         ENDIF
+@@ -1544,6 +1543,13 @@
+ 
+ C     All items have been read-  start the computations.
+ C     For each upstream head compute the discharge and also
++
++C     SET THE ROADWAY MOMENTUM FLUX FACTOR TO 1.0. NEEDED BY
++C     FRFEMB BUT MOMENTUM FLUX NOT USED FOR COMMAND EMBANK.
++ 
++      RMFFAC = 1.0
++
++
+ C     Compute the submerged flow if requested
+  
+  
+@@ -1603,10 +1609,6 @@
+       N_GT_TWICE = 0 
+       QD_SPAN = 0.0
+       SIESQR = 0.D0
+-C     SET THE ROADWAY MOMENTUM FLUX FACTOR TO 1.0. NEEDED BY
+-C     FRFEMB BUT MOMENTUM FLUX NOT USED FOR COMMAND EMBANK.
+- 
+-      RMFFAC = 1.0
+  
+       DO 5000 I=1, NHU
+ C       CLEAR FLAGS TO RESTRICT WARNINGS TO ONE MESSAGE PER UPSTREAM
+@@ -1754,12 +1756,24 @@
+  
+ C       NOW OUTPUT THE TABLE TO STDTAB
+  
+- 
++        zrhufd = 0.0
+         CALL TWDOUT
+      I             (STDOUT, STDTAB, TABLE, LABEL, NHU, NFRAC, HUVEC,
+      I              FDROP, PFDVEC, Q, MINCRS+ZDATUM,
+-     I              TYPE, ' EMBANKQ',
++     I              TYPE, ' EMBANKQ', zrhufd,
++     i              zone, hgrid, vdatum, unitsys, basis,
++     i              easting, northing,
+      O              EFLAG)
++
++        if(twod_cubic_out.eq.'YES') then
++          verbose = 1
++          CALL twodfit
++     I             (STDOUT, TABLE, NHU, NFRAC, HUVEC,
++     I              FDROP, PFDVEC, Q, MINCRS+ZDATUM,
++     I              TYPE, ' EMBANKQ', zrhufd, verbose,
++     M              FTP,
++     O              EFLAG,ftpup)
++        endif
+       ELSE
+         WRITE(STDTAB,22)  TABID(1:LENSTR(TABID))
+         WRITE(STDTAB,29)

@@ -1,0 +1,239 @@
+C     This file contains the subprograms that are specific to 
+C     access to the HECDSS.  
+C     ***********
+C     *         *
+C     * HECDSS_INIT
+C     *         *
+C     ***********
+
+      SUBROUTINE HECDSS_INIT(STDOUT)
+
+C     Set various values for managing HECDSS
+
+      IMPLICIT NONE
+      INTEGER STDOUT
+      
+C     INCLUDE 'arsize.prm'
+C     INCLUDE 'hecdss.cmn'
+C     INCLUDE 'dssout.cmn'
+
+C**********************************************************************
+C     STOP 'HECDSS OPTION NOT SUPPORTED IN THIS VERSION OF FEQ'
+      RETURN
+      END
+C     ***********
+C     *         *
+C     * HECDSS_QUIT
+C     *         *
+C     ***********
+
+      SUBROUTINE HECDSS_QUIT(STDOUT)
+
+C     Shut down any HECDSS files.
+      
+      IMPLICIT NONE
+      INTEGER STDOUT
+
+C***********************************************************************
+CC    STOP 'HECDSS NOT IMPLEMENTED'
+      RETURN
+      END
+C     ***********
+C     *         *
+C     * PROCESS_HECDSS_NAME
+C     *         *
+C     ***********
+
+      SUBROUTINE PROCESS_HECDSS_NAME(STDOUT, NAME, INDEX, OPTION, 
+     A                               EFLAG )
+
+C     Process a reference to a HECDSS file name.  
+
+      IMPLICIT NONE
+      CHARACTER NAME*64, OPTION*6
+
+      INTEGER EFLAG, INDEX, STDOUT
+
+      STOP 'HECDSS NOT IMPLEMENTED-1'
+      END
+C     ***********
+C     *         *
+C     * PROCESS_HECDSS_PATH_NAME
+C     *         *
+C     ***********
+
+      SUBROUTINE PROCESS_HECDSS_PATH_NAME(STDOUT, NAME, TIME_STEP, 
+     A                                    EFLAG)
+
+C     Process a path name. 
+
+      IMPLICIT NONE
+      CHARACTER*80 NAME
+
+      INTEGER EFLAG, STDOUT, TIME_STEP
+
+C***********************************************************************
+      STOP 'HECDSS NOT IMPLEMENTED-2'
+      END
+C     ***********
+C     *         *
+C     * CHECK_EXIST
+C     *         *
+C     ***********
+
+      SUBROUTINE CHECK_EXIST(DSS_INDEX, NAME, IERR)
+
+C     Try checking for the existence of a time-series record
+C     without a D part defined.
+
+      IMPLICIT NONE
+      INTEGER DSS_INDEX, IERR
+
+      CHARACTER NAME*80
+
+C***********************************************************************
+      STOP 'HECDSS NOT IMPLEMENTED-3'
+      END
+C     ***********
+C     *         *
+C     * UPDATE_DSSOUT_JTIME
+C     *         *
+C     ***********
+
+      SUBROUTINE UPDATE_DSSOUT_JTIME(JTIME, FULL)
+
+C     Add the next FEQ Julian time to the buffer for output going
+C     to HECDSS data sets.  Set the FULL flag when the last row
+C     in the buffer is used. 
+
+      IMPLICIT NONE
+      INTEGER FULL
+
+      REAL*8 JTIME
+
+C***********************************************************************
+C      STOP 'HECDSS NOT IMPLEMENTED-4'
+      FULL = 0
+      END
+C     ***********
+C     *         *
+C     * UPDATE_DSSOUT_BUFFER
+C     *         *
+C     ***********
+
+      SUBROUTINE UPDATE_DSSOUT_BUFFER(COLUMN, VAL)
+
+C     Add an output value to the DSS output buffer.  The row index
+C     is already set in UPDATE_DSSOUT_JTIME.
+
+      IMPLICIT NONE
+      INTEGER COLUMN
+
+      REAL VAL
+
+C***********************************************************************
+
+      STOP 'HECDSS NOT IMPLEMENTED-5'
+      END
+C     ***********
+C     *         *
+C     * INITIALIZE_DSSOUT_JTIME
+C     *         *
+C     ***********
+
+      SUBROUTINE INITIALIZE_DSSOUT_JTIME(JTIME)
+
+C     Add starting JTIME to zero row in the buffer
+
+      IMPLICIT NONE
+      REAL*8 JTIME
+
+C***********************************************************************
+C      STOP 'HECDSS NOT IMPLEMENTED-6'
+      RETURN
+      END
+C     ***********
+C     *         *
+C     * INITIALIZE_DSSOUT_BUFFER
+C     *         *
+C     ***********
+
+      SUBROUTINE INITIALIZE_DSSOUT_BUFFER(COLUMN, VAL)
+
+C     Put the run-start values in the zero row of the buffer.
+
+      IMPLICIT NONE
+      INTEGER COLUMN
+
+      REAL VAL
+
+C***********************************************************************
+
+      STOP 'HECDSS NOT IMPLEMENTED-7'
+      END
+C     ***********
+C     *         *
+C     * OUTPUT_DSSOUT_BUFFER
+C     *         *
+C     ***********
+
+      SUBROUTINE OUTPUT_DSSOUT_BUFFER 
+
+C     Output the DSS output buffer when it is full and at the end
+C     of the run.  
+
+      STOP 'HECDSS NOT IMPLEMENTED-8'
+      END        
+C     ***********
+C     *         *
+C     * GET_HECDSS_BLOCK  *
+C     *         *
+C     ***********
+
+      SUBROUTINE GET_HECDSS_BLOCK(STDOUT, NAMEIN, DSS_FILE_INDEX,
+     A                           TIME_STEP, REPORT_MODE, JTIME, NMAX,
+     B                              NVALUES, JTIMES, VALUES, MRJTIMES)
+
+C     Get a consecutive sequence of values from a HECDSS pathname
+C     attached to an input unit.  The sequence begins on or after
+C     a FEQ julian time and will return no more than a given
+C     number of values. 
+
+      IMPLICIT NONE
+      CHARACTER NAMEIN*80, REPORT_MODE*8
+
+      INTEGER DSS_FILE_INDEX, TIME_STEP, STDOUT, NMAX, NVALUES, 
+     A        MRJTIMES
+
+      REAL VALUES(MRJTIMES)
+
+      REAL*8 JTIME, JTIMES(MRJTIMES)
+
+C***********************************************************************
+      STOP 'HECDSS NOT IMPLEMENTED-9'
+      END        
+C     ***********
+C     *         *
+C     * CHK_HECDSS_RECORD  *
+C     *         *
+C     ***********
+
+      SUBROUTINE CHK_HECDSS_RECORD(STDOUT, NAMEIN, DSS_FILE_INDEX,
+     A                           TIME_STEP, REPORT_MODE, JTIME, 
+     B                           START_TIME, EFLAG)
+
+C     Check to make sure that the DSS time series is of the
+C     proper reporting mode; and find the start time needed
+C     so the GET_HECDSS_BLOCK will obtain data from the time series
+C     at or before the start time of the run.  
+
+      IMPLICIT NONE
+      CHARACTER NAMEIN*80, REPORT_MODE*8
+
+      INTEGER DSS_FILE_INDEX, TIME_STEP, STDOUT, EFLAG
+
+      REAL*8 JTIME, START_TIME
+
+C***********************************************************************
+      STOP 'HECDSS NOT IMPLEMENTED-10'
+      END        

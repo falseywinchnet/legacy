@@ -1,0 +1,198 @@
+--- 9.98/fequtl/critq.for
++++ 10.61/fequtl/critq.for
+@@ -164,18 +164,21 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER APPTAB, ATYPE, CONTAB, CTYPE, I, IOFF, J, N, NDEPTH,
+-     A        TABLE, WFLAG, XOFF
++     A        TABLE, WFLAG, XOFF, type
+       REAL AC, ALPHA, CD, EA, QAVEC(PMXPNT), QC, TC, YA, YAVEC(PMXPNT),
+-     A     YC, ZA, ZC
++     A     YC, ZA, ZC, factor
++      real*8 easting, northing
+       CHARACTER BETOPT*8, CIN*50, LABEL*50, LINE*80, MONTON*8, NAME*8,
+-     A          OUTOPT*8, SAVOPT*8, TABID*16, APPTABID*16, CONTABID*16
++     A          OUTOPT*8, SAVOPT*8, TABID*16, APPTABID*16, CONTABID*16,
++     b          body_head*30, zone*8, hgrid*8, vdatum*8, unitsys*8,
++     c          basis*8
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC SQRT
+  
+ C     + + + EXTERNAL NAMES + + +
+       INTEGER LENSTR
+-      EXTERNAL CHKCFC, INL80, INVTSE, KIL, SETOPT, LENSTR,
++      EXTERNAL CHKCFC, inline, INVTSE, KIL, SETOPT, LENSTR,
+      A         TAB_IN_USE, READ_TABID_PLUS, READ_TABID
+  
+ C     + + + DATA INITIALIZATIONS + + +
+@@ -209,7 +212,8 @@
+  85   FORMAT(F10.2,F7.2,F11.2,F10.2,F10.1)
+  86   FORMAT(/,' TabId= ',A,2X,'Internal number=',I6,2X,A)
+ C***********************************************************************
+-      CALL INL80
++      body_head = '      DEPTH DISCHARGE'
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID_PLUS
+@@ -228,9 +232,18 @@
+      I                                      (TABID,
+      M                                       EFLAG)
+  
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++
+ C     INPUT THE TABLE NUMBER FOR THE APPROACH CROSS SECTION
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -245,7 +258,7 @@
+  
+ C     INPUT THE TABLE NUMBER FOR THE CONSTRICTED CROSS SECTION
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -262,7 +275,7 @@
+ C     INPUT THE DISCHARGE COEFFICIENT FOR CONTRACTION AND APPROACH SECTION
+ C     LOSSES
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,'(A8,F10.0)',ERR=991) NAME, CD
+@@ -272,7 +285,7 @@
+         EFLAG = 1
+       ENDIF
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,'(A50)',ERR=991) LABEL
+@@ -325,7 +338,18 @@
+ C     CRITICAL FLOW AND THE CORRESPONDING DEPTH IN THE APPROACH
+ C     CROSS SECTION
+  
+-      NDEPTH = 0
++      NDEPTH = 1
++c     Set the point at zero depth in approach section. Always present.
++      yavec(ndepth) = 0.0
++      qavec(ndepth) = 0.0
++
++c     Check if zero flow persists for non-zero depth in approach section.
++      IF(ZC.GT.ZA) THEN
++        ndepth = ndepth + 1
++        yavec(ndepth) = zc -za
++        qavec(ndepth) = 0.0
++      ENDIF
++
+  
+ C     IOFF GIVES THE OFFSET FROM THE TABLE ADDRESS TO THE FIRST
+ C     POSITIVE DEPTH  ENTRY IN THE TABLE.
+@@ -389,51 +413,55 @@
+       IF(SAVOPT(1:4).EQ.'SAVE') THEN
+ C       CHECK ON SPACE IN THE TABLE SYSTEM
+  
+-        N = 5 + 2*(2 + NDEPTH)
++        N = OFF234 + 2*(2 + NDEPTH)
+         IF((N + FTP).GT.MRFTAB) THEN
+           WRITE(STDOUT,80) N + FTP - MRFTAB
+           EFLAG = 1
+         ENDIF
+  
++        
+         FTPNT(TABLE) = FTP
+         ITAB(FTP+1) = TABLE
+         ITAB(FTP+2) = 2
+-        ITAB(FTP+3) = FTP + 5
++        ITAB(FTP+3) = FTP + OFF234
+         FTAB(FTP+4) = 0.0
++        FTAB(FTP+5) = 1.0
++        itab(ftp+18) = 0     !datum is not used.
++        ftab(ftp+19) = 0.0
+         J = ITAB(FTP+3)
+       ENDIF
+-      WRITE(STDTAB,52) TABID(1:LENSTR(TABID))
++c      WRITE(STDTAB,52) TABID(1:LENSTR(TABID))
+       WRITE(STDOUT,54) TABID(1:LENSTR(TABID))
+  
+-      WRITE(STDTAB,56)
++c      WRITE(STDTAB,56)
+       WRITE(STDOUT,58)
+  
+-      WRITE(STDTAB,60)
++c      WRITE(STDTAB,60)
+       WRITE(STDOUT,62)
+  
+-      WRITE(STDTAB,64) LABEL
++c      WRITE(STDTAB,64) LABEL
+       WRITE(STDOUT,66) LABEL
+  
+-      WRITE(STDTAB,68) 0.0, 0.0
++c      WRITE(STDTAB,68) 0.0, 0.0
+       WRITE(STDOUT,70) 0.0, 0.0
+       IF(ZC.GT.ZA) THEN
+-        WRITE(STDTAB,68) ZC - ZA, 0.0
++c        WRITE(STDTAB,68) ZC - ZA, 0.0
+         WRITE(STDOUT,70) ZC - ZA, 0.0
+       ENDIF
+  
+-      IF(SAVOPT(1:4).EQ.'SAVE') THEN
+-        FTAB(J) = 0.
+-        FTAB(J+1) = 0.0
+-        J = J + 2
+-        IF(ZC.GT.ZA) THEN
+-          FTAB(J) = ZC - ZA
+-          FTAB(J+1) = 0.0
+-          J = J + 2
+-        ENDIF
+-      ENDIF
++c      IF(SAVOPT(1:4).EQ.'SAVE') THEN
++c        FTAB(J) = 0.
++c        FTAB(J+1) = 0.0
++c        J = J + 2
++c        IF(ZC.GT.ZA) THEN
++c          FTAB(J) = ZC - ZA
++c          FTAB(J+1) = 0.0
++c          J = J + 2
++c        ENDIF
++c      ENDIF
+  
+       DO 2300 I=1,NDEPTH
+-        WRITE(STDTAB,68) YAVEC(I), QAVEC(I)
++c        WRITE(STDTAB,68) YAVEC(I), QAVEC(I)
+         WRITE(STDOUT,70) YAVEC(I), QAVEC(I)
+         IF(SAVOPT(1:4).EQ.'SAVE') THEN
+           FTAB(J) = YAVEC(I)
+@@ -442,7 +470,16 @@
+         ENDIF
+  2300 CONTINUE
+  
+-      WRITE(STDTAB,68) -1.0, 0.0
++c      WRITE(STDTAB,68) -1.0, 0.0
++
++      type = 2
++      factor = 1.0
++      CALL OUTPUT_TYPE_234
++     I                 (STDOUT, STDTAB, ndepth, table, TYPE, FACTOR, 
++     I                  BODY_HEAD, LABEL, yavec, qavec, qavec,
++     i                  zone, hgrid, vdatum, unitsys, basis,
++     i                  easting, northing)
++
+  
+         IF(SAVOPT(1:4).EQ.'SAVE') THEN
+           ITAB(FTP) = J - 2

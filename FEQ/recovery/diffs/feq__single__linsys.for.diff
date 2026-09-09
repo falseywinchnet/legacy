@@ -1,0 +1,13 @@
+--- 9.98/feq/single/linsys.for
++++ 10.61/feq/single/linsys.for
+@@ -32,8 +32,8 @@
+       INTRINSIC MIN
+  
+ C     + + + OUTPUT FORMATS + + +
+- 50   FORMAT(/,' *BUG:XXX* Invalid matrix block type:',I5,' in PROFAC.')
+- 52   FORMAT(/,' *ERR/BUG:XXX* Zero pivot in matrix. Offset=',I7,
++ 50   FORMAT(/,'*BUG:XXX* Invalid matrix block type:',I5,' in PROFAC.')
++ 52   FORMAT(/,'*ERR/BUG:XXX* Zero pivot in matrix. Offset=',I7,
+      A  ' Row=',I5,' Column=',I5)
+ C***********************************************************************
+       DO 9000 IBLK=1,MATBLK

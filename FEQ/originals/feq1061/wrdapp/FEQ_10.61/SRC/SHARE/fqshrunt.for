@@ -1,0 +1,126 @@
+C     ***********
+C     *         *
+C     * INITIALIZE_UNITS
+C     *         *
+C     ***********
+
+      SUBROUTINE INITIALIZE_UNITS
+
+C     Set the unit number common block values to their default
+C     values.  Unit numbers 5 and 6 are not used in any case
+C     to avoid what seemed to be unavoidable confusion on some
+C     Unix systems where these units were tied to console input
+C     and console output and that connection could not be
+C     changed.
+
+      IMPLICIT NONE
+      INCLUDE 'forunit.cmn'
+
+C     Local
+
+      INTEGER I
+C***********************************************************************
+      IF(DIM_UNIT.GT.1024) THEN
+        WRITE(*,*) ' Invalid value for maximum I/O unit', DIM_UNIT
+        WRITE(*,*) ' Must be 1024 or less'
+        STOP 'Abnormal stop: bug found.'
+      ENDIF
+      DO 100 I=1,DIM_UNIT
+        UNIT_STATUS(I) = 0
+100   CONTINUE
+C     Mark units 1, 2, 3, 4, 5, 6, 7 as unavailable
+      DO 110 I=1,7
+        UNIT_STATUS(I) = -1
+110   CONTINUE
+
+C     Set the value of the current unit count.  DOES not include
+C     the never used units. 
+      UNIT_KNT = 0
+      RETURN
+      END
+
+C     ***********
+C     *         *
+C     * GET_UNIT
+C     *         *
+C     ***********
+
+      INTEGER FUNCTION GET_UNIT (STDOUT)
+
+C     Get a unit number for Fortran I/O.
+
+      IMPLICIT NONE
+      INTEGER STDOUT
+
+      INCLUDE 'forunit.cmn'
+
+C     Local
+
+      INTEGER I
+C     *********************************FORMATS**************************
+50    FORMAT(/,' *ERR:319* I/O unit numbers exhausted.')
+C***********************************************************************
+      DO 100 I=8,DIM_UNIT
+C Start unit number at 8 to avoid conflicts with possibly reserved
+C system units, such as standard input, output and error unit numbers.
+        IF(UNIT_STATUS(I).EQ.0) THEN
+C         Found one!
+          GET_UNIT = I
+          UNIT_KNT = UNIT_KNT + 1
+C         Mark unit as in use for Fortran I/O
+          UNIT_STATUS(I) = FORTRAN_IO
+          GOTO 110
+        ENDIF
+100   CONTINUE
+C     If we get here then there are no unit numbers left.  This is
+C     a fatal error. 
+      WRITE(STDOUT,50) 
+      STOP 'Abnormal stop.  Errors found.'
+
+110   CONTINUE
+      RETURN
+      END      
+
+C     ***********
+C     *         *
+C     * FREE_UNIT
+C     *         *
+C     ***********
+
+      SUBROUTINE FREE_UNIT(STDOUT, UNIT)
+
+C     Free a Fortran I/O unit number.  This also implies closing the
+C     associated file, if any. 
+
+      IMPLICIT NONE
+      INTEGER STDOUT, UNIT
+
+      INCLUDE 'forunit.cmn'
+
+C     *****************************Formats******************************
+50    FORMAT(/,' *BUG:XXX* Unit=',I5,' out of range in FREE_UNIT.')
+52    FORMAT(/,' *BUG:XXX* Unit=',I5,' was not in use in FREE_UNIT.')
+54    FORMAT(/,' *BUG:XXX* Unit=',I5,' was not assigned to Fortran ',
+     A         'I/O in FREE_UNIT.')
+C************************************************************************
+      IF(UNIT.LT.1.OR.UNIT.GT.DIM_UNIT) THEN
+        WRITE(STDOUT,50) UNIT
+      ELSEIF(UNIT_STATUS(UNIT).LT.1) THEN
+        WRITE(STDOUT,52) UNIT
+      ELSE
+C       UNIT appears to be valid.  Close the file if it is for
+C       Fortran I/O.
+        IF(UNIT_STATUS(UNIT).EQ.FORTRAN_IO) THEN
+
+          CLOSE(UNIT)
+
+C         Free for use later.
+          UNIT_STATUS(UNIT) = 0
+          UNIT_KNT = UNIT_KNT - 1
+          RETURN
+        ELSE
+          WRITE(STDOUT,54) UNIT
+        ENDIF
+      ENDIF
+      STOP 'Abnormal stop.  Bug found.'
+      END        

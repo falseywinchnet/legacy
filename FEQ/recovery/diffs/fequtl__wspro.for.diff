@@ -1,0 +1,527 @@
+--- 9.98/fequtl/wspro.for
++++ 10.61/fequtl/wspro.for
+@@ -80,7 +80,7 @@
+       REAL AXISL, COSSK, DELY, FAC, LEFTL, RIGHTL, RVAL(MXNVAL),
+      A     XARG(MXNSA), XE, XEPS, XINVAR, XS
+       DOUBLE PRECISION DPVAL(MXNVAL)
+-      CHARACTER CVAL(MXNVAL)*64, HEADID*2, RECID*2, SECID*5, 
++      CHARACTER CVAL(MXNVAL)*256, HEADID*2, RECID*2, SECID*5, 
+      A          TERM(MXNVAL)*1
+  
+ C     + + + INTRINSICS + + +
+@@ -90,7 +90,7 @@
+       REAL FDCNMN
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL BINSER, FDCNMN, GETVAL, INL80, INSPT
++      EXTERNAL BINSER, FDCNMN, GETVAL, inline, INSPT
+  
+ C     + + + DATA INITIALIZATIONS + + +
+       DATA
+@@ -126,7 +126,7 @@
+  
+  90   CONTINUE
+         IF(LNFLAG.EQ.0) THEN
+-          CALL INL80
++          CALL inline
+      I              (IN, STDOUT,
+      O               LINE)
+         ELSE
+@@ -843,16 +843,19 @@
+      A        TYPE(MAXN)
+       REAL FROUDE, HDATUM, HDVEC(PMXNHU), HUMAT(PMXNHU,PMXFRC), MAXQ,
+      A     PFQVEC(PMXFRC), Q(PMXNHU,PMXFRC), QFVEC(PMXNHU), RVAL(MAXN),
+-     B     WSEL
+-      DOUBLE PRECISION DPVAL(MAXN)
+-      CHARACTER CVAL(MAXN)*64, HEAD*80, LABEL*50, LINE*80, LINE1*81,
+-     A          NAME*64, TERM(MAXN)*1, XSID*5
++     B     WSEL, zrhufd
++      real*8 DPVAL(MAXN), easting, northing
++
++      CHARACTER CVAL(MAXN)*256, HEAD*80, LABEL*50, LINE*80, LINE1*81,
++     A          NAME*64, TERM(MAXN)*1, XSID*5, 
++     b     zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
++
+       LOGICAL THERE
+  
+       CHARACTER GETTOK*5, TABID*16
+ 
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL GETTOK, GETVAL, INL80, TABCHK, TWDOUT
++      EXTERNAL GETTOK, GETVAL, inline, TABCHK, TWDOUT, os_file_style
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(7X,I5)
+@@ -870,14 +873,14 @@
+  60   FORMAT(/,' *WRN:510* Froude number=',F7.2,' > 1.0 at XSID=',A5)
+ 62    FORMAT(' Not enough user tables.  One or more profiles',
+      A           ' failed in WSPRO.')
+- 96   FORMAT(/,' FILE NAMED:',A,' NOT FOUND.  CHECK SPELLING OF'
++ 96   FORMAT(/,' FILE NAMED:',A,' NOT FOUND.  CHECK SPELLING OF',
+      A       ' FILE NAME.')
+  98   FORMAT(/,' Found ',I3,' downstream elevations and ',I3,
+      A      ' partial maximum flows.')
+  99   FORMAT(/,' All files have been processed.')
+ C***********************************************************************
+ C     Get the table number to be used by the two-D table.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -888,15 +891,25 @@
+       CALL TABCHK
+      I           (STDOUT, PMXTAB,
+      M            TAB, TABDIR, EFLAG)
++
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++
+  
+ C     Get the label for the 2-D table.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2,ERR=991) LABEL
+       WRITE(STDOUT,51) LABEL
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24,ERR=991) HEAD
+@@ -914,12 +927,17 @@
+       NZD = 1
+       NZD2 = 1
+  100  CONTINUE
+-        CALL INL80B
++        CALL inlineb
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,3,ERR=991) NAME
+  
+         IF(NAME.NE.' ') THEN
++           CALL MAYBE_ADD_HOME(
++     M                         name)
++
++          call os_file_style(
++     m                              name)
+           INQUIRE(FILE=NAME, EXIST=THERE)
+           IF(THERE) THEN
+             WRITE(STDOUT,56) NAME
+@@ -1077,10 +1095,13 @@
+         PFQVEC(I+1) = Q(NZD,I)/MAXQ
+  800  CONTINUE
+       NFRAC = NFRAC + 1
++      zrhufd = 0.0
+       CALL TWDOUT
+      I           (STDOUT, STDTAB, TAB, LABEL, NZD, NFRAC, QFVEC, HDVEC,
+      I            PFQVEC, HUMAT, HDATUM,
+-     I            14,'   WSPRO',
++     I            14,'   WSPRO', zrhufd,
++     i            zone, hgrid, vdatum, unitsys, basis,
++     i            easting, northing,
+      O            EFLAG)
+  
+       RETURN
+@@ -1135,21 +1156,24 @@
+       PARAMETER(MAXN=16)
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER I, IT, KNT, MVAL, NFRAC, NZD, NZD2, NZDF, NZDL, OPT, TAB
++      INTEGER I, IT, KNT, MVAL, NFRAC, NZD, NZD2, NZDF, NZDL, OPT, TAB,
++     a        first, hdeflag
+       INTEGER CLEN(MAXN), IVAL(MAXN), TERML(MAXN), TERMCLS(MAXN),  
+      A        TYPE(MAXN)
+       REAL FROUDE, HDATUM, HDVEC(PMXNHU), HUMAT(PMXNHU,PMXFRC), MAXQ,
+      A     PFQVEC(PMXFRC), Q(PMXNHU,PMXFRC), QFVEC(PMXNHU), RVAL(MAXN),
+-     B     WSEL
+-      DOUBLE PRECISION DPVAL(MAXN)
++     B     WSEL, zrhufd, hd, hdfirst
++      real*8 DPVAL(MAXN), easting, northing
++
+       CHARACTER CVAL(MAXN)*64, HEAD*80, LABEL*50, LINE*80, LINE1*81,
+-     A          NAME*64, TERM(MAXN)*1, XSID*7
++     A          NAME*256, TERM(MAXN)*1, XSID*7,
++     b   zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+       LOGICAL THERE
+  
+-      CHARACTER GETTOK*7, TABID*16
++      CHARACTER GETTOK*7, TABID*16, LINE_IN_ERROR*80
+ 
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL GETTOK, GETVAL, INL80, TABCHK, TWDOUT
++      EXTERNAL GETTOK, GETVAL, inline, TABCHK, TWDOUT, os_file_style
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(7X,I5)
+@@ -1168,13 +1192,18 @@
+ 62    FORMAT(' Not enough user tables.  One or more profiles',
+      A           ' failed in WSPRO.')
+ 64    FORMAT(/,' *ERR:760* One or more of ERROR or FATAL',
+-     A      ' found in WSPRO results.')
+- 96   FORMAT(/,' FILE NAMED:',A,' NOT FOUND.  CHECK SPELLING OF'
++     A      ' found in WSPRO results.',/,4X,'Line is: ',A)
++65    format(/,'*ERR:XXX* Tailwater elevations not constant when they',
++     a        ' should be.',/,10x,
++     b        '  First elevation=',f10.3, ' Differing elevation=',f10.3)
++66    format(/,'Errors found prevent output of the type 14 table.')
++ 96   FORMAT(/,' FILE NAMED:',A,' NOT FOUND.  CHECK SPELLING OF',
+      A       ' FILE NAME.')
+  98   FORMAT(/,' Found ',I3,' downstream elevations and ',I3,
+      A      ' partial maximum flows.')
+  99   FORMAT(/,' All files have been processed.')
+ C***********************************************************************
++      hdeflag = 0
+ C     The latest version of WSPRO finally prints results in a user table
+ C     to a precision that allows us to use the elevation and the flow
+ C     in the table.  Previously we could not use the flow because it
+@@ -1182,7 +1211,7 @@
+ C     would not make a valid type 14 table. 
+ 
+ C     Get the table number to be used by the two-D table.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -1194,14 +1223,23 @@
+      I           (STDOUT, PMXTAB,
+      M            TAB, TABDIR, EFLAG)
+  
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++
+ C     Get the label for the 2-D table.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2,ERR=991) LABEL
+       WRITE(STDOUT,51) LABEL
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24,ERR=991) HEAD
+@@ -1219,12 +1257,16 @@
+       NZD = 1
+       NZD2 = 1
+  100  CONTINUE
+-        CALL INL80B
++        CALL inlineb
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,3,ERR=991) NAME
+  
+         IF(NAME.NE.' ') THEN
++           CALL MAYBE_ADD_HOME(
++     M                         name)
++          call os_file_style(
++     m                              name)
+           INQUIRE(FILE=NAME, EXIST=THERE)
+           IF(THERE) THEN
+             WRITE(STDOUT,56) NAME
+@@ -1239,12 +1281,13 @@
+             READ(STD48,'(A80)',END=160) LINE
+             IF(INDEX(LINE,'ERROR').GT.0.OR.
+      A         INDEX(LINE,'FATAL').GT.0) THEN
++              LINE_IN_ERROR = LINE
+               EFLAG = 1
+             ENDIF
+             GOTO 150
+ 160       CONTINUE
+           IF(EFLAG.GT.0) THEN
+-            WRITE(STDOUT,64) 
++            WRITE(STDOUT,64) LINE_IN_ERROR 
+             STOP 'Abnormal stop.  Error(s) found.'
+           ENDIF
+           REWIND(STD48)
+@@ -1316,6 +1359,8 @@
+  
+               KNT = 0
+               NZDL = 1
++c             Clear the flag to track the sequences of downstream depths. 
++              first = 0
+  500          CONTINUE
+                 READ(STD48,24,END=910) LINE
+                 IF(LINE(30:41).EQ.'User Defined') THEN
+@@ -1332,7 +1377,7 @@
+ C                 first is in the unconstricted case and the 
+ C                 second is the one we want.  The new version prepends
+ C                 numbers to the names.  We use those numbers to 
+-C                 make sure we get waht we want. 
++C                 make sure we get what we want. 
+  600              CONTINUE
+                     READ(STD48,'(A80)') LINE
+                     XSID = LINE(2:8)
+@@ -1352,7 +1397,8 @@
+ C                     statement is executed NZDF times with the
+ C                     same water surface elevation.
+  
+-                      HDVEC(NZD2) = WSEL - HDATUM
++                      hd = wsel - hdatum
++                      HDVEC(NZD2) = hd
+                     ENDIF
+                     IF(XSID.EQ.'5 APPRO'.OR.XSID.EQ.'6 APPRO') THEN
+ C                     Get the upstream elevation and save it.
+@@ -1361,12 +1407,24 @@
+ C                     by adding one to KNT when storing the upstream
+ C                     heads.  Required by TWDOUT.
+                       HUMAT(NZD2,KNT+1) = WSEL - HDATUM
++                      if(first == 0) then
++c                       First time through here for the current sequence of downstream
++c                       heads.  They should all have the same value.
++                        first = 1
++                        hdfirst = hd
++                      else
++                        if(hd .ne. hdfirst) then
++                          write(stdout,65) hdfirst + hdatum, hd + hdatum
++                          hdeflag = hdeflag + 1
++                        endif
++                      endif
+                       IF(KNT.EQ.NFRAC) THEN
+ C                       The current downstream elevation's flows are
+ C                       complete.
+                         NZD2 = NZD2 + 1
+                         NZDL = NZDL + 1
+                         KNT = 0
++                        first = 0
+                         IF(NZDL.GT.NZDF) THEN
+ C                         Current file is processed.
+                           NZDL = 1
+@@ -1406,12 +1464,19 @@
+         PFQVEC(I+1) = Q(NZD,I)/MAXQ
+  800  CONTINUE
+       NFRAC = NFRAC + 1
+-      CALL TWDOUT
+-     I           (STDOUT, STDTAB, TAB, LABEL, NZD, NFRAC, QFVEC, HDVEC,
+-     I            PFQVEC, HUMAT, HDATUM,
+-     I            14,'   WSPRO',
+-     O            EFLAG)
+- 
++      zrhufd = 0.0
++      if(hdeflag == 0) then
++        CALL TWDOUT
++     I             (STDOUT, STDTAB, TAB, LABEL, NZD, NFRAC, QFVEC, 
++     I              HDVEC, PFQVEC, HUMAT, HDATUM,
++     I              14,'   WSPRO', zrhufd,
++     i              zone, hgrid, vdatum, unitsys, basis,
++     i              easting, northing,
++     O              EFLAG)
++      else
++        write(stdout,66) 
++        EFLAG =1
++      endif
+       RETURN
+  900  CONTINUE
+         WRITE(STDOUT,*) ' END OF FILE SEEKING WSPROZQ HEADER'
+@@ -1487,13 +1552,15 @@
+      A     Q(PMXNHU*PMXFRC), QCOFF, QCRIT, QNORM, Y, ZBQC, ZBQN,
+      B     ZDMAT(PMXNHU*PMXFRC), ZDVEC(PMXNHU)
+       CHARACTER CHAR5*5, HEAD*80, LINE*80, QNTABID*16, QCTABID*16
++      character*8 zone, hgrid, vdatum, unitsys, basis
++      real*8 easting, northing, shift
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC FLOAT, MAX, MIN, SQRT
+  
+ C     + + + EXTERNAL NAMES + + +
+       INTEGER LENSTR
+-      EXTERNAL CHKTAB, FNDELV, INL80, LKTK, LKTQC, LENSTR
++      EXTERNAL CHKTAB, FNDELV, inline, LKTK, LKTQC, LENSTR
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(6X,I5)
+@@ -1521,8 +1588,8 @@
+  61   FORMAT('UT                7  27    5')
+  62   FORMAT('Q ',8X,F12.2,F12.2,F12.2,F12.2,F12.2)
+  63   FORMAT('Q ',8X,F12.2,F12.2,F12.2,F12.2,F12.2,',')
+- 64   FORMAT('WS',8X,F12.2,F12.2,F12.2,F12.2,F12.2)
+- 65   FORMAT('WS',8X,F12.2,F12.2,F12.2,F12.2,F12.2,',')
++ 64   FORMAT('WS',8X,F12.4,F12.4,F12.4,F12.4,F12.4)
++ 65   FORMAT('WS',8X,F12.4,F12.4,F12.4,F12.4,F12.4,',')
+  66   FORMAT(' Power for spacing of partial maximum flows=',F6.2)
+  75   FORMAT(/,' Profile limit for WSPRO program=',I5)
+  76   FORMAT(/,' *ERR:535* NFRAC=',I5,' > MAXPRO=',I5,'.  Unable',
+@@ -1532,10 +1599,11 @@
+  95   FORMAT(' ',F10.3,F10.1,F10.7,F10.3)
+  96   FORMAT(/,' WSPRO must be run ',I3,' times.  Once for each',
+      A    ' input block below.')
++97    format(/,' Vertical shift=',f10.3)
+ C***********************************************************************
+ C     Get the table number of the cross section that may be used
+ C     to define the maximum flow using an estimated water-surface slope.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+ C      READ(LINE,1,ERR=991) QNTAB
+@@ -1561,7 +1629,7 @@
+ C     Get the table number of the cross section that defines critical
+ C     flow in the structure opening using a user-supplied offset
+ C     in elevation from the downstream water-surface elevation.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+ C      READ(LINE,1,ERR=991) QCTAB
+@@ -1581,37 +1649,56 @@
+      I             (TAB, STDOUT,
+      O              EFLAG, ZBQC)
+       ENDIF
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++      CALL inline
++     I          (STDIN, STDOUT,
++     O           LINE)
++      shift = 0.d0
++      if(line(1:5) == 'SHIFT') then
++        read(line,'(6x,f10)', err=991) shift
++      else
++        backspace(stdin)
++      endif
++      write(stdout,97) shift
+  
+  
+ C     Get the elevation of the datum for computing heads
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2,ERR=991) HDATUM
++      hdatum = hdatum + shift
+       WRITE(STDOUT,52) HDATUM
+  
+ C     Get the minimum value of partial maximum flow to use in the
+ C     code 14 table.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2,ERR=991) PFQMIN
+       WRITE(STDOUT,53) PFQMIN
+  
+ C     Get the values defining the distribution of partial free flows.
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,26,ERR=991) CHAR5, NFRAC
+       WRITE(STDOUT,94) NFRAC
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,16,ERR=991) CHAR5, POWER
+       WRITE(STDOUT,66) POWER
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,25,ERR=991) MAXPRO
+@@ -1623,7 +1710,7 @@
+         RETURN
+       ENDIF
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24,ERR=991) HEAD
+@@ -1637,13 +1724,14 @@
+       KNT = 0
+  100  CONTINUE
+         LEFLAG = 0
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,3,ERR=991) DNSWSE, MAXQ, MAXQS, QCOFF
++        dnswse = dnswse + shift
+         IF(DNSWSE.GT.OLDZD) THEN
+           NZD = NZD + 1
+-          ZDVEC(NZD) = DNSWSE
++          ZDVEC(NZD) = DNSWSE 
+  
+ C         Compute and output the flow and water-surface elevation
+ C         lines for WSPRO.  These must be transfered by the user
+@@ -1845,7 +1933,12 @@
+      A     STAT(PMXSEC,3), STATL, STATR, STATT, TP, XFLINE(6), XOLD,
+      B     ZMAX
+       CHARACTER BETOPT*8, F10X*5, LINE*120, MODE*8, MONFLG*8, OLDID*2,
+-     A          OUTOPT*8, SAVOPT*8, SFPNAM*8, XSNAME*5
++     A          OUTOPT*8, SAVOPT*8, SFPNAM*8, XSNAME*5,
++     a khflag(pmxpnt)*1, alphaflag(pmxpnt)*1, betaflag(pmxpnt)*1,
++     b     maflag(pmxpnt)*1, mqflag(pmxpnt)*1,
++     c     zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
++
++
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, MAX, MIN
+@@ -1895,6 +1988,11 @@
+  88   FORMAT('OFFS',6F10.2)
+  90   FORMAT(I10)
+ C***********************************************************************
++      zone = 'NONE'
++      hgrid = 'NONE'
++      vdatum = 'NONE'
++      unitsys = 'NONE'
++      basis = 'NONE'
+ C     Clear values not set
+       GISID = ' '
+       NORTHING = 0.D0
+@@ -1928,7 +2026,9 @@
+       CALL INSFPX
+      I           (STDIN, STDOUT, SFPNAM, SFPN,
+      O            SAVOPT, OUTOPT, BETOPT, MONFLG, EFLAG, MODE, BEGTAB,
+-     O            TABINC, BEGSTA, STADIR, SFAC)
++     O            TABINC, BEGSTA, STADIR, SFAC,
++     O            zone, hgrid, vdatum, unitsys, basis,
++     O            easting, northing)
+       IF(EFLAG.EQ.1) RETURN
+  
+ C     SET THE INPUT UNIT NUMBER
+@@ -2201,9 +2301,19 @@
+      I                                  (STDOUT, TABID,
+      M                                   EFLAG,
+      O                                   ITEMP)
++c     compute derivatives of square root of conveyance, alpha, beta, 
++c     da, and dq
++
++      call xsecfit
++     I            (STDOUT, 0,
++     M             NDEPU, XSTU, 
++     o             khflag, alphaflag, betaflag, maflag, mqflag)
++
+             CALL TABOUT
+      I                 (STDOUT, STDTAB, ITEMP, STATT, ZMINU, MESG,
+      I                  SAVOPT, OUTOPT, BETOPT,
++     i                  zone, hgrid, vdatum, unitsys, basis,
++     i                  khflag, alphaflag, betaflag, maflag, mqflag,
+      M                  NDEPU, XSTU, FTP)
+  200      CONTINUE
+         ELSE

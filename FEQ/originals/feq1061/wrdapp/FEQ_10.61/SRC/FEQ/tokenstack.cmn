@@ -1,0 +1,10 @@
+C     Stack for processing selection blocks in FEQ
+
+      INTEGER MAX_TOP
+      PARAMETER (MAX_TOP=100)
+
+      INTEGER SELECT_STACK(3,MAX_TOP), TOP
+
+      COMMON /SELECT_CMN/ SELECT_STACK, TOP
+
+      SAVE /SELECT_CMN/

@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0049)http://il.water.usgs.gov/proj/feq/bug_notice.html -->
+<HTML><HEAD><TITLE></TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META content="MSHTML 6.00.2800.1561" name=GENERATOR>
+<META content=FrontPage.Editor.Document name=ProgId></HEAD>
+<BODY><FONT face="courier new,courier"><FONT size=+0>
+<P>***************************************************************************************<BR>
+FEQ--Summary 
+of user notices and pending bug fixes since Version 8.92.<BR>Version 8.92 has 
+been renumbered to Version 9.15. See release.txt in the<BR>distribution files or 
+http://il.water.usgs.gov/proj/feq/feqdoc/release.html<BR>for further details and 
+additional notices. This list is superseded by the<BR>release.txt distributed with 
+subsequent versions of FEQ. User notices and bug<BR>reports for subsequent releases
+of FEQ and FEQUTL may also apply to this<BR>version.
+<P>The version numbers are for reference only--the fixes have not been applied 
+to Version 9.15.<BR>(FEQUTL notices follow)
+<P>***************************************************************************************
+<P>Version 8.93</FONT></FONT> 
+<BLOCKQUOTE><FONT face="courier new,courier"><FONT size=+0>July 8, 1997: 
+  </FONT></FONT><BR><FONT face="courier new,courier"><FONT size=+0>--Metric 
+  units and HECDSS for diffuse runoff values will not function properly because 
+  no unit conversion is done on the HECDSS unit-area runoff intensity values. 
+  Currently FEQ assumes that the units for the diffuse runoff values in the 
+  HECDSS are inches per time interval and the interval is of fixed length for 
+  all files involved. The DTSF files, on the other hand, are assumed to have the 
+  runoff intensity in feet per second for the customary US set and meters per 
+  second for the metric set of units. </FONT></FONT></BLOCKQUOTE><FONT 
+face="courier new,courier"><FONT size=+0>Version 9.52</FONT></FONT> 
+<BLOCKQUOTE><FONT face="courier new,courier"><FONT size=+0>November 9, 1999: 
+  </FONT></FONT><BR><FONT face="courier new,courier"><FONT size=+0>--Factor on 
+  value in HECDSS files in the INPUT FILES block has a default of zero when it 
+  should have a default of 1.0. </FONT></FONT></BLOCKQUOTE><FONT 
+face="courier new,courier"><FONT size=+0>Version 9.65</FONT></FONT> 
+<BLOCKQUOTE><FONT face="courier new,courier"><FONT size=+0>March 7, 2000: 
+  </FONT></FONT><BR><FONT face="courier new,courier"><FONT size=+0>--Significant 
+  errors found in the STDCX governing-equation option. The error is in the 
+  computation of some of the derivatives of the residual function as well as an 
+  error in one part of one function-table lookup routine. The governing-equation 
+  options other than STDX has little use and therefore some errors have been 
+  present for some time. Recommend that users use only STDX until further 
+  notice. </FONT></FONT></BLOCKQUOTE><FONT face="courier new,courier"><FONT 
+size=+0>Version 9.80</FONT></FONT> 
+<BLOCKQUOTE><FONT face="courier new,courier"><FONT size=+0>March 15, 
+  2001:</FONT></FONT> <BR><FONT face="courier new,courier"><FONT size=+0>--An 
+  error has been discovered in the computation of the Hager side-weir correction 
+  factor that has been present in the side-weir routine (Code 14) of FEQ for at 
+  least 10 years. The factor is in the correct range (&lt;= 1.0) but has been 
+  coded in FEQ to return larger values than are referenced in the FEQ 
+  documentation in section 8.1.2.1.3.2 (p. 83) to Hager (1987).
+  <P>Testing indicates that the effect of the error is most dominant at low 
+  heads in the range of 0.2 to 0.4 feet where simulated flows may exceed the 
+  correct Hager computation by about 25 percent. At heads near one foot the 
+  simulated flows exceed the Hager computation by about 5 percent and at 2 feet 
+  or above, the error is approximately 2 percent. Therefore, the effect of the 
+  error on existing models depends on the operational head. Because the computed 
+  flow approximations over side weirs at low heads have large uncertainties, 
+  results from physical model testing are often implemented as a rating in the 
+  model instead of using the side-weir routines. 
+  <P>The above error will be fixed in a future FEQ update. To obtain a copy of 
+  the fixed code now, send e-mail to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6008520f130f061420151307134e070f16">[email&#160;protected]</a> or <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="07666b6e746f6e6e477274607429606871">[email&#160;protected]</a>. 
+  <P>Problem exists in interpolation of cross sections when a bottom slot is 
+  present. Recommend that users do not interpolate cross sections when a bottom 
+  slot is present. </FONT></FONT></P></BLOCKQUOTE><FONT 
+face="courier new,courier"><FONT size=+0>Version 9.84</FONT></FONT> 
+<BLOCKQUOTE><FONT face="courier new,courier"><FONT size=+0>October 1, 2001: 
+  </FONT></FONT><BR><FONT face="courier new,courier"><FONT size=+0>The point 
+  flows block is no longer supported. Point flows should be connected to the 
+  model at a junction created for each point flow with a dummy branch added to 
+  provide the boundary node to reference the point flow. 
+</FONT></FONT></BLOCKQUOTE><FONT face="courier new,courier"><FONT 
+size=+0>Version 9.91</FONT></FONT> 
+<BLOCKQUOTE><FONT face="courier new,courier"><FONT size=+0>May 17, 2002: 
+  </FONT></FONT><BR><FONT face="courier new,courier"><FONT size=+0>Found a 
+  subtle bug in the computations of one derivative in the side-weir code. This 
+  appears only if the weight factor on head in the source channel differs from 
+  0.5. 
+  <P>The multiplying factor for the forced-boundary instruction, code 6, is 
+  applied to both the base value and the time-series value. The base value 
+  serves as a constant lower limit on the flow or elevation at that location. 
+  </FONT></FONT></P></BLOCKQUOTE><FONT face="courier new,courier"><FONT 
+size=+0>Version 10.25</FONT></FONT> 
+<BLOCKQUOTE><FONT face="courier new,courier"><FONT size=+0>September 27, 2005: 
+  </FONT></FONT><BR><FONT face="courier new,courier"><FONT size=+0>An error has 
+  	been discovered in reporting the time step when using a diffuse time-series 
+  	file (DTSF). The reported time offset depends on the initial hour of each 
+  	event. If the starting hour is zero then the offset is zero. Otherwise 
+  	the offset depends on the starting hour. If the starting hour is 1, then the
+  	offset is 1 - 1/24.0 hours, which is slightly less than one hour. Thus the 
+  	maximum offset in the reported time is one hour or less. It appears that 
+  	this discrepancy has been present for some time. To prevent this bug, use 
+  	a starting time of 0.0 when using a DTSF.
+</FONT></FONT></BLOCKQUOTE><FONT size=+0><FONT 
+face="courier new,courier">**********************************************************************************************<BR>FEQUTL--Summary 
+of user notices and pending bug fixes since<BR>Version 4.68. Version 4.68 has 
+been renumbered to Version 4.85. See<BR>release.txt in the distribution files or 
+http://il.water.usgs.gov/proj/feq/fequtl/release.html<BR>for further details and 
+additional notices. 
+<P>The version numbers are for reference only--the fixes have not been applied 
+to Version 
+4.85.<BR>**********************************************************************************************
+<P>Version 5.06</FONT> 
+<BLOCKQUOTE><FONT face="courier new,courier"><FONT size=+0>January 18, 2000: 
+  </FONT></FONT><BR><FONT face="courier new,courier"><FONT size=+0>--Roughness 
+  factor greater than 0.60 in CULVERT command will cause failure of a table 
+  lookup. 
+  <P>Error found in the default values in the EMBANKQ command. CSHIFT is 
+  defaulted to 1.0 when it should have been defaulted to 0.0. This results in an 
+  increase of crest elevation for the embankment of 1.0 feet. Do not use the 
+  default value of CSHIFT. </FONT></FONT></P></BLOCKQUOTE><FONT 
+face="courier new,courier"><FONT size=+0>Version 5.31</FONT></FONT> 
+<BLOCKQUOTE><FONT face="courier new,courier"><FONT size=+0>December 21, 2000: 
+  </FONT></FONT><BR><FONT face="courier new,courier"><FONT size=+0>--The 
+  low-head weir coefficient in EMBANKQ and in flow over the road in CULVERT is 
+  improperly allowed to vary with the submerged total head as an argument in 
+  computing submerged weir flow. The argument should be held fixed at the 
+  free-flow total head value. Limited testing shows that the effect is generally 
+  smaller than 0.05 percent of the flow. Some submerged flows less than 10 cfs, 
+  appear to to affected by less than 0.5 percent. The only values affected are 
+  those in which a significant approach velocity head is present. The flows are 
+  unaffected if the velocity head is negligible. </FONT></FONT></BLOCKQUOTE><FONT 
+face="courier new,courier"><FONT size=+0>Version 5.32</FONT></FONT> 
+<BLOCKQUOTE><FONT face="courier new,courier"><FONT size=+0>January 22, 2001: 
+  </FONT></FONT><BR><FONT face="courier new,courier"><FONT size=+0>--An 
+  erroneous error message is printed if UFGATE has less than two gate openings 
+  given. 
+  <P>An error exists in computing LEFT and RIGHT options for cross sections 
+  where either or both points of intersection do not match an existing point on 
+  the cross section. A check for consistency of elements in the cross-section 
+  function table before it was output should give notice if any of these errors 
+  cause significant differences in the computed elements, however until an 
+  update is issued, all LEFT and RIGHT options should intersect with an existing 
+  point on the cross section. </FONT></FONT></P></BLOCKQUOTE><FONT 
+face="courier new,courier"><FONT size=+0>Version 5.35</FONT></FONT> 
+<BLOCKQUOTE><FONT face="courier new,courier"><FONT size=+0>February 9, 2002: 
+  </FONT></FONT><BR><FONT face="courier new,courier"><FONT size=+0>--Problem 
+  exists in interpolation of cross sections when a bottom slot is present. 
+  Recommend that users do not interpolate cross sections when a bottom slot is 
+  present. </FONT></FONT></BLOCKQUOTE></FONT>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="application/javascript" src="http://www.usgs.gov/scripts/analytics/usgs-analytics.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a382c5a26c51cb76',t:'MTc4ODkyMTAzNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></BODY></HTML>

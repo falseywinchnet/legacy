@@ -1,0 +1,440 @@
+c     1-6 March 2003:  Start some new lookup and storage options to see if
+c     we can improve robustness of the solution in FEQ by providing, as a start,
+c     at storage and lookup for type 13 tables that will provide at least 
+c     continuous first derivatives and in some cases continuous second derivatives. 
+
+C
+C
+C
+      SUBROUTINE   TDLK43
+     I                (STDOUT, IP, PTYPE, MFTAB, TIME, EDA, EUA, pfda,
+     I                 HBASE,
+     O                 Q, DQED, DQEU,dqpfd, FREE)
+ 
+C     + + + PURPOSE + + +
+C     Do 2-d lookup for flow for tables of type 43.
+c     These tables use piecewise-cubic Hermite interpolation in 
+c     both the upstream head, and partial free drop.  Testing so far
+c     shows that most tables of this type can be fitted column by column
+c     and row by row with a cubic spline.  We need to fefine methods
+c     for handling too rapid a variation.  Using a variation-limiting approach
+c     may cause major problems in consistency.  Other means, such as forcing
+c     variation limitation, then interpolating using this limitation for additional
+c     intermediate points followed by a subsequent fitting with cubic splines may 
+c     solve the problem.  We need to develop some guides to how to interpolate
+c     for intermediate points to allow a cubic spline to be used everywhere. 
+
+
+c     The pattern of storage is similar to that for type 13 but we must make 
+c     room for about 3.5 times more information to store the various partial 
+c     and ordinary derivatives required to define the piecewise cubic polynomials. 
+
+      IMPLICIT NONE
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER FREE, IP, STDOUT, MFTAB, PTYPE
+      REAL DQED, DQEU, EDA, EUA, HBASE, Q, TIME, pfda, dqpfd
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     IP     - address of the table
+C     PTYPE  - expected table type
+C     MFTAB  - table number and later table address of the function
+C               table that supplies an adjustment factor for flows
+C     TIME   - elapsed time in seconds from start of run
+C     EDA    - water surface elevation at downstream node
+C     EUA    - elevation of water surface at upstream node
+C     HBASE  - datum for heads
+C     Q      - flow rate
+C     DQED   - derivative of flow wrt downstream elevation
+C     DQEU   - derivative flow wrt upstream elevation
+C     FREE   - flag for free flow
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'ftable.cmn'
+ 
+C     + + + LOCAL PARAMETERS + + +
+      INTEGER INC
+      PARAMETER(INC=4)
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER LHU, LP,  NTAB,  TAB, TYPE
+      integer  it, itl, itr, qoffset, ppfd
+      REAL 
+     A     DROP, ED, EU, FAC, HDROP, HDROPL, HDROPR, HMAX, HU,
+     B     HUL, HUR, P, PDV,    THDROP, 
+     d  dhdropl, dhdropr, t, h, flp, frp, fl, fr, dlp, drp, dm,
+     e  dqldhu, dqrdhu, pfdD, pfdU,
+     f  QLD, PQPpfdLD, PQPhuLD, PPQPpfdPhuLD,
+     g  QLU, PQPpfdLU, PQPhuLU, PPQPpfdPhuLU,
+     h  QRD, PQPpfdRD, PQPhuRD, PPQPpfdPhuRD,
+     i  QRU, PQPpfdRU, PQPhuRU, PPQPpfdPhuRU, 
+     j  QL, QR, PQPpfdL, PQPpfdR, PQPhuL, PQPhuR, 
+     k  PPQPpfdPhuL, PPQPpfdPhuR,
+     l  PQPpfd 
+
+
+        
+ 
+C     + + + EXTERNAL NAMES + + +
+      CHARACTER*16 GET_TABID
+      EXTERNAL GET_TABID, LKTAB
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT('*ERR:72* EU < ED in two-D TABID=',A,' EU=',
+     A       F10.2,' ED=',F10.2)
+ 52   FORMAT('*WRN:04* HU > HMAX in two-D TABID=',A,' HU=',
+     A       F10.2,' HMAX=',F10.2)
+ 54   FORMAT('*ERR:73* Unexpected type in two-D TABID',A,
+     A       ' Type=',I5,' expected Type=',I5)
+C***********************************************************************
+C     GET VALUES FROM HEADER-  MUST BE INITIALIZED ON INPUT SO THAT
+C     POINTERS ARE SET TO THE PROPER VALUES AT START
+ 
+      TAB = ITAB(IP+1)
+      TYPE = ITAB(IP+2)
+      LHU = ITAB(IP+4)
+      HMAX = FTAB(IP+9)
+      
+c     Get the offset from zero flow to free flow in the table.  This is 
+c     a constant for each upstream head and is 4*(number of partial free drops
+c     including zero free drop - 1).  Must be set on input of the table!
+      qoffset = itab(ip+7)
+c     Get the pointer to the start of the partial free-drop sequence. 
+c     needed to compute some offsets. 
+      ppfd = itab(ip+5)
+
+C      WRITE(STDOUT,*) ' TDLK43: TAB=',TAB,' TYPE=',TYPE,' LHU=',LHU
+ 
+C     IMPORTANT: THE DESIGNATIONS UPSTREAM AND DOWNSTREAM REFER TO
+C     THE TRUE RELATIONSHIP.  THUS EU >= ED ALWAYS.
+ 
+      EU = EUA
+      ED = EDA
+ 
+      IF(TYPE.NE.PTYPE) THEN
+        WRITE(STDOUT,54) GET_TABID(TAB), TYPE, PTYPE
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      IF(EU.LT.ED) THEN
+        WRITE(STDOUT,50) GET_TABID(TAB), EU, ED
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+ 
+      HU = EU - HBASE
+ 
+      IF(HU.GT.HMAX) THEN
+        WRITE(STDOUT,52) GET_TABID(TAB), HU, HMAX
+        DROP = EU - ED
+        HU = HMAX
+        EU = HBASE + HMAX
+        ED = EU - DROP
+      ENDIF
+ 
+
+C     DETERMINE IF THERE IS FLOW AND IF IT IS KNOWN TO BE FREE
+ 
+      IF(EU.LE.HBASE) THEN
+C       FLOW IS ZERO AND SO ARE DERIVATIVES
+        Q = 0.0
+        DQED = 0.0
+        DQEU = 0.0
+        FREE = 0
+        RETURN
+      ENDIF
+ 
+C     UPSTREAM LEVEL IS ABOVE BASE.  FIND THE UPSTREAM LEVEL INTERVAL
+C     CONTAINING EU
+ 
+      IF(HU.GE.FTAB(LHU)) THEN
+ 100    CONTINUE
+          IF(HU.LE.FTAB(LHU+INC)) GOTO 120
+          LHU = LHU + INC
+          GOTO 100
+      ELSE
+ 110    CONTINUE
+          LHU = LHU - INC
+          IF(HU.GE.FTAB(LHU)) GOTO 120
+          GOTO 110
+      ENDIF
+ 120  CONTINUE
+      ITAB(IP+4) = LHU
+
+C      WRITE(STDOUT,*) ' LHU AFTER SEARCH=',LHU
+ 
+C     FREE FLOW MAY RESULT IF THE DOWNSTREAM HEAD IS
+C     SMALL ENOUGH
+ 
+C     FIND THE HEAD DROP CORRESPONDING TO HU
+ 
+c     Get the ups heads on left (smaller) and right( larger) of the argument value
+c     of ups head.  Also get the the drop to free flow and the derivative of the drop
+c     to free flow wrt to ups head.
+      HUL = FTAB(LHU)
+      HUR = FTAB(LHU+INC)
+      HDROPL = FTAB(LHU+1)
+      HDROPR = FTAB(LHU+INC+1)
+      dhdropl = ftab(lhu+2)
+      dhdropr = ftab(lhu+inc+2)
+
+c     Now do cubic interpolation for the value of free drop at the argument ups head.  Compute
+C     the factors that depend only on the relative location in the interval.  We can reuse these
+c     if the flow is in fact free. 
+      h = hur - hul
+      t = (hu - hul)/h
+c     compute factors on left and right derivative. 
+      flp = (1.0 - t)*t*h
+      frp = -flp*t
+      flp = flp*(1.0 - t)
+c     compute factors on left and right function value
+      fl = 2.*t + 1.0
+      fr = (4.0 - fl)*t*t
+      fl = fl*(1.0 - t)**2
+
+      thdrop = flp*dhdropl + frp*dhdropr + fl*hdropl + fr*hdropr      
+
+
+C      WRITE(STDOUT,*) ' THDROP=',THDROP 
+C     THDROP IS THE TABLE VALUE OF THE HEAD DROP TO FREE FLOW
+C     FOR THE CURRENT UPSTREAM LEVEL
+C     HDROP IS THE CURRENT HEAD DROP
+ 
+      HDROP = EU - ED
+      goto 9123
+      IF(HDROP.GE.THDROP) THEN
+C       Free flow.  Get the values we need: flow on left and right 
+C       and the derivative of flow wrt ups head on left and right. 
+c       These are stored with the submerged values because they form the 
+c       upper condition for submerged flow. 
+ 
+        it = itab(lhu+3)
+        QL = FTAB(it)
+        dqldhu = ftab(it+2)
+        it = itab(lhu+inc+3)
+        QR = FTAB(it)
+        dqrdhu = ftab(it+2)
+
+c       compute the factors based on relative interval for computing derivatives. 
+        dlp = 1. - 3.*t
+        drp = -(1. + dlp)*t
+        dlp = dlp*(1.0 - t)
+        dm = 6.*(1.0 - t)*t/h
+
+        Q = flp*dqldhu + frp*dqrdhu + fl*ql + fr*qr
+        DQEU = dlp*dqldhu + drp*dqrdhu + dm*(qr - ql)
+
+
+        DQED = 0.0
+        FREE = 1
+ 
+        GOTO 9000
+      ENDIF
+ 
+C     SUBMERGED FLOW HERE
+ 
+ 
+C     FIND THE FRACTION OF FREE-FLOW DROP REPRESENTED BY THE CURRENT DROP
+
+9123  continue 
+c      P = HDROP/THDROP
+      p = pfda
+ 
+C      WRITE(STDOUT,*) ' P=',P
+
+c     Outline of approach and variables: 
+c     1. we interpolate wrt to pfd (partial free drop) first.  
+c     2  Then interpolate wrt to ups head. 
+
+c     For each upstream head we have in sequence all of the values for that head.
+c     The upstream head that is just less than the argument value will be denoted
+c     by L for left.  The upstream head that is just greater than the argument value
+c     will be denoted by R for right.  Note that equality is accepted at either end as well. 
+
+c     In the sequence of partial free drops we will have on that is just below the
+c     argument value.  We denote that by D.  We also have one that just above the 
+c     argument value of pfd.  We denote by U.  Now we need not distinguish left and 
+c     right for the pfd because they are the same.   The pattern looks like this:
+
+c          huL             hu       huR
+c        --------------    --     ---------------
+c           .              |         .
+c           .              |         .            Zero or more sets of 4
+c           .              |         .
+c   pfdD    QLD            |        QRD
+c           PQPpfdLD       |        PQPpfdRD      partial Q wrt to pfd
+c           PQPhuLD        |        PQPhuRD       partial Q wrt to hu
+c           PPQPpfdPhuLD   |        PPQPpfdPhuRD  partial partial Q wrt to pfd (2nd) and hu (1st)
+c    P -------------------------------------------  value of argument pfd
+c   pfdU    QLU            |        QRU          
+c           PQPpfdLU       |        PQPpfdRU     
+c           PQPhuLU        |        PQPhuRU      
+c           PPQPpfdPhuLU   |        PPQPpfdPhuRU 
+c           .              |         .
+c           .              |         .            Zero or more sets of 4
+c           .              |         .
+
+c     Beware:  Fortran does not distinguish upper and lower case in names!!!!!
+
+ 
+C     SEARCH IN THE PARTIAL FREE DROP LIST.  Get the value where we last found
+C     the interval. 
+ 
+      LP = ITAB(IP+6)
+      IF(P.GE.FTAB(LP)) THEN
+ 130    CONTINUE
+          IF(P.LE.FTAB(LP+1)) GOTO 150
+            LP = LP + 1
+            GOTO 130
+      ELSE
+ 140    CONTINUE
+          LP = LP - 1
+          IF(P.GE.FTAB(LP)) GOTO 150
+          GOTO 140
+      ENDIF
+ 150  CONTINUE
+      ITAB(IP+6) = LP
+C      WRITE(STDOUT,*) ' LP=',LP
+
+
+c     get the pointers to the free flows for the bounding upstream heads.
+      itl = ITAB(LHU+3)
+      itr = ITAB(LHU+INC+3)
+
+c     Find the pointer for each flow at the partial free drop 
+c     below P (smaller than P).  4*(lp - ppfd) gives the distance from
+c     the flow at zero pfd to the flow at the pfd just smaller than P.
+c     qoffset is the distance from free flow to zero flow (flow at zero 
+c     partial free drop). INC is 4 and is a parameter already in the code.
+c     
+c    
+
+      it = INC*(lp - ppfd) - qoffset
+      itl = itl + it
+      itr = itr + it
+
+c     At this point itl points to QLD and itr points to QRD in the pattern 
+c     given above. 
+
+c     Set the values of pfdD and pfdU
+
+      pfdD = ftab(lp)
+      pfdU = ftab(lp+1)
+
+ 
+c     Get the values in the pattern above.  All will be needed plus a whole
+c     lot more!
+
+      QLD          =  ftab(itl)
+      PQPpfdLD     =  ftab(itl+1)
+      PQPhuLD      =  ftab(itl+2)
+      PPQPpfdPhuLD =  ftab(itl+3)
+
+      QLU          =  ftab(itl+4)
+      PQPpfdLU     =  ftab(itl+5)
+      PQPhuLU      =  ftab(itl+6)
+      PPQPpfdPhuLU =  ftab(itl+7)
+      
+      QRD          =  ftab(itr)
+      PQPpfdRD     =  ftab(itr+1)
+      PQPhuRD      =  ftab(itr+2)
+      PPQPpfdPhuRD =  ftab(itr+3)
+
+      QRU          =  ftab(itr+4)
+      PQPpfdRU     =  ftab(itr+5)
+      PQPhuRU      =  ftab(itr+6)
+      PPQPpfdPhuRU =  ftab(itr+7)
+
+
+c     now compute the coefficients that depend only on the local interval and the interpolation
+c     point.   These apply to both the left and right sequences since the partial free-drop interval
+c     is the same and so is P
+
+      h = pfdU - pfdD
+      t = (P - pfdD)/h
+c     compute factors on left and right derivative. 
+      flp = (1.0 - t)*t*h
+      frp = -flp*t
+      flp = flp*(1.0 - t)
+c     compute factors on left and right function value
+      fl = 2.*t + 1.0
+      fr = (4.0 - fl)*t*t
+      fl = fl*(1.0 - t)**2
+c     compute the factors based on relative interval for computing derivatives. 
+      dlp = 1. - 3.*t
+      drp = -(1. + dlp)*t
+      dlp = dlp*(1.0 - t)
+      dm = 6.*(1.0 - t)*t/h
+
+c     We need four values at P on huL and four values at P on huR to be able
+c     to compute both the function and its two derivatives at P and hu:
+c      1. Q ---------------------------------->  QL           QR
+c      2. partial Q wrt to pfd --------------->  PQPpfdL      PQPpfdR
+c      3. partial Q wrt to hu ---------------->  PQPhuL       PQPhuR
+c      4. partial partial Q wrt to pfd and hu->  PPQPpfdPhuL  PPQPpfdPhuR
+
+
+      QL      = fl*QLD + fr*QLU + flp*PQPpfdLD + frp*PQPpfdLU     
+      PQPpfdL = dlp*PQPpfdLD + drp*PQPpfdLU + dm*(QLU - QLD)
+
+      PQPhuL      = 
+     a   fl*PQPhuLD + fr*PQPhuLU + flp*PPQPpfdPhuLD + frp*PPQPpfdPhuLU       
+      PPQPpfdPhuL = 
+     a  dlp*PPQPpfdPhuLD + drp*PPQPpfdPhuLU 
+     b                            + dm*(PQPhuLU - PQPhuLD)
+
+      QR      = fl*QRD + fr*QRU + flp*PQPpfdRD + frp*PQPpfdRU     
+      PQPpfdR = dlp*PQPpfdRD + drp*PQPpfdRU + dm*(QRU - QRD)
+
+      PQPhuR      = 
+     a   fl*PQPhuRD + fr*PQPhuRU + flp*PPQPpfdPhuRD + frp*PPQPpfdPhuRU       
+      PPQPpfdPhuR = 
+     a  dlp*PPQPpfdPhuRD + drp*PPQPpfdPhuRU 
+     b                            + dm*(PQPhuRU - PQPhuRD)
+
+c     Next recompute the coefficients for the upstream head interval
+      h = hur - hul
+      t = (hu - hul)/h
+c     compute factors on left and right derivative. 
+      flp = (1.0 - t)*t*h
+      frp = -flp*t
+      flp = flp*(1.0 - t)
+c     compute factors on left and right function value
+      fl = 2.*t + 1.0
+      fr = (4.0 - fl)*t*t
+      fl = fl*(1.0 - t)**2
+c     compute the factors based on relative interval for computing derivatives. 
+      dlp = 1. - 3.*t
+      drp = -(1. + dlp)*t
+      dlp = dlp*(1.0 - t)
+      dm = 6.*(1.0 - t)*t/h
+
+c     We now interpolate on upstream head for the values at p and hu.
+
+      Q = fl*QL + fr*QR + flp*PQPhuL  + frp*PQPhuR
+      DQEU = dlp*PQPhuL + drp*PQPhuR + dm*(QR - QL)
+
+      PQPpfd = fl*PQPpfdL + fr*PQPpfdR 
+     a                  + flp*PPQPpfdPhuL + frp*PPQPpfdPhuR
+      DQED =  -PQPpfd/thdrop
+      dqpfd =  PQPpfd
+      FREE = 0
+ 
+ 9000 CONTINUE
+C     CHECK FOR FINAL ADJUSMENT
+      IF(MFTAB.GT.0) THEN
+C       FIND ADJUSTMENT FACTOR AND APPLY TO THE FLOW AND DERIVATIVES
+ 
+        CALL LKTAB
+     I            (MFTAB, TIME, 1,
+     O             FAC, NTAB, PDV)
+ 
+        Q = Q*FAC
+        DQED = DQED*FAC
+        DQEU = DQEU*FAC
+      ENDIF
+ 
+      RETURN
+ 
+      END

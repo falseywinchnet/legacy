@@ -1,0 +1,56 @@
+--- 9.98/fequtl/ritter.for
++++ 10.61/fequtl/ritter.for
+@@ -161,7 +161,7 @@
+       INTRINSIC SQRT
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL CHKCFC, FNDRIT, INL80, KIL, READ_TABID
++      EXTERNAL CHKCFC, FNDRIT, inline, KIL, READ_TABID
+  
+ C     + + + INPUT FORMATS + + +
+  2    FORMAT(2F10.0)
+@@ -185,7 +185,7 @@
+ C***********************************************************************
+ C     INPUT THE TABLE ID FOR THE APPROACH CROSS SECTION
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -201,7 +201,7 @@
+  
+ C     INPUT THE TABLE ID FOR THE CONSTRICTED FLOW
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -216,7 +216,7 @@
+  
+ C     INPUT THE BREACH OFFSET VALUE
+  
+-C      CALL INL80(STDIN, STDOUT, LINE)
++C      CALL inline(STDIN, STDOUT, LINE)
+ C      READ(LINE,'(A8,F10.0)',ERR=991) NAME, Z0
+ C      WRITE(STDOUT,'(1X,A8,F10.3)') NAME, Z0
+ C      IF(Z0.LT.0.0) THEN
+@@ -325,7 +325,7 @@
+ C     FOR EACH CASE GIVEN IN THE INPUT.
+  
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,'(A79)',ERR=991) LABEL
+@@ -333,7 +333,7 @@
+       WRITE(STDOUT,58) LABEL(21:79)
+  
+  200  CONTINUE
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+         READ(LINE,2,ERR=991) Y1, Q1

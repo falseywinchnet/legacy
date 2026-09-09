@@ -1,0 +1,9 @@
+C**********************************************************************
+      COMMON/BNRSLT/ TQMAX, TQMIN, TZMAX, QMAX, QMIN, ZMAX, VMAX
+
+
+      REAL QMAX(MNBN), QMIN(MNBN), ZMAX(MNBN), VMAX(MNBN)
+
+      DOUBLE PRECISION TQMAX(MNBN), TQMIN(MNBN), TZMAX(MNBN)
+C**********************************************************************
+                 

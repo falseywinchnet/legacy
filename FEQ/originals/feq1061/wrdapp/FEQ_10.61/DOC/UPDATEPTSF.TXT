@@ -1,0 +1,81 @@
+Description of Point Time Series File Processing
+
+The following utility reads PTSF's in the old sequential unformatted style
+and creates PTSF's in the new direct unformatted style:
+File name                    Description
+---------                    -----------------------------------------------------------
+updatedptsf/updateptsf.exe   Program to convert to the new style for PTSF
+updateptsf/infile.upd        Input file containing file names for processing
+updateptsf/updateptsf.for    Source code
+
+
+The input files for the programs contain one or more lines.  Each line 
+is a complete instruction giving the name of the source file, the name 
+of a target file, and in some cases, the description of the operation 
+or format of the source/target file.  There can be no blank lines in 
+an input file; not even a blank line at the end!  A blank line will 
+send the programs into problems.  
+
+
+The contents of infile.upd are one or more lines like:
+
+'cumqbase.sim'  'cumqbase.drt' 
+
+
+with no blank lines before or after.  Each line has two 
+character strings.  The first string gives the name of 
+a PTSF in the old sequential style and the second string
+gives the name of the PTSF in the new direct style.  
+
+
+Important: Any utility that is reading a PTSF must have 
+been compiled by the same compiler that was used to 
+compile the version of FEQ that created the file.  This 
+is vital.  FEQ reports the compiler used for the executable
+near the top of the master-output file since version 9.93. 
+If you are using an earlier version then the following points
+could help decide which compiler was used just in case you
+do not know:
+
+1. If you are using a model from DuPage County, Illinois,
+that has PTSF's or DTSF's, then it is most likely the 
+compiler used was LF90.  However, file conversion is underway
+and this may fail to be true in the future. 
+
+2.Check the size of the executable:  If it is less than
+1,500,000 bytes, it is probably compiled with LF90 and 
+if it is greater, probably LF95.  May not be reliable with
+old versions of FEQ.
+
+To convert a PTSF from the old style to the new style:
+
+1. Decide what compiler created the executable that 
+wrote the PTSF. 
+
+2. Download the executable of updateptsf for that 
+compiler.  If you have a compiler other than LF90 or LF95
+then you will have to compile the source code for updatetsf
+with that compiler. 
+
+3. Create the file: infile.upd for all the PTSF's you 
+need to convert.  Notice that the name must be changed
+so use some standatd extension that will make the file
+names differ. 
+
+4.Invoke the executable name as a command with no
+arguments.  That is, run the utility!
+
+5. At the prompt give the name:  infile.upd or whatever
+name you gave to an equivalent file. Terminate your
+input with the enter key. 
+
+With the new style for the PTSF's there will be little 
+need for the other utilities with the compilers currently 
+being used.  However, some other compiler may produce 
+executables of FEQ that write direct unformatted files 
+in a manner incompatible with the current compilers.  
+Then we will have to use the other files and makeptsf
+will need to be modified to write the new format.  
+
+
+

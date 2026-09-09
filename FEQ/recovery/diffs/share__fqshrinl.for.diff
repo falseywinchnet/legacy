@@ -1,0 +1,719 @@
+--- 9.98/share/fqshrinl.for
++++ 10.61/share/fqshrinl.for
+@@ -1,192 +1,192 @@
+ C
+ C
+ C
+-      SUBROUTINE   INL80B
+-     I                  (IN, OUT,
+-     O                   LINE)
++c      SUBROUTINE   INL80B
++c     I                  (IN, OUT,
++c     O                   LINE)
+  
+ C     + + + PURPOSE + + +
+ C     Function to read lines from the input, detect comments, 
+ C     and return only valid input lines to the point of call.
+ C     This routine returns a blank line as a valid input line.
+  
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER IN, OUT
+-      CHARACTER LINE*80
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     IN     - unit number for the user input file
+-C     OUT    - unit number for output
+-C     LINE   - buffer for an input line
+- 
+-C     Local 
+-
+-      INTEGER N
+-
+-C     + + + SAVED VALUES + + +
+-      CHARACTER INONLY*1, INOUT*1, PLUS*1
+-
+-      SAVE INONLY, INOUT, PLUS
+- 
+-C     + + + DATA INITIALIZATIONS + + +
+-      DATA INOUT/'*'/, PLUS/'+'/, INONLY/';'/
+-
+-C     Program units called.
+-
+-      EXTERNAL  FILTER_CR
+-C***********************************************************************
+- 100  CONTINUE
+-        READ(IN,'(A80)',END=200) LINE
+-        CALL FILTER_CR(
+-     M                LINE)
+-        IF(LINE(1:1).EQ.INOUT.OR.LINE(1:1).EQ.PLUS) THEN
+-C         OUTPUT THE LINE AND GO BACK AND GET NEXT LINE
+-          N = LEN_TRIM(LINE)
+-          WRITE(OUT,'(1X,A)') LINE(1:N)
+-          GOTO 100
+-        ELSEIF(LINE(1:1).NE.INONLY) THEN
+-C         LINE IS NOT A COMMENT.  RETURN THE LINE TO
+-C         THE POINT OF CALL.
+- 
+-          RETURN
+-        ENDIF
+-      GOTO 100
+- 200  CONTINUE
+-        LINE = 'ENDFILE'
+-        RETURN
+- 
+-      END
+-C
+-C
+-C
+-      SUBROUTINE   INL112
+-     I                   (IN, OUT,
+-     O                    LINE)
+- 
+-C     + + + PURPOSE + + +
+-C     Function to read lines from the input, detect comments, 
+-C     and return only valid input lines to the point of call.
+-C     This routine treats blank lines like echoing comments.
+- 
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER IN, OUT
+-      CHARACTER LINE*112
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     IN     - unit number for the user input file
+-C     OUT    - unit number for output
+-C     LINE   - buffer for an input line
+- 
+-C     Local 
+-
+-      INTEGER N
+-
+-C     + + + SAVED VALUES + + +
+-      CHARACTER INONLY*1, INOUT*1, PLUS*1, BLINE*112
+-      SAVE INONLY, INOUT, PLUS, BLINE
+- 
+-C     + + + DATA INITIALIZATIONS + + +
+-      DATA INOUT/'*'/, PLUS/'+'/, INONLY/';'/, BLINE/' '/
+-
+-C     Program units called.
+-
+-      EXTERNAL FILTER_CR
+-C***********************************************************************
+- 100  CONTINUE
+-        READ(IN,'(A)',END=200) LINE
+-        CALL FILTER_CR(
+-     M                 LINE)
+-        IF(LINE(1:1).EQ.INOUT.OR.LINE(1:1).EQ.PLUS) THEN
+-C         OUTPUT THE LINE AND GO BACK AND GET NEXT LINE
+-          N = LEN_TRIM(LINE)
+-          WRITE(OUT,'(1X,A)') LINE(1:N)
+-          GOTO 100
+-        ELSEIF(LINE.EQ.BLINE) THEN
+-C         Treat a blank line as an echoing comment.
+-          WRITE(OUT,'(1X,A1)') ' '
+-          GOTO 100
+-        ELSEIF(LINE(1:1).NE.INONLY) THEN
+-C         LINE IS NOT BLANK AND NOT A COMMENT.  RETURN THE LINE TO
+-C         THE POINT OF CALL.
+- 
+-          RETURN
+-        ENDIF
+- 
+-      GOTO 100
+- 
+- 200  CONTINUE
+-        LINE = 'ENDFILE'
+-        RETURN
+-      END
+-C
+-C
+-C
+-      SUBROUTINE   INL120
+-     I                   (IN, OUT,
+-     O                    LINE)
+- 
+-C     + + + PURPOSE + + +
+-C     Function to read lines from the input, detect comments, 
+-C     and return only valid input lines to the point of call.
+-C     This routine treats blank lines like echoing comments.
+- 
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER IN, OUT
+-      CHARACTER LINE*120
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     IN     - unit number for the user input file
+-C     OUT    - unit number for output
+-C     LINE   - buffer for an input line
+- 
+-C     Local 
+-
+-      INTEGER N
+-
+-C     + + + SAVED VALUES + + +
+-      CHARACTER INONLY*1, INOUT*1, PLUS*1, BLINE*120
+-      SAVE INONLY, INOUT, PLUS, BLINE
+- 
+-C     + + + DATA INITIALIZATIONS + + +
+-      DATA INOUT/'*'/, PLUS/'+'/, INONLY/';'/, BLINE/' '/
+-
+-C     Program units called.
+-
+-      EXTERNAL FILTER_CR
+-C***********************************************************************
+- 100  CONTINUE
+-        READ(IN,'(A)',END=200) LINE
+-        CALL FILTER_CR(
+-     M                 LINE)
+-        IF(LINE(1:1).EQ.INOUT.OR.LINE(1:1).EQ.PLUS) THEN
+-C         OUTPUT THE LINE AND GO BACK AND GET NEXT LINE
+-          N = LEN_TRIM(LINE)
+-          WRITE(OUT,'(1X,A)') LINE(1:N)
+-          GOTO 100
+-        ELSEIF(LINE.EQ.BLINE) THEN
+-C         Treat a blank line as an echoing comment.
+-          WRITE(OUT,'(1X,A1)') ' '
+-          GOTO 100
+-        ELSEIF(LINE(1:1).NE.INONLY) THEN
+-C         LINE IS NOT BLANK AND NOT A COMMENT.  RETURN THE LINE TO
+-C         THE POINT OF CALL.
+- 
+-          RETURN
+-        ENDIF
+- 
+-      GOTO 100
+- 
+- 200  CONTINUE
+-        LINE = 'ENDFILE'
+-        RETURN
+-      END
+-C
+-C
+-C
+-      SUBROUTINE   INL120B
++c      IMPLICIT NONE
++cC     + + + DUMMY ARGUMENTS + + +
++c      INTEGER IN, OUT
++c      CHARACTER LINE*80
++c 
++cC     + + +DUMMY ARGUMENT DEFINITIONS + + +
++cC     IN     - unit number for the user input file
++cC     OUT    - unit number for output
++cC     LINE   - buffer for an input line
++c 
++cC     Local 
++c
++c      INTEGER N
++c
++cC     + + + SAVED VALUES + + +
++c      CHARACTER INONLY*1, INOUT*1, PLUS*1
++c
++c      SAVE INONLY, INOUT, PLUS
++c 
++cC     + + + DATA INITIALIZATIONS + + +
++c      DATA INOUT/'*'/, PLUS/'+'/, INONLY/';'/
++c
++cC     Program units called.
++c
++c      EXTERNAL  FILTER_CR
++cC***********************************************************************
++c 100  CONTINUE
++c        READ(IN,'(A80)',END=200) LINE
++c        CALL FILTER_CR(
++c     M                LINE)
++c        IF(LINE(1:1).EQ.INOUT.OR.LINE(1:1).EQ.PLUS) THEN
++cC         OUTPUT THE LINE AND GO BACK AND GET NEXT LINE
++c          N = LEN_TRIM(LINE)
++c          WRITE(OUT,'(1X,A)') LINE(1:N)
++c          GOTO 100
++c        ELSEIF(LINE(1:1).NE.INONLY) THEN
++cC         LINE IS NOT A COMMENT.  RETURN THE LINE TO
++cC         THE POINT OF CALL.
++c 
++c          RETURN
++c        ENDIF
++c      GOTO 100
++c 200  CONTINUE
++c        LINE = 'ENDFILE'
++c        RETURN
++c 
++c      END
++cC
++cC
++cC
++c      SUBROUTINE   inl112
++c     I                   (IN, OUT,
++c     O                    LINE)
++c 
++cC     + + + PURPOSE + + +
++cC     Function to read lines from the input, detect comments, 
++cC     and return only valid input lines to the point of call.
++cC     This routine treats blank lines like echoing comments.
++c 
++c      IMPLICIT NONE
++cC     + + + DUMMY ARGUMENTS + + +
++c      INTEGER IN, OUT
++c      CHARACTER LINE*112
++c 
++cC     + + +DUMMY ARGUMENT DEFINITIONS + + +
++cC     IN     - unit number for the user input file
++cC     OUT    - unit number for output
++cC     LINE   - buffer for an input line
++c 
++cC     Local 
++c
++c      INTEGER N
++c
++cC     + + + SAVED VALUES + + +
++c      CHARACTER INONLY*1, INOUT*1, PLUS*1, BLINE*112
++c      SAVE INONLY, INOUT, PLUS, BLINE
++c 
++cC     + + + DATA INITIALIZATIONS + + +
++c      DATA INOUT/'*'/, PLUS/'+'/, INONLY/';'/, BLINE/' '/
++c
++cC     Program units called.
++c
++c      EXTERNAL FILTER_CR
++cC***********************************************************************
++c 100  CONTINUE
++c        READ(IN,'(A)',END=200) LINE
++c        CALL FILTER_CR(
++c     M                 LINE)
++c        IF(LINE(1:1).EQ.INOUT.OR.LINE(1:1).EQ.PLUS) THEN
++cC         OUTPUT THE LINE AND GO BACK AND GET NEXT LINE
++c          N = LEN_TRIM(LINE)
++c          WRITE(OUT,'(1X,A)') LINE(1:N)
++c          GOTO 100
++c        ELSEIF(LINE.EQ.BLINE) THEN
++cC         Treat a blank line as an echoing comment.
++c          WRITE(OUT,'(1X,A1)') ' '
++c          GOTO 100
++c        ELSEIF(LINE(1:1).NE.INONLY) THEN
++cC         LINE IS NOT BLANK AND NOT A COMMENT.  RETURN THE LINE TO
++cC         THE POINT OF CALL.
++c 
++c          RETURN
++c        ENDIF
++c 
++c      GOTO 100
++c 
++c 200  CONTINUE
++c        LINE = 'ENDFILE'
++c        RETURN
++c      END
++cC
++cC
++cC
++c      SUBROUTINE   inl120
++c     I                   (IN, OUT,
++c     O                    LINE)
++c 
++cC     + + + PURPOSE + + +
++cC     Function to read lines from the input, detect comments, 
++cC     and return only valid input lines to the point of call.
++cC     This routine treats blank lines like echoing comments.
++c 
++c      IMPLICIT NONE
++cC     + + + DUMMY ARGUMENTS + + +
++c      INTEGER IN, OUT
++c      CHARACTER LINE*120
++c 
++cC     + + +DUMMY ARGUMENT DEFINITIONS + + +
++cC     IN     - unit number for the user input file
++cC     OUT    - unit number for output
++cC     LINE   - buffer for an input line
++c 
++cC     Local 
++c
++c      INTEGER N
++c
++cC     + + + SAVED VALUES + + +
++c      CHARACTER INONLY*1, INOUT*1, PLUS*1, BLINE*120
++c      SAVE INONLY, INOUT, PLUS, BLINE
++c 
++cC     + + + DATA INITIALIZATIONS + + +
++c      DATA INOUT/'*'/, PLUS/'+'/, INONLY/';'/, BLINE/' '/
++c
++cC     Program units called.
++c
++c      EXTERNAL FILTER_CR
++cC***********************************************************************
++c 100  CONTINUE
++c        READ(IN,'(A)',END=200) LINE
++c        CALL FILTER_CR(
++c     M                 LINE)
++c        IF(LINE(1:1).EQ.INOUT.OR.LINE(1:1).EQ.PLUS) THEN
++cC         OUTPUT THE LINE AND GO BACK AND GET NEXT LINE
++c          N = LEN_TRIM(LINE)
++c          WRITE(OUT,'(1X,A)') LINE(1:N)
++c          GOTO 100
++c        ELSEIF(LINE.EQ.BLINE) THEN
++cC         Treat a blank line as an echoing comment.
++c          WRITE(OUT,'(1X,A1)') ' '
++c          GOTO 100
++c        ELSEIF(LINE(1:1).NE.INONLY) THEN
++cC         LINE IS NOT BLANK AND NOT A COMMENT.  RETURN THE LINE TO
++cC         THE POINT OF CALL.
++c 
++c          RETURN
++c        ENDIF
++c 
++c      GOTO 100
++c 
++c 200  CONTINUE
++c        LINE = 'ENDFILE'
++c        RETURN
++c      END
++C
++C
++C
++      SUBROUTINE   INLINEB
+      I                    (IN, OUT,
+      O                     LINE)
+  
+@@ -198,7 +198,7 @@
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IN, OUT
+-      CHARACTER LINE*120
++      CHARACTER LINE*(*)
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IN     - unit number for the user input file
+@@ -246,75 +246,75 @@
+         LINE = 'ENDFILE'
+         RETURN
+       END
+-C
+-C
+-C
+-      SUBROUTINE   INL196
+-     I                   (IN, OUT,
+-     O                    LINE)
+- 
+-C     + + + PURPOSE + + +
+-C     Function to read lines from the input, detect comments, 
+-C     and return only valid input lines to the point of call.
+-C     This routine treats blank lines like echoing comments.
+- 
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER IN, OUT
+-      CHARACTER LINE*196
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     IN     - unit number for the user input file
+-C     OUT    - unit number for output
+-C     LINE   - buffer for an input line
+- 
+-C     Local 
+-
+-      INTEGER N
+-
+-C     + + + SAVED VALUES + + +
+-      CHARACTER INONLY*1, INOUT*1, PLUS*1, BLINE*196
+-      SAVE INONLY, INOUT, PLUS, BLINE
+- 
+-C     + + + DATA INITIALIZATIONS + + +
+-      DATA INOUT/'*'/, PLUS/'+'/, INONLY/';'/, BLINE/' '/
+-
+-C     Program units called.
+-
+-      EXTERNAL FILTER_CR
+-C***********************************************************************
+- 100  CONTINUE
+-        READ(IN,'(A)',END=200) LINE
+-        CALL FILTER_CR(
+-     M                 LINE)
+-        IF(LINE(1:1).EQ.INOUT.OR.LINE(1:1).EQ.PLUS) THEN
+-C         OUTPUT THE LINE AND GO BACK AND GET NEXT LINE
+-          N = LEN_TRIM(LINE)
+-          WRITE(OUT,'(1X,A)') LINE(1:N)
+-          GOTO 100
+-        ELSEIF(LINE.EQ.BLINE) THEN
+-C         Treat a blank line as an echoing comment.
+-          WRITE(OUT,'(1X,A1)') ' '
+-          GOTO 100
+-        ELSEIF(LINE(1:1).NE.INONLY) THEN
+-C         LINE IS NOT BLANK AND NOT A COMMENT.  RETURN THE LINE TO
+-C         THE POINT OF CALL.
+- 
+-          RETURN
+-        ENDIF
+- 
+-      GOTO 100
+- 
+- 200  CONTINUE
+-        LINE = 'ENDFILE'
+-        RETURN
+-      END
+-C
+-C
+-C
+-      SUBROUTINE   INL196_ALL
+-     I                   (IN,
+-     O                    LINE)
++cC
++cC
++cC
++c      SUBROUTINE   inl196
++c     I                   (IN, OUT,
++c     O                    LINE)
++c 
++cC     + + + PURPOSE + + +
++cC     Function to read lines from the input, detect comments, 
++cC     and return only valid input lines to the point of call.
++cC     This routine treats blank lines like echoing comments.
++c 
++c      IMPLICIT NONE
++cC     + + + DUMMY ARGUMENTS + + +
++c      INTEGER IN, OUT
++c      CHARACTER LINE*196
++c 
++cC     + + +DUMMY ARGUMENT DEFINITIONS + + +
++cC     IN     - unit number for the user input file
++cC     OUT    - unit number for output
++cC     LINE   - buffer for an input line
++c 
++cC     Local 
++c
++c      INTEGER N
++c
++cC     + + + SAVED VALUES + + +
++c      CHARACTER INONLY*1, INOUT*1, PLUS*1, BLINE*196
++c      SAVE INONLY, INOUT, PLUS, BLINE
++c 
++cC     + + + DATA INITIALIZATIONS + + +
++c      DATA INOUT/'*'/, PLUS/'+'/, INONLY/';'/, BLINE/' '/
++c
++cC     Program units called.
++c
++c      EXTERNAL FILTER_CR
++cC***********************************************************************
++c 100  CONTINUE
++c        READ(IN,'(A)',END=200) LINE
++c        CALL FILTER_CR(
++c     M                 LINE)
++c        IF(LINE(1:1).EQ.INOUT.OR.LINE(1:1).EQ.PLUS) THEN
++cC         OUTPUT THE LINE AND GO BACK AND GET NEXT LINE
++c          N = LEN_TRIM(LINE)
++c          WRITE(OUT,'(1X,A)') LINE(1:N)
++c          GOTO 100
++c        ELSEIF(LINE.EQ.BLINE) THEN
++cC         Treat a blank line as an echoing comment.
++c          WRITE(OUT,'(1X,A1)') ' '
++c          GOTO 100
++c        ELSEIF(LINE(1:1).NE.INONLY) THEN
++cC         LINE IS NOT BLANK AND NOT A COMMENT.  RETURN THE LINE TO
++cC         THE POINT OF CALL.
++c 
++c          RETURN
++c        ENDIF
++c 
++c      GOTO 100
++c 
++c 200  CONTINUE
++c        LINE = 'ENDFILE'
++c        RETURN
++c      END
++C
++C
++C
++      SUBROUTINE   INLINE_ALL
++     I                      (IN,
++     O                        LINE)
+  
+ C     + + + PURPOSE + + +
+ C     Function to read lines from the input, returning all
+@@ -324,7 +324,7 @@
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IN
+-      CHARACTER LINE*196
++      CHARACTER LINE*(*)
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IN     - unit number for the user input file
+@@ -347,22 +347,91 @@
+         LINE = 'ENDFILE'
+         RETURN
+       END
+-C
+-C
+-C
+-      SUBROUTINE   INL80
+-     I                  (IN, OUT,
+-     O                   LINE)
++cC
++cC
++cC
++c      SUBROUTINE   inl80
++c     I                  (IN, OUT,
++c     O                   LINE)
++c 
++cC     + + + PURPOSE + + +
++cC     Function to read lines from the input, detect comments, 
++cC     and return only valid input lines to the point of call.
++cC     This routine treats blank lines like echoing comments.
++c 
++c      IMPLICIT NONE
++cC     + + + DUMMY ARGUMENTS + + +
++c      INTEGER IN, OUT
++c      CHARACTER LINE*80
++c 
++cC     + + +DUMMY ARGUMENT DEFINITIONS + + +
++cC     IN     - unit number for the user input file
++cC     OUT    - unit number for output
++cC     LINE   - buffer for an input line
++c
++cC     Local
++c
++c      INTEGER N
++c 
++cC     + + + SAVED VALUES + + +
++c      CHARACTER INONLY*1, INOUT*1, PLUS*1, BLINE*80
++c
++c      SAVE INONLY, INOUT, PLUS, BLINE
++c 
++cC     + + + DATA INITIALIZATIONS + + +
++c      DATA INOUT/'*'/, PLUS/'+'/, INONLY/';'/,BLINE/' '/
++c
++cC     Called program units
++c
++c      EXTERNAL FILTER_CR
++cC***********************************************************************
++c 100  CONTINUE
++c        READ(IN,'(A80)',END=200) LINE
++c        CALL FILTER_CR(
++c     M                 LINE)
++c
++c        IF(LINE(1:1).EQ.INOUT.OR.LINE(1:1).EQ.PLUS) THEN
++cC         OUTPUT THE LINE AND GO BACK AND GET NEXT LINE
++c          N = LEN_TRIM(LINE)
++c          WRITE(OUT,'(1X,A)') LINE(1:N)
++c          GOTO 100
++c        ELSEIF(LINE.EQ.BLINE) THEN
++cC         Treat a blank line as an echoing comment
++c          WRITE(OUT,'(1X,A1)') ' '
++c          GOTO 100
++c        ELSEIF(LINE(1:1).NE.INONLY) THEN
++cC         LINE IS NOT BLANK AND NOT A COMMENT.  RETURN THE LINE TO
++cC         THE POINT OF CALL.
++c 
++c          RETURN
++c        ENDIF
++c 
++c      GOTO 100
++c 
++c 200  CONTINUE
++c        LINE = 'ENDFILE'
++c        RETURN
++c 
++c      END
++C
++C
++C
++      SUBROUTINE   INLINE
++     I                   (IN, OUT,
++     O                    LINE)
+  
+ C     + + + PURPOSE + + +
+ C     Function to read lines from the input, detect comments, 
+ C     and return only valid input lines to the point of call.
+ C     This routine treats blank lines like echoing comments.
+  
++C     Jan. 8, 2002: Experiment with a generic-length string 
++C     to see how well it works.  
++
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IN, OUT
+-      CHARACTER LINE*80
++      CHARACTER LINE*(*)
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IN     - unit number for the user input file
+@@ -386,7 +455,7 @@
+       EXTERNAL FILTER_CR
+ C***********************************************************************
+  100  CONTINUE
+-        READ(IN,'(A80)',END=200) LINE
++        READ(IN,'(A)',END=200) LINE
+         CALL FILTER_CR(
+      M                 LINE)
+ 
+@@ -413,72 +482,3 @@
+         RETURN
+  
+       END
+-C
+-C
+-C
+-      SUBROUTINE   INLINE
+-     I                   (IN, OUT,
+-     O                    LINE)
+- 
+-C     + + + PURPOSE + + +
+-C     Function to read lines from the input, detect comments, 
+-C     and return only valid input lines to the point of call.
+-C     This routine treats blank lines like echoing comments.
+- 
+-C     Jan. 8, 2002: Experiment with a generic-length string 
+-C     to see how well it works.  
+-
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER IN, OUT
+-      CHARACTER LINE*(*)
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     IN     - unit number for the user input file
+-C     OUT    - unit number for output
+-C     LINE   - buffer for an input line
+-
+-C     Local
+-
+-      INTEGER N
+- 
+-C     + + + SAVED VALUES + + +
+-      CHARACTER INONLY*1, INOUT*1, PLUS*1, BLINE*80
+-
+-      SAVE INONLY, INOUT, PLUS, BLINE
+- 
+-C     + + + DATA INITIALIZATIONS + + +
+-      DATA INOUT/'*'/, PLUS/'+'/, INONLY/';'/,BLINE/' '/
+-
+-C     Called program units
+-
+-      EXTERNAL FILTER_CR
+-C***********************************************************************
+- 100  CONTINUE
+-        READ(IN,'(A)',END=200) LINE
+-        CALL FILTER_CR(
+-     M                 LINE)
+-
+-        IF(LINE(1:1).EQ.INOUT.OR.LINE(1:1).EQ.PLUS) THEN
+-C         OUTPUT THE LINE AND GO BACK AND GET NEXT LINE
+-          N = LEN_TRIM(LINE)
+-          WRITE(OUT,'(1X,A)') LINE(1:N)
+-          GOTO 100
+-        ELSEIF(LINE.EQ.BLINE) THEN
+-C         Treat a blank line as an echoing comment
+-          WRITE(OUT,'(1X,A1)') ' '
+-          GOTO 100
+-        ELSEIF(LINE(1:1).NE.INONLY) THEN
+-C         LINE IS NOT BLANK AND NOT A COMMENT.  RETURN THE LINE TO
+-C         THE POINT OF CALL.
+- 
+-          RETURN
+-        ENDIF
+- 
+-      GOTO 100
+- 
+- 200  CONTINUE
+-        LINE = 'ENDFILE'
+-        RETURN
+- 
+-      END

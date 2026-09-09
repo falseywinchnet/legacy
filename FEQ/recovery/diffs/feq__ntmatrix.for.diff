@@ -1,0 +1,207 @@
+--- 9.98/feq/ntmatrix.for
++++ 10.61/feq/ntmatrix.for
+@@ -109,7 +109,8 @@
+       SUBROUTINE   CMPCOR
+      I                   (NBRA, NEX, BRPT, EXNODT, QEPS, EPSSYS, EPSSY2,
+      I                    ABSTOL,
+-     O                    MXRE, BMXRE, NMXRE, KNT, KNTA, BNODE_MAX)
++     O                    MXRE, BMXRE, NMXRE, IVAR_MXRE, KNT, 
++     O                    KNTA, BNODE_MAX)
+  
+ C     + + + PURPOSE + + +
+ C     Compute corrections to current estimate
+@@ -117,7 +118,8 @@
+       IMPLICIT NONE
+ 
+ C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER BMXRE, KNT, KNTA, NBRA, NEX, NMXRE, BNODE_MAX
++      INTEGER BMXRE, KNT, KNTA, NBRA, NEX, NMXRE, BNODE_MAX,
++     A        IVAR_MXRE
+       INTEGER BRPT(8,NBRA), EXNODT(9,NEX)
+       REAL ABSTOL, EPSSY2, EPSSYS, MXRE, QEPS
+  
+@@ -150,15 +152,14 @@
+ C                    pointer in initial processing of input
+ C     QEPS   - value of flow to prevent zero divide when computing
+ C               relative correction
+-C     EPSSYS - primary convergence limit one or more variables is
+-C              permitted to exceed the primary convergence limit
+-C     EPSSY2 - secondary convergence limit one or more variables is
+-C              permitted to exceed the primary convergence limit
++C     EPSSYS - primary convergence limit 
++C     EPSSY2 - secondary convergence limit
+ C     ABSTOL - Absolute tolerance in depth that overrides relative
+ C               change in declaring convergence.
+ C     MXRE   - maximum relative correction value for any variable
+ C     BMXRE  - branch number for maximum relative correction
+ C     NMXRE  - node number at which maximum relative correction occurs
++C     IVAR_MXRE -internal variable number at point of max relative error (correction)
+ C     KNT    - number of variables that violate the primary convergence
+ C               tolerance
+ C     KNTA   - number of variables that violate the secondary
+@@ -231,39 +232,56 @@
+               ENDIF
+             ELSE
+               B = ABS(TEMP)/YE2(I)
++c          if(ivar.eq.3062) then
++c            write(std6,54) b, ye2(i), temp
++c54    format(' Debug: b=',1pe12.5,' ye22(i)=',1pe12.5,' temp=',1pe12.5)
++c          endif 
++
+             ENDIF
+           ENDIF
+           IF(B.GE.MXRE) THEN
+             MXRE = B
+             BMXRE = 0
+             NMXRE = -I
++            IVAR_MXRE = IVAR
+           ENDIF
+           IF(B.GT.EPSSYS) THEN
+             IKNT = IKNT + 1
+             IF(B.GT.EPSSY2) THEN
+               IKNTA = IKNTA + 1
+             ENDIF
+-          ENDIF
+-          ENCORY(I) = TEMP
++            HI_IQ_NS_STATE(IVAR) = 0
++          ELSE
++            HI_IQ_NS_STATE(IVAR) = 1
++          ENDIF
++          ENCORY(I) = HI_IQ_NS_FAC(IVAR)*TEMP
+  
+  
+           TEMP = RHS(IVAR-1)
+  
+           B = ABS(TEMP/(ABS(QE2(I)) + QEPS))
+  
++c          if(ivar-1.eq.3061) then
++c            write(std6,52) b, qe2(i), temp
++c52    format(' Debug: b=',1pe12.5,' qe2(i)=',1pe12.5,' temp=',1pe12.5)
++c          endif 
+           IF(B.GE.MXRE) THEN
+             MXRE = B
+             BMXRE = 0
+             NMXRE = I
++            IVAR_MXRE = IVAR - 1
+           ENDIF
+           IF(B.GT.EPSSYS) THEN
+             IKNT = IKNT + 1
+             IF(B.GT.EPSSY2) THEN
+               IKNTA = IKNTA + 1
+             ENDIF
+-          ENDIF
+- 
+-          ENCORQ(I) = TEMP
++            HI_IQ_NS_STATE(IVAR-1) = 0
++          ELSE
++            HI_IQ_NS_STATE(IVAR-1) = 1
++          ENDIF
++ 
++          ENCORQ(I) = HI_IQ_NS_FAC(IVAR-1)*TEMP
+         ENDIF
+  50   CONTINUE
+  
+@@ -289,7 +307,7 @@
+  
+         DO 90 NAD=FNA,LNA,NINC
+           DY = RHS(IVAR+1)
+-          BNCORY(NAD) = DY
++          BNCORY(NAD) = HI_IQ_NS_FAC(IVAR+1)*DY
+           IF(ABS(DY).LT.ABSTOL) THEN
+             B = 0.0
+           ELSE
+@@ -299,6 +317,7 @@
+           IF(B.GE.MXRE) THEN
+             MXRE = B
+             BMXRE = NB
++            IVAR_MXRE = IVAR + 1
+             BNODE_MAX = NAD
+             NMXRE = -(SNODE + NAD - NDBAS)
+           ENDIF
+@@ -308,15 +327,19 @@
+             IF(B.GT.EPSSY2) THEN
+               IKNTA = IKNTA + 1
+             ENDIF
++            HI_IQ_NS_STATE(IVAR+1) = 0
++          ELSE
++            HI_IQ_NS_STATE(IVAR+1) = 1
+           ENDIF
+  
+           DQ = RHS(IVAR)
+-          BNCORQ(NAD) = DQ
++          BNCORQ(NAD) = HI_IQ_NS_FAC(IVAR)*DQ
+  
+           B = ABS(DQ/(ABS(Q2(NAD)) + QEPS))
+           IF(B.GE.MXRE) THEN
+             MXRE = B
+             BMXRE = NB
++            IVAR_MXRE = IVAR 
+             BNODE_MAX = NAD
+             NMXRE = SNODE + NAD - NDBAS
+           ENDIF
+@@ -325,6 +348,9 @@
+             IF(B.GT.EPSSY2) THEN
+               IKNTA = IKNTA + 1
+             ENDIF
++            HI_IQ_NS_STATE(IVAR) = 0
++          ELSE
++            HI_IQ_NS_STATE(IVAR) = 1
+           ENDIF
+           IVAR = IVAR + 2
+  90     CONTINUE
+@@ -475,7 +501,7 @@
+ C
+ C
+       SUBROUTINE   CSMAT
+-     I                  (DT, WT, NBN, NBRA, NEX, BRPT, HSLOT, EPT,
++     I                  (DT, DTDY, WT, NBN, NBRA, NEX, BRPT, HSLOT, EPT,
+      I                   DTMIN_OUT, START_EQ, END_EQ, JTIME, PRTIME,
+      I                   KOUNT, QEPS,
+      M                   EMC, EXNODT,
+@@ -495,7 +521,7 @@
+      A        START_EQ, END_EQ, KOUNT
+       INTEGER BRPT(8,NBRA), EMC(MREMC), EXNODT(9,NEX)
+       REAL ERRP, ERRQ, HSLOT, MXRES, RNORM, WT, DTMIN_OUT, QEPS
+-      REAL*8 DT, JTIME, PRTIME
++      REAL*8 DT, DTDY, JTIME, PRTIME
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     DT     - time step in seconds
+@@ -553,17 +579,18 @@
+       EXTERNAL PROFAC, PROSLV, SETEXT
+ C***********************************************************************
+       CALL SETEXT
+-     I           (DT, WT, NBN, NBRA, NEX, BRPT, HSLOT, EPT, QEPS,
++     I     (DT, DTDY, WT, NBN, NBRA, NEX, BRPT, HSLOT, EPT, QEPS, jtime,
+      M            EMC, EXNODT,
+      O            RNORM, MXRES, LMXRES, ERRP, ERRQ, BERRQ, NERRQ, NERRP,
+      O            BERRP)
+  
+  
+ C     Save copy of matrix and rhs for later dumping
+-      IF(START_EQ.LE.END_EQ.AND.
+-     A   JTIME.GE.PRTIME) THEN
+-        CALL SAVEMAT(NUMEQ, C(NUMEQ), PDAVEC, RHS, 
+-     O             PDAVEC2, RHS2)
++      IF(START_EQ.LE.END_EQ) then
++        if(JTIME.GE.PRTIME) THEN
++          CALL SAVEMAT(NUMEQ, C(NUMEQ), PDAVEC, RHS, 
++     O               PDAVEC2, RHS2)
++        endif
+       ENDIF
+ 
+  
+@@ -587,9 +614,10 @@
+      M            RHS)
+  
+ 
+-      IF(START_EQ.LE.END_EQ.AND.
+-     A   JTIME.GE.PRTIME) THEN
+-        CALL DMPEQS(STDOUT, START_EQ, END_EQ, KOUNT, JTIME)
++      IF(START_EQ.LE.END_EQ) then
++        if( JTIME.GE.PRTIME) THEN
++          CALL DMPEQS(STDOUT, START_EQ, END_EQ, KOUNT, JTIME)
++        endif
+       ENDIF
+ 
+ C      WRITE(STDOUT,*) ' SOLUTION VECTOR'

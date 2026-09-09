@@ -1,0 +1,111 @@
+--- 9.98/feq/tdtchk_free.for
++++ 10.61/feq/tdtchk_free.for
+@@ -43,10 +43,10 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER  NTAB, TABTYP
+-      REAL HU, PDV, QARG, QFREE, TI
++      REAL HU, PDV, QARG, QFREE
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL LKTAB
++      EXTERNAL LKTSTAB
+ C***********************************************************************
+       QARG = Q
+       TABN = ITAB(ADR+1)
+@@ -55,9 +55,8 @@
+       HMAX = FTAB(ADR+5)
+       WSPRO = ITAB(ADR+7)
+       IF(ZTAB.GT.0) THEN
+-        TI = 86400.*(JT - SJTIME)
+-        CALL LKTAB
+-     I            (ZTAB, TI, 1,
++        CALL LKTSTAB
++     I            (ZTAB, JT, 
+      O             HDATUM, NTAB, PDV)
+       ENDIF
+  
+@@ -111,35 +110,38 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER  MTAB, NTAB
+-      REAL PDV, Q, DQED, DQEU, TI, TIME
++      REAL PDV, Q, DQED, DQEU
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL LKTAB
++      EXTERNAL LKTSTAB
+ C***********************************************************************
+ C     The optional time-serie table giving a factor on the flows in the
+ C     2-D table is ignored here.  We only want the table state.
+       MTAB = 0
+ 
+ C     Time is also ignored
+-      TIME = 0.0
+       TABN = ITAB(ADR+1)
+       TABTYP = ITAB(ADR+2)
+       HMAX = FTAB(ADR+9)
+       IF(ZTAB.GT.0) THEN
+-        TI = 86400.*(JT - SJTIME)
+-        CALL LKTAB
+-     I            (ZTAB, TI, 1,
++        CALL LKTSTAB
++     I            (ZTAB, JT, 
+      O             HDATUM, NTAB, PDV)
+       ENDIF
+       IF(TABTYP.EQ.6) THEN
+ 
+         CALL TDLK6
+-     I            (STDOUT, ADR, 6, MTAB, TIME, ZD, ZU, HDATUM,
++     I            (STDOUT, ADR, 6, MTAB, SJTIME, ZD, ZU, HDATUM,
+      O             Q, DQED, DQEU, FREE)
+       ELSEIF(TABTYP.EQ.13) THEN
+         CALL TDLK13
+-     I             (STDOUT, ADR, 13, MTAB, TIME, ZD, ZU, HDATUM,
++     I             (STDOUT, ADR, 13, MTAB, SJTIME, ZD, ZU, HDATUM,
+      O              Q, DQED, DQEU, FREE)
++      else
++        call tdlk43
++     I           (STDOUT, adr, 43, MTAB, SJTIME, zd, zu, hdatum,
++     O            Q, DQed, DQeu, FREE)
++
+       ENDIF
+  
+       RETURN
+@@ -148,7 +150,7 @@
+ C
+ C
+       SUBROUTINE   TDTCHK_FREE
+-     I                   (STDOUT, EXNODT, NEX, EMC)
++     I                   (STDOUT, EXNODT, NEX, QCHOP, EMC)
+ 
+ C     + + + PURPOSE + + +
+ C     Check two-D tables appearing in Code 5 Type 6 to check the
+@@ -164,7 +166,8 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER STDOUT, NEX
+       INTEGER EMC(MREMC), EXNODT(9,NEX)
+- 
++      REAL QCHOP
++
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT - unit number for standatd output
+ C     EXNODT - exterior node table.  Contains the following items
+@@ -298,7 +301,7 @@
+               ITMP = EMC(IPNT+11)
+               HDATUM = RTMP
+ 
+-              IF(QATMAX.GT.0.0) THEN
++              IF(QATMAX.GT.QCHOP*512.0) THEN
+ C               We have flow from ups node to dns node.  If the flow
+ C               is zero we skip since we are not interested.  If the
+ C               flow is negative we have flow from dns to ups.  This
+@@ -422,7 +425,7 @@
+               ITMP = EMC(IPNT+11)
+               HDATUM = RTMP
+ 
+-              IF(QATMAX.LT.0.0) THEN
++              IF(QATMAX.LT.-QCHOP*512.0) THEN
+ C               We have flow from dns node to ups node.  If the flow
+ C               is zero we skip since we are not interested.  If the
+ C               flow is negative we have flow from dns to ups. 

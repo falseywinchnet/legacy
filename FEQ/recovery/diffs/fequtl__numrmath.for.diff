@@ -1,0 +1,391 @@
+--- 9.98/fequtl/numrmath.for
++++ 10.61/fequtl/numrmath.for
+@@ -1,231 +1,5 @@
+ C     Contains stuff for some standard numerical methods.
+ 
+-C
+-C
+-C
+-      SUBROUTINE   TRID
+-     I                 (SUB, SUP, N,
+-     M                  DIAG, B,
+-     O                  IFLAG)
+- 
+-C     + + + PURPOSE + + +
+-C     Solve the tridiagonal system with coefficient matrix
+-C     given by SUB, DIAG, SUP.  SUB(1) and SUP(N) are not used.
+-C     The right hand side is contained in B. N gives the number of
+-C     equations.  DIAG and B are changed in the solution
+-C     process.  B is used to return the solution.
+-C     Based on Conte and DeBoor, 1st Ed. p. 122.
+- 
+-C     IFLAG=1 signals a singular matrix
+- 
+-      IMPLICIT NONE
+-
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER IFLAG, N
+-      DOUBLE PRECISION B(N), DIAG(N), SUB(N), SUP(N)
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     SUB    - Sub-diagonal elements
+-C     SUP    - Super diagonal elements
+-C     N      - Number of equations
+-C     DIAG   - Diagonal elements for a tri-diagonal matrix
+-C     B      - Right hand side vector
+-C     IFLAG  - error flag
+- 
+-C     + + + LOCAL VARIABLES + + +
+-      INTEGER K
+-      DOUBLE PRECISION RATIO
+-C***********************************************************************
+-      IFLAG = 0
+- 
+-       IF(N.EQ.1) THEN
+-        IF(DIAG(1).EQ.0.D0) THEN
+-           IFLAG = 1
+-           RETURN
+-        ENDIF
+- 
+-        B(1) = B(1)/DIAG(1)
+-        RETURN
+-      ELSE
+- 
+-        DO 11 K=2,N
+-          IF(DIAG(K-1).EQ.0.D0) THEN
+-            IFLAG=1
+-            RETURN
+-          ENDIF
+-          RATIO = -SUB(K)/DIAG(K-1)
+-          DIAG(K) = DIAG(K) + RATIO*SUP(K-1)
+-          B(K) = B(K) + RATIO*B(K-1)
+- 11     CONTINUE
+- 
+-        IF(DIAG(N).EQ.0.D0) THEN
+-          IFLAG = 1
+-          RETURN
+-        ENDIF
+-        B(N) = B(N)/DIAG(N)
+-        DO 12 K=N-1,1,-1
+-          B(K) = (B(K) - SUP(K)*B(K+1))/DIAG(K)
+- 12     CONTINUE
+-      ENDIF
+- 
+-      RETURN
+- 
+-      END
+-C
+-C
+-C
+-      SUBROUTINE   VRLIM
+-     I                  (N, X, Y,
+-     M                   M,
+-     O                   ADJLOC)
+- 
+-C     + + + PURPOSE + + +
+-C     Force limited variation on the cubic piecewise polynomial
+-C     representation of the function Y.
+-
+-      IMPLICIT NONE
+-
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER N
+-      integer adjloc(n)
+-      DOUBLE PRECISION M(N), X(N), Y(N)
+-
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     N      - number of points
+-C     X      - breakpoints for the spline
+-C     Y      - function values for spline
+-C     M      - Vector of first derivatives
+-C     ADJLOC - values at which slope was adjusted to limit variation
+- 
+-C     + + + LOCAL VARIABLES + + +
+-      INTEGER I
+-      DOUBLE PRECISION R, S, SL, SR, st, xl, xr
+- 
+-C     + + + INTRINSICS + + +
+-      INTRINSIC ABS, MIN, SIGN
+-C***********************************************************************
+-C     To have limited variation, the ratio, R,  of the derivative at the
+-C     breakpoints in X(*) to the slopes in M(*)
+-C     must satisfy 0 <= R <= 3 at each breakpoint.  This is somewhat more
+-c     restrictive than it need be.  For example if the relative slope on the
+-c     left is 1.0 then the relative slope on the right may be as large as 
+-c     4 and still maintain a zero or positive slope.  However, making the 
+-c     changes depend on a particular slope outcome is more involved. 
+-
+-c     Thus we restrict the relative slope to be between 0 and 3 even though
+-c     that forces a change at a point where the variation is already monotone.
+-c     We capture most of the region involved this way and keep the adjustment
+-c     of computed slopes relatively simple.  If we made the adjustment 
+-c     dependent on the local computed slopes, to gain more of the region of 
+-c     monotone behavior, then we have to have special action if the computed
+-c     relative slope is negative and the problem of propagation of changes
+-c     must be solved.  We are only trying to create a smoother function 
+-c     to constrain wild behavior.  This smoother function 
+-c     may be more accurate but we have not checked nor are we motivated 
+-c     by concern for accuracy here-we are motivated by concern for smoothness
+-c     and certainty about the nature of interpolated results. 
+-c     13 march 2003.
+-
+- 
+-     
+-C     Check the left end.  Chord is on the right.
+- 
+-      xr = (X(2) - X(1))
+-      SR = (Y(2) - Y(1))/xr
+- 
+-      ADJLOC(1) = 0
+-      IF(SR.EQ.0.D0) THEN
+-        IF(M(1).NE.0.D0) THEN
+-C         Derivative must be zero if the secant slope is zero
+-          M(1) = 0.D0
+-          ADJLOC(1) = 1
+-        ENDIF
+-      ELSE
+-        R = M(1)/SR
+-        IF(R.GT.3.D0) THEN
+-c         Limit slope to three times the secant slope. 
+-          M(1) = 3.D0*SR
+-          ADJLOC(1) = 1
+-        ELSEIF(R.LT.0.0) THEN 
+-c         The slope  outcome for the spline is inconsistent with the 
+-c         slope of the secant.  Force the slope to match
+-c         the slope of the secant at this point
+-          M(1) = SR
+-          ADJLOC(1) = 1
+-        ENDIF
+-      ENDIF
+- 
+-C     Now check the interior breakpoints.  Each point has two chords.
+- 
+-      SL = SR
+-      xl = xr
+-      DO 100 I=2,N-1
+-        ADJLOC(I) = 0
+-        xr = X(I+1) - X(I)
+-        SR = (Y(I+1) - Y(I))/xr
+- 
+-C       Derivative must be zero at a local extreme
+- 
+-        IF(SL*SR.LE.0.0) THEN
+-          IF(M(I).NE.0.D0) THEN
+-            ADJLOC(I) = 1
+-            M(I) = 0.D0
+-          ENDIF
+-        ELSE
+-C         Find the chord slope closest to 0.  SL and SR are of the
+-C         same sign here and both differ from 0.
+- 
+-          S = SIGN(MIN(ABS(SL), ABS(SR)), SL)
+-          R = M(I)/S
+-          IF(R.GT.3.D0) THEN
+-            M(I) = 3.D0*S
+-            ADJLOC(I) = 1
+-         ELSEIF(R.LT.0.D0) THEN
+-c          Computed derivative is inconsistent.   Match the 
+-c          slope estimated from the secants to the left and right of 
+-c          point.  We do not use a three-point slope estimate because if
+-c          a cubic spline fit has a "wild" derivative here, then so will 
+-c          a parabola.  Use a weighted-slope estimate so that we get 
+-c          improved accuracy if the argument increment is locally uniform. 
+-           st = (sl*xr + sr*xl)/(xl + xr)
+-           r = st/s
+-           if(r.gt.3.d0) then
+-c            Limit slope to 3 times the smaller secant slope at this point. 
+-             st = 3.d0*s
+-           endif
+-           M(I) = st
+-           ADJLOC(I) = 1
+-          ENDIF
+-        ENDIF
+-        SL = SR
+-        xl = xr
+- 100  CONTINUE
+- 
+-C     Check right end.  Chord is on left and its slope was computed
+-C     in the loop just completed.
+- 
+-      ADJLOC(N) = 0
+-      IF(SL.EQ.0.D0) THEN
+-        IF(M(N).NE.0.D0) THEN
+-C         Force derivative to 0.
+-          M(N) = 0.D0
+-          ADJLOC(N) = 1
+-        ENDIF
+-      ELSE
+-        R = M(N)/SL
+-        IF(R.GT.3.D0) THEN
+-          M(N) = 3.D0*SL
+-          ADJLOC(N) = 1
+-        ELSEIF(R.LT.0.D0) THEN
+-c         outcome for the spline is inconsistent with the 
+-c         slope of the secant.  Force the slope to match
+-c         the slope of the secant at this point
+-          M(N) = SL
+-          ADJLOC(N) = 1
+-        ENDIF
+-      ENDIF
+-      RETURN
+-      END
+ C
+ C
+ C
+@@ -290,9 +64,9 @@
+ 
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER LCODE, N, RCODE, STDOUT
+-      INTEGER ADJLOC(N)
+       DOUBLE PRECISION LVAL, M(N), RVAL, X(N), Y(N)
+- 
++      character*1 ADJLOC(N)
++
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT - Fortran unit number for user output and messages
+ C     N      - number of points
+@@ -307,6 +81,9 @@
+  
+ C     + + + EXTERNAL NAMES + + +
+       EXTERNAL SPLINE, VRLIM
++
++c     Local
++      integer nadj
+ C***********************************************************************
+       CALL SPLINE
+      I           (STDOUT, X, Y, N, LCODE, LVAL, RCODE, RVAL,
+@@ -317,133 +94,9 @@
+       CALL VRLIM
+      I          (N, X, Y,
+      M           M,
+-     O           ADJLOC)
++     O           nadj, ADJLOC)
+  
+       RETURN
+-      END
+-C
+-C
+-C
+-      SUBROUTINE   SPLINE
+-     I                   (STDOUT, X, Y, N, LCODE, LVAL, RCODE, RVAL,
+-     O                    M)
+- 
+-C     + + + PURPOSE + + +
+-C     Estimate the first derivative of Y wrt X at each of the
+-C     N pairs of points stored in X(*),Y(*) and store in M(*).
+-C     Use a cubic spline with specified end conditions.
+- 
+-      IMPLICIT NONE
+-
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER LCODE, N, RCODE, STDOUT
+-      REAL*8 LVAL, M(N), RVAL, X(N), Y(N)
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     STDOUT - Fortran unit number for user output and messages
+-C     X      - Abscissas for cubic spline
+-C     Y      - Ordinate values for cubic spline
+-C     N      - Number of points defining the cubic spline
+-C     LCODE  - Code for left hand end condition
+-C     LVAL   - Value of the left hand end condition
+-C     RCODE  - Code for the right-hand end condition
+-C     RVAL   - Value of the right-hand end condition
+-C     M      - Vector of first derivatives
+- 
+-C     + + + LOCAL PARAMETERS + + +
+-      INTEGER MAXN
+-      PARAMETER(MAXN=1000)
+- 
+-C     + + + LOCAL VARIABLES + + +
+-      INTEGER IFLAG, J
+-      DOUBLE PRECISION D(MAXN), H, HJ, HJP1, L(MAXN), U(MAXN)
+- 
+-C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL TRID
+-C***********************************************************************
+-      IF(N.GT.MAXN) THEN
+-        WRITE(STDOUT,*) 'TOO MANY POINTS FOR SUBROUTINE SPLINE'
+-        WRITE(STDOUT,*) 'SPACE FOR ',MAXN,' POINTS BUT ',N,' POINTS',
+-     1              ' REQUESTED'
+-        STOP 'Abnormal stop. Errors found.'
+-      ENDIF
+-      IF(N.LT.2) THEN
+-        WRITE(STDOUT,*) 'LESS THAN TWO POINTS IN SUB. SPLINE. AT LEAST',
+-     1             ' TWO ARE REQUIRED.'
+-        STOP 'Abnormal stop. Errors found.'
+-      ENDIF
+- 
+-C     COMPUTE THE VALUES IN L, D, U, AND M.  M SERVES AS THE RIGHT
+-C     HAND SIDE VECTOR FOR NOW
+- 
+- 
+-      HJ = X(2) - X(1)
+-      DO 100 J=2,N-1
+-        HJP1 = X(J+1) - X(J)
+-        L(J) = HJP1/(HJ + HJP1)
+-        U(J) = 1.D0 - L(J)
+-        D(J) = 2.D0
+-        M(J) = 3.D0*(L(J)*(Y(J) - Y(J-1))/HJ +
+-     1               U(J)*(Y(J+1) - Y(J))/HJP1)
+- 
+-        HJ = HJP1
+- 100  CONTINUE
+- 
+-C     DO THE LEFT END CONDITION
+- 
+-      D(1) = 2.D0
+-      H = X(2) - X(1)
+-      IF(LCODE.EQ.1) THEN
+-C       FIRST DERIVATIVE GIVEN
+- 
+-        U(1) = 0.D0
+-        M(1) = 2.D0*LVAL
+- 
+-      ELSE IF(LCODE.EQ.2) THEN
+-C       SECOND DERIVATIVE GIVEN
+- 
+-        U(1) = 1.D0
+-        M(1) = 3.D0*(Y(2) - Y(1))/H - 0.5D0*H*LVAL
+- 
+-      ELSE
+-C       SPECIAL END CASE
+- 
+-          U(1) = 4.D0*(1.D0 - LVAL)/(4.D0 - LVAL)
+-          M(1) = 6.D0*(2.D0 - LVAL)*(Y(2) - Y(1))/
+-     1                ((4.D0 - LVAL)*H)
+-      ENDIF
+- 
+- 
+-C     DO RIGHT END CONDITION
+- 
+-      D(N) = 2.D0
+-      H = X(N) - X(N-1)
+-      IF(RCODE.EQ.1) THEN
+-        L(N) = 0.D0
+-        M(N) = 2.D0*RVAL
+-      ELSE IF(RCODE.EQ.2) THEN
+-        L(N) = 1.D0
+-        M(N) = 3.D0*(Y(N) - Y(N-1))/H + 0.5D0*H*RVAL
+-      ELSE
+-        L(N) = 4.D0*(1.D0 - RVAL)/(4.D0 - RVAL)
+-        M(N) = 6.D0*(2.D0 - RVAL)*(Y(N) - Y(N-1))/
+-     1              ((4.D0 - RVAL)*H)
+-      ENDIF
+- 
+-C     FIND THE SOLUTION
+- 
+-      CALL TRID
+-     I         (L, U, N,
+-     M          D, M,
+-     O          IFLAG)
+- 
+-      IF(IFLAG.EQ.1) THEN
+-        WRITE(STDOUT,*) 'SINGULAR MATRIX IN SUBROUTINE SPLINE'
+-        STOP 'Abnormal stop. Errors found.'
+-      ENDIF
+- 
+-      RETURN
+- 
+       END
+ C
+ C

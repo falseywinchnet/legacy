@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html>
+<head>
+  <!--BEGIN EDIT: PAGE TITLE -->
+  <title>FEQ Full Equations Model</title>
+  <!--END EDIT -->
+<link rel="stylesheet" href="/stylesheets/2008/common.css" />
+<link rel="stylesheet" href="/stylesheets/2008/custom.css" />
+<link rel="stylesheet" href="/stylesheets/2008/custom.feq.css" />
+
+<meta name="Author" content="Illinois Water Science Center, Audrey Ishii, Terry Ortel" />
+<meta name="keywords" content="unsteady flow, one-dimensional flow, streamflow simulation" />
+<meta name="Description" content="Documentation updates for FEQ and FEQUTL" />
+</head>
+
+<!-- BEGIN USGS Header Template -->
+<div style="height: 81px; background-color: rgb(0, 38, 76);">
+  <a href="https://www.usgs.gov/index.html">
+     <img style="margin: 8px 0px 8px 8px;" alt="Home" src="/images/usgs_vi.png" />
+  </a>
+</div>
+
+<div id="usgstitle">
+	<p>Water Resources Surface Water Software: Full Equations (FEQ) Model Web Resources</p>
+</div>
+<br />
+<!-- END USGS Header Template -->
+
+ 
+<BR>
+<H3>Summary of Reported Bugs: Post FEQ 9.98 and FEQUTL 5.46</H3>
+<P>These notices are superseded by the release.txt distributed with the subsequent released
+versions of FEQ. User notices and bug reports (if any) for subsequent releases of FEQ and
+FEQUTL may also apply to this version.</p>
+<HR>
+<H3>FEQ: Full Equations model  </H3>
+  <DIV class=programtitle>
+  </DIV>
+  <HR>
+  <b>Potential error in reporting diffuse time-series (lateral inflow) file time step </b>
+  <DIV>
+
+  <P CLASS="indented">
+    <P>An error has been discovered in reporting the time step when using a diffuse time-series file (DTSF)
+    with a starting time other than 0.0. The reported time offset depends on the initial hour of each event. 
+    If the starting hour is zero then the offset is zero. Otherwise the offset depends on the starting hour. 
+    If the starting hour is 1, then the offset is 1 - 1/24.0 hours, which is slightly less than one hour. 
+    Thus the maximum offset in the reported time is one hour or less. It appears that this discrepancy has 
+    been present for some time. To prevent this bug, use a starting time of 0.0 when using a DTSF, or use 
+    a version later than 10.25.
+    </P>      
+  </DIV>
+
+  <b>Factor error in observed high-water mark file interpolation </b>
+  <DIV>
+    <P>There is a bug in reporting the interpolation for high-water marks.  The 
+    stationing factor is not applied to the output when interpolating.  
+    Thus small errors on the order of a few tenths of foot are possible.  
+    This is relevant only for users who utilize the file hwmark.loc 
+    containing the observed high-water marks for their model.
+    </P>
+  </DIV>
+
+<HR>
+
+<H3>FEQUTL: Full Equations Utilities model </H3>
+  <DIV class=programtitle>
+  <HR>
+  </DIV>
+  <b>Initialization of variable errors </b>
+    <DIV>
+    <P> Uninitialized variables were discovered that could
+    have the following possible effects for versions prior 
+    to Version 5.80.  
+
+(1)  Sinuosity values were not being set properly for SEWER, MULPIPES, 
+and MULCON.  This would have had no effect because they were not used 
+in the computations.  FEQUTL always disables sinuosity corrections 
+in closed conduits.  However, the variables involved have been
+ initialized to prevent future potential problems.  
+
+(2)  A bug was found in setting the line-segment Manning's n values in 
+MULCON.  One or two line segments could get a Manning's n at one 
+point, that is for one line segment, that came from an adjacent 
+conduit.  Thus, if the conduits in the system had differing Manning's 
+n, the near flowing full values of conveyance would be affected.  In 
+one test case the changes in conveyance were about 0.4 percent when 
+flowing full.  However, this was a test case in which the conduit 
+diameters varied by more than a factor of two.  Normally this would 
+not be the case.  
+
+(3)  The CULVERT command had two cases of un-initialized variables.  One 
+involved using a type 1 value when type 1 flow was not possible.  When 
+corrected, the same results were obtained for the flows in the culvert.  
+However, there might have been some cases where this was not true.  
+
+The other involved a type 5 flow submergence-limit computation and the 
+starting value for an iterative solution was not set.  However, 
+after setting it to a proper value, the same results were obtained 
+as before.  
+</P>
+      </DIV>
+       <b>Precision error in breakpoint deletion </b>
+      <DIV>
+      <P>A bug was detected in an area increment by the output routine in 
+FEQUTL for versions prior to 5.66.  The problem was eventually traced to the 
+routine that removes 
+duplicate elevations and near duplicate elevations from the list of 
+breakpoints in top-width variation for a cross section.   Detection of 
+near duplicates was not properly scaled when the elevations were in 
+the range of 700's or more.  Thus, one or more breakpoints at the end 
+of boundary line segments that deviated only slightly from horizontal were 
+deleted from the list, because single-precision floating point had been used 
+rather than double-precision floating point.  This would cause a breakpoint 
+to be skipped that should have been included in the table.  The top 
+widths and areas given in the final table were correct, but some 
+increments in area and related elements were incorrect because a 
+breakpoint was improperly left out.   
+</P>
+      </DIV>
+      <HR>
+
+<!-- BEGIN USGS Footer Template -->
+<div id="usgsfooter">
+	<p id="usgsfooterbar">
+		<a href="http://www.usgs.gov/laws/accessibility.html" title="Accessibility Policy (Section 508)">Accessibility</a>
+		<a href="http://www.usgs.gov/foia/" title="Freedom of Information Act">FOIA</a>
+		<a href="http://www.usgs.gov/laws/privacy.html" title="Privacy policies of the U.S. Geological Survey.">Privacy</a>
+		<a href="http://www.usgs.gov/laws/policies_notices.html" title="Policies and notices that govern information posted on USGS Web sites.">Policies and Notices</a>
+	</p>
+	
+	<p id="usgsfootertext">
+		<a href="http://www.takepride.gov/"><img src="/images/footer_graphic_takePride.jpg" alt="Take Pride in America logo" title="Take Pride in America Home Page" width="60" height="58" /></a>
+		<a href="http://usa.gov/"><img src="/images/footer_graphic_usagov.jpg" alt="USA.gov logo" title="USAGov: Government Made Easy" width="90" height="26" /></a>
+		<a href="http://www.doi.gov/">U.S. Department of the Interior</a> |
+		<a href="http://www.usgs.gov/">U.S. Geological Survey</a> |
+                <a href="http://il.water.usgs.gov/">Illinois Water Science Center</a><br />
+		URL: http://cm.water.usgs.gov/proj/feq/bug_notice2.shtml <br />
+		Page Contact Information: <A href="/cdn-cgi/l/email-protection#8cf8e3fef8e9e0ccf9ffebffa2ebe3fa">USGS FEQ support</A> <br />
+		Page Last Modified: 
+                Tuesday, December 18, 2012 
+	</p>
+</div>
+<!-- END USGS Footer Template -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="application/javascript" src="http://www.usgs.gov/scripts/analytics/usgs-analytics.js"></script>
+</html>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a382c5a08824e7bb',t:'MTc4ODkyMTAzNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>

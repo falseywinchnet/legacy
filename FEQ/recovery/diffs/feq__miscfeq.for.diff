@@ -1,0 +1,360 @@
+--- 9.98/feq/miscfeq.for
++++ 10.61/feq/miscfeq.for
+@@ -1,6 +1,145 @@
+ C Miscellaneious routines.                                                      
+-C                                                                               
+-C                                                                               
++C
++C
++      subroutine eqsummary
++     i                     (STDOUT, nbn)
++
++c     Output a summary of the number, source, and type (linear or 
++c     non-linear) of the equations in the network matrix.
++      implicit none
++
++      integer nbn, stdout
++
++      include 'eqsum.cmn'
++
++
++c     Local
++
++      integer i, it, neq
++
++c     *****************************formats******************************
++1     format(i5,'          Branch',i7, ' Non-linear')
++2     format(i5,'   Sum of Q is 0',i7, ' Linear')
++3     format(i5,'     Equal elevs',i7, ' Linear')
++4     format(i5,'       1-node CS',i7, ' Non-linear')
++5     format(i5,'       2-node CS',i7, ' Non-linear')
++6     format(i5,'    Forced Value',i7, ' Linear')
++7     format(i5,'    Lvl Pool Res',i7, ' Non-linear')
++8     format(i5,'  Critical Depth',i7, ' Non-linear')
++11    format(i5,'  Cnsrv Mom/Elev',i7, ' Non-linear')
++12    format(i5,'   Mtch Avr Elev',i7, ' Linear')
++13    format(i5,'  Cnsrv Mom/Engr',i7, ' Non-linear')
++14    format(i5,'       Side Weir',i7, ' Non-linear')
++15    format(i5,'    Dummy Branch',i7, ' Linear')
++    
++50    format(/,' Summary of Equations in Network Matrix')
++52    format(/,' Code     Description Num_Eq Category')
++54    format(/,' Number of equations=',i8)
++
++c***********************************************************************
++
++      write(stdout,50)
++      write(stdout,52)
++
++c     Output in the code order and add info for each 
++
++      neq = 0
++      do i=1,15
++
++        select case (i)
++
++          case (1)
++c           Branch equations.  2 per comp element. 
++            it = 2*(nbn - eqsum_knt(1))
++            neq = neq + it
++            write(stdout,1) i, it
++        
++          case (2)
++c           Sum of flows is zero
++            it = eqsum_knt(2)
++            neq = neq + it
++            write(stdout,2) i, it
++
++          case (3)
++c           Equal elevations
++            it = eqsum_knt(3)
++            neq = neq + it
++            write(stdout,3) i, it
++
++          case (4)
++c           1-node CS
++            it = eqsum_knt(4)
++            neq = neq + it
++            write(stdout,4) i, it
++
++          case (5)
++c           2-node CS
++            it = eqsum_knt(5)
++            neq = neq + it
++            write(stdout,5) i, it
++
++          case (6)
++c           Forced value
++            it = eqsum_knt(6)
++            neq = neq + it
++            write(stdout,6) i, it
++
++          case (7)
++c           Level-pool reservoir
++            it = eqsum_knt(7)*2
++            neq = neq + it
++            write(stdout,7) i, it
++
++          case (8)
++c           Critical depth
++            it = eqsum_knt(8)
++            neq = neq + it
++            write(stdout,8) i, it
++
++          case (9)
++c           Unused
++
++          case (10)
++c           Unused
++
++          case (11)
++c           mom/elev
++            it = eqsum_knt(11)
++            neq = neq + it
++            write(stdout,11) i, it
++
++          case (12)
++c           Average elev
++            it = eqsum_knt(12)
++            neq = neq + it
++            write(stdout,12) i, it
++
++          case (13)
++c           mom/energy
++            it = eqsum_knt(13)
++            neq = neq + it
++            write(stdout,13) i, it
++
++          case (14)
++c           side weir
++            it = eqsum_knt(14)
++            neq = neq + it
++            write(stdout,14) i, it
++
++          case (15)
++c           mom/elev
++            it = eqsum_knt(15)*2
++            neq = neq + it
++            write(stdout,15) i, it
++
++        end select
++      end do
++
++      write(stdout,54) neq
++
++      return
++
++      end
+ C
+ C
+ C
+@@ -85,7 +224,7 @@
+  
+ C     + + + OUTPUT FORMATS + + +
+  50   FORMAT(/,' *BUG:19* ERROR IN BRPT OR INNODE DETECTED IN FBRND.')
+- 51   FORMAT(I6,I5,/,(6I10))
++ 51   FORMAT(I6,I5,/ (6I10))
+ C***********************************************************************
+       DO 100 IB=1,NBRA
+         IF(INNODE.GE.BRPT(3,IB).AND.INNODE.LE.BRPT(4,IB)) THEN
+@@ -364,29 +503,6 @@
+ C
+ C
+ C
+-      INTEGER FUNCTION   GETTYP
+-     I                         (ADRS)
+- 
+-C     + + + PURPOSE + + +
+-C     Get the table type of the table at ADRS.
+- 
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER ADRS
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     ADRS   - address of the function table in FTAB/ITAB
+- 
+-C     + + + COMMON BLOCKS + + +
+-      INCLUDE 'arsize.prm'
+-      INCLUDE 'ftable.cmn'
+-C***********************************************************************
+-      GETTYP = ITAB(ADRS+2)
+-      RETURN
+-      END
+-C
+-C
+-C
+       CHARACTER*5 FUNCTION   GETUSN
+      I                             (INN)
+  
+@@ -438,10 +554,12 @@
+         J = I
+         T = X(J)
+  100    CONTINUE
+-          IF(J.GT.1.AND.X(J-1).GT.T) THEN
+-            X(J) = X(J-1)
+-            J = J-1
+-            GOTO 100
++          IF(J.GT.1) THEN
++            if(X(J-1).GT.T) then
++              X(J) = X(J-1)
++              J = J-1
++              GOTO 100
++            endif
+           ENDIF
+         X(J) = T
+  200  CONTINUE
+@@ -548,13 +666,13 @@
+ C***********************************************************************
+         NODE = ABS(EMC(J))
+         IF(EXNODT(3,NODE).GT.0) THEN
+-                WRITE(DUMMY,'(A6,I4)') 'ON BR ',
++                WRITE(DUMMY,'(A6,I4)') 'on Br ',
+      A                                    INBRUS(EXNODT(3, NODE))
+         NOTE = DUMMY
+         ELSE IF(EXNODT(3,NODE).EQ.0) THEN
+-                NOTE = 'FREE NODE '
++                NOTE = 'Free Node '
+         ELSE
+-                NOTE = 'RESERVOIR '
++                NOTE = 'Reservoir '
+         ENDIF
+         RETURN
+         END
+@@ -593,13 +711,15 @@
+          TA = IVAL(J)
+  100     CONTINUE
+  
+-            IF(J.GT.1.AND.CVAL(J-1).GT.T) THEN
+-               CVAL(J) = CVAL(J-1)
+-               IVAL(J) = IVAL(J-1)
+- 
+-               J = J-1
+- 
+-               GOTO 100
++            IF(J.GT.1) then
++              if(CVAL(J-1).GT.T) THEN
++                CVAL(J) = CVAL(J-1)
++                IVAL(J) = IVAL(J-1)
++ 
++                J = J-1
++ 
++                GOTO 100
++              endif
+             ENDIF
+          CVAL(J) = T
+          IVAL(J) = TA
+@@ -641,13 +761,15 @@
+          TA = IVAL(J)
+  100     CONTINUE
+  
+-            IF(J.GT.1.AND.IVALS(J-1).GT.T) THEN
+-               IVALS(J) = IVALS(J-1)
+-               IVAL(J) = IVAL(J-1)
+- 
+-               J = J-1
+- 
+-               GOTO 100
++            IF(J.GT.1) then
++              if(IVALS(J-1).GT.T) THEN
++                IVALS(J) = IVALS(J-1)
++                IVAL(J) = IVAL(J-1)
++ 
++                J = J-1
++ 
++                GOTO 100
++              endif
+             ENDIF
+          IVALS(J) = T
+          IVAL(J) = TA
+@@ -692,7 +814,7 @@
+       EXTERNAL KIL
+ C***********************************************************************
+ C     Check for space.
+-      IF((FTP+4+3*NDEP).GE.MRFTAB) CALL KIL
++      IF((FTP+OFF234+3*NDEP).GE.MRFTAB) CALL KIL
+      I                                      (10,
+      M                                       FTP, EFLAG)
+  
+@@ -705,15 +827,15 @@
+       ITAB(ADRS+2) = 5
+  
+ C     INITIALIZE LAST ADDRESS ACCESSED
+-      ITAB(ADRS+3) = ADRS + 5
++      ITAB(ADRS+3) = ADRS + OFF234
+       FTAB(ADRS+4) = 0.0
+  
+-      ADRS = ADRS + 5
++      ADRS = ADRS + OFF234
+  
+       DO 100 I=1,NDEP
+-        FTAB(ADRS)= Y(I)
+-        FTAB(ADRS+1) = QC(I)
+-        FTAB(ADRS+2) = M(I)
++        FTAB(ADRS)= sngl(Y(I))
++        FTAB(ADRS+1) = sngl(QC(I))
++        FTAB(ADRS+2) = sngl(M(I))
+         ADRS = ADRS + 3
+  100  CONTINUE
+  
+@@ -802,7 +924,6 @@
+       INTEGER NBRA, NEX, STDOUT, BRPT(8,NBRA), EXNODT(9,NEX),
+      A        EMC(MREMC)
+ 
+-      REAL*8 NODEX, NODEY
+ 
+ C     EXNODT - exterior node table.  Contains the following items
+ C              for each exterior node.
+@@ -830,7 +951,7 @@
+ 
+ 
+ C     Local
+-      INTEGER ADRS, CODE, IENTRY, IPNT, J, K, KNT, N, CNN, CLASS,
++      INTEGER ADRS, CODE, IENTRY, IPNT, K, KNT, N, CNN, CLASS,
+      A        NULL
+ 
+       REAL*8 X,  SUMX, STATION
+@@ -960,7 +1081,7 @@
+ 
+       NEQ = UPPER - LOWER + 1
+ 
+-C      WRITE(45) NEQ, KOUNT, JTIME
++c      WRITE(45) NEQ, KOUNT, JTIME
+       DO 500 I=LOWER, UPPER 
+ 
+ C       Define the id string for the variable on the diagonal of this
+@@ -970,9 +1091,9 @@
+ C         We don't have an assigned id.  Use the 
+ C         variable number itself
+           IF(MOD(I,2).EQ.0) THEN
+-            WRITE(EQVAR,'(6X,I4,'':Y'')') I
++            WRITE(EQVAR,'(5X,I5,'':Y'')') I
+           ELSE
+-            WRITE(EQVAR,'(6X,I4,'':Q'')') I
++            WRITE(EQVAR,'(5X,I5,'':Q'')') I
+           ENDIF
+         ELSE
+ C         We have an exterior node number
+@@ -1028,8 +1149,8 @@
+         GLOBAL_KMIN = MIN(KMIN, GLOBAL_KMIN)
+         GLOBAL_KMAX = MAX(KMAX, GLOBAL_KMAX)
+ 
+-C        WRITE(45) I, KMIN, KMAX, (A(K), K=KMIN,KMAX), RHS2(I), RHS(I),
+-C     A           EQVAR
++c        WRITE(45) I, KMIN, KMAX, (A(K), K=KMIN,KMAX), RHS2(I), RHS(I),
++c     A           EQVAR
+         N = 0
+         MINCOEF = 1.D100
+         MAXCOEF = -1.D100
+@@ -1050,9 +1171,9 @@
+ C           We don't have an assigned id.  Use the 
+ C           variable number itself
+             IF(MOD(VN,2).EQ.0) THEN
+-              WRITE(OUTPUT(J),'(6X,I4,'':Y'')') VN
++              WRITE(OUTPUT(J),'(5X,I5,'':Y'')') VN
+             ELSE
+-              WRITE(OUTPUT(J),'(6X,I4,'':Q'')') VN
++              WRITE(OUTPUT(J),'(5X,I5,'':Q'')') VN
+             ENDIF
+           ELSE
+ C           We have an exterior node number

@@ -1,0 +1,245 @@
+C
+C
+C
+      SUBROUTINE   PROFAC
+     I                   (STDOUT)
+ 
+C     + + + PURPOSE + + +
+C     Factor an unsymmetric variable band matrix.  No pivoting.
+C     Factors overwrite the original matrix in PDAVEC.  All arguments
+C     are in MATCOM.COM
+ 
+C     Takes into account detailed structure by breaking the matrix
+C     into blocks with similar patterns.
+      IMPLICIT NONE
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER STDOUT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT - standard output unit for user messages
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'matcom.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER BASE, I, IBLK, ID, IL, ILLIM, IU, IULIM, J, JBEGIN, K, KE,
+     A        KS, L, M, N, SBASE
+      REAL SUM
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC MIN
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *BUG:XXX* Invalid matrix block type:',I5,' in PROFAC.')
+ 52   FORMAT(/,' *ERR/BUG:XXX* Zero pivot in matrix. Offset=',I7,
+     A  ' Row=',I5,' Column=',I5)
+C***********************************************************************
+      DO 9000 IBLK=1,MATBLK
+        JBEGIN = BEGROW(IBLK)
+        N = ENDCON(IBLK)
+ 
+C       BRANCH ON MBTYPE
+        GOTO(1000, 2000), MBTYPE(IBLK)
+ 
+        WRITE(STDOUT,50) MBTYPE(IBLK)
+        STOP 'Abnormal stop: errors found.'
+ 
+ 1000   CONTINUE
+C          WRITE(STDOUT,*) ' DOING TYPE 1 BLOCK'
+          DO 500 J=JBEGIN, N
+C           COMPUTE A ROW OF THE LOWER TRIANGULAR MATRIX.  FOLLOW CROUT
+C           METHOD AS DESCRIBED IN ZIENKIEWICZ AND TAYLOR, 4TH ED.
+C           K, KS, KE, IL, AND IU ARE POINTERS INTO PDAVEC(*).  I AND J
+C           ARE INDICES INTO THE N BY N MATRIX.
+ 
+C            WRITE(STDOUT,*) ' ROW =',J
+C            WRITE(STDOUT,*) ' INDEX     VALUE'
+ 
+C           KS gives the pointer to the start of the j-th row of the
+C           matrix.  KE gives the end of the j-th row of the matrix.
+            KS = C(J-1) + 1
+            KE = R(J)
+ 
+C           IL- pointer to L values
+C           IU- pointer to U values
+C           K- pointer into a row of L
+ 
+            I = J - 1 - KE + KS
+            DO 200 K=KS,KE
+              IL = K - 1
+              ID = C(I)
+              IU = ID - 1
+              IULIM = R(I) + 1
+              SUM = 0.0
+              M = MIN(IL - KS, IU - IULIM)
+              DO 100 L=0,M
+                SUM = SUM + PDAVEC(IL-L)*PDAVEC(IU-L)
+ 100          CONTINUE
+              IF(PDAVEC(ID).EQ.0.0) THEN
+                WRITE(STDOUT,52) ID, I, J
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+              PDAVEC(K) = (PDAVEC(K) - SUM)/PDAVEC(ID)
+ 
+C              WRITE(STDOUT,'(I6,1PE12.4)') K, PDAVEC(K)
+ 
+              I = I + 1
+ 200        CONTINUE
+C           COMPUTE A COLUMN OF THE UPPER TRIANGULAR MATRIX
+ 
+            KS = KE + 1
+            KE = C(J)
+            I = J - KE + KS
+ 
+C            WRITE(STDOUT,*) ' COLUMN=',J
+C            WRITE(STDOUT,*) ' INDEX     VALUE'
+ 
+            DO 400 K=KS,KE
+              IL = R(I)
+              IU = K - 1
+              ILLIM = C(I-1) + 1
+              SUM = 0.0
+              M = MIN(IL - ILLIM, IU - KS)
+              DO 300 L=0,M
+                SUM = SUM + PDAVEC(IL-L)*PDAVEC(IU-L)
+ 300          CONTINUE
+              PDAVEC(K) = PDAVEC(K) - SUM
+C              WRITE(STDOUT,'(I6,1PE12.4)') K, PDAVEC(K)
+ 
+              I = I + 1
+ 400        CONTINUE
+ 500      CONTINUE
+          GOTO 9000
+ 
+ 2000   CONTINUE
+C          WRITE(STDOUT,*) ' DOING TYPE 2 BLOCK'
+C         4-POINT BLOCK. 4 ELEMENTS PER ROW TWO ROWS PER BLOCK.  USE
+C         FIXED OFFSETS AND DO TWO ROW-COLUMNS.  ENDING CONDITION IS THE
+C         ADDRESS IN PDAVEC(*) OF THE LAST PAIR OF ROWS TO BE DONE.
+C         THUS WE CHECK FOR COMPLETION AND THEN INCREMENT TO THE NEXT ROW.
+ 
+          SBASE = R(JBEGIN)
+          DO 2020 BASE=SBASE,N,8
+C           EIGHT ELEMENTS NEED TO BE PROCESSED AT EACH ITERATION
+C           FIRST VALUE IN THE FIRST ROW. ONLY ONE NONZERO.
+ 
+            PDAVEC(BASE) = PDAVEC(BASE)/PDAVEC(BASE-1)
+ 
+C           DO COLUMN CORRESPONDING TO FIRST ROW.  3 ELEMENTS IN THE
+C           COLUMN.  FIRST ELEMENT IS UNCHANGED.
+ 
+C           SECOND ELEMENT
+ 
+            PDAVEC(BASE+2) = PDAVEC(BASE+2) - PDAVEC(BASE+1)*
+     A                                          PDAVEC(BASE-3)
+C           THIRD ELEMENT
+ 
+            PDAVEC(BASE+3) = PDAVEC(BASE+3) - PDAVEC(BASE+2)*
+     A                                          PDAVEC(BASE)
+ 
+C           DO LAST ROW OF THE PAIR. FIRST ELEMENT IN ROW
+ 
+            PDAVEC(BASE+4) = PDAVEC(BASE+4)/PDAVEC(BASE-1)
+ 
+C           SECOND ELEMENT
+ 
+            PDAVEC(BASE+5) = (PDAVEC(BASE+5) - PDAVEC(BASE+2)*
+     A                            PDAVEC(BASE+4))/PDAVEC(BASE+3)
+ 
+C           DO LAST COLUMN OF PAIR.  FIRST ELEMENT IS AGAIN UNCHANGED.
+ 
+C           SECOND ELEMENT.
+ 
+            PDAVEC(BASE+7) = PDAVEC(BASE+7) - PDAVEC(BASE+6)*
+     A                                          PDAVEC(BASE+5)
+ 2020     CONTINUE
+          GOTO 9000
+ 
+ 9000 CONTINUE
+ 
+      RETURN
+      END
+C
+C
+C
+      SUBROUTINE   PROSLV
+     I                   (N, PDAVEC, C, R,
+     M                    RHS)
+ 
+C     + + + PURPOSE + + +
+C     Use the factors in PDAVEC(*) computed by subroutine PROFAC to
+C     find the solution for the RHS vector.  The solution is returned
+C     in the RHS vector.  WORK(*) is a work vector.
+ 
+      IMPLICIT NONE
+
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER N
+      INTEGER C(0:*), R(*)
+      REAL PDAVEC(*), RHS(*)
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     N      - number of rows in the matrix being solved
+C     PDAVEC - vector for the array of partial derivatives
+C     C      - pointer to diagonal element for each equation in the
+C               network matrix
+C     R      - pointer to first subdiagonal element for each equation
+C               in the network matrix
+C     RHS    - right hand side vector for the set of linear equations
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I, J, K, KE, KS, L
+      REAL SUM, WORK(MRMAT), XCON
+C***********************************************************************
+C     DO THE FORWARD SOLUTION. OVERWRITE RHS IN THE PROCESS
+C     ALSO SET WORK TO ZERO
+ 
+      WORK(1) = 0.0
+      DO 200 I=2,N
+        WORK(I) = 0.0
+        KS = C(I-1) + 1
+        KE = R(I)
+        SUM = RHS(I)
+        J = I - 1 - KE + KS
+        DO 100 K=KS,KE
+          SUM = SUM - PDAVEC(K)*RHS(J)
+          J = J + 1
+ 100    CONTINUE
+        RHS(I) = SUM
+ 200  CONTINUE
+ 
+C     DO THE BACK SOLUTION.
+ 
+C      IF(PDAVEC(C(N)).EQ.0.0) THEN
+C        WRITE(STD6,*) ' N=',N,' C(N)=',C(N),' PDAVEC(C(N))=',
+C     A                   PDAVEC(C(N))
+C        STOP 'Abnormal stop: errors found.'
+C      ENDIF
+      RHS(N) = RHS(N)/PDAVEC(C(N))
+      DO 400 I=N-1,1,-1
+        J = I + 1
+        KS = C(J) - 1
+        KE = R(J) + 1
+        L = I
+        XCON = RHS(I+1)
+        DO 300 K=KS,KE,-1
+          WORK(L) = WORK(L) + PDAVEC(K)*XCON
+          L = L - 1
+ 300    CONTINUE
+ 
+C        IF(PDAVEC(C(I)).EQ.0.0) THEN
+C          WRITE(STD6,*) ' I=',I,' C(I)=',C(I),' PDAVEC(C(I))=',
+C     A                       PDAVEC(C(I))
+C          STOP 'Abnormal stop: errors found.'
+C        ENDIF
+        RHS(I) = (RHS(I) - WORK(I))/PDAVEC(C(I))
+ 400  CONTINUE
+ 
+      RETURN
+      END

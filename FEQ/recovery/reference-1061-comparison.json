@@ -1,0 +1,294 @@
+{
+  "mask_policy": "Run timestamps and initialization/computation elapsed clocks only; preserve all other bytes.",
+  "files": [
+    {
+      "path": "feqex1.out",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
+      "actual_sha256": "18d8bbfbe8cd5f809211df4ce014c546ad181950ec71323169bc6fd6dcaa6a5d",
+      "expected_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "expected_bytes": 1693210,
+      "actual_bytes": 1693210
+    },
+    {
+      "path": "feqex1.out.spi",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
+      "actual_sha256": "68ce2d8b5112ce7485c84b844c09b1b96b4e22c85b6404753278303c70e18823",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 1836,
+      "actual_bytes": 1836
+    },
+    {
+      "path": "feqex1.out.wsq",
+      "raw_equal": true,
+      "clock_masked_equal": true,
+      "expected_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
+      "actual_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
+      "expected_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 129731,
+      "actual_bytes": 129731
+    },
+    {
+      "path": "feqex2.out",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
+      "actual_sha256": "6edf186ce78e92db6ab2e5b7f5cab8750355617929e72cd302b3afc1a3b72b68",
+      "expected_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "expected_bytes": 876444,
+      "actual_bytes": 876444
+    },
+    {
+      "path": "feqex2.out.spi",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
+      "actual_sha256": "b941f226146ac75a66d706c5cdc551d4f4617d51a613f26c237e73887aebeb16",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 1132,
+      "actual_bytes": 1132
+    },
+    {
+      "path": "feqex2.out.wsq",
+      "raw_equal": true,
+      "clock_masked_equal": true,
+      "expected_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
+      "actual_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
+      "expected_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 15809,
+      "actual_bytes": 15809
+    },
+    {
+      "path": "feqex3.out",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
+      "actual_sha256": "0cb5bf719f15c5804015e1ecc66625b17596e6637e2258d9d8ef6359562e7062",
+      "expected_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "expected_bytes": 1340610,
+      "actual_bytes": 1340610
+    },
+    {
+      "path": "feqex3.out.spi",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
+      "actual_sha256": "a13996f87df015e820bb59c1545cf8f1ba06636be4020c5c64f92689d75d072a",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 1132,
+      "actual_bytes": 1132
+    },
+    {
+      "path": "feqex3.out.wsq",
+      "raw_equal": true,
+      "clock_masked_equal": true,
+      "expected_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
+      "actual_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
+      "expected_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 23579,
+      "actual_bytes": 23579
+    },
+    {
+      "path": "feqex4.out",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
+      "actual_sha256": "427ff2cd8ddf2753dbf981e39101fa395b20b6c3458666955ac5cb0efcb9073c",
+      "expected_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "expected_bytes": 1371793,
+      "actual_bytes": 1371793
+    },
+    {
+      "path": "feqex4.out.spi",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
+      "actual_sha256": "fc99d6e1a58227b0e062ce36834e3043c5870918d4e402dd56c5945e10571158",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 1132,
+      "actual_bytes": 1132
+    },
+    {
+      "path": "feqex4.out.wsq",
+      "raw_equal": true,
+      "clock_masked_equal": true,
+      "expected_sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff",
+      "actual_sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff",
+      "expected_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 23579,
+      "actual_bytes": 23579
+    },
+    {
+      "path": "utlexm.out",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
+      "actual_sha256": "d5288e31973afb94064e07c2a421c158bfce56fe620d9216baa6d647e12c96de",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 775740,
+      "actual_bytes": 775740
+    },
+    {
+      "path": "utlexm.tab",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
+      "actual_sha256": "e27d9d9c99822504327043dd8ce4acdf6722243de6f9ec208b2ea80346523492",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 135953,
+      "actual_bytes": 135953
+    },
+    {
+      "path": "utlexm.chx",
+      "raw_equal": true,
+      "clock_masked_equal": true,
+      "expected_sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af",
+      "actual_sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af",
+      "expected_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 12998,
+      "actual_bytes": 12998
+    },
+    {
+      "path": "culvert.out",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72",
+      "actual_sha256": "30594b2c69f988b51598afddaefd0db221bd77ccd506bf0acb05d46701aa52d1",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 141152,
+      "actual_bytes": 141152
+    },
+    {
+      "path": "culvert.tab",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade",
+      "actual_sha256": "e9b26a3bcb11302c3329dcbd24a654921584dc23d84bec998f65cd09c4557523",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 6015,
+      "actual_bytes": 6015
+    }
+  ]
+}

@@ -1,0 +1,1279 @@
+--- 9.98/feq/output.for
++++ 10.61/feq/output.for
+@@ -81,12 +81,72 @@
+       RETURN
+       END
+ 
++c
++c
++c
++      subroutine find_gate_table_items(std6, ipta, 
++     o           old_lev,            old_lev_offset, 
++     o           control_node_state, control_node_state_offset,
++     o           done)
++
++c     Find the gate_table items that need to be remembered for 
++c     forecast operation.  Give an operation block number location, repeated
++c     calls should return need values for each control node. 
++
++      implicit none
++      integer ipta, old_lev_offset, control_node_state, 
++     a        control_node_state_offset, done, std6
++      real old_lev
++
++c     common blocks
++
++      include 'arsize.prm'
++      include 'ftable.cmn'
++
++c     Local
++
++      integer first, ipt, control_node
++
++      save first, ipt
++
++      data first/1/
++
++c***********************************************************************
++      if(first == 1) then
++c       Setup pointer for loop over control nodes
++        ipt = ipta
++        ipt = ipt + 12
++        first = 0
++      endif
++c     check the next control node.  Note that when we leave the 
++c     subroutine with a value, we must set ipt to the start of
++c     block for the next control node.  
++      control_node = itab(ipt)
++      if(control_node /= 0) then
++c       Get values and return
++        old_lev = ftab(ipt+4)
++        old_lev_offset = ipt+4 - ipta
++
++        control_node_state = itab(ipt+5)
++        control_node_state_offset = ipt+5 - ipta
++c       point to the next control node
++        ipt = ipt + 17
++        done = 0 !not done yet:)
++      else
++c       all control nodes processed
++        done = 1  !done now
++        first = 1 !Reset the first flag for the next control block:)
++      endif  
++
++      return
++      end
+ 
+ C
+ C
+ C
+       SUBROUTINE   BWPUT
+-     I                  (BWFDSN, WT, NBRA, NBN, NEX, NBLK, OPBLK)
++     I                  (BWFDSN, WT, NBRA, NBN, NEX, NBLK, OPBLK,
++     m                   bwrec)
+  
+ C     + + + PURPOSE + + +
+ C     Put current state of system into dataset given by BWFDSN.
+@@ -96,7 +156,7 @@
+       INCLUDE 'arsize.prm'
+  
+ C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER BWFDSN, NBLK, NBN, NBRA, NEX
++      INTEGER BWFDSN, bwrec, NBLK, NBN, NBRA, NEX
+       INTEGER OPBLK(MNBLK)
+       REAL WT
+  
+@@ -109,6 +169,7 @@
+ C     NBLK   - number of operation blocks
+ C     OPBLK  - pointer into the function table storage(FTAB/ITAB) for
+ C               each operation block.
++c     bwrec   - record pointer for storing the information
+  
+ C     + + + COMMON BLOCKS + + +
+       INCLUDE 'bnelem.cmn'
+@@ -116,37 +177,104 @@
+       INCLUDE 'enelem.cmn'
+       INCLUDE 'ftable.cmn'
+       INCLUDE 'tam.cmn'
++      include 'stdun.cmn'
+ 
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER I, IT
++      integer  i, it, old_lev_offset,  control_node_state, 
++     a        control_node_state_offset,  done
++      real old_lev
+ C***********************************************************************
+ C      SHIFT TO UNFORMATED I/O FOR PRODUCTION VERSION.
+  
+-      WRITE(BWFDSN)  WT
++c      WRITE(BWFDSN)  WT
++      write(bwfdsn, rec=bwrec) wt
++      bwrec = bwrec + 1
+       DO 100 I=1,NBN
+-        WRITE(BWFDSN) Q1(I), Y1(I), T1(I), A1(I), K1(I),B1(I), WXVEC(I),
+-     A    POND1(I), DXVEC(I), DZVEC(I), MY(I), MQ(I)
++c        WRITE(BWFDSN) Q1(I), Y1(I), T1(I), A1(I), K1(I),B1(I), WXVEC(I),
++c     A    POND1(I), DXVEC(I), DZVEC(I), MY(I), MQ(I), MA1(I), MQ1(I)
++        write(bwfdsn, rec=bwrec) Q1(I), Y1(I)
++        bwrec = bwrec + 1
++        write(bwfdsn, rec=bwrec) T1(I), A1(I)
++        bwrec = bwrec + 1
++        write(bwfdsn, rec=bwrec)  K1(I), B1(I)
++        bwrec = bwrec + 1
++        write(bwfdsn, rec=bwrec) WXVEC(I), POND1(I)
++        bwrec = bwrec + 1
++        write(bwfdsn, rec=bwrec) DXVEC(I), DZVEC(I)
++        bwrec = bwrec + 1
++        write(bwfdsn, rec=bwrec) MY(I), MQ(I)
++        bwrec = bwrec + 1
++        write(bwfdsn, rec=bwrec) MA1(I), MQ1(I)
++        bwrec = bwrec + 1
++
+  100  CONTINUE
+  
+       DO 200 I=1,NEX
+-        WRITE(BWFDSN) QE1(I), YE1(I), AE1(I), MYE(I), MQE(I)
++c        WRITE(BWFDSN) QE1(I), YE1(I), AE1(I), MYE(I), MQE(I), TE1(I)
++        write(bwfdsn, rec=bwrec) QE1(I), YE1(I)
++        bwrec = bwrec + 1        
++        write(bwfdsn, rec=bwrec)  AE1(I), MYE(I)
++        bwrec = bwrec + 1        
++        write(bwfdsn, rec=bwrec)  MQE(I), TE1(I)
++        bwrec = bwrec + 1        
++
+  200  CONTINUE
+  
+ C     PROBLEM IN FORECASTING WITH WRITING EMC.  TRY TO GET BY WITHOUT
+ C     DOING SO.  RESETTING STATE SHOULD WORK
+ C      WRITE(BWFDSN) EMC
+  
+-      DO 300 I=1,NBLK
+-        IT = OPBLK(I) + 1
+-        WRITE(BWFDSN) FTAB(IT), FTAB(IT+1)
+- 300  CONTINUE
+- 
+-      WRITE(BWFDSN) (BPOND(I), I=1,NBRA)
+-      
+-      IF(DLAY_KNT.GT.0) WRITE(BWFDSN) (DLAY_Q1(I),I=1,DLAY_KNT)
++      DO I=1,NBLK
++        IT = OPBLK(I) 
++        WRITE(BWFDSN, rec=bwrec) FTAB(IT+1), FTAB(IT+2)
++        bwrec = bwrec + 1        
++        WRITE(BWFDSN, rec=bwrec) FTAB(IT+5)
++        bwrec = bwrec + 1   
++c       Blocks of type 3, GATETABL, have values for each control point
++c       that need to be remembered as well. 
++c        write(std6,*) 'BWPUT: Block type=',itab(it+3) 
++        if(itab(it+3) == 3) then 
++c         Extract and remember the offset and value for old level and 
++c         the control node state. 
++300       continue
++            call find_gate_table_items(std6, it, 
++     o                  old_lev,            old_lev_offset, 
++     o                  control_node_state, control_node_state_offset,
++     o                   done)
++            if(done == 0) then
++              write(bwfdsn, rec=bwrec) old_lev_offset, old_lev
++              bwrec = bwrec + 1
++              write(bwfdsn, rec=bwrec) 
++     a                   control_node_state_offset, control_node_state
++              bwrec = bwrec + 1
++              goto 300
++            else
++c             wrtie a value of zero to signal end of control-node info
++              done = 0
++              write(bwfdsn, rec=bwrec) done, done
++              bwrec = bwrec + 1
++            endif
++        endif
++      enddo
++ 
++c      WRITE(BWFDSN) (BPOND(I), I=1,NBRA)
++      do i=1,nbra
++        write(bwfdsn,rec=bwrec) bpond(i)
++        bwrec = bwrec + 1        
++      enddo
++      do i=1,dlay_knt
++        WRITE(BWFDSN, rec=bwrec) DLAY_Q1(I)
++        bwrec = bwrec + 1        
++      enddo
+ 
+       DO 400  I=1,DTEN_KNT
+-        WRITE(BWFDSN) DTEN_S1(I), DTEN_Q1(I), DTEN_Q1P(I)
++c        WRITE(BWFDSN) DTEN_S1(I), DTEN_Q1(I), DTEN_Q1P(I)
++        write(bwfdsn, rec=bwrec) dten_s1(i)
++        bwrec = bwrec + 1        
++        write(bwfdsn, rec=bwrec) dten_q1(i)
++        bwrec = bwrec + 1        
++        write(bwfdsn, rec=bwrec) dten_q1p(i)
++        bwrec = bwrec + 1        
+ 400   CONTINUE
+ 
+       RETURN
+@@ -287,7 +415,7 @@
+       REAL*8 JT
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL LKTAB
++      EXTERNAL LKTSTAB
+ C***********************************************************************
+       TABN = ITAB(ADR+1)
+       TABTYP = ITAB(ADR+2)
+@@ -302,9 +430,8 @@
+         JT = TZMAX(IT)
+       ENDIF
+       IF(ZTAB.GT.0) THEN
+-        TI = 86400.*(JT - SJTIME)
+-        CALL LKTAB
+-     I            (ZTAB, TI, 1,
++        CALL LKTSTAB
++     I            (ZTAB, JT,
+      O             HDATUM, NTAB, PDV)
+       ENDIF
+  
+@@ -373,6 +500,7 @@
+ C
+       SUBROUTINE   OUTSP
+      I                  (EXNODT, NEX, YR, MN, DY, HR, NOUT, UNIT, POUT,
++     i                   dz_for_output,
+      M                   QOUT, ZOUT, LKOUNT)
+  
+ C     + + + PURPOSE + + +
+@@ -384,7 +512,7 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER DY, LKOUNT, NEX, MN, NOUT, UNIT, YR
+       INTEGER EXNODT(9,NEX), POUT(NOUT)
+-      REAL HR
++      REAL HR, dz_for_output
+       CHARACTER QOUT(NOUT)*8, ZOUT(NOUT)*8
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -433,27 +561,27 @@
+  
+ C     + + + OUTPUT FORMATS + + +
+  10   FORMAT(F8.1)
+- 11   FORMAT(' ',F10.6,45A8)
+- 12   FORMAT(' ',I4,'/',I2,'/',I2,45A8)
++ 11   FORMAT(' ',F10.6,250(A8))
++ 12   FORMAT(' ',I4,'/',I2,'/',I2,250(A8))
+  13   FORMAT(F9.0)
+-15    FORMAT(' ',A10,45A8)
++15    FORMAT(' ',A10,250(A8))
+  20   FORMAT(F8.3)
+- 50   FORMAT(11X,45(1X,A7))
+-52    FORMAT(18X, 40(2X,2A7))
+-54    FORMAT('YEAR MN DY    HOUR',40A16)
+-56    FORMAT(I4,I3,I3,F8.4,40(A8,A8))
++ 50   FORMAT(11X,250(1X,A7))
++52    FORMAT(18X, 250(2X,2A7))
++54    FORMAT('YEAR MN DY    HOUR',250(A16))
++56    FORMAT(I4,I3,I3,F8.4,250(A8,A8))
+ C***********************************************************************
+ C     WRITE THE HEADINGS IF NEEDED
+  
+       IF(LKOUNT.EQ.0) THEN
+         IF(SPOUT_STYLE.EQ.2) THEN
+-          WRITE(UNIT,50) (SPHEAD(I,1), I=1,NOUT)
+-          WRITE(UNIT,50) (SPHEAD(I,2), I=1,NOUT)
++          WRITE(stdspout,50) (SPHEAD(I,1), I=1,NOUT)
++          WRITE(stdspout,50) (SPHEAD(I,2), I=1,NOUT)
+           LKOUNT = 2
+         ELSE
+ C         Single line style.
+-          WRITE(UNIT,52) (SPHEAD(I,1), SPHEAD(I,2), I=1,NOUT)
+-          WRITE(UNIT,54) (ITEMS, I=1,NOUT)
++          WRITE(stdspout,52) (SPHEAD(I,1), SPHEAD(I,2), I=1,NOUT)
++          WRITE(stdspout,54) (ITEMS, I=1,NOUT)
+           LKOUNT = 2
+         ENDIF
+       ENDIF
+@@ -472,7 +600,7 @@
+                 WRITE(CHR9,13) QE1(ADR)
+                 QOUT(I) = CHR9
+               ENDIF
+-              WRITE(ZOUT(I),20) YE1(ADR) + ZE(ADR)
++              WRITE(ZOUT(I),20) YE1(ADR) + ZE(ADR) + dz_for_output
+             ELSEIF(ADR.LT.20000) THEN
+               ADR = ADR - 10000
+              CALL VAR_DECIMAL(QPVEC(ADR),
+@@ -500,7 +628,7 @@
+               WRITE(CHR9,13) Q1(ADR)
+               QOUT(I) = CHR9
+             ENDIF
+-            WRITE(ZOUT(I),20) Y1(ADR) + ZVEC(ADR)
++            WRITE(ZOUT(I),20) Y1(ADR) + ZVEC(ADR) + dz_for_output
+          ELSE
+            ADR = ADR - 10000
+            CALL VAR_DECIMAL(QPVEC(ADR),
+@@ -511,11 +639,14 @@
+  100   CONTINUE
+ 
+       IF(SPOUT_STYLE.EQ.2) THEN 
+-        WRITE(UNIT,12) YR, MN, DY, ZOUT
+-        WRITE(UNIT,11) HR, QOUT
++        WRITE(stdspout,12) YR, MN, DY, ZOUT
++        WRITE(stdspout,11) HR, QOUT
+       ELSEIF(SPOUT_STYLE.EQ.1) THEN
+-        WRITE(UNIT,56) YR, MN, DY, HR, (QOUT(I), ZOUT(I), I=1,NOUT)
++        WRITE(stdspout,56) YR, MN, DY, HR, (QOUT(I), ZOUT(I), I=1,NOUT)
+       ENDIF
++c     Update the count of records-taken to be a time point.  That is, there is one
++c     record per time point.  
++      spo_knt = spo_knt + 1
+ 
+  
+  
+@@ -638,7 +769,7 @@
+  
+ C       Output the extra lines.  All are complete.
+         DO 600 J=1,SPOUT_KNT
+-          WRITE(UNIT,15) SPOUT_ITEM_LABEL(SPOUT_ITEM(J)),
++          WRITE(stdspout,15) SPOUT_ITEM_LABEL(SPOUT_ITEM(J)),
+      A                        (EXTRA_BUFFER(I,J), I=1,NOUT)
+ 600     CONTINUE
+       ENDIF
+@@ -653,7 +784,7 @@
+ C
+       SUBROUTINE   PRTLOG
+      I                   (STDOUT, KOUNT, MXREV, BMXREV, NMXREV, MXRV,
+-     I                    LMXRV, MXSSRV, KNTVEC)
++     I                    LMXRV, MXSSRV, KNTVEC, ivarv)
+  
+ C     + + + PURPOSE + + +
+ C     Print a summary of the various error statistics.
+@@ -661,7 +792,8 @@
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER KOUNT, STDOUT
+-      INTEGER BMXREV(KOUNT), KNTVEC(KOUNT), LMXRV(KOUNT), NMXREV(KOUNT)
++      INTEGER BMXREV(KOUNT), KNTVEC(KOUNT), LMXRV(KOUNT), NMXREV(KOUNT),
++     a        ivarv(kount)
+       REAL MXREV(KOUNT), MXRV(KOUNT), MXSSRV(KOUNT)
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -683,11 +815,12 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER BRA, I, NODE
+-      CHARACTER NODOUT*7
++      CHARACTER NODOUT*7, vartype*1
+  
+ C     + + + OUTPUT FORMATS + + +
+- 50   FORMAT(' ITER RCORECT  BRA   NODE   MXRES  LOC  SUMSQR NUMGT')
+- 52   FORMAT(I5,1PE8.1,I5,A7,1PE8.1,I5,1PE8.1,I6)
++ 50   FORMAT(' Iter RCorect Bran   NodeV   MxRes EqNmbr  SumSqr',
++     a   ' NumGt IntrnlNum')
++ 52   FORMAT(I5,1PE8.1,I5,A7,a1,1PE8.1,I7,1PE8.1,I6,i10)
+ C***********************************************************************
+       WRITE(STDOUT,50)
+       DO 100 I=1,KOUNT
+@@ -696,18 +829,26 @@
+         IF(BRA.EQ.0) THEN
+ C         EXTERIOR NODE
+           IF(NODE.LT.0) THEN
+-            NODOUT = '-'//INENUS(-NODE)
++            NODOUT = ' '//INENUS(-NODE)
++            vartype = 'y'
+           ELSE
+             NODOUT = ' '//INENUS(NODE)
++            vartype = 'q'
+          ENDIF
+         ELSE
+ C         NODE ON A BRANCH
+-          WRITE(NODOUT,'(I7)') NODE
++          WRITE(NODOUT,'(I7)') abs(NODE)
++          if(node.lt.0) then
++            vartype = 'y'
++          else
++            vartype = 'q'
++          endif
+           BRA = INBRUS(BRA)
+         ENDIF
+  
+-        WRITE(STDOUT,52) I, MXREV(I), BRA, NODOUT,
+-     A                 MXRV(I), LMXRV(I), MXSSRV(I), KNTVEC(I)
++        WRITE(STDOUT,52) I, MXREV(I), BRA, NODOUT, vartype,
++     A                 MXRV(I), LMXRV(I), MXSSRV(I), KNTVEC(I),
++     a                 ivarv(i)
+  100  CONTINUE
+  
+       RETURN
+@@ -731,7 +872,7 @@
+       INTEGER EXNODT(9,NEX), OPBLK(MNBLK)
+       REAL SITER, WT
+       REAL*8 DT, JTIME
+-      CHARACTER NAME*32
++      CHARACTER NAME*256
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT - standard output unit for user messages
+@@ -755,7 +896,7 @@
+       INCLUDE 'stdun.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER IOFLAG
++      INTEGER IOFLAG, bwrec, dummy
+  
+ C     + + + EXTERNAL NAMES + + +
+       EXTERNAL BWPUT, FREE_UNIT
+@@ -765,10 +906,12 @@
+ C***********************************************************************
+ C     OPEN THE FILE
+       IF(NAME.EQ.' ') THEN
+-        OPEN(PUTDSN, FILE='PUTD', FORM='UNFORMATTED', STATUS='NEW')
++        OPEN(PUTDSN, FILE='PUTD', FORM='UNFORMATTED', STATUS='NEW',
++     a   access='direct', recl=8)
+       ELSE
+         OPEN(PUTDSN, FILE=NAME, FORM='UNFORMATTED',
+-     A          STATUS='UNKNOWN', IOSTAT=IOFLAG)
++     A          STATUS='UNKNOWN', IOSTAT=IOFLAG, access='direct',
++     b          recl=8)
+         IF(IOFLAG.NE.0) THEN
+           WRITE(STD6,*) ' PROBLEM IN OPENING FILE: ',NAME
+           WRITE(STD6,*) ' CHECK PATH FOR FINAL CONDITIONS FILE.'
+@@ -779,10 +922,23 @@
+ C     WRITE SIZE INFORMATION SO THAT WE CAN CHECK FOR AGREEMENT
+ C     AND CATCH MANY MISTAKES IN SPECIFYING A FILE.
+  
+-      WRITE(PUTDSN) NBRA, NBN, NEX, JTIME, SITER, DT, BNODE
++      bwrec = 1
++      dummy = 0
++c      WRITE(PUTDSN) NBRA, NBN, NEX, JTIME, SITER, DT, BNODE
++      write(putdsn, rec=bwrec) nbra, nbn
++      bwrec = bwrec + 1
++      write(putdsn, rec=bwrec) nex, siter
++      bwrec = bwrec + 1
++      write(putdsn, rec=bwrec) bnode, dummy
++      bwrec = bwrec + 1
++      write(putdsn, rec=bwrec) jtime
++      bwrec = bwrec + 1
++      write(putdsn, rec=bwrec) dt
++      bwrec = bwrec + 1
+  
+       CALL BWPUT
+-     I          (PUTDSN, WT, NBRA, NBN, NEX, NBLK, OPBLK)
++     I          (PUTDSN, WT, NBRA, NBN, NEX, NBLK, OPBLK,
++     m           bwrec)
+  
+       CALL FREE_UNIT(STD6, PUTDSN)
+       WRITE(STDOUT,50)  JTIME
+@@ -811,11 +967,25 @@
+ C     External names
+ 
+       EXTERNAL FREE_UNIT
++c     **************************formats*********************************
++50    format(/,' Dual-source TS file: ',a,/,5x,'has been deleted.')
++52    format(/,' *BUG* in rdquit: Invalid value in delete list.')
+ C***********************************************************************
+       DO 100 I=1,NUM_TS_F
+         IF(DSS_INDEX_IN(I).EQ.0) THEN
+ C         This is a file and not a path in a HECDSS
+-          CALL FREE_UNIT(STDOUT, UNIN(I))
++          if(delete_list(i) == 0) then
++            CALL FREE_UNIT(STDOUT, UNIN(I))
++          elseif(delete_list(i) == 1) then
++c           Request that this file be deleted on close.  Note: we do not
++c           need to update FEQ's unit-numnber tracking system--the run
++c           is over:)
++            close(unin(i), status='delete')
++            write(stdout,50) namin(i)(1:len_trim(namin(i)))
++          else
++            write(stdout,52) 
++            stop 'Abnormal stop: bug found in subroutine rdquit:('
++          endif
+         ENDIF
+ 100   CONTINUE
+       RETURN
+@@ -824,8 +994,8 @@
+ C
+ C
+       SUBROUTINE   RESOUT
+-     I                   (GRAV, VUNIT, STDOUT, NBRA, NODEID, NEX, TIME,
+-     I                    SFAC, BRPT, EXNODT, QCHOP)
++     I                   (GRAV, VUNIT, STDOUT, NBRA, NODEID, NEX, time, 
++     I                    SFAC, BRPT, EXNODT, QCHOP, dz_for_output)
+  
+ C     + + + PURPOSE + + +
+ C     Output results.
+@@ -834,8 +1004,8 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER STDOUT, NBRA, NEX
+       INTEGER BRPT(8,NBRA), EXNODT(9,NEX)
+-      REAL GRAV, QCHOP, SFAC, VUNIT
+-      REAL*8 TIME
++      REAL GRAV, QCHOP, SFAC, VUNIT, dz_for_output
++      real*8 time
+       CHARACTER NODEID*4
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -899,25 +1069,21 @@
+       EXTERNAL FROUDE, PUT8
+  
+ C     + + + OUTPUT FORMATS + + +
+- 2000 FORMAT(/,' RESULTS at time ',F15.0,' JTIME = ',F20.10)
++ 2000 FORMAT(/,' RESULTS at JTIME = ',F20.10)
++c 2000 FORMAT(/,' RESULTS at time ',F16.1,' JTIME = ',F20.10)
+  2010 FORMAT(/,' BRANCH NUMBER = ',I5)
+- 2020 FORMAT(' NODE STATION  DISCHARGE',6X,'AREA VELOC  DEPTH',
+-     A       '    ELEV',5X,'TOP   FR LAT INF')
+  2022 FORMAT('  Node  Node Identifier     Stat    Flow    Area   Vel',
+      A       '  Depth    Elev     Top  Fr Lat Inf')
+  2030 FORMAT(I5,F8.3,1PE11.3,1PE10.3,0PF6.2,F7.2,F8.2,F8.1,F5.1,1PE8.1)
+  2040 FORMAT(/,' EXTERIOR NODES')
+- 2050 FORMAT(' NODE',8X,'QE1',5X,'YE1',4X,'ELEV    STORAGE    STORAGE')
+  2052 FORMAT('  Node  Node Identifier',8X,'QE1',5X,'YE1',4X,
+      A       'Elev    Storage    Storage')
+- 2060 FORMAT(1X,A4,1PE11.3,2(0PF8.2))
+- 2062 FORMAT(1X,A5,1X,A16,1PE11.3,2(0PF8.3))
++ 2062 FORMAT(1X,A5,1X,A16,1PE11.5e1,2(0PF8.3))
+  2070 FORMAT(/,'       Branch ponding volume = ',1PE12.4,A6,
+      A       0PF10.1,A6)
+  2080 FORMAT(/,'     Network ponding volume = ',1PE12.4,A6,
+      A       0PF10.1,A6)
+- 2090 FORMAT(1X,A5,1PE11.3,2(0PF8.2),2(1PE11.3))
+- 2092 FORMAT(1X,A5,1X,A16,1PE11.3,2(0PF8.3),2(1PE11.3))
++ 2092 FORMAT(1X,A5,1X,A16,1PE11.5e1,2(0PF8.3),2(1PE11.3))
+ C     Formats for US standard unit set.
+ 18000 FORMAT(I6,1X,A16,F9.0,A8,A8,F6.2,F7.2,F8.2,A8,F4.1,A8)
+ 18100 FORMAT(I6,1X,A16,F9.1,A8,A8,F6.2,F7.2,F8.2,A8,F4.1,A8)
+@@ -934,7 +1100,7 @@
+  
+ C     TITLE
+  
+-      WRITE(STDOUT,2000) TIME, JTIME
++      WRITE(STDOUT,2000) JTIME
+  
+ C     WRITE OUT RESULTS ETC FOR INTERIOR NODES
+  
+@@ -948,11 +1114,7 @@
+         FA = BRPT(3,NB)
+         LA = BRPT(4,NB)
+         WRITE(STDOUT,2010) INBRUS(NB)
+-C        IF(NODEID.EQ.'NO') THEN
+-C          WRITE(STDOUT,2020)
+-C        ELSE
+-          WRITE(STDOUT,2022)
+-C        ENDIF
++        WRITE(STDOUT,2022)
+  
+         IF(ADDVEC(NB).LT.0) THEN
+ C         DO NOT OUTPUT ADDED NODES.
+@@ -966,7 +1128,7 @@
+         FN = FN + 1
+         FR = FROUDE(NSEC(NAD), Y1(NAD), Q1(NAD), A1(NAD),
+      A              T1(NAD), GRAV)
+-        Z  = Y1(NAD) +ZVEC(NAD)
++        Z  = Y1(NAD) +ZVEC(NAD) + dz_for_output
+         ST = XVEC(NAD)/SFAC
+           TEMP = 0.0
+         QPUT = Q1(NAD)
+@@ -1036,7 +1198,7 @@
+             FN = FN + 1
+             FR = FROUDE(NSEC(NAD), Y1(NAD), Q1(NAD), A1(NAD),
+      A                  T1(NAD), GRAV)
+-            Z  = Y1(NAD) +ZVEC(NAD)
++            Z  = Y1(NAD) +ZVEC(NAD) + dz_for_output
+             ST = XVEC(NAD)/SFAC
+             TEMP = QPVEC(NAD)
+             QPUT = Q1(NAD)
+@@ -1123,7 +1285,7 @@
+  
+       DO 200 II=1,NEX
+         NAD = USNSRT(II)
+-        ELEV = ZE(NAD) + YE1(NAD)
++        ELEV = ZE(NAD) + YE1(NAD) + dz_for_output
+         QPUT = QE1(NAD)
+         IF(ABS(QPUT).LE.QCHOP) THEN
+           QPUT = 0.0
+@@ -1139,10 +1301,10 @@
+           ELSE
+             YTEMP = YE1(NAD)
+           ENDIF
+-          IF(QPUT.NE.0.0) THEN
++c          IF(QPUT.NE.0.0) THEN
+             WRITE(STDOUT,2062) INENUS(NAD), ENODID(NAD), QPUT, YTEMP,
+      A                       ELEV
+-          ENDIF
++c          ENDIF
+         ENDIF
+  200  CONTINUE
+       RETURN
+@@ -2002,7 +2164,7 @@
+ C
+ C
+       SUBROUTINE   WROUT
+-     I                  (JTIME, STDOUT, QCHOP, DT)
++     I                  (JTIME, STDOUT, QCHOP, DT, dz_for_output)
+  
+ C     + + + PURPOSE + + +
+ C     Write curent record for all output files.
+@@ -2010,7 +2172,7 @@
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER STDOUT
+-      REAL QCHOP
++      REAL QCHOP, dz_for_output
+       REAL*8 DT, JTIME
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -2060,6 +2222,8 @@
+             ELSE
+               VAL = YE2(NODOUT(I)) + ZE(NODOUT(I))
+             ENDIF
++c           Apply shift for datum change on output
++            val = val + dz_for_output
+             GOTO 1000
+      
+  3        CONTINUE
+@@ -2098,15 +2262,19 @@
+           ENDIF
+           IF(ACTOUT(I).EQ.OUTA.OR.ACTOUT(I).EQ.OUTS) THEN 
+             VAL = SNGL(SUM)
+-            WRITE(UNOUT(I)) JTIME, VAL
++            WRITE(UNOUT(I), rec=wr_rec(i)) JTIME, VAL
++c            write(stdout,*) 'jtime=',jtime,' wr_rec(i)=',wr_rec(i)
++
++            wr_rec(i) = wr_rec(i) + 1
+ C            WRITE(STDOUT,*) 'OUT ', NAMOUT(I)
+ C            WRITE(STDOUT,*) ' VAL=',VAL
+             IS_SUM_GOOD = NO
+           ELSEIF(ACTOUT(I).EQ.QUAD) THEN
+             RUNQUAD(I) = RUNQUAD(I) + 0.5D0*DT*(OLDF(I) + SUM)
+             OLDF(I) = SUM
+-            VAL = SNGL(RUNQUAD(I))
+-            WRITE(UNOUT(I)) JTIME, VAL
++            VAL = SNGL(RUNQUAD(I)*quadfactor)
++            WRITE(UNOUT(I), rec=wr_rec(i)) JTIME, VAL
++            wr_rec(i) = wr_rec(i) + 1
+ C            WRITE(STDOUT,*) 'QUAD ', NAMOUT(I)
+ C            WRITE(STDOUT,*) ' SUM=',SUM,' RUNQUAD(I)=',RUNQUAD(I)
+             IS_SUM_GOOD = NO
+@@ -2122,16 +2290,46 @@
+       ENDIF
+       RETURN
+       END
+-C
+-C
+-C
+-      SUBROUTINE   WRQUIT(STDOUT)
++c
++c
++c
++      subroutine spo_close(stdout)
++
++c     Write final data and close any open special-output related files
++
++      implicit none
++
++      integer stdout
++
++c     Common blocks
++
++      include 'arsize.prm'
++      include 'spout.cmn'
++c     *************************formats**********************************
++50    format('spoknt=',i10)
++c***********************************************************************
++
++      if(stdspout.gt.0) then
++        close(stdspout)
++
++c       write the final record_knt to the describe file
++        write(stdspo,50) spo_knt
++        close(stdspo)
++      endif
++      return
++      end
++
++C
++C
++C
++      SUBROUTINE   WRQUIT(STDOUT, jtime)
+  
+ C     + + + PURPOSE + + +
+ C     Write the terminating record and close output files.
+  
+       IMPLICIT NONE
+       INTEGER STDOUT
++      real*8 jtime
+ 
+ C     + + + COMMON BLOCKS + + +
+       INCLUDE 'arsize.prm'
+@@ -2139,8 +2337,8 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER I
+-      REAL VAL1
+-      REAL*8 JT
++      REAL VAL1 , value
++      REAL*8 JT, jttemp
+ 
+ C     External names
+ 
+@@ -2150,7 +2348,34 @@
+       JT = 0.D0
+       DO 500 I=1,NFOUT
+         IF(UNOUT(I).LT.1000.AND.UNOUT(I).GT.0) THEN
+-          WRITE(UNOUT(I)) JT, VAL1
++          WRITE(UNOUT(I), rec=wr_rec(i)) JT, VAL1
++c         write the record number of the last ts point,
++c         which is wr_rec(i) - 1 with jtime to the 
++c         DPTSF_REC_AT_FRST_TS_PNT - 1 record.  
++          write(unout(i), rec=DPTSF_REC_AT_FRST_TS_PNT - 1) 
++     a          jtime, wr_rec(i) - 1
++
++c         There is a subtle problem with noise in jtime.  The value
++c         jtime here has been set to match the ending time exactly. 
++c         This will sometimes disagree by about 5 x e-9 day or a fraction
++c         of a millisecond.  However, that can sometimes cause annoying
++c         run failures because some datam point does not go far enough in
++c         time.  Therefore, we want the jtime in hand here and recorded
++c         as the end time, to match the time at the last record written. 
++c         The jtime here is consistent with the ending time which is often
++c         an integral day value.  The jtime used when the last time-series
++c         point was written may not be the same.  Therefore we will 
++c         read the last record to get the flow value, then re-write the 
++c         record with the value of jtime we have here.  This should 
++c         stop any problems that may arise from minute differences between
++c         the two values of jtime. 
++
++          read(unout(i),rec=wr_rec(i) -1) jttemp, value
++          write(unout(i),rec=wr_rec(i) -1) jtime, value
++         
++
++c          write(stdout,*) ' jttemp=',jttemp, ' value=', value
++c          write(stdout,*) ' jtime=',jtime, ' wr_rec(i)-1=',wr_rec(i) -1
+           CALL FREE_UNIT(STDOUT, UNOUT(I))
+         ENDIF
+  500  CONTINUE
+@@ -2165,8 +2390,9 @@
+ C
+ C
+       SUBROUTINE   ZSUMRY
+-     I                   (STDOUT, NBRA, NODEID, TIME, SFAC, EMC, BRPT,
+-     I                    EXNODT, NEX, HSLOT, VUNIT, QCHOP)
++     I                   (STDOUT, NBRA, NODEID, SFAC, EMC, BRPT,
++     I                    EXNODT, NEX, HSLOT, VUNIT, QCHOP, 
++     i                    dz_for_output)
+  
+ C     + + + PURPOSE + + +
+ C     Output a summary of maximum elevations and extreme flows.
+@@ -2178,14 +2404,13 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER STDOUT, NBRA, NEX
+       INTEGER BRPT(8,NBRA), EMC(MREMC), EXNODT(9,NEX)
+-      REAL HSLOT, QCHOP, SFAC, TIME, VUNIT
++      REAL HSLOT, QCHOP, SFAC,  VUNIT, dz_for_output
+       CHARACTER NODEID*4
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT   - Fortran unit number for user output and messages
+ C     NBRA   - number of branches in the model
+ C     NODEID - user node identification string
+-C     TIME   - elapsed time in seconds from start of run
+ C     SFAC   - conversion factor from user stations to internal stations
+ C     EMC    - vector containing coded form of the Matrix Control Input
+ C     BRPT   - branch pointer table.  Values for each branch are:
+@@ -2236,16 +2461,16 @@
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER ADDFLG, FA, FN, I, ID, II, KNT, LA, LPRFLG, NAD, NB, NTAB,
+      A        NULL, STDHWM, USBRAN, BRAN, NODE, EFLAG, USR_BRAN_NODE,
+-     B        BRAN_NODE_PNT, SLOT(11)
++     B        BRAN_NODE_PNT, SLOT(11), UEXN, DEXN, IT
+       LOGICAL THERE
+       REAL AUNIT, DIFF, PDV, QPUTMN, QPUTMX, VOL, X, YMAX,
+      A     ADUM, TDUM, DTDUM, KATMAX, DCDUM, BDUM, DBDUM,
+      B     TAUMAX, ELEVATION, OFFSET, ZHWM, XL, XR, ZL, ZR,
+-     C     LIM(11)
++     C     LIM(11), EFAC, HDATUM, SOURCE_ELEV, ZUP, ZDN, zmx
+       REAL*8 HR, DSTATION
+       CHARACTER OUT1*14, OUT2*14, OUT3*14, GISID*16, TABID*16,
+      A          OUT4*10, LINE*80, HWMARK_LOC*40, CHAR8*8, USNODE*5,
+-     B          WORK8*8, WORK*128
++     B          WORK8*8, WORK*256, QNODE_SUM*32
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS
+@@ -2256,13 +2481,12 @@
+  
+ C     + + + EXTERNAL NAMES + + +
+       EXTERNAL JTTOCT, LKTAB, TDTCHK, GET_GISID, GET_TABID, LENSTR,
+-     A         GET_UNIT, INLINE, STRIP_L_BLANKS, GETINB, GETINN
++     A         GET_UNIT, INLINE, STRIP_L_BLANKS, GETINB, GETINN, FND14
+ 
+       DATA NULL/-2147483647/ 
+       DATA LIM/-100.,-1.0,-0.5,-0.25,-0.1,0.0,0.1,0.25,0.5,1.0,100./
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT(/,' SUMMARY OF EXTREME ELEVATIONS AND FLOWS')
+- 2010 FORMAT(/,' EXTREMES ACHIEVED BY TIME',F15.0)
+  2020 FORMAT(/,' BRANCH NUMBER  =',I5)
+  2021 FORMAT(/,' BRANCH NUMBER =',I5,' PONDING VOLUME=',F10.1,A6)
+  2032 FORMAT(
+@@ -2279,9 +2503,9 @@
+  2058 FORMAT(2X,A5,1X,A16,2F10.4,2(1PE10.3))
+  2062 FORMAT('   Node  Node_Identifier  Mx Depth   Mx Elev Botm Elev',
+      A     8X,'Qmax',8X,'Qmin',' Time of max Z Time of max Q',
+-     B     ' Time of min Q   Station')
++     B     ' Time of min Q   Station    SrcElv  QCrstElv UpsNd DnsNd')
+ C 2070 FORMAT(1X,1X,A5,3F10.4,2(1PE12.4),3A14)
+- 2072 FORMAT(2X,A5,1X,A16,3F10.4,2(1PE12.4),3A14,A10)
++ 2072 FORMAT(2X,A5,1X,A16,3F10.4,2(1PE12.4),3A14,A10,A)
+  2074 FORMAT(' ')
+  2075 FORMAT(1X, A)
+  2076 FORMAT(' *WRN:39* Depth at node:',I5,':',I7,' overtops ',
+@@ -2308,7 +2532,7 @@
+      A       0PF8.1)
+ 18400 FORMAT(1X,I6,1X,A16,F10.4,F10.3,F10.3,F8.3,2(1PE12.4),3A14,1X,A16,
+      A       0PF8.1)
+-C***********************************************************************
++C**********************************************************************
+ C     Define the index for the case selection of format for output
+       ID = NINT( LOG10(SFAC))
+ 
+@@ -2374,21 +2598,23 @@
+ C     O         ADUM, TDUM, DTDUM, KATMAX, DCDUM, BDUM, DBDUM)
+ C        TAUMAX = 62.4*YMAX*(QPUTMX/KATMAX)**2 
+ 
++c       Make the datum shift for output
++        zmx = zmax(nad) + dz_for_output
+         SELECT CASE(ID)
+           CASE(0)
+-            WRITE(STDOUT,18000) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++            WRITE(STDOUT,18000) FN, BNODID(NAD), X, YMAX, zmx,
+      A        VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+           CASE(1)
+-            WRITE(STDOUT,18100) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++            WRITE(STDOUT,18100) FN, BNODID(NAD), X, YMAX, zmx,
+      A        VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+           CASE(2)
+-            WRITE(STDOUT,18200) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++            WRITE(STDOUT,18200) FN, BNODID(NAD), X, YMAX, zmx,
+      A        VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+           CASE(3)
+-            WRITE(STDOUT,18300) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++            WRITE(STDOUT,18300) FN, BNODID(NAD), X, YMAX, zmx,
+      A        VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+           CASE DEFAULT
+-            WRITE(STDOUT,18400) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++            WRITE(STDOUT,18400) FN, BNODID(NAD), X, YMAX, zmx,
+      A        VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+         END SELECT
+ 
+@@ -2407,6 +2633,7 @@
+             FN = FN + 1
+             X = XVEC(NAD)/SFAC
+             YMAX = ZMAX(NAD) - ZVEC(NAD) + SDVEC(NAD)
++            zmx = zmax(nad) + dz_for_output
+  
+             OUT1 = JTTOCT(TZMAX(NAD))
+             OUT2 = JTTOCT(TQMAX(NAD))
+@@ -2429,19 +2656,19 @@
+ 
+             SELECT CASE(ID)
+               CASE(0)
+-                WRITE(STDOUT,18000) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++                WRITE(STDOUT,18000) FN, BNODID(NAD), X, YMAX, zmx,
+      A            VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+               CASE(1)
+-                WRITE(STDOUT,18100) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++                WRITE(STDOUT,18100) FN, BNODID(NAD), X, YMAX, zmx,
+      A            VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+               CASE(2)
+-                WRITE(STDOUT,18200) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++                WRITE(STDOUT,18200) FN, BNODID(NAD), X, YMAX, zmx,
+      A            VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+               CASE(3)
+-                WRITE(STDOUT,18300) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++                WRITE(STDOUT,18300) FN, BNODID(NAD), X, YMAX, zmx,
+      A            VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+               CASE DEFAULT
+-                WRITE(STDOUT,18400) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++                WRITE(STDOUT,18400) FN, BNODID(NAD), X, YMAX, zmx,
+      A            VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+             END SELECT
+           ENDIF
+@@ -2453,7 +2680,7 @@
+       IF(NEX.GT.2*NBRA) THEN
+  
+         WRITE(STDOUT,2050)
+-          WRITE(STDOUT,2062)
++        KNT = 0
+         DO 200 II=1,NEX
+           I = USNSRT(II)
+           IF(EXNODT(3,I).LE.0) THEN
+@@ -2462,6 +2689,12 @@
+             ELSE
+               YMAX = FNZMAX(I) - ZE(I)
+             ENDIF
++            
++            IF(MOD(KNT,50).EQ.0) THEN
++              WRITE(STDOUT,*) ' '
++              WRITE(STDOUT,2062)
++            ENDIF
++
+             OUT1 = JTTOCT(FTZMAX(I))
+             OUT2 = JTTOCT(FTQMAX(I))
+             OUT3 = JTTOCT(FTQMIN(I))
+@@ -2482,7 +2715,6 @@
+             ELSE
+               OUT4 = ' '
+             ENDIF
+-
+  
+             QPUTMX = FNQMAX(I)
+             IF(ABS(QPUTMX).LE.QCHOP) THEN
+@@ -2492,9 +2724,56 @@
+             IF(ABS(QPUTMN).LE.QCHOP) THEN
+               QPUTMN = 0.0
+             ENDIF
+- 
+-              WRITE(STDOUT,2072) INENUS(I), ENODID(I), YMAX, FNZMAX(I),
+-     A          ZE(I), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, OUT4
++
++C           Output additional information for flow nodes on side weirs.  We want
++C           to add: 
++
++C           1. Elevation in the source channel that defines the flow.  We can only 
++C              approximate this here because it may not be true that the maximum elevations
++C              available defined the maximum elevation used for outflow because the elevation
++C              used for outflow is an average of the elevations at the ups and dns nodes. 
++C              Thus it is possible that we get slight differences.  Good enough for 
++C              calibration purposes-we hope! 4 Feb 2003.
++
++C           2. The nodes upstream and downstream of the free node flow node.
++
++C           3. The elevation of the head datum for flow at the flow node. 
++
++            CALL FND14
++     I                (STDOUT, I,  EMC, MREMC,
++     O                 UEXN, DEXN, HDATUM, EFAC)
++            IF(UEXN.GT.0) THEN
++C             We have a flow node. Find the elevations
++              IT = EXNODT(3,UEXN)  
++              IF(IT.LE.0) THEN     
++                ZUP = FNZMAX(UEXN) 
++              ELSE                 
++                IT = EXNODT(2,UEXN)
++                ZUP = ZMAX(IT)     
++              ENDIF                
++              IT = EXNODT(3,DEXN)  
++              IF(IT.LE.0) THEN     
++                ZDN = FNZMAX(DEXN) 
++              ELSE                 
++                IT = EXNODT(2,DEXN)
++                ZDN = ZMAX(IT)    
++              ENDIF                
++
++              SOURCE_ELEV = EFAC*ZUP + (1.0 - EFAC)*ZDN + dz_for_output
++              WRITE(QNODE_SUM,'(F10.4,F10.4,1X,A5,1X,A5)') SOURCE_ELEV,
++     A             HDATUM, INENUS(UEXN), INENUS(DEXN)
++            
++              WRITE(STDOUT,2072) INENUS(I), ENODID(I), YMAX, FNZMAX(I) + 
++     a          dz_for_output,
++     A          ZE(I), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, OUT4,
++     B          QNODE_SUM
++            ELSE
++ 
++              WRITE(STDOUT,2072) INENUS(I), ENODID(I), YMAX, FNZMAX(I) + 
++     a        dz_for_output,
++     A        ZE(I), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, OUT4
++            ENDIF
++            KNT = KNT + 1
+           ENDIF
+  200    CONTINUE
+  
+@@ -2533,13 +2812,8 @@
+               CALL LKTAB
+      I                  (EXNODT(4,I), YMAX, 0,
+      O                   VOL, NTAB, PDV)
+-C              IF(NODEID.EQ.'NO') THEN
+-C                WRITE(STDOUT,2057) INENUS(I), YMAX, FNZMAX(I),
+-C     A                           VOL/VUNIT, PDV/AUNIT
+-C              ELSE
+                 WRITE(STDOUT,2058) INENUS(I), ENODID(I), YMAX, 
+-     A                  FNZMAX(I), VOL/VUNIT, PDV/AUNIT
+-C              ENDIF
++     A                  FNZMAX(I) + dz_for_output, VOL/VUNIT, PDV/AUNIT
+             ENDIF
+  255      CONTINUE
+         ENDIF
+@@ -2570,24 +2844,25 @@
+  
+ C     Check for the state of two-D tables in Code 5 Type 6
+       CALL TDTCHK_FREE
+-     I                (STDOUT, EXNODT, NEX, EMC)
++     I                (STDOUT, EXNODT, NEX, QCHOP, EMC)
+ 
+ 
+ C     Seek a hwmark.loc file and output comparisons if one is found
+ C     Attach the existing global home name to the file to define its
+ C     location. 
+       CALL CLEAR_HOME()
+-      IF(GHOME.NE.' ') THEN
++      IF(ghome_out.NE.' ') THEN
+ C       A global home directory name exists. Seek the file there.
+         WORK = '/hwmark.loc'
+-        CALL MAYBE_ADD_HOME(
+-     M                      WORK)
++        CALL MAYBE_ADD_GHOME_out(
++     M                          WORK)
+       ELSE
+ C       No global home directory exists. Seek in current working directory
+         WORK = 'hwmark.loc'
+       ENDIF  
+ 
+-
++      call os_file_style(
++     m                     work)
+       INQUIRE(FILE=WORK, EXIST=THERE)
+       IF(THERE) THEN
+         STDHWM = GET_UNIT(STDOUT)
+@@ -2631,10 +2906,10 @@
+      O                  EFLAG, NODE)
+             IF(EXNODT(3,NODE).LE.0) THEN
+ C             Free node or LPR
+-              ZHWM = FNZMAX(NODE)
++              ZHWM = FNZMAX(NODE) + dz_for_output
+             ELSE
+ C             Node on a branch
+-              ZHWM = ZMAX(EXNODT(2,NODE))
++              ZHWM = ZMAX(EXNODT(2,NODE)) + dz_for_output
+             ENDIF              
+           ELSE
+ C           We have a location on a branch. Find the pointer into the
+@@ -2658,7 +2933,8 @@
+               XR = XVEC(BRAN_NODE_PNT-1)
+               ZR = ZMAX(BRAN_NODE_PNT-1)
+             ENDIF
+-            ZHWM = ZL + ABS(OFFSET)*(ZR - ZL)/ABS(XR - XL)
++            ZHWM = ZL + ABS(OFFSET*SFAC)*(ZR - ZL)/ABS(XR - XL) + 
++     a          dz_for_output
+           ENDIF
+           DIFF = ZHWM - ELEVATION
+           WRITE(STDOUT,2082) 
+@@ -2726,7 +3002,7 @@
+       CALL INVMJD
+      I           (MJD,
+      O            YR, MN, DY)
+-      HR = 24.0*FRAC
++      HR = sngl(24.d0*FRAC)
+  
+ C      IF(YR.LT.2000) THEN
+ C        YR = YR - 1900
+@@ -2741,8 +3017,9 @@
+ C
+ C
+       SUBROUTINE   ZSUMRY_OLD
+-     I                   (STDOUT, NBRA, NODEID, TIME, SFAC, EMC, BRPT,
+-     I                    EXNODT, NEX, HSLOT, VUNIT, QCHOP)
++     I                   (STDOUT, NBRA, NODEID, SFAC, EMC, BRPT,
++     I                    EXNODT, NEX, HSLOT, VUNIT, QCHOP,
++     i                    dz_for_output)
+  
+ C     + + + PURPOSE + + +
+ C     Output a summary of maximum elevations and extreme flows in 
+@@ -2755,14 +3032,13 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER STDOUT, NBRA, NEX
+       INTEGER BRPT(8,NBRA), EMC(MREMC), EXNODT(9,NEX)
+-      REAL HSLOT, QCHOP, SFAC, TIME, VUNIT
++      REAL HSLOT, QCHOP, SFAC, VUNIT, dz_for_output
+       CHARACTER NODEID*4
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT   - Fortran unit number for user output and messages
+ C     NBRA   - number of branches in the model
+ C     NODEID - user node identification string
+-C     TIME   - elapsed time in seconds from start of run
+ C     SFAC   - conversion factor from user stations to internal stations
+ C     EMC    - vector containing coded form of the Matrix Control Input
+ C     BRPT   - branch pointer table.  Values for each branch are:
+@@ -2812,7 +3088,7 @@
+       INTEGER ADDFLG, FA, FN, I, ID, II, KNT, LA, LPRFLG, NAD, NB, NTAB
+       REAL AUNIT, DIFF, PDV, QPUTMN, QPUTMX, VOL, X, YMAX,
+      A     ADUM, TDUM, DTDUM, KATMAX, DCDUM, BDUM, DBDUM,
+-     B     TAUMAX
++     B     TAUMAX, zmx
+       CHARACTER OUT1*16, OUT2*16, OUT3*16, GISID*16
+  
+ C     + + + INTRINSICS + + +
+@@ -2827,7 +3103,6 @@
+  
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT(/,' SUMMARY OF EXTREME ELEVATIONS AND FLOWS')
+- 2010 FORMAT(/,' EXTREMES ACHIEVED BY TIME',F15.0)
+  2020 FORMAT(/,' BRANCH NUMBER  =',I5)
+  2021 FORMAT(/,' BRANCH NUMBER =',I5,' PONDING VOLUME=',F10.1,A6)
+  2032 FORMAT('  NODE   NODEID   STATION MAX DEPTH  MAX ELEV MAX VELOC',
+@@ -2924,21 +3199,22 @@
+ C     O         ADUM, TDUM, DTDUM, KATMAX, DCDUM, BDUM, DBDUM)
+ C        TAUMAX = 62.4*YMAX*(QPUTMX/KATMAX)**2 
+ 
++        zmx = zmax(nad) + dz_for_output
+         SELECT CASE(ID)
+           CASE(0)
+-            WRITE(STDOUT,18000) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++            WRITE(STDOUT,18000) FN, BNODID(NAD), X, YMAX, zmx,
+      A        VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+           CASE(1)
+-            WRITE(STDOUT,18100) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++            WRITE(STDOUT,18100) FN, BNODID(NAD), X, YMAX, zmx,
+      A        VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+           CASE(2)
+-            WRITE(STDOUT,18200) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++            WRITE(STDOUT,18200) FN, BNODID(NAD), X, YMAX, zmx,
+      A        VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+           CASE(3)
+-            WRITE(STDOUT,18300) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++            WRITE(STDOUT,18300) FN, BNODID(NAD), X, YMAX, zmx,
+      A        VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+           CASE DEFAULT
+-            WRITE(STDOUT,18400) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++            WRITE(STDOUT,18400) FN, BNODID(NAD), X, YMAX, zmx,
+      A        VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+         END SELECT
+         KNT = ADDFLG
+@@ -2974,21 +3250,24 @@
+ C     M         YMAX,
+ C     O         ADUM, TDUM, DTDUM, KATMAX, DCDUM, BDUM, DBDUM)
+ C        TAUMAX = 62.4*YMAX*(QPUTMX/KATMAX)**2 
++
++            zmx = zmax(nad) + dz_for_output
++
+             SELECT CASE(ID)
+               CASE(0)
+-                WRITE(STDOUT,18000) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++                WRITE(STDOUT,18000) FN, BNODID(NAD), X, YMAX, zmx,
+      A            VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+               CASE(1)
+-                WRITE(STDOUT,18100) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++                WRITE(STDOUT,18100) FN, BNODID(NAD), X, YMAX, zmx,
+      A            VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+               CASE(2)
+-                WRITE(STDOUT,18200) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++                WRITE(STDOUT,18200) FN, BNODID(NAD), X, YMAX, zmx,
+      A            VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+               CASE(3)
+-                WRITE(STDOUT,18300) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++                WRITE(STDOUT,18300) FN, BNODID(NAD), X, YMAX, zmx,
+      A            VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+               CASE DEFAULT
+-                WRITE(STDOUT,18400) FN, BNODID(NAD), X, YMAX, ZMAX(NAD),
++                WRITE(STDOUT,18400) FN, BNODID(NAD), X, YMAX, zmx,
+      A            VMAX(NAD), QPUTMX, QPUTMN, OUT1, OUT2, OUT3, GISID
+             END SELECT
+           ENDIF
+@@ -3005,7 +3284,7 @@
+           I = USNSRT(II)
+           IF(EXNODT(3,I).LE.0) THEN
+             IF(EXNODT(3,I).EQ.0) THEN
+-              YMAX = FNZMAX(I)-ZE(I) 
++              YMAX = FNZMAX(I)-ZE(I)  
+             ELSE
+               YMAX = FNZMAX(I)-ZE(I)
+             ENDIF
+@@ -3027,7 +3306,8 @@
+ C     A                         QPUTMX, QPUTMN, OUT1, OUT2, OUT3
+ C            ELSE
+               WRITE(STDOUT,2072) INENUS(I), ENODID(I), YMAX, 
+-     A          FNZMAX(I), ZE(I), QPUTMX, QPUTMN, OUT1, OUT2, OUT3
++     A          FNZMAX(I)+ dz_for_output, ZE(I), QPUTMX, QPUTMN, 
++     a          OUT1, OUT2, OUT3
+ C            ENDIF
+           ENDIF
+  200    CONTINUE
+@@ -3072,7 +3352,7 @@
+ C     A                           VOL/VUNIT, PDV/AUNIT
+ C              ELSE
+                 WRITE(STDOUT,2058) INENUS(I), ENODID(I), YMAX, 
+-     A                  FNZMAX(I), VOL/VUNIT, PDV/AUNIT
++     A                  FNZMAX(I)+ dz_for_output, VOL/VUNIT, PDV/AUNIT
+ C              ENDIF
+             ENDIF
+  255      CONTINUE
+@@ -3103,7 +3383,84 @@
+  
+ C     Check for the state of two-D tables in Code 5 Type 6
+       CALL TDTCHK_FREE
+-     I                (STDOUT, EXNODT, NEX, EMC)
++     I                (STDOUT, EXNODT, NEX, QCHOP, EMC)
+ 
+       RETURN
+       END
++
++C
++C
++C
++      SUBROUTINE   FND14
++     I                 (STDOUT, QNODE,  EMC, EPT,
++     O                  UEXN, DEXN, HDATUM, EFAC)
++ 
++C     + + + PURPOSE + + +
++C     Find code = 14 with the given flow node, QNODE, and 
++C     return the upstream node, UEXN, downstream node, DEXN,
++C     HDATUM, head datum elevation for flow tables, and EFAC,
++C     the weight factor on elevations.   if not found, 
++C     return -1 in UEXN
++ 
++      IMPLICIT NONE
++C     + + + DUMMY ARGUMENTS + + +
++      INTEGER DEXN, EPT, QNODE, STDOUT,  UEXN
++      INTEGER EMC(EPT)
++
++      REAL HDATUM, EFAC
++ 
++C     + + +DUMMY ARGUMENT DEFINITIONS + + +
++C     STDOUT   - Fortran unit number for user output and messages
++C     UEXN   - upstream exterior node
++C     DEXN   - downstream exterior node number
++C     EMC    - vector containing coded form of the Matrix Control Input
++ 
++C     + + + COMMON BLOCKS + + +
++      INCLUDE 'arsize.prm'
++      INCLUDE 'matcom.cmn'
++ 
++C     + + + LOCAL VARIABLES + + +
++      INTEGER CODE, IENTRY, IDUM, IPNT
++      REAL RDUM
++ 
++C     + + + EXTERNAL FUNCTIONS + + +
++      CHARACTER GETUSN*5
++ 
++C     + + + EXTERNAL NAMES + + +
++      EXTERNAL GETUSN
++
++      EQUIVALENCE (RDUM, IDUM)
++ 
++C     + + + OUTPUT FORMATS + + +
++C***********************************************************************
++C     START SEARCH
++      IENTRY = 0
++ 
++ 100  CONTINUE
++        IENTRY = IENTRY + 1
++        IPNT = ADD(IENTRY)
++        CODE = EMC(IPNT)
++        IF(CODE.EQ.14) THEN
++C         CODE = 14.  Check for flow node
++          IF(QNODE.EQ.EMC(IPNT+3)) THEN
++C           Found match for flow node
++            UEXN = EMC(IPNT+1)
++            DEXN = EMC(IPNT+2)
++            IDUM = EMC(IPNT+8)
++            EFAC = RDUM
++            IDUM = EMC(IPNT+9)
++            HDATUM = RDUM
++            RETURN
++
++          ENDIF
++        ENDIF
++ 
++        IF(CODE.GT.0) THEN
++C         Continue the search.
++          GOTO 100
++        ELSE
++C         End of Network-Matrix Control data.
++          UEXN = -1
++          RETURN
++        ENDIF
++      END

@@ -1,0 +1,6 @@
+C     Used for output of Mc Henry gate information
+
+      INTEGER TYPMCH
+      REAL HGMCH
+      COMMON/MHENRY/ TYPMCH, HGMCH
+

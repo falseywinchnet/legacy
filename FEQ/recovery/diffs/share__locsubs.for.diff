@@ -1,0 +1,11 @@
+--- 9.98/share/locsubs.for
++++ 10.61/share/locsubs.for
+@@ -35,7 +35,7 @@
+       imn = ivalues(6)
+       isec = ivalues(7)
+       imilli = ivalues(8)
+-      
++
+       seconds = (ihr*3600 + imn*60 + isec )*100 + imilli/10
+ C      secnds = (ihr*3600 + imn*60 + isec )*100 
+       IF (first.EQ.0) THEN

@@ -1,0 +1,20 @@
+--- 9.98/feq/hecdmy.for
++++ 10.61/feq/hecdmy.for
+@@ -200,7 +200,7 @@
+ C     number of values. 
+ 
+       IMPLICIT NONE
+-      CHARACTER NAMEIN*80, REPORT_MODE*8
++      CHARACTER NAMEIN*(*), REPORT_MODE*8
+ 
+       INTEGER DSS_FILE_INDEX, TIME_STEP, STDOUT, NMAX, NVALUES, 
+      A        MRJTIMES
+@@ -228,7 +228,7 @@
+ C     at or before the start time of the run.  
+ 
+       IMPLICIT NONE
+-      CHARACTER NAMEIN*80, REPORT_MODE*8
++      CHARACTER NAMEIN*(*), REPORT_MODE*8
+ 
+       INTEGER DSS_FILE_INDEX, TIME_STEP, STDOUT, EFLAG
+ 

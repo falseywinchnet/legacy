@@ -1,0 +1,13 @@
+C     Command-line processing offset for most Unix-like systems
+      INTEGER MORG
+      PARAMETER (MORG=0)
+
+
+C     MORG- offset value for the first command-line argument.
+C           On PC systems this should be 1 if the supplied 
+C           routines for retrieval of command-line arguments
+C           are used.  If the compiler differs from Lahey,
+C           then the value should be set to get the first
+C           file argument.  On Unix systems MORG=0 is normally
+C           required. 
+

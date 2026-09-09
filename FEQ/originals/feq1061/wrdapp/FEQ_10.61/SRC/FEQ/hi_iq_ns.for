@@ -1,0 +1,458 @@
+c     Programs to implement the high iq newton solution 
+c     option in FEQ.  
+
+c     We will also be experimenting with shifting to lower case
+c     for the fortran code. 
+
+c     25 Feb 2003
+
+c     As part of this system we must keep track of internal variable
+c     numbers on an action list.  These are variables that appear in
+c     the iteration log(s) in particular patterns that lead us to 
+c     take a partial-newton correction for these variables until 
+c     the problem pattern disappears.  Thus variables will be added
+c     to the list when problems persist and will eventually be deleted
+c     from the list when they appear to be over.   Most of the time
+c     the list should be empty.  Only experimentation will tell if this
+c     solves certain annoying problems with convergence. 
+
+c     We use what is called a doubly-linked list for the list of 
+c     variables on the action list.  The operations we need to 
+c     make are:
+
+c     1. add a variable to the list and checking to make sure there is
+c        room on the list.  We will always add at the end of the "top" of 
+c        list.
+
+c     2. Scan through the action list from top to bottom making adjustments
+c        to the partial-newton correction factors as we go.  There will be two 
+c        modes:  when convergence fails we will be making the correction factors 
+c        smaller by some factor until some lower limit is reached; when 
+c        convergence succeeds we will be increasing the correction factors by 
+c        a factor to make them larger.  When the factor exceeds 1.0, the 
+c        variable is removed from the list.  
+
+c     3. Remove a variable from the list. 
+
+c     TLhe following subroutines will do most of the work:
+
+c     init_list -- initialize a doubley-linked list
+c     add_to_list  -- adds a given internal variable number to the list
+c     remove_from_list -- removes the variable at the known location
+c                         in the list. 
+c     The above subroutines will be written for potential other applications
+C     and are not specific to the hi_iq_ns processing
+c     hi_iq_ns_success -- process the hi_iq_ns list when convergence is 
+c                         obtained
+c     hi_iq_ns_fail -- process the hi_iq_ns list when convergence fails. 
+
+c     Note: a node on a doubly-linked list consistes of a back pointer, 
+c           the item being stored, and the forward pointer. 
+
+c
+c
+c
+      subroutine init_list(mrlist,
+     o                     avail_p, active_p, bp, items, fp)
+
+c     Initialize a doubly-linked list as outline above.
+      
+      implicit none
+      integer mrlist, avail_p, active_p
+      integer bp(mrlist), items(mrlist), fp(mrlist)
+
+c     Local
+      integer i
+
+c***********************************************************************
+      do 100 i=1,mrlist
+        bp(i) = i - 1
+        fp(i) = i + 1
+c       fill items with garbage.
+        items(i) = -1234
+100   continue
+      fp(mrlist) = 0
+      avail_p = 1
+      active_p = 0
+      return
+      end
+c
+c
+c
+      subroutine add_to_list(mrlist, value, 
+     m    avail_p, active_p, bp, items, fp,
+     o    eflag)
+
+c     Add value to a doubly-linked list. 
+
+c     mrlist- max number of rows in the list
+c     value - value to be placed on the list
+c     avail_p- pointer to the bottom of the list of available 
+c              nodes in the list.  
+c     active_p-pointer to the top of the list of active items. It is zero
+c              active-item list is empty.  
+c     bp(*) - back pointer to the item on a list that is back of,
+c             below, or to the left of (take your pick of which one
+c             you like) the item in the current node.  I no such node
+c             exists, then we put 0 in bp, otherwise the value in bp 
+c             is greater than 0.
+c     items(*)- the value of interest-depends on the purpose of the list
+c     fp(*) - forward point to the item on the list that is in front of,
+c             above, or to the right of the item in the current node. 
+c             If no such node exists, then we put 0 in fp, otherwise the 
+c             value in fp is greater than 0.
+c     eflag - 0 if there is room on the list.  1 if the list has overflowed.
+
+      implicit none
+
+      integer mrlist, value, avail_p, active_p, eflag
+      integer bp(mrlist), items(mrlist), fp(mrlist)
+
+
+C     Local
+
+c***********************************************************************
+      if(avail_p.gt.0) then
+c       There is room on the list.  Set the back pointer for the next 
+c       available node to the top of the current active list. 
+        bp(avail_p) = active_p
+
+c       Set the forward pointer for the current top of list to the 
+C       new top of list-only when the the active list is present
+        if(active_p.gt.0) then
+          fp(active_p) = avail_p
+        endif
+         
+c       Update the top-of-active-list pointer and save the value.
+        active_p = avail_p 
+        items(active_p) = value
+
+c       Update the available pointer.  Must do before the last 
+c       operation for the active list to avoid loss of information
+        avail_p = fp(avail_p)
+
+c       clear the back pointer for the available list
+        bp(avail_p) = 0
+
+c       Now clear the forward pointer for the top of active list
+        fp(active_p) = 0 
+        eflag = 0
+      else
+        eflag = 1
+      endif
+      return
+      end
+
+                      
+c
+c
+c
+      subroutine remove_from_list(mrlist, i,
+     m               avail_p, active_p, bp, items, fp)
+
+c     Remove the node at i from the active list and place it on the
+c     available list.   We assume that node i does exist on the active
+c     list. 
+
+      implicit none
+      integer mrlist, i, avail_p, active_p
+      integer bp(mrlist), items(mrlist), fp(mrlist)
+
+
+c***********************************************************************
+
+c     What we do depends on where the item is on the list: bottom 
+c     of the list, top of the list, interior to the list, or the only 
+c     node on the list. 
+
+      if(bp(i).gt.0) then
+        if(fp(i).gt.0) then
+c         node is interior to the list.  We adjust pointers to "jump" 
+c         over or around the node. 
+          fp(bp(i)) = fp(i)
+          bp(fp(i)) = bp(i)
+        else
+c         node is on top of the list.  We have to adjust the active_p
+          active_p = bp(i)
+          fp(active_p) = 0
+        endif
+      else
+        if(fp(i).gt.0) then
+c         node is at the bottom of the list. 
+          bp(fp(i)) = 0
+        else
+c         node is the only node on the list. 
+          active_p = 0
+        endif
+      endif
+
+c     Now add the freed node to the bottom of the available list. 
+      if(avail_p.gt.0) then
+        bp(avail_p) = i
+        fp(i) = avail_p
+        bp(i) = 0
+        avail_p = i
+      else
+        avail_p = i
+        fp(avail_p) = 0
+        bp(avail_p) = 0
+      endif
+      
+c     clear the value to help in debug dumps
+      items(i) = -1234
+      return
+      end
+
+  
+c
+c
+c
+      subroutine  hi_iq_ns_fail(stdout, kount, mxrev, ivarv, kntvec,
+     i                          hi_iq_ns_dwn, hi_iq_ns_lmt, hi_iq_ns,
+     i                          hi_iq_ns_numgt,
+     i                          hi_iq_ns_state,
+     m                          hi_iq_ns_fac,
+     o                          eflag)
+
+c     Make adjustments to the high iq newton-solution factor based
+c     on the active list when convergence has failed.  
+
+      implicit none
+
+      integer eflag, hi_iq_ns_numgt, kount, stdout
+      integer  ivarv(kount), kntvec(kount),
+     a        hi_iq_ns_state(*)
+
+      real hi_iq_ns_dwn, hi_iq_ns_lmt, hi_iq_ns_fac(*),
+     a      mxrev(kount)
+
+      character hi_iq_ns*4
+
+      include 'hi_iq_ns.cmn' 
+
+c     Local
+      integer i, inext, it
+      real factor
+c     ****************************formats*******************************
+50    format(' Adding internal var=',i10,' to active list.')
+51    format(' Removing internal var=',i10,' Converged!')
+52    format(/,' Int. Var#   factor')
+54    format(i10,f10.3)
+55    format(' Internal var=',i10,' already on list.')
+c***********************************************************************
+      if(hi_iq_ns.eq.'LEV2') then
+c       Traverse the list and remove any converged variables. 
+        i = hi_iq_ns_active_p
+      
+        do while (i > 0)
+c         get the next node now because when we remove nodes from the list, 
+c         the pointers change. 
+          inext = hi_iq_ns_bp(i)
+
+          it = hi_iq_ns_vars(i)
+c          it points to the flow value at the node
+          if(hi_iq_ns_state(it).eq.1.and.
+     a       hi_iq_ns_state(it+1).eq.1 ) then
+c           both values at the node have converged.  Reset the factors
+c           and remove the flow value variable number from the active list.
+            hi_iq_ns_fac(it) = 1.0
+            hi_iq_ns_fac(it+1) = 1.0
+            write(stdout,51) it
+c           remove this variable from the active list. 
+            call  remove_from_list(mrlist, i,
+     m               hi_iq_ns_avail_p, hi_iq_ns_active_p, hi_iq_ns_bp,
+     m               hi_iq_ns_vars, hi_iq_ns_fp)
+          endif
+          i = inext
+        end do
+      endif
+
+
+c     Add the last variable in the iteration log
+c     to the active list.  Later we may try to get smarter.  12 April 2003>
+c     We are trying to get smarter because adding a variable appears to work
+c     in only some cases.  We will try to add both variables at a node 
+c     if only one appears in the critical position.  The flow variable no. at a node
+c     is always odd with the depth being given by the following even numbered variable. 
+
+c     Later on 12 april:  Need to add even more smarts!  We must force the addition of
+c     both values at a node and also keep them both there until both are converged!
+c     Thus we do the following:  1. Find the flow variable number and use it as the 
+c     id for the node.  2. Only the flow variable is placed on the list.  The depth 
+c     variable is implied.  3. Both will have the same fac value. 
+
+      if(kntvec(kount).le.hi_iq_ns_numgt) then
+        i = ivarv(kount)
+        if(mod(i,2).eq.0) then
+c         the variable number is even.  decrease  by one to get the 
+c         variable number for the associated flow 
+          i = i - 1
+        endif
+        
+        if(hi_iq_ns_fac(i).lt.1.0) then
+c         don't add to the list again-already there
+          write(stdout,55) i
+        else
+c         add to the list
+          write(stdout,50) i
+          call add_to_list(mrlist, i, 
+     m      hi_iq_ns_avail_p, hi_iq_ns_active_p, hi_iq_ns_bp, 
+     m      hi_iq_ns_vars, hi_iq_ns_fp,
+     o      eflag)
+        endif
+      endif
+
+      
+c      write(stdout,*) 'dump before LEV2 action'
+c      call hi_iq_ns_dump(stdout,10)
+ 
+
+c     Now traverse the active list and adjust the factor.
+      i = hi_iq_ns_active_p
+c      write(stdout,*) 'dump before adjusting list'
+c      call hi_iq_ns_dump(stdout,10)
+
+      if(i > 0) then
+        write(stdout,52)
+      endif
+      do while (i > 0)
+        it = hi_iq_ns_vars(i)
+c       Do the flow value
+        factor = hi_iq_ns_fac(it)
+        factor = factor*hi_iq_ns_dwn
+        if(factor.lt.hi_iq_ns_lmt) then
+          factor = hi_iq_ns_lmt
+        endif
+        hi_iq_ns_fac(it) = factor
+        write(stdout,54) it, factor
+c       Do the depth value
+        hi_iq_ns_fac(it+1) = factor
+
+c       do the next node-we are moving from top to bottom of the 
+c       active list. 
+        i = hi_iq_ns_bp(i)
+      end do
+c      write(stdout,'(a)') ' '
+c      write(stdout,*) ' hi_iq_ns_active_p=', hi_iq_ns_active_p,
+c     a               ' after adjusting list'
+      return
+      end
+
+
+c
+c
+c
+      subroutine hi_iq_ns_success(stdout, hi_iq_ns_up, hi_iq_ns, 
+     i                          dt, hi_iq_ns_dt,
+     m                          hi_iq_ns_fac)
+
+c     Make adjustments to the high iq newton-solution factor based
+c     on the active list when we have convergence
+            
+      implicit none
+
+      integer stdout
+
+      real hi_iq_ns_up, hi_iq_ns_fac(*), hi_iq_ns_dt
+
+      real*8 dt
+
+      character hi_iq_ns*4
+
+      include 'hi_iq_ns.cmn'
+
+c     Local
+      integer i, inext, it
+      real factor, force
+c     *****************************formats******************************
+50    format(' Removing internal var=',i10,' from active list.')
+c***********************************************************************
+c     Traverse the active list multiplying the factors by hi_iq_ns_up.
+c     If the factor for a variable becomes >= 1.0, set the factor to 1.0
+c     and remove the variable from the active list. 
+
+      if(hi_iq_ns.eq.'LEV2'.and.dt.gt.hi_iq_ns_dt) then
+        force = 1.e10
+      else
+        force = hi_iq_ns_up
+      endif
+
+c        write(stdout,*) 'dump before list-node removal'
+c        call hi_iq_ns_dump(stdout,10)
+
+      i = hi_iq_ns_active_p
+      
+      do while (i > 0)
+c       get the next node now because when we remove nodes from the list, 
+c       the pointers change. 
+        inext = hi_iq_ns_bp(i)
+
+c       adjust the factor for the current variable
+        it = hi_iq_ns_vars(i)
+c         it points to the flow value
+        factor = hi_iq_ns_fac(it)
+        factor = factor*force
+        if(factor.ge.1.0) then
+          write(stdout,50) it
+          factor = 1.0
+c         remove this variable from the active list. 
+          call  remove_from_list(mrlist, i,
+     m               hi_iq_ns_avail_p, hi_iq_ns_active_p, hi_iq_ns_bp,
+     m               hi_iq_ns_vars, hi_iq_ns_fp)
+        endif
+        hi_iq_ns_fac(it) = factor
+        hi_iq_ns_fac(it+1) = factor
+        i = inext
+      end do
+
+c        write(stdout,*) 'dump after list-node removal'
+c        call hi_iq_ns_dump(stdout,10)
+
+      return
+      end
+
+c
+c
+c
+      subroutine hi_iq_ns_list_init()
+
+c     Initialize the list for the high iq newton solution
+
+      implicit none
+
+      include 'hi_iq_ns.cmn'
+c***********************************************************************
+      call init_list(mrlist,
+     o              hi_iq_ns_avail_p, hi_iq_ns_active_p, hi_iq_ns_bp, 
+     o              hi_iq_ns_vars, hi_iq_ns_fp)
+      return
+      end
+c
+c
+c
+      subroutine hi_iq_ns_dump(stdout,n)
+
+c     dump the first n values in the current list plus basic pointers.
+
+      implicit none
+
+      integer n, stdout
+      include 'hi_iq_ns.cmn'
+
+c     Local
+      integer i
+c     ************************************formats***********************
+50    format(/,'hi_iq_ns_avail_p=',i5,' hi_iq_ns_active_p=',i5)
+52    format('     index     backp     value  forwardp')
+54    format(4i10)
+c***********************************************************************
+      write(stdout,50) hi_iq_ns_avail_p, hi_iq_ns_active_p
+      write(stdout,52)
+      do i=1,n
+         write(stdout,54) i, hi_iq_ns_bp(i), hi_iq_ns_vars(i), 
+     a                     hi_iq_ns_fp(i)
+      end do
+
+      return
+      end
+

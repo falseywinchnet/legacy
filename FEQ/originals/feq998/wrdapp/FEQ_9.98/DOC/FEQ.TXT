@@ -1,0 +1,378 @@
+
+
+
+feq(1)           U.S. Geological Survey (wrdapp)           feq(1)
+
+
+NAME
+       feq - Full EQuations Model
+       fequtl - Full EQuations UTiLity
+
+ABSTRACT
+       FEQ simulates flow in a stream system by solving the full, dynamic
+       equations of motion for one-dimensional unsteady flow in open
+       channels and through control structures.  The structure of the
+       program is designed to follow the structure of a stream system while
+       providing maximum generality and flexibility of description.  A
+       stream system that is simulated with FEQ is subdivided into three
+       broad classes of flow paths: (1) stream reaches (branches), (2)
+       parts of the stream system for which complete information on flow
+       and depth are not required (dummy branches), and (3) level-pool
+       reservoirs.  These components are connected by special features or
+       hydraulic control structures, such as junctions, bridges, culverts,
+       dams, waterfalls, spillways, weirs, side weirs, pumps, and others.
+       The hydraulic characteristics of channel cross sections and special
+       features are stored in function tables calculated by the companion
+       program FEQUTL.  FEQ can interpolate hydraulic properties of cross
+       sections between measured sections.  FEQ can be applied in the
+       simulation of a wide range of stream configurations (including
+       loops), lateral-inflow conditions, and special features.  Boundary
+       conditions can be water-surface stage, discharge, or the stage-
+       discharge relationship at a node.  Wind stress terms are supported.
+       The effects of lateral inflows can also be simulated in FEQ when
+       given local runoff intensity data.
+
+METHOD
+       In FEQ, the principles of conservation of mass and conservation of
+       momentum are used to calculate the flow and depth throughout the
+       stream system resulting from known initial and boundary conditions
+       with an implicit finite-difference approximation.  FEQUTL is used to
+       compute the hydraulic properties of various structures, each with
+       its own computational theory.  Thorough discussion of computational
+       theory is given in the sources listed under DOCUMENTATION.
+
+HISTORY
+       The Full Equations (FEQ) model for the simulation of one-dimensional
+       unsteady flow in open channels and through control structures was
+       first developed in 1976 to model the Sanitary and Ship Canal,
+       Chicago, Ill., as part of the 208 Water Quality Management Studies
+       conducted by the Northeastern Illinois Planning Commission with
+       principal support from the U.S. Environmental Protection Agency.
+       This original version was then expanded over the next several years.
+       The first numbered version, 2.0, appeared in March 1986 when a
+       version for personal computers was prepared.  In subsequent years,
+       the capabilities of the software were expanded at frequent intervals
+       to meet the needs of the expanding user base.  The USGS published
+       documentation for version 8.10 in 1997.  The later features of FEQ
+       are documented below.  Refer to the file RELEASE.TXT distributed
+       with the software for additional information on these enhancements
+       and code corrections.
+
+       Version 9.98, posted 2005/05/31 - (A) Generalized effect of detention
+          of flow within reservoirs and delay of flow from tributary areas
+          enabled.  (B) Control of gate operations as a function of 3
+          exterior nodes.  (C) Irrigation runoff and withdrawal effects
+          from near-surface and imported water.  (D) Table numbers changed
+          to labels resulting in heading-dependent formats for many blocks.
+          Convertfeq utility available for conversion.  (E)Rainfall and
+          evaporation from open surfaces.  (F) Adjustment factor for
+          conveyance in a branch.  (G) Crest and flow adjustment for side
+          weirs.  (H) Master files and scenario-selector variable option for
+          complex project management.  (I) Automatic counting of nodes and
+          branches, disabling of weirs with datum errors.  (J) Formats to
+          facilitate conversion between linux and dos operating systems
+          incorporated.
+
+       Version 8.92, posted 1999/04/07 - (A) The negative constant-flow boundary
+          was corrected from an applied constant value of 0.  Positive
+          constant flow boundaries into and out of the system were
+          unaffected.  (B) An undefined variable was defined to end
+          potential error in the interpolation between weir and orifice
+          flow for underflow gates.  (C) An undefined variable that caused
+          potential error in checking for overflow in side-weir 2-D tables
+          was defined.
+
+       Version 8.92, posted 1997/06/18 - (A) Blank lines are now allowed
+          anywhere in the input except in the Branch Description Block where
+          they indicate repeated cross sections.  The blank lines are echoed to
+          the output.  (B) FORTRAN I/O numbers are no longer needed.  They
+          can be left in old inputs however.  (C) Space-delimited format is
+          allowed for the Network Matrix Control Input Block, when the
+          block is specified as NEW Network Matrix Control Input Block.  A
+          asterisk is used as a place holder for optional items.  (D) The
+          Special Output Block has been modified to allow user-customized
+          specification of output variables or single-line output.  The new
+          values are given in an OPTIONS line following the UNIT line.  The
+          variables that may be output include mean velocity (V), cross-
+          sectional area (A), main channel area (MCA), flow (MCQ), and
+          velocity (MCV), flood plain flow area (FPA), flow (FPQ), and
+          velocity (FPV).  In order to have single-line special output, the
+          Special Output Block is specified as "Special" rather than
+          "SPECIAL."  Only flow and velocity will be output.  (E) Access to
+          HECDSS time series is supported for the input of flow or
+          elevation at a boundary node, for output of flow or elevation
+          from any node, and for the unit-area runoff intensity used to
+          compute lateral inflow from a tributary area.  (F) Explicit
+          specification of side nodes (Code 13) is allowed to provide for
+          conservation of momentum for inflows.  The angle of entry is also
+          specified.  (G) The difference in elevation between two exterior
+          nodes can be used as the argument for control structures in the
+          Operations Control Block.  The difference from the NODE elevation
+          is specified by identifying the second node in the KEY variable
+          field.  (H) An optional Define Macros and Instructions Block has
+          been added to streamline the definition of the Network Control
+          Matrix.  (I) Two-way pumps have been added.  (J) An argument
+          scale factor has been added for function tables type 2,3, and 4
+          to allow for variable unit systems.  (K) A linear reservoir delay
+          factor for tributary runoff areas can be specified by the
+          variable KLR added at the end of the branch specification line.
+          KLR has the units of minutes delay time for a linear reservoir
+          interposed between the branch and the tributary area.
+
+       The Full Equations Utilities (FEQUTL) model for the approximation of
+       hydraulic characteristics of open channels and control structures
+       during unsteady flow was first developed in early 1984-85 using some
+       ideas from earlier piecemeal utility programs.  The first numbered
+       versions appeared in early 1988 as the user base expanded.  The
+       software has been expanded at frequent intervals to meet the needs
+       of the user base.  The U.S. Geological Survey published the
+       documentation for FEQUTL Version 4.15 in 1997.  Many additional
+       capabilities have been added to FEQ and FEQUTL during the time the
+       documentation was prepared.  The capabilities added to FEQUTL are
+       described below.  Refer to the file RELEASE.TXT distributed with the
+       software for additional information on these enhancements and code
+       corrections.
+
+       Version 5.46, posted 2005/05/31 - (A) Gate control table development
+          from underflow-gate rating partly supported in routine--INV_GATE.
+          (B) Sluice gate on upstream face of box culvert routine--UFGCULV.
+          (C) Support for function-table labels rather than function-table
+          numbers, requires conversion to heading-dependent formats in many
+          routines, see release.txt for details.  Conversion program,
+          convertutl, available.  (D) Exact specification of conversion
+          factors for Manning's n and the acceleration due to gravity
+          available.  (E) Cross-section conversion from FEQUTL to WSPRO
+          format.  (F) Estimate of surface area for level-pool reservoirs
+          where only elevation-storage capacity relation is know.  (G)
+          Formats to facilitate conversion between linux and Dos operating
+          systems incorporated.
+
+       Version 4.68, posted 1997/05/29 - (A) SI units are now supported. The
+          subdirectory METRIC under the test directory in FEQUTL contains
+          the SI version of the standard example file and the SI version of
+          the weir coefficients for embankment-shaped weirs.  (B) Added
+          another global convergence tolerance to the header block for
+          FEQUTL. The new convergence tolerance, EPSABS, is to be used in
+          those cases in which the residual function returns a length
+          value.  Thus when switching to using meters for the length unit,
+          EPSF will remain unchanged but EPSABS must be changed to reflect
+          the larger length unit.  In the US standard unit system, EPSABS
+          has the same numeric value as EPSF but has a different meaning.
+          EPSABS is located in the next field from EPSF.  If omitted, the
+          value of EPSF is used.  (C) Modified the Preissman slot for
+          closed conduits to reflect the unit system. The maximum slot
+          level is 150 meters, which is not exactly equal to 500 feet used
+          in the US unit system.  However, the round number is indicative
+          of an arbitrary selected value. The slot detection code was
+          modified also to find the vertical diameter of closed conduits.
+          The slot width used for detection of closed conduits remains at
+          0.07 feet or 0.021336 meters.  A slot width larger than this will
+          not be detected and FEQUTL will treat the cross-section function
+          table as being a normal open channel and not a closed conduit in
+          any context in which a closed conduit must be detected.  (D)
+          Changed the means for eliminating close values of depth in
+          computing cross section tables.  Previous versions had used an
+          absolute tolerance for the minimum difference between adjacent
+          depths.  This has been changed to a relative tolerance to be
+          scale independent.  (E) HEC2X command has been modified to
+          convert units from SI to English or from English to SI under user
+          control.  The default action is no conversion of the elevations
+          and offsets on the cross section.  Adding the word CONVERT after
+          the MODE response will cause conversion of units.  The conversion
+          of station values is governed by SFAC only and is set by the
+          user.  (F) Provided additional options following the unit system
+          selection in the standard header to force FEQUTL to use the more
+          exact value for the factor in Manning's equation.  The factor is
+          technically the cubic root of the number of feet in a meter,
+          which to single precision in a 32-bit IEEE floating point
+          representation is about 1.485919. For nearly all practical
+          purposes this can be taken as 1.49.  (G) Provided the option to
+          use an equation to compute the value of g given a latitude and an
+          elevation.  This happens whenever the exact value for the factor
+          in Manning's equation is requested.  The usual value of g is 32.2
+          f/s^2 or  9.815 m/s^2 with an error less than 0.2 percent across
+          the United States.  Using more than one value of GRAV may result
+          in slight differences between SI and US standard units.  (H)
+          Added vertical scale factor (VSCALE), and horizontal shift amount
+          (HSHIFT), to FEQX cross sections.  (I) Added vertical scale
+          factor (VSCALE), vertical shift (CSHIFT), horizontal scale factor
+          (HSCALE) to EMBANKQ.  (J) Added an argument scale factor to the
+          input of function tables of type 2, 3,and 4.  The argument scale
+          factor is placed after the function scale factor.  This moves the
+          SHIFT input item to the right.  The SHIFT item is little used and
+          may be discontinued.  In any case if you are using it you will
+          have to move the SHIFT item to the right by 16 columns to leave
+          space for the reading of the argument scale factor.  (K) Added
+          two new commands to create a bottom slot in a cross section.  The
+          commands are SETSLOT and CLRSLOT.   The first command defines a
+          bottom slot and this slot is add to all cross sections that
+          FEQUTL encounters until the command CLRSLOT is found.  Thus the
+          addition of a bottom slot to a cross section is like a switch:
+          either on or off.  When it is on it will appear in all cross
+          sections processed.  (L) Flapgate losses from submerged culvert
+          flow are supported.  Culverts with risers and flow through
+          orifices are also supported.  (M) CHANRAT and EMBANKQ have
+          optional variables LIPREC and MINPFD to request optimization of
+          interpolation of two-dimensional tables of type 6 or 13.  LIPREC
+          is the Linear Interpolation Precision specification in terms of
+          relative error.  MIPFD is the minimum partial free drop to be
+          computed.  (N) Computation of pump rating curves and pump loss
+          tables supported.
+
+DATA REQUIREMENTS
+       FEQ reads an input file that contains specifications of run control
+       parameters, an encoding of the stream schematic, and initial
+       conditions.  This file can contain boundary-condition tables and
+       function tables for special features, or it can identify additional
+       files that contain the information.
+
+       FEQUTL computes function tables from specifications and data
+       provided in input files.  FEQUTL can read HEC-2 and WSPRO cross-
+       section input data and calculate cross-section function tables for
+       use in FEQ simulation.  Function tables for bridges are computed
+       using the program WSPRO to compute a suite of upstream and
+       downstream water-surface elevations.  FEQUTL can create input files
+       for WSPRO and convert tables output by WSPRO into a format suitable
+       for FEQ.
+
+OUTPUT OPTIONS
+       The FEQ simulation process is documented in an output file.  In
+       addition, the results of simulation at nodes selected by the modeler
+       can be sent to data output files, special output files, or files
+       readable by the USGS program GenScn.
+
+       FEQUTL creates two output files, one which documents the computation
+       processes in detail, and the other which contains only function
+       tables.  The latter file can be identified in an FEQ input file to
+       be read directly by FEQ.
+
+SYSTEM REQUIREMENTS
+       The program was written in Fortran 77 for PC.  The code is easily
+       ported to Unix and linux systems.  Both PC and UNIX versions are
+       available.
+
+APPLICATIONS
+       Snohomish County Department of Public Works, Surface Water
+          Management Division, 1989, Snohomish River Unsteady Flow Model
+          (FEQ):  Report submitted to the U.S. Army Corps of Engineers,
+          Seattle District.  The model developed for the Snohomish River has
+          been extended to include the lower portions of the Skykomish and
+          Snoqualmie Rivers.  This model will eventually become part of a
+          flood-forecasting system.
+
+       Northwest Hydraulic Consultants Inc., 1993, Mill Creek (Auburn)
+          Hydraulic Modeling, Report to King County, Division of Surface
+          Water Management, Seattle, Washington.
+
+       Model of Mississippi River from Keokuk, Iowa, to Thebes, Illinois,
+          including its major tributaries as well as most of its minor
+          tributaries.  About 600 miles of stream are represented.  Seven
+          dams and six sets of operable gates, under automatic program
+          control, are included.  A report is in progress.
+
+       Johnstown Flood of 1977.  FEQ was applied to this flood as part of a
+          legal action stemming from this flood.  The lower reaches of the
+          Little Conemaugh and Stony Brook as well as the upper reaches of
+          the Conemaugh River are simulated.
+
+       DuPage County, Illinois Stormwater Management Plan.  As part of
+          their overall planning and regulation effort, DuPage County has
+          applied FEQ/FEQUTL to a wide variety of streams in DuPage County.
+          These streams include Winfield Creek, Waubaunsee Creek, Salt
+          Creek, East Branch DuPage River, Klein Creek, Black Partridge
+          Creek, Willoway Brook, and numerous other streams.
+
+       Illinois Department of Transportation, Division of Water Resources.
+          The Bureau of Planning has developed models used for planning and
+          regulation for the Fox River, Farmer-Prairie Creek, Midlothian
+          Creek, and the Skokie Lagoons.  The Fox River model includes
+          dynamic modeling of alternative dam-gate control operations.
+
+DOCUMENTATION
+       Franz, D.D., and Melching, C.S., 1997, Full Equations (FEQ) model
+          for the solution of the full, dynamic equations of motion for
+          one-dimensional unsteady flow in open channels and through
+          control structures: U.S. Geological Survey Water-Resources
+          Investigations Report 96-4240, 258 p.
+
+       Franz, D.D., and Melching, C.S., 1997,  Full Equations Utilities
+          (FEQUTL) model for the approximation of hydraulic characteristics
+          of open channels and control structures during unsteady flow:
+          U.S. Geological Survey Water-Resources Investigations Report
+          97-4037, 205 p.
+
+REFERENCES
+       Franz, D.D., 1982, Tabular representation of cross-sectional
+          elements: Journal of the Hydraulics Division, American Society of
+          Civil Engineers, v. 108, no. 10, p. 1070-1081.
+
+       Ishii, A.L., and Turner, M.J., 1997, Verification of a one-
+          dimensional, unsteady flow model for the Fox River in Illinois:
+          U.S. Geological Survey Water-Supply Paper 2477, 65 p.
+
+       Ishii, A.L., and Wilder, J.E., 1993, Effect of boundary condition
+          selection on unsteady-flow model calibration, in Proceedings of
+          the XXV Congress of International Association for Hydraulic
+          Research, Tokyo, p. 193-200.
+
+       Knapp, H.V., and Ortel, T.W., 1992, Effect of Stratton Dam operation
+          on flood control along the Fox River and Fox Chain of Lakes:
+          Illinois State Water Survey Contract Report 533, 79 p.
+
+       Turner, M.J., 1994, Data-collection methods and data summary for
+          verification of a one-dimensional, unsteady-flow model of the Fox
+          River in Illinois: U.S. Geological Survey Open-File Report
+          93-483, 40 p.
+
+       Turner, M.J., Pulokas, A.P., and Ishii, A.L., 1996, Implementation
+          and verification of a one-dimensional, unsteady-flow model for
+          Spring Brook near Warrenville, Illinois:  U.S. Geological Survey
+          Water-Supply Paper 2455, 35 p.
+
+TRAINING
+       One-week courses in FEQ modeling are offered about once a year in
+       DuPage County as demand dictates.  Contact the local American
+       Society of Civil Engineers section or:
+          Department of Environmental Concerns
+          DuPage County Center
+          421 N. County Farm Road
+          Wheaton, IL 60187
+
+       Additional courses at other locations are offered but only as demand
+       dictates.
+
+CONTACTS
+       Operation:
+          U.S. Geological Survey
+          Illinois Water Science Center
+          Watershed and River Modeling Support
+          1201 W. University Avenue
+          Urbana, IL  61801
+
+          alishii@usgs.gov
+
+       Official versions of U.S. Geological Survey water-resources analysis
+       software are available for electronic retrieval via the World Wide
+       Web (WWW) at:
+
+                  http://il.water.usgs.gov/proj/feq/
+
+       and via anonymous File Transfer Protocol (FTP) from:
+
+                  ftpdilurb.eru.usgs.gov (path: /pub/feq).
+
+       The WWW page and anonymous FTP directory from which the FEQ software
+       can be retrieved are, respectively:
+
+                  http://il.water.usgs.gov/proj/feq/software/feq
+                                --and--
+                  /pub/feq
+
+SEE ALSO
+       bltm(1) - Branched Lagrangian Transport Model
+       branch(1) - One-dimensional Branch-network flow model
+       daflow(1) - Streamflow routine in upland channels of
+                   channel networks
+       wspro88(1) - A computer model for Water-Surface PROfile
+                    computations
+       GenScn(1) - GENeration and analysis of model simulation SCeNarios

@@ -1,0 +1,11 @@
+--- 9.98/fequtl/findbrk.for
++++ 10.61/fequtl/findbrk.for
+@@ -495,7 +495,7 @@
+  52   FORMAT(' ', F12.7, 1PE12.4, 1PE12.4)
+  54   FORMAT(F10.6,F10.4,F10.4,F10.4)
+  58   FORMAT(/,' Results from cubic-spline fit.')
+- 60   FORMAT(' Index    Argument  Function    1stDeriv    2ndDeriv'
++ 60   FORMAT(' Index    Argument  Function    1stDeriv    2ndDeriv',
+      A      '   Integrand')
+  62   FORMAT(/,' Computation of indefinite integral of breakpoint',
+      A         ' density.')

@@ -1,0 +1,11 @@
+# Preserve historical source, executable, and reference bytes exactly.
+originals/** -text -whitespace
+tests/reference/** -text -whitespace
+recovery/diffs/** -text -whitespace
+*.zip binary
+*.exe binary
+*.EXE binary
+*.pdf binary
+*.bin binary
+*.msi binary
+*.gz binary

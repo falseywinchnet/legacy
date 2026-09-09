@@ -1,0 +1,124 @@
+TABDIR is a program that creates a directory of function tables for
+an FEQ model.  TABDIR requires two command line arguments.
+The first argument is a file name that contains the names
+of the function table files to be scanned.  The contents
+of an example file are:
+
+D:\sumas\feq\SECTIONS\BCSR\xsec.tab     
+D:\sumas\feq\SECTIONS\USSR\xsec.tab     
+D:\sumas\feq\SECTIONS\BONE\xsec.tab     
+D:\sumas\feq\SECTIONS\JOHNSON\xsec.tab  
+D:\sumas\feq\SECTIONS\TOBC\xsec.tab     
+D:\SUMAS\FEQ\SECTIONS\EVRSUM\RASXSEC.TAB
+D:\sumas\feq\SECTIONS\usrof\xsec.tab    
+D:\sumas\feq\SECTIONS\bclof\sbcditch.tab
+D:\sumas\feq\SECTIONS\bclof\interp.tab  
+D:\sumas\feq\SECTIONS\bcrof\xsec.tab    
+D:\sumas\feq\TWOD\BCSR\chanrat.tab      
+D:\sumas\feq\TWOD\SR\expcon.tab         
+D:\sumas\feq\TWOD\TOBC\chanrat.tab      
+D:\sumas\feq\TWOD\JOHNSON\chanrat.tab   
+D:\sumas\feq\TWOD\JOHNSON\culvert.tab   
+D:\sumas\feq\TWOD\JOHNSON\embank.tab    
+D:\sumas\feq\TWOD\usrof\embank.tab      
+D:\sumas\feq\TWOD\usrof\chanrat.tab     
+D:\sumas\feq\TWOD\USROF\expcon.tab      
+D:\sumas\feq\TWOD\BCLOF\CHANRAT.TAB     
+D:\sumas\feq\TWOD\BCLOF\CULVERT.TAB     
+D:\sumas\feq\TWOD\BCLOF\EMBANK.TAB      
+D:\sumas\feq\TWOD\BCROF\chanrat.tab     
+D:\sumas\feq\TWOD\BCROF\embank.tab      
+D:\sumas\feq\TWOD\BCROF\culvert.tab     
+D:\sumas\feq\TWOD\SR\chanrat.tab        
+D:\sumas\feq\LPRS\LOF.TAB               
+D:\sumas\feq\LPRS\usrof.tab             
+D:\SUMAS\FEQ\INFLOWS\EVERSON.Q          
+D:\SUMAS\FEQ\INFLOWS\JOHNSON.Q          
+D:\SUMAS\FEQ\INFLOWS\SUMAS.Q            
+
+
+These are copied from the Function Tables block of an existing 
+FEQ model. The last line in the file should be a blank line. 
+Notice that all of the names in this example are fully qualified.
+They need not be so but if they are not you must make sure that
+the directory in which you run TABDIR will be the correct directory. 
+
+
+The second command-line argument is the file name where you 
+want the function-table directory stored.  Part of such a 
+directory is given here:
+
+ NUMBER_OF_FILES=          31
+ DOING FILE:D:\sumas\feq\SECTIONS\BCSR\xsec.tab                             
+ DOING FILE:D:\sumas\feq\SECTIONS\USSR\xsec.tab                             
+ DOING FILE:D:\sumas\feq\SECTIONS\BONE\xsec.tab                             
+ DOING FILE:D:\sumas\feq\SECTIONS\JOHNSON\xsec.tab                          
+ DOING FILE:D:\sumas\feq\SECTIONS\TOBC\xsec.tab                             
+ DOING FILE:D:\SUMAS\FEQ\SECTIONS\EVRSUM\RASXSEC.TAB                        
+ DOING FILE:D:\sumas\feq\SECTIONS\usrof\xsec.tab                            
+ DOING FILE:D:\sumas\feq\SECTIONS\bclof\sbcditch.tab                        
+ DOING FILE:D:\sumas\feq\SECTIONS\bclof\interp.tab                          
+ DOING FILE:D:\sumas\feq\SECTIONS\bcrof\xsec.tab                            
+ DOING FILE:D:\sumas\feq\TWOD\BCSR\chanrat.tab                              
+ DOING FILE:D:\sumas\feq\TWOD\SR\expcon.tab                                 
+ DOING FILE:D:\sumas\feq\TWOD\TOBC\chanrat.tab                              
+ DOING FILE:D:\sumas\feq\TWOD\JOHNSON\chanrat.tab                           
+ DOING FILE:D:\sumas\feq\TWOD\JOHNSON\culvert.tab                           
+ DOING FILE:D:\sumas\feq\TWOD\JOHNSON\embank.tab                            
+ DOING FILE:D:\sumas\feq\TWOD\usrof\embank.tab                              
+ DOING FILE:D:\sumas\feq\TWOD\usrof\chanrat.tab                             
+ DOING FILE:D:\sumas\feq\TWOD\USROF\expcon.tab                              
+ DOING FILE:D:\sumas\feq\TWOD\BCLOF\CHANRAT.TAB                             
+ DOING FILE:D:\sumas\feq\TWOD\BCLOF\CULVERT.TAB                             
+ DOING FILE:D:\sumas\feq\TWOD\BCLOF\EMBANK.TAB                              
+ DOING FILE:D:\sumas\feq\TWOD\BCROF\chanrat.tab                             
+ DOING FILE:D:\sumas\feq\TWOD\BCROF\embank.tab                              
+ DOING FILE:D:\sumas\feq\TWOD\BCROF\culvert.tab                             
+ DOING FILE:D:\sumas\feq\TWOD\SR\chanrat.tab                                
+ DOING FILE:D:\sumas\feq\LPRS\LOF.TAB                                       
+ DOING FILE:D:\sumas\feq\LPRS\usrof.tab                                     
+ DOING FILE:D:\SUMAS\FEQ\INFLOWS\EVERSON.Q                                  
+ DOING FILE:D:\SUMAS\FEQ\INFLOWS\JOHNSON.Q                                  
+ DOING FILE:D:\SUMAS\FEQ\INFLOWS\SUMAS.Q                                    
+ TABLE#   TYPE  File name/table label
+    207     13  D:\sumas\feq\TWOD\usrof\embank.tab
+                 Conchman Rd. <-> RSR07
+    209     13  D:\sumas\feq\TWOD\usrof\embank.tab
+                 Conchman Rd. <-> RSR09
+    212     13  D:\sumas\feq\TWOD\usrof\embank.tab
+                 Conchman Rd. <-> RSR12
+    213     13  D:\sumas\feq\TWOD\usrof\embank.tab
+                 Conchman Rd. <-> RSR13
+    214     13  D:\sumas\feq\TWOD\usrof\embank.tab
+                 Conchman Rd. <-> RSR14
+    215     13  D:\sumas\feq\TWOD\usrof\embank.tab
+                 Conchman Rd. <-> RSR15
+    220     13  D:\sumas\feq\TWOD\usrof\embank.tab
+                 Jones Rd between RSR15 and RSR16
+    221     13  D:\sumas\feq\TWOD\usrof\embank.tab
+                 Jones Rd <-> RJR1
+    222     13  D:\sumas\feq\TWOD\usrof\embank.tab
+                 Jones Rd <-> RJR2
+    223     13  D:\sumas\feq\TWOD\usrof\embank.tab
+                 Jones Rd <-> RJR3
+      .
+      .
+      .
+
+The number of files is given first with the file names in the order in which
+they were given.  This is followed by a numerically ascending list
+of table numbers with the type of the table, the file name that 
+contains the table, and a label for the table.  In some cases the 
+label will be based on informal practice on the part of users.  
+In others the label is extracted from the explicit label field
+of the table. 
+
+
+The current size limits for the executable file are:
+
+number of function-table files:  500
+
+number of function tables: 5000
+
+
+

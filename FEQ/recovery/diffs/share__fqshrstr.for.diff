@@ -1,0 +1,296 @@
+--- 9.98/share/fqshrstr.for
++++ 10.61/share/fqshrstr.for
+@@ -1,3 +1,49 @@
++c
++c
++c
++      subroutine os_file_style(
++     m                         string)
++
++c     Convert a character string that is supposed to contain a file-name
++c     to the style of the osflag.  There are currently two styles:
++c     MS, and LINUX.  If neither style is given, then string is 
++c     unchanged. 
++
++      implicit none
++      character*(*) string
++
++      include 'whatos.cmn'
++      
++      integer len_trim
++      intrinsic len_trim
++
++c     Local
++      integer i, n      
++
++      INTEGER MS, LINUX
++      PARAMETER (MS=1, LINUX=2)
++c***********************************************************************
++      n = len_trim(string)
++      if(osis == MS) then
++c       Search for forward slashes and convert any found to the 
++c       backward slash.
++        do i=1,n
++          if(string(i:i) == '/') then
++            string(i:i) = '\'
++          endif
++        end do
++      elseif(osis == LINUX) then
++c       Search for backward slahes and convert any found to the 
++c       forward slash.
++        do i=1,n
++          if(string(i:i) == '\') then
++            string(i:i) = '/'
++          endif
++        end do
++      endif
++      return  
++      end
++
+ C     ***********
+ C     *         *
+ C     * CHAR_TO_DP
+@@ -16,9 +62,14 @@
+ C     Local
+ 
+       REAL*8 TP
+-C***********************************************************************
+-      READ(CHAR_ARGUMENT,'(A8)')  TP
++      character*8 tpc
++C***********************************************************************
++c      READ(CHAR_ARGUMENT,'(A8)')  TP
++
++      tpc = char_argument
++      tp = TRANSFER(tpc,tp)
+       CHAR_TO_DP = TP
++      
+       RETURN
+       END
+ C     ***********
+@@ -40,8 +91,10 @@
+ 
+       CHARACTER*8 TP
+ C***********************************************************************
+-      WRITE(TP,'(A8)')  DP_ARGUMENT
++c      WRITE(TP,'(A8)')  DP_ARGUMENT
++      tp = TRANSFER(dp_argument,tp)
+       DP_TO_CHAR = TP
++
+       RETURN
+       END
+       
+@@ -66,19 +119,21 @@
+ C     Local
+ 
+       INTEGER FIELD_WIDTH, NUMBER_OF_DECIMAL_PLACES, D,
+-     A        IT
++     A        IT, max_decimal_places
+ 
+       REAL Y
+ 
+-      CHARACTER ROUT_FORMAT*7,  IOUT_FORMAT*5, CHAR2*2
++      CHARACTER ROUT_FORMAT*8,  IOUT_FORMAT*5, CHAR2*2
+ 
+       INTRINSIC LOG10, ABS
+       
+-      DATA ROUT_FORMAT/'(F  . )'/, IOUT_FORMAT/'(I  )'/
++c                       12345678                 12345
++      DATA ROUT_FORMAT/'(F  .  )'/, IOUT_FORMAT/'(I  )'/
+       
+ C***********************************************************************
+       FIELD_WIDTH = LEN(RESULT)
+       IF(FIELD_WIDTH.GT.20) FIELD_WIDTH = 20
++      max_decimal_places = field_width - 3
+       WRITE(CHAR2,'(I2)') FIELD_WIDTH
+       ROUT_FORMAT(3:4) = CHAR2
+       IOUT_FORMAT(3:4) = CHAR2
+@@ -93,8 +148,10 @@
+       IF(D.LT.FIELD_WIDTH) THEN
+ 
+         NUMBER_OF_DECIMAL_PLACES = FIELD_WIDTH - D
+-        IF(NUMBER_OF_DECIMAL_PLACES.GT.7) NUMBER_OF_DECIMAL_PLACES = 7
+-        WRITE(ROUT_FORMAT(6:6),'(I1)') NUMBER_OF_DECIMAL_PLACES
++
++        IF(NUMBER_OF_DECIMAL_PLACES.GT.max_decimal_places)
++     a           NUMBER_OF_DECIMAL_PLACES = max_decimal_places
++        WRITE(ROUT_FORMAT(6:7),'(I2)') NUMBER_OF_DECIMAL_PLACES
+ 
+         WRITE(RESULT, ROUT_FORMAT) VALUE
+       ELSE
+@@ -285,10 +342,14 @@
+ 
+ C     Strip trailing and leading blanks and leading zeros
+ C     from the string NAME and return.
++c     Added 7 Dec 2005: check for blanks internal to the field and 
++c     if found write error message and stop processing. 
+ 
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       CHARACTER NAME*(*)
++
++      include 'stdun.cmn'
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     NAME   - string being scanned
+@@ -297,43 +358,42 @@
+       INTEGER I, IEND, ISTART
+  
+ C     Called program units
+-C***********************************************************************
++c     *************************formats**********************************
++50    format(/,'*ERR:xxx* One or more blanks found in: ',a,
++     a            '  Invalid in this context.')
++C***********************************************************************
++c     Strip any leading blanks
++      name = adjustl(name)
+       I = 1
++c     Strip trailing blanks
+       IEND = LEN_TRIM(NAME)
+- 
+- 100  CONTINUE
+-        IF(NAME(I:I).EQ.' ') THEN
+-          I = I + 1
+-          IF(I.LE.IEND) THEN
+-            GOTO 100
+-          ELSE
+-C           RETURN A BLANK IF NO NON-BLANK FOUND
+-            NAME = ' '
+-            RETURN
+-          ENDIF
+-        ELSE
+-          IF(NAME(I:I).EQ.'0') THEN
+-            IF(I.EQ.IEND) THEN
+-              ISTART = I
+-            ELSE
+-              IF(NAME(I+1:I+1).EQ.'.') THEN
+-                ISTART = I
+-              ELSE
+-                I = I + 1 
+-                GOTO 100
+-              ENDIF
+-            ENDIF
+-          ELSE
+-            ISTART = I
+-          ENDIF
+-        ENDIF
+- 
+-      NAME = NAME(ISTART:IEND)
+-      IF(ISTART.GT.1) THEN
+-        NAME(IEND-ISTART+2:IEND) = ' '
+-      ENDIF
+-      RETURN
+-      END
++
++c     Change leading zeros to blanks
++      do while(i <= iend)
++        if(name(i:i) == '0') then
++          name(i:i) = ' '
++          i = i + 1
++        else
++          exit
++        endif
++      end do  
++
++c     Strip leading  and trailing blanks again
++      name = adjustl(name)
++      iend = len_trim(name)
++      if(iend > 2) then
++c       Check for internal blanks
++        if(index(name(1:iend), ' ') > 0) then
++c         Found a blank interior to the item--error
++          write(std6,50) name(1:iend)
++          stop 'Abnormal stop. Error(s) found:('
++        endif
++      elseif(iend == 0) then
++c       return a single blank
++        name = ' '
++      endif
++      return
++      end
+ C
+ C
+ C
+@@ -520,74 +580,6 @@
+ 
+       RETURN
+       END
+-C     ***********
+-C     *         *
+-C     * NXTTOK  *
+-C     *         *
+-C     ***********
+- 
+-      SUBROUTINE   NXTTOK
+-     I                   (STRING,
+-     M                    NXT,
+-     O                    RESULT)
+- 
+-C     + + + PURPOSE + + +
+-C     Get the next consecutive sequence of non-blank characters from
+-C     STRING, return the sequence in RESULT, and the next character
+-C     offset in NXT.
+-
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER NXT
+-      CHARACTER RESULT*(*), STRING*(*)
+-
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     STRING - string to scan
+-C     NXT    - character offset for next scan
+-C     RESULT - item found
+-
+-C     + + + LOCAL VARIABLES + + +
+-      INTEGER I, IEND, ISTART, ISTOP
+-
+-C     + + + INTRINSICS + + +
+-      INTRINSIC LEN
+-C***********************************************************************
+-      I = NXT
+-      IEND = LEN(STRING)
+-
+- 100  CONTINUE
+-        IF(STRING(I:I).EQ.' ') THEN
+-          I = I + 1
+-          IF(I.LE.IEND) THEN
+-            GOTO 100
+-          ELSE
+-C           RETURN A BLANK IF NO NON-BLANK FOUND
+-            RESULT = ' '
+-            NXT = -1
+-            RETURN
+-          ENDIF
+-        ELSE
+-          ISTART = I
+- 110      CONTINUE
+-            IF(STRING(I:I).NE.' ') THEN
+-              I = I + 1
+-              IF(I.LE.IEND) THEN
+-                GOTO 110
+-              ELSE
+-                ISTOP = I - 1
+-              ENDIF
+-            ELSE
+-              ISTOP = I - 1
+-            ENDIF
+-        ENDIF
+-
+-      RESULT = STRING(ISTART:ISTOP)
+-      NXT = ISTOP + 1
+-C      WRITE(*,*) ' NXTTOK: RESULT=',RESULT,' NXT=',NXT
+-C      WRITE(*,*) ' ISTART=',ISTART,' ISTOP=',ISTOP
+-      RETURN
+-      END
+-      
+ C
+ C
+ C
+@@ -659,7 +651,7 @@
+       INTRINSIC ABS
+ C***********************************************************************
+ C     Select a value near the middle of the list for scale. 
+-      DIV = 0.5*(ABS(A(1)) + ABS(A(N)))
++      DIV = 0.5*(ABS(A(1)) + ABS(A(N))) - A(1)
+ C      IF(DIV.EQ.0.0) THEN
+ C        WRITE(STD6,*) ' N=',N
+ C        WRITE(STD6,*) ' DIV=',DIV

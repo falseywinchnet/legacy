@@ -1,0 +1,12 @@
+GET DATES
+    FILE name =  D:\DLH\WIN\TSFSHORT.SLT
+END GET
+
+
+DUMP DTSF
+   DTSF file name= D:\DLH\WIN\TSFSHORT.SLT
+   ASCII file name= dtsfdump
+   conversion FACTOR = 1.07E10
+END DUMP
+
+FINISH

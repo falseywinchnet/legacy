@@ -1,0 +1,163 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+   <title>APPENDIX</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+<b><font face="Times New Roman,Times"><font size=+1>ENHANCEMENTS
+AND MODIFICATIONS TO THE FULL</font></font></b>
+<br><b><font face="Times New Roman,Times"><font size=+1>EQUATIONS UTILITIES
+(FEQUTL) MODEL, MARCH 1995 TO AUGUST 1999:</font></font></b>
+<br><font face="Times New Roman,Times">Updates to Franz, D.D., and Melching, C.S., 1997, Approximating the hydraulic properties of open channels and control structures, during unsteady flow using the Full Equations Utility (FEQUTL) program: U.S. Geological Survey Water-Resources Investigations Report, 97-4037, 205 p. </font>
+<p><i>Prepared by</i>
+<br>DELBERT D. FRANZ, Ph.d.
+<p><i>Note: This document is separate from the U.S. Geological Survey report
+by Franz and Melching (1997). This description of enhancements and modifications
+to the Full Equations Utilities Model has not been approved by the Director
+of the U.S. Geological Survey.</i>
+<p><a NAME="TOC"></a><font face="Times New Roman,Times"><font size=+1>TABLE
+OF CONTENTS</font></font>
+<table BORDER CELLPADDING=9 WIDTH="860" BORDERCOLOR="#000000" >
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="#introduction">INTRODUCTION</a></td>
+
+<td VALIGN=TOP WIDTH="50%"><a href="../index.html">RETURN TO MAIN FEQ/FEQUTL
+INDEX PAGE</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="../fequtl/release.html">RELEASE INFORMATION</a></td>
+
+<td VALIGN=TOP WIDTH="50%">Release notes that are distributed with the
+FEQUTL software. Summarizes with brief descriptions selected modifications&nbsp;
+<br>implemented in FEQUTL from March 1995 to January 1999.</td>
+</tr>
+
+<tr>
+<td VALIGN=TOP ROWSPAN="5" WIDTH="50%">&nbsp;Input Description Updates</td>
+
+<td VALIGN=TOP WIDTH="50%"><a href="5_1update.html">Section 5.1 Standard
+Header Block</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="5_3update.html">Section 5.3 CHANRAT
+Command</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="5_5update.html">Section 5.5 CULVERT
+Command</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="5_6update.html">Section 5.6 EMBANKQ
+Command</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="5_8update.html">Section 5.8 FEQX Command</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP ROWSPAN="7" WIDTH="50%">&nbsp;New Sections</td>
+
+<td VALIGN=TOP WIDTH="50%"><a href="1_2_3a_update.html">Section 1.2.3a
+Table Interpolation and Automatic Breakpoint Procedure</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="4_7aupdate.html">Section 4.7a Flow
+in Orifices</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="5_1aupdate.html">Section 5.1a AXIALPMP
+Command</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="5_17aupdate.html">Section 5.17a ORIFICE
+Command</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="5_17bupdate.html">Section 5.17b PUMPLOSS
+Command</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="5_8_1_update.html">Section 5.8.1 SETSLOT
+Command</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%"><a href="5_8_2_update.html">Section 5.8.2 CLRSLOT
+Command</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%">&nbsp;Section Updates</td>
+
+<td VALIGN=TOP WIDTH="50%"><a href="4_2_5_update.html">Section 4.2.5 Departure
+Reach Losses</a></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP WIDTH="50%">&nbsp;<a href="references.html">REFERENCES</a></td>
+
+<td VALIGN=TOP WIDTH="50%">&nbsp;</td>
+</tr>
+</table>
+
+<p><a NAME="introduction"></a>INTRODUCTION
+<p>This documentation detailing enhancements and modifications to the Full
+Equations Utility (FEQUTL) model has been prepared as an update to the
+U.S. Geological Survey Water Resources Investigations Report 97-4037, Full
+Equations Utilities (FEQUTL) Model for the Solution of the Full, Dynamic
+Equations of Motion for the Approximation of Hydraulic Characteristics
+of Open Channels and Control Structures During Unsteady Flow (Franz and
+Melching, 1997). The version of FEQUTL that was documented was maintained
+at the state as of March 1995 during the documentation process so that
+the task could be completed. This update has been written in order to document
+the development of FEQUTL since March 1995.
+<p>Enhancements and modifications are made to FEQUTL on a continuing basis
+for the following reasons:
+<p>1. Correction of errors detected in the software.
+<p>2. Addition of new features to the software.
+<p>3. Enhancements or modifications to existing features of the software
+as suggested by experienced users.
+<p>A maintenance file, RELEASE.TXT, is distributed with the code and contains
+brief descriptions of the modifications made to FEQUTL, the approximate
+date each modification was implemented, and the version number assigned
+to the software as a basis for this update to the documentation report,
+Franz and Melching (1997). The published documentation report was prepared
+as a hyperlinked Hypertext Markup Language (HTML) document and posted to
+the Internet in 1997.
+<p>This update documents and summarizes the modifications made to the software
+from March 1995 to January 1999. It is being distributed as an HTML document
+that is hyperlinked to the original documentation report. The maintenance
+file, RELEASE.TXT, is hyperlinked both to the original documentation report
+and to expanded text documenting the changes, if any, to Section 5.0--
+Input Description for the Full Equations Utilities Model: Version 4.0 (Franz
+and Melching, 1997). Any changes made to the main text of the documentation
+report to describe the modifications in addition to that contained in the
+input description is hyperlinked to both the original documentation report
+and the RELEASE.TXT file.
+<p><a NAME="release"></a>RELEASE.TXT
+<p>These notes from the RELEASE.TXT file appear in an equal-spaced font
+because the ASCII input excerpts are more clear when presented in columns,
+and in some cases must always abe entered in fixed fields. RELEASE.TXT
+is written in a more abbreviated and informal style than the detailed updates
+to the FEQ documentation report, and the ASCII text style is an indication
+of this.
+<p>The notes have been hyperlinked to the original documentation report
+and to the updated input description, and other selected update sections
+where available.
+<br>&nbsp;
+<br>&nbsp;
+<script type="application/javascript" src="http://www.usgs.gov/scripts/analytics/usgs-analytics.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a382cc104ae9a9a4',t:'MTc4ODkyMTMwMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

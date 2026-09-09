@@ -1,0 +1,80 @@
+C 
+C
+C
+      SUBROUTINE SETCR()
+
+C     Set the carriage return character to use
+C     in filtering carriage-return characters from
+C     input files transfered from NT to Linux without
+C     doing a conversion.  We find all carriage-return
+C     characters and replace them with a single space. 
+C     There will be only one per line and then at the 
+C     last none-blank of the line. 
+
+      INCLUDE 'cr.cmn'
+C***********************************************************************
+      CR = CHAR(13)
+      RETURN
+      END
+
+C
+C
+C
+      SUBROUTINE FILTER_CR(
+     M                     LINE)
+
+C     Seek a carriage-return character at the end
+C     of the line and change it to a space if found.
+C     The logic of this routine is as follows:
+
+C     1. If we are running on some MS Windows system 
+C        the final character in the line that Fortran
+C        sees will never be a carriage return because
+C        the OS sends Fortran the actual data in the 
+C        text file and not the end of line characters. 
+
+C     2. If we are running on a Linux/Unix system using
+C        input data transfered from MS Windows without 
+C        conversion of the end of line characters, we 
+C        will have a carriage return at the end of the 
+C        line because Linux/Unix treats it like data.
+
+C     3. If we are running on a Linux/Unix system using
+C        input data created on that system so that each 
+C        line in the file is ended with only a line feed,
+C        we will never see a carriage return at the end
+C        of the line so the line is unchanged.  The 
+C        same holds for input data transferred from 
+C        MS Windows and then converte to the Linux/Unix
+C        end of lines.  
+
+C     The purpose of this scanning is to make it possible 
+C     to transfer huge amounts of text input between Linux
+C     and MS Windows without having to convert the end of 
+C     line character.  Visual Slick Edit, the editor I use
+C     under Linux recognizes the end of line and maintains it
+C     for each file.  Thus changes made on the Linux side 
+C     will reflect the end of line used for MS Windows.  
+
+C     However, manipulation of the text files in Linux using
+C     any of the Linux commands could present problems with
+C     this approach. 
+      
+      IMPLICIT NONE
+      CHARACTER LINE*(*)
+
+      INCLUDE 'cr.cmn'
+
+C     Local
+      INTEGER N
+C***********************************************************************
+      N = LEN_TRIM(LINE)
+      IF(N.GT.0) THEN
+        IF(LINE(N:N).EQ.CR) THEN
+          LINE(N:N) = ' '
+        ENDIF
+      ENDIF
+      RETURN
+      END
+
+      

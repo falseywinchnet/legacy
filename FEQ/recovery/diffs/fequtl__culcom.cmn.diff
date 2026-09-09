@@ -1,0 +1,9 @@
+--- 9.98/fequtl/culcom.cmn
++++ 10.61/fequtl/culcom.cmn
+@@ -30,3 +30,6 @@
+ C             if 1 the barrel shape is nonprismatic.
+ C     TY5SBF- ratio of depth to vertical diameter of the culvert
+ C             at the exit which causes submergence. 
++
++c Note:  25 August 2004:  SBSHAPE is apparently not used.  BSHAPE
++c is but outside of a common block.

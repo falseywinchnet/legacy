@@ -1,0 +1,171 @@
+
+      SUBROUTINE PUTPAT(STDOUT, NEQ, CMAT, NEX, EXNODT, NBRA, BRPT)
+
+C     PRINT THE MATRIX PATTERN FOR CHECKING. LIMITED TO 268 EQUATIONS
+C     
+
+      INTEGER NEQ, STDOUT, NEX, NBRA
+
+      INTEGER BRPT(8,NBRA), EXNODT(9,NEX)
+
+      CHARACTER*1 CMAT(1013,1013)
+
+C     LOCAL
+
+      CHARACTER*1 LINE1(1013), LINE2(1013), LINE3(1013), LINE4(1013),
+     A            LINE5(1013), LINE6(1013), LINE7(1013), LINE8(1013),
+     B            LINE9(1013)
+
+      CHARACTER*3 CHR3
+
+      INTEGER NFLAG, NUMND, JL, JR, BRAN, I, J, K, STRIP
+
+      PARAMETER(STRIP=250)
+
+C     ********************************FORMATS***************************
+50    FORMAT(' EQN',1013A1)
+52    FORMAT(I4,1013A1)
+54    FORMAT(4X,1013A1)
+56    FORMAT(' BRA',1013A1)
+58    FORMAT(' NOD',1013A1)
+60    FORMAT('0 PATTERN OF THE COEFFICIENT MATRIX')
+C***********************************************************************
+
+      WRITE(STDOUT,*) ' '
+      WRITE(STDOUT,60)
+      WRITE(STDOUT,*) ' '
+C     WRITE HEADINGS GIVING THE EXTENT OF VARIBLES INVOLVED IN 
+C     EACH BRANCH.  ALLOW UP TO TWO DIGIT BRANCH NUMBERS.  PLACE
+C     THE NUMBER AT THE END OF THE  VARIABLE RANGE FOR THE BRANCH.
+C     IF THE DIRECTION OF VARIABLE ASSIGNMENT IS REVERSED GIVE
+C     THE BRANCH NUMBER AS NEGATIVE.  
+
+      DO 800 I=1,NEQ
+        LINE1(I) = ' '
+        LINE2(I) = ' '
+        LINE3(I) = ' '
+        LINE4(I) = ' '
+        LINE5(I) = ' '
+        LINE6(I) = ' '
+        LINE7(I) = ' '
+        LINE8(I) = ' '
+        LINE9(I) = ' '
+800   CONTINUE
+
+      DO 700 I=1,NBRA
+C       GET NUMBER OF NODES ON THIS BRANCH.
+
+        NUMND = BRPT(4,I) - BRPT(3,I) + 1
+
+C       GET THE FIRST VARIBLE NUMBER ON THE BRANCH.
+        JL = BRPT(7,I)
+C       SET THE SIGN FOR THE BRANCH
+        IF(JL.LT.0) THEN
+          NFLAG = 1
+          JL = -JL
+        ELSE
+          NFLAG = 0
+        ENDIF
+
+C       GET THE LAST VARIABLE NUMBER ON THE BRANCH
+
+        JR = JL + 2*NUMND -1
+
+C       CREATE THE UNDERBAR
+        DO 610 J=JL,JR-1
+          LINE2(J) = '-'
+610     CONTINUE
+        LINE2(JR) = '+'
+        
+C       CREATE THE BRANCH LABEL
+
+        IF(NFLAG.EQ.0) THEN
+          BRAN = I
+        ELSE
+          BRAN = -I
+        ENDIF
+        WRITE(CHR3,'(I3)') BRAN
+        LINE1(JR) = CHR3(3:3)
+        LINE1(JR-1) = CHR3(2:2)
+        LINE1(JR-2) = CHR3(1:1)
+700   CONTINUE
+
+      DO 750 I=1,NEX
+C       GET VARIBLE NUMBER
+        JL = EXNODT(5,I)
+C       MAKE THE UNDERBAR
+        LINE6(JL) ='-'
+        LINE6(JL+1) = '+'
+
+C       STACK THE NUMBER AT THE END
+
+        WRITE(CHR3,'(I3)') I
+        LINE3(JL+1) = CHR3(1:1)
+        LINE4(JL+1) = CHR3(2:2)
+        LINE5(JL+1) = CHR3(3:3)
+750   CONTINUE
+
+
+C     MARK THE VERTICAL PARTS OF THE PROFILE
+      DO 500 I=1,NEQ
+        DO 400 J=I+1,NEQ
+          IF(CMAT(I,J).EQ.'X'.OR.CMAT(I,J).EQ.'?') THEN
+            DO 350 K=I+1,J-1
+              IF(CMAT(K,J).EQ.'.') THEN
+                CMAT(K,J) = '0'
+              ENDIF
+350         CONTINUE
+          ENDIF
+400     CONTINUE
+500   CONTINUE
+
+C     MARK THE DIAGONAL
+      DO 300 I=1,NEQ
+        IF(CMAT(I,I).EQ.'0'.OR.CMAT(I,I).EQ.'.') THEN
+          CMAT(I,I) = '*'
+        ELSEIF(CMAT(I,I).NE.'?') THEN
+          CMAT(I,I) = 'N'
+        ENDIF
+300   CONTINUE
+
+C     MAKE THE HEADINGS
+
+      DO 100 I=1,NEQ
+        WRITE(CHR3,'(I3)') I
+        LINE7(I) = CHR3(1:1)
+        LINE8(I) = CHR3(2:2)
+        LINE9(I) = CHR3(3:3)
+100   CONTINUE
+
+
+C     OUTPUT IN WIDTHS THAT CAN BE VIEWED WITH BRIEF
+
+      JS = 1
+      JE = STRIP
+      IF(JE.GT.NEQ) JE = NEQ
+      
+9000  CONTINUE
+C       OUTPUT THE HEADINGS
+        WRITE(STDOUT,56) (LINE1(J),J=JS,JE)
+        WRITE(STDOUT,54) (LINE2(J),J=JS,JE)
+        WRITE(STDOUT,58) (LINE3(J), J=JS,JE)
+        WRITE(STDOUT,54) (LINE4(J), J=JS,JE)
+        WRITE(STDOUT,54) (LINE5(J), J=JS,JE)
+        WRITE(STDOUT,54) (LINE6(J), J=JS,JE)
+        IF(NEQ.GE.100) THEN
+          WRITE(STDOUT,54) (LINE7(J), J=JS,JE)
+        ENDIF
+        WRITE(STDOUT,54) (LINE8(J), J=JS,JE)
+        WRITE(STDOUT,50) (LINE9(J), J=JS,JE)
+        
+C       OUTPUT THE MATRIX
+        DO 200 I=1,NEQ
+          WRITE(STDOUT,52) I, (CMAT(I,J), J=JS,JE)
+200   CONTINUE
+C       UPDATE THE COLUMN POINTERS
+        IF(JE.EQ.NEQ) RETURN
+        JS = JE + 1
+        JE = JE + STRIP
+        IF(JE.GT.NEQ) JE = NEQ      
+        GOTO 9000
+      END

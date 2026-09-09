@@ -56,9 +56,18 @@ input. The original RUNUP digital Fortran and CHAMP Visual Basic project remain
 missing; surviving binaries, debug data, tables, and p-code supplied the evidence
 used to reconstruct their behavior.
 
+## In development: FEQ / FEQUTL
+
+**[FEQ 10.61 / FEQUTL 5.80](FEQ/)** is the collection's next project: modern,
+portable C++ programs for unsteady channel-network flow and hydraulic function
+tables. Its directory contains the original USGS releases, manuals, detailed
+source comparisons, and a reproducible six-example baseline that matches all
+17 original output files apart from explicitly identified execution clocks.
+The native C++ applications are in development and are not released yet.
+
 ## Collection structure and licensing
 
-CHAMP and its associated engines are the first project in this collection.
+CHAMP and its associated engines, and FEQ/FEQUTL, have separate project directories.
 Project-specific code, assets, research, licenses, and instructions live in each
 project's directory; repository-wide GitHub workflows live in [`.github/`](.github/).
 

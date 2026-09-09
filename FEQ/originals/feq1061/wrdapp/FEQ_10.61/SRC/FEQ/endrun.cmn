@@ -1,0 +1,7 @@
+      
+      INTEGER JDE_RUN, MOFF_END_RUN
+
+      COMMON/ENDRUN/ JDE_RUN, MOFF_END_RUN
+
+
+      SAVE /ENDRUN/

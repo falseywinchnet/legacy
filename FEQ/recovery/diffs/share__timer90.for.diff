@@ -1,0 +1,21 @@
+--- 9.98/share/timer90.for
++++ 10.61/share/timer90.for
+@@ -16,6 +16,7 @@
+ C
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER COUNT, COUNT_RATE, COUNT_MAX
++      real*8 time
+ C
+ C     + + + SAVE VARIABLES + + +
+       INTEGER first, base, seconds
+@@ -29,6 +30,10 @@
+       CALL SYSTEM_CLOCK(COUNT, COUNT_RATE, COUNT_MAX)
+ 
+       seconds = INT(DBLE(COUNT)*100.D0/DBLE(COUNT_RATE) + 0.5D0)
++c      call cpu_time(time)
++c      write(*,*) ' cpu time=',time
++
++c      seconds = time*100.d0 + 0.5d0
+       IF (first.EQ.0) THEN
+         first = 1
+         base = seconds

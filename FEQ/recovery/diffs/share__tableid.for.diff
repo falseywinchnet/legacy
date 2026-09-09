@@ -1,0 +1,27 @@
+--- 9.98/share/tableid.for
++++ 10.61/share/tableid.for
+@@ -5,7 +5,7 @@
+      I                                  (TABID,
+      O                                   INTERNAL_TAB_NUMBER)
+ 
+-C     Given an id, try to find its internal table nubmer, if none is found,
++C     Given an id, try to find its internal table number, if none is found,
+ C     return 0
+       IMPLICIT NONE
+       INTEGER  INTERNAL_TAB_NUMBER
+@@ -45,7 +45,6 @@
+      I           (STDOUT, TABID, MFTNUM,
+      M            TABID_TABLE, NUM_TABID,
+      O            INTERNAL_TAB_NUMBER, EFLAG)
+-
+       RETURN
+       END
+ C
+@@ -70,7 +69,6 @@
+       ENDIF
+       RETURN
+       END
+-C
+ C
+ C
+       INTEGER FUNCTION NONBLANK_NONZERO(CHAR16)

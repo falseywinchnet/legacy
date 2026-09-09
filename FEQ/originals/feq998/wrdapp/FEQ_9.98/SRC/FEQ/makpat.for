@@ -1,0 +1,39 @@
+C     *****************
+C     *               *
+C     * MAKPAT        *
+C     *               *
+C     *****************
+
+      SUBROUTINE MAKPAT(NUMEQ, NEQ, EQLEN, JEQ, CMAT)
+
+C     MAKE PATTERN OF ZERO AND NON-ZERO VALUES IN A FULL MATRIX
+C     FOR CHECKING PURPOSES ON MODEST SIZE MODELS.
+
+
+      INTEGER NEQ, EQLEN, NUMEQ
+
+      INTEGER JEQ(EQLEN)
+
+      CHARACTER*1 CMAT(1013,1013)
+C***********************************************************************
+
+      IF(NUMEQ.GT.1013) RETURN
+C     CREATE PATTERN IN CMAT FOR CHECKING
+C     ZEROS OUTSIDE THE PROFILE ARE THE CHARACTER '.'
+C     MAKE ZEROS WITHIN THE PROFILE THE CHARACTER '0'
+      DO 100 J=ABS(JEQ(1)),ABS(JEQ(EQLEN))
+        IF(J.LE.NEQ) THEN  
+          CMAT(NEQ,J) = '0'
+        ENDIF
+100   CONTINUE
+
+C     MAKE NON-ZEROS WITHIN THE PROFILE THE CHARACTER 'X'
+      DO 200 K=1,EQLEN
+        IF(JEQ(K).GT.0) THEN
+          CMAT(NEQ,JEQ(K)) = 'X'
+        ELSE
+          CMAT(NEQ,-JEQ(K)) = '?'
+        ENDIF
+200   CONTINUE
+      RETURN
+      END

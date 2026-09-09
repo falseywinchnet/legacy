@@ -1,0 +1,16 @@
+
+c     This is a dummy version of the real subroutine. 
+c     Needed because not everyone will have their usf software
+c     under Submversion
+c 
+      subroutine svn_report(stdout)
+
+      implicit none
+
+      integer stdout
+c***********************************************************************
+
+      return
+      end
+
+

@@ -1,0 +1,18 @@
+C***********************************************************************
+      COMMON/WRCOM/ NFOUT, DSS_OUT_COUNT, UNOUT, BRAOUT, NODOUT, ICDOUT,
+     A              DSS_INDEX_OUT, DSS_BUFFER_COLUMN, TIME_STEP_OUT,
+     B              IRR_DT, ACTOUT
+
+      COMMON/WRCOMC/ NAMOUT
+      COMMON/WRCOMD/ RUNQUAD, OLDF
+
+      CHARACTER*80 NAMOUT(MNFOUT)
+      
+      INTEGER NFOUT, DSS_OUT_COUNT, IRR_DT
+      INTEGER UNOUT(MNFOUT), BRAOUT(MNFOUT), NODOUT(MNFOUT), 
+     A        ACTOUT(MNFOUT), ICDOUT(MNFOUT), DSS_INDEX_OUT(MNFOUT), 
+     B        DSS_BUFFER_COLUMN(MNFOUT), TIME_STEP_OUT(MNFOUT)
+     
+      REAL*8 RUNQUAD(MNFOUT), OLDF(MNFOUT)
+C***********************************************************************
+

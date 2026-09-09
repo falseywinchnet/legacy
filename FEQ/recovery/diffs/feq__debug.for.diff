@@ -1,0 +1,764 @@
+--- 9.98/feq/debug.for
++++ 10.61/feq/debug.for
+@@ -4,60 +4,60 @@
+ C
+ C
+ C
+-      SUBROUTINE   BROUT
+-     I                  (STDOUT, NBN, NBRA, BRPT)
+- 
+-C     + + + PURPOSE + + +
+-C     Output the branch information for debugging.
+- 
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER STDOUT, NBN, NBRA
+-      INTEGER BRPT(8,NBRA)
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     STDOUT   - Fortran unit number for user output and messages
+-C     NBN    - total number on nodes on branches in the model
+-C     NBRA   - number of branches in the model
+-C     BRPT   - branch pointer table.  Values for each branch are:
+-C              ROW       Meaning
+-C              1         upstream user node number
+-C              2         downstream user node number
+-C              3         pointer into branch vector for upstream node
+-C              4         pointer into branch vector for downstream node
+-C              5         upstream exterior node number
+-C              6         downstream exterior node number
+-C              7         pointer to address in EMC for the branch
+-C              8         number of unknowns at a node for the branch
+- 
+-C     + + + COMMON BLOCKS + + +
+-      INCLUDE 'arsize.prm'
+-      INCLUDE 'bnothr.cmn'
+- 
+-C     + + + LOCAL VARIABLES + + +
+-      INTEGER I, J
+- 
+-C     + + + OUTPUT FORMATS + + +
+- 74   FORMAT(///,' BRANCH INFORMATION'//,' BRANCH POINTER TABLE')
+- 75   FORMAT(' ',' BRAN','   UN','   DN','   UP','   DP',
+-     A ' UEXN',' DEXN')
+- 76   FORMAT(' ',7I5)
+- 77   FORMAT(/,'BRANCH VECTORS')
+- 78   FORMAT(' ',' XSAD',7X,'UVX',7X,'UVY')
+- 79   FORMAT(' ',I5,2F10.6)
+-C***********************************************************************
+-      WRITE(STDOUT,74)
+-      WRITE(STDOUT,75)
+-         DO 500 I=1,NBRA
+-         WRITE(STDOUT,76) I, (BRPT(J,I), J=1,6)
+- 500     CONTINUE
+-      WRITE(STDOUT,77)
+-      WRITE(STDOUT,78)
+-         DO 600 I=1,NBN
+-         WRITE(STDOUT,79) NSEC(I), UVX(I), UVY(I)
+- 600     CONTINUE
+-      RETURN
+-      END
++c      SUBROUTINE   BROUT
++c     I                  (STDOUT, NBN, NBRA, BRPT)
++c 
++cC     + + + PURPOSE + + +
++cC     Output the branch information for debugging.
++c 
++c      IMPLICIT NONE
++cC     + + + DUMMY ARGUMENTS + + +
++c      INTEGER STDOUT, NBN, NBRA
++c      INTEGER BRPT(8,NBRA)
++c 
++cC     + + +DUMMY ARGUMENT DEFINITIONS + + +
++cC     STDOUT   - Fortran unit number for user output and messages
++cC     NBN    - total number on nodes on branches in the model
++cC     NBRA   - number of branches in the model
++cC     BRPT   - branch pointer table.  Values for each branch are:
++cC              ROW       Meaning
++cC              1         upstream user node number
++cC              2         downstream user node number
++cC              3         pointer into branch vector for upstream node
++cC              4         pointer into branch vector for downstream node
++cC              5         upstream exterior node number
++cC              6         downstream exterior node number
++cC              7         pointer to address in EMC for the branch
++cC              8         number of unknowns at a node for the branch
++c 
++cC     + + + COMMON BLOCKS + + +
++c      INCLUDE 'arsize.prm'
++c      INCLUDE 'bnothr.cmn'
++c 
++cC     + + + LOCAL VARIABLES + + +
++c      INTEGER I, J
++c 
++cC     + + + OUTPUT FORMATS + + +
++c 74   FORMAT(///,' BRANCH INFORMATION'//,' BRANCH POINTER TABLE')
++c 75   FORMAT(' ',' BRAN','   UN','   DN','   UP','   DP',
++c     A ' UEXN',' DEXN')
++c 76   FORMAT(' ',7I5)
++c 77   FORMAT(/,'BRANCH VECTORS')
++c 78   FORMAT(' ',' XSAD',7X,'UVX',7X,'UVY')
++c 79   FORMAT(' ',I5,2F10.6)
++cC***********************************************************************
++c      WRITE(STDOUT,74)
++c      WRITE(STDOUT,75)
++c         DO 500 I=1,NBRA
++c         WRITE(STDOUT,76) I, (BRPT(J,I), J=1,6)
++c 500     CONTINUE
++c      WRITE(STDOUT,77)
++c      WRITE(STDOUT,78)
++c         DO 600 I=1,NBN
++c         WRITE(STDOUT,79) NSEC(I), UVX(I), UVY(I)
++c 600     CONTINUE
++c      RETURN
++c      END
+ C
+ C
+ C
+@@ -182,80 +182,80 @@
+  1000 CONTINUE
+       RETURN
+       END
+-C
+-C
+-C
+-      SUBROUTINE   DPWOUT
+-     I                   (DIFFUS, STDOUT, LPNT, MLPNT, NO, POINT, WIND,
+-     I                    MF, PFPNT)
+- 
+-C     + + + PURPOSE + + +
+-C     Output diffuse, point and wind loading information for debug.
+- 
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER STDOUT, LPNT, MLPNT
+-      INTEGER PFPNT(3,MLPNT)
+-      REAL MF(MLPNT)
+-      CHARACTER DIFFUS*4, NO*4, POINT*4, WIND*4
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     DIFFUS - indicator if tributary area is present.  YES if so
+-C     STDOUT   - Fortran unit number for user output and messages
+-C     LPNT   - length of the point load point load array
+-C     MLPNT  - maximum length of the point load pointer arrays
+-C     NO     - character string 'NO'
+-C     POINT  - if YES then point inflows to a branch are present
+-C     WIND   - flag for presence of wind stress simulation
+-C     MF     - momentum flux value
+-C     PFPNT  - point flow pointer array
+- 
+-C     + + + COMMON BLOCKS + + +
+-      INCLUDE 'arsize.prm'
+-      INCLUDE 'wincom.cmn'
+- 
+-C     + + + LOCAL VARIABLES + + +
+-      INTEGER I, J
+- 
+-C     + + + OUTPUT FORMATS + + +
+- 2100 FORMAT(///,' POINT FLOW INFORMATION')
+- 2110 FORMAT(/,6X,' TYPE',' NTAB','  NBN','     MF     ')
+- 2120 FORMAT(4I5,E12.5)
+- 2200 FORMAT(///,' WIND LOADING INFORMATION')
+- 2210 FORMAT(/,' WIND TABLE ADDRESS  = ',I5,/,1X,
+-     A           'AIRWAT  = ',1PE10.3,/,1X,
+-     C           'VELOCITY AT MIN CD  = ',0PF7.2,/,1X,
+-     D           'MIN CD =',1PE10.3,/,1X,
+-     E           'VELOCITY AT MAX CD =',0PF7.2,/,1X,
+-     F           'MAX CD =',1PE10.3,/,1X,
+-     G           'VADIF=',0PF7.2,/,1X,
+-     H           'CDDIF=',1PE10.3)
+-C***********************************************************************
+-C     DIFFUSE FLOWS
+- 
+-      IF(DIFFUS.EQ.NO) GOTO 150
+-C          DUMMY FOR NOW. EXPAND LATER
+-C     POINT FLOWS
+- 
+- 150  CONTINUE
+-      IF(POINT.EQ.NO) GOTO 210
+-      WRITE(STDOUT,2100)
+-      WRITE(STDOUT,2110)
+-      DO 200 I=1,LPNT
+-        WRITE(STDOUT,2120) I, (PFPNT(J,I), J=1,3), MF(I)
+- 200  CONTINUE
+- 
+-C     WIND LOADING
+- 
+- 210  CONTINUE
+-      IF(WIND.EQ.NO) GOTO 220
+-      WRITE(STDOUT,2200)
+-      WRITE(STDOUT,2210) WINTAB, AIRWAT, VAMIN, CDMIN, VAMAX, CDMAX,
+-     A                 VADIF, CDDIF
+- 
+- 220  CONTINUE
+-      RETURN
+-      END
++cC
++cC
++cC
++c      SUBROUTINE   DPWOUT
++c     I                   (DIFFUS, STDOUT, LPNT, MLPNT, NO, POINT, WIND,
++c     I                    MF, PFPNT)
++c 
++cC     + + + PURPOSE + + +
++cC     Output diffuse, point and wind loading information for debug.
++c 
++c      IMPLICIT NONE
++cC     + + + DUMMY ARGUMENTS + + +
++c      INTEGER STDOUT, LPNT, MLPNT
++c      INTEGER PFPNT(3,MLPNT)
++c      REAL MF(MLPNT)
++c      CHARACTER DIFFUS*4, NO*4, POINT*4, WIND*4
++c 
++cC     + + +DUMMY ARGUMENT DEFINITIONS + + +
++cC     DIFFUS - indicator if tributary area is present.  YES if so
++cC     STDOUT   - Fortran unit number for user output and messages
++cC     LPNT   - length of the point load point load array
++cC     MLPNT  - maximum length of the point load pointer arrays
++cC     NO     - character string 'NO'
++cC     POINT  - if YES then point inflows to a branch are present
++cC     WIND   - flag for presence of wind stress simulation
++cC     MF     - momentum flux value
++cC     PFPNT  - point flow pointer array
++c 
++cC     + + + COMMON BLOCKS + + +
++c      INCLUDE 'arsize.prm'
++c      INCLUDE 'wincom.cmn'
++c 
++cC     + + + LOCAL VARIABLES + + +
++c      INTEGER I, J
++c 
++cC     + + + OUTPUT FORMATS + + +
++c 2100 FORMAT(///,' POINT FLOW INFORMATION')
++c 2110 FORMAT(/,6X,' TYPE',' NTAB','  NBN','     MF     ')
++c 2120 FORMAT(4I5,E12.5)
++c 2200 FORMAT(///,' WIND LOADING INFORMATION')
++c 2210 FORMAT(/,' WIND TABLE ADDRESS  = ',I5,/,1X,
++c     A           'AIRWAT  = ',1PE10.3,/,1X,
++c     C           'VELOCITY AT MIN CD  = ',0PF7.2,/,1X,
++c     D           'MIN CD =',1PE10.3,/,1X,
++c     E           'VELOCITY AT MAX CD =',0PF7.2,/,1X,
++c     F           'MAX CD =',1PE10.3,/,1X,
++c     G           'VADIF=',0PF7.2,/,1X,
++c     H           'CDDIF=',1PE10.3)
++cC***********************************************************************
++cC     DIFFUSE FLOWS
++c 
++c      IF(DIFFUS.EQ.NO) GOTO 150
++cC          DUMMY FOR NOW. EXPAND LATER
++cC     POINT FLOWS
++c 
++c 150  CONTINUE
++c      IF(POINT.EQ.NO) GOTO 210
++c      WRITE(STDOUT,2100)
++c      WRITE(STDOUT,2110)
++c      DO 200 I=1,LPNT
++c        WRITE(STDOUT,2120) I, (PFPNT(J,I), J=1,3), MF(I)
++c 200  CONTINUE
++c 
++cC     WIND LOADING
++c 
++c 210  CONTINUE
++c      IF(WIND.EQ.NO) GOTO 220
++c      WRITE(STDOUT,2200)
++c      WRITE(STDOUT,2210) WINTAB, AIRWAT, VAMIN, CDMIN, VAMAX, CDMAX,
++c     A                 VADIF, CDDIF
++c 
++c 220  CONTINUE
++c      RETURN
++c      END
+ C
+ C
+ C
+@@ -370,64 +370,64 @@
+ C
+ C
+ C
+-      SUBROUTINE   EXOUT
+-     I                  (STDOUT, EPT, NEX, EMC, EXNODT)
+- 
+-C     + + + PURPOSE + + +
+-C     Output the exterior node table and the network-matrix
+-C     control vector information
+- 
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER EPT, STDOUT, NEX
+-      INTEGER EMC(EPT), EXNODT(9,NEX)
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     STDOUT   - Fortran unit number for user output and messages
+-C     EPT    - current length of EMC(*)
+-C     NEX    - number of exterior nodes in the model
+-C     EMC    - vector containing coded form of the Matrix Control Input
+-C     EXNODT - exterior node table.  Contains the following items
+-C              for each exterior node.
+-C              Row   Content
+-C               1    sign of the node
+-C               2    pointer into vectors for nodes on a branch
+-C               3    descriptive code: if -1 then a reservoir;
+-C                    if  0 then not on a branch and not a reservoir;
+-C                    if > 0 then a branch number
+-C               4    pointer to a cross section table if on a branch, 
+-C                    to storage table if a reservoir, to other node if
+-C                    a dummy branch
+-C               5    gives the variable number(in the system matrix) for
+-C                    the flow at the exterior node. Also a junction
+-C                    pointer in initial processing of input
+- 
+-C     + + + LOCAL VARIABLES + + +
+-      INTEGER I, IDUM, J
+-      REAL RDUM
+- 
+-C     + + + EQUIVALENCES + + +
+-      EQUIVALENCE (RDUM,IDUM)
+- 
+-C     + + + OUTPUT FORMATS + + +
+- 40     FORMAT(I5,I10,F10.2)
+- 80   FORMAT(///,' EXNODT',/,' NODE',' SIGN',' IPNT',' BRAN',' XSAD')
+- 81   FORMAT(' ',5I5)
+- 82   FORMAT(///,' NETWORK-MATRIX CONTROL')
+-C***********************************************************************
+-      WRITE(STDOUT,80)
+-         DO 500 I=1,NEX
+-         WRITE(STDOUT,81) I, (EXNODT(J,I), J=1,4)
+- 500     CONTINUE
+- 
+-      WRITE(STDOUT,82)
+- 
+-        DO 100 I=1,EPT
+-        IDUM = EMC(I)
+-        WRITE(STDOUT,40) I, IDUM, RDUM
+- 100    CONTINUE
+-        RETURN
+-      END
++c      SUBROUTINE   EXOUT
++c     I                  (STDOUT, EPT, NEX, EMC, EXNODT)
++c 
++cC     + + + PURPOSE + + +
++cC     Output the exterior node table and the network-matrix
++cC     control vector information
++c 
++c      IMPLICIT NONE
++cC     + + + DUMMY ARGUMENTS + + +
++c      INTEGER EPT, STDOUT, NEX
++c      INTEGER EMC(EPT), EXNODT(9,NEX)
++c 
++cC     + + +DUMMY ARGUMENT DEFINITIONS + + +
++cC     STDOUT   - Fortran unit number for user output and messages
++cC     EPT    - current length of EMC(*)
++cC     NEX    - number of exterior nodes in the model
++cC     EMC    - vector containing coded form of the Matrix Control Input
++cC     EXNODT - exterior node table.  Contains the following items
++cC              for each exterior node.
++cC              Row   Content
++cC               1    sign of the node
++cC               2    pointer into vectors for nodes on a branch
++cC               3    descriptive code: if -1 then a reservoir;
++cC                    if  0 then not on a branch and not a reservoir;
++cC                    if > 0 then a branch number
++cC               4    pointer to a cross section table if on a branch, 
++cC                    to storage table if a reservoir, to other node if
++cC                    a dummy branch
++cC               5    gives the variable number(in the system matrix) for
++cC                    the flow at the exterior node. Also a junction
++cC                    pointer in initial processing of input
++c 
++cC     + + + LOCAL VARIABLES + + +
++c      INTEGER I, IDUM, J
++c      REAL RDUM
++c 
++cC     + + + EQUIVALENCES + + +
++c      EQUIVALENCE (RDUM,IDUM)
++c 
++cC     + + + OUTPUT FORMATS + + +
++c 40     FORMAT(I5,I10,F10.2)
++c 80   FORMAT(///,' EXNODT',/,' NODE',' SIGN',' IPNT',' BRAN',' XSAD')
++c 81   FORMAT(' ',5I5)
++c 82   FORMAT(///,' NETWORK-MATRIX CONTROL')
++cC***********************************************************************
++c      WRITE(STDOUT,80)
++c         DO 500 I=1,NEX
++c         WRITE(STDOUT,81) I, (EXNODT(J,I), J=1,4)
++c 500     CONTINUE
++c 
++c      WRITE(STDOUT,82)
++c 
++c        DO 100 I=1,EPT
++c        IDUM = EMC(I)
++c        WRITE(STDOUT,40) I, IDUM, RDUM
++c 100    CONTINUE
++c        RETURN
++c      END
+ C
+ C
+ C
+@@ -598,187 +598,187 @@
+ C
+ C
+ C
+-      SUBROUTINE   FTOUT
+-     I                  (STDOUT,
+-     M                   OUTPUT)
+- 
+-C     + + + PURPOSE + + +
+-C     Output the function tables for debugging.
+- 
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER STDOUT, OUTPUT
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     STDOUT   - Fortran unit number for user output and messages
+-C     OUTPUT - output level for diagnostic work
+- 
+-C     + + + COMMON BLOCKS + + +
+-      INCLUDE 'arsize.prm'
+-      INCLUDE 'ftable.cmn'
+- 
+-C     + + + LOCAL VARIABLES + + +
+-      INTEGER FTP, HA, I, J, K, LA, NTAB, TYPE
+- 
+-C     + + + OUTPUT FORMATS + + +
+- 60   FORMAT(///,' FUNCTION TABLES')
+- 61   FORMAT(' ','*BUG:22* ADDRESSING BUG FOR TABLES*',2I5)
+- 62   FORMAT(' ','*BUG:23* TABLE TYPE INVALID:',I5)
+- 63   FORMAT(/,'TABLE = ',I5,/,' TYPE = ',I5,/,' FIRST ADD = ',I5,/,
+-     A      ' HIGH ADD = ',I5,/,' LAST ADD = ',I5)
+- 64   FORMAT(' ','STATION = ',F15.3,' ELEVATION = ',F10.2)
+- 65   FORMAT(' ',F7.3,F9.2,1P2E11.4,0PF7.3,1P2E11.4)
+- 66   FORMAT(' ','REFERENCE LEVEL = ',F10.2)
+- 67   FORMAT(/,'  ARGUMENT',' FUNCTION VALUE')
+- 68   FORMAT(' ',F10.2,2(1PE15.5))
+- 69   FORMAT(/,'  ARGUMENT    FUNCTION1        FUNCTION2')
+- 641  FORMAT(/,2X,'DEPTH',' TOPWIDTH',7X,'AREA',4X,'CONVFAC',
+-     1  3X,'BETA',8X,'YBA',9X,'SJ')
+-C***********************************************************************
+-      IF(OUTPUT.GT.0)
+-     1   WRITE(STDOUT,60)
+- 
+-         DO 3000 I=1,MFTNUM
+-         FTP = FTPNT(I)
+-         IF(FTP.EQ.0) GOTO 3000
+- 
+-C           TABLE EXISTS
+- 
+-            NTAB = ITAB(FTP+1)
+-            IF(NTAB.EQ.I) GOTO 100
+-               WRITE(STDOUT,61) NTAB, I
+- 100        CONTINUE
+-            TYPE = ITAB(FTP+2)
+-            IF(OUTPUT.GT.0)
+-     1         WRITE(STDOUT,63) NTAB, TYPE, FTP, ITAB(FTP), ITAB(FTP+3)
+-            IF(TYPE.GE.1 .AND. TYPE.LE.4) GOTO 500
+-            WRITE(STDOUT,62) TYPE
+-            GOTO 1000
+- 500        GOTO(1,2,3,3),TYPE
+-         WRITE(STDOUT,*) ' *BUG:24* INVALID TABLE TYPE IN FTOUT. TYPE=',
+-     A               TYPE
+-              STOP 'Abnormal stop: errors found.'
+- 
+- 1          CONTINUE
+-               IF(OUTPUT.GT.0)
+-     1            WRITE(STDOUT,64) FTAB(FTP+4), FTAB(FTP+5)
+-               IF(OUTPUT.GT.0)
+-     1            WRITE(STDOUT,641)
+-               LA = FTP+6
+-               HA = ITAB(FTP)
+-               IF(OUTPUT.EQ.0) GOTO 1000
+-                  DO 200 J=LA,HA,6
+-                  WRITE(STDOUT,65) (FTAB(J+K-1), K=1,6)
+- 200              CONTINUE
+-               GOTO 1000
+- 2          CONTINUE
+-               IF(OUTPUT.GT.0)
+-     1            WRITE(STDOUT,66) FTAB(FTP+4)
+-               IF(OUTPUT.GT.0)
+-     1            WRITE(STDOUT,67)
+-               LA = FTP+5
+-               HA = ITAB(FTP)
+-               IF(OUTPUT.EQ.0) GOTO 1000
+-                  DO 300 J=LA,HA,2
+-                  WRITE(STDOUT,68) (FTAB(J+K-1), K=1,2)
+- 300              CONTINUE
+-               GOTO 1000
+- 3          CONTINUE
+-               IF(OUTPUT.GT.0)
+-     1            WRITE(STDOUT,66) FTAB(FTP+4)
+-               IF(OUTPUT.GT.0)
+-     1            WRITE(STDOUT,69)
+-               LA = FTP+ 5
+-               HA = ITAB(FTP)
+-               IF(OUTPUT.EQ.0) GOTO 1000
+-               DO 400 J=LA,HA,3
+-                  WRITE(STDOUT,68) (FTAB(J+K-1), K=1,3)
+- 400           CONTINUE
+-               GOTO 1000
+- 1000       CONTINUE
+- 3000    CONTINUE
+-      IF(OUTPUT.EQ.0) OUTPUT = 1
+-      RETURN
+-      END
+-C
+-C
+-C
+-      SUBROUTINE   INOUT
+-     I                  (STDOUT, NBRA, NEX, BRPT)
+- 
+-C     + + + PURPOSE + + +
+-C     Output a summary of initial conditions for debugging purposes.
+- 
+-      IMPLICIT NONE
+-C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER STDOUT, NBRA, NEX
+-      INTEGER BRPT(8,NBRA)
+- 
+-C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+-C     STDOUT   - Fortran unit number for user output and messages
+-C     NBRA   - number of branches in the model
+-C     NEX    - number of exterior nodes in the model
+-C     BRPT   - branch pointer table.  Values for each branch are:
+-C              ROW       Meaning
+-C              1         upstream user node number
+-C              2         downstream user node number
+-C              3         pointer into branch vector for upstream node
+-C              4         pointer into branch vector for downstream node
+-C              5         upstream exterior node number
+-C              6         downstream exterior node number
+-C              7         pointer to address in EMC for the branch
+-C              8         number of unknowns at a node for the branch
+- 
+-C     + + + COMMON BLOCKS + + +
+-      INCLUDE 'arsize.prm'
+-      INCLUDE 'bnelem.cmn'
+-      INCLUDE 'enelem.cmn'
+- 
+-C     + + + LOCAL VARIABLES + + +
+-      INTEGER FA, FN, LA, NAD, NB
+- 
+-C     + + + OUTPUT FORMATS + + +
+- 2000 FORMAT('1',/,/,' DEBUG OUTPUT FOR INITIAL CONDITIONS')
+- 2010 FORMAT(/,'BRANCH NUMBER = ',I5)
+- 2020 FORMAT(/,' NODE',10X,'Q1',10X,'Y1',10X,'A1',10X,'DX',
+-     A           10X,'DZ')
+- 2030 FORMAT(1X,I5,5(1PE12.5))
+- 2040 FORMAT(//,' EXTERIOR NODES')
+- 2050 FORMAT(/,'NODE',5X,'QE1',8X,'YE1',8X,'AE1',8X,'ZE')
+-C***********************************************************************
+-C     TITLE
+- 
+-      WRITE(STDOUT,2000)
+- 
+-C     WRITE OUT INITIAL CONDITIONS ETC FOR INTERIOR NODES
+- 
+-C     I) BRANCH LOOP
+- 
+-      DO 100 NB=1,NBRA
+-        FN = BRPT(1,NB) - 1
+-        FA = BRPT(3,NB)
+-        LA = BRPT(4,NB)
+-        WRITE(STDOUT,2010) NB
+-        WRITE(STDOUT,2020)
+- 
+-C       II) NODE LOOP
+- 
+-        DO 50 NAD=FA,LA
+-          FN = FN + 1
+-          WRITE(STDOUT,2030) FN, Q1(NAD), Y1(NAD), A1(NAD), DXVEC(NAD),
+-     A                     DZVEC(NAD)
+- 50     CONTINUE
+- 100  CONTINUE
+- 
+-C     WRITE OUT INITIAL CONDITIONS FOR EXTERIOR NODES
+- 
+-      WRITE(STDOUT,2040)
+-      WRITE(STDOUT,2050)
+-      DO 200 NAD=1,NEX
+-        WRITE(STDOUT,2030) NAD, QE1(NAD), YE1(NAD), AE1(NAD), ZE(NAD)
+- 200  CONTINUE
+-      RETURN
+-      END
++c      SUBROUTINE   FTOUT
++c     I                  (STDOUT,
++c     M                   OUTPUT)
++c 
++cC     + + + PURPOSE + + +
++cC     Output the function tables for debugging.
++c 
++c      IMPLICIT NONE
++cC     + + + DUMMY ARGUMENTS + + +
++c      INTEGER STDOUT, OUTPUT
++c 
++cC     + + +DUMMY ARGUMENT DEFINITIONS + + +
++cC     STDOUT   - Fortran unit number for user output and messages
++cC     OUTPUT - output level for diagnostic work
++c 
++cC     + + + COMMON BLOCKS + + +
++c      INCLUDE 'arsize.prm'
++c      INCLUDE 'ftable.cmn'
++c 
++cC     + + + LOCAL VARIABLES + + +
++c      INTEGER FTP, HA, I, J, K, LA, NTAB, TYPE
++c 
++cC     + + + OUTPUT FORMATS + + +
++c 60   FORMAT(///,' FUNCTION TABLES')
++c 61   FORMAT(' ','*BUG:22* ADDRESSING BUG FOR TABLES*',2I5)
++c 62   FORMAT(' ','*BUG:23* TABLE TYPE INVALID:',I5)
++c 63   FORMAT(/,'TABLE = ',I5,/,' TYPE = ',I5,/,' FIRST ADD = ',I5,/,
++c     A      ' HIGH ADD = ',I5,/,' LAST ADD = ',I5)
++c 64   FORMAT(' ','STATION = ',F15.3,' ELEVATION = ',F10.2)
++c 65   FORMAT(' ',F7.3,F9.2,1P2E11.4,0PF7.3,1P2E11.4)
++c 66   FORMAT(' ','REFERENCE LEVEL = ',F10.2)
++c 67   FORMAT(/,'  ARGUMENT',' FUNCTION VALUE')
++c 68   FORMAT(' ',F10.2,2(1PE15.5))
++c 69   FORMAT(/,'  ARGUMENT    FUNCTION1        FUNCTION2')
++c 641  FORMAT(/,2X,'DEPTH',' TOPWIDTH',7X,'AREA',4X,'CONVFAC',
++c     1  3X,'BETA',8X,'YBA',9X,'SJ')
++cC***********************************************************************
++c      IF(OUTPUT.GT.0)
++c     1   WRITE(STDOUT,60)
++c 
++c         DO 3000 I=1,MFTNUM
++c         FTP = FTPNT(I)
++c         IF(FTP.EQ.0) GOTO 3000
++c 
++cC           TABLE EXISTS
++c 
++c            NTAB = ITAB(FTP+1)
++c            IF(NTAB.EQ.I) GOTO 100
++c               WRITE(STDOUT,61) NTAB, I
++c 100        CONTINUE
++c            TYPE = ITAB(FTP+2)
++c            IF(OUTPUT.GT.0)
++c     1         WRITE(STDOUT,63) NTAB, TYPE, FTP, ITAB(FTP), ITAB(FTP+3)
++c            IF(TYPE.GE.1 .AND. TYPE.LE.4) GOTO 500
++c            WRITE(STDOUT,62) TYPE
++c            GOTO 1000
++c 500        GOTO(1,2,3,3),TYPE
++c         WRITE(STDOUT,*) ' *BUG:24* INVALID TABLE TYPE IN FTOUT. TYPE=',
++c     A               TYPE
++c              STOP 'Abnormal stop: errors found.'
++c 
++c 1          CONTINUE
++c               IF(OUTPUT.GT.0)
++c     1            WRITE(STDOUT,64) FTAB(FTP+4), FTAB(FTP+5)
++c               IF(OUTPUT.GT.0)
++c     1            WRITE(STDOUT,641)
++c               LA = FTP+6
++c               HA = ITAB(FTP)
++c               IF(OUTPUT.EQ.0) GOTO 1000
++c                  DO 200 J=LA,HA,6
++c                  WRITE(STDOUT,65) (FTAB(J+K-1), K=1,6)
++c 200              CONTINUE
++c               GOTO 1000
++c 2          CONTINUE
++c               IF(OUTPUT.GT.0)
++c     1            WRITE(STDOUT,66) FTAB(FTP+4)
++c               IF(OUTPUT.GT.0)
++c     1            WRITE(STDOUT,67)
++c               LA = FTP+5
++c               HA = ITAB(FTP)
++c               IF(OUTPUT.EQ.0) GOTO 1000
++c                  DO 300 J=LA,HA,2
++c                  WRITE(STDOUT,68) (FTAB(J+K-1), K=1,2)
++c 300              CONTINUE
++c               GOTO 1000
++c 3          CONTINUE
++c               IF(OUTPUT.GT.0)
++c     1            WRITE(STDOUT,66) FTAB(FTP+4)
++c               IF(OUTPUT.GT.0)
++c     1            WRITE(STDOUT,69)
++c               LA = FTP+ 5
++c               HA = ITAB(FTP)
++c               IF(OUTPUT.EQ.0) GOTO 1000
++c               DO 400 J=LA,HA,3
++c                  WRITE(STDOUT,68) (FTAB(J+K-1), K=1,3)
++c 400           CONTINUE
++c               GOTO 1000
++c 1000       CONTINUE
++c 3000    CONTINUE
++c      IF(OUTPUT.EQ.0) OUTPUT = 1
++c      RETURN
++c      END
++C
++C
++C
++c      SUBROUTINE   INOUT
++c     I                  (STDOUT, NBRA, NEX, BRPT)
++c 
++cC     + + + PURPOSE + + +
++cC     Output a summary of initial conditions for debugging purposes.
++c 
++c      IMPLICIT NONE
++cC     + + + DUMMY ARGUMENTS + + +
++c      INTEGER STDOUT, NBRA, NEX
++c      INTEGER BRPT(8,NBRA)
++c 
++cC     + + +DUMMY ARGUMENT DEFINITIONS + + +
++cC     STDOUT   - Fortran unit number for user output and messages
++cC     NBRA   - number of branches in the model
++cC     NEX    - number of exterior nodes in the model
++cC     BRPT   - branch pointer table.  Values for each branch are:
++cC              ROW       Meaning
++cC              1         upstream user node number
++cC              2         downstream user node number
++cC              3         pointer into branch vector for upstream node
++cC              4         pointer into branch vector for downstream node
++cC              5         upstream exterior node number
++cC              6         downstream exterior node number
++cC              7         pointer to address in EMC for the branch
++cC              8         number of unknowns at a node for the branch
++c 
++cC     + + + COMMON BLOCKS + + +
++c      INCLUDE 'arsize.prm'
++c      INCLUDE 'bnelem.cmn'
++c      INCLUDE 'enelem.cmn'
++c 
++cC     + + + LOCAL VARIABLES + + +
++c      INTEGER FA, FN, LA, NAD, NB
++c 
++cC     + + + OUTPUT FORMATS + + +
++c 2000 FORMAT('1',/,/,' DEBUG OUTPUT FOR INITIAL CONDITIONS')
++c 2010 FORMAT(/,'BRANCH NUMBER = ',I5)
++c 2020 FORMAT(/,' NODE',10X,'Q1',10X,'Y1',10X,'A1',10X,'DX',
++c     A           10X,'DZ')
++c 2030 FORMAT(1X,I5,5(1PE12.5))
++c 2040 FORMAT(//,' EXTERIOR NODES')
++c 2050 FORMAT(/,'NODE',5X,'QE1',8X,'YE1',8X,'AE1',8X,'ZE')
++cC***********************************************************************
++cC     TITLE
++c 
++c      WRITE(STDOUT,2000)
++c 
++cC     WRITE OUT INITIAL CONDITIONS ETC FOR INTERIOR NODES
++c 
++cC     I) BRANCH LOOP
++c 
++c      DO 100 NB=1,NBRA
++c        FN = BRPT(1,NB) - 1
++c        FA = BRPT(3,NB)
++c        LA = BRPT(4,NB)
++c        WRITE(STDOUT,2010) NB
++c        WRITE(STDOUT,2020)
++c 
++cC       II) NODE LOOP
++c 
++c        DO 50 NAD=FA,LA
++c          FN = FN + 1
++c          WRITE(STDOUT,2030) FN, Q1(NAD), Y1(NAD), A1(NAD), DXVEC(NAD),
++c     A                     DZVEC(NAD)
++c 50     CONTINUE
++c 100  CONTINUE
++c 
++cC     WRITE OUT INITIAL CONDITIONS FOR EXTERIOR NODES
++c 
++c      WRITE(STDOUT,2040)
++c      WRITE(STDOUT,2050)
++c      DO 200 NAD=1,NEX
++c        WRITE(STDOUT,2030) NAD, QE1(NAD), YE1(NAD), AE1(NAD), ZE(NAD)
++c 200  CONTINUE
++c      RETURN
++c      END
+ C
+ C
+ C

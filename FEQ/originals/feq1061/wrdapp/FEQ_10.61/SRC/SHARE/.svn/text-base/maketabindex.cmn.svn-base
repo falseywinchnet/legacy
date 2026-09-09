@@ -1,0 +1,10 @@
+
+      character*4 make_tab_index
+
+      integer ftab_type(MFTNUM), data_pnt(MFTNUM), index_knt,
+     a        stdindex
+
+      character ftabid(MFTNUM)*16, ftab_fn(MFTNUM)*256
+
+      common /mktbindxc/ ftab_fn, ftabid, make_tab_index
+      common /mktbindx/ ftab_type, data_pnt, index_knt, stdindex

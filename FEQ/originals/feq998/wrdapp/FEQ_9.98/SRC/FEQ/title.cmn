@@ -1,0 +1,11 @@
+C     Common blocks for handling the expanded title for output labeling
+
+      INTEGER TITLE_N
+
+      CHARACTER*120 TITLE(51)
+
+
+      COMMON/TITLEC/ TITLE
+      COMMON/TITLEI/ TITLE_N
+
+      SAVE /TITLEC/, /TITLEI/

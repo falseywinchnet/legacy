@@ -1,0 +1,171 @@
+--- 9.98/feq/ftlookup.for
++++ 10.61/feq/ftlookup.for
+@@ -103,6 +103,9 @@
+      A     HL, HLD, HLU, HR, HRD, HRU, HUL, HUR, P, PD, PU, QFL, QFR,
+      B     QFREE, QL, QMAX, QR
+  
++c      integer verbose
++c      common/debug/ verbose
++
+ C     + + + OUTPUT FORMATS + + +
+  50   FORMAT(/,' *BUG:XXX* NEGATIVE QARG IN TDLK14=',F10.2,' TABID=',A)
+  52   FORMAT(/,' *WRN:43* FLOW > MAXFLOW IN TWO-D TABID=',A,' FLOW=',
+@@ -121,7 +124,9 @@
+  
+       ED = EDA
+  
+-C      WRITE(STDOUT,*) 'TDLK14: TAB#=',TAB, ' QARG=',QARG,' ED=',ED
++c      if(verbose.eq.1) then
++c        WRITE(STDOUT,*) 'TDLK14: TAB#=',TAB, ' QARG=',QARG,' ED=',ED
++c      endif
+  
+       IF(TYPE.NE.PTYPE) THEN
+         WRITE(STDOUT,54) GET_TABID(TAB), TYPE, PTYPE
+@@ -131,7 +136,9 @@
+  
+       HD = ED - HBASE
+  
+-C      WRITE(STDOUT,*) 'TDLK14: HBASE=',HBASE, ' HD=',HD
++c      if(verbose.eq.1) then
++c        WRITE(STDOUT,*) 'TDLK14: HBASE=',HBASE, ' HD=',HD
++c      endif
+  
+ C     FIND THE DOWNSTREAM HEAD INTERVAL CONTAINING HD.
+ C     FIRST MAKE SURE THAT HD IS WITHIN VALID RANGE.
+@@ -175,6 +182,10 @@
+       DQFHD = (QFR - QFL)/(HDR - HDL)
+       QFREE = QFL + DQFHD*(HD - HDL)
+  
++c      if(verbose.eq.1) then
++c        write(stdout,*) ' QARG=',QARG,' QFREE=',QFREE
++c      endif
++
+ C     DQFHD GIVES THE RATE OF CHANGE OF THE FREE FLOW AT INCIPIENT
+ C     SUBMERGENCE WITH RESPECT TO THE DOWNSTEAM HEAD.
+  
+@@ -223,10 +234,12 @@
+           HU = HUL + DHUQ*(QARG - QL)
+           DHUED = 0.0
+           FREE = 1
+-C          WRITE(STDOUT,*) 'TDLK14: FREE FLOW QARG=',QARG,' QFREE=',QFREE
+-C          WRITE(STDOUT,*) ' QL=',QL,' QR=',FTAB(LQF+INC),
+-C     A                          ' HUL=',HUL,' HUR=',HUR
+-C          WRITE(STDOUT,*) 'HU =',HU,' DHUQ=',DHUQ
++c          if(verbose.eq.1) then
++c            WRITE(STDOUT,*) 'TDLK14: FR FLW QARG=',QARG,' QFREE=',QFREE
++c            WRITE(STDOUT,*) ' QL=',QL,' QR=',FTAB(LQF+INC),
++c     A                          ' HUL=',HUL,' HUR=',HUR
++c            WRITE(STDOUT,*) 'HU =',HU,' DHUQ=',DHUQ
++c          endif
+  
+ C         DHUQ GIVES THE DERIVATIVE OF UPSTREAM HEAD WITH RESPECT TO
+ C         FREE FLOW.
+@@ -266,10 +279,12 @@
+           QARG = QL + DHUQ*(HU - HUL)
+           DHUED = 0.0
+           FREE = 1
+-C          WRITE(STDOUT,*) 'TDLK14: FREE FLOW SPECIAL CASE. HU=',HU
+-C          WRITE(STDOUT,*) ' QL=',QL,' QR=',QR,
+-C     A                          ' HUL=',HUL,' HUR=',HUR
+-C          WRITE(STDOUT,*) 'QARG =',QARG,' DHUQ=',DHUQ
++c          if(verbose.eq.1) then
++c            WRITE(STDOUT,*) 'TDLK14: FREE FLOW SPECIAL CASE. HU=',HU
++c            WRITE(STDOUT,*) ' QL=',QL,' QR=',QR,
++c     A                          ' HUL=',HUL,' HUR=',HUR
++c            WRITE(STDOUT,*) 'QARG =',QARG,' DHUQ=',DHUQ
++c          endif
+  
+ C         DHUQ GIVES THE DERIVATIVE OF FREE FLOW WITH RESPECT TO
+ C         UPSTREAM HEAD IN THIS CASE.
+@@ -296,8 +311,10 @@
+  
+         P = QARG/QFREE
+  
+-C        WRITE(STDOUT,*) 'TDLK14; SUBMERGED FLOW'
+-C        WRITE(STDOUT,*) ' QARG=',QARG,' QFREE=',QFREE,' P=',P
++c        if(verbose.eq.1) then
++c          WRITE(STDOUT,*) 'TDLK14; SUBMERGED FLOW'
++c          WRITE(STDOUT,*) ' QARG=',QARG,' QFREE=',QFREE,' P=',P
++c        endif
+  
+ C       WE HAVE TWO LINES OF CONSTANT DWNSTRM LEVEL.  ONE IS ON THE LEFT
+ C       AND WILL BE DESIGNATED BY THE SUFFIX L.  THE OTHER IS ON THE RIGHT
+@@ -338,9 +355,10 @@
+ C       DHLP GIVES THE PARTIAL DERIVATIVE OF THE UPSTREAM HEAD
+ C       WITH RESPECT TO THE PARTIAL FREE FLOW ALONG THE LEFT
+ C       LINE OF CONSTANT DOWNSTREAM HEAD.
+- 
+-C        WRITE(STDOUT,*) ' PD=',PD,' HLD=',HLD,' LPFQ=',LPFQ
+-C        WRITE(STDOUT,*) ' PU=',PU,' HLU=',HLU,' HL=',HL
++c        if(verbose.eq.1) then
++c          WRITE(STDOUT,*) ' PD=',PD,' HLD=',HLD,' LPFQ=',LPFQ
++c          WRITE(STDOUT,*) ' PU=',PU,' HLU=',HLU,' HL=',HL
++c        endif
+  
+         HRD = FTAB(OFFR+LPFQ)
+         HRU = FTAB(OFFR+LPFQ+1)
+@@ -350,9 +368,10 @@
+ C       DHRP GIVES THE PARTIAL DERIVATIVE OF UPSTREAM HEAD
+ C       WITH RESPECT TO THE PARTIAL FREE FLOW ALONG THE
+ C       RIGHT LINE OF CONSTANT DOWNSTREAM HEAD.
+- 
+-C        WRITE(STDOUT,*) ' PD=',PD,' HRD=',HRD,' LPFQ=',LPFQ
+-C        WRITE(STDOUT,*) ' PU=',PU,' HRU=',HRU,' HR=',HR
++c        if(verbose.eq.1) then 
++c          WRITE(STDOUT,*) ' PD=',PD,' HRD=',HRD,' LPFQ=',LPFQ
++c          WRITE(STDOUT,*) ' PU=',PU,' HRU=',HRU,' HR=',HR
++c        endif
+  
+ C        WRITE(STDOUT,*) 'TDLK14: HL=',HL,' HR=',HR
+  
+@@ -375,8 +394,10 @@
+         FREE = 0
+  
+       ENDIF
+-C      WRITE(STDOUT,*) 'TDLK14: Q=',QARG,' DHUED=',DHUED,' DHUQ=',DHUQ,
+-C     A               ' HU=',HU
++c      if(verbose.eq.1) then
++c        WRITE(STDOUT,*) 'TDLK14: Q=',QARG,' DHUED=',DHUED,' DHUQ=',DHUQ,
++c     A               ' HU=',HU
++c      endif
+       RETURN
+  
+       END
+@@ -706,7 +727,7 @@
+ C
+ C
+       SUBROUTINE   TDLK6
+-     I                  (STDOUT, IP, PTYPE, MFTAB, TIME, EDA, EUA, 
++     I                  (STDOUT, IP, PTYPE, MFTAB, JTIME, EDA, EUA, 
+      I                   HBASE,
+      O                   Q, DQED, DQEU, FREE)
+  
+@@ -716,7 +737,8 @@
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER FREE, IP, STDOUT, MFTAB, PTYPE
+-      REAL DQED, DQEU, EDA, EUA, HBASE, Q, TIME
++      REAL DQED, DQEU, EDA, EUA, HBASE, Q
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     STDOUT   - Fortran unit number for user output and messages
+@@ -984,18 +1006,6 @@
+       FREE = 0
+  
+  9000 CONTINUE
+-C     CHECK FOR FINAL ADJUSMENT
+-      IF(MFTAB.GT.0) THEN
+-C       FIND ADJUSTMENT FACTOR AND APPLY TO THE FLOW AND DERIVATIVES
+- 
+-        CALL LKTAB
+-     I            (MFTAB, TIME, 1,
+-     O             FAC, NTAB, PDV)
+- 
+-        Q = Q*FAC
+-        DQED = DQED*FAC
+-        DQEU = DQEU*FAC
+-      ENDIF
+ C      WRITE(STDOUT,*) 'TDLK6: Q=',Q,' DQEU=',DQEU,' DQED=',DQED
+       RETURN
+  

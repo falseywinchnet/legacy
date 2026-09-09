@@ -1,0 +1,10 @@
+--- 9.98/share/notes.who
++++ 10.61/share/notes.who
+@@ -5,6 +5,6 @@
+ 
+ 2. The compiler being used.
+ 
+-3. The prefetch options used: level 1, level2, or none
++3. The prefetch options used: level 1, level 2, or none
+ 
+ 

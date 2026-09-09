@@ -1,0 +1,212 @@
+--- 9.98/feq/schematic.for
++++ 10.61/feq/schematic.for
+@@ -94,7 +94,7 @@
+ 
+ C     **************************FORMATS*********************************
+ 52    FORMAT(';',' Dummy branch with free nodes: ',A5,', ',A5)
+-54    FORMAT(
++54    FORMAT('Dummy branches not drawn in schematic',/,
+      A' Dummy Branch Ups                     Dummy Branch Dns',/,
+      B'  Node     X-location     Y-location ',
+      C'  Node     X-location     Y-location') 
+@@ -192,7 +192,8 @@
+ 
+ C           Do dummy branch labels here. 
+ C           Select the layer for Dummy branch labels
+-            WRITE(SCMUNIT,'(A)') 'LAYER','MAKE','DUMBRLAB',' '
++            WRITE(SCMUNIT,'(A)') 'LAYER','MAKE','DUMBRLAB'
++            write(scmunit,'( )')
+ 
+ C         
+ C           Find the length of the graphic
+@@ -270,11 +271,12 @@
+             WRITE(SCMUNIT,'(A11)') DUMBR_LABEL
+ 
+ C           Select the layer for Dummy branches
+-            WRITE(SCMUNIT,'(A)') 'LAYER','MAKE','DUMBR',' '
++            WRITE(SCMUNIT,'(A)') 'LAYER','MAKE','DUMBR'
++            write(scmunit,'( )')
+ 
+ 
+           ELSE
+-C           Output note to user input file for dummy branches not
++C           Output note to user master output file for dummy branches not
+ C           drawn.
+ C           Clear the output flag.
+             OUT = 0
+@@ -361,7 +363,7 @@
+ 
+       REAL*8 X, Y, SUMX, SUMY, DNULL
+ 
+-      DATA DNULL/-1.D30/, NULL/-2147483647/
++      DATA DNULL/-33.D6/, NULL/-2147483647/
+ C***********************************************************************
+ C     Scan over all CODE 2 entries and search for NODE
+ 
+@@ -462,7 +464,7 @@
+ C***********************************************************************
+ 
+ C     Output the polyline command
+-      WRITE(SCMUNIT,'(A)') 'POLYLINE'
++      WRITE(SCMUNIT,'(A)') 'PLINE'
+ C     Output the x,y pairs, one per line
+       DO 110 J=1,NODE_KNT
+         WRITE(LINE,'(F13.2,'','',F13.2)') X(J), Y(J)
+@@ -473,7 +475,7 @@
+ 110   CONTINUE
+ 
+ C     Write a blank line to terminate the polyline command
+-      WRITE(SCMUNIT,*) ' '
++      WRITE(SCMUNIT,'( )') 
+ 
+ C     Compute the end points of the polyline that will represent
+ C     the ends of a branch.   We find the coefficents for the general
+@@ -508,7 +510,7 @@
+ 
+       M = -AP/BP
+ 
+-      WRITE(SCMUNIT,'(A)') 'POLYLINE'
++      WRITE(SCMUNIT,'(A)') 'PLINE'
+       DX = HALF_L/SQRT(1.D0 + M**2)     
+       DY = HALF_L/SQRT(1.D0 + 1.D0/M**2)
+ 
+@@ -539,7 +541,7 @@
+      O                      SLEN)
+       WRITE(SCMUNIT,'(A)') LINE(1:SLEN)
+ 
+-      WRITE(SCMUNIT,*) ' '
++      WRITE(SCMUNIT,'( )') 
+ 
+ C     Do the dns end of the branch
+       CALL FIND_LINE_COEF(X(NODE_KNT-1), Y(NODE_KNT-1), X(NODE_KNT),
+@@ -549,7 +551,7 @@
+      O                        AP, BP, CP)
+       M = -AP/BP
+ 
+-      WRITE(SCMUNIT,'(A)') 'POLYLINE'
++      WRITE(SCMUNIT,'(A)') 'PLINE'
+       DX = HALF_L/SQRT(1.D0 + M**2)     
+       DY = HALF_L/SQRT(1.D0 + 1.D0/M**2)
+ 
+@@ -579,7 +581,7 @@
+      O                      SLEN)
+       WRITE(SCMUNIT,'(A)') LINE(1:SLEN)
+ 
+-      WRITE(SCMUNIT,*) ' '
++      WRITE(SCMUNIT,'( )') 
+ 
+       RETURN
+       END
+@@ -638,7 +640,7 @@
+       REAL*8 DNULL, XBASE, YBASE, XLOC, YLOC
+       CHARACTER BASE_NODE*5
+ 
+-      DATA NULL/-2147483647/, DNULL/-1.D30/
++      DATA NULL/-2147483647/, DNULL/-33.D6/
+ 
+ C     ******************************************************************
+ 50    FORMAT(/,' *ERR:398* Base node= ',A5,' for free node= ',A5,
+@@ -777,7 +779,7 @@
+ 
+       M = -AP/BP
+ 
+-      WRITE(SCMUNIT,'(A)') 'POLYLINE'
++      WRITE(SCMUNIT,'(A)') 'PLINE'
+       DX = R/SQRT(1.D0 + M**2)     
+       DY = R/SQRT(1.D0 + 1.D0/M**2)
+ 
+@@ -808,7 +810,7 @@
+      O                      SLEN)
+       WRITE(SCMUNIT,'(A)') LINE(1:SLEN)
+ 
+-      WRITE(SCMUNIT,*) ' '
++      WRITE(SCMUNIT,'( )') 
+ 
+ C     Label the LPR with its downstream node label on a horizontal
+ C     line a bit below the center of the circle. 
+@@ -988,7 +990,7 @@
+ 
+       CHARACTER LINE*80, UPNLABEL*5, DNNLABEL*5
+ 
+-      DATA DNULL/-1.D30/, NULL/-2147483647/
++      DATA DNULL/-33D6/, NULL/-2147483647/
+ C     ***************************FORMATS********************************
+ 52    FORMAT(';',' Connection between nodes: ',A5,', ',A5,' D=',F10.1)
+ C***********************************************************************
+@@ -996,7 +998,8 @@
+ C     in the junction
+ 
+ C     Select the layer
+-      WRITE(SCMUNIT,'(A)') 'LAYER','MAKE','DOT_CNCT',' '
++      WRITE(SCMUNIT,'(A)') 'LAYER','MAKE','DOT_CNCT'
++      write(scmunit,'( )')
+ 
+       IENTRY = 0
+ 
+@@ -1107,7 +1110,7 @@
+                     DNNLABEL = GETUSN(NODEJ)
+                     WRITE(SCMUNIT,52) UPNLABEL, DNNLABEL, DIST
+                 
+-                    WRITE(SCMUNIT,'(A)') 'POLYLINE'
++                    WRITE(SCMUNIT,'(A)') 'PLINE'
+                     WRITE(LINE,'(F13.2,'','',F13.2)') XI, YI
+                     CALL STRIP_ALL_BLANKS(
+      M                                    LINE,
+@@ -1120,7 +1123,7 @@
+      O                                    SLEN)
+                     WRITE(SCMUNIT,'(A)') LINE(1:SLEN)
+                     
+-                    WRITE(SCMUNIT,*) ' '
++                    WRITE(SCMUNIT,'( )')
+                   ENDIF
+                 ENDIF
+               ENDIF
+@@ -1168,7 +1171,7 @@
+       INTEGER GET_UNIT, GETUSB
+       REAL*8 GET_DP_FROM_FT
+       EXTERNAL GET_UNIT, FREE_UNIT, GETUSB, FIND_LINE_COEF,
+-     A        STRIP_ALL_BLANKS, DRAW_BRANCH_GRAPHIC
++     A        STRIP_ALL_BLANKS, DRAW_BRANCH_GRAPHIC, os_file_style
+ 
+       INCLUDE 'bnothr.cmn'
+       INCLUDE 'home.cmn'
+@@ -1199,23 +1202,26 @@
+       HF = FACTOR*HF
+ 
+       SCMUNIT = GET_UNIT(0)
+-      IF(GHOME.NE.' ') THEN
++      IF(GHOME_out.NE.' ') THEN
+ C       A global home directory name exists.  Put the script file there.
+         LINE = '/schematic.scr'
+-        CALL MAYBE_ADD_HOME(
++        CALL MAYBE_ADD_GHOME_out(
+      M                      LINE)
+       ELSE
+ C       No global home directory exists.  Put script in the current directory.
+         LINE = 'schematic.scr'
+       ENDIF  
+ 
++      call os_file_style(
++     m                     line)
+       OPEN(UNIT=SCMUNIT, FILE=LINE, STATUS='UNKNOWN')
+ 
+ C     Set the line-type-scale
+       WRITE(SCMUNIT,'(A)') 'ltscale', '500.0'
+ 
+ C     Select the layer for branches
+-      WRITE(SCMUNIT,'(A)') 'LAYER','MAKE','BRANCHES',' '
++      WRITE(SCMUNIT,'(A)') 'LAYER','MAKE','BRANCHES'
++      write(scmunit,'( )')
+ 
+ C     Scan all branches and output the trace of each 
+ 
+@@ -1359,7 +1365,8 @@
+ 
+ 
+ C     Select the layer for LPR's
+-      WRITE(SCMUNIT,'(A)') 'LAYER','MAKE','LPRS',' '
++      WRITE(SCMUNIT,'(A)') 'LAYER','MAKE','LPRS'
++      write(scmunit,'( )')
+ 
+       CALL DO_LPRS(STDOUT, SCMUNIT, NEX, EXNODT, EMC)
+ 

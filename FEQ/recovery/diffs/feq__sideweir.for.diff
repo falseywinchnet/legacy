@@ -1,0 +1,84 @@
+--- 9.98/feq/sideweir.for
++++ 10.61/feq/sideweir.for
+@@ -83,7 +83,8 @@
+ 54    FORMAT(1X,A5,F10.3,F10.3,1X,A5,1X,A5,F10.3,F10.3,F10.3,4X,A4,
+      A       4X,A4,4X,A4)
+ C***********************************************************************
+-      MAX_DIFF_IN_FEET = 0.1
++c      MAX_DIFF_IN_FEET = 0.1
++      MAX_DIFF_IN_FEET =  0.75
+ C     Set the maximum difference allowed in water-surface elevation.
+       IF(GRAV.LT.16.0) THEN
+         MAX_DIFF = MAX_DIFF_IN_FEET*0.3048
+@@ -99,8 +100,8 @@
+          CODE = EMC(J)
+          IF(CODE.EQ.-1) GOTO 2000
+          GOTO(1,2,3,4,5,6,7,8,9,10, 10, 10, 10, 14, 10),CODE
+-           WRITE(STDOUT,*)' *BUG:20* INVALID EMC CODE IN FINCHK. CODE=',
+-     A                  CODE
++           WRITE(STDOUT,*)
++     A ' *BUG:20* INVALID EMC CODE IN SIDE_WEIR_CHK. CODE=', CODE
+             STOP 'Abnormal stop: errors found.'
+  1       CONTINUE
+             GOTO 1500
+@@ -117,8 +118,9 @@
+            UPN = EMC(J+2)
+            DNN = EMC(J+3)
+            GOTO(501, 502, 503, 504, 505, 506, 507, 508, 509), ITYPE
+-             WRITE(STDOUT,*) ' *BUG:21* INVALID CODE=5 TYPE IN FINCHK.',
+-     A                 ' TYPE=', ITYPE
++             WRITE(STDOUT,*) 
++     A  ' *BUG:21* INVALID CODE=5 TYPE IN SIDE_WEIR_CHK.',
++     B  ' TYPE=', ITYPE
+              STOP 'Abnormal stop: errors found.'
+  501       CONTINUE
+              J = J + CD5TY1
+@@ -214,19 +216,42 @@
+                Q_NON_ZERO = 'YES'
+              ENDIF
+            ENDIF
+-           IF(INVERT_HIGH.NE.'NO'.OR.Q_NON_ZERO.NE.'NO') THEN
+-             IF(ABS(ZUP - ZMID).GT.MAX_DIFF) THEN
++           if(invert_high == 'YES'.or. q_non_zero == 'YES') then
++             if(invert_high.eq.'YES') then
+ C              Set datum very high.
+                DISABLED = 'YES'
+                RDUM = 99999.0
+                EMC(J+9) = IDUM
+-             ELSE
+-               DISABLED = 'NO'
+-             ENDIF
++               
++             elseif(abs(zup - zmid) > MAX_DIFF) then
++c              Could be a problem but the datum for head 
++c              might make startup possible.
++               if(zup - hdatum < MAX_DIFF .OR.
++     a             zmid - hdatum < MAX_DIFF) then
++                 disabled = 'NO'
++               else
++C                Set datum very high.
++                 DISABLED = 'YES'
++                 RDUM = 99999.0
++                 EMC(J+9) = IDUM
++               endif
++             else
++               disabled = 'NO'
++             endif
++
++c           IF(INVERT_HIGH.NE.'NO'.OR.Q_NON_ZERO.NE.'NO') THEN
++c             IF(ABS(ZUP - ZMID).GT.MAX_DIFF) THEN
++cC              Set datum very high.
++c               DISABLED = 'YES'
++c               RDUM = 99999.0
++c               EMC(J+9) = IDUM
++c             ELSE
++c               DISABLED = 'NO'
++c             ENDIF
+              WRITE(STDOUT,54) GETUSN(UPN), ZBUP, ZUP, GETUSN(DNN),
+      A                        GETUSN(MDN), ZBMID, ZMID, HDATUM,
+      B                        INVERT_HIGH, Q_NON_ZERO, DISABLED
+-           ENDIF
++           endif
+ 
+            GOTO 1500
+  1500 CONTINUE

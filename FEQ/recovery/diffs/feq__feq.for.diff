@@ -1,0 +1,1207 @@
+--- 9.98/feq/feq.for
++++ 10.61/feq/feq.for
+@@ -1,3 +1,93 @@
++c
++c
++c
++      subroutine update_time_step_tab(stddtout, jtime, dt)
++
++c     Write a value of time step to the file 
++
++      implicit none
++      integer stddtout
++      real*8 jtime, dt
++
++c     Local
++      integer mjd, yr, mn, dy
++
++      real hr
++
++      real*8 jtemp, dyfrac
++c     ***************************formats********************************
++50    format(i4,i3,i3,f10.6,f10.2)
++c***********************************************************************
++      jtemp = jtime - dt/86400.d0
++      MJD = INT(jtemp)
++      DYFRAC = jtemp - DBLE(MJD)
++      HR = 24.D0*DYFRAC
++      CALL INVMJD
++     I           (MJD,
++     O             YR, MN, DY)
++      write(stddtout,50) yr, mn, dy, hr, dt
++      return
++      end
++C
++C
++C
++      SUBROUTINE RESET_HI_IQ_NS_FAC()
++
++C     Reset the high iq Newton solution factor to 1.0
++
++      IMPLICIT NONE
++
++      INCLUDE 'arsize.prm'
++      INCLUDE 'matcom.cmn'
++
++C     Local
++
++      INTEGER I
++C***********************************************************************
++      DO 100 I=1,NUMEQ
++        HI_IQ_NS_FAC(I) = 1.00
++100   CONTINUE
++      RETURN
++      END
++
++c
++c
++c
++      subroutine trim_last_extension(fnamein, 
++     o                                 fnameout)
++
++c     return the filename in fnamein with its final extension deleted
++c     in fnameout
++
++      implicit none
++
++      character*(*) fnamein, fnameout
++
++c     Local
++
++      integer i, n, l
++c***********************************************************************
++      N = LEN_TRIM(fnamein)
++
++C     Set L for case of no period found
++      L = N
++      DO I=N,1,-1
++
++        IF(fnamein(I:I).EQ.'.') THEN
++          IF(I.GT.1) THEN
++            L = I - 1
++          ELSE
++            L = N
++          ENDIF
++          EXIT
++        ENDIF
++
++      END DO
++      fnameout = fnamein(1:L)
++      return
++      end
++
++      
+ C
+ C
+ C
+@@ -25,30 +115,18 @@
+ C     file names unless the period is in the first position and is
+ C     the only period present. 
+ 
+-      N = LEN_TRIM(FNAME)
+-
+-C     Set L for case of no period found
+-      L = N
+-      DO I=N,1,-1
+-
+-        IF(FNAME(I:I).EQ.'.') THEN
+-          IF(I.GT.1) THEN
+-            L = I - 1
+-          ELSE
+-            L = N
+-          ENDIF
+-          EXIT
+-        ENDIF
+-
+-      END DO
+-
+-      FNAME2 = FNAME(1:L)//'.out'
++
++      call trim_last_extension(fname, 
++     o                         fname2)
++      l = len_trim(fname2)
++      fname2 = fname2(1:l)//'.out'
++
+       RETURN
+       END
+ C
+ C
+ C
+-      SUBROUTINE STAT_TRAN(NEX, 
++      SUBROUTINE braxy_to_exnodt(NEX, 
+      M                          EXNODT)
+ 
+ C     Transfer the node locations to exterior nodes on branches.
+@@ -78,8 +156,10 @@
+ 
+ C     Local
+ 
+-      INTEGER ADRS, I
+-      REAL*8 X, Y
++      INTEGER ADRS, I, null
++      REAL*8 X, Y, dnull
++
++      data dnull/-33d6/, null/-2147483647/
+ 
+ C***********************************************************************
+       DO 100 I=1,NEX
+@@ -88,8 +168,13 @@
+           ADRS = EXNODT(4,I)
+           X = GET_DP_FROM_FT(ADRS+8)
+           Y = GET_DP_FROM_FT(ADRS+10)
+-          EXNODT(6,I) = NINT(100.D0*X)
+-          EXNODT(7,I) = NINT(100.D0*Y)
++          if(x <= dnull) then
++            exnodt(6,i) = null
++            exnodt(7,i) = null
++          else
++            EXNODT(6,I) = NINT(100.D0*X)
++            EXNODT(7,I) = NINT(100.D0*Y)
++          endif
+         ENDIF
+ 100   CONTINUE
+       RETURN
+@@ -140,11 +225,266 @@
+ 
+       INCLUDE 'version.cmn'
+ C***********************************************************************
+-      VERSION_NUMBER = 9.98
+-      VERSION_DATE = '21 April 2003'
++      VERSION_NUMBER = 10.61
++      VERSION_DATE = '15 October 2008'
+       RETURN
+       END
+-      
++
++c
++c
++c
++      subroutine  reset_standard_output_ext(name)
++
++c     Get the final extension from name and store in the standard
++c     output extension.  A period is the delimiter used between parts
++c     of a name and the string that follows the last period in the 
++c     name when scanning left to right is the extension. If the name
++c     begins with a period, then the name is not treated as an extension.
++
++      implicit none
++      character*(*) name
++
++      include 'home.cmn'
++
++c     Local
++      integer i, iend
++
++c***********************************************************************
++      iend = len_trim(name)
++      do i=iend,1,-1
++        if(name(i:i) == '.') then
++          exit
++        endif
++      end do 
++      if(i > 1) then
++c       There was a period found during the reverse search.
++        stdext = name(i:iend)
++      endif
++      return
++      end
++c
++c
++c
++      subroutine ftab_loc_chk(
++     i            stdout)
++
++c     Scan the function table and check for those that have 
++c     the geographic location (easting, northing) known from
++c     other sources in FEQ but have no information in their
++c     header block from input. 
++
++      implicit none
++
++      integer stdout
++
++      include 'arsize.prm'
++      include 'ftable.cmn'
++      include 'maketabindex.cmn'
++      include 'grid_datum.cmn'
++
++      character*16 get_tabid
++      external  get_east_north, get_tabid, binser
++
++c     Local
++      integer i, tabn, adrs, pnt, tab_type, vdatum_error,
++     a        unitsys_error, basis_difference, it
++      real*8 dnull, easting, northing
++      character*8 tzone, thgrid, tvdatum, tunitsys, tbasis
++      character*16 tabid
++      character*1 zone_src, hgrid_src, vdatum_src, unitsys_src, 
++     a          basis_src, east_src, north_src
++
++
++      data dnull/-33d6/
++
++c     *****************Formats******************************************
++50    format(/,'List of Function-table status found in FEQ',/,
++     a 8x,' Table id',' Type',1x,5x,'Zone',1x,4x,'Hgrid',1x,9x,'Easting',
++     b     1x,8x,'Northing',1x,3x,'Vdatum',1x,2x,'Unitsys',1x,
++     c     4x,'Basis',2x,'File-name')
++52    format(1x,a16,i5,1x,a8,a1,1x,a8,a1,1x,f15.3,a1,1x,f15.3,a1,1x,
++     a          a8,a1,1x,a8,a1,1x,a8,a1,2x,a)
++54    format(/,'*ERR:XXX* Unexpected vertical datum found in: ',i5,
++     a    ' function tables.',/,5x,'  Expected to find: ',a8,'.',
++     b    '  Vdatum values marked with a trailing dash are in error.') 
++56    format(/,'*ERR:XXX* Unexpected unit system found in: ',i5,
++     a    ' function tables.',/,5x,'  Expected to find: ',a8,'.',
++     b    '  Unitsys values marked with a trailing dash are in error.') 
++c***********************************************************************
++      write(stdout,50) 
++      vdatum_error = 0
++      unitsys_error = 0
++      basis_difference = 0
++      do i=1,knt_of_ftabs
++        zone_src = ' '
++        hgrid_src = ' '
++        east_src = ' '
++        north_src = ' '
++        vdatum_src = ' '
++        unitsys_src = ' ' 
++c       Get the table adrs, that is, the index into ftab/itab
++        adrs = ftpnt(i)
++c       Get the internal table number.  
++        tabn = itab(adrs + 1)
++        tab_type = itab(adrs+2)
++        tabid = get_tabid(tabn)
++        call   BINSER
++     I               (tabid, index_knt, ftabid,
++     O                pnt)
++c       Get the information from the function-table.  Then
++c       do an array of checks to determine what to output.
++        call get_east_north(
++     i               stdout, adrs,
++     o               easting, northing)
++c       We need to distinguish between the zone... given in the 
++c       run-control block, and those that are stored with the
++c       function table.  Thus the prefix "t" denotes the values
++c       from the function table.
++        call get_zone_etc(
++     i                     stdout, adrs,
++     o        tzone, thgrid, tvdatum, tunitsys, tbasis)
++        if(g_zone /= 'NONE') then
++c         User has given a value for zone in the run-control block.
++c         These means that hgrid is also given, and that a value
++c         of easting and northing is meaningful for the function
++c         table.  The values of easting and northing that appear
++c         in the table may have been given in the function-table
++c         input, ft_loc_status = 'I', or they may have been 
++c         supplied by FEQ, ft_loc_status = 'M' AND easting > dnull,
++c         or they may be unknown, ft_loc_status = 'm' AND 
++c         easting <= dnull. 
++
++          if(tzone == 'MISSING') then
++c           Zone, hgrid, where missing from the table.  The easting and 
++c           northing may have been present if the table were a cross-section
++c           table.  
++            zone_src = ' '
++            hgrid_src = ' '
++          endif
++
++c         Check the easting and northing status.          
++          if(tzone /= 'NONE' .and. tzone /='NA') then
++c           Easting and northing make sense
++            if(ft_loc_status(tabn) == 'M') then
++c             Easting and northing were not given for the function-table
++              if(easting > dnull) then
++c               FEQ found a location for the table.  Signal update of input sources.
++                east_src = 'u'
++                north_src = 'u'
++              else
++c               Location is still unknown, that state is in the table either
++c               explicitly given or implicit in not being present.
++c               Signal that the value in the function-table input, if, any, should 
++c               not be changed.
++                east_src = ' '
++                north_src = ' '
++              endif
++            elseif(ft_loc_status(tabn) == 'I') then
++c             Location known from input.  Mark as such
++              east_src = ' '
++              north_src = ' '
++            else
++c             Should not get here.
++              write(stdout,*) '*BUG*1: invalid value of ',
++     a        'ft_loc_status(tabn) in subroutine ftab_loc_chk=',
++     b         ft_loc_status(tabn)
++              write(stdout,*)  ' tabid=',tabid 
++              stop 'Abnormal stop.  Bug found' 
++            endif
++          else
++c           Location has no meaning for this function table. 
++            if(ft_loc_status(tabn) /= 'N') then
++              write(stdout,*) '*BUG*2: invalid value of ',
++     a        'ft_loc_status(tabn) in subroutine ftab_loc_chk=',
++     b         ft_loc_status(tabn)
++              write(stdout,*)  ' tabid=',tabid 
++              stop 'Abnormal stop.  Bug found' 
++            endif
++c           Mark that source is the table itself.  No update of input sources.
++            east_src = ' '
++            north_src = ' '
++
++          endif
++        else
++c         What ever is in the table is OK.
++          zone_src = ' '
++          hgrid_src = ' '
++          east_src = ' '
++          north_src = ' '
++        endif
++
++        if(g_vdatum /= 'NONE') then
++          if(tvdatum == 'MISSING' .or. tvdatum == 'NA') then
++            vdatum_src = ' ' 
++          else
++            if(g_vdatum /= tvdatum) then
++              vdatum_error = vdatum_error + 1
++              vdatum_src = '-'  ! Signal that this value disagrees with desired value
++            else
++              vdatum_src = ' ' 
++            endif
++          endif
++        else
++c         What ever is in the table is OK.
++          vdatum_src = ' '
++        endif
++
++        if(g_unitsys /= 'NONE') then
++          if(tunitsys == 'MISSING' .or. tunitsys == 'NA') then
++            unitsys_src = ' ' 
++          else
++            if(g_unitsys /= tunitsys) then
++              unitsys_error = unitsys_error + 1
++              unitsys_src = '-'  ! Signal that this value disagrees with desired value
++            else
++              unitsys_src = ' '  ! Signal that this value is OK and input sources need NOT be updated.
++            endif
++          endif
++        else
++c         What ever is in the table is OK.
++          unitsys_src = ' '
++        endif
++
++        if(g_basis /= 'NONE') then
++          if(tbasis == 'MISSING' .or. tbasis == 'NA') then
++            basis_src = ' ' ! Basis is OK
++          else
++            if(g_basis /= tbasis) then
++              basis_difference = basis_difference + 1
++              basis_src = '-'  ! Signal that this value disagrees with FEQ run-control block.
++            else
++              basis_src = ' '  ! Signal that this value is OK and input sources need NOT be updated.
++            endif
++          endif
++        else
++c         What ever is in the table is OK.
++          basis_src = ' '
++        endif
++
++        it = len_trim(ftab_fn(data_pnt(pnt)))
++        write(stdout,52) adjustr(tabid), tab_type, adjustr(tzone), 
++     a         zone_src, adjustr(thgrid), hgrid_src, easting, east_src, 
++     b         northing, north_src, adjustr(tvdatum), vdatum_src, 
++     c         adjustr(tunitsys), unitsys_src, adjustr(tbasis), 
++     d         basis_src, ftab_fn(data_pnt(pnt))(1:it)
++
++
++      end do
++
++
++c     Output summary of the state of the function table system. 
++      if(vdatum_error > 0) then
++        write(stdout,54) vdatum_error, g_vdatum
++        stop 'Abnormal stop. Inconsistent vertical datum values found.'
++      endif
++      if(unitsys_error > 0) then
++        write(stdout,56) unitsys_error, g_unitsys
++        stop 'Abnormal stop. Inconsistent unit system values found.'
++      endif
++                                                                        
++
++      return
++      end 
+ C
+ C
+ C
+@@ -220,6 +560,7 @@
+       INCLUDE 'ftable.cmn'
+       INCLUDE 'infcom.cmn'
+       INCLUDE 'julian.cmn'
++      include 'matcom.cmn'
+       INCLUDE 'namcom.cmn'
+       INCLUDE 'tsfcom.cmn'
+       INCLUDE 'rdcom.cmn'
+@@ -232,8 +573,14 @@
+       INCLUDE 'stdun.cmn' 
+       INCLUDE 'genscn.cmn'    
+       INCLUDE 'tam.cmn' 
+-      INCLUDE 'code14.cmn'   
+- 
++      INCLUDE 'code14.cmn'
++      include 'tabupgrade.cmn'   
++      include 'timetab.cmn'   
++      include 'whatos.cmn'   
++      include 'spout.cmn'   
++      include 'maketabindex.cmn'
++      include 'grid_datum.cmn'
++
+ C     + + + SAVED VALUES + + +
+       CHARACTER NO*4, YES*4
+       SAVE NO, YES
+@@ -243,35 +590,42 @@
+      A        IOFLAG, IPRT, ITEMP, J, KNT, KNTA, KOUNT, LDCALL, LKOUNT,
+      B        LMXRES, MINPRT, N, NERRP, NERRQ, NFREE, NMXRE,
+      C        NRWTA, NTINT, NUMLIM, QPN, RESNUM, SUMITR, WYR, BNODE_MAX,
+-     D        START_EQ, END_EQ, STDEXT_OPTION
+-      INTEGER BMXREV(MNITER), KNTVEC(MNITER),
+-     A        LMXRV(MNITER), NMXREV(MNITER), RTAP(MNFREE), RWTA(MNFREE)
++     D        START_EQ, END_EQ, STDEXT_OPTION, IVAR, hi_iq_ns_numgt,
++     e        hi_iq_ns_knt, dot_flag, dt_adjust, bwrec
++
++      INTEGER BMXREV(MNITER), KNTVEC(MNITER), LMXRV(MNITER),
++     A     NMXREV(MNITER),IVARV(MNITER), RTAP(MNFREE), RWTA(MNFREE)
++
+       REAL ABSTOL, BAL, DTHR, DTIMLD, ERRP, ERRQ, ET, HR, HSLOT,
+      A     LAMBDA, MXRE, MXRES, MXREV(MNITER), MXRV(MNITER),
+      B     MXSSRV(MNITER), NSLOT, RBAL, RTAFAC(MNFREE), SRLIM, SRNEW,
+      C     SROLD, VUNIT, WSLOT, WT, DTMIN_OUT
+-      REAL*8 DJLOAD, DT, DTLOAD, EVENT_BASE, HRD,
+-     A       S1, S2, D1, D2, 
+-     B       BNI, BNQ, TAI, TAQ, TAQBN, WSI, WSQ
++      real hi_iq_ns_dwn, hi_iq_ns_lmt, hi_iq_ns_up, hi_iq_ns_dt, 
++     a     dz_for_output
++      REAL*8 DJLOAD, DT, DTDY, DTLOAD, dtdyload, EVENT_BASE, HRD,
++     A       S1, S2, D1, D2, jtemp,
++     B       BNI, BNQ, TAI, TAQ, TAQBN, WSI, WSQ, last_dt_to_console
+       CHARACTER FNAME*64, FNAME2*64, GCHK*4, NODEID*4, QOUT(MNSOUT)*8,
+      A          ZOUT(MNSOUT)*8, OLD_SUMMARY*4, CD14_TAB_DATUM*4, 
+-     B          CD5T6_TAB_DATUM*4
++     B          CD5T6_TAB_DATUM*4, hi_iq_ns*4, frcst_wth_dtsf*4
+       LOGICAL THERE
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC FLOAT, MOD, SNGL
+  
+ C     + + + EXTERNAL FUNCTIONS + + +
+-      INTEGER IARGC, LPYEAR, GET_UNIT
++      INTEGER iargc, LPYEAR, GET_UNIT, what_os
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL BDYFLW, BROUT, BWGET, CHKGEO, CMPCOR, CRSET2, CSMAT,
+-     A         DPWOUT, DUMPIT, ESTBN, ESTEN, EXOUT, FINCHK, FMXMN,
+-     B         FTOUT, GETARG, IARGC, INFO, INOUT, LOAD, LPYEAR, MAKCOR,
+-     C         MANTIM, OPER, OPINIT, OUTSP, PRTLOG, QPVOUT, RESOUT,
+-     D         RPLSET, RSTNZD, RSTSTA, SETSTA, STINT, WRINIT,
+-     E         WROUT, GET_UNIT, FIND_VOLUMES, CLEAR_HOME,
+-     F         RESET_KOUNT_OF_INTERNAL_TABIDS, TBOX
++      EXTERNAL BDYFLW, BWGET, CHKGEO, CMPCOR, CRSET2, CSMAT,
++     A       DUMPIT, ESTBN, ESTEN, FINCHK, FMXMN,
++     B       getarg, iargc,
++     b       INFO, LOAD, LPYEAR, MAKCOR,
++     C       MANTIM, OPER, OPINIT, OUTSP, PRTLOG, QPVOUT, RESOUT,
++     D       RPLSET, RSTNZD, RSTSTA, SETSTA, STINT, WRINIT,
++     E       WROUT, GET_UNIT, FIND_VOLUMES, CLEAR_HOME,
++     F       RESET_KOUNT_OF_INTERNAL_TABIDS, TBOX,
++     G       RESET_HI_IQ_NS_FAC, what_os
+  
+ C     + + + DATA INITIALIZATIONS + + +
+       DATA YES/'YES'/, NO/'NO'/
+@@ -280,7 +634,8 @@
+  2010 FORMAT(/)
+  2020 FORMAT(/,' SIMULATION ending at ',I5,'/',I2,'/',I2,':',F10.7,
+      A '.  Time step=', F9.2, ' sec')
+- 2021 FORMAT('+At ',I4,'/',I2,'/',I2,':',F6.3,' DT=', F8.2, ' sec')
++c 2021 FORMAT('+At ',I4,'/',I2,'/',I2,':',F6.3,' DT=', F8.2, ' sec')
++ 2021 FORMAT(' At ',I4,'/',I2,'/',I2,':',F6.3,' DT=', F8.2, ' sec')
+  2030 FORMAT(/,' *WRN:24* Non-convergence. Time step will be',
+      A       ' reduced.')
+  2150 FORMAT(' Balance 1: S1=',1PE9.3,' S2=',1PE9.3,' BNI=',1PE9.3,
+@@ -293,7 +648,8 @@
+  2154 FORMAT(' Bal diff=BAL=D2-D1-TAI+TAQ+TAQBN=',1PE10.3,
+      A       ' Rel Bal=BAL/(D2+TAQ+TAQBN)=',1PE10.0)
+  2180 FORMAT(' CSUR=',1PE8.1,' AT ND=',I4,':',I6,' RLTQ=',
+-     A       1PE8.1,' AT ND=',I4,':',I6,' DT/ITER=',0PF8.1)
++     A       1PE8.1,' AT ND=',I4,':',I6,' DT/ITER=',0PF8.1,
++     b       ' Total iterations=',i10)
+  3000 FORMAT(/,' PNC SROLD=',1PE9.2,
+      A       ' SRNEW=',1PE9.2,' LAMBDA WAS ',0PF9.6)
+  3022 FORMAT(/,' Initialization time=',F10.2,' secs or ',F10.4,' mins')
+@@ -314,6 +670,18 @@
+      B/,' name.  If part or all of the path is given with the name,',
+      C/,' make sure that all directories exist as spelled.')
+ C***********************************************************************
++cc     set the hi iq factors here for initial testing
++c      hi_iq_ns_dwn = 0.75
++c      hi_iq_ns_lmt = 0.25
++cc     Increase the factor over more than one time step of convergence
++cc     Will need to experiment with this
++c      hi_iq_ns_up = sqrt( 1.0/hi_iq_ns_dwn)
++
++c     Clear the location-status flag for function tables.
++      ft_loc_status = ' '
++
++      call hi_iq_ns_list_init()
++
+ C
+ C     strings for Unix what command
+       fname =
+@@ -325,10 +693,19 @@
+       fname =
+      &'$Id: feq.f,v 8.5 1996/02/28 18:30:45 rsregan Exp rsregan $'
+ 
++C     Initialize various  labeled common blocks
++      call   SPOUT_INIT()
++      call   xoffin()
+ 
+ C     Clear the HOME portion of file names for function tables
+ C     and time series.
+       CALL CLEAR_HOME()
++
++c     Clear the standard output extension
++      call clear_ext()
++
++c     Clear the global output home name
++      call clear_ghome_out()
+ 
+ C     Initialize selector-name processing
+       CALL SELECTOR_SYMBOL_INIT()
+@@ -352,7 +729,14 @@
+ 
+ C     Start the time-keeping
+       CALL TIMERL(ITICK)
+- 
++
++c     set for the minimum time step
++      min_time_step=1.e20
++ 
++c     set the last time step output to the console to an impossible
++c     vallue
++       last_dt_to_console = 0
++
+ C     The values for the standard input and output units are given
+ C     in the file: stdun.cmn.  Set their value here because the
+ C     common block is used in some cases where the normal units
+@@ -382,15 +766,16 @@
+       CALL SETCR()
+ C     PROCESS COMMAND LINE ARGUMENTS
+  
++      osis = what_os()
+       NARG = 0
+       NXT = 1
+-      NARG = IARGC()
++      NARG = iargc()
+       
+       IF(NARG.EQ.1+MORG) THEN
+ C       If only one file argument is given we assume that the 
+ C       extension, if any, from the file given is stripped and the 
+ C       remaining  file name IS formed by adding .out 
+-C       to the file name given by the user name stripped of its extension.
++C       to the file name given by the user,  stripped of its extension.
+ 
+         STDEXT_OPTION = 1
+       ELSEIF(NARG-MORG.LT.2) THEN
+@@ -402,10 +787,11 @@
+  
+ C     GET THE FIRST FILE ARGUMENT
+  
+-      CALL GETARG
++      CALL getarg
+      I           (1+MORG,
+      O            FNAME)
+- 
++       call os_file_style(
++     m                       fname)
+       INQUIRE(FILE=FNAME, EXIST=THERE)
+       IF(THERE) THEN
+         OPEN(IN, FILE = FNAME, STATUS = 'OLD')
+@@ -425,31 +811,44 @@
+ 
+ C       GET THE SECOND FILE ARGUMENT
+  
+-        CALL GETARG
++        CALL getarg
+      I             (2+MORG,
+      O              FNAME2)
+       ENDIF
++       call os_file_style(
++     m                        fname2)
+       WRITE(*,*) ' '
+       IF(FNAME.EQ.FNAME2) THEN
+         WRITE(*,*) ' The names given for the two command-line'
+         WRITE(*,*) ' arguments are the same.  They must be different.'
+         STOP 'Abnormal stop: errors found.'
++      elseif (fname2 == 'feqin' .or.
++     a        fname2 == 'FEQIN') then
++        write(*,*) ' Master-output file cannot be: feqin or FEQIN.'
++        write(*,*) ' These file names are reserved for the standard'
++        write(*,*) ' master-input file.'
++        STOP 'Abnormal stop: errors found.'
+       ENDIF
+       OPEN(STDOUT, FILE = FNAME2, STATUS = 'UNKNOWN', IOSTAT=IOFLAG)
+  
+       IF(IOFLAG.NE.0) THEN
+         N = LEN_TRIM(FNAME2)
+         WRITE(*,96) FNAME2(1:N)
++        write(*,*) 'iostat=',ioflag
+         STOP 'Abnormal stop: errors found.'
+       ENDIF
+ 
++c     Get the extension on the master output file, if any, and 
++c     place in the standard extension for output.  If non-blank,
++c     it will be appended to all output files.
++      call reset_standard_output_ext(fname2)
+ 
+ 
+ C     Open the file we will use for checking.  Do not make part of
+ C     the standard package.  Comment out after testing
+ 
+-C      OPEN(UNIT=45, FILE='fromfeq.D',STATUS='UNKNOWN',
+-C     A          FORM='UNFORMATTED')
++c      OPEN(UNIT=45, FILE='fromfeq.d',STATUS='UNKNOWN',
++c     A          FORM='UNFORMATTED')
+ 
+ 
+ C     Output the header to the standard output
+@@ -472,7 +871,23 @@
+      O          NODEID, MINPRT, LAGTSF, NFREE, GCHK, VUNIT, ABSTOL,
+      O          HSLOT, WSLOT, NSLOT, NUMLIM, BNODE, BDYNUM, RESNUM,
+      O          RTAFAC, OLD_SUMMARY, CD14_TAB_DATUM, CD5T6_TAB_DATUM,
+-     O          START_EQ, END_EQ, DTMIN_OUT)
++     O          START_EQ, END_EQ, DTMIN_OUT, hi_iq_ns, 
++     o          hi_iq_ns_dwn, hi_iq_ns_up, hi_iq_ns_lmt,
++     o          ty13_to_ty43, upgrade_xsec_tab, make_dt_tab,
++     o          use_maxdt_tab, hi_iq_ns_numgt, hi_iq_ns_knt,
++     o          hi_iq_ns_dt, frcst_wth_dtsf,
++     o          make_tab_index, dz_for_output)
++
++c     set the option for forecasting with dtsf present
++      if(frcst_wth_dtsf == 'YES') then
++        frcst= 1
++      else
++        frcst = 0
++      endif
++
++c     Set values for time-step tables. 
++
++      call set_time_step_tables(stdout, eflag)
+ 
+ C     Assign the formats for detailed branch output.  FTID is in common 
+ C     group file name bnelem.cmn
+@@ -502,17 +917,17 @@
+         ENDIF                      
+       ENDIF
+ 
+-
+- 
+- 
+-      IF(IFRZ.GT.0) THEN
+-        DTLOAD = 1.D0
+-        DJLOAD = 1.157407D-5
+-        DTIMLD = 1.0
+-      ELSE
+-        DJLOAD = 0.D0
+-        DTIMLD = 0.0
+-      ENDIF
++c     Assign the conversion factor for quadrature in the Output Files Block
++c     If English units are used, convert from cubic feet to acre-feet
++c     and if metric unit are used, convert from cubic meters to 1,000 cubic meters
++      if(grav.gt.15.0) then
++        quadfactor = 1.d0/43560.d0
++      else
++        quadfactor = 1.d0/1000.d0
++      endif
++ 
++
++
+       WT = BWT
+  
+       IF(SQREPS.LT.0.0) THEN
+@@ -537,46 +952,47 @@
+      
+       CALL STINT
+      I          (TSFDSN, STDOUT, NBRA, NEX, BRPT, EXNODT, EFLAG, EPSB,
+-     I           GRAV, IN, MAXIT, NBN, OUTPUT, SNGL(TIME), SFAC, NBLK,
+-     I           OPBLK, BWFDSN, FFFDSN, DIFFUS, UNDERF, IFRZ, DT,
+-     I           GETDSN, UJTIME, EPT, BNODE, QEPS,
+-     M           EMC,
+-     O           WT, SITER)
+- 
++     I          GRAV, IN, MAXIT, NBN, OUTPUT, jtime, SFAC, NBLK,
++     I          OPBLK, BWFDSN, FFFDSN, DIFFUS, UNDERF, IFRZ, DT,
++     I          GETDSN, putdsn, UJTIME, EPT, BNODE, QEPS, dz_for_output,
++     M          EMC, dtsf_rec,
++     O          WT, SITER)
+  
+       IF(EFLAG.NE.0) THEN
+         STOP 'Abnormal stop: errors found.'
+       ENDIF
+ C     DEBUG OUTPUT HERE
+  
+-      IF(OUTPUT.NE.0) THEN
+- 
+-        CALL BROUT
+-     I            (STDOUT, NBN, NBRA, BRPT)
+-        CALL EXOUT
+-     I            (STDOUT, EPT, NEX, EMC, EXNODT)
+- 
+-C        IF(POINT.EQ.NO.AND.DIFFUS.EQ.NO.AND.WIND.EQ.NO) GOTO 3
+-        IF(POINT.EQ.YES.OR.DIFFUS.EQ.YES.OR.WIND.EQ.YES) THEN
+-          CALL DPWOUT
+-     I             (DIFFUS, STDOUT, LPNT, MRPFPT, NO, POINT, WIND, MF,
+-     I              PFPNT)
++c      IF(OUTPUT.NE.0) THEN
++c 
++c        CALL BROUT
++c     I            (STDOUT, NBN, NBRA, BRPT)
++c        CALL EXOUT
++c     I            (STDOUT, EPT, NEX, EMC, EXNODT)
++c 
++c        IF(POINT.EQ.YES.OR.DIFFUS.EQ.YES.OR.WIND.EQ.YES) THEN
++c          CALL DPWOUT
++c     I             (DIFFUS, STDOUT, LPNT, MRPFPT, NO, POINT, WIND, MF,
++c     I              PFPNT)
++c        ENDIF
++c 
++c        CALL FTOUT
++c     I            (STDOUT,
++c     M             OUTPUT)
++c        CALL INOUT
++c     I            (STDOUT, NBRA, NEX, BRPT)
++c      ENDIF
++ 
++
++C     Check side-weir relationships against initial conditions if the initial 
++C     conditions were not read but computed in BCKWTR
++      
++      IF(GETDSN.EQ.0) THEN
++        IF(CODE14_PRESENT.GT.0) THEN
++          CALL SIDE_WEIR_CHK
++     I                       (STDOUT, GRAV, NEX, EXNODT, EPT,
++     M                        EMC)
+         ENDIF
+- 
+-        CALL FTOUT
+-     I            (STDOUT,
+-     M             OUTPUT)
+-        CALL INOUT
+-     I            (STDOUT, NBRA, NEX, BRPT)
+-      ENDIF
+- 
+-
+-C     Check side-weir relationships against initial conditions.
+-      
+-      IF(CODE14_PRESENT.GT.0) THEN
+-        CALL SIDE_WEIR_CHK
+-     I                     (STDOUT, GRAV, NEX, EXNODT, EPT,
+-     M                      EMC)
+       ENDIF
+ 
+ C     MAKE CHECK OF THE INITIAL CONDITIONS AND VALUES WHICH COULD
+@@ -586,6 +1002,15 @@
+      I            CD14_TAB_DATUM, CD5T6_TAB_DATUM,
+      M            EMC)
+ 
++c     Check for locations of function tables known in FEQ but not
++c     currently defined in the function tables.  Also do various
++c     checks and report status for vdatum, unitsys, and basis. 
++c 
++      if(make_tab_index == 'YES' .and. g_zone /= 'NONE') then
++        call ftab_loc_chk(
++     i              stdout)
++      endif
++
+ C     RESET OUTPUT
+       IF(OUTPUT.EQ.0) OUTPUT = 1
+  
+@@ -593,15 +1018,19 @@
+         ISITER = SITER
+ C       OUTPUT CHECK VALUES FOR INITIAL CONDITIONS
+         WRITE(STDOUT,*) ' '
+-        WRITE(STDOUT,*) ' INITIAL VALUES FROM GETIC FILE:',GETNAM
++        WRITE(STDOUT,*) ' Initial values from GETIC file:',GETNAM
+ C       CLEAR QPVEC TO AVOID ERRONEOUS OUTPUT FOR THE INITIAL
+-C       CONDITIONS
++C       CONDITIONS. Also clear the none-convergent node vectors
+         DO 9125 I=1,NBN
+           QPVEC(I) = 0.0
++          NON_CONV_BNODE(I) = 0
+  9125   CONTINUE
++        DO 9120 I=1,NEX
++          NON_CONV_ENODE(I) = 0
++9120    CONTINUE           
+         CALL RESOUT
+-     I             (GRAV, VUNIT, STDOUT, NBRA, NODEID, NEX, TIME,
+-     I              SFAC, BRPT, EXNODT, QCHOP)
++     I             (GRAV, VUNIT, STDOUT, NBRA, NODEID, NEX, time,
++     I              SFAC, BRPT, EXNODT, QCHOP, dz_for_output)
+       ELSE
+ C       SET INITIAL PONDING TO ZERO WHEN INITIAL CONDITIONS ARE NOT
+ C       READ FROM A FILE.  CLEAR EXTRAPOLATION VECTORS.  Also clear
+@@ -651,8 +1080,9 @@
+         LEAP = LPYEAR(YR)
+         MN = SMN
+         DY = SDY
+-        DYFRAC = SFRAC/24.D0
+-        HR = SFRAC
++c        DYFRAC = SFRAC/24.D0
++c        dyfrac = sfrac
++        HR = sngl(dyfrac*24.d0)
+         JTIME = SJTIME
+         TIME = 86400.D0*(SJTIME - TAB_789_JTBASE)
+         EVENT_BASE = TIME
+@@ -675,19 +1105,21 @@
+         WSI = 0.D0
+         WSQ = 0.D0
+         LAMBDA = 1.0
++c       Start over with time-step checking 
++        dot_flag = 0
++
++C     Reset the high iq ns factor to 1.0 for all unknowns
++      CALL RESET_HI_IQ_NS_FAC()
+  
+ C     Reset extreme values  and initialize various  values.
+  
+       DO 1 I=1,NBN
+         QPVEC(I) = 0.
+         WSVEC(I) = 0.
+-C        MY(I) = 0.
+-C        MQ(I) = 0.
+         QMIN(I) = 1.E30
+         ZMAX(I) = -9999.
+         QMAX(I) = -1.E30
+         VMAX(I) = -1.E30
+-C       POND1(I) = 0.0
+         POND2(I) = 0.0
+         TZMAX(I) = SJTIME
+         TQMAX(I) = SJTIME
+@@ -714,8 +1146,6 @@
+         BPOND(I) = 0.0
+  4    CONTINUE
+       DO 5 I=1,NEX
+-C        MYE(I) = 0.0
+-C        MQE(I) = 0.0
+         FNQMAX(I) = -1.E30
+         FNQMIN(I) =  1.E30
+         FNZMAX(I) = -1.E30
+@@ -734,17 +1164,21 @@
+ 6     CONTINUE
+ 
+ C     INITIALIZE THE SYSTEM.
+-      IF(DIFFUS.EQ.YES) REWIND BWFDSN
++c      IF(DIFFUS.EQ.YES) REWIND BWFDSN
+       IF(IFRZ.EQ.0) THEN
+         IF(DIFFUS.EQ.YES) THEN
+-          CALL BWGET
+-     I              (BWFDSN, NBRA, NBN, NEX, MNBLK, NBLK, OPBLK,
+-     O               WT)
+-          WRITE(STDOUT,*) ' BWF BEING READ WHEN IFRZ=0. WT=',WT
++          if(getdsn+putdsn == 0) then
++            bwrec = 1
++            CALL BWGET
++     I                (BWFDSN, NBRA, NBN, NEX, MNBLK, NBLK, OPBLK,
++     m                 bwrec,
++     O                 WT)
++            WRITE(STDOUT,*) ' BWF BEING READ WHEN IFRZ=0. WT=',WT
++          endif
+           IF(NBLK.GT.0) THEN
+             CALL OPINIT(NBLK, OPBLK)
+-            CALL SET_INITIAL_OPER_BLK(NBLK, OPBLK, SNGL(TIME), EPT,
+-     M                                EMC)
++            CALL SET_INITIAL_OPER_BLK(NBLK, OPBLK, jtime, EPT,
++     M                                  EMC)
+           ENDIF
+         ENDIF
+         CALL SETSTA
+@@ -759,8 +1193,8 @@
+      I              WXVEC1, MA1, DLAY_Q1, DLAY_K, DTEN_S1, DTEN_AVDA,
+      O              S1, D1)
+  
+-        IF(NFOUT.GT.0) CALL WRINIT
+-     I                            (SJTIME)
++        IF(NFOUT.GT.0.and. ifrz == 0) CALL WRINIT
++     I                                           (SJTIME)
+  
+ C       CHECK THE INITIAL VALUES FOR EXTREMES
+  
+@@ -770,7 +1204,7 @@
+ C       Output the first record to the GENSCN system.
+         IF(FEO_UNIT.GT.0) THEN
+           CALL OUT_GENSCN
+-     I                   (STDOUT, JTIME)
++     I                   (STDOUT, JTIME, dz_for_output)
+         ENDIF
+         
+  
+@@ -796,13 +1230,15 @@
+         CALL MANTIM
+      I             (BRPT, BWFDSN, DIFFUS, VUNIT, DTVEC, EXNODT, NBLK,
+      I              NBN, NBRA, NODEID, NEX, OPBLK, RESNUM, RESVEC, SFAC,
+-     I              FFFDSN, MINPRT, HSLOT, PUTDSN, BNODE, QCHOP, 
++     I              FFFDSN, MINPRT, HSLOT, PUTDSN, getdsn, BNODE, QCHOP, 
+      I              BNI, BNQ, TAI, TAQ, TAQBN, WSI, WSQ, OLD_SUMMARY,
+-     M              CFLAG, DT, IFRZ, WT, SEFLAG,
+-     O              EMC, SUMITR, S1, D1)
+- 
+- 
+- 
++     M              CFLAG, DT, DTDY, IFRZ, WT, SEFLAG,
++     O              EMC, SUMITR, S1, D1, dt_adjust, dz_for_output)
++ 
++        if(dt_adjust.eq.0) then
++          min_time_step = min(min_time_step,real(dt))
++        endif
++
+ C       CATCH END OF SEGMENT IN TSF. RESET = 0 ALWAYS IF NO TSF
+ C       SET TO 1 TO SIGNAL END OF A SEGMENT IF TSF IS PRESENT.
+  
+@@ -820,21 +1256,31 @@
+           ELSE
+             DTHR = 0.0
+           ENDIF
+-          CALL OPER(SNGL(TIME), NBLK, OPBLK, DTHR,
++          CALL OPER(jtime, NBLK, OPBLK, DTHR,
+      O              EMC)
+         ENDIF
+  
+  
+         IF(LDCALL.GT.0) THEN
+-          IF(IFRZ.EQ.0) THEN
++
++          IF(IFRZ.GT.0) THEN
++c           During frozen time, do lookup in the diffuse inflows with an offset of
++c           1 second to avoid possible roundoff problems in actually getting the very 
++c           first time point in a diffuse-flow file if the user should start there.
++c           We also set the time step to 1 second.
++            DTLOAD = 1.D0
++            DJLOAD = 1.157407D-5
++            dtdyload = 1.157407e-5
++          ELSE
+             DTLOAD = DT
+             DJLOAD = 0.D0
+-            DTIMLD = 0.0
++            dtdyload = dtdy
+           ENDIF
++
+           CALL LOAD
+      I             (DIFFUS, BRPT, NBRA, STDOUT, LPNT, MRPFPT, NBN, 
+-     I              OUTPUT, POINT, SNGL(TIME), WIND, PFPNT, QPN, 
+-     I              DT, DTLOAD, DJLOAD, DTIMLD,
++     I              OUTPUT, POINT, WIND, PFPNT, QPN, 
++     I              DT, dtdy, DTLOAD, dtdyload, DJLOAD, 
+      M              EMC,
+      O              EFLAG, WYR)
+  
+@@ -857,12 +1303,22 @@
+      I            (DT, NEX, MRE, EXNODT)
+  
+ C       COMPUTE  MATRIX, UPDATE SROLD, AND SOLVE MATRIX
++c        write(stdout,*) 'Dump initial values for current time step'
++c        do i=1,nbn
++c          write(stdout,'(i6,f12.3,1pe12.5)') i, y2(i), q2(i)
++c        enddo
++
++c        do i=1,nex
++c          write(stdout,'(i6,f12.3,1pe12.5)') i, ye2(i), qe2(i)
++c        enddo
++        
++
+  
+         LAMBDA = 1.0
+         KOUNT = 0
+ 
+         CALL CSMAT
+-     I            (DT, WT, NBN, NBRA, NEX, BRPT, HSLOT, EPT, DTMIN_OUT,
++     I        (DT, DTDY,WT, NBN, NBRA, NEX, BRPT, HSLOT, EPT, DTMIN_OUT,
+      I             START_EQ, END_EQ, JTIME, PRTIME, KOUNT, QEPS,
+      M             EMC, EXNODT,
+      O             SROLD, MXRES, LMXRES, ERRP, ERRQ, BERRQ, NERRQ,
+@@ -890,9 +1346,9 @@
+               WRITE(STDOUT,2020) YR, MN, DY, HRD, DT
+               CALL PRTLOG
+      I                   (STDOUT, KOUNT, MXREV, BMXREV, NMXREV, MXRV,
+-     I                    LMXRV, MXSSRV, KNTVEC)
++     I                    LMXRV, MXSSRV, KNTVEC, ivarv)
+             ENDIF
+-C           Count the exterior nodes, if any, that appear as the
++C           Count the exterior nodes, if any, that appear as 
+ C           the last location of maximum relative correction
+ C           when convergence fails.
+ 
+@@ -919,24 +1375,47 @@
+               ENDIF
+               WRITE(STDOUT,2180) ERRP, IBP, NERRP, ERRQ,
+      A                         IBQ, NERRQ, 
+-     B                         (TIME - EVENT_BASE)/FLOAT(SUMITR)
++     B                         (TIME - EVENT_BASE)/FLOAT(SUMITR),
++     c                          sumitr
+             ENDIF
++
++c           Make adjustments to HI_IQ_NS_FAC based on the variables that 
++c           appeared in the iteration log.  We did not get convergence. 
++            if(hi_iq_ns.ne.'NO') then
++              call  hi_iq_ns_fail(stdout, kount, mxrev, ivarv, kntvec,
++     i                            hi_iq_ns_dwn, hi_iq_ns_lmt, hi_iq_ns,
++     i                            hi_iq_ns_numgt, 
++     i                            hi_iq_ns_state,
++     m                            hi_iq_ns_fac,
++     o                            eflag)
++
++              if(eflag.eq.1) then
++                write(stdout,*) ' hi_iq_ns list has overflowed!'
++                stop 'Abnormal stop'
++              endif 
++            endif
++
+             GOTO 8000
+           ENDIF
+  
++
++
+ C         COMPUTE CORRECTIONS AND SAVE IN ENCORY(*), ENCORQ(*),
+ C         BNCORY(*), AND BNCORQ(*)
+  
+           CALL CMPCOR
+      I               (NBRA, NEX, BRPT, EXNODT, QEPS, EPSSYS, EPSSY2,
+      I                ABSTOL,
+-     O                MXRE, BMXRE, NMXRE, KNT, KNTA, BNODE_MAX)
++     O                MXRE, BMXRE, NMXRE, IVAR, KNT, KNTA, BNODE_MAX)
+  
+           MXREV(KOUNT) = MXRE
+           BMXREV(KOUNT) = BMXRE
+           NMXREV(KOUNT) = NMXRE
++          IVARV(KOUNT) = IVAR
+           KNTVEC(KOUNT) = KNT
+  
++
++
+ C         SAVE SET2 IN SET3
+  
+           DO 303 I=1,NBN
+@@ -1016,7 +1495,7 @@
+  
+               IF(IFRZ.EQ.0. AND.NFOUT.GT.0)
+      A          CALL WROUT
+-     I                    (JTIME, STDOUT, QCHOP, DT)
++     I                    (JTIME, STDOUT, QCHOP, DT, dz_for_output)
+  
+ C             UPDATE OPERATION BLOCKS WITH THE OLD SET 1 VALUES
+  
+@@ -1067,6 +1546,14 @@
+      A          CALL FMXMN
+      I                    (NBN, NEX, NBRA, EXNODT, BRPT, JTIME)
+  
++
++c              Output to time-step file if active
++               if(stddtout.gt.0) then
++                  call update_time_step_tab(stddtout, jtime, dt)
++        
++               endif
++                  
++                 
+ C              PRINT OUT RESULTS
+  
+                HRD = 24.*DYFRAC
+@@ -1074,10 +1561,20 @@
+                IF(OUTPUT.GT.2) WRITE(STDOUT,2010)
+                IF(MINPRT.EQ.0) THEN
+                  WRITE(STDOUT,2020) YR, MN, DY, HRD, DT
+-                 WRITE(*,2021) YR, MN, DY, HR, DT
++                 if(last_dt_to_console.ne.dt) then
++                   if(dot_flag.eq.1) then
++                     write(*,'(a1)') ' '
++                   endif
++                   WRITE(*,2021) YR, MN, DY, HR, DT
++                   last_dt_to_console = dt
++                   dot_flag = 0
++                 else
++                   write(*,'(a1)', ADVANCE='NO') '.'
++                   dot_flag = 1
++                 endif
+                  CALL PRTLOG
+      I                      (STDOUT, KOUNT, MXREV, BMXREV, NMXREV, MXRV,
+-     I                       LMXRV, MXSSRV, KNTVEC)
++     I                       LMXRV, MXSSRV, KNTVEC, ivarv)
+                  IF(BERRP.EQ.0) THEN
+                    IBP = 0
+                  ELSE
+@@ -1090,13 +1587,14 @@
+                  ENDIF
+                  WRITE(STDOUT,2180) ERRP, IBP, NERRP, ERRQ,
+      A                            IBQ, NERRQ, 
+-     B                            (TIME - EVENT_BASE)/FLOAT(SUMITR)
++     B                            (TIME - EVENT_BASE)/FLOAT(SUMITR),
++     c                            sumitr
+                ENDIF
+                IF(IPRT.EQ.1.OR.JTIME.GT.PRTIME.OR.DT.LT.DTMIN_OUT)
+      A           CALL RESOUT
+      I                      (GRAV, VUNIT, STDOUT, NBRA, NODEID, NEX,
+-     I                       TIME, SFAC, BRPT, EXNODT,
+-     I                       QCHOP)
++     I                       time, SFAC, BRPT, EXNODT,
++     I                       QCHOP, dz_for_output)
+                IF(IFRZ.EQ.0) THEN
+  
+                  IF(IPRT.EQ.1.OR.JTIME.GT.PRTIME.OR.
+@@ -1129,29 +1627,36 @@
+  
+ C                OUTPUT QPVEC
+  
+-                 IF(OUTPUT.GT.4) THEN
+-                   CALL QPVOUT
+-     I                        (NBRA, NBN, STDOUT, BRPT, QPVEC, NRWTA,
+-     I                         RWTA, RTAP)
+-                 ENDIF
++c                 IF(OUTPUT.GT.4) THEN
++c                   CALL QPVOUT
++c     I                        (NBRA, NBN, STDOUT, BRPT, QPVEC, NRWTA,
++c     I                         RWTA, RTAP)
++c                 ENDIF
+ 
+ C                Output to the GENSCN file. 
+                  IF(FEO_UNIT.GT.0) THEN
+                    CALL OUT_GENSCN
+-     I                            (STDOUT, JTIME)
++     I                            (STDOUT, JTIME, dz_for_output)
+                  ENDIF
+                ENDIF
+  
+-               IF(NOUT.GT.0)
++               IF(NOUT.GT.0.and.ifrz.le.1)
+      A           CALL OUTSP
+      I                     (EXNODT, NEX, YR, MN, DY, HR, NOUT, UNIT, 
+-     I                      POUT,
++     I                      POUT, dz_for_output,
+      M                      QOUT, ZOUT, LKOUNT)
+  
+-C              GOTO NEXT TIME INTERVAL
++C                GOTO NEXT TIME INTERVAL
+ 
+ C      CALL MISSVOL(NBRA, NBN, BRPT, DXVEC, A2, GEQVEC, K2, T2, Q2,
+ C     A             0, JTIME)
++
++                 if(hi_iq_ns.ne.'NO') then
++                   call hi_iq_ns_success(stdout, hi_iq_ns_up, hi_iq_ns,
++     i                                   dt, hi_iq_ns_dt,
++     m                                   hi_iq_ns_fac)
++                 endif
++
+  
+                GOTO 8000
+  
+@@ -1178,7 +1683,7 @@
+  
+  
+             CALL CSMAT
+-     I                (DT, WT, NBN, NBRA, NEX, BRPT, HSLOT, EPT,
++     I                (DT, DTDY,WT, NBN, NBRA, NEX, BRPT, HSLOT, EPT,
+      I                 DTMIN_OUT, START_EQ, END_EQ, JTIME, PRTIME, 
+      I                 KOUNT, QEPS,
+      M                 EMC, EXNODT,

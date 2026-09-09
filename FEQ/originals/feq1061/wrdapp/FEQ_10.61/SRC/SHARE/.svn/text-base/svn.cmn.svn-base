@@ -1,0 +1,15 @@
+c     Track status of a subversion working copy.  May not
+c     be used but should be:)
+c     Also use to document the subversion info for the source
+c     code
+
+      integer svn_rev, svn_mod
+
+      character*256 url, revision
+
+      common/svncom/ svn_rev, svn_mod
+
+      common/svncomc/url, revision
+
+      save /svncom/, /svncomc/
+

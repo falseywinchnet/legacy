@@ -1,0 +1,41 @@
+--- 9.98/fequtl/makelakexs.for
++++ 10.61/fequtl/makelakexs.for
+@@ -12,10 +12,10 @@
+       INTEGER EFLAG, STDIN, STDOUT
+ 
+       INCLUDE 'arsize.prm'
+-      INCLUDE 'ftable.CMN'
++      INCLUDE 'ftable.cmn'
+ 
+ C     Called program units
+-      EXTERNAL INL80, STRIP_L_BLANKS
++      EXTERNAL inline, STRIP_L_BLANKS
+ 
+ C     Local variables.
+ 
+@@ -40,7 +40,7 @@
+ C***********************************************************************
+ C     Get the tabids for the invert description.
+ 
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+ 
+@@ -91,14 +91,14 @@
+ C     input the station and offset data in advancing station order. 
+ 
+ C     Input the heading line
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       
+       I = 0
+ 100   CONTINUE
+ 
+-        CALL INL80
++        CALL inline
+      I    (STDIN, STDOUT,
+      O     LINE)
+ 

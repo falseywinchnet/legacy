@@ -1,0 +1,11 @@
+c     common for high iq newton solution
+
+      integer mrlist
+      parameter (mrlist=100)
+
+      integer hi_iq_ns_avail_p, hi_iq_ns_active_p
+      integer hi_iq_ns_vars(mrlist), hi_iq_ns_fp(mrlist), 
+     a        hi_iq_ns_bp(mrlist)
+
+      common /hiiqnscmn/ hi_iq_ns_vars, hi_iq_ns_fp, hi_iq_ns_bp,
+     a   hi_iq_ns_avail_p, hi_iq_ns_active_p

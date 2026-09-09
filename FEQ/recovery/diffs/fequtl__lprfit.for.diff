@@ -1,0 +1,275 @@
+--- 9.98/fequtl/lprfit.for
++++ 10.61/fequtl/lprfit.for
+@@ -28,6 +28,23 @@
+ C     Default for:OUTFAC
+       LPRFITITEMFTAB(  3) = 43560.0
+ 
++C     Default for: ZONE
++      LPRFITITEMCTAB(  7) = 'NONE'
++C     Default for: HGRID
++      LPRFITITEMCTAB(  8) = 'NONE'
++C     Default for: VDATUM
++      LPRFITITEMCTAB(  9) = 'NONE'
++C     Default for: UNITSYS
++      LPRFITITEMCTAB( 10) = 'NONE'
++C     Default for: BASIS
++      LPRFITITEMCTAB( 11) = 'NONE'
++
++C     Default for: EASTING
++      LPRFITITEMDTAB(  3) = -33d6
++C     Default for: NORTHING
++      LPRFITITEMDTAB(  4) =  -33d6
++      
++
+       RETURN
+       END
+ C
+@@ -36,7 +53,9 @@
+       SUBROUTINE  SET_LPRFIT_ITEMS(
+      M             EFLAG,
+      O             TAB, FIT_WITH, CHK_OPTION, LEFT_SLOPE, 
+-     O             RIGHT_SLOPE, ARGFAC, INFAC, OUTFAC)
++     O             RIGHT_SLOPE, ARGFAC, INFAC, OUTFAC,
++     O             zone, hgrid, vdatum, unitsys, basis, 
++     O             easting, northing)
+ 
+ C     Set items in LPRFIT
+ C     All values not set explicitly by user are at their default value.
+@@ -46,6 +65,8 @@
+       INTEGER EFLAG, TAB
+       REAL ARGFAC, INFAC, OUTFAC
+       CHARACTER*16 FIT_WITH, CHK_OPTION, LEFT_SLOPE, RIGHT_SLOPE
++      character*8 zone, hgrid, vdatum, unitsys, basis
++      real*8 easting, northing
+     
+ 
+ C     Local
+@@ -71,21 +92,37 @@
+       ELSE
+         TAB = 0
+       ENDIF
+-C     Default for: FIT_WITH
++C     Valuet for: FIT_WITH
+       FIT_WITH = LPRFITITEMCTAB(  3) 
+-C     Default for: CHK_OPTION
++C     Value for: CHK_OPTION
+       CHK_OPTION = LPRFITITEMCTAB(  4) 
+-C     Default for: LEFT_SLOPE
++C     Value for: LEFT_SLOPE
+       LEFT_SLOPE = LPRFITITEMCTAB(  5) 
+-C     Default for: RIGHT_SLOPE
++C     Value for: RIGHT_SLOPE
+       RIGHT_SLOPE =  LPRFITITEMCTAB(  6)
+ 
+-C     Default for:ARGFAC 
++C     Value for:ARGFAC 
+       ARGFAC = LPRFITITEMFTAB(  1)
+-C     Default for:INFAC
++C     Value for:INFAC
+       INFAC =  LPRFITITEMFTAB(  2) 
+-C     Default for:OUTFAC
++C     Value for:OUTFAC
+       OUTFAC =  LPRFITITEMFTAB(  3) 
++c     value for: ZONE
++      zone = LPRFITITEMCTAB(  7)
++c     value for: HGRID
++      hgrid = LPRFITITEMCTAB(  8)
++c     value for: VDATUM
++      vdatum = LPRFITITEMCTAB(  9)
++c     value for: UNITSYS
++      unitsys = LPRFITITEMCTAB(  10)
++c     value for: BASIS
++      basis = LPRFITITEMCTAB(  11)
++
++c     value for: EASTING
++      easting = LPRFITITEMDTAB(  3)
++c     value for: northing
++      northing = LPRFITITEMDTAB(  4)
++
+     
+       RETURN
+       END
+@@ -110,7 +147,7 @@
+ C     + + + LOCAL PARAMETERS + + +
+       INTEGER  INTVAL, REAVAL, CHRVAL, DPRVAL, EXACT, LOWER,
+      B         NUMERIC, CHAR, N_SYMBOL, NXTBLK, ENDSIG, NONE
+-      PARAMETER(N_SYMBOL=16, INTVAL=1, REAVAL=2,
++      PARAMETER(N_SYMBOL=23, INTVAL=1, REAVAL=2,
+      A          DPRVAL=3, CHRVAL=4, EXACT=0, LOWER=1, 
+      B          NUMERIC=0, CHAR=1, NXTBLK=2, ENDSIG=3,
+      C          NONE=0)
+@@ -132,26 +169,28 @@
+      A'TABID','TABLE','FIT_WITH','CHK_OPTION','LEFT_SLOPE',
+      B'RIGHT_SLOPE','ARGFAC','INFAC','OUTFAC','DATA',
+      C 'ARGUMENT','Argument','ELEVATION','Elevation','DEPTH',
+-     D 'Depth'/
++     D 'Depth','ZONE','HGRID','VDATUM','UNITSYS',
++     E 'EASTING','NORTHING','BASIS'/
+                                                                       
+       DATA GROUP  /
+-     A   6*CHAR, 3*NUMERIC,ENDSIG,6*NXTBLK/          
++     A   6*CHAR, 3*NUMERIC,ENDSIG,6*NXTBLK,4*CHAR,2*NUMERIC,CHAR/          
+ 
+       DATA GROUP_INDEX /
+-     A  1, 2, 3, 4, 5, 6, 1, 2, 3, 7*0/
++     A  1, 2, 3, 4, 5, 6, 1, 2, 3, 7*0, 7, 8, 9, 10,
++     b  5, 7,11/
+                                        
+       DATA RESPONSE_TYPE  /
+-     A  6*CHRVAL,3*REAVAL,7*NONE/
++     A  6*CHRVAL,3*REAVAL,7*NONE,4*CHRVAL,2*DPRVAL,CHRVAL/
+     
+       DATA CONVERT_RULE /
+-     A  4*EXACT,2*LOWER,3*LOWER,7*EXACT/
++     A  4*EXACT,2*LOWER,3*LOWER,7*EXACT,4*LOWER,2*LOWER,LOWER/
+    
+ C***********************************************************************
+ C     Set Defaults
+  
+       CALL SET_LPRFIT_ITEM_DEFAULTS()
+ 
+-      MAX_LINE = 10
++      MAX_LINE = 14
+       CALL GET_NAMED_ITEMS(
+      I                     STDIN, STDOUT,  MAX_LINE, N_SYMBOL,
+      I  GROUP, RESPONSE_TYPE, CONVERT_RULE, GROUP_INDEX, SYMBOL_TABLE,
+@@ -255,6 +294,7 @@
+ C     + + + COMMON BLOCKS + + +
+       INCLUDE 'arsize.prm'
+       INCLUDE 'ftable.cmn'
++      include 'grid_datum.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER ADRS, I, J, N, NF, NITEM, MAXN, TABLE, LCODE, RCODE,
+@@ -262,27 +302,28 @@
+ 
+       PARAMETER (MAXN=8)
+ 
+-      INTEGER ITEM_START(MAXN), ITEM_END(MAXN), ADJLOC(MNDEP)
++      INTEGER ITEM_START(MAXN), ITEM_END(MAXN)
+ 
+       REAL ARGFAC, INFAC, OUTFAC, YS(MNDEP), SS(MNDEP), AS(MNDEP),
+      A     YOLD, SOLD, AOLD, DY, YNEW, SNEW, ANEW, DA
+ 
+       REAL*8 Y(MNDEP), S(MNDEP), A(MNDEP), ARG, FVEC(10),
+      A       OLDARG, SUM, RATIO, LVAL, RVAL, TERM, H1, H2, DS,
+-     B       IFAC(4)
++     B       IFAC(4), easting, northing
+ 
+       CHARACTER*16 FIT_WITH, CHK_OPTION, LEFT_SLOPE, RIGHT_SLOPE,
+      A             TABID
+-      CHARACTER LINE*120, JUST*5, AREA*10, VOLUME*10
++      CHARACTER LINE*120, JUST*5, AREA*10, VOLUME*10, ADJLOC(MNDEP)*1,
++     a          zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+     
+   
+  
+ C     + + + EXTERNAL NAMES + + +
+       INTEGER LENSTR
+       CHARACTER GET_TABID*16, PUT10D*10
+-      EXTERNAL  INL120,  KIL, LENSTR, VAR_DECIMALD,
++      EXTERNAL  inline,  KIL, LENSTR, VAR_DECIMALD,
+      A GET_LPRFIT_ITEMS, SET_LPRFIT_ITEMS, GET_TABID,
+-     B PUT1D, LKTAB
++     B PUT1D, LKTAB, chk_vdatum_unitsys
+ 
+       DATA IFAC/4.D0,2.D0,4.D0,1.D0/ 
+ C     + + + INPUT FORMATS + + +
+@@ -306,14 +347,17 @@
+ 64    FORMAT(/,' *ERR:765* Number of tabulated values in LPRFIT=',
+      A   I5,' > ',I5,/,' Increase value of MNDEP in file',
+      B  ' arsize.prm and recompile.')
++ 65   format('ZONE=',a8,' HGRID=',a8,' VDATUM=',a8,' UNITSYS=',a8,
++     a        ' BASIS=',a8,/, 'EASTING=',0PF15.3,' NORTHING=',F15.3)
++
+ 66    FORMAT(/,'  Argument        Storage')
+ 68    FORMAT(F10.2,10(1PE15.8))
+ 70    FORMAT(/,'*ERR:766* Unable to read ',A,
+      A   ' for left-hand slope value.')
+ 72    FORMAT(/,'*ERR:767* Unable to read ',A,
+      A   ' for right-hand slope value.')
+-74    FORMAT('TABID=',A16,/,'TYPE=   -4',/,
+-     A            'REFL=       0.0 FAC=',F10.1,
++74    FORMAT('TABID=',A16,/,'TYPE=   -4')
++ 76   format( 'REFL=       0.0 FAC=',F10.2,
+      B /,' ELEVATION    VOLUME      AREA')
+ 80    FORMAT(/,' *ERR:768* Storage=',F10.3,
+      A      ' <  0.0 at argument=',F10.3)
+@@ -346,7 +390,13 @@
+       CALL  SET_LPRFIT_ITEMS(
+      M             EFLAG,
+      O             TABLE, FIT_WITH, CHK_OPTION, LEFT_SLOPE, 
+-     O             RIGHT_SLOPE, ARGFAC, INFAC, OUTFAC)
++     O             RIGHT_SLOPE, ARGFAC, INFAC, OUTFAC,
++     O             zone, hgrid, vdatum, unitsys, basis, 
++     O             easting, northing)
++
++      call chk_vdatum_unitsys(stdout, vdatum, unitsys, 
++     a          ' during output of table for LPR capacity')
++
+ 
+ 
+       TABID = GET_TABID(TABLE)
+@@ -376,7 +426,7 @@
+      M                                       EFLAG)
+  
+ C     Get the heading line.
+-      CALL INL120
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       
+@@ -390,7 +440,7 @@
+       WRITE(STDOUT,66)
+ 
+ 100   CONTINUE
+-        CALL INL120
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+ 
+@@ -414,7 +464,7 @@
+               STOP 'Abnormal stop.  Error(s) found.'
+             ENDIF
+             WRITE(STDOUT,68) ARG, (FVEC(J), J=1,NF) 
+-            Y(I) = ARG*ARGFAC
++            Y(I) = (ARG )*ARGFAC
+             S(I) = SUM*RATIO
+             OLDARG = ARG
+             GOTO 100
+@@ -532,8 +582,8 @@
+       WRITE(STDOUT,96) YOLD, SOLD, AOLD, DA
+       DO 129 I=2,N
+ 
+-        DY = Y(I) - Y(I-1)
+-        DS = S(I) - S(I-1)
++        DY = YS(I) - YS(I-1)
++        DS = SS(I) - SS(I-1)
+         SUM = AOLD
+         DO 127 J=1,4
+           YNEW = YOLD + DY*FLOAT(J)/4.0
+@@ -601,7 +651,15 @@
+ 
+ C     Output a table of type 4
+ 
+-      WRITE(STDTAB,74) TABID, OUTFAC
++      WRITE(STDTAB,74) TABID
++
++      if(zone /= 'NONE' .and. zone /= 'NONE')  then
++c       Output the location information.
++        write(stdtab, 65) zone, hgrid, vdatum, unitsys, basis, easting, 
++     a        northing
++      endif
++
++      write(stdtab,76) outfac
+ 
+       DO 140 I=1,N
+         CALL VAR_DECIMALD(S(I),
+@@ -618,6 +676,7 @@
+       ENDIF
+       WRITE(STDTAB,'(F10.0)') TERM
+ 
++
+       RETURN
+ 998   CONTINUE
+        WRITE(STDOUT,70) LEFT_SLOPE

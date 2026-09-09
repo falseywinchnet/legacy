@@ -1,0 +1,295 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Appendix B: Glossary of Terms and Acronyms</title>
+</head>
+<body bgcolor="#FFFFFF">
+<a href="http://www.usgs.gov"><img SRC="2935.gif" ALT="USGS" BORDER=0 height=72 width=480 align=TEXTTOP></a>
+<h2>
+APPENDIX B:<br>
+Glossary of Terms and Acronyms</h2>
+
+<hr>
+<p>[Bold terms are FEQ or FEQUTL output that are not echoed from input
+terms.]
+<p><b><font face="Arial">AL</font></b> : Cross-sectional area of flow in
+the steady-flow computations at the station. The steady-flow computations
+proceed from downstream to upstream and are printed in that order.
+<p><b><font face="Arial">AREA</font></b> : Cross-sectional area of flow
+in the unsteady-flow computations. The unsteady- flow results are printed
+from upstream to downstream in the output.
+<p><font face="Arial">BACKWATER</font> (4): Water surface of stream raised
+above its normal level by a natural or artificial obstruction.
+<p><b><font face="Arial">BC </font></b>: Balance computation summary label.
+A system-wide water-volume balance is maintained by tracking the inflows
+and outflows at the boundaries of the system and comparing the sum to the
+change in storage within the system. If the relative error in the balance,
+<b><font face="Arial">R</font></b>,
+is larger than a fraction of 1 percent, then an error is likely.
+<p><b><font face="Arial">BOTM ELEV</font></b>: Bottom elevation for free
+nodes and level-pool reservoirs in the summary of extremes at the end of
+a simulated event. The elevation may be an actual bottom elevation or it
+may be the datum for the depth variable associated with the free node or
+level-pool reservoir. In most cases, it is convenient to make the elevation
+and depth the same value for the free and level-pool reservoir nodes; thus,
+the bottom elevation is zero.
+<p><font face="Arial">BOUNDARY CONDITIONS: </font>The stage, discharge,
+or rating curve data needed at one or more terminating branches of an unsteady-flow
+model in order to solve the equations of flow for the system.
+<p><font face="Arial">BRANCH: </font>The FEQ representation of a reach
+of a channel or other watercourse between hydraulic features that cannot
+be represented by the governing equations for gradually varied flow.
+<p><b><font face="Arial">BRA</font></b> (iteration log): The branch number
+in which the maximum relative correction <b><font face="Arial">RCORECT</font></b>
+occurred. If the branch number is zero, then the node number in the <b><font face="Arial">NODE</font></b>
+column is an exterior node number or name; otherwise, the node number is
+the number of the node on the branch.
+<p><b><font face="Arial">BRANCH NUMBER</font></b> : Branch number of the
+output of detailed results for each time step.
+<p><b><font face="Arial">BRANCH PONDING VOLUME</font></b>: Volume of water
+ponded above a branch if the storm-sewer option is invoked by inputting
+CF and YC to represent the path for inflow and outflow of water from a
+storm sewer in the branch.
+<p><font face="Arial">CHANNEL</font>: A natural or artificial waterway
+that periodically or continuously contains moving water.
+<p><b><font face="Arial">COMPUTATION TIME</font></b> : Computer processing
+time spent to complete unsteady-flow computations including function table
+lookup, network matrix content, solving network matrix, updating variables,
+output of results, and so forth. Excludes the input processing and the
+initialization time.
+<p><font face="Arial">CONVEYANCE</font> : A measure of the flow carrying
+capacity of a channel section.
+<p><font face="Arial">CROSS SECTION</font> : A series of coordinates representing
+the elevations and distances of points across a stream channel, perpendicular
+to the direction of flow.
+<p><font face="Arial"><b>CSUR:</b> </font>The maximum relative change in
+storm-sewer surcharge storage for the system. See <b><font face="Arial"><font size=-1>BRANCH
+PONDING VOLUME</font></font></b>.
+<p><b><font face="Arial">D</font></b> (end of time step output) : Balance
+error in cubic feet or cubic meters. The balance error is computed by the
+equation <font face="Arial"><font size=-1><b>D </b>=<b> S2 </b>+<b> Q </b>-<b>
+S1 </b>-<b> I</b></font></font> , where S2 is the water volume in the system
+at the current time; Q is the sum of the outflows from the start of the
+event to the current time; S1 is the water volume in the system at the
+start of the event; and I is the sum of the inflows from the start of the
+simulated event to the current time.
+<p><b><font face="Arial">DEPTH</font></b> (each time step): Maximum water
+depth for the time step. The water depth is the difference between the
+water-surface elevation and the minimum elevation point in the cross section.
+<p><b><font face="Arial">DT/ITER</font></b> (each time step): Number of
+seconds of simulation time per iteration since the start of the computations
+for the simulated event.
+<p><b><font face="Arial">DX</font></b> : Length of each computational element
+in a branch in the steady-flow computations.
+<p><b><font face="Arial">DZ</font></b> : Change in elevation across each
+computational element in a branch in the steady-flow computations. A negative
+value indicates a drop in the downstream direction.
+<p><b><font face="Arial">ELEV</font></b><font size=-1> : </font>Water-surface
+elevation in both the steady-flow computations and in the detailed output
+for a time step.
+<p><b><font face="Arial">FLOW</font></b> (each time step): Flow rate in
+cubic feet per second. A negative value indicates that the flow is moving
+from downstream to upstream at a node.
+<p><b><font face="Arial">FR</font></b> : Square of the Froude number in
+both the steady-flow computations and in the output for each time step.
+<p><font face="Arial">FROUDE NUMBER</font> : Dimensionless parameter that
+is the ratio of inertial to gravitational force. The Froude number value
+is one for critical flow, where the specific energy is minimum for a given
+depth.
+<p><b><font face="Arial">I</font></b> : The sum of the inflows to the system,
+used in the water-balance computation. See also <b><font face="Arial"><font size=-1>BC,
+Q, D, S1, S2, and R</font></font></b>.
+<p><b><font face="Arial">IFRZ</font></b>: The number of frozen time steps
+not yet completed. A frozen time step is a time step where the time is
+held constant while the time step is greater than zero. It is used to reduce
+the small differences between the initial condition as given by the steady-flow
+computations and the steady flow that would result if the unsteady-flow
+computations were continued with the boundary conditions held fixed. Freezing
+the time step results in fixed boundary conditions.
+<p><b><font face="Arial">INITIALIZATION TIME</font></b>: The computer time
+spent processing the input to FEQ and computing the initial conditions.
+<p><b><font face="Arial">IT</font></b>: The number of iterations required
+to reach convergence in the steady-flow computations.
+<p><font face="Arial"><b>JTIME</b>: </font>The time in Julian time as defined
+in FEQ. FEQ takes the beginning of January 1, 1901 as Julian time 15385.0.
+Thus, JTIME=15385.5 is the same as noon on January 1, 1901. The relations
+used to compute JTIME and also to invert JTIME (compute the year, month,
+day, and hour from a given JTIME) are valid from November 17, 1858 through
+December 31, 25000. JTIME is used to create a strictly increasing and uniform
+index for time. All the dates given in FEQ are converted to Julian time
+to make comparisons both easier and faster. JTIME is based on modified
+Julian time (as defined astronomically) but with changes for convenient
+use in FEQ.
+<p><font face="Arial"><b>LAT IN</b>:</font> This column gives the lateral
+inflows when DIFFUS=YES. These flows are averaged over the time step.
+<p><font face="Arial">LEVEL-POOL RESERVOIR:<b> </b></font>A body of water
+with a water surface that has no slope and no momentum.
+<p><b><font face="Arial">LOC</font></b>: The location of the maximum residual
+given in the column headed by MXRES. The location is the equation number
+in either the exterior or interior system. A negative number denotes an
+equation in the exterior system and a positive number an equation in the
+interior system. This is sometimes useful in diagnosing problems with the
+solution when debugging the software.
+<p><font face="Arial">MANNING'S <i>n</i>: </font>The roughness coefficient
+used in Manning's formula for computing conveyance in an open channel.
+<p><font face="Arial"><b>MAX DEPTH</b>:</font> Appears in the extreme value
+summary at the end of the event and given the maximum depth reached during
+the event.
+<p><font face="Arial"><b>MAX ELEV</b>:</font> Appears in the extreme value
+summary at the end of the event and gives the maximum depth reached during
+the event.
+<p><font face="Arial"><b>MAX VELOC</b>:</font> Appears in the extreme value
+summary at the end of the event and gives the maximum velocity reached
+during the event. This is the absolute value of the velocity so that high-velocity
+flows that are reversing also are included as a positive velocity.
+<p><font face="Arial"><b>MXRES</b>:</font> Appears in the iteration log
+and gives the maximum absolute value of the residual in solving the network
+matrix. MXRES will be small relative to the other terms in the equation.
+<p><font face="Arial"><b>ND</b>:</font> Used with CSUR and RLTQ to denote
+the branch and node location. It consists of two numbers: the first is
+the branch number and the second, following the colon, is the node number
+on the branch.
+<p><font face="Arial"><b>NETWORK PONDING VOLUME</b>:</font> Appears after
+the branch results in the detailed output at a time step and is the ponding
+volume above storm sewers for the entire network.
+<p><font face="Arial"><b>NODE</b>:</font> Labels the column of node numbers
+on a branch in the branch output and the column of exterior node numbers
+in the exterior node output. Note that the exterior nodes in the new input
+style are names for nodes and not numbers.
+<p><font face="Arial"><b>NODEID</b>:</font> Labels the column of the alphanumeric
+string giving the node identification taken from the input.
+<p><font face="Arial"><b>NUMGT</b>:</font> If the user has given a value
+to NUMGT in the input in the Run Control Block, the NUMGT is the number
+of nodes that fall outside the primary tolerance for convergence but meet
+the secondary tolerance for convergence. The values given under this column
+in the iteration log will never exceed the input value of NUMGT.
+<p><font face="Arial"><b>Q</b>:</font> The sum of outflows from the system
+in the balance computations from the beginning of the event to the current
+time. See BC.
+<p><font face="Arial"><b>QE1</b>:</font> The flow at the exterior node
+in the output of the detailed exterior node information given at a time
+step.
+<p><font face="Arial"><b>QL</b>:</font> Appears in the steady-flow profile
+output and is the flow at the node.
+<p><font face="Arial"><b>QMAX</b>:</font> Appears in the summary of extremes
+output and is the maximum flow rate. This is the true maximum with regard
+to sign. That is, negative flows are considered to be smaller than any
+positive flow.
+<p><font face="Arial"><b>QMIN</b>:</font> Appears in the summary of exter
+me output and is the minimum flow rate. This is the true minimum with regard
+to sign. Any negative flow is considered to be smaller than any positive
+flow.
+<p><font face="Arial">RATING CURVE: </font>The plot representing the relation
+of stage or elevation and discharge at a particular structure or point
+in a stream.
+<p><font face="Arial"><b>R</b>:</font> Appears in the balance check output
+and gives the error in balance relative to the sum of the current storage
+and the cumulative outflow of water from the hydraulic system (<i>S</i>2
++<i>Q</i>).
+<p><font face="Arial"><b>RCORECT</b>:</font> The maximum relative correction
+in the iteration log for the entire stream system. Used for applying the
+primary convergence criterion that the maximum relative correction in absolute
+value must be less than the tolerance specified by the user.
+<p><font face="Arial"><b>RES</b>:</font> Appears in the output for the
+steady-flow profiles and is the residual in the function used to define
+the root of the equation being solved. A large residual at convergence
+may indicate some problem in the steady-flow computations.
+<p><font face="Arial"><b>RESULTS AT TIME</b>:</font> Appears in the detailed
+output for a time step. The elapsed time since the beginning of the event
+in seconds.
+<p><font face="Arial"><b>RLTQ</b>:</font> The maximum relative lateral
+inflow for the system. Computed as the ratio of the current rate of lateral
+inflow to the current average flow in the element receiving the lateral
+inflow. Large values often indicate computational problems where any value
+greater than one can be considered.
+<p><font face="Arial"><b>S1</b>:</font> The initial storage in the stream
+system at the beginning of the event used in the balance check. This storage
+includes the water in the branches and in reservoirs.
+<p><font face="Arial"><b>S2</b>:</font> The current storage in the stream
+system used in the balance check. This storage includes the water in the
+branches, reservoirs, and in storm-sewer surcharge storage.
+<p><font face="Arial"><b>SIMULATION COMPLETE</b>:</font> Message given
+when the simulation of an event has been completed. The final time point
+in the simulation is printed in detail to show the final state of the stream
+system.
+<p><font face="Arial"><b>SIMULATION ENDING AT</b>:</font> The time in terms
+of year, month, day, and hour and fraction of an hour at the end of the
+current time step. The length of the current time step is given in seconds.
+<p><font face="Arial"><b>STAT</b>:</font> The station of each node on a
+branch in the detailed output for a time step.
+<p><font face="Arial"><b>STATION</b>:</font> The station of each node on
+a branch in the steady-state profile computation output.
+<p><font face="Arial"><b>STORAGE</b>:</font> The amount of water stored
+in each level-pool reservoir. Two numbers are given: the first is the storage
+in internal units, cubic feet or cubic meters, and the second is the storage
+in acre-feet in English units and thousands of cubic meters in metric units.
+In the output of extreme values, only the values in units or acre-feet
+or thousands of cubic meters are given.
+<p><font face="Arial">SUBCRITICAL FLOW: </font>The flow condition at which
+gravitational acceleration is the dominant governing force. The Froude
+number is less than 1.0.
+<p><font face="Arial">SUPERCRITICAL FLOW:<b> </b></font>The flow condition
+for which inertia is the dominant governing force. The Froude number is
+greater than 1.0.
+<p><font face="Arial"><b>SURF AREA</b>:</font> The surface area of each
+reservoir corresponding to the maximum water-surface elevation in the output
+of extreme values. Acres in English units and square kilometers in metric
+units.
+<p><font face="Arial"><b>SUMSQR</b>:</font> Appears in the iteration log
+and is the sum of the squared residuals of all the equations in both the
+interior and exterior system. Used internally for controlling the size
+of the correction used in the iterative solution.
+<p><font face="Arial"><b>TIME IN COMPUTING NETWORK MATRIX</b>:</font> The
+elapsed time in computing the contents of the network matrix. This may
+be an underestimate for small networks because the timing software resolution
+is sometimes too coarse for accurate timing.
+<p><font face="Arial"><b>TIME IN SOLVING NETWORK MATRIX</b>:</font> The
+elapsed time in solving the network matrix. This may be an underestimate
+for small networks because the timing software resolution is sometimes
+too coarse for accurate timing.
+<p><font face="Arial"><b>TIME OF MAX Q</b>:</font> Heading for the column
+of the times of maximum flows in the summary of extremes. The time is given
+in year (first two digits dropped to save space), month, day, and hour
+in fractional form.
+<p><font face="Arial"><b>TIME OF MAX Z</b>:</font> Heading for the column
+of the times of maximum elevations in the summary of extremes. The time
+is given in year (first two digits dropped to save space), month, day,
+and hour in fractional form.
+<p><font face="Arial"><b>TIME OF MIN Q</b>:</font> Heading of the column
+of times of the minimum flows in the summary of extremes. The time is given
+in year (first two digits dropped to save space), month, day, and hour
+in fractional form. The minimum flow is defined algebraically considering
+the sign of the flow. Thus, the minimum flow could be the maximum flow
+if the absolute value is considered.
+<p><font face="Arial"><b>TIME STEP RESET IN MANTIM TO</b>:</font> The ending
+time specified by the user in the Run Control Block is used in FEQ. However,
+there is no guarantee that the sequence of time steps selected by FEQ will
+exactly match the ending time. The subroutine used to manage the time step,
+MANTIM, resets the final time step to match the ending time specified by
+the user.
+<p><font face="Arial"><b>TL</b>:</font> The top width of the wetted cross
+section in the steady-flow profile output.
+<p><font face="Arial"><b>TOP</b>:</font> The top width of the wetted cross
+section in the detailed output for the time step.
+<p><font face="Arial"><b>VEL</b>:</font> The average velocity for the flow
+in the cross section in the detailed output for a time step.
+<p><font face="Arial"><b>WT</b>:</font> The current value of the time integration
+weight factor. When
+<i>WT</i>=0.5, the trapezoidal rule is used to approximate
+the integrals with respect to time. Values of <i>WT</i>>0.5 reduce the
+accuracy of the approximate integration but reduce the effect of non-linear
+oscillations that sometimes distort the numerical solution.
+<p><font face="Arial"><b>YE1</b>:</font> The depth at each exterior node
+in the detailed output for exterior nodes at a time step.
+<p><font face="Arial"><b>YL</b>:</font> The depth at each node on a branch
+in the steady-flow computation.
+<br>
+<br>
+<hr>
+<a href="../index.html">[Back to FEQ Web Resources]</a>
+<hr>
+<script type="application/javascript" src="http://www.usgs.gov/scripts/analytics/usgs-analytics.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a382cc131cf6db47',t:'MTc4ODkyMTMwMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

@@ -1,0 +1,119 @@
+--- 9.98/feq/block.for
++++ 10.61/feq/block.for
+@@ -1,33 +1,58 @@
+ C
+ C
+ C
+-      BLOCKDATA   SPOUT_INIT
++      SUBROUTINE   SPOUT_INIT()
+  
+ C     + + + PURPOSE + + +
+ C     Initialize the list of names for special output item
+ C     names.
+- 
++       
++      implicit none
++
++      integer i, j
++
+ C     + + + COMMON BLOCKS + + +
+       INCLUDE 'arsize.prm'
+       INCLUDE 'spout.cmn'
+  
+-C     + + + DATA INITIALIZATIONS + + +
+-      DATA SPOUT_ITEM_NAME/'V','MCV','FPV','A','MCA','FPA',
+-     A                     'MCQ', 'FPQ'/
+-      DATA SPOUT_ITEM_LABEL/'Velocity','MnChnVlcty','FdPlnVlcty',
+-     A                      'Area','MnChnArea','FdPlnArea',
+-     B                      'MnChnFlow','FdPlnFlow'/
+-      DATA SPOUT_ITEM_VALUE/MEAN_VELOCITY, MAIN_CHANNEL_VELOCITY,
+-     A                      FLOOD_PLAIN_VELOCITY, TOTAL_AREA,
+-     B                      MAIN_CHANNEL_AREA, FLOOD_PLAIN_AREA,
+-     C                      MAIN_CHANNEL_FLOW, FLOOD_PLAIN_FLOW/
+-      DATA EXTRA_BUFFER/FILL_FACTOR*'        '/
+ C***********************************************************************
++      SPOUT_ITEM_NAME(1) = 'V'
++      SPOUT_ITEM_NAME(2) = 'MCV'
++      SPOUT_ITEM_NAME(3) = 'FPV'
++      SPOUT_ITEM_NAME(4) = 'A'
++      SPOUT_ITEM_NAME(5) = 'MCA'
++      SPOUT_ITEM_NAME(6) = 'FPA'
++      SPOUT_ITEM_NAME(7) =  'MCQ'
++      SPOUT_ITEM_NAME(8) =  'FPQ'
++
++      SPOUT_ITEM_LABEL(1)= 'Velocity'
++      SPOUT_ITEM_LABEL(2)= 'MnChnVlcty'
++      SPOUT_ITEM_LABEL(3)= 'FdPlnVlcty'
++      SPOUT_ITEM_LABEL(4)=  'Area'
++      SPOUT_ITEM_LABEL(5)= 'MnChnArea'
++      SPOUT_ITEM_LABEL(6)= 'FdPlnArea'
++      SPOUT_ITEM_LABEL(7)= 'MnChnFlow'
++      SPOUT_ITEM_LABEL(8)= 'FdPlnFlow'
++
++      SPOUT_ITEM_VALUE(1)=  MEAN_VELOCITY 
++      SPOUT_ITEM_VALUE(2)=  MAIN_CHANNEL_VELOCITY
++      SPOUT_ITEM_VALUE(3)=  FLOOD_PLAIN_VELOCITY
++      SPOUT_ITEM_VALUE(4)=  TOTAL_AREA
++      SPOUT_ITEM_VALUE(5)=  MAIN_CHANNEL_AREA
++      SPOUT_ITEM_VALUE(6)=  FLOOD_PLAIN_AREA
++      SPOUT_ITEM_VALUE(7)=  MAIN_CHANNEL_FLOW
++      SPOUT_ITEM_VALUE(8)=  FLOOD_PLAIN_FLOW
++
++      do i=1,MNSOUT
++        do j=1,MNSPROW
++          extra_buffer(i,j) =  '        '
++        end do
++      end do
+       END
+ C
+ C
+ C
+-      BLOCKDATA   XOFFIN
++      SUBROUTINE   XOFFIN()
+  
+ C     + + + PURPOSE + + +
+ C     Initialize the offset list for cross sections
+@@ -36,6 +61,42 @@
+       INCLUDE 'offcom.cmn'
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA OFFVEC/6,10*0,8,7*0,5, 6, 8, 7, 8, 10/
++c     DATA OFFVEC/6,10*0,8,7*0,5, 6, 8, 7, 8, 10,
++c    A      4*0, 7, 8, 11, 11, 12, 15/
+ C***********************************************************************
++      offvec( 1) = 6
++      offvec( 2) = 0
++      offvec( 3) = 0
++      offvec( 4) = 0
++      offvec( 5) = 0
++      offvec( 6) = 0
++      offvec( 7) = 0
++      offvec( 8) = 0
++      offvec( 9) = 0
++      offvec(10) = 0
++      offvec(11) = 0
++      offvec(12) = 8
++      offvec(13) = 0
++      offvec(14) = 0
++      offvec(15) = 0
++      offvec(16) = 0
++      offvec(17) = 0
++      offvec(18) = 0
++      offvec(19) = 0
++      offvec(20) = 5
++      offvec(21) = 6
++      offvec(22) = 8
++      offvec(23) = 7
++      offvec(24) = 8
++      offvec(25) = 10
++      offvec(26) = 0
++      offvec(27) = 0
++      offvec(28) = 0
++      offvec(29) = 0
++      offvec(30) = 7
++      offvec(31) = 8
++      offvec(32) = 11
++      offvec(33) = 11
++      offvec(34) = 12
++      offvec(35) = 15
+       END

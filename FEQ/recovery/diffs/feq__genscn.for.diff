@@ -1,0 +1,502 @@
+--- 9.98/feq/genscn.for
++++ 10.61/feq/genscn.for
+@@ -57,19 +57,19 @@
+       JS = 0
+       DO 100 I=1,NUMBER_OF_FULL_RECORDS
+         JE = JS + ITEMS_PER_RECORD - 1
+-C        WRITE(FTF_UNIT,REC=I) (FTAB(J), J=JS,JE)
+-        WRITE(FTF_UNIT) (FTAB(J), J=JS,JE)
++        WRITE(FTF_UNIT,REC=I) (FTAB(J), J=JS,JE)
++c        WRITE(FTF_UNIT) (FTAB(J), J=JS,JE)
+         JS = JE + 1
+ 100   CONTINUE
+       IF(LEFTOVER_ITEM_KNT.GT.0) THEN
+ C       Write a partial record.
+         JE = JS + LEFTOVER_ITEM_KNT -1
+-C        DO 110 J=JE+1,ITEMS_PER_RECORD
+-C          FTAB(J) = 0.0
+-C110     CONTINUE
+-C        JE = JS + ITEMS_PER_RECORD - 1
+-C        WRITE(FTF_UNIT,REC=NUMBER_OF_FULL_RECORDS+1) (FTAB(J), J=JS,JE)
+-        WRITE(FTF_UNIT) (FTAB(J), J=JS,JE)
++        DO 110 J=JE+1,ITEMS_PER_RECORD
++          FTAB(J) = 0.0
++110     CONTINUE
++        JE = JS + ITEMS_PER_RECORD - 1
++        WRITE(FTF_UNIT,REC=NUMBER_OF_FULL_RECORDS+1) (FTAB(J), J=JS,JE)
++c        WRITE(FTF_UNIT) (FTAB(J), J=JS,JE)
+       ENDIF
+       RETURN
+       END
+@@ -120,7 +120,6 @@
+       ENDIF
+       RETURN
+       END
+-
+ C
+ C
+ C
+@@ -183,9 +182,11 @@
+       INCLUDE 'version.cmn'
+       INCLUDE 'home.cmn'
+ 
++c     called subprograms
++
+ C     Local variables.
+ 
+-      CHARACTER  FEO_NAME*64, TSD_NAME*64, FTF_NAME*64, LINE*80,
++      CHARACTER  FEO_NAME*256, TSD_NAME*256, FTF_NAME*256, LINE*196,
+      A           CHAR5*5, USER_ID_STRING*12, HEAD*80,
+      B        LOCATION_CLASS*5
+ 
+@@ -199,11 +200,11 @@
+ 
+       INTEGER GET_UNIT
+       CHARACTER GETTOK*5
+-      EXTERNAL GET_UNIT, GETTOK, LSTAB, FREE_UNIT
++      EXTERNAL GET_UNIT, GETTOK, LSTAB, FREE_UNIT, INLINE
+ C     ***************************FORMATS***************************************
+ 2     FORMAT(A)
+ 
+- 3    FORMAT(80A)
++c 3    FORMAT(A)
+  5    FORMAT(I5,A5,1X,A12)
+  
+  4    FORMAT(' ',A80)
+@@ -214,7 +215,7 @@
+ 50    FORMAT('-VERSION',/,'FEQ:',F5.2,//,'-FILES')
+  51   FORMAT(' *ERR:172* Exterior node',A5,' does not have trib.',
+      A    ' area or is not a reservoir.')
+-52    FORMAT(A64)
++52    FORMAT(A)
+ 
+ 54    FORMAT(//,'-UNITS',/,
+      A       'STATION_UNIT_NAME= miles               ',/,
+@@ -252,11 +253,11 @@
+ 74    FORMAT(//'-FTF',/,
+      A 'NUMBER_OF_FULL_RECORDS=',I8,/,
+      B 'ITEMS_PER_RECORD=',I8,/,
+-     C 'LETOVER_ITEM_KNT=',I8)
++     C 'LEFTOVER_ITEM_KNT=',I8)
+ 
+ C*********************************************************************
+       CALL CLEAR_HOME()
+-      CALL INL80
++      CALL INLINE
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL STRIP_L_BLANKS(
+@@ -277,32 +278,44 @@
+         IT = LEN_TRIM(HOME)
+         WRITE(STDOUT,69) HOME(1:IT)
+ 
+-        CALL INL80
++        CALL INLINE
+      I            (STDIN, STDOUT,
+      O             LINE)
+       ENDIF
+ C     Input the three file names for now.  Refine later
+-C      CALL INL80
++C      CALL inline
+ C     I          (STDIN, STDOUT,
+ C     O           LINE)
+ 
+       READ(LINE,2) FEO_NAME
+-      CALL MAYBE_ADD_HOME(
++      CALL MAYBE_ADD_GHOME_out(
+      M                    FEO_NAME)
++      call maybe_add_ext(
++     m                   feo_name)
++      call os_file_style(
++     m                              feo_name)
+       WRITE(STDOUT,'(A)') FEO_NAME
+-      CALL INL80
++      CALL INLINE
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2) TSD_NAME
+-      CALL MAYBE_ADD_HOME(
++      CALL MAYBE_ADD_GHOME_out(
+      M                    TSD_NAME)
++      call maybe_add_ext(
++     m                    tsd_name)
++      call os_file_style(
++     m                              tsd_name)
+       WRITE(STDOUT,'(A)') TSD_NAME
+-      CALL INL80
++      CALL INLINE
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2) FTF_NAME
+-      CALL MAYBE_ADD_HOME(
++      CALL MAYBE_ADD_GHOME_OUT(
+      M                    FTF_NAME)
++      call maybe_add_ext(
++     m                    ftf_name)
++      call os_file_style(
++     m                              ftf_name)
+       WRITE(STDOUT,'(A)') FTF_NAME
+ 
+ 
+@@ -319,9 +332,9 @@
+       ENDIF
+ 
+       WRITE(FEO_UNIT,50) VERSION_NUMBER
+-      WRITE(FEO_UNIT,52) FEO_NAME
+-      WRITE(FEO_UNIT,52) TSD_NAME
+-      WRITE(FEO_UNIT,52) FTF_NAME
++      WRITE(FEO_UNIT,52) FEO_NAME(1:len_trim(feo_name))
++      WRITE(FEO_UNIT,52) TSD_NAME(1:len_trim(tsd_name))
++      WRITE(FEO_UNIT,52) FTF_NAME(1:len_trim(ftf_name))
+ 
+ C     Write the unit names and conversion factors.  Expand later.
+ 
+@@ -352,16 +365,16 @@
+ C     For initial testing adapt the special output processing code
+ C     and expand to include some generic groups of nodes later. 
+ 
+-      CALL INL80
++      CALL INLINE
+      I            (STDIN, STDOUT,
+      O             LINE)
+-      READ(LINE,3) HEAD
++      READ(LINE,2) HEAD
+       WRITE(STDOUT,4) HEAD
+ 
+       WRITE(FEO_UNIT,58)  
+       GENSCN_NOUT = 0
+  100    CONTINUE
+-        CALL INL80
++        CALL INLINE
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,5,ERR=991) BRAIN, CHAR5, USER_ID_STRING
+@@ -578,16 +591,11 @@
+       ENDIF
+       RETURN
+       END              
+-
+-
+-
+-
+-
+ C
+ C
+ C
+        SUBROUTINE   OUT_GENSCN
+-     I                  (STDOUT, JTIME)
++     I                  (STDOUT, JTIME, dz_for_output)
+  
+ C     + + + PURPOSE + + +
+ C     Write a record for the file used to define results for
+@@ -596,6 +604,7 @@
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER STDOUT
++      real dz_for_output
+       REAL*8 JTIME 
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     JTIME - modified julian time.
+@@ -613,8 +622,7 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER ADR, I, J, IOFF 
+-     
+- 
++
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS
+  
+@@ -630,7 +638,7 @@
+            IF(ADR.LT.10000) THEN
+ C             WRITE(STDOUT,*) ' IOFF=',IOFF, 'Q=',QE1(ADR)
+              GENSCN_OUT_VEC(IOFF) =  QE1(ADR)
+-              GENSCN_OUT_VEC(IOFF+1) = YE1(ADR) + ZE(ADR)
++             GENSCN_OUT_VEC(IOFF+1) = YE1(ADR) + ZE(ADR) + dz_for_output
+            ELSEIF(ADR.LT.20000) THEN
+ C            Tributary-area flow at an exterior node.
+              ADR = ADR - 10000
+@@ -785,14 +793,15 @@
+       INCLUDE 'version.cmn'
+       INCLUDE 'inusnb.cmn'
+       INCLUDE 'home.cmn'
++      include 'svn.cmn'
+ 
+ C     Local variables.
+       INTEGER N_CLASS, N_GP_STATUS
+       PARAMETER (N_CLASS=11, N_GP_STATUS=13)
+ 
+-      CHARACTER  FEO_NAME*64, TSD_NAME*64, FTF_NAME*64, LINE*80,
+-     A           CHAR5*5, USER_ID_STRING*16, HEAD*80,
+-     B        LOCATION_CLASS*5, CHAR4*4, NAME*80, OPTION*3,
++      CHARACTER  FEO_NAME*256, TSD_NAME*256, FTF_NAME*256, LINE*196,
++     A           CHAR5*5, USER_ID_STRING*16, HEAD*196,
++     B        LOCATION_CLASS*5, CHAR4*4, NAME*256, OPTION*3,
+      C        NODE_CLASS*16, CLASS_TABLE(N_CLASS)*16,
+      D        OPT5*5, CHAR7*7, EASTSTRING*12, NORTHSTRING*12,
+      E        GP_STATUS(N_GP_STATUS)*8, NODE_ITEM*16,
+@@ -802,7 +811,7 @@
+      A        FTAB_INDEX, RECORD_LENGTH_IN_BYTES, BRA, I, II, IT,
+      B        IBRA, J, NULL, NXT,
+      B        NUMBER_OF_FULL_RECORDS, ITEMS_PER_RECORD,
+-     C        LEFTOVER_ITEM_KNT, CLASS, ADDFLAG
++     C        LEFTOVER_ITEM_KNT, CLASS, ADDFLAG, ftab_dummy
+ 
+       INTEGER BNODE_FLAG(MNBN), BNODE_BRA(MNBN), ENODE_FLAG(MNEX),
+      A        ENODE_BRA(MNEX), CLASS_VALUE(N_CLASS),
+@@ -817,7 +826,8 @@
+       REAL*8 GET_DP_FROM_FT
+ 
+       EXTERNAL GET_SOURCE, GET_UNIT, GETTOK, LENSTR, LSTAB, 
+-     A         FREE_UNIT, STRIP_L_BLANKS, GET_DP_FROM_FT
++     A         FREE_UNIT, STRIP_L_BLANKS, GET_DP_FROM_FT,
++     b         inline
+ 
+       DATA  CLASS_TABLE
+      A      /'ALL_NODES','ALL_BRANCHES','ALL_EXN', 'INTERPOLATED',
+@@ -835,10 +845,10 @@
+ C     ***************************FORMATS********************************
+ 2     FORMAT(A)
+ 
+- 3    FORMAT(80A)
++c 3    FORMAT(A)
+  5    FORMAT(A5,I5,1X, A16)
+  
+- 4    FORMAT(' ',A80)
++ 4    FORMAT(' ',A)
+  6    FORMAT(' ',A5,I5,1X,A16)
+  7    FORMAT(' *ERR:147* Output requested at too many nodes. NOUT = ',
+      1   I5)
+@@ -846,7 +856,7 @@
+ 50    FORMAT('-VERSION',/,'FEQ:',F5.2)
+  51   FORMAT(' *ERR:172* Exterior node',A5,' does not have trib.',
+      A    ' area or is not a reservoir.')
+-52    FORMAT(A64)
++52    FORMAT(A)
+ 
+ 53    FORMAT(//,'-FILES')
+ 54    FORMAT(//,'-UNITS',/,
+@@ -888,7 +898,9 @@
+      G' ---------------- ----- ----- ------- ---------------',
+      H' ---------- ---------------- -------- --------',
+      I' ------------ ------------')
+-59    FORMAT(//,'-FILE_FORMAT',/,' 1',//,'-FILES')
++59    FORMAT(//,'-FILE_FORMAT',/,' 2',//,'-FILES')
++60    format(//,'-SVN',/,
++     a     'Source code repository location and revision are:')
+ 68    FORMAT(/,' *WRN:58* No home name found following HOME=. ',
+      A         ' Home name cleared.')
+ 69    FORMAT(/,' Home directory/drive is: ',A)
+@@ -900,7 +912,7 @@
+ 74    FORMAT(//'-FTF',/,
+      A 'NUMBER_OF_FULL_RECORDS=',I8,/,
+      B 'ITEMS_PER_RECORD=',I8,/,
+-     C 'LETOVER_ITEM_KNT=',I8)
++     C 'LEFTOVER_ITEM_KNT=',I8)
+ 75    FORMAT(/,' The file names for  GENSCN transfer are:')
+ 76    FORMAT(/,' *ERR:372* GENSCN expected: FILE but found: ',A4)
+ 77    FORMAT(/,' *ERR:373* Option= ',A3,' unknown.',
+@@ -914,6 +926,15 @@
+ 82    FORMAT(/,' Node class operations completed.  ',
+      A          'Seeking item-level instructions.')
+ 83    FORMAT(/,' GENSCN output requested at ',I5,' nodes.')
++86    format('Version number is ',i8,' for the Subversion working ',
++     a         'copy') 
++87    format('*WRN:XXX* The working copy contains local ',
++     a 'modifications.',/,5x,
++     b 'The version number given is therefore',
++     b' not current and may not properly',/,5x,
++     b  'provide the version',
++     c' number required to retrieve all the same files ',
++     d'at a later time.')
+ 88    FORMAT(//,'-TSDDIR',/,
+      A'      FEQ LOCTN BRAN   NODE         STATION     INVERT ',
+      A'       USERID',
+@@ -927,9 +948,9 @@
+ 90    FORMAT(1X,A8,1X,A5,1X,I5,1X,A6,1X,1PE15.6,1X,0PF10.4,1X,A12,1X,
+      A I8,1X,I8)
+ C*********************************************************************
+-      NULL = -(2**31 -1)
++      NULL = -2147483647
+       CALL CLEAR_HOME()
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL STRIP_L_BLANKS(
+@@ -950,12 +971,12 @@
+         IT = LEN_TRIM(HOME)
+         WRITE(STDOUT,69) HOME(1:IT)
+ 
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+       ENDIF
+ C     Input the main file name.  Extensions added here.
+-C      CALL INL80
++C      CALL inline
+ C     I          (STDIN, STDOUT,
+ C     O           LINE)
+ 
+@@ -982,17 +1003,29 @@
+         FTF_NAME = NAME(1:I)
+         FTF_NAME(I+1: ) = '.ftf'
+ 
+-        CALL MAYBE_ADD_HOME(
++        CALL MAYBE_ADD_GHOME_OUT(
+      M                      FEO_NAME)
+-        CALL MAYBE_ADD_HOME(
++        call maybe_add_ext(
++     m                      feo_name)
++        CALL MAYBE_ADD_GHOME_OUT(
+      M                      TSD_NAME)
+-        CALL MAYBE_ADD_HOME(
++        call maybe_add_ext(
++     m                      tsd_name)
++        CALL MAYBE_ADD_GHOME_OUT(
+      M                      FTF_NAME)
++        call maybe_add_ext(
++     m                      ftf_name)
+ 
+         WRITE(STDOUT,75)         
+-        WRITE(STDOUT,'(A)') FEO_NAME
+-        WRITE(STDOUT,'(A)') TSD_NAME
+-        WRITE(STDOUT,'(A)') FTF_NAME
++        call os_file_style(
++     m                                feo_name)
++        WRITE(STDOUT,'(A)') FEO_NAME(1:len_trim(feo_name))
++        call os_file_style(
++     m                                tsd_name)
++        WRITE(STDOUT,'(A)') TSD_NAME(1:len_trim(tsd_name))
++        call os_file_style(
++     m                                ftf_name)
++        WRITE(STDOUT,'(A)') FTF_NAME(1:len_trim(ftf_name))
+       ELSE
+         WRITE(STDOUT,76) CHAR4
+         STOP 'Abnormal stop: errors found.'
+@@ -1017,13 +1050,26 @@
+       ELSE
+         WRITE(FEO_UNIT,59)
+       ENDIF 
+-      WRITE(FEO_UNIT,52) FEO_NAME
+-      WRITE(FEO_UNIT,52) TSD_NAME
+-      WRITE(FEO_UNIT,52) FTF_NAME
++      WRITE(FEO_UNIT,52) FEO_NAME(1:len_trim(feo_name))
++      WRITE(FEO_UNIT,52) TSD_NAME(1:len_trim(tsd_name))
++      WRITE(FEO_UNIT,52) FTF_NAME(1:len_trim(ftf_name))
+ 
+ C     Write the unit names and conversion factors.  Expand later.
+ 
+       WRITE(FEO_UNIT,54) 
++
++c     Write the subversion related values
++      write(feo_unit,60)
++      it = len_trim(url)
++      write(feo_unit,"(a)") url(1:it)
++      it = len_trim(revision)
++      write(feo_unit,"(a)") revision(1:it)
++      if(svn_rev >0 ) then
++        write(feo_unit,86) svn_rev
++        if(svn_mod > 0) then
++          write(feo_unit,87)
++        endif
++      endif
+ 
+ 
+       IF(NEW_GENSCN_FEO.NE.'NO') THEN
+@@ -1038,18 +1084,14 @@
+ 
+ C     Open the FTF file and store the function table vector in it. 
+       FTF_UNIT = GET_UNIT(STDOUT)
++c      OPEN(FTF_UNIT, FILE=FTF_NAME, FORM='UNFORMATTED',
++c     A        STATUS='UNKNOWN', IOSTAT=IOFLAG)
++ 
++
++      RECORD_LENGTH_IN_BYTES =4*512
+       OPEN(FTF_UNIT, FILE=FTF_NAME, FORM='UNFORMATTED',
+-     A        STATUS='UNKNOWN', IOSTAT=IOFLAG)
+- 
+-
+-C      RECORD_LENGTH_IN_BYTES =4*512
+-C      OPEN(FTF_UNIT, FILE=FTF_NAME, FORM='UNFORMATTED',
+-C     A        STATUS='UNKNOWN', ACCESS='DIRECT',
+-C     B        RECL=RECORD_LENGTH_IN_BYTES, IOSTAT=IOFLAG)
+-
+-
+-
+-
++     A        STATUS='UNKNOWN', ACCESS='DIRECT',
++     B        RECL=RECORD_LENGTH_IN_BYTES, IOSTAT=IOFLAG)
+ 
+ 
+       IF(IOFLAG.NE.0) THEN
+@@ -1088,7 +1130,7 @@
+ 507   CONTINUE
+ 
+ 550   CONTINUE
+-        CALL INL80
++        CALL INLINE
+      I            (STDIN, STDOUT,
+      O             LINE)
+         CALL STRIP_L_BLANKS(
+@@ -1305,10 +1347,10 @@
+   
+ 21000 CONTINUE
+ 
+-      CALL INL80
++      CALL INLINE
+      I            (STDIN, STDOUT,
+      O             LINE)
+-      READ(LINE,3) HEAD
++      READ(LINE,2) HEAD
+       WRITE(STDOUT,4) HEAD
+ 
+       IF(NEW_GENSCN_FEO.EQ.'NO') THEN
+@@ -1319,7 +1361,7 @@
+ 
+ 
+  100    CONTINUE
+-        CALL INL80
++        CALL INLINE
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,5,ERR=991) OPT5, BRAIN, NODE_ITEM
+@@ -1481,6 +1523,19 @@
+ C     nodes on branches.   The user can avoid this duplication if 
+ C     they so wish. 
+ 
++c     18 June 2002:  A bug in GENSCN makes plotting of free nodes impossible
++c     unless the free node has a non-zero FTAB index.  LPR's do have such an 
++c     index but inflow nodes for LPR's and nodes on dummy branches do not. 
++c     It is a pain to fill these in manually.  Thus we will establish a default
++c     ftab index when we need it.  Every model must have one branch so 
++c     there will always be some nodes on a branch and thes have an ftab index
++c     to the cross-section function table.  Therefore we take the ftab index
++c     for the first cross section of the first branch.  Apparently GENSCN does
++c     not use the info in the ftable-we hope because it should no look for one
++c     when one does not exist. 
++
++      ftab_dummy = nsec(1)
++
+ C     Finally we output information on pumps and gates
+ 
+       GENSCN_NOUT = 0
+@@ -1520,7 +1575,7 @@
+               STATION = -1.E30
+             ENDIF
+             INVERT_ELEVATION = ZE(I)
+-            FTAB_INDEX = 0
++            FTAB_INDEX = ftab_dummy
+             LOCATION_CLASS = 'FNODE'
+             BRAIN = 0
+           ELSE
+@@ -1629,7 +1684,7 @@
+             GENSCN_POUT(GENSCN_NOUT) =-(20000 + GATE_PUMP_IP(I))
+             STATION = -1.E30
+             INVERT_ELEVATION = -3000.0
+-            FTAB_INDEX = 0
++            FTAB_INDEX = ftab_dummy
+             LOCATION_CLASS = 'PMPGT'
+             CHAR7 = ' '
+             BRAIN = 0

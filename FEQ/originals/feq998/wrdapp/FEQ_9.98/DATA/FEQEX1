@@ -1,0 +1,315 @@
+Unsteady Flow- Example 1
+Single Branch System
+July 14, 1994
+;
+;NBRA gives the number of branches in the model.
+RUN CONTROL BLOCK
+NBRA=00001
+;
+;NEX gives the number of exterior nodes in the model.
+NEX=00002
+;
+SOPER=NO
+POINT=NO
+DIFFUS=NO  
+WIND=NO
+UNDERFLOW=NO
+ZL=0.0
+;
+;STIME is the starting time.  year/ month, day/ hour
+STIME=1990/01/01:0.00
+;
+;ETIME is the ending time in same form as STIME
+ETIME=1990/01/02:24.0
+;
+GRAV=32.2
+NODEID=YES
+SSEPS=0.1
+PAGE=   20
+;     EPSSYS=0.05 requires that the corrections for any variable(flow or
+;     depth be less than 5 per cent of the value being corrected.
+EPSSYS= 0.050
+MKNT=    5
+;     PRTINT gives the frequency of full system output.  We have requested
+;     full output at every time step.
+PRTINT=00001
+GEQOPT=STDX
+EPSB=0.000005
+MAXIT=   30
+SFAC=5280.
+;     QSMALL is added to the absolute value of each flow when computing
+;     the relative correction.  Prevents zero divide and prevents
+;     trying to obtain small corrections for flows which are too small
+;     for concern.   In this case 0.01 is a small value of QSMALL and
+;     a value nearer 0.5 of 1.0 would be more appropriate in a real
+;     application.
+QSMALL=     0.010
+;     The following two lines specify the number of frozen time steps
+;     and their length.  The values are used from right to left.
+IFRZ=    1  1800.0
+;     The following line is used for time step control.  The maximum
+;     time step is 1800 seconds.  The minimum time step is 1 second.
+;     If the weighted sum of the number of iterations gets larger than
+;     3.2 then FEQ multiplies the current time step by 0.5 to get the
+;     new time step.  If the weighted sum of the number of iterations
+;     gets smaller than 2.8 FEQ doubles the current time step for the
+;     new time step.  If the weighted sum of the number of iterations
+;     is between 2.8 and 3.2 FEQ leaves the current time step unchanged.
+;     In computing the weighted sum of the number of iterations to
+;     convergence, FEQ applies a weight of 0.7 to the current weighted
+;     and a weight of 1.0 - .70 = .3 to the current number of iterations
+;     to completion.  The starting value for the weighted sum of
+;     iterations to convergence is 3.0.
+MAXDT=   300.0  MINDT=     1.0  AUTO= 0.70  SITER=  2.8  HIGH= 3.20  LOW= 3.00  HFAC= 2.00  LFAC= 0.50
+MRE=    0.20
+FAC=    0.00
+DWT=0.05
+BWT=0.50
+CHKGEO=NO
+ISTYLE=NEW
+EXTTOL= 0.0
+SQREPS=1.E30
+BRANCH DESCRIPTION TABLES
+BNUM=    1
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+  100 UPSTREAM  5000       0.0     100.
+ 
+;     It is best to give only the upstream node number on each branch
+;     and leave the others blank.  FEQ will number the remainder starting
+;     at the number you give.
+ 
+;     These blank lines tell FEQ that you want the upstream cross section
+;     table number, 5000 in the current case, propagated as the table for
+;     each blank line.  You also what FEQ to divide the distance between
+;     the point along the stream given upstream and the point given
+;     downstream in equal part and then compute the elevation assuming
+;     the slope is constant over the distance.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+      DNSTREAM  5000      1.0     100.
+;     The input for each branch is terminated by a -1.
+   -1
+NEW NETWORK-MATRIX CONTROL INPUT
+ CODE  N1  N2  N3  N4  N5  N6  N7  N8  N9  N10    F1     F2     F3     F4     F5
+;     Code 6 gives the upstream boundary.  The flows are in table 100.
+    6    1   U1    1  100                                        '
+;     Code 1 specifies a branch.
+    1    1                                                       '
+;     Code 4 specifies a one-node control structure.  That is,  flow only
+;     depends on the head at one point.
+    4    1   D1   -1   D1  110                          102.0   32.0     '
+   -1                                                            '
+BNODE= U1
+SPECIAL OUTPUT LOCATIONS
+;     The special output goes into a separate file to provide a more
+;     compact record of what happened at the locations you selected.
+UNIT=    3feqex1.wsq
+  BRA NODE
+    1  100 NOD 100
+    1  101 NOD 101
+    1  102 NOD 102
+    1  103 NOD 103
+    1  104 NOD 104
+    1  105 NOD 105
+    1  106 NOD 106
+    1  107 NOD 107
+    1  108 NOD 108
+    1  109 NOD 109
+    1  110 NOD 110
+   -1
+INPUT FILE SPECIFICATION
+ UNIT NAME
+   -1
+OUTPUT FILE SPECIFICATION
+ UNIT  BRA NODE ITEM TYPE NAME------------------------------------------------------------
+   -1
+FUNCTION TABLES
+;     In this example all the function tables appear here.
+TABID=   100
+TYPE=   -7
+REFL=0.0        FAC=1.0
+YEAR MN DY      HOUR DISCHARGE  INFLOW HYDROGRAPH AT UPSTREAM END
+1990 01 01       0.0        9.
+                 1.0       32.
+                 2.0      100.
+                 3.0      151.
+                 4.0       94.
+                 5.0      145.
+                 6.0      220.
+                 7.0      178.
+                 8.0      104.
+                 9.0       77.
+                10.0       57.
+                11.0       38.
+                12.0       28
+                13.0       19.
+                14.0       10.
+        03      24.0       10.
+                23.0
+TABID=   110
+TYPE=   -2
+REFL=0.0
+      HEAD WEIR COEF
+       0.0       3.2
+      50.0       3.2
+      -1.0
+TABID=  5000
+TYPE=   -1
+STATION= 2.41200E+00
+ELEVATION= 0.00000E+00                  EXT=00.00      FAC=1.000
+     DEPTH TOP WIDTH         AREA   SQRT(CONV)      BETA        YBARA
+      .000    20.000  0.00000E+00  0.00000E+00    1.0000  0.00000E+00
+      .080    20.480  1.61920E+00  4.21451E+00    1.0000  6.45120E-02
+      .938    25.625  2.13867E+01  3.34821E+01    1.0000  9.61304E+00
+     1.875    31.250  4.80469E+01  6.13671E+01    1.0000  4.17480E+01
+     2.812    36.875  7.99805E+01  8.86460E+01    1.0000  1.01349E+02
+     3.750    42.500  1.17188E+02  1.16093E+02    1.0000  1.93359E+02
+     4.688    48.125  1.59668E+02  1.43993E+02    1.0000  3.22723E+02
+     5.625    53.750  2.07422E+02  1.72467E+02    1.0000  4.94385E+02
+     6.563    59.375  2.60449E+02  2.01568E+02    1.0000  7.13287E+02
+     7.500    65.000  3.18750E+02  2.31316E+02    1.0000  9.84375E+02
+     8.437    70.625  3.82324E+02  2.61712E+02    1.0000  1.31259E+03
+     9.375    76.250  4.51172E+02  2.92750E+02    1.0000  1.70288E+03
+    10.312    81.875  5.25293E+02  3.24420E+02    1.0000  2.16019E+03
+    11.250    87.500  6.04687E+02  3.56707E+02    1.0000  2.68945E+03
+    12.187    93.125  6.89355E+02  3.89597E+02    1.0000  3.29562E+03
+    13.125    98.750  7.79297E+02  4.23074E+02    1.0000  3.98364E+03
+    14.062   104.375  8.74512E+02  4.57123E+02    1.0000  4.75845E+03
+    15.000   110.000  9.75000E+02  4.91730E+02    1.0000  5.62500E+03
+    15.909   115.455  1.07748E+03  5.25807E+02    1.0000  6.55757E+03
+    16.818   120.909  1.18492E+03  5.60383E+02    1.0000  7.58556E+03
+    17.727   126.364  1.29731E+03  5.95444E+02    1.0000  8.71347E+03
+    18.636   131.818  1.41467E+03  6.30980E+02    1.0000  9.94581E+03
+    19.545   137.273  1.53698E+03  6.66980E+02    1.0000  1.12871E+04
+    20.455   142.727  1.66426E+03  7.03433E+02    1.0000  1.27418E+04
+    21.364   148.182  1.79649E+03  7.40329E+02    1.0000  1.43145E+04
+    22.273   153.636  1.93368E+03  7.77659E+02    1.0000  1.60097E+04
+    23.182   159.091  2.07583E+03  8.15414E+02    1.0000  1.78318E+04
+    24.091   164.545  2.22293E+03  8.53584E+02    1.0000  1.97854E+04
+    25.000   170.000  2.37500E+03  8.92162E+02    1.0000  2.18750E+04
+    -1.000      .000  0.00000E+00  0.00000E+00     .0000  0.00000E+00
+TABID=    -1
+;     Function table input is always terminated by a table number of -1.
+BACKWATER ANALYSIS
+BRANCH NUMBER=   -1
+DISCHARGE=  9.0
+  BRA CODE ELEVATION EXN#
+    1    3     102.1
+**************************************************************************
+*     At each time step FEQ prints what is called an iteration log
+*     giving some statistics for each iteration for the current time
+*     step.  Look in the output file at simulation time 3.5 hours.
+*     After giving the date and time and the time step in seconds,
+*     FEQ prints the iteration log.  The iteration number appears
+*     in the column labeled ITER.  The maximum relative correction(or
+*     loosely speaking, the relative error) at each iteration appears
+*     under the column headed RERROR.  The branch number of the
+*     node at which the maximum relative correction appeared is
+*     given next under the column headed BRA.  The node on the
+*     branch is given in the next column.  If the branch number is
+*     zero, an invalid branch number for input, it means that the
+*     node number is an exterior node number.  If the node number is
+*     positive it shows that the maximum correction occurred for flow;
+*     if it is negative it shows that the maximum correction occurred
+*     in the depth value.  The next column gives the maximum rescaled
+*     residual in the equation system.  The equation system is rescaled
+*     so that the maximum coefficient in the Jacobian matrix used in
+*     Newton's method not greater than 1.0 in absolute value.    The
+*     LOC column gives the location of the maximum residual in the
+*     equation system.  A negative location denotes an equation number
+*     in the exterior matrix and a positive number an equation
+*     number in the interior matrix.   The next column, headed by
+*     SUMSQR, gives the sum of the squares of the rescaled residuals for
+*     both the interior and exterior system residuals.  The final column
+*     shows the number of variables which are currently outside the
+*     convergence criteria.
+*
+*     The line following the last iteration in the iteration log gives
+*     additional information about the computations.  CSUR gives the
+*     relative correction in the surcharge storage which might be present
+*     if storm sewers are being simulated.    The AT ND stands for at node
+*     and the branch and node at which the surcharge storage with the
+*     maximum relative correction exists is given.  The branch is given
+*     first followed by a colon and then the node number on the branch.
+*     RLTQ gives the maximum ratio of lateral inflow to the flow in an
+*     element.  Large ratios( > 1) can relate to computational problems
+*     associated with convergence problems.  The location of the element
+*     follows in branch:node-on-branch sequence.    The last entry on the
+*     line is the simulation time per iteration so far.
+*
+*     The results are given next with the elapsed time in seconds from
+*     the start of the run and the modified julian time in days.
+*     The columns have the following meanings:
+*
+*     NODE - node number on the branch
+*     NODEID - node identification you provided
+*     STAT - the station of the node. Precision varies with SFAC.
+*     FLOW - flow rate in modified fortran floating point output.
+*            To save space only a one digit exponent is used and the
+*            E is deleted.  Thus a sign for the exponent on the base 10
+*            always appears.  It is unlikely that flows greater than
+*            one billion cfs will be needed.
+*     AREA - the flow area
+*     VEL - the average velocity at the node
+*     DEPTH - the maximum water depth at the node
+*     ELEV - the water surface elevation
+*     TOP - the top width at the current elevation
+*     FR - the square of the Froude number at the node.  Critical flow is
+*          taken from tables of type 12 if they are used.  Otherwise the
+*          the critical flow is computed ignoring any effects of the
+*          velocity distribution.  Thus the Froude number is crude if
+*          overbank flow is present and tables of type 1 are used.
+*     LAT IN - lateral inflow coming from the land surface.  Only
+*              non-zero when DIFFUS=YES is used.
+*
+*     The ponding volume in storm sewer surcharge storage is given for
+*     each branch and for the network as a whole.
+*
+*     Each exterior node's values are also output.  QE1 denotes the flow
+*     at the node, YE1 denotes the depth,  ELEV denotes the elevation of the
+*     water surface, and the two STORAGE columns give the storage volume
+*     present in any level-pool reservoirs in both cubic feet and
+*     acre-feet.
+*
+*     The final line of output for a complete output at a time step gives
+*     a mass balance check.  S1 is the initial volume in the stream system,
+*     including channel, reservoirs, and storm sewer surcharge, S2 is the
+*     volume in the stream system at the end of the current time step.
+*     I is the volume of inflow from the start of the simulation; and
+*     Q is the volume of outflow for the same period.  D gives the
+*     the water balance discrepancy in cubic feet; and R gives the
+*     discrepancy relative to S1 + I.  If the balance errors were zero
+*     then S1 + I = S2 + Q.
+*
+*     FEQ issues a message each time it changes the time step.  If the
+*     time step is already at its maximum value, message is issued even
+*     though the time step is not changed because FEQ tries to change the
+*     time step.
+*
+*     At the end of the simulation period, FEQ gives a summary of the
+*     maximum flows, and elevations reached.  The minimum flow is also given
+*     because one or more branches or nodes may have had negative flow values
+*     which were larger in absolute value than the positive flow values.
+*
+*     On some systems a summary of the computation time will be given.
+*
+***************************************************************************
+   -1
+ 
+ 

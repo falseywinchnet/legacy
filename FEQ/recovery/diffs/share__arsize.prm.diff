@@ -1,0 +1,101 @@
+--- 9.98/share/arsize.prm
++++ 10.61/share/arsize.prm
+@@ -4,17 +4,18 @@
+ 
+ C
+ C SHARED PARAMETERS BETWEEN FEQ AND FEQUTL
+-      INTEGER MFTNUM, MRFTAB, XTIOFF, MCDT10, MNBN, MNMID, MNDEP,
+-     A        MNBRA, MEXTRA, NPSLOT
++      INTEGER MFTNUM, MRFTAB, MDFTAB, XTIOFF, MCDT10, MNBN, MNMID, 
++     A        MNDEP, MNBRA, MEXTRA, NPSLOT, TDTIOFF, OFF234
+ 
+       PARAMETER(MNBRA=2200, MEXTRA=4000)
+-      PARAMETER (MFTNUM=10002, XTIOFF=21, MRFTAB=8000000, 
++      PARAMETER (MFTNUM=10002, XTIOFF=32, MRFTAB=13000001, 
++     A           MDFTAB=(MRFTAB - 1)/2,
+      A           MCDT10=19, MNBN=2*MNBRA + MEXTRA, MNMID=150, 
+-     B  MNDEP=1000, NPSLOT=10)
++     B  MNDEP=1000, NPSLOT=10, TDTIOFF=26, OFF234=22)
+ C
+ C FEQ SPECIFIC PARAMETERS
+       INTEGER CD5TY1, CD5TY2, CD5TY3, CD5TY4, CD5TY5, CD5TY6, CD5TY7,
+-     A        CD5TY8, CD5TY9, OFF234
++     A        CD5TY8, CD5TY9
+       INTEGER MNFREE, MNEX, MRMAT, MLPDA, MRMBLK, MREMC, MNBLK, MCPFPT, 
+      1        MNDIFA, MNDBUF, MSPKNT, MNSOUT, MNFRDT, MNITER,
+      2        MRPFPT, MNCD6, MRRBUF, MNFOUT, MXGAGE, MXGLU,
+@@ -23,21 +24,24 @@
+       INTEGER TA_UNITS_PER_BRANCH, MXR_TRIBA, MXN_DTEN,
+      A        MXN_DLAY, TAM_MXNI, TAM_MXNF
+       INTEGER MXN_IRRIG
++      integer  DPTSF_REC_AT_FRST_TS_PNT, DPTSF_REC_AT_LKUP_TAB_START
++      parameter(DPTSF_REC_AT_FRST_TS_PNT=30, 
++     A             DPTSF_REC_AT_LKUP_TAB_START=16)
+       PARAMETER(MNFREE=4000)
+       PARAMETER(MNEX=2*MNBRA + MNFREE)
+-      PARAMETER(MRMAT=2*(MNBN + MNFREE), MLPDA=60*MRMAT, 
+-     1          MRMBLK=2*MNBRA + 1, MREMC=200000,
++      PARAMETER(MRMAT=2*(MNBN + MNFREE), MLPDA=30*MRMAT, 
++     1          MRMBLK=2*MNBRA + 1, MREMC=120000,
+      2          MNBLK=100, 
+      3          MCPFPT=10, MNDBUF=512, MSPKNT=100, 
+-     4          MNSOUT=40, MNFRDT=10, MNITER=16,
++     4          MNSOUT=250, MNFRDT=10, MNITER=16,
+      5          MRPFPT=3, MNCD6=60,  MRRBUF=6000,
+-     6          MNFOUT=80, MXGAGE=8, MXN_LU_G=8, 
++     6          MNFOUT=1200, MXGAGE=16, MXN_LU_G=8, 
+      6          MNDIFA=MXGAGE*MXN_LU_G, MXGLU=MNDIFA,
+      7          MNETRY = 2*MNEX, MNGATE=50, MNSPROW=8,
+-     8          MXN_TS=80, MXN_DEST=2*MXN_TS, MXN_TS_F=60)
++     8          MXN_TS=200, MXN_DEST=2*MXN_TS, MXN_TS_F=160)
+       PARAMETER(CD5TY1=7, CD5TY2=12, CD5TY3=17, CD5TY4=10, CD5TY5=3, 
+-     A          CD5TY6=5, CD5TY7=10, CD5TY8=7, CD5TY9=11,
+-     B          OFF234=5)
++     A          CD5TY6=8, CD5TY7=10, CD5TY8=7, CD5TY9=11
++     B          )
+       PARAMETER(TA_UNITS_PER_BRANCH=4, 
+      A          MXR_TRIBA=2*MNBRA+MNFREE, 
+      B          MXN_DTEN=MXR_TRIBA/2,
+@@ -57,7 +61,7 @@
+      B  MAXCMD=45, PMXOFF=1000,
+      C  PMXNHU=151, PMXFRC=351,
+      D  MRDT10=40,
+-     E  PMXSEC=400, PMXNFL=11, PMXELM=17, PMXNHG=40,
++     E  PMXSEC=400, PMXNFL=11, PMXELM=22, PMXNHG=40,
+      F  PMXNIG=6*PMXNHU)
+ 
+ C     TA_UNITS_PER_BRANCH - gives the assumed average number of 
+@@ -144,7 +148,20 @@
+ 
+ 
+ C     MRFTAB- maximum row in function table.  Gives the
+-C             size of the vector used to store function tables.
++C             size of the vectors used to store function tables.
++c					This value should be an odd integer.  We declare the 
++c             single-precision vectors from 0.  Thus we need
++c					an even number of total elements to match exactly 
++c             the double-precision vector.  Example:  Take 
++c             MRFTAB to be 1001.  We allocate with (0:MRFTAB). 
++c             Thus there are 1002 4-byte reals and integers in
++c             the function-table system.  To match exactly we need
++c             501 8-byte values.  Since we allocate with the zero 
++c             element as well, we then have MDFTAB = (MRFTAB -1)/2
++
++c	MDFTAB- maximum row in the double-precision part of the function-table
++c             system= (MRFTAB -1)/2
++
+ 
+ 
+ C     PMXELM- maximum number of cross section elements in an
+@@ -179,6 +196,11 @@
+ 
+ C     PMXTAB- maximum table number.
+ 
++C     TDTIOFF- two-d table initial offset.  The offset of the 
++c              first value in the "body" of the table.  Made the 
++c              same for all two-d tables.  As of 7 march 2003
++c              these are 10, 13, 14, and 43.  We may be adding
++c              40, and 44 in the near future.
+ 
+ C     XSCOML- length in 4-byte words of the common blocks for
+ C             cross sections. 

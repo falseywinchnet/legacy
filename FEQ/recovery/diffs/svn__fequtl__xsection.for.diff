@@ -1,0 +1,13 @@
+--- SVN/fequtl/xsection.for
++++ distributed/fequtl/xsection.for
+@@ -4323,7 +4323,9 @@
+ c     as of 31 August 2007.  If the computations reach here, then the 
+ c     variation of Manning's n IS constant, so we make sure that all 
+ c     values in nvar say that!
+-      nvar = 0
++c      BUG FIX, commented out below line on 03.23.2009 per email from Delbert
++c      Franz, documented in fixlist for version 5.93
++c      nvar = 0
+ c      WRITE(STDOUT,*) ' '
+ c      WRITE(STDOUT,*) ' Check of adjusted cross section boundary.'
+ c      WRITE(STDOUT,*) ' NPNT=',NPNT

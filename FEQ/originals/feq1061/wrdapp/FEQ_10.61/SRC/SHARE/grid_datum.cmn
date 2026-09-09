@@ -1,0 +1,38 @@
+c     Common to hold the global value for grid and datum values.
+
+      character*8 g_zone, g_hgrid, g_vdatum, g_unitsys,
+     a           g_basis
+
+      common /grid_datum/ g_zone, g_hgrid, g_vdatum, g_unitsys,
+     a           g_basis
+
+
+c     g_zone- zone designation for the horizontal grid to be used. 
+c             For state plaine coordinates in the US this is an
+c             integer number.  For example: 4601 denotes the 
+c             north zone in Washington.  The value is stored as
+c             a string so that any 8 char sequence makes sense.
+c             Currently, 5 Sept 2007, FEQ/FEQUTL just tracks the 
+c             zone information and does not check it.
+
+c     g_hgrid- name for the horizontal grid.  Again a string of up
+c              to eight characters.  Values that make sense include:
+c              SPCS27- state plane coordinate system based on NAD 27,
+c              SPCS83- state plane coordinate system based on NAD 83,
+c              UTM27- universal transverse Mercator coordinate system
+c              based on NAD 27, and UTM83-universal transverse Mercator
+c              coordinate system based on NAD 83, etc
+
+c     g_vdatum- the vertical datum: NGVD29, NAVD88, etc.
+
+c     g_unitsys- unit system: ENGLISH or METRIC
+
+c     g_basis- label for the source of the data the was used
+c              to create the table.  For example, the year of 
+c              the survey, the name or date of a DTM that was
+c              used, etc.  This makes it possible to track 
+c              the progress of changes as a model is updated
+c              with more recently obtained geometric data.
+
+
+ 

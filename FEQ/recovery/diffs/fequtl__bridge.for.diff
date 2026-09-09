@@ -1,0 +1,256 @@
+--- 9.98/fequtl/bridge.for
++++ 10.61/fequtl/bridge.for
+@@ -247,7 +247,7 @@
+       CHARACTER LINE*80, TABID*16
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL INL80, STDARG
++      EXTERNAL inline, STDARG
+  
+ C     + + + INPUT FORMATS + + +
+  1    FORMAT(20A4)
+@@ -257,13 +257,13 @@
+  51   FORMAT(' ',20A4)
+  52   FORMAT(' TABID=',A)
+ C***********************************************************************
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,1,ERR=991) HEAD
+       WRITE(STDOUT,51) HEAD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -421,13 +421,14 @@
+  
+ C     + + + PURPOSE + + +
+ C     Compute the contraction ratio.
+- 
++
+       IMPLICIT NONE
++      include 'arsize.prm'
+ 
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER EFLAG, NAVM, NPNT, NSUB, STDOUT
+       INTEGER SB(NPNT)
+-      REAL CNTR, K, LSN(NPNT), M, N(NSUB), NFAC, SN(NPNT), T, X(NPNT),
++      REAL CNTR, K, LSN(NPNT), M, N(pmxsub), NFAC, SN(NPNT), T, X(NPNT),
+      A     Z(NPNT), ZW
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -450,8 +451,6 @@
+ C     N      - Manning's n values
+ C     M      - Contraction ratio
+  
+-C     + + + COMMON BLOCKS + + +
+-      INCLUDE 'arsize.prm'
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER I, NPNTS, NSUBS, SNFLGS, WRN557
+@@ -480,6 +479,8 @@
+ C     DEVELOP SUBSET OF THE BASIC CROSS SECTION
+  
+       ZMAX = Z(1)
++
++      NPNTS = PMXPNT+2
+       CALL SUBSET
+      I           (STDOUT, NPNT, X, Z, SB, ZMAX, SN, LSN,
+      M            XL, XR, EFLAG, NPNTS, 
+@@ -671,13 +672,14 @@
+       INTEGER MODE
+       INTEGER HEAD(20)
+       REAL LEFT, RIGHT, ZMAX, ZOLD
+-      CHARACTER BETOPT*8, LINE*80, OUTOPT*8, SAVOPT*8, TYPE*8
++      CHARACTER BETOPT*8, LINE*80, OUTOPT*8, SAVOPT*8, TYPE*8,
++     a          zone*8, hgrid*8, vdatum*8, unitsys*8
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL INFEQX, INL80
++      EXTERNAL INFEQX, inline
+  
+ C     + + + DATA INITIALIZATIONS + + +
+       DATA RDFLOW/'RDFLOW'/
+@@ -720,13 +722,13 @@
+  68   FORMAT(' BRIDGE TYPE=',A8)
+  69   FORMAT('0*ERR:517* ONLY TYPE RDFLOW IS VALID FOR A BRIDGE')
+ C***********************************************************************
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,1,ERR=991) LABEL
+       WRITE(STDOUT,51) LABEL
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,12,ERR=991) TYPE
+@@ -737,7 +739,7 @@
+         WRITE(STDOUT,69)
+         EFLAG = EFLAG + 1
+       ENDIF
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2,ERR=991) BSCURV
+@@ -748,14 +750,14 @@
+         EFLAG=EFLAG+1
+  100  CONTINUE
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,3,ERR=991) ABTYPE
+       WRITE(STDOUT,54) ABTYPE
+       IF(ABTYPE.GT.0) ABTYPE=1
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,4,ERR=991) BSKEW
+@@ -766,25 +768,25 @@
+         WRITE(STDOUT,56) BSKEW
+  110  CONTINUE
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,5,ERR=991) ADJFAC
+       WRITE(STDOUT,57) ADJFAC
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,6,ERR=991) CNTRU
+       WRITE(STDOUT,58) CNTRU
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,7,ERR=991) CNTRD
+       WRITE(STDOUT,59) CNTRD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,8,ERR=991) PTYPE
+@@ -803,13 +805,13 @@
+  
+ C     INPUT PIER DESCRIPTION
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,9,ERR=991) PLEN
+       WRITE(STDOUT,62) PLEN
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,10,ERR=991) PSKEW
+@@ -820,13 +822,13 @@
+           WRITE(STDOUT,64) PSKEW
+  140    CONTINUE
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,1,ERR=991) HEAD
+       WRITE(STDOUT,51) HEAD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,1,ERR=991) HEAD
+@@ -845,7 +847,7 @@
+           EFLAG=EFLAG+1
+  160    CONTINUE
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,11,ERR=991) PZ(NPZ),PNUM(NPZ),PWIDTH(NPZ)
+@@ -871,7 +873,8 @@
+      I           (STDIN, STDOUT, MXPNTB, MODE,
+      M            TABDIR, EFLAG,
+      O            TABB, STATB, NPNTB, NSUBB, NAVMB, XB, ZB, SBB, NB,
+-     O            LEFT, RIGHT, SAVOPT, OUTOPT, BETOPT, ZMAX)
++     O            LEFT, RIGHT, SAVOPT, OUTOPT, BETOPT, ZMAX, zone, 
++     O            hgrid, vdatum, unitsys)
+  
+       FTNUM=TABB
+  
+@@ -932,7 +935,11 @@
+      A     KU, LEFT, LSNB(PMXPNT), M, NATYB(9,PMXSUB), RIGHT,
+      B     SNB(PMXPNT), TB, TBMAX, TP, TSOLD(PMXSUB), XSV(PMXELM),
+      C     YATNB(9,PMXSUB), ZDWN, ZUP
+-      CHARACTER BETOPT*8, OUTOPT*8, SAVOPT*8
++      CHARACTER BETOPT*8, OUTOPT*8, SAVOPT*8,
++     a khflag(pmxpnt)*1, alphaflag(pmxpnt)*1, betaflag(pmxpnt)*1,
++     b     maflag(pmxpnt)*1, mqflag(pmxpnt)*1,
++     c     zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
++
+  
+ C     + + + EXTERNAL NAMES + + +
+       EXTERNAL BWCOEF, COMPEL, CPTA, CXSTAB, INBRID, INELEV, MCOMP,
+@@ -943,6 +950,12 @@
+  30     FORMAT('0*ERR:512* DOWNSTREAM CROSS SECTION MISSING',
+      1     ' FOR BRIDGE')
+ C***********************************************************************
++      zone = 'NONE'
++      hgrid = 'NONE'
++      vdatum = 'NONE'
++      unitsys = 'NONE'
++      basis = 'NONE'
++      
+ C     ENABLE CONVEYANCE MESSAGES
+       NOCM = 0
+       SLOT = 1.E30
+@@ -1029,10 +1042,23 @@
+      M            NPNTB, ZMINB, ZMAXB, XB, ZB, SBB, EFLAGI, LSNB, SNB,
+      O            NB, NDEPB, XSTB)
+  
+-      IF(FTYPE.EQ.1) CALL TABOUT
+-     I                          (STDOUT, STDTAB, TABB, STATB, ZMINB, 0,
+-     I                           SAVOPT, OUTOPT, BETOPT,
+-     M                           NDEPB, XSTB, FTP)
++      IF(FTYPE.EQ.1) THEN
++
++c     compute derivatives of square root of conveyance, alpha, beta, 
++c     da, and dq
++
++        call xsecfit
++     I            (STDOUT, 0,
++     M             NDEPU, XSTU, 
++     o             khflag, alphaflag, betaflag, maflag, mqflag)
++
++        CALL TABOUT
++     I             (STDOUT, STDTAB, TABB, STATB, ZMINB, 0,
++     I              SAVOPT, OUTOPT, BETOPT,
++     i              zone, hgrid, vdatum, unitsys, basis,
++     i       khflag, alphaflag, betaflag, maflag, mqflag,
++     M              NDEPB, XSTB, FTP)
++      ENDIF
+  
+ C     COMPUTE WIDTH AND AREA OF PIERS
+  

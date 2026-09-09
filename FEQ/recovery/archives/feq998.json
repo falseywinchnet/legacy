@@ -1,0 +1,4611 @@
+{
+  "archive": "originals/archives/feq998.zip",
+  "sha256": "7c20451f96c88dcbbaf583bd0914bca3cb87d0c339f0cac1bb9dda8a98a1f532",
+  "members": [
+    {
+      "member": "wrdapp/FEQ_9.98/BIN/convertfeq.exe",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/BIN/convertfeq.exe",
+      "size": 555068,
+      "sha256": "c0c94d48f90d7f4a138dfeb79693b91a529d00866d3e437b5cb3c5c1290f2976",
+      "zip_crc32": "80992673",
+      "zip_date_time": [
+        2002,
+        7,
+        16,
+        15,
+        15,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/BIN/convertutl.exe",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/BIN/convertutl.exe",
+      "size": 587664,
+      "sha256": "3d0c10caf26942d1b96d676122d1d64d83876856d3408f318d34b7fcf8bca363",
+      "zip_crc32": "9eac22b8",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/BIN/detain.tab",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/BIN/detain.tab",
+      "size": 3919,
+      "sha256": "17dcf164f23f117e1f9dbe0455ed3b55f4ad2f95c1f01864bde036af73a6fae7",
+      "zip_crc32": "414c5aa6",
+      "zip_date_time": [
+        1998,
+        4,
+        2,
+        11,
+        21,
+        34
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/BIN/feq.exe",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/BIN/feq.exe",
+      "size": 1159680,
+      "sha256": "0825558264d26235492f0e26f92766cdb99b98210fec0430bae23b3b53da7113",
+      "zip_crc32": "e1bac593",
+      "zip_date_time": [
+        2003,
+        5,
+        23,
+        15,
+        55,
+        38
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/BIN/fequtl.exe",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/BIN/fequtl.exe",
+      "size": 1212928,
+      "sha256": "3b840f4c9aaa16897fa381f2108808f3b8e8179fd9244f5b604e9d59571969df",
+      "zip_crc32": "f6422852",
+      "zip_date_time": [
+        2003,
+        4,
+        21,
+        13,
+        37,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/BIN/lf90.eer",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/BIN/lf90.eer",
+      "size": 41040,
+      "sha256": "9f414498ee1e214ec877afb2c7cce89c950826eb951d19b5862b498fc7f7f1a6",
+      "zip_crc32": "bb999187",
+      "zip_date_time": [
+        1997,
+        8,
+        1,
+        11,
+        18,
+        44
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/BIN/tabdir.exe",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/BIN/tabdir.exe",
+      "size": 264955,
+      "sha256": "f8b93420395285be9bd87e8d4c17049bf422affa6e766b4034b486418d550622",
+      "zip_crc32": "8172601c",
+      "zip_date_time": [
+        1998,
+        9,
+        3,
+        13,
+        49,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/CULVERT.IN",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/CULVERT.IN",
+      "size": 8263,
+      "sha256": "fbd6ce4963c88319bf79469188e34422eef5d22c58a02f9ecb5ff483287a40b0",
+      "zip_crc32": "2ff82c74",
+      "zip_date_time": [
+        2003,
+        1,
+        7,
+        13,
+        29,
+        26
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/CULVERT.OUT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/CULVERT.OUT",
+      "size": 133213,
+      "sha256": "b20b5418853949988d0d68e439fca5a3070e81ca0ab536ec5e28dbbd8148502c",
+      "zip_crc32": "65be4ce1",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        30
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/CULVERT.TAB",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/CULVERT.TAB",
+      "size": 5751,
+      "sha256": "453caa8b021b97d85ad77daaa248e30275fa05c3530d1a9fe52c6b15ddc3a2b6",
+      "zip_crc32": "26ed7bc2",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        30
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX1",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX1",
+      "size": 13850,
+      "sha256": "29c0db7065d86cb04206b35aaaf932e260126b9c00de8034e4d61cf99eae24b4",
+      "zip_crc32": "b7a07419",
+      "zip_date_time": [
+        2003,
+        1,
+        7,
+        13,
+        19,
+        26
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX1.OUT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX1.OUT",
+      "size": 1671492,
+      "sha256": "783a5559d3bb403ca491b16544162611eb79bf2628440113c3bb4190ea5c080d",
+      "zip_crc32": "6e4a3d81",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX1.WSQ",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX1.WSQ",
+      "size": 129731,
+      "sha256": "0d9026026d441555299a775a941b518e0e3fa310f6ff62f1460d651c8e94b1a6",
+      "zip_crc32": "be195a36",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX2",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX2",
+      "size": 8996,
+      "sha256": "ef75e6c0c063a155e495a5f0f8b871fd2dc4e47f5297c7e6250236efa11b743c",
+      "zip_crc32": "a13f6ee8",
+      "zip_date_time": [
+        2003,
+        1,
+        7,
+        13,
+        19,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX2.OUT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX2.OUT",
+      "size": 866212,
+      "sha256": "7ad22f78c0ba75128b8383dab9ef5ec058607bae93345459cee68730b82de73c",
+      "zip_crc32": "0d634008",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX2.WSQ",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX2.WSQ",
+      "size": 15809,
+      "sha256": "d61d02d2ef67b29d4538e87d0b5ccbe1893a5e8e47b501c2aa9a5d6548a53322",
+      "zip_crc32": "3b985c08",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX3",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX3",
+      "size": 9767,
+      "sha256": "f85f8cb1566c6cfcb68739e7cb5dac3896d0b7c541746c6cd45cf1f08ff31ab7",
+      "zip_crc32": "759c4fdd",
+      "zip_date_time": [
+        2003,
+        1,
+        7,
+        13,
+        19,
+        58
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX3.OUT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX3.OUT",
+      "size": 1325128,
+      "sha256": "91e55fa5ce7a1f59362bb9d329f52b6106579f74440850c82fb88ec5e54185ee",
+      "zip_crc32": "6f617b54",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX3.WSQ",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX3.WSQ",
+      "size": 23579,
+      "sha256": "2c0393ba3e4caabc066f12bb552d228dc1367652a0dc5c05a7fb74db68455b8e",
+      "zip_crc32": "0a60e334",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX4",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX4",
+      "size": 7604,
+      "sha256": "e48e0e0ea8329c9b1e732ec77ab08773984e39e13c4ffd449b443ff44b1c5fa6",
+      "zip_crc32": "860c8fd3",
+      "zip_date_time": [
+        2003,
+        1,
+        7,
+        13,
+        20,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX4.OUT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX4.OUT",
+      "size": 1320362,
+      "sha256": "b7ef62ccc971d884011ee6bd7931fafacbc3ddea3a4ed94e595174d34bd821c3",
+      "zip_crc32": "58614504",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/FEQEX4.WSQ",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/FEQEX4.WSQ",
+      "size": 23579,
+      "sha256": "04a0e3b681904ca7c88d4e47bf9923251d542a2b0e37bdf35cd189ef0184dfa9",
+      "zip_crc32": "b0fbd4c6",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/MODEL01.INP",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/MODEL01.INP",
+      "size": 7363,
+      "sha256": "07764dad7c1bc3943ee5eb8da7bcc239cd5eeddcaa0ea092db83f4b860418df8",
+      "zip_crc32": "ba767cd3",
+      "zip_date_time": [
+        1998,
+        9,
+        2,
+        15,
+        26,
+        38
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/TYPE5.TAB",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/TYPE5.TAB",
+      "size": 11513,
+      "sha256": "dd15462267c4a24caa402e6257e0f903c3b677dbf48344c8eb7021fe8acd81b1",
+      "zip_crc32": "09c44c24",
+      "zip_date_time": [
+        1998,
+        9,
+        2,
+        15,
+        26,
+        34
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/UTLEXM.CHX",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/UTLEXM.CHX",
+      "size": 11078,
+      "sha256": "5520354d92c10382f6665db42e99cd47c5367c4b9cf6daaf0ad6627446d05df4",
+      "zip_crc32": "d0882395",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        30
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/UTLEXM.IN",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/UTLEXM.IN",
+      "size": 59873,
+      "sha256": "f589fd1c75bbca0436c407974d3176cac8e9c08dfd7380afb0e4df825eb27157",
+      "zip_crc32": "097758a7",
+      "zip_date_time": [
+        2003,
+        1,
+        7,
+        13,
+        25,
+        12
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/UTLEXM.OUT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/UTLEXM.OUT",
+      "size": 704841,
+      "sha256": "4470e3b8349586c1b8fbc654ab934c10d1fa052f7ec3952ae3e43ee0f61403e3",
+      "zip_crc32": "738d7b5f",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        30
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/UTLEXM.TAB",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/UTLEXM.TAB",
+      "size": 137225,
+      "sha256": "c9da9b133c9c66776165469716761a8f835c21cdf3b4937b9028cbe0f1c07faf",
+      "zip_crc32": "f51dd34f",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        15,
+        46,
+        30
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DATA/WEIRTABS",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DATA/WEIRTABS",
+      "size": 4689,
+      "sha256": "e818590713f9878ded0de329fd47142df35bd9c0f73ce0c161b7593c5892ee1d",
+      "zip_crc32": "8a732966",
+      "zip_date_time": [
+        1998,
+        9,
+        2,
+        15,
+        26,
+        30
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DOC/CONTENTS",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DOC/CONTENTS",
+      "size": 1052,
+      "sha256": "2191a963d59f4407ecbfdc221cb2222c2d7aae1d980032330468cb156656d077",
+      "zip_crc32": "7cbf38b5",
+      "zip_date_time": [
+        1998,
+        9,
+        30,
+        13,
+        41,
+        38
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DOC/FEQ.PDF",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DOC/FEQ.PDF",
+      "size": 792072,
+      "sha256": "ff54fd1b67248aed1c858571d3708be7aee84fcf2e265d2219a0240456cc4460",
+      "zip_crc32": "37098488",
+      "zip_date_time": [
+        1998,
+        9,
+        30,
+        9,
+        38,
+        54
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DOC/FEQ.TXT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DOC/FEQ.TXT",
+      "size": 22226,
+      "sha256": "f5f2b9dbedf89ca29baa11692d21f91b17b8b038b1fc218e539b24a61dfc2e7b",
+      "zip_crc32": "0be7924d",
+      "zip_date_time": [
+        2005,
+        6,
+        1,
+        8,
+        57,
+        18
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DOC/FEQUTL.PDF",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DOC/FEQUTL.PDF",
+      "size": 716084,
+      "sha256": "83a22d463b6c7537bf5a6b1a895fb69c974cf00a4b79c2d1bd2ec848f3dc17f3",
+      "zip_crc32": "09272c9a",
+      "zip_date_time": [
+        1998,
+        9,
+        30,
+        9,
+        38,
+        56
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/DOC/TABDIR.TXT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/DOC/TABDIR.TXT",
+      "size": 6071,
+      "sha256": "15066df63ef5b766516a1e8457b6dfa9b048e178f68ef5613901ec571b9bddf1",
+      "zip_crc32": "d1a84914",
+      "zip_date_time": [
+        1998,
+        9,
+        2,
+        15,
+        38,
+        42
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/NOTICE.TXT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/NOTICE.TXT",
+      "size": 2655,
+      "sha256": "16a7d11857587613bff5e2f06da1144b9f24f92e2eee7c91c2da7470628478a2",
+      "zip_crc32": "46fcee61",
+      "zip_date_time": [
+        2003,
+        4,
+        25,
+        16,
+        24,
+        58
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/README.TXT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/README.TXT",
+      "size": 11486,
+      "sha256": "19b9d6d34be187250fd8eb98468e1fd64731eef35792873e26dd14b22e6646d7",
+      "zip_crc32": "7b46b315",
+      "zip_date_time": [
+        2005,
+        6,
+        1,
+        9,
+        2,
+        50
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/RELEASEFEQ05.TXT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/RELEASEFEQ05.TXT",
+      "size": 178064,
+      "sha256": "23f2e9abc93b98fc03ec0a68fbfe02333a75040e98418c21a7da4b2356edd377",
+      "zip_crc32": "86578322",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        12,
+        45,
+        18
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/RELEASEUTL05.TXT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/RELEASEUTL05.TXT",
+      "size": 95303,
+      "sha256": "b8204fc95ce06678568aa687975ecf11a8225d45416f1b1bd397fff1b29af7e2",
+      "zip_crc32": "0776f196",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        12,
+        44,
+        4
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTFEQ/automake.fig",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTFEQ/automake.fig",
+      "size": 4363,
+      "sha256": "6447855b070828e888ffe07dea972a13851522a528d6466b1b1142673def4908",
+      "zip_crc32": "1eefd658",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        4
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTFEQ/clcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTFEQ/clcom.cmn",
+      "size": 271,
+      "sha256": "d393dffbfd6d9084ae5e2d6b62e8fc3d55c94af76b4b885d7224da3a09b68658",
+      "zip_crc32": "c2fff2b5",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTFEQ/compile.bat",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTFEQ/compile.bat",
+      "size": 468,
+      "sha256": "d63b98906508bc8e535a8cf2fc75fd13a97731bf653b3b5eae31a341a8454158",
+      "zip_crc32": "9c695741",
+      "zip_date_time": [
+        2005,
+        5,
+        26,
+        10,
+        10,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTFEQ/convertfeq.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTFEQ/convertfeq.for",
+      "size": 22701,
+      "sha256": "b62c4804d046eb8dd39776562f1a359e679f91f223b1df5e75f5bdc6d5abe2ad",
+      "zip_crc32": "0e258b5d",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTFEQ/inl192.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTFEQ/inl192.for",
+      "size": 1682,
+      "sha256": "b3af44467ff98c7b5e757bfd275d1efeff572c6207accae319aed03f09cd3a5d",
+      "zip_crc32": "02f72199",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTFEQ/process_old_units.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTFEQ/process_old_units.for",
+      "size": 1727,
+      "sha256": "118050ac3dfc941bab3cd684bc84cd4ca50e14d88c8b0ca37ef39e530dee2c68",
+      "zip_crc32": "cc9a0dad",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTFEQ/stdun.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTFEQ/stdun.cmn",
+      "size": 471,
+      "sha256": "6d28dc3753679a0855bdcd37eed59014088f9ad395beb7c1602c5d015de06ec3",
+      "zip_crc32": "8c5e5f6e",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTUTL/automake.fig",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTUTL/automake.fig",
+      "size": 4379,
+      "sha256": "22afcfe00f959866d87f9842b5464355a878236ccbedbab8882ed5596f67f2af",
+      "zip_crc32": "a1daea24",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTUTL/clcom.com",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTUTL/clcom.com",
+      "size": 271,
+      "sha256": "d393dffbfd6d9084ae5e2d6b62e8fc3d55c94af76b4b885d7224da3a09b68658",
+      "zip_crc32": "c2fff2b5",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTUTL/compile.bat",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTUTL/compile.bat",
+      "size": 470,
+      "sha256": "a1a79f69df9854ebf3b6c2d42d5d327e5fd3abf92dc9e979195dd5b2a4febdba",
+      "zip_crc32": "08cfa3d6",
+      "zip_date_time": [
+        2005,
+        5,
+        26,
+        10,
+        10,
+        56
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTUTL/convertutl.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTUTL/convertutl.for",
+      "size": 15085,
+      "sha256": "ec184756ea85f41ada20c5170b966e69824e12f89a7a2f87912b95a145564f96",
+      "zip_crc32": "e416f61b",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTUTL/inl192.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTUTL/inl192.for",
+      "size": 1682,
+      "sha256": "b3af44467ff98c7b5e757bfd275d1efeff572c6207accae319aed03f09cd3a5d",
+      "zip_crc32": "02f72199",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/CONVERTUTL/stdun.com",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/CONVERTUTL/stdun.com",
+      "size": 471,
+      "sha256": "6d28dc3753679a0855bdcd37eed59014088f9ad395beb7c1602c5d015de06ec3",
+      "zip_crc32": "8c5e5f6e",
+      "zip_date_time": [
+        2004,
+        11,
+        12,
+        0,
+        8,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/block.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/block.for",
+      "size": 1319,
+      "sha256": "179a89d808eea2279434824f06b55117b3a404cbb0f19f545d97d774458ddb7e",
+      "zip_crc32": "9b424ae4",
+      "zip_date_time": [
+        2002,
+        8,
+        23,
+        14,
+        22,
+        14
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/bnelem.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/bnelem.cmn",
+      "size": 982,
+      "sha256": "531e28774fbf8119becc6b1ee9f1742a7d611ef571b5b6d8aac7ec6cbf2c0577",
+      "zip_crc32": "d67f4d8f",
+      "zip_date_time": [
+        1999,
+        12,
+        14,
+        8,
+        0,
+        44
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/bnothr.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/bnothr.cmn",
+      "size": 625,
+      "sha256": "c23bf3ac8bb5bc8e1d5fd0d5db18fe381936950f68753204f9ae8523953d8e4a",
+      "zip_crc32": "842679c2",
+      "zip_date_time": [
+        2000,
+        4,
+        20,
+        15,
+        46,
+        0
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/bnpond.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/bnpond.cmn",
+      "size": 336,
+      "sha256": "0364b9c9efa1fddf6cd36c86568e635230b312c93de7c1f4e2e80ff81810c163",
+      "zip_crc32": "32dfff07",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        22
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/bnrslt.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/bnrslt.cmn",
+      "size": 358,
+      "sha256": "3a4a6865c83f73bbc9fd9449f7941e7688427467235aa7b6969d18975d624b70",
+      "zip_crc32": "da848da0",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/brhd.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/brhd.cmn",
+      "size": 341,
+      "sha256": "e018614611f4849a5172855abdf4f2bc4c75063f8556502cf06bbeb0067b4d6e",
+      "zip_crc32": "346ed74c",
+      "zip_date_time": [
+        1999,
+        8,
+        3,
+        12,
+        3,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/brnmat.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/brnmat.for",
+      "size": 126279,
+      "sha256": "bcfa4e2ef56ab6a27bb2c5ccac6784418f469b611cbc238775afc5f999636d5a",
+      "zip_crc32": "2d9c7131",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/cbcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/cbcom.cmn",
+      "size": 273,
+      "sha256": "0f21cdb5be87df4f92084dd3cde7ab95a5f370d3db78841cea67e71d53df5596",
+      "zip_crc32": "78532222",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        26
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/chkinput.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/chkinput.for",
+      "size": 102202,
+      "sha256": "47205af9bed6c4fafd53d258e8feb0f99c2872c31766539f6b4b09487d694246",
+      "zip_crc32": "3010c42a",
+      "zip_date_time": [
+        2002,
+        8,
+        22,
+        10,
+        58,
+        2
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/code14.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/code14.cmn",
+      "size": 198,
+      "sha256": "8faf53b976d5750103e64737d10c02a8425d2334d53a693675e38ee9ad707103",
+      "zip_crc32": "533e8c5f",
+      "zip_date_time": [
+        2000,
+        10,
+        26,
+        16,
+        11,
+        0
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/debug.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/debug.for",
+      "size": 32162,
+      "sha256": "6f342029a1b62467b4b0f2004de58199603b7a2d06ddb8afdc38f33235460857",
+      "zip_crc32": "787ed62c",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/difcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/difcom.cmn",
+      "size": 226,
+      "sha256": "e4b1e19e9c564d090f193d392914d8280c69a6f06e8dc0eb8a51d1f916d9ad63",
+      "zip_crc32": "c846a527",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        26
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/dmpmc.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/dmpmc.for",
+      "size": 1707,
+      "sha256": "282ce6451fcd048bda81d31cef2808a5cf9e9368de069133d5410ecee3eab0de",
+      "zip_crc32": "bf5b26d2",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/doeqz.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/doeqz.for",
+      "size": 10635,
+      "sha256": "c67a2b2eae5a90d6c007383b6a0b855f026ae40dc7f3b4d6aad49e35dda78a6a",
+      "zip_crc32": "5349a59f",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/double/linsys.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/double/linsys.for",
+      "size": 7647,
+      "sha256": "f40143efeed5aebc1a7f9a58a59042adb4938dca169541e7e538728e08b44c86",
+      "zip_crc32": "3be375a8",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        25,
+        22
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/double/matcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/double/matcom.cmn",
+      "size": 940,
+      "sha256": "965d9219eb0c708bc63a6393ed54886d96fc8cf5d905383d36a880d6c15b2ad8",
+      "zip_crc32": "de1abd2d",
+      "zip_date_time": [
+        2001,
+        8,
+        8,
+        14,
+        41,
+        18
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/dssdif.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/dssdif.cmn",
+      "size": 587,
+      "sha256": "00be1965c523fe176bc2a0702c7a56e379eac089cb04257f324a9cbe540825c2",
+      "zip_crc32": "95ff9e2e",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/dssout.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/dssout.cmn",
+      "size": 584,
+      "sha256": "6324d096fe438147b07d57712bf79a95fd543d5cc02e2e338fe16c9a4c4b9f33",
+      "zip_crc32": "61ac051c",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        30
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/dtcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/dtcom.cmn",
+      "size": 354,
+      "sha256": "ff0af407f4103750889a920efde45ac55701b0294409af327163ce44635691d7",
+      "zip_crc32": "673b15e3",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        30
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/dtendef.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/dtendef.cmn",
+      "size": 682,
+      "sha256": "863a7a6f5b38a2f03839a4164508f702b2b418cb2b6f13aa357beef9473c09b6",
+      "zip_crc32": "7dd2c82a",
+      "zip_date_time": [
+        2000,
+        11,
+        7,
+        19,
+        49,
+        36
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/dtendlay.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/dtendlay.for",
+      "size": 64154,
+      "sha256": "beb5d571fdab3a2d0785a003aa207b35017df250d327e7f9094c906389c2cf00",
+      "zip_crc32": "6d0cd562",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/endrun.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/endrun.cmn",
+      "size": 116,
+      "sha256": "ef7c9116d15c153eff953c469ead4c68313127e64b112a41cc724819961cce35",
+      "zip_crc32": "889b2222",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        32
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/enelem.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/enelem.cmn",
+      "size": 439,
+      "sha256": "80741d23f79b2e66043274403a246ff22c2eb69a01df46802922b1ab0d7391f9",
+      "zip_crc32": "68cfa9d5",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        32
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/enothr.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/enothr.cmn",
+      "size": 460,
+      "sha256": "789c753ff28863c8984015a77448503141d79a9cb1da0d1aa9d7ff1fb22ad28d",
+      "zip_crc32": "2d9e9554",
+      "zip_date_time": [
+        1999,
+        5,
+        13,
+        8,
+        40,
+        8
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/enrslt.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/enrslt.cmn",
+      "size": 1725,
+      "sha256": "28fde78f66ba83b76cc66afd61265d44c950dafec1e9b557800a7f0b9f381106",
+      "zip_crc32": "f18de8d6",
+      "zip_date_time": [
+        1999,
+        8,
+        18,
+        8,
+        53,
+        38
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/exnmat.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/exnmat.for",
+      "size": 189202,
+      "sha256": "5f08af897a909eced5b8f67dd1d72cf098e76de2343b08b626afad3383583e4f",
+      "zip_crc32": "b38f9731",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/feq.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/feq.for",
+      "size": 41222,
+      "sha256": "1e383ba6cbefb43446dba057c68a6a05f1ed2c86b6a3c6a3fcab26da9ee17c70",
+      "zip_crc32": "ca3d2b0d",
+      "zip_date_time": [
+        2003,
+        4,
+        21,
+        11,
+        57,
+        8
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/ftlookup.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/ftlookup.for",
+      "size": 30696,
+      "sha256": "4d24d756f537b3b90e61c461a141c7bb8c787354e4072293a1d89e870dc5c3c5",
+      "zip_crc32": "d7ed8a42",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/gatcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/gatcom.cmn",
+      "size": 1000,
+      "sha256": "944d458ccebf5e91e54ca83c2f5dda1be25e8d63e6fa2ab026ef79d6838be2eb",
+      "zip_crc32": "6716dd8b",
+      "zip_date_time": [
+        2000,
+        10,
+        5,
+        18,
+        28,
+        18
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/genscn.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/genscn.cmn",
+      "size": 526,
+      "sha256": "2f34502a0a0710cabffc9657ed0d7e6375647cec2be254001fc0428a50fc6330",
+      "zip_crc32": "2c2ae85a",
+      "zip_date_time": [
+        2001,
+        6,
+        15,
+        15,
+        56,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/genscn.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/genscn.for",
+      "size": 55319,
+      "sha256": "f23a551346de75350b90732f4a1551722e99ac9e76c57231aa4d3fa78d3a097d",
+      "zip_crc32": "9d48e9d7",
+      "zip_date_time": [
+        2002,
+        10,
+        21,
+        22,
+        36,
+        40
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/getcode.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/getcode.for",
+      "size": 27227,
+      "sha256": "9f28942de3082d212c1e70b2ab5a5d9693fdc5f88a511381638ffa3ac08ab786",
+      "zip_crc32": "a9e2b15b",
+      "zip_date_time": [
+        2001,
+        11,
+        21,
+        12,
+        55,
+        2
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/grav.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/grav.cmn",
+      "size": 241,
+      "sha256": "50b0baa472e35bb62a231ce8824bf1333519b8d2e647473b6702f81746945d5a",
+      "zip_crc32": "82862083",
+      "zip_date_time": [
+        1999,
+        3,
+        2,
+        8,
+        8,
+        34
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/hecdmy.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/hecdmy.for",
+      "size": 6152,
+      "sha256": "0746e75a77eb34f2df7f49d8e52c599e9e049f05d35738c8dc377bca562bce9d",
+      "zip_crc32": "2ad4b94f",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/hecdss.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/hecdss.cmn",
+      "size": 388,
+      "sha256": "d9b00af7f413f290bac4706e0b0e273ef1f7979fe8a7ce7975615c9bf8261852",
+      "zip_crc32": "317b2904",
+      "zip_date_time": [
+        1999,
+        11,
+        8,
+        15,
+        21,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/hecdss.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/hecdss.for",
+      "size": 32075,
+      "sha256": "29f6cf13799b0f89936a134bd72545c1bc3d6fd9231cf64bbe87bae9fde88527",
+      "zip_crc32": "a9dbc12c",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/infcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/infcom.cmn",
+      "size": 1084,
+      "sha256": "24d4965e4fc1204ed6e7322882e95c1d485a336d46c75945c236d386c85388db",
+      "zip_crc32": "b8bd720f",
+      "zip_date_time": [
+        2000,
+        10,
+        27,
+        11,
+        51,
+        26
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/input.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/input.for",
+      "size": 45027,
+      "sha256": "202dbb9c60ffbe76c8674201053b19a5f59c7e52f8e2488dca94468f93ead09c",
+      "zip_crc32": "d2dd1025",
+      "zip_date_time": [
+        2002,
+        8,
+        23,
+        15,
+        37,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/inputuf.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/inputuf.for",
+      "size": 311316,
+      "sha256": "3b568ff925af7595d5ebfee682d2fb14bc9349c09b64042148a682db0c636119",
+      "zip_crc32": "af041d0d",
+      "zip_date_time": [
+        2003,
+        4,
+        21,
+        12,
+        4,
+        16
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/inusnb.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/inusnb.cmn",
+      "size": 541,
+      "sha256": "06a63b2f2e29bc193492363d624fee4c5574a05ce960b598a96e9aab1837ff82",
+      "zip_crc32": "38893a51",
+      "zip_date_time": [
+        1999,
+        5,
+        13,
+        12,
+        3,
+        34
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/iounits.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/iounits.for",
+      "size": 2259,
+      "sha256": "c22b22d60ff36720fb2310948d94a229f53b328bc63f2b7d8c9b20a7166c5509",
+      "zip_crc32": "62dd50b7",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/irrig.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/irrig.cmn",
+      "size": 2889,
+      "sha256": "176a4154e2665575b9e25be5105651b2ee31d290e88f70b5516d93db3041e675",
+      "zip_crc32": "8b70c9b2",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        17,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/macro.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/macro.cmn",
+      "size": 2678,
+      "sha256": "a6dcda0d547f1ebee98f20e9e79b1a3bf4442bb75f1febb83ae8c46c8a21ecad",
+      "zip_crc32": "b24a09b0",
+      "zip_date_time": [
+        2000,
+        5,
+        19,
+        8,
+        55,
+        36
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/macro.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/macro.for",
+      "size": 29509,
+      "sha256": "a6b28f17205e07187e1d02b807cfd6171188da4950416557ca3f2a202362712e",
+      "zip_crc32": "32edd0c2",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/make/automake.fig",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/make/automake.fig",
+      "size": 4271,
+      "sha256": "8a6037e862a81abfe0a40fce38ebc22269296a4a9b0a86e93cdcadd31620b3e5",
+      "zip_crc32": "f5f2b527",
+      "zip_date_time": [
+        2002,
+        6,
+        27,
+        11,
+        39,
+        2
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/make/compile.bat",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/make/compile.bat",
+      "size": 424,
+      "sha256": "a18d683f39eed6c2b9df5ef6a7e6d588b26ffb24420c79c250dc417d18931dbb",
+      "zip_crc32": "57c6b344",
+      "zip_date_time": [
+        2005,
+        5,
+        31,
+        16,
+        16,
+        18
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/makpat.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/makpat.for",
+      "size": 1051,
+      "sha256": "a6908cf30f7c3bc76928ac40d4fd6ea721ab251329b47d8494fe748bbb19ab55",
+      "zip_crc32": "44b88c41",
+      "zip_date_time": [
+        2001,
+        2,
+        12,
+        22,
+        50,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/mhenry.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/mhenry.cmn",
+      "size": 132,
+      "sha256": "476b724c791dbfa01c54f0f3eee4bc94f8973f186837c3a98279dac06c37c845",
+      "zip_crc32": "0fa92eeb",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/misccon.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/misccon.cmn",
+      "size": 316,
+      "sha256": "7f801d060047b901eb1d2fae6f326f0dc404b2e1aa975da4604441dc1d84d4ce",
+      "zip_crc32": "d6b6c5b2",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        17,
+        8
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/miscfeq.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/miscfeq.for",
+      "size": 30607,
+      "sha256": "e2d6aa815f37232b29b04278697d996170470d4a18517062a09fe12f3941619c",
+      "zip_crc32": "a735204c",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/namcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/namcom.cmn",
+      "size": 254,
+      "sha256": "4a5a17297eda079190fe5ae98e3c77a82903620327b66a25fd142d1eb7550764",
+      "zip_crc32": "c7e2ec2e",
+      "zip_date_time": [
+        1999,
+        4,
+        15,
+        10,
+        6,
+        2
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/ntmatrix.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/ntmatrix.for",
+      "size": 50164,
+      "sha256": "dfc075bfc5e01f1cbc8c2d8414ad264cab62534eca9141df50f2f9ff784c5fdc",
+      "zip_crc32": "86e6f90e",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/ntwmxstr.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/ntwmxstr.for",
+      "size": 177292,
+      "sha256": "e83b5290a730f548aa2b6f4c4e5928d6f66e1af3299be7a24b36a39978118f2d",
+      "zip_crc32": "e146df49",
+      "zip_date_time": [
+        2002,
+        8,
+        8,
+        16,
+        20,
+        36
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/nzdcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/nzdcom.cmn",
+      "size": 167,
+      "sha256": "7aa3bbf50e7e0d27aa474aa3d8f1b80e3401c7af9d302b9e4439779895ebaf12",
+      "zip_crc32": "549b32cf",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        50
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/output.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/output.for",
+      "size": 107366,
+      "sha256": "fedf8c7914c87111c7990a07b056a454222f2771f957d9981ebcaa5b88555e1b",
+      "zip_crc32": "88edb4c7",
+      "zip_date_time": [
+        2002,
+        8,
+        23,
+        15,
+        39,
+        58
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/putpat.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/putpat.for",
+      "size": 4459,
+      "sha256": "85012da3ab1fb8089236699791ee943e4090fe74f25a27f46b7cf9214c72a304",
+      "zip_crc32": "cbacd241",
+      "zip_date_time": [
+        2001,
+        2,
+        12,
+        22,
+        57,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/rcblock.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/rcblock.cmn",
+      "size": 317,
+      "sha256": "2ae7774289f06c02f03851af3044868e70650e7894f3e9da9cb50268ffe34269",
+      "zip_crc32": "f43f7e38",
+      "zip_date_time": [
+        2002,
+        5,
+        16,
+        13,
+        16,
+        10
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/rdcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/rdcom.cmn",
+      "size": 994,
+      "sha256": "811c3cad01339922c07a10e1eaf724682083d9dd98038cee4e91c66ab026c922",
+      "zip_crc32": "a2bbefc2",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        52
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/runinit.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/runinit.for",
+      "size": 155063,
+      "sha256": "45807a814fa0a9013f7763903832900f860c5197bc22276ed682ac417f9e1e2d",
+      "zip_crc32": "227f7f9e",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/schematic.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/schematic.for",
+      "size": 46099,
+      "sha256": "5a5766a99a4982ca8610e5c421c329a50b7de299ae47978812ca750c4e3200fd",
+      "zip_crc32": "6766e37f",
+      "zip_date_time": [
+        2002,
+        8,
+        23,
+        15,
+        38,
+        4
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/select.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/select.for",
+      "size": 39552,
+      "sha256": "e13f3f1488b3a28f910a4791d47c8e9b6d09234f8378b6c5815b67cbda4ea7b5",
+      "zip_crc32": "f41071f1",
+      "zip_date_time": [
+        2002,
+        10,
+        12,
+        15,
+        7,
+        14
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/selector.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/selector.cmn",
+      "size": 394,
+      "sha256": "4835374b0a9036a4695a3a422a1df90eee93f97bdb2780449390fdee79bd5a90",
+      "zip_crc32": "f0133ed7",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        12,
+        46,
+        34
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/selectstack.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/selectstack.cmn",
+      "size": 226,
+      "sha256": "88ec95afe435da8157a8c2472d20d9cc74d547ea04d4cb7bdb010185de1629c7",
+      "zip_crc32": "cb7a25a3",
+      "zip_date_time": [
+        2002,
+        7,
+        31,
+        11,
+        41,
+        8
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/sideweir.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/sideweir.for",
+      "size": 7992,
+      "sha256": "aa741ba91f3dedc7a24fd4cd02ee7d6d709d2b3f764cf90238ba2784252d2196",
+      "zip_crc32": "c8c73cc6",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/single/linsys.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/single/linsys.for",
+      "size": 7635,
+      "sha256": "d7c1516a2e87e2bed5ef3a44fc158642e1f720a962ba590de86a827a7ac46c00",
+      "zip_crc32": "980dc587",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        22,
+        50
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/single/matcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/single/matcom.cmn",
+      "size": 914,
+      "sha256": "dd3a88768fe71412b8c9a33d44352b2d96a45181c0c44b62300ee78e83d967ad",
+      "zip_crc32": "8c6ceda2",
+      "zip_date_time": [
+        2001,
+        8,
+        8,
+        14,
+        41,
+        12
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/spout.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/spout.cmn",
+      "size": 1196,
+      "sha256": "28581f19bd48238767b4165237123f144d47fb4c7d5a9004204b09c48c3f366f",
+      "zip_crc32": "4e6d3954",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        52
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/symbol.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/symbol.cmn",
+      "size": 375,
+      "sha256": "b55c087790d81189f64282effc175d5b672951ad14618c3d63426ce3bac6643e",
+      "zip_crc32": "3bd43668",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        54
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/tabbrh.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/tabbrh.cmn",
+      "size": 381,
+      "sha256": "ba27a02dd7199c7cdc1e98df63042c430794cd5a913e835ca70f5681ff184105",
+      "zip_crc32": "c128d147",
+      "zip_date_time": [
+        2001,
+        8,
+        28,
+        10,
+        5,
+        14
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/tabhd.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/tabhd.cmn",
+      "size": 361,
+      "sha256": "90f554b74b4ac059d5a85c77710de618dd519cee396380f91ac4a838d1b4a28d",
+      "zip_crc32": "cc35a4e3",
+      "zip_date_time": [
+        2002,
+        5,
+        16,
+        20,
+        37,
+        4
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/tam.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/tam.cmn",
+      "size": 8111,
+      "sha256": "ae2dd1368a12f4cb928bea65dee3a006699e2bf633ca9aa8a35ec14b3a7dff49",
+      "zip_crc32": "fd6ef494",
+      "zip_date_time": [
+        2000,
+        11,
+        7,
+        19,
+        55,
+        40
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/tdtchk_free.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/tdtchk_free.for",
+      "size": 18888,
+      "sha256": "5e2356504b87c8c43008fac1d9cf83a66f53b6a422da7a7c7a9fedb673a413a6",
+      "zip_crc32": "26fadae6",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/timcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/timcom.cmn",
+      "size": 202,
+      "sha256": "21a5e514797adb0915f05f34f0fbf2d7081e095872b063890fec922fed9ff61a",
+      "zip_crc32": "31e329fd",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        56
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/timeman.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/timeman.for",
+      "size": 33282,
+      "sha256": "a484e95e4b821a3fcd831907d0fa1390be5ee5667ce0578bd9a9bd9c7d48fab6",
+      "zip_crc32": "5f7162fa",
+      "zip_date_time": [
+        2003,
+        4,
+        21,
+        12,
+        0,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/title.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/title.cmn",
+      "size": 224,
+      "sha256": "78959b4cf37f65bd9bad7187ad187b94d79b454b85f8b8c742c84743336b9a30",
+      "zip_crc32": "fce12297",
+      "zip_date_time": [
+        1999,
+        7,
+        23,
+        17,
+        20,
+        26
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/tokenstack.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/tokenstack.cmn",
+      "size": 226,
+      "sha256": "88ec95afe435da8157a8c2472d20d9cc74d547ea04d4cb7bdb010185de1629c7",
+      "zip_crc32": "cb7a25a3",
+      "zip_date_time": [
+        2002,
+        7,
+        31,
+        11,
+        40,
+        40
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/tsfcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/tsfcom.cmn",
+      "size": 703,
+      "sha256": "a58ff17e9f783543822a14a42a5fe27eb88213c3bd577c2fc30fbc52ad86b862",
+      "zip_crc32": "ff3ea39b",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        16,
+        58
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/ts_mngt.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/ts_mngt.cmn",
+      "size": 2055,
+      "sha256": "eb98eeae78e741a6c4dc0897f2cd954710fffbe0632313de17695a918ce5d235",
+      "zip_crc32": "be66e28c",
+      "zip_date_time": [
+        1999,
+        8,
+        3,
+        9,
+        3,
+        8
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/ts_mngt.prm",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/ts_mngt.prm",
+      "size": 344,
+      "sha256": "a7ea9b97cbb96c997414a9dbc8491c2d0f9a1b459a55c2f8c157c360f85e275b",
+      "zip_crc32": "c433c28a",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        11,
+        55,
+        26
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/usintp.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/usintp.cmn",
+      "size": 359,
+      "sha256": "ca1449b5f98a2e4f05d0182139bd592ad80d891d20b162343d307659e353e278",
+      "zip_crc32": "237a308f",
+      "zip_date_time": [
+        1999,
+        5,
+        13,
+        11,
+        30,
+        22
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/version.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/version.cmn",
+      "size": 248,
+      "sha256": "77affecdb91419046713050dea44b711a5ae3c4a2ad07ee3ceae7ab68e0823cc",
+      "zip_crc32": "0ac6a0f9",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        17,
+        0
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/wincom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/wincom.cmn",
+      "size": 229,
+      "sha256": "6439bd6cfa4a6f232b4f22aa7fdb89f451fb273f5984a24f78081f597a149196",
+      "zip_crc32": "483a0402",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        17,
+        2
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQ/wrcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQ/wrcom.cmn",
+      "size": 735,
+      "sha256": "086e68f1b68d22c31609cdbc1f8985377bf83d3ea920649b7f99d89e0afee473",
+      "zip_crc32": "275ec426",
+      "zip_date_time": [
+        2002,
+        3,
+        20,
+        16,
+        28,
+        18
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/abslot.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/abslot.cmn",
+      "size": 555,
+      "sha256": "8af9e9aed1213da19cd147ed1c780a0f1ce2309413d5823c9a60d6977a5ca6c5",
+      "zip_crc32": "fe97e390",
+      "zip_date_time": [
+        2001,
+        2,
+        19,
+        7,
+        38,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/appcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/appcom.cmn",
+      "size": 188,
+      "sha256": "a58ef4cad85390a354001a411818ca5c02b9077ccdaf09f6e4e80348d729467b",
+      "zip_crc32": "2292ec37",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        22
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/barrel.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/barrel.cmn",
+      "size": 3465,
+      "sha256": "2eb0863c8743be357c44c1e999430ce97ecb597c80fcb3076240667aa4faab48",
+      "zip_crc32": "1f4ad312",
+      "zip_date_time": [
+        1998,
+        8,
+        24,
+        11,
+        32,
+        58
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/bridge.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/bridge.cmn",
+      "size": 331,
+      "sha256": "25220a8528951df812ca1a8a49bd7b46effeb24e15b5af58ff301493288920d1",
+      "zip_crc32": "0222e657",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        22
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/bridge.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/bridge.for",
+      "size": 33317,
+      "sha256": "0ac087d321849af0a28f5b57331821ac63f61668299d9b30835f5ad7aa759722",
+      "zip_crc32": "bf880c1b",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/cdcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/cdcom.cmn",
+      "size": 924,
+      "sha256": "3663250c27d907c7fe54e47d039fcccc338606626c390d0e67aca28b2ed92288",
+      "zip_crc32": "9ce695af",
+      "zip_date_time": [
+        2001,
+        10,
+        3,
+        11,
+        5,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/chanrat.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/chanrat.for",
+      "size": 41639,
+      "sha256": "d18d60f5a02aac8cb3d1c124d2bed125430d2bb5e46ae36752c87daf05541689",
+      "zip_crc32": "3a225178",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/chncom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/chncom.cmn",
+      "size": 262,
+      "sha256": "63a2a30ba495eeabe2c79b960be7979e3eaf3a26419be0387db41678e274c66f",
+      "zip_crc32": "e80b27c1",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        26
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/conduit.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/conduit.for",
+      "size": 79149,
+      "sha256": "074bef2f7aacef943d6aba0d144733fbaea84c8383ac7ed62e4886aaaa909784",
+      "zip_crc32": "9057037c",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/critq.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/critq.for",
+      "size": 13363,
+      "sha256": "4e37c1ef0c8b61f5e41bc6956752158b5c6982d72a62080a5cc798d862f045f0",
+      "zip_crc32": "f0069144",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/crqrec.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/crqrec.cmn",
+      "size": 124,
+      "sha256": "1f70c75baecd44209ef15485445637caf731ec974831ff65ad6f980f3a6c19fe",
+      "zip_crc32": "acf2d99f",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        26
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/culcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/culcom.cmn",
+      "size": 1548,
+      "sha256": "995ce7c8d6f9594abcd68de5b8941d7e029e63a035a397aebc572f65667661e1",
+      "zip_crc32": "83a0d903",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/culverta.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/culverta.for",
+      "size": 158503,
+      "sha256": "6fb760d98b05caf9a2db679ac4aab10e392cbfbcf984aa20804ba548f16c9bb4",
+      "zip_crc32": "a055e273",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/culvertb.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/culvertb.for",
+      "size": 143127,
+      "sha256": "7088ce5a4ab843ccfce4d5598515cd6bef9d4127604ec0504ece508cc89f4c50",
+      "zip_crc32": "a1e06d78",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/culvertc.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/culvertc.for",
+      "size": 53775,
+      "sha256": "cc1fd53f1b1f8421ff6e167ee788d53bd0e782411b9a307c5e113b32bd16efdd",
+      "zip_crc32": "300a5b30",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/culvertd.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/culvertd.for",
+      "size": 116105,
+      "sha256": "d8619f99924fcbc90787c593fcaaa166fbc3b8d0d70c37676e21486261438050",
+      "zip_crc32": "3b0124a6",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/culverte.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/culverte.for",
+      "size": 8390,
+      "sha256": "af79f4d4848ceee3dd7dee76a1f010e1a1773742a4e03e0691857e964c5495bd",
+      "zip_crc32": "22cbdb6a",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/depcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/depcom.cmn",
+      "size": 194,
+      "sha256": "48aeda07205a2efb3df3ec132792106a06aae4741e3a247ce43a154c3cea6cc1",
+      "zip_crc32": "b4cb8922",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/depitm.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/depitm.cmn",
+      "size": 381,
+      "sha256": "d50d8d952e5fe3a82d6c4b480f3290e3189c2f296c42d4706bf53cd45d4a46af",
+      "zip_crc32": "0c75262b",
+      "zip_date_time": [
+        1999,
+        5,
+        3,
+        12,
+        35,
+        54
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/depmc.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/depmc.cmn",
+      "size": 170,
+      "sha256": "56a1f3a370c059c6dceee5ada7283a46b6327274d08dd17db1140499123cf4a2",
+      "zip_crc32": "30d946e2",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        30
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/dpm26c.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/dpm26c.cmn",
+      "size": 134,
+      "sha256": "871b7ecc649e901c6bf3185d4b936c59d81747e09e9892125a329714cd4fadd5",
+      "zip_crc32": "dc419363",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        32
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/embank.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/embank.for",
+      "size": 73974,
+      "sha256": "3193d550cbf90a1fb8646379b6b8c45c53ff2ecf80d0a8139aa53cd314d4b375",
+      "zip_crc32": "391d681d",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/embcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/embcom.cmn",
+      "size": 1067,
+      "sha256": "140d3f33eb511f35daaccd38b89dd526eb2486471808c74e9bc82634d598b83e",
+      "zip_crc32": "20f8ca9c",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        32
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/embkitm.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/embkitm.cmn",
+      "size": 401,
+      "sha256": "5584075942a76f6ed9fe39b4c2f0840d4202d7d12b2f6d53b6e2ae49f784eafd",
+      "zip_crc32": "324740e2",
+      "zip_date_time": [
+        2001,
+        2,
+        9,
+        12,
+        21,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/embwrq.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/embwrq.cmn",
+      "size": 771,
+      "sha256": "84909e66b8fa66005eda685a37bc5a3895a803f1faaaa9d85ce445c766c1d180",
+      "zip_crc32": "d0d9e530",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        34
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/epscom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/epscom.cmn",
+      "size": 205,
+      "sha256": "47a454c26b3af8e6c6f5e5d793c4415bd0d801113fce8ce2df31dc1a736f580b",
+      "zip_crc32": "47b9ecbd",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        36
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/expcon.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/expcon.for",
+      "size": 40813,
+      "sha256": "3052330ba5f2adadf6c3acb82a79df354594df559c1cccdf91f9a24eb6d20f6d",
+      "zip_crc32": "fa137233",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/feccom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/feccom.cmn",
+      "size": 458,
+      "sha256": "9e09c993307a54024d563eeed7c9f1eefb1ea6823ce3a58acc726137471ae26f",
+      "zip_crc32": "e0369de6",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        38
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/fequtl.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/fequtl.for",
+      "size": 49071,
+      "sha256": "3ee99e3d8b4550d1d7ddc7a4a921f309d6ecd2659a80e2b8c584973491c7aa5e",
+      "zip_crc32": "7851c9e3",
+      "zip_date_time": [
+        2003,
+        4,
+        21,
+        13,
+        34,
+        14
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/findbrk.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/findbrk.for",
+      "size": 31923,
+      "sha256": "e99f144fd4fedf8ddecbb77ed33137cc583d36366abf022dffb662c4ed37eb55",
+      "zip_crc32": "54b72b72",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/find_root_interval.old",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/find_root_interval.old",
+      "size": 3968,
+      "sha256": "157a7487100967ce048dfa123174a431c4cd3fc04a8944e24db6047942b82b42",
+      "zip_crc32": "fd36903e",
+      "zip_date_time": [
+        2000,
+        2,
+        4,
+        16,
+        16,
+        14
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/flapgate.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/flapgate.cmn",
+      "size": 242,
+      "sha256": "9c2f0a1da3103b131d454e232d35f885c7e74e5a807a3cdfb1bf7cdf43140ccd",
+      "zip_crc32": "793693a2",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        40
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/fldway.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/fldway.cmn",
+      "size": 471,
+      "sha256": "776864cf56ff80847b7a53fdcca65a25abc011ec3666972d9f5b5414624cdf5d",
+      "zip_crc32": "26014473",
+      "zip_date_time": [
+        2003,
+        3,
+        17,
+        13,
+        2,
+        58
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/floodway.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/floodway.for",
+      "size": 28416,
+      "sha256": "e6a00504064269c0355d959e078a5d40089ab460454a4cc238f7b3a688f7bbf1",
+      "zip_crc32": "9d217087",
+      "zip_date_time": [
+        2003,
+        3,
+        17,
+        15,
+        51,
+        34
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/flotab.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/flotab.cmn",
+      "size": 173,
+      "sha256": "861f51f38aaf5bf6a85d0debdcadb1b32f9754abff362aea2e4d2775435dfafb",
+      "zip_crc32": "e8d63ab6",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        44
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/flowline.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/flowline.cmn",
+      "size": 2047,
+      "sha256": "fa4375b3449a8dfebace138699a3572397d1546efa605f694b427df6417202e7",
+      "zip_crc32": "00ddb4f3",
+      "zip_date_time": [
+        2002,
+        2,
+        20,
+        14,
+        47,
+        14
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/fwcc.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/fwcc.cmn",
+      "size": 243,
+      "sha256": "9e6cb13328fdeb488c9da140c9b91daec408bef09390c69e9932566bdc04df87",
+      "zip_crc32": "5ec4c126",
+      "zip_date_time": [
+        1998,
+        8,
+        28,
+        20,
+        21,
+        18
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/gnicom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/gnicom.cmn",
+      "size": 244,
+      "sha256": "2df3421bd7c2c5d9abd460a192dcc317869177358bd1f9d15bfa3f9a019175c4",
+      "zip_crc32": "e1120fe4",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/goodbrk.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/goodbrk.cmn",
+      "size": 319,
+      "sha256": "cae0fec5abb079e02a90d6b4675e5f583c7740baba20f8e4cac048c34bf02493",
+      "zip_crc32": "f52e5041",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        50
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/grvcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/grvcom.cmn",
+      "size": 102,
+      "sha256": "d3f2360c65fe0915903c100412a99a5540a03f65ee617952a88fdc88fc954f51",
+      "zip_crc32": "e66f4984",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        54
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/hec2x.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/hec2x.for",
+      "size": 45100,
+      "sha256": "7904e319c92b13d0b07e7ccb9c207c99144663d1619d55be9aca255c002cd998",
+      "zip_crc32": "12e18c2a",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/imptrap.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/imptrap.for",
+      "size": 51455,
+      "sha256": "bfcacf4e1860ccc844de9ae5a2fc9bdf701f29e408adda3c16af00f212bfcb71",
+      "zip_crc32": "5cbfee95",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/inputproc.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/inputproc.for",
+      "size": 24732,
+      "sha256": "1a35f556bebb00444a72e6e20f4ba2b8226249348311ff8fe7436942a9db4687",
+      "zip_crc32": "637edaa9",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/invgate.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/invgate.cmn",
+      "size": 418,
+      "sha256": "a9339f8c4b5d9bd8135f234da0e335866aab5d58e2419fba3ddb4f73dbe3b753",
+      "zip_crc32": "50306722",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        20,
+        4
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/inv_gate.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/inv_gate.for",
+      "size": 38629,
+      "sha256": "e38330c6c3d68fdd43510c625f6cd050ce8e1339c1e7d3fa0e0aaf59c32cfcda",
+      "zip_crc32": "84f10a43",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/isecom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/isecom.cmn",
+      "size": 156,
+      "sha256": "ab7673b745740ae3c15cb8079ca1564ab92eba28ecc2abf0cef9f4a202f88f9e",
+      "zip_crc32": "98f1e4ee",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        56
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/lprfit.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/lprfit.for",
+      "size": 19224,
+      "sha256": "c4fe4abf33e74129fed8e18e81c3faa6db06a2980d9dc0adae2959fe610db3ee",
+      "zip_crc32": "166734f3",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/lprfititem.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/lprfititem.cmn",
+      "size": 489,
+      "sha256": "9e38755f92a09a5dd3cf510a940884c99dde181be762664806b81e361453ae4b",
+      "zip_crc32": "3e604b75",
+      "zip_date_time": [
+        2000,
+        10,
+        28,
+        20,
+        36,
+        56
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/make/automake.fig",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/make/automake.fig",
+      "size": 4352,
+      "sha256": "6cc34afa5be6e95724799a180c2a784ae179b2c855ca0a6826b6cd8ad537430e",
+      "zip_crc32": "f3f7df76",
+      "zip_date_time": [
+        2002,
+        6,
+        21,
+        19,
+        2,
+        18
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/make/compile.bat",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/make/compile.bat",
+      "size": 284,
+      "sha256": "5cd1281a18f3dbd4c5ff8d18f8edbbd4cf90c9d9cbf214afed4ed90250a9c05f",
+      "zip_crc32": "a34f52f7",
+      "zip_date_time": [
+        2003,
+        4,
+        21,
+        13,
+        36,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/makelakexs.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/makelakexs.for",
+      "size": 6290,
+      "sha256": "b4dfbb96ed94e6621557110536550d9e8a7f7826bd07500bb9a6d70e058f16ea",
+      "zip_crc32": "a553ae4f",
+      "zip_date_time": [
+        2002,
+        10,
+        13,
+        16,
+        14,
+        2
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/max.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/max.cmn",
+      "size": 162,
+      "sha256": "9bee415d69c56656085e5bb04e95eeb4269160606e7c094e8e206c8ac5d69655",
+      "zip_crc32": "010b37c5",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        0
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/mkembank.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/mkembank.for",
+      "size": 14330,
+      "sha256": "190395c537ab1e8f18552d0e63198d0e086174b287325250abc97c9ad65ce2a2",
+      "zip_crc32": "aaa04314",
+      "zip_date_time": [
+        2002,
+        9,
+        30,
+        18,
+        7,
+        40
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/mkwspro.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/mkwspro.for",
+      "size": 4634,
+      "sha256": "7b7b2b6e1478c2674a2270c0fa178cc980c49b00f04e20b3315eab01a2fefddd",
+      "zip_crc32": "ecec6300",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/multiple_value_body.tmp",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/multiple_value_body.tmp",
+      "size": 4446,
+      "sha256": "acfe28f4efc4c61742c1b63e8ce5f7a344368222c55d0a8e2d5c86afd6a29871",
+      "zip_crc32": "da34de3e",
+      "zip_date_time": [
+        1998,
+        7,
+        16,
+        12,
+        25,
+        4
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/ndrsdc.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/ndrsdc.cmn",
+      "size": 131,
+      "sha256": "1c8b487a8dc04f7ed857c7924307b415fc160c787f63fe961d37c4a27dad2b06",
+      "zip_crc32": "c49cf234",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        2
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/nrdzcm.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/nrdzcm.cmn",
+      "size": 214,
+      "sha256": "fd868f1957045c86ba5ddffec2c3b6f5a6298142f5b339b348d0598b2e8ac272",
+      "zip_crc32": "eb0d1f52",
+      "zip_date_time": [
+        1999,
+        12,
+        13,
+        19,
+        15,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/numrmath.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/numrmath.for",
+      "size": 31592,
+      "sha256": "594043b29850c8580f8f8994efbc978d9ebb0ed0d9bf7af6d4bf3f3fdc080bc8",
+      "zip_crc32": "f412f281",
+      "zip_date_time": [
+        2003,
+        4,
+        21,
+        12,
+        16,
+        30
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/orfshape.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/orfshape.cmn",
+      "size": 259,
+      "sha256": "2ae386ca263e4b9abd35d91379866d2c0278f5b068c581c44e6f4dc57d6ad3b8",
+      "zip_crc32": "de683a79",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        18,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/orifice.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/orifice.for",
+      "size": 32402,
+      "sha256": "64c5e26572caa6ee727cd410bced4529cc46fcb296406df3739702e8c4a5bb25",
+      "zip_crc32": "c91826ca",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/pumpitem.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/pumpitem.for",
+      "size": 36551,
+      "sha256": "2a9536559e2f53c012f777a5395259362019e53984b55ad4fce33629edf834b7",
+      "zip_crc32": "a3e23854",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/putget.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/putget.cmn",
+      "size": 1733,
+      "sha256": "4f7bb5f853d4bacbcfec0d329777f15ef81a96357dfd7fefd088df99f991033c",
+      "zip_crc32": "1e62be30",
+      "zip_date_time": [
+        1999,
+        7,
+        28,
+        12,
+        7,
+        58
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rappc.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rappc.cmn",
+      "size": 132,
+      "sha256": "3e76b0da2806e8c6037f8d8ff775c40b613e4eb5d3050c138d799d256ea9ee51",
+      "zip_crc32": "5e2bbda2",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        4
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rconc.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rconc.cmn",
+      "size": 216,
+      "sha256": "3d18050fcb43282b8f4549f0f0fdd36c548d9aeee40113ce5a48b09f6185eee7",
+      "zip_crc32": "e775fb17",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rdfcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rdfcom.cmn",
+      "size": 443,
+      "sha256": "6f4811016ca908103ca9dff9562bf4a9ad2eae798bf27b8c86ae503067a08e3e",
+      "zip_crc32": "8bdd07a0",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        8
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/riserclv.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/riserclv.for",
+      "size": 34892,
+      "sha256": "c4ccbebb7de57ef43c5a09a588e1debc77ce359f67180365804cc8b4dd992aa5",
+      "zip_crc32": "190a6d59",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/ritcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/ritcom.cmn",
+      "size": 179,
+      "sha256": "07d6a0b635b0c800485f3fae7b040c621eec3ca843d433526975e8dd663ebd8a",
+      "zip_crc32": "cb38deda",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        10
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/ritter.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/ritter.for",
+      "size": 10122,
+      "sha256": "b01a7d9de2ec3d8c5fb67a3039872ded4beab1e8cd7e19d20ec38677dc9cee8c",
+      "zip_crc32": "aab01e7b",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rootfind.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rootfind.for",
+      "size": 30466,
+      "sha256": "8dae6871fa13c1505a2b1d030e79400864cbf19970380c5528b8871a8b379448",
+      "zip_crc32": "ab0c8d31",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rqvstw.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rqvstw.cmn",
+      "size": 279,
+      "sha256": "96889bc9b6677edde62aaa50b2b01de1877cd318db9322dcd96d698e08b7aa14",
+      "zip_crc32": "f94a1997",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        12
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rrovdc.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rrovdc.cmn",
+      "size": 129,
+      "sha256": "c4b46d0c37f4b766bf7ad64461baea124c1712b0af6efedce61aebda98c0c701",
+      "zip_crc32": "b812f9e7",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        14
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rsubc.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rsubc.cmn",
+      "size": 278,
+      "sha256": "5cdd068062be93cbbe0e48b6d7dc9708d47798b2266c890be38f3198416ab937",
+      "zip_crc32": "61a3028e",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        16
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rty0c.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rty0c.cmn",
+      "size": 251,
+      "sha256": "d1129713335d0d014bafc2854b557534032ef9f4225463c456368383ec41147b",
+      "zip_crc32": "b72e1004",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        18
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rty16c.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rty16c.cmn",
+      "size": 393,
+      "sha256": "b98e44cefd5a985f64d141b996869eeebccd4f7abb642e1703245463a1630c8f",
+      "zip_crc32": "4844b79c",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        20
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rty1c.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rty1c.cmn",
+      "size": 210,
+      "sha256": "ba080bd66306d809e61a2d9fc54e2e8e6b10e568f5beb3a4d982acc155c68f7d",
+      "zip_crc32": "a3dc4e94",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        22
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rty2c.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rty2c.cmn",
+      "size": 320,
+      "sha256": "5d74123b38bc240a939d586a60d7a8bb8a76799e84eea45ad87267796465b261",
+      "zip_crc32": "565a3068",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rty6c.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rty6c.cmn",
+      "size": 370,
+      "sha256": "40f14b238ac2bf687d4eb561177229b671e71bd453624981147a970970287041",
+      "zip_crc32": "dd9a7317",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        26
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rty7c.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rty7c.cmn",
+      "size": 225,
+      "sha256": "44832ae241ff6072d0713eeb33b4810fc5fb9e1fc5d3edd029413b4fb461f38c",
+      "zip_crc32": "404509b6",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/rtysc.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/rtysc.cmn",
+      "size": 121,
+      "sha256": "845d925f6cbe337dbe8aa88ec57f3d018fad2186920183550e06fb74823c1227",
+      "zip_crc32": "2cdbd7ea",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        30
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/sberc.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/sberc.cmn",
+      "size": 198,
+      "sha256": "53edf3216263214029bdc9171c216b0b7d6c6b57bb38a57cfca3317d35c586a8",
+      "zip_crc32": "4687e26b",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        32
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/seqd.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/seqd.cmn",
+      "size": 107,
+      "sha256": "79f09e949306562250ee5e617a971bab2e30a9fc86d125753e7feb6d432bcc98",
+      "zip_crc32": "a476d204",
+      "zip_date_time": [
+        1998,
+        9,
+        4,
+        20,
+        53,
+        2
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/sfwmdqcv.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/sfwmdqcv.cmn",
+      "size": 391,
+      "sha256": "6b735fcc07eddf410f6bbe3de2c45cd71b3f3815fc33a4947f516adcff21bf4d",
+      "zip_crc32": "3c949467",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        34
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/sincom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/sincom.cmn",
+      "size": 508,
+      "sha256": "726c31624307ce4229bc939377d397faf4e8cd9869530f568fd41ed9f5c3b007",
+      "zip_crc32": "b01be95c",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        36
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/sinuous.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/sinuous.for",
+      "size": 48910,
+      "sha256": "1b0bd4f8dfadc86d52feaf9eb713893a130a409a8e412e25f7c882674430b498",
+      "zip_crc32": "5b922c26",
+      "zip_date_time": [
+        1999,
+        7,
+        28,
+        16,
+        17,
+        42
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/sortser.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/sortser.for",
+      "size": 6917,
+      "sha256": "75fa943d7bf80591762d154b7435b3790e5b2520037520a9bbfeea4078351004",
+      "zip_crc32": "66a94dfa",
+      "zip_date_time": [
+        1999,
+        6,
+        3,
+        10,
+        7,
+        42
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/so_flow.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/so_flow.cmn",
+      "size": 559,
+      "sha256": "77adf1bdb0c31beb62b98e1b4358d5efe1ea0b3a926d9e0e9410ccb1352ada9d",
+      "zip_crc32": "0aa4ff98",
+      "zip_date_time": [
+        1998,
+        9,
+        7,
+        10,
+        16,
+        26
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/sperc.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/sperc.cmn",
+      "size": 225,
+      "sha256": "7d2a8d8d2f8735b57727dfc18458072e77062b09a1925bfe5a0b9b5cdf06b25b",
+      "zip_crc32": "2c974032",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        38
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/subcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/subcom.cmn",
+      "size": 121,
+      "sha256": "f34379ae92f12c71ab980fca7ce691e90771e45a7f943b88a0ef6827224b5621",
+      "zip_crc32": "6e73e5e0",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        40
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/tablook.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/tablook.for",
+      "size": 21206,
+      "sha256": "647afc392b75531ec5f62e489baac074055726672c83501be8e47088aea91df8",
+      "zip_crc32": "d93307a1",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/tabstore.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/tabstore.for",
+      "size": 42000,
+      "sha256": "ae3dfda01f91308023250897c16f8e81cdd0002af4113463fe3eb2137e7d0609",
+      "zip_crc32": "fab2693d",
+      "zip_date_time": [
+        2002,
+        10,
+        21,
+        16,
+        38,
+        14
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/tautsp.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/tautsp.for",
+      "size": 13322,
+      "sha256": "0c4bab6ae24fa53c0dc481e2b120e1ca8ab94ef81771efaafda46247d39474b1",
+      "zip_crc32": "acc96c7f",
+      "zip_date_time": [
+        2001,
+        11,
+        25,
+        23,
+        14,
+        44
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/temp.ufgculv",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/temp.ufgculv",
+      "size": 1433,
+      "sha256": "0bcdfc8623f8dd276576a0dd9e095c9a2ac63589c7d11ed5f1632c090c777bd6",
+      "zip_crc32": "9a3cc335",
+      "zip_date_time": [
+        1999,
+        7,
+        28,
+        9,
+        48,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/typlim.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/typlim.cmn",
+      "size": 770,
+      "sha256": "0d32e88ca7cdfd024c67eccfd688ecb3e64c307f5af9c3d236e08376f38887fd",
+      "zip_crc32": "1dbf1663",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        42
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/typtrn.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/typtrn.cmn",
+      "size": 1348,
+      "sha256": "fd029017cfb4d0898b90b737dc5d56a248db783393983e9dde17ef59b8c8cb9b",
+      "zip_crc32": "eee87754",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        44
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/ufgate.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/ufgate.cmn",
+      "size": 702,
+      "sha256": "97851f32a4719b93b870fbab99d2e4682dfa38fb93edd5e96f3b3cd72ff876f4",
+      "zip_crc32": "7e684c09",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        44
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/ufgate.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/ufgate.for",
+      "size": 52960,
+      "sha256": "85f30e17e946555d791a6a25002d2912d40cadaf1a9d8605a1889a0592c6b3c0",
+      "zip_crc32": "6ac017d9",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/ufgate_d.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/ufgate_d.cmn",
+      "size": 1170,
+      "sha256": "d81bcf40ded021b196d3c39e7db75ef266612e947f4f3c660ab578b6fe68a4c1",
+      "zip_crc32": "1692f2f1",
+      "zip_date_time": [
+        1998,
+        9,
+        8,
+        7,
+        24,
+        54
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/ufgcitm.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/ufgcitm.cmn",
+      "size": 401,
+      "sha256": "f36d35e7d81bd205d06aa2a332e822f02ee5666b911a8e9aa50ce810b5866b75",
+      "zip_crc32": "fa90a719",
+      "zip_date_time": [
+        1999,
+        7,
+        28,
+        12,
+        54,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/ufgculv.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/ufgculv.for",
+      "size": 130405,
+      "sha256": "b906cb85174bfbe806b09d35bdf628b1f721e17d258519afb814a34bb1b77104",
+      "zip_crc32": "3f2cae0c",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/version.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/version.cmn",
+      "size": 248,
+      "sha256": "77affecdb91419046713050dea44b711a5ae3c4a2ad07ee3ceae7ab68e0823cc",
+      "zip_crc32": "0ac6a0f9",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        17,
+        0
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/wspro.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/wspro.for",
+      "size": 80693,
+      "sha256": "8afc91dd959467cda3d5e4f09755194ec1e6f4fbaca75fbad49d75b393bbe9db",
+      "zip_crc32": "48753aed",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        27,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/wsproxs.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/wsproxs.cmn",
+      "size": 1626,
+      "sha256": "b095b95a89c88f006a4d0830dcbd5cbe7a8b2363b2ef155931c45c9ddd256731",
+      "zip_crc32": "1b35d595",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/x43com.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/x43com.cmn",
+      "size": 382,
+      "sha256": "e7399ac6b8291bdd109240e178bbc19a3247e7326c3e5359dd5b6ee435ab37e7",
+      "zip_crc32": "2dc0e91d",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/x44com.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/x44com.cmn",
+      "size": 347,
+      "sha256": "9f1d300204ac7830b046f0b75bb7076af12880cbf3f78095d118b1b1078f753b",
+      "zip_crc32": "a22e9868",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/xs0com.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/xs0com.cmn",
+      "size": 295,
+      "sha256": "e761afb9c5acde48c370be7b42d57f6bad9128781ef82b6dbda60d0e04f31f32",
+      "zip_crc32": "652b56bf",
+      "zip_date_time": [
+        1998,
+        6,
+        15,
+        9,
+        36,
+        40
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/xs1com.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/xs1com.cmn",
+      "size": 1072,
+      "sha256": "401de4b391cb6cc95f9e573171f489d96db61c519dea1b1d11a8bdea56b6c914",
+      "zip_crc32": "293de4c6",
+      "zip_date_time": [
+        1999,
+        4,
+        29,
+        11,
+        8,
+        20
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/xs2com.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/xs2com.cmn",
+      "size": 622,
+      "sha256": "4c8c2008d16c4984d58e1ac4791a408ea9d6fa63d4c85330b24008e6b4561dfa",
+      "zip_crc32": "99dcfb46",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        52
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/xs3com.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/xs3com.cmn",
+      "size": 4087,
+      "sha256": "6b01e8059c77ccded3b3030bd901f59e331e4f93ccb3fb13475f2a7879372667",
+      "zip_crc32": "281572d5",
+      "zip_date_time": [
+        1999,
+        4,
+        29,
+        11,
+        8,
+        22
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/xs4com.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/xs4com.cmn",
+      "size": 283,
+      "sha256": "761f794573764d8d88dbf8d19a00429b60bbaa2053cf6b3170074e2617a9ca67",
+      "zip_crc32": "dac8e237",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        56
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/xscomb.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/xscomb.cmn",
+      "size": 352,
+      "sha256": "f288f3f7b0aa9be169bb685da6cb29f03cbfcaef386b58a5fd2a280d7c09be0a",
+      "zip_crc32": "40449ecc",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        19,
+        56
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/xscomd.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/xscomd.cmn",
+      "size": 1648,
+      "sha256": "0b68c37d83ad3ab44bf7abdba82af9dcd8d349d9aafbf559b1874cfd7486769c",
+      "zip_crc32": "76b4b77e",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        20,
+        0
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/xscomu.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/xscomu.cmn",
+      "size": 1849,
+      "sha256": "c4a4a7b123af975e0070e938c9e5d4920a12d0235121e2d17f70ae9ffddd3302",
+      "zip_crc32": "83c606b6",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        20,
+        0
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/xsection.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/xsection.for",
+      "size": 157319,
+      "sha256": "2cd643be91d524774cfafd886498c5454afac11154b975a6455de95a0cd7b83b",
+      "zip_crc32": "91b9b62e",
+      "zip_date_time": [
+        2003,
+        4,
+        21,
+        12,
+        28,
+        14
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/xtadd.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/xtadd.cmn",
+      "size": 290,
+      "sha256": "58cd8ee54f35c1a0f7c55e38b5fb0ea901a55faccb9f2c2b32a9bed83567f581",
+      "zip_crc32": "768b7db2",
+      "zip_date_time": [
+        1999,
+        12,
+        13,
+        19,
+        20,
+        12
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/y1gy2.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/y1gy2.cmn",
+      "size": 200,
+      "sha256": "2f4f7d9c7914bdbecee07fa9dcc06c9465e5ade7632a45617e884decf5582964",
+      "zip_crc32": "0aa18c7b",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        20,
+        2
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/y43_to_4.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/y43_to_4.cmn",
+      "size": 151,
+      "sha256": "cb63e7dba2228a50be793bdc8f1a36637d97f55841f7832e775a8fe00e62955a",
+      "zip_crc32": "ec05e20d",
+      "zip_date_time": [
+        1998,
+        9,
+        4,
+        22,
+        38,
+        4
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/y4sw.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/y4sw.cmn",
+      "size": 224,
+      "sha256": "b4f5cbab0fe3ea4dbbd923a75e292be9ce285a2eed1f2d10bd44c9dd49e5afcf",
+      "zip_crc32": "c1ceebb2",
+      "zip_date_time": [
+        1998,
+        9,
+        3,
+        8,
+        31,
+        36
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/FEQUTL/y4_to_43.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/FEQUTL/y4_to_43.cmn",
+      "size": 219,
+      "sha256": "05b3fe88af9f6d40cf7ac73d05260a5967a11da5ae25dde45780521b28767a77",
+      "zip_crc32": "9b7207b1",
+      "zip_date_time": [
+        1998,
+        9,
+        4,
+        10,
+        13,
+        40
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/arsize.bak",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/arsize.bak",
+      "size": 8010,
+      "sha256": "3c217e2f8336514f7e1deec92bfdd415f5e08881fbaf8a890f22bc216f104b5f",
+      "zip_crc32": "4351b0a2",
+      "zip_date_time": [
+        2000,
+        10,
+        9,
+        8,
+        56,
+        20
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/arsize.prm",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/arsize.prm",
+      "size": 8150,
+      "sha256": "73288de81564e27530e6014b7bfadcaec20cc3d0c05a04c4613fa6edc120b492",
+      "zip_crc32": "64826dc2",
+      "zip_date_time": [
+        2002,
+        4,
+        5,
+        13,
+        15,
+        44
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/arsiz~l7.pcv",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/arsiz~l7.pcv",
+      "size": 8288,
+      "sha256": "6c4e66f078ac359ce66c2280f5166de5775ff139684bed063093621b5b1ebf34",
+      "zip_crc32": "92b2ed00",
+      "zip_date_time": [
+        1998,
+        6,
+        15,
+        10,
+        21,
+        32
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/clcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/clcom.cmn",
+      "size": 271,
+      "sha256": "d393dffbfd6d9084ae5e2d6b62e8fc3d55c94af76b4b885d7224da3a09b68658",
+      "zip_crc32": "c2fff2b5",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        20,
+        20
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/cr.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/cr.cmn",
+      "size": 135,
+      "sha256": "2a140c942aadb93511acb875d019cec10abce96cc4cc1b8bbb9a0fa6bfc66cf1",
+      "zip_crc32": "476d99d5",
+      "zip_date_time": [
+        2000,
+        12,
+        13,
+        8,
+        4,
+        12
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/forunit.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/forunit.cmn",
+      "size": 619,
+      "sha256": "b25d9f7e0530e35c667ff78268f6d1047120e85483b413dbcec9cca91cc070b2",
+      "zip_crc32": "ce5df064",
+      "zip_date_time": [
+        2002,
+        8,
+        9,
+        10,
+        33,
+        22
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/fqshrarg.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/fqshrarg.for",
+      "size": 2611,
+      "sha256": "6845d47dff2f3dfa4c9d284d5da12df3aeed0f0a8842d64d1b2a439070a7646a",
+      "zip_crc32": "cc285225",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        21,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/fqshrftb.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/fqshrftb.for",
+      "size": 168521,
+      "sha256": "926d46bf94c22f78c7a2a9161e9d6add2ffbba069277d972be792c8fdb653305",
+      "zip_crc32": "eb5c4ee6",
+      "zip_date_time": [
+        2002,
+        8,
+        23,
+        15,
+        36,
+        8
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/fqshrinl.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/fqshrinl.for",
+      "size": 12928,
+      "sha256": "18bcacf1453ca3beaba0e499a48be98ac37b48d96fe9a2f8b6d71abb178db759",
+      "zip_crc32": "012af04e",
+      "zip_date_time": [
+        2002,
+        7,
+        25,
+        10,
+        28,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/fqshrlin.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/fqshrlin.for",
+      "size": 58052,
+      "sha256": "7b5d2b46ac7c51cec467376a1c6666b84a84b7220e9f2d5adb3ee0d96dbe128f",
+      "zip_crc32": "262e5697",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        20,
+        56
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/fqshrmsc.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/fqshrmsc.for",
+      "size": 573,
+      "sha256": "013043495670c75101d154479e934a85ee45fd186f3d0765b3360533a72b5216",
+      "zip_crc32": "e69d4b24",
+      "zip_date_time": [
+        2002,
+        8,
+        7,
+        14,
+        42,
+        50
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/fqshrplg.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/fqshrplg.for",
+      "size": 1691,
+      "sha256": "03d616f45f88eb9abaaa31f924eff3cabaa74d090b1ffcac17a2ecf01279c7ac",
+      "zip_crc32": "5b64733a",
+      "zip_date_time": [
+        2000,
+        7,
+        31,
+        11,
+        6,
+        8
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/fqshrstr.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/fqshrstr.for",
+      "size": 17009,
+      "sha256": "bbd52e2e8768106d1c544aec636f369270140aced3597befe3a7017b6922f2ae",
+      "zip_crc32": "f99b2a33",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        21,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/fqshrtdl.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/fqshrtdl.for",
+      "size": 24716,
+      "sha256": "e2742a12d97a2423aa009f3052647d3c1e6bf25f5bf05009571488e88ee566e7",
+      "zip_crc32": "85753219",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        21,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/fqshrtim.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/fqshrtim.for",
+      "size": 4137,
+      "sha256": "3a36501ca524ca2fce6a04227bc5432372eb71ca3588068e46b46ebf83ae4332",
+      "zip_crc32": "bce94739",
+      "zip_date_time": [
+        1999,
+        7,
+        28,
+        16,
+        58,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/fqshrunt.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/fqshrunt.for",
+      "size": 3600,
+      "sha256": "af027d9835f100149fe0053203dc9fe2c9ad18488d54e472f100af9287aa4bd1",
+      "zip_crc32": "f8d5d012",
+      "zip_date_time": [
+        2002,
+        8,
+        9,
+        10,
+        34,
+        40
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/ftable.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/ftable.cmn",
+      "size": 403,
+      "sha256": "a3c8d7a32f3a24598d71f02b0ee3f032eccebdc7f3a628a9600077e62f9201ce",
+      "zip_crc32": "f7fca034",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        20,
+        22
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/home.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/home.cmn",
+      "size": 143,
+      "sha256": "0121b88ab91a3d895057df6df71fe98ee99695d01728e5544130c8768c32f5f9",
+      "zip_crc32": "5086705e",
+      "zip_date_time": [
+        2002,
+        8,
+        8,
+        19,
+        49,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/itabidnum.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/itabidnum.cmn",
+      "size": 206,
+      "sha256": "3c06d0170dac19553c0b5a42e6035b6beeabfe8c0774e07cc95708f221bbb39d",
+      "zip_crc32": "01980c8c",
+      "zip_date_time": [
+        2000,
+        2,
+        18,
+        13,
+        57,
+        52
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/itbidnm.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/itbidnm.cmn",
+      "size": 206,
+      "sha256": "3c06d0170dac19553c0b5a42e6035b6beeabfe8c0774e07cc95708f221bbb39d",
+      "zip_crc32": "01980c8c",
+      "zip_date_time": [
+        2000,
+        2,
+        18,
+        14,
+        57,
+        52
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/julian.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/julian.cmn",
+      "size": 644,
+      "sha256": "f175291ad079505d7b7292723df3975b8b74e4c98c055cc6940d739f6398764c",
+      "zip_crc32": "91e0a68b",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        20,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf90_ms_d.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf90_ms_d.who",
+      "size": 3496,
+      "sha256": "bb11770c955705d767f4c35b912daf23a037c25bce0db59685ef12d651ec8487",
+      "zip_crc32": "497d8bcb",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        11,
+        41,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf90_ms_s.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf90_ms_s.who",
+      "size": 3496,
+      "sha256": "e12f0888fa5851607c0516fe042965d08bc2439e405373f62e112aec43707e74",
+      "zip_crc32": "4bbf65da",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        11,
+        41,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_d_npf.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_d_npf.who",
+      "size": 3503,
+      "sha256": "8ad1a9661146f08043bf8b3135d3ddec8f4b73175cb7c2eff7872cfb372d1a0e",
+      "zip_crc32": "c69fd26f",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        12,
+        32,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_d_pf1.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_d_pf1.who",
+      "size": 3505,
+      "sha256": "96b8de1d8340e24a0c1ed17f07379b62aeb24376d706e483272d84706ed47337",
+      "zip_crc32": "daa0a309",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        12,
+        32,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_d_pf2.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_d_pf2.who",
+      "size": 3505,
+      "sha256": "ffae64335448e0e18cba2152b0008a7a098d27a7ede42003def7b2eb950e71ff",
+      "zip_crc32": "e8322007",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        12,
+        32,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_s_npf.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_s_npf.who",
+      "size": 3503,
+      "sha256": "4edad8adf9c32675c2fe17291feb4c305b01f5cbfab9aa238ea83baf67e4ff73",
+      "zip_crc32": "c45d3c7e",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        12,
+        32,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_s_pf1.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_s_pf1.who",
+      "size": 3505,
+      "sha256": "3a762e13dee37179ffea4618b618b1a2bfc4c5305c98b0e33ddbd9264438709c",
+      "zip_crc32": "d8624d18",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        12,
+        32,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_s_pf2.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_lnx_s_pf2.who",
+      "size": 3505,
+      "sha256": "94e1b13893c3bfba7db13f8683692b86294250f54d37c31eeb9c089eff66cfac",
+      "zip_crc32": "eaf0ce16",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        12,
+        32,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_d_npf.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_d_npf.who",
+      "size": 3499,
+      "sha256": "7c73f9bcc96a353c3b54d01ccc31931f4246a5bd7f5ad4675d93c85ad56431b7",
+      "zip_crc32": "bebd7262",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        11,
+        44,
+        42
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_d_pf1.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_d_pf1.who",
+      "size": 3501,
+      "sha256": "1a3e5b0e7559fe1abe7039a3fab4482a2c6f224f2eb642dc5761311c232f22e8",
+      "zip_crc32": "b9d8068e",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        11,
+        41,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_d_pf2.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_d_pf2.who",
+      "size": 3501,
+      "sha256": "40433e2527dd3bd79dede44d4b7afc7b0fc2334e820c2ad65e9c3e12f94fa597",
+      "zip_crc32": "8b4a8580",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        11,
+        41,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_s_npf.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_s_npf.who",
+      "size": 3499,
+      "sha256": "efce2578d9b1106c423c9e5c9e546dd2f6b50e8b2527570c05e7e649e9d3149d",
+      "zip_crc32": "bc7f9c73",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        12,
+        4,
+        56
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_s_pf1.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_s_pf1.who",
+      "size": 3501,
+      "sha256": "86d1c126aefaa4dfd8e284cdf1f1dbf45050b7dd1efc85572d9c4efdbe44117a",
+      "zip_crc32": "bb1ae89f",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        12,
+        5,
+        12
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_s_pf2.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/lf95_ms_s_pf2.who",
+      "size": 3501,
+      "sha256": "b65874b9f7837947ee0ad3c74f6f8d6a0108770bf754f5f5c17aefe60d032ffe",
+      "zip_crc32": "89886b91",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        12,
+        5,
+        42
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/linuxcr.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/linuxcr.for",
+      "size": 2691,
+      "sha256": "a06d521d4d58307fcc64bac5d19717372f50d8894c4d5fc9f1d009434194abe1",
+      "zip_crc32": "e72282dc",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        21,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/locsubs.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/locsubs.for",
+      "size": 1222,
+      "sha256": "f8eb179bf9ab58dc7bdcbcc26cd37fc9c9e60129c2cecfa06fbbbb5e565eda77",
+      "zip_crc32": "ac281470",
+      "zip_date_time": [
+        1999,
+        7,
+        28,
+        16,
+        58,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/locsubux.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/locsubux.for",
+      "size": 1099,
+      "sha256": "0bff55902bf4c8bfddcc106d1d52a1a7ebad3d66faf4da4a9b36932be547ce97",
+      "zip_crc32": "4abcefe8",
+      "zip_date_time": [
+        1999,
+        7,
+        28,
+        16,
+        58,
+        46
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/locsu~rp.f",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/locsu~rp.f",
+      "size": 1083,
+      "sha256": "f19ba42205bea8cacbdc72584bf8992cd10d08813489f1d886b47096cbc832ae",
+      "zip_crc32": "0379e688",
+      "zip_date_time": [
+        1998,
+        6,
+        15,
+        10,
+        4,
+        16
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/morglh.prm",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/morglh.prm",
+      "size": 504,
+      "sha256": "2b1ff604f41858e40fe14c595bfd8259522b2ad9769fed9548cbd65c584bcd21",
+      "zip_crc32": "4a240e93",
+      "zip_date_time": [
+        1998,
+        10,
+        27,
+        7,
+        25,
+        2
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/morgux.prm",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/morgux.prm",
+      "size": 510,
+      "sha256": "98df2895e456dfc2c4b942e0a66de0dc58ac46a9fae17b22b42b831e9f319eed",
+      "zip_crc32": "d04b84c0",
+      "zip_date_time": [
+        1998,
+        10,
+        27,
+        7,
+        26,
+        12
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/notes",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/notes",
+      "size": 196,
+      "sha256": "563664be55df81c118f1ae80b77ce5d2fd55511f5e8e2e79c2bc44ee9085b956",
+      "zip_crc32": "9776d87d",
+      "zip_date_time": [
+        2001,
+        7,
+        11,
+        8,
+        33,
+        16
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/notes.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/notes.who",
+      "size": 227,
+      "sha256": "7b804642c06551504e9730519387970eeccb0f68fb01da26fb4579df687d9b4c",
+      "zip_crc32": "2d5104aa",
+      "zip_date_time": [
+        2002,
+        9,
+        5,
+        9,
+        26,
+        12
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/offcom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/offcom.cmn",
+      "size": 204,
+      "sha256": "01da27df411cd088e1cd25e762bfbbe3aafa019b09e4b5a3dd9d52cf82f13412",
+      "zip_crc32": "f942d2ce",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        20,
+        24
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/pgi_lnx.who",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/pgi_lnx.who",
+      "size": 1461,
+      "sha256": "cd83c62ead4c75db1108c2daef0a85ca1ade8f1dd568fde23c79c00ef079f45a",
+      "zip_crc32": "26706a9a",
+      "zip_date_time": [
+        2002,
+        8,
+        14,
+        11,
+        20,
+        36
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/stdun.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/stdun.cmn",
+      "size": 475,
+      "sha256": "194989444301de1ad1f9580c06b1843cab164a5b47abefa2560aa259d0d64346",
+      "zip_crc32": "dd6daa2e",
+      "zip_date_time": [
+        2002,
+        8,
+        8,
+        21,
+        11,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/tabid.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/tabid.cmn",
+      "size": 237,
+      "sha256": "6b177724624755d11c20bbe10b38490b41049500975c9725645b492222fe6668",
+      "zip_crc32": "96a81ab9",
+      "zip_date_time": [
+        1999,
+        4,
+        20,
+        10,
+        54,
+        48
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/tableid.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/tableid.for",
+      "size": 2623,
+      "sha256": "6b9f6560e31ece9279520eb354c9e95c93d10618051efe00338705cbd16288de",
+      "zip_crc32": "986899e1",
+      "zip_date_time": [
+        2002,
+        7,
+        23,
+        13,
+        21,
+        6
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/timer90.for",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/timer90.for",
+      "size": 930,
+      "sha256": "2a6b2ff768b18a260be79d265c988458cfb2c8ccfb2191f58433b24c8395e478",
+      "zip_crc32": "c7c23682",
+      "zip_date_time": [
+        1998,
+        11,
+        25,
+        7,
+        6,
+        12
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/SHARE/xscom.cmn",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/SHARE/xscom.cmn",
+      "size": 318,
+      "sha256": "f160697bcedc3afe3b5651c414af8010846d8876d7a7d22943ce5cab180b013c",
+      "zip_crc32": "0589a7e3",
+      "zip_date_time": [
+        1998,
+        6,
+        12,
+        14,
+        20,
+        28
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/TABDIR/MAKEFILE",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/TABDIR/MAKEFILE",
+      "size": 3877,
+      "sha256": "3df2e3270cf0ac22e84fe9a2c54d86a75a47545f39f99888a0073cab64c422f3",
+      "zip_crc32": "1c10204a",
+      "zip_date_time": [
+        1998,
+        9,
+        3,
+        13,
+        49,
+        18
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/SRC/TABDIR/TABDIR.FOR",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/SRC/TABDIR/TABDIR.FOR",
+      "size": 13419,
+      "sha256": "33b57774485c7826d69928c25c5a7aa6007af26ae10e3029a43e8d039570eda5",
+      "zip_crc32": "1796a0e0",
+      "zip_date_time": [
+        1998,
+        9,
+        2,
+        15,
+        24,
+        32
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/TEST/CHECK.BAT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/TEST/CHECK.BAT",
+      "size": 1432,
+      "sha256": "ef574e2251bf5b159d3715037a93c1d89a7d9ce73b1179134e4228e134edc7c4",
+      "zip_crc32": "f06d2ee3",
+      "zip_date_time": [
+        1999,
+        4,
+        6,
+        14,
+        43,
+        56
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/TEST/CLEAN.BAT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/TEST/CLEAN.BAT",
+      "size": 545,
+      "sha256": "29288d1669d41eeab84fa2df7fba50df141e91c79fc740f316d0700700887dcb",
+      "zip_crc32": "b5c5f4e7",
+      "zip_date_time": [
+        1999,
+        4,
+        6,
+        14,
+        58,
+        32
+      ]
+    },
+    {
+      "member": "wrdapp/FEQ_9.98/TEST/TEST.BAT",
+      "path": "originals/feq998/wrdapp/FEQ_9.98/TEST/TEST.BAT",
+      "size": 2293,
+      "sha256": "33bc54a46f6810056c68e9b875440bdf806b5d9e185cdf95ea79b97a98475a59",
+      "zip_crc32": "de87940f",
+      "zip_date_time": [
+        1999,
+        4,
+        6,
+        13,
+        47,
+        48
+      ]
+    }
+  ]
+}

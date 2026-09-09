@@ -1,0 +1,29 @@
+--- 9.98/fequtl/tablook.for
++++ 10.61/fequtl/tablook.for
+@@ -221,7 +221,7 @@
+       EXTERNAL GET_TABID, XSTYPE
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/1,10*0,1,7*0,6*1,10*0/
++      DATA VTYPE/1,10*0,1,7*0,6*1,4*0,6*1/
+  
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT('0','*WRN:41* X-SECTION BELOW RANGE IN LKTK',
+@@ -581,7 +581,7 @@
+       EXTERNAL GET_TABID, XSTYPE
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/1,10*0,1,7*0,6*1,10*0/
++      DATA VTYPE/1,10*0,1,7*0,6*1,4*0,6*1/
+  
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT('0','*WRN:41* X-SECTION BELOW RANGE IN LKTA',
+@@ -705,7 +705,7 @@
+       EXTERNAL GET_TABID, XSTYPE
+  
+ C     + + + DATA INITIALIZATIONS + + +
+-      DATA VTYPE/1,10*0,1,7*0,0,1,1,0,1,1,10*0/
++      DATA VTYPE/1,10*0,1,7*0,0,1,1,0,1,1,4*0,0,1,1,0,1,1/
+  
+ C     + + + OUTPUT FORMATS + + +
+  2000 FORMAT('0','*WRN:41* X-SECTION BELOW RANGE IN LKTJ',

@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html>
+<head>
+  <!--BEGIN EDIT: PAGE TITLE -->
+  <title>FEQ Full Equations Model</title>
+  <!--END EDIT -->
+<link rel="stylesheet" href="/stylesheets/2008/common.css" />
+<link rel="stylesheet" href="/stylesheets/2008/custom.css" />
+<link rel="stylesheet" href="/stylesheets/2008/custom.feq.css" />
+
+<meta name="Author" content="Illinois Water Science Center, Audrey Ishii, Terry Ortel" />
+<meta name="keywords" content="unsteady flow, one-dimensional flow, streamflow simulation" />
+<meta name="Description" content="Documentation updates for FEQ and FEQUTL" />
+</head>
+
+<!-- BEGIN USGS Header Template -->
+<div style="height: 81px; background-color: rgb(0, 38, 76);">
+  <a href="https://www.usgs.gov/index.html">
+     <img style="margin: 8px 0px 8px 8px;" alt="Home" src="/images/usgs_vi.png" />
+  </a>
+</div>
+
+<div id="usgstitle">
+	<p>Water Resources Surface Water Software: Full Equations (FEQ) Model Web Resources</p>
+</div>
+<br />
+<!-- END USGS Header Template -->
+
+ 
+ 
+<H3> <BR> SUMMARY OF MAJOR FORMAT CHANGES FROM PREVIOUS MODEL VERSIONS</H3>
+      <HR>
+      <H3>FEQ: Full Equations model  </H3>
+      <DIV class=programtitle>
+      </DIV>
+      <HR>
+
+      <b>Diffuse Time Series File (DTSF), Point Time Series File (PTSF), and Initial Conditions file format changes </b>
+      <DIV>
+
+<P CLASS="indented">
+      <P>Point time-series files (PTSF's) are now read and written as 
+direct-access unformatted.  This change allows these files to move 
+among various operating systems and compiled executables.  This has
+been tested on five different compilers (two under Linux and three under 
+MS Windows).  PTSF's created with earlier 
+versions of FEQ must be converted using the PTSFUTL utility or the 
+models that generated the PTSFUTL must be rerun with FEQ version 10.20
+or later. </P>
+
+<p>Diffuse time-series files (DTSF's) are now read by FEQ as 
+direct-access unformatted.  This change was made to allow these files
+to move among the various operating systems and compilers, similarly 
+to the PSTF's.  Old files must be converted using the version of TSFUTL
+ included in the FEQ 10.60 release package.  HSPF 12.0 allows a direct output to
+the new unformatted DTSF using the PLTGEN routine. </p>
+
+<p>The GETIC and PUTIC files have been updated to be written and read 
+using direct access statements.  This means that old forms of these 
+files cannot be used with this version.  The files have been expanded 
+to support additional control structures as well, so old files are 
+obselete for that reason as well.</P> 
+
+</P>
+
+      <b>Side weir optional table definition change </b>     
+      <DIV>
+
+<P CLASS="indented">
+      <P>The definition of the flow-factor adjustment table in the side-weir 
+instruction, code=14, when it appears with a crest level adjustment table is changed.  
+When both optional tables are present, FEQ does the following:
+<ul>
+<li>(1) Computes the flow at the head at current crest level = Q1
+<li>(2) Computes the flow at the head at original fixed crest level = Q2 
+<li>(3) Finds the current flow factor, fac, from the flow-factor table. 
+<li>(4) Computes the flow as:  
+  <p> 
+     Q = fac*Q1 + (1 - fac)*Q2
+</p></ul>
+This approximates the combination of flow over the portion of the 
+flow surface that is at its original level and the flow through the 
+portion of the flow surface that is at its new level.  This 
+computation assumes the crest is approximately horizontal and that the flow 
+interaction between the two flows is small.   The factor is estimated
+by the ratio of the length of weir that is being shifted by erosion of 
+the surface to the total overflow weir segment.   Previously, this 
+time series table consisted of factor values determined by the user.
+
+</P>
+
+ <HR>
+
+<H3>FEQUTL: Full Equations Utilities model </H3>
+      <DIV class=programtitle>
+      <HR>
+      </DIV>
+       <b>BRIDGE routine no longer available </b>
+      <DIV>
+      <P> The obsolete BRIDGE routine is no longer available.  
+      Function tables for bridges (table type 14) are computed using 
+      the WSPROQZ command documented in 
+      <a href="http://il.water.usgs.gov/proj/feq/fequtl/fequtl.toc_1.html">
+      Franz and Melching (1997)</a> with 
+      additional notes accessible using the FEQ Web Resources 
+      <a href="http://il.water.usgs.gov/htdig/search-feq.html"> search utility </A></P>
+      </DIV>
+<HR>
+<br>
+
+<!-- BEGIN USGS Footer Template -->
+<div id="usgsfooter">
+	<p id="usgsfooterbar">
+		<a href="http://www.usgs.gov/laws/accessibility.html" title="Accessibility Policy (Section 508)">Accessibility</a>
+		<a href="http://www.usgs.gov/foia/" title="Freedom of Information Act">FOIA</a>
+		<a href="http://www.usgs.gov/laws/privacy.html" title="Privacy policies of the U.S. Geological Survey.">Privacy</a>
+		<a href="http://www.usgs.gov/laws/policies_notices.html" title="Policies and notices that govern information posted on USGS Web sites.">Policies and Notices</a>
+	</p>
+	
+	<p id="usgsfootertext">
+		<a href="http://www.takepride.gov/"><img src="/images/footer_graphic_takePride.jpg" alt="Take Pride in America logo" title="Take Pride in America Home Page" width="60" height="58" /></a>
+		<a href="http://usa.gov/"><img src="/images/footer_graphic_usagov.jpg" alt="USA.gov logo" title="USAGov: Government Made Easy" width="90" height="26" /></a>
+		<a href="http://www.doi.gov/">U.S. Department of the Interior</a> |
+		<a href="http://www.usgs.gov/">U.S. Geological Survey</a> |
+                <a href="http://il.water.usgs.gov/">Illinois Water Science Center</a><br />
+		URL: http://cm.water.usgs.gov/proj/feq/impt_notice.shtml <br />
+		Page Contact Information: <A href="/cdn-cgi/l/email-protection#ff8b908d8b9a93bf8a8c988cd1989089">USGS FEQ support</A> <br />
+		Page Last Modified: 
+                Tuesday, December 18, 2012 
+	</p>
+</div>
+<!-- END USGS Footer Template -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="application/javascript" src="http://www.usgs.gov/scripts/analytics/usgs-analytics.js"></script>
+</html>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a382c5a43de37a97',t:'MTc4ODkyMTAzNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>

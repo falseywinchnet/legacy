@@ -1,0 +1,70 @@
+--- 9.98/feq/dtendlay.for
++++ 10.61/feq/dtendlay.for
+@@ -71,12 +71,10 @@
+       DEF_DTEN_ORIF_TABID = '10001'
+       DEF_DTEN_UNIT_AREA_VOL_TABID = '10000'
+ C     Set the internal table numbers to 0.  
+-C     They are set if detention is simulations
++C     They are set if detention is simulated.
+       DEF_DTEN_ORIF_TAB_NUM = 0
+       DEF_DTEN_UNIT_AREA_VOL_TAB_NUM = 0
+ 
+-      DEF_DTEN_ORIF_TABID = '10001'
+-      DEF_DTEN_UNIT_AREA_VOL_TABID = '10000'
+       DEF_DTEN_WC = 0.9
+       DEF_DTEN_WZ = 50.0
+       DEF_DTEN_BZ = 4.0
+@@ -146,7 +144,7 @@
+ 
+       REAL CON_FAC, RVAL(MAX_NVAL), TRIBA(MXR_TRIBA,MXN_LU_G)
+ 
+-      CHARACTER CVAL(NVAL)*64
++      CHARACTER CVAL(NVAL)*256
+ 
+       INCLUDE 'tam.cmn'
+ 
+@@ -426,7 +424,7 @@
+ 
+       REAL*8 DPVAL(ITEM_KNT)
+ 
+-      CHARACTER CVAL(ITEM_KNT)*64, TERM(ITEM_KNT)*1, WHICH*4
++      CHARACTER CVAL(ITEM_KNT)*256, TERM(ITEM_KNT)*1, WHICH*4
+ 
+       INCLUDE 'tam.cmn'
+ 
+@@ -643,7 +641,7 @@
+ 
+       REAL*8 DPVAL(ITEM_KNT)
+ 
+-      CHARACTER CVAL(ITEM_KNT)*64, TERM(ITEM_KNT)*1, WHICH*4
++      CHARACTER CVAL(ITEM_KNT)*256, TERM(ITEM_KNT)*1, WHICH*4
+ 
+       INCLUDE 'arsize.prm'
+       INCLUDE 'dtendef.cmn'
+@@ -973,7 +971,7 @@
+      B        TERMCLS(MAX_ITEM_KNT)
+       REAL RVAL(MAX_ITEM_KNT)
+       REAL*8 DPVAL(MAX_ITEM_KNT)
+-      CHARACTER CVAL(MAX_ITEM_KNT)*64, TERM(MAX_ITEM_KNT)*1, LINE*113,
++      CHARACTER CVAL(MAX_ITEM_KNT)*256, TERM(MAX_ITEM_KNT)*1, LINE*113,
+      A          LINE_ID*16
+ 
+       INTEGER LENSTR
+@@ -1407,7 +1405,7 @@
+ C        WRITE(STDOUT,*) 'J=',J,' Y(J)=',Y(J)
+ C130   CONTINUE
+ 
+-C      WRITE(STDOUT,52) 
++c      WRITE(STDOUT,52) 
+ C     Now we can finally compute the table values. 
+       DO 150 J=1,M
+         YA = Y(J)
+@@ -1441,7 +1439,7 @@
+         DQ(J) = (DQORF + DQSPILL)/A
+           
+         ARG(J) = V
+-C        WRITE(STDOUT,50) Y(J), ARG(J), Q(J), DQ(J)
++c        WRITE(STDOUT,50) Y(J), ARG(J), Q(J), DQ(J)
+ 150   CONTINUE
+ 
+ C     Get an available table number for the table.         

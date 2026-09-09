@@ -1,0 +1,9 @@
+C**********************************************************************
+
+      COMMON/BNPOND/ COEFIN, POND1, POND2, YCUT, BPOND, BPMAX
+
+      REAL COEFIN(MNBN), POND1(MNBN), POND2(MNBN), YCUT(MNBN),
+     A     BPOND(MNBRA), BPMAX(MNBRA)
+
+C**********************************************************************
+                

@@ -1,0 +1,8 @@
+C     Common for the counter for the number of internally
+C     generated table ids
+
+      INTEGER KOUNT_OF_INTERNAL_TABIDS
+
+      COMMON/ITABIDNUM/ KOUNT_OF_INTERNAL_TABIDS
+
+      SAVE /ITABIDNUM/

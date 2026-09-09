@@ -1,0 +1,12 @@
+--- 9.98/share/home.cmn
++++ 10.61/share/home.cmn
+@@ -1,5 +1,7 @@
+ C     Values of local and global home directory names
+-      CHARACTER*64 HOME, GHOME
+-      COMMON /HOMEC/ HOME, GHOME
++c	7 dec 2005:  Add an output extension value 
++	character*128 stdext
++      CHARACTER*128 HOME, GHOME, ghome_out
++      COMMON /HOMEC/ HOME, GHOME, ghome_out, stdext
+       SAVE /HOMEC/
+ 

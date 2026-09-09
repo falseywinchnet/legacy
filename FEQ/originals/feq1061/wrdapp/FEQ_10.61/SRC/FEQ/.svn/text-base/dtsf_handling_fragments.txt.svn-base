@@ -1,0 +1,645 @@
+
+
+
+
+      IF(DIFFUS.EQ.YES) THEN
+        INQUIRE(FILE=TSFNAM, EXIST=THERE)
+        IF(THERE) THEN
+          OPEN(TSFDSN, FILE=TSFNAM, FORM='UNFORMATTED', STATUS='OLD',
+     a         access='direct', recl=4)
+          dtsf_rec = 1
+          read(tsfdsn,rec=1) record_len
+          close(tsfdsn)
+          OPEN(TSFDSN, FILE=TSFNAM, FORM='UNFORMATTED', STATUS='OLD',
+     a         access='direct', recl=record_len)
+c         update record pointer to point to second record
+          dtsf_rec = dtsf_rec + 1
+        ELSE
+          WRITE(STDOUT,*) ' FILE NAMED:', TSFNAM,' NOT FOUND.'
+          WRITE(STDOUT,*) ' CHECK SPELLING OF TSF FILE.'
+          STOP 'Abnormal stop: errors found.'
+        ENDIF
+        IF(BWFNAM.EQ.' ') THEN
+          OPEN(BWFDSN, FILE='BWFD', FORM='UNFORMATTED', 
+     a        STATUS='UNKNOWN', access='direct', recl=8)
+        ELSE
+          OPEN(BWFDSN, FILE=BWFNAM, FORM='UNFORMATTED',
+     A            STATUS='UNKNOWN', IOSTAT=IOFLAG,
+     b           access='direct', recl=8)
+ 
+          IF(IOFLAG.NE.0) THEN
+            WRITE(STDOUT,*) ' PROBLEM IN OPENING FILE: ',BWFNAM
+            WRITE(STDOUT,*) ' CHECK PATH FOR BACKWATER FILE.'
+            STOP 'Abnormal stop: errors found.'
+          ENDIF
+ 
+        ENDIF
+        IF(FFFDSN.GT.0) THEN
+          IF(FFFNAM.EQ.' ')  THEN
+            OPEN(FFFDSN, FILE='FFFD', FORM='FORMATTED', STATUS='NEW')
+          ELSE
+            OPEN(FFFDSN, FILE=FFFNAM, FORM='FORMATTED',
+     A                    STATUS='UNKNOWN', IOSTAT=IOFLAG)
+ 
+            IF(IOFLAG.NE.0) THEN
+              WRITE(STDOUT,*) ' PROBLEM IN OPENING FILE: ',FFFNAM
+              WRITE(STDOUT,*) ' IOFLAG=',IOFLAG
+              WRITE(STDOUT,*) ' CHECK PATH FOR EXTREME VALUE FILE.'
+              STOP 'Abnormal stop: errors found.'
+            ENDIF
+ 
+          ENDIF
+        ENDIF
+        CALL READOC
+        CALL BFINIT(DT)
+      ELSEIF(DIFFUS.EQ.'DSS') THEN
+
+
+
+
+
+
+
+      SUBROUTINE   READOC()
+ 
+C     + + + PURPOSE + + +
+C     Read documentation information from header of TSFDSN.
+ 
+      IMPLICIT NONE
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'tsfcom.cmn'
+      INCLUDE 'xscom.cmn'
+      INCLUDE 'namcom.cmn'
+      INCLUDE 'stdun.cmn'
+ 
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER I, J, LIMIT
+      INTEGER A(7+mndifa), TEMP(10)
+      character c(7+mndifa)*4
+
+   
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC MIN
+ 
+C     + + + OUTPUT FORMATS + + +
+ 10   FORMAT(/,'This TSF was created on ',
+     1I4,'/',I2,'/',I2,' AT ',I4,' and has ',I3,
+     2' LSRO values.')
+ 11   FORMAT(' ','Simulation for the ',
+     1'runoff values began on ',I4,'/',
+     2I2,'/',I2,' and ended on ',I4,'/',I2,'/',I2,'.')
+ 14   FORMAT(/,32A4)
+ 16   FORMAT(4X,'LSRO# ',I2,':',20A4)
+ 20   FORMAT(/,'*************************************************')
+ 50   FORMAT(/,'*ERR:154* There are',I3,' values in each record of',/,
+     A '       the diffuse TSF but only',I3,' values allowed in FEQ.')
+ 60   FORMAT(/,'*ERR:155* There are',I3,' diffuse flows in the',/,
+     A '       diffuse flow file but ',I3,' land uses in FEQ.')
+C***********************************************************************
+      WRITE(STD6,20)
+ 
+C     READ THE FIRST PART OF THE second RECORD TO ESTABLISH THE FORMAT OF
+C     THE DTSF
+ 
+      READ(TSFDSN,rec=dtsf_rec) (A(I), I=1,7)
+      dtsf_rec = dtsf_rec + 1
+      
+C      NREC = A(5)
+      NDFVAL = A(6)
+      TSFTYP = A(7)
+ 
+ 
+c      IF(TSFTYP.EQ.0) THEN
+c        WRITE(STD6,*) ' '
+c        WRITE(STD6,*) ' TSF uses 8 bytes per runoff value'
+c      ELSE
+c        WRITE(STD6,*) ' '
+c        WRITE(STD6,*) ' TSF uses 4 bytes per runoff value'
+c      ENDIF
+ 
+      IF(NDFVAL.GT.MNDIFA) THEN
+        WRITE(STD6,50) NDFVAL, MNDIFA
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      IF(NDFVAL.NE.NLUSE) THEN
+        WRITE(STDOUT,60) NDFVAL, NLUSE
+        STOP 'Abnormal stop: errors found.'
+      ENDIF
+ 
+      LIMIT = 7 + NLUSE
+ 
+      dtsf_rec = 2
+      READ(TSFDSN, rec=dtsf_rec) (A(I), I=1,LIMIT)
+      dtsf_rec = dtsf_rec + 1
+ 
+      DO 12 I=1,4
+        TEMP(I) = A(I)
+ 12   CONTINUE
+ 
+      READ(TSFDSN,rec=dtsf_rec) (A(I), I=1,LIMIT)
+      dtsf_rec = dtsf_rec + 1
+      DO 13 I=5,10
+        TEMP(I) = A(I-4)
+ 13   CONTINUE
+ 
+      READ(TSFDSN, rec=dtsf_rec) (c(I), I=1,LIMIT)
+      dtsf_rec = dtsf_rec + 1
+      WRITE(STD6,14) (c(I), I=1,MIN(32,LIMIT))
+      WRITE(STD6,10) (TEMP(I), I=1,4), NDFVAL
+      WRITE(STD6,11) (TEMP(I), I=5,10)
+ 
+      DO 15 I=1,NDFVAL
+        READ(TSFDSN,rec=dtsf_rec) (c(J), J=1,LIMIT)
+        dtsf_rec = dtsf_rec + 1
+        WRITE(STD6,16) I, (c(J), J=1,MIN(20,LIMIT))
+ 15   CONTINUE
+ 
+      WRITE(STD6,20)
+ 
+ 
+      RETURN
+
+      END
+C
+
+
+
+C
+C
+C
+      SUBROUTINE   BFINIT(DT)
+ 
+C     + + + PURPOSE + + +
+C     Initialize the TSF buffer system and initialize the
+C     time as given in the TSF.
+ 
+      IMPLICIT NONE
+
+      real*8 DT
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'arsize.prm'
+      INCLUDE 'tsfcom.cmn'
+      INCLUDE 'julian.cmn'
+      INCLUDE 'difcom.cmn'
+      INCLUDE 'stdun.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER DYT, I, J, MNT, YRT, fsyr, fsmn, fsdy, wyr
+      REAL RUNOFF(MNDIFA)
+      REAL*8 DUMMY, DYF, RI(MNDIFA), TSFDT, fsfrac
+ 
+C     + + + EQUIVALENCES + + +
+      EQUIVALENCE(DUMMY, RUNOFF(1))
+ 
+C     + + + INTRINSICS + + +
+      INTRINSIC DABS
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER IWYR, LPYEAR
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL IWYR, LPYEAR, LKTSF
+ 
+C     + + + OUTPUT FORMATS + + +
+ 50   FORMAT(/,' *BUG:04* INVALID JTIME FOR TSF RECORD JTIME = ',
+     1     1PD25.16)
+52    format(/,
+     a    'Forecasting with DTSF: Start time NOT reset to event start')
+54    format(' Skipping event with start jtime=',f17.10,
+     a      ' and end jtime=',f17.10,/,5x,
+     b ' that does not contain the current run start jtime=',f17.10,'.')
+C***********************************************************************
+C     DEFINE NUMBER OF BUFFERS
+ 
+      NBUFF = MNDBUF
+ 
+C     GET FIRST DATA RECORD FROM THE TSF-DOCUMENTATION RECORDS
+C     HAVE BEEN READ PREVIOUSLY
+ 
+ 90   CONTINUE
+ 
+        READ(TSFDSN, rec=dtsf_rec) 
+     a               BJTIME(1), fSFRAC, fSYR, fSMN, fSDY,
+     1               (RUNOFF(J), J=1,NDFVAL)
+        dtsf_rec = dtsf_rec + 1
+        DO 105 J=1,NDFVAL
+          TSFBUF(1,J) = RUNOFF(J)
+ 105    CONTINUE
+ 
+        IF(LAGTSF.GT.0) THEN
+C         INITIALIZE TSFRAT TO STANDARD VALUE OF 0.0
+          DO 107 J=1,NDFVAL
+            TSFRAT(1,J) = 0.0
+ 107      CONTINUE
+        ENDIF
+ 
+        IF(BJTIME(1).LT.0.D0) GOTO 100
+ 
+          IF(BJTIME(1).EQ.0.D0) THEN
+            RESET = -1
+            RETURN
+          ENDIF
+          WRITE(STD6,50) BJTIME(1)
+          STOP 'Abnormal stop: errors found.'
+ 100    CONTINUE
+ 
+C       SET THE END TIME FOR THIS SEGMENT(FRAME) AND CLEAR BUFFER ENTRY
+        EJTIME = DUMMY
+        TSFBUF(1,1) = 0.D0
+
+        LEAP = LPYEAR(YR)
+ 
+C       MAKE SURE THAT END OF THIS SEGMENT DOES NOT EXTEND BEYOND
+C       END OF RUN
+ 
+        IF(EJTIME.GT.VJTIME) THEN
+          EJTIME = VJTIME
+        ENDIF
+ 
+        BJTIME(1) = DABS(BJTIME(1))
+c       See if we can get a start time later than the start time
+c       of the event when we have only one event in the DTSF
+        if(frcst == 1) then
+          write(std6,52)
+          
+        else
+          SJTIME = BJTIME(1)
+          sfrac = fsfrac
+          dyfrac = sfrac
+          syr = fsyr
+          smn = fsmn
+          sdy = fsdy
+        endif
+
+C       CHECK IF THE START TIME OF THIS EVENT IS AFTER THE ENDING
+C       TIME SET FOR THE RUN
+        IF(SJTIME.GE.VJTIME) THEN
+          RESET = -1
+          RETURN
+        ENDIF
+        if(frcst == 0) then
+          IF(SJTIME.LT.UJTIME.AND.SYR.NE.DMYEAR) THEN
+C           SKIP THIS EVENT
+ 110        CONTINUE
+              READ(TSFDSN,rec=dtsf_rec) BJTIME(1), DYF, YRT, MNT, DYT,
+     1                     (RUNOFF(J), J=1,NDFVAL)
+              dtsf_rec = dtsf_rec + 1
+              IF(BJTIME(1).NE.EJTIME) THEN
+                GOTO 110
+              ELSE
+                GOTO 90
+              ENDIF
+          ENDIF
+        else
+c         Here we skip over events until we find the one containing
+c         the value of sjtime and we assume that this will be the single
+c         event involved. 
+c          IF(SJTIME.LT.UJTIME.AND.SYR.NE.DMYEAR) THEN
+          IF(.not.(sjtime <= ejtime .and. sjtime >= bjtime(1))) THEN
+C           SKIP THIS EVENT
+            write(std6,54) bjtime(1), ejtime, sjtime 
+ 120        CONTINUE
+              READ(TSFDSN,rec=dtsf_rec) BJTIME(1), DYF, YRT, MNT, DYT,
+     1                     (RUNOFF(J), J=1,NDFVAL)
+              dtsf_rec = dtsf_rec + 1
+              IF(BJTIME(1).NE.EJTIME) THEN
+                GOTO 120
+              ELSE
+                GOTO 90
+              ENDIF
+          ENDIF
+       endif   
+
+ 
+      BWYR(1) = IWYR(SYR,SMN)
+ 
+C     FILL THE REMAINDER OF THE BUFFER SET
+ 
+      DO 200 I=2,NBUFF
+ 
+        READ(TSFDSN, rec=dtsf_rec) BJTIME(I), DYF, YRT, MNT, DYT,
+     1               (RUNOFF(J), J=1,NDFVAL)
+        dtsf_rec = dtsf_rec + 1
+        DO 106 J=1,NDFVAL
+          RI(J) = RUNOFF(J)
+ 106    CONTINUE
+ 
+        BWYR(I) = IWYR(YRT,MNT)
+ 
+C       COMPUTE CUMULATIVE VALUES
+ 
+        TSFDT = 86400.E0*(BJTIME(I) - BJTIME(I-1))
+        IF(LAGTSF.EQ.0) THEN
+          DO 150 J=1,NDFVAL
+            TSFBUF(I,J) = TSFBUF(I-1,J) + TSFDT*RI(J)
+ 150      CONTINUE
+        ELSE
+          TSFDT = 0.5*TSFDT
+          DO 160 J=1,NDFVAL
+            TSFRAT(I,J) = RI(J)
+            TSFBUF(I,J) = TSFBUF(I-1,J) + TSFDT*
+     A                               (RI(J) + TSFRAT(I-1,J))
+ 160      CONTINUE
+        ENDIF
+C       Added to try to handle the buffer being larger than an event.
+C       December 4, 1996.
+        IF(BJTIME(I).GE.EJTIME) THEN
+C         WE HAVE REACHED THE END OF THE EVENT BEFORE THE END OF THE
+C         BUFFER.  STOP AT THIS POINT AND LEAVE THE BUFFER ONLY
+C         PARTIALLY FULL.
+          GOTO 210
+        ENDIF
+ 200  CONTINUE
+ 
+ 210  CONTINUE
+ 
+C     SET DEFAULT LAST ENTRY
+ 
+      LENTRY = 1
+      LHEAD = 1
+ 
+C     SET VALUE OF THE  DIFFUSE FLOW BUFFER
+      CALL LKTSF
+     I          (STD6, sjtime, DT,
+     O           CLSR1, WYR)
+
+ 
+c      DO 300 I=1,NLUSE
+c        CLSR1(I) = 0.D0
+c 300  CONTINUE
+ 
+      RETURN
+ 
+      END
+
+
+C
+C
+C
+      SUBROUTINE   LKTSF
+     I                  (STDOUT, JLTIME, DT,
+     O                   CLSR, WYR)
+ 
+C     + + + PURPOSE + + +
+C     Find values of cumulative land surface runoff and the water
+C     year corresponding to JLTIME.
+ 
+      IMPLICIT NONE
+C     + + + PARAMETERS + + +
+      INCLUDE 'arsize.prm'
+ 
+C     + + + DUMMY ARGUMENTS + + +
+      INTEGER STDOUT, WYR
+      REAL*8 CLSR(MNDIFA)
+      REAL*8 JLTIME, DT
+ 
+C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+C     STDOUT   - Fortran unit number for user output and messages
+C     JLTIME - modified julian time for land surface runoff value
+C     CLSR   - values of cumulative land surface runoff found
+C     WYR    - current water year
+ 
+C     + + + COMMON BLOCKS + + +
+      INCLUDE 'tsfcom.cmn'
+      INCLUDE 'julian.cmn'
+      INCLUDE 'dssdif.cmn'
+ 
+C     + + + LOCAL VARIABLES + + +
+      INTEGER DYT, I, J, KNT, LL, LM1, LP1, LR, LSTOP, LT, LTM1, MNT,
+     A        YRT, NEED, GOT
+      REAL RATE, RATEL, RUNOFF(MNDIFA)
+      REAL*8 DYF, P, RI(MNDIFA), JTBASE, TEPS, TSFDT
+ 
+C     + + + EXTERNAL FUNCTIONS + + +
+      INTEGER IWYR
+ 
+C     + + + EXTERNAL NAMES + + +
+      EXTERNAL IWYR
+ 
+      DATA TEPS/1.D-6/
+C     + + + OUTPUT FORMATS + + +
+ 54   FORMAT(' *BUG:37* JTIME= 0 IN DTSF IN LKTSF. LOOKUP JTIME=',
+     A         1PD20.12,/,
+     A        10X,' RUN JTIME=', 1PD20.12,' RUN EJTIME=',1PD20.12)
+60    FORMAT(/,' *BUG:XXX Need to backspace diffuse file system.',
+     A  /,11X,'Probable cause is diffuse buffer that is too small.')
+61    FORMAT(' Above message issued while searching buffer for HECDSS',
+     A     ' access in LKTSF.')
+ 62   FORMAT(/,' *BUG:XXX* Times do not match for runoff in ',
+     A               'LKTSF.')
+C***********************************************************************
+      IF(JLTIME.GE.BJTIME(LENTRY)) THEN
+C       SEARCH BUFFER CLOCKWISE
+ 100    CONTINUE
+          LP1 = LENTRY + 1
+          IF(LP1.GT.NBUFF) LP1 = 1
+          IF(LP1.EQ.LHEAD) THEN
+C           MOVED BEYOND END OF BUFFER-READ NEW RECORD INTO LIST
+C           HEAD LOCATION. NOTE: LIST HEAD WILL POINT TO OLDEST
+C           RECORD IN THE BUFFER.
+ 
+            IF(TIME_STEP_DIFF(1).LT.0) THEN
+              READ(TSFDSN, rec=dtsf_rec) BJTIME(LHEAD), DYF, YRT, MNT,
+     A                               DYT, (RUNOFF(J), J=1,NDFVAL)
+              dtsf_rec = dtsf_rec + 1
+              DO 106 J=1,NDFVAL
+                RI(J) = RUNOFF(J)
+ 106          CONTINUE
+ 
+              IF(BJTIME(LHEAD).EQ.0.D0) THEN
+                WRITE(STDOUT,54) JLTIME, JTIME, EJTIME
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+ 
+              BWYR(LHEAD) = IWYR(YRT,MNT)
+ 
+C             COMPUTE CUMULATIVE FORM IN THE BUFFER
+C             LENTRY IS THE LAST UP-TO-DATE VALUE HERE.
+ 
+              TSFDT = 86400.E0*(BJTIME(LHEAD) - BJTIME(LENTRY))
+              IF(LAGTSF.EQ.0) THEN
+                DO 150 J=1,NDFVAL
+                  TSFBUF(LHEAD,J) = TSFBUF(LENTRY,J) + TSFDT*RI(J)
+ 150            CONTINUE
+              ELSE
+                TSFDT = 0.5*TSFDT
+                DO 160 J=1,NDFVAL
+                  TSFRAT(LHEAD,J) = RI(J)
+                  TSFBUF(LHEAD,J) = TSFBUF(LENTRY,J) + TSFDT*
+     A                                    (RI(J) + TSFRAT(LENTRY,J))
+ 160            CONTINUE
+              ENDIF
+ 
+              LHEAD = LHEAD + 1
+              IF(LHEAD.GT.NBUFF) LHEAD = 1
+            ELSE
+C             Path name in HECDSS.  Find out how many
+C             values need to be retained in the buffer so that
+C             time step reductions due to convergence difficulties
+C             do not require reading data already past.
+              JTBASE = JLTIME - DT/86400.D0 - TEPS
+C              WRITE(STDOUT,*) ' State of buffer before refresh'
+C              CALL DUMP_DIFF_STATE(1, NBUFF, LHEAD, LENTRY)
+ 
+              LT = LHEAD - 1
+              IF(LT.LT.1) LT = NBUFF
+C             LT gives index to the last item placed in the buffer.
+              KNT = 1
+110           CONTINUE
+                IF(BJTIME(LT).GE.JTBASE) THEN
+C                 Continue searching backwards.
+                  LT = LT - 1
+                  IF(LT.LT.1) LT = NBUFF
+                  IF(LT.EQ.LHEAD) THEN
+                    WRITE(STDOUT,60)
+                    WRITE(STDOUT,61)
+                    STOP 'Abnormal stop: errors found.'
+                  ENDIF
+ 
+                  KNT = KNT + 1
+                  GOTO 110
+                ENDIF
+C             KNT  gives the number of values in the buffer that
+C             must be retained.
+              NEED = NBUFF - KNT
+C              WRITE(STDOUT,*) ' LKTSF: KNT=',KNT,' NEED=',
+C     A                     NEED
+C             Set the desired julian time so that we do not
+C             get a value twice.  Add .75 of the buffer time step
+C             which is constant in time and space, to the julian time
+C             of the last valid entry in the buffer.  This should
+C             get the correct value for all valid HECDSS time steps.
+              JTBASE =  BJTIME(LENTRY) + BUF_DT
+ 
+C             Get the data from the pathnames and transfer to the
+C             columns of the diffuse buffer.
+ 
+              DO 510 J=1,NLUSE
+                CALL GET_HECDSS_BLOCK(STDOUT, PATH_NAME_DIFF(J),
+     A                   DSS_INDEX_DIFF(J), TIME_STEP_DIFF(J),
+     B                   'PER-CUM ', JTBASE, NEED,
+     B                   GOT, JTVEC, TMPVEC, NBUFF + 1)
+C               Transfer to the buffer. Slot at LHEAD is the start
+C               point.
+                LT = LHEAD
+                IF(J.EQ.1) THEN
+C                 Transfer both the times and the values.
+                  DO 190 I=1,GOT
+                    TSFBUF(LT,J) = TMPVEC(I)
+                    BJTIME(LT) = JTVEC(I)
+                    LT = LT + 1
+                    IF(LT.GT.NBUFF) LT = 1
+190               CONTINUE
+                ELSE
+C                 Transfer the values and compare the times.
+                  DO 205 I=1,GOT
+                    TSFBUF(LT,J) = TMPVEC(I)
+                    IF(ABS(BJTIME(LT) - JTVEC(I)).GT.1.D-5) THEN
+C                     Problem in time steps.
+                      WRITE(STDOUT,62)
+                      STOP 'Abnormal stop: errors found.'
+                    ENDIF
+                    LT = LT + 1
+                    IF(LT.GT.NBUFF) LT = 1
+205               CONTINUE
+                ENDIF
+510           CONTINUE
+              LHEAD = LT
+C             COMPUTE CUMULATIVE FORM IN THE BUFFER
+C             LENTRY IS THE LAST UP-TO-DATE VALUE HERE.
+ 
+              LSTOP = LHEAD - 1
+              IF(LSTOP.LT.1) LSTOP = NBUFF
+              LTM1 = LENTRY
+              LT = LENTRY + 1
+              IF(LT.GT.NBUFF) LT = 1
+ 
+520           CONTINUE
+                IF(LAGTSF.EQ.0) THEN
+                  DO 151 J=1,NLUSE
+                    TSFBUF(LT,J) = TSFBUF(LTM1,J)
+     A                                     + TSFDT_DSS*TSFBUF(LT,J)
+ 151              CONTINUE
+                ELSE
+                  DO 161 J=1,NDFVAL
+                    TSFRAT(LT,J) = TSFBUF(LT,J)
+                    TSFBUF(LT,J) = TSFBUF(LTM1,J) + HALF_TSFDT_DSS*
+     A                                  (TSFBUF(LT,J) + TSFRAT(LTM1,J))
+ 161              CONTINUE
+                ENDIF
+                IF(LT.NE.LSTOP) THEN
+                  LTM1 = LTM1 + 1
+                  IF(LTM1.GT.NBUFF) LTM1 = 1
+                  LT = LT + 1
+                  IF(LT.GT.NBUFF) LT = 1
+                  GOTO 520
+                ENDIF
+ 
+ 
+C              WRITE(STDOUT,*) ' State of buffer after refresh'
+C              CALL DUMP_DIFF_STATE(1, NBUFF, LHEAD, LENTRY)
+ 
+            ENDIF
+          ENDIF
+          IF(JLTIME.LE.BJTIME(LP1)) THEN
+C           FOUND THE INTERVAL-SET THE LEFT AND RIGHT TIME POINTERS
+            LL = LENTRY
+            LR = LP1
+            GOTO 1000
+          ELSE
+            LENTRY = LP1
+            GOTO 100
+          ENDIF
+        ELSE
+C         SEARCH COUNTER CLOCKWISE. PASSING THE LIST HEAD IS A
+C         BUG BECAUSE IT SHOULD NOT HAPPEN.
+ 
+ 200        CONTINUE
+              IF(LENTRY.EQ.LHEAD) THEN
+                WRITE(STDOUT,*)
+     A          ' *BUG:34 SUBROUTINE LKTSF-PASSING LIST HEAD',
+     B          ' COUNTER CLOCKWISE. JTIME = ',JLTIME
+                STOP 'Abnormal stop: errors found.'
+              ENDIF
+ 
+              LM1 = LENTRY - 1
+              IF(LM1.LT.1) LM1 = NBUFF
+              IF(JLTIME.GE.BJTIME(LM1)) THEN
+C               FOUND INTERVAL
+                LL = LM1
+                LR = LENTRY
+                GOTO 1000
+              ELSE
+                LENTRY = LM1
+                GOTO 200
+              ENDIF
+            ENDIF
+ 
+ 1000 CONTINUE
+C     INTERPOLATE FOR THE VALUE
+ 
+      TSFDT = JLTIME - BJTIME(LL)
+      P = TSFDT/(BJTIME(LR) - BJTIME(LL))
+      WYR = BWYR(LR)
+ 
+      IF(LAGTSF.EQ.0) THEN
+        DO 600 J=1,NDFVAL
+          CLSR(J) = TSFBUF(LL,J) + P*(TSFBUF(LR ,J) - TSFBUF(LL,J))
+ 600    CONTINUE
+      ELSE
+        TSFDT = 43200.D0*TSFDT
+        DO 610 J=1,NDFVAL
+          RATEL = TSFRAT(LL,J)
+          RATE = RATEL + P*(TSFRAT(LR,J) - RATEL)
+          CLSR(J) = TSFBUF(LL,J) + TSFDT*(RATE + RATEL)
+ 610    CONTINUE
+      ENDIF
+ 
+      RETURN
+ 
+      END
+

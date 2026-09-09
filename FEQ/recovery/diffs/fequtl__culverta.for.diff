@@ -1,0 +1,662 @@
+--- 9.98/fequtl/culverta.for
++++ 10.61/fequtl/culverta.for
+@@ -583,13 +583,12 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER FLAG, I, IFLAG, J, KNT, KNT2, KNT3
+-      INTEGER ADJLOC(MAXN)
+       REAL ARGVEC(MAXN), DDN, DIR, DUP, DZ, F, F1(MAXN), F2(MAXN), FAC,
+      A     FL, FOLD, FR, QCULV, QHIGH, QLOW, QOLD, Y2PMIN, Y3VEC(MAXN),
+      B      ZTAIL, ZTVEC(MAXN)
+       DOUBLE PRECISION DROP(MAXN), MCLVT(MAXN), QCLVT(MAXN), SLOPE,
+      A                 SQRTDP(MAXN), TWVEC(MAXN), Y2VEC(MAXN)
+-      CHARACTER  CQCLV*8, CQROAD*8
++      CHARACTER  CQCLV*8, CQROAD*8, ADJLOC(MAXN)*1
+ 
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, FLOAT, MIN, SQRT
+@@ -615,7 +614,7 @@
+      E    ' -------')
+  77   FORMAT(1X,F8.3,F9.3,F8.3,F9.3,F8.4,I5,2A8)
+  78   FORMAT(
+-     A  1X, '-------------------------------------------------------'
++     A  1X, '-------------------------------------------------------',
+      A      '---------',
+      A    /, 1X,'  Notes: Barrel flows full at section 3 when depth',
+      A ' there=',F8.3,
+@@ -1140,7 +1139,7 @@
+  
+       IFLAG = 0
+       DO 502 I=1,NFRAC
+-        IF(ADJLOC(I).EQ.1) THEN
++        IF(ADJLOC(I).ne.' ') THEN
+ C         At least one slope has been adjusted.
+           IF(IFLAG.EQ.0) THEN
+ C           Write the heading.
+@@ -1509,6 +1508,7 @@
+         CALL FRFT12
+      I             (STDOUT, HDATUM, ZDATUM, HUP, DUP, DDN, IU, ID,
+      I              CULCLS, TRUEA1,
++     M              CD1,
+      O              EFLAG, TYPE, CONFLG, EXPFLG, QFREE, FREED)
+         IF(TYPE.GT.2) THEN
+ C         FLOW TYPE MUST BE 5 OR 6 OR 7
+@@ -1539,6 +1539,7 @@
+           CALL FRFT12
+      I               (STDOUT, HDATUM, ZDATUM, HUP, DUP, DDN, IU, ID,
+      I                CULCLS, TRUEA1,
++     M                CD1,
+      O                EFLAG, TYPE, CONFLG, EXPFLG, QFREE, FREED)
+           IF(TYPE.GT.2) THEN
+             WRITE(STDOUT, 51) HUP
+@@ -2096,6 +2097,7 @@
+         FTAB(ADR+4) = 0.0
+         FTAB(ADR+5) = BEGELV
+         FTAB(ADR+6) = FTAB(ADRS43+5)
++        ITAB(ADR+21) = 0
+         ADR = ADR + XTIOFF
+  
+ C       Do the zero depth row.
+@@ -2248,7 +2250,8 @@
+      I                   MFTNUM, MRFTAB, FTPNT, TYPFLG,
+      M                   EFLAG, FTKNT, FTP,
+      O                   NBN, BRPT, NSEC, XVEC, ZBVEC, KA, KD, HLTAB,
+-     O                   BNODID, NEGTAB, CHKBAR, IAT3D, IAT6D, BSHAPE)
++     O                   BNODID, NEGTAB, CHKBAR, IAT3D, IAT6D, BSHAPE,
++     O                   sbkind)
+  
+ C     + + + PURPOSE + + +
+ C     Input the culvert conduit description.  Similar to a regular
+@@ -2256,8 +2259,8 @@
+  
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+-      INTEGER BSHAPE, CHKBAR, EFLAG, FTKNT, FTP, IAT3D, IAT6D, STDIN,
+-     A        STDOUT, MFTNUM, MNBN, MRFTAB, NBN, NBRA, TYPFLG
++      INTEGER BSHAPE, CHKBAR, EFLAG, FTKNT, FTP, IAT3D, IAT6D, sbkind,
++     a   STDIN, STDOUT, MFTNUM, MNBN, MRFTAB, NBN, NBRA, TYPFLG
+       INTEGER BRPT(8,NBRA), FTPNT(MFTNUM), HLTAB(MNBN), NEGTAB(MNBN),
+      A        NSEC(MNBN)
+       REAL KA(MNBN), KD(MNBN), SFAC, XVEC(MNBN), ZBVEC(MNBN)
+@@ -2277,8 +2280,8 @@
+ C              exist.
+ C     TYPFLG - If TYPFLG=0 then any cross section table type is
+ C               adequate; else at least equivalent of old type 12
+-C               (new type 22) must be supplied.  TYPFLG = 0 when called
+-C               from CULVRT and TYPFLG=1 when called from from XSTMAK.
++C               (new type 22) must be supplied.  TYPFLG = 1 when called
++C               from CULVRT and TYPFLG=0 when called from from XSTMAK.
+ C     EFLAG  - Error flag: EFLAG=0-no errors; else one or more errors
+ C     FTKNT  - function table counter
+ C     FTP    - next open location in the function table storage
+@@ -2317,7 +2320,7 @@
+      B        IDLEN, HLIDLEN, PFLAG
+ 
+       REAL CA, CD, CLVLEN, D, DX, DXFAC, DZ, ELEV, FAC, FINT, LOVERD,
+-     A     SBKIND, SDXOVL, STAT, STATL, STATR, STDL, STDR, X, Z,
++     A     SDXOVL, STAT, STATL, STATR, STDL, STDR, X, Z,
+      B     XL, XR
+       CHARACTER HEAD*120, LINE*120, NAME*8, XCHAR*10, XTABN*5, ZCHAR*10,
+      A          JUST*5, TABID*16, HLTABID*16, BLANK*16, TEMPC*16
+@@ -2331,7 +2334,7 @@
+       CHARACTER GETTOK*10, GET_TABID*16
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL CHKTAB, FNDELV, FNDSTA, GETD, GETTOK, INL80, INL120, KIL,
++      EXTERNAL CHKTAB, FNDELV, FNDSTA, GETD, GETTOK, inline, KIL,
+      A         MKXVEC, SCAN, GET_ITEM_LIMITS, LENSTR, 
+      B         READ_CULVERT_ITEMS
+  
+@@ -2377,7 +2380,7 @@
+       NBN = 0
+       LNODE = 0
+       BNUM = 1
+-      CALL INL120
++      CALL inline
+      I           (STDIN, STDOUT,
+      O            LINE)
+       CALL GET_ITEM_LIMITS(
+@@ -2387,7 +2390,7 @@
+       READ(LINE,1) HEAD
+ C      WRITE(STDOUT,11) HEAD
+  100  CONTINUE
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         IF(NODEID.EQ.'NO') THEN
+@@ -2553,6 +2556,8 @@
+         IF(NBN.EQ.2) THEN
+ C         Only two nodes given.  Signals that the stations are to
+ C         be internally generated.
++c         Also the slope is constant
++          SBKIND = 0
+           CLVLEN = ABS(XVEC(1) - XVEC(2))
+           IT = NSEC(1)
+           CALL CHKTAB
+@@ -2647,7 +2652,7 @@
+           IT = 0
+ 
+           DO 2200 I=FIRST+1, LAST
+-            WRITE(STDOUT,*) ' IT=',IT, ' HLTAB(I)=',HLTAB(I)
++c            WRITE(STDOUT,*) ' IT=',IT, ' HLTAB(I)=',HLTAB(I)
+             IF(IT.EQ.0) THEN
+               IF(HLTAB(I).EQ.1) THEN 
+ C               Set a pointer to remember location of the first p value 
+@@ -2656,7 +2661,7 @@
+ C               This makes the detection easier and does not reduce the
+ C               usefulness in our current application.
+          
+-                WRITE(STDOUT,*) ' Found p-value. IT=',IT
++c                WRITE(STDOUT,*) ' Found p-value. IT=',IT
+                 IT = I
+               ENDIF
+             ELSE
+@@ -2666,7 +2671,7 @@
+ C               using XVEC(IT-1) as the first X value and XVEC(I) as the last X value.
+                 XL = XVEC(IT-1)
+                 XR = XVEC(I)
+-                WRITE(STDOUT,*) ' Interpolate with: XL=',XL,' XR=',XR 
++c                WRITE(STDOUT,*) ' Interpolate with: XL=',XL,' XR=',XR 
+                 DO 2190 J=IT,I-1
+                   XVEC(J) = XL + XVEC(J)*(XR - XL)
+                   HLTAB(J) = 0
+@@ -2912,6 +2917,7 @@
+       INCLUDE 'flapgate.cmn'
+       INCLUDE 'epscom.cmn'
+       INCLUDE 'putget.cmn'
++      INCLUDE 'tabupgrade.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER CULVERT 
+@@ -2920,7 +2926,7 @@
+       INTEGER BSHAPE, CHK23, CHKBAR, CONFLG, EXPFLG, FRTYPE, FTPTMP, I,
+      A        ID, IFLAG, IU, IT, J, NBN, NBRA, NFRAC, NHU, NT, NTAB, 
+      B        Q3VSRD, TAB, TABTYP, TYPE, TYPFLG, WFLAG, Y3VSTW, Y2VSD,
+-     C        FTPBASE
++     C        FTPBASE, ftpup, verbose
+       INTEGER BRPT(8,1), NEGTAB(MNBN), DEFAULT_TABVEC(13)
+       REAL A1TRUE, ALP1T, CCT5, CL34, DDN, DDROP, DE14, DE34, DEPCON,
+      A     DF, DFDC, DFDR, DQ, DROP, DUP, DY2, DZ4, ED, EU, FDRDW, 
+@@ -2929,14 +2935,15 @@
+      D     PFDVEC(PMXFRC), POWER, QC3, QCLV, QFREE, QMAT(PMXNHU,PMXFRC),
+      E     QOLD, RATIO, RDFLOW, SFAC, X3D, X6D, Y3LIMU, YEXIT, 
+      F     Z1TRUE, Z3PSAV, Z3SAV, Z3SOF, Z44SAV, Z4OLD, Z4SAV, 
+-     G     ZDATUM, ZSBRDF, ZT, Y2MAT(PMXNHU,PMXFRC)
+-
+-      REAL*8 FD
++     G     ZDATUM, ZSBRDF, ZT, Y2MAT(PMXNHU,PMXFRC), zrhufd
++
++      REAL*8 FD, easting, northing
+       CHARACTER BNODID(MNBN)*8, C5VEC(3)*5, CHAR10*10, CHAR4*4, CHAR5*5,
+      A          CHAR6*6, CHAR7*7, CL34C*5, CULCLS*8, HEAD*80, LABEL*50,
+      B          LINE*80, LINE120*120, LOSOPT*8, NODEID*4, SAVEIT*4, 
+      C          CQFREE*7, CWFRD*7, CBOTH*7, CQCLV*7, TABID*16,
+-     D          APPTABID*16, DEPTABID*16, BEGTABID*16, CHAR16*16
++     D          APPTABID*16, DEPTABID*16, BEGTABID*16, CHAR16*16,
++     e          zone*8, hgrid*8, vdatum*8, unitsys*8, basis*8
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, DBLE, FLOAT, MAX, MIN
+@@ -2949,7 +2956,7 @@
+ C     + + + EXTERNAL NAMES + + +
+       EXTERNAL CHKCFC, CHKDEP, CHKTAB, CHKTEL, CLVIN, EMBSUB, ETABIN,
+      A         FDCD46, FDFRFC, FHHTYP, FRFCLV, FRFEMB, FRFT7, GETD,
+-     B         GETTOK, INL80, INPRDP, INSERT, LKTA, LKTAB, LKTK, QVSTW,
++     B         GETTOK, inline, INPRDP, INSERT, LKTA, LKTAB, LKTK, QVSTW,
+      C         TABCHK, TDLK10, TWDOUT, XLKT22, XLKTAL, VAR_DECIMAL,
+      D         LENSTR, TWOD13PUT, TWOD13GET, GET_INTERNAL_TAB_NUMBER,
+      E         STRIP_L_BLANKS, READ_TABID_PLUS, GET_TABID, READ_TABID
+@@ -3133,7 +3140,7 @@
+  
+  
+  
+-      CALL INL120
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE120)
+       CALL READ_TABID_PLUS
+@@ -3153,6 +3160,7 @@
+      M            TAB, TABDIR, EFLAG)
+       TABU = TAB
+ 
++
+ C     Process get/put actions.
+       CALL GET_PUTGET_OPTIONS
+      I                (STDIN, STDOUT, LINE, CULVERT,
+@@ -3169,8 +3177,7 @@
+      M              PUTY2, TABDIR, EFLAG)
+       ENDIF
+ 
+-
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,27,ERR=991) CHAR4, TABTYP, FLAP
+@@ -3184,7 +3191,17 @@
+         EFLAG = 1
+       ENDIF
+  
+-      CALL INL80
++c     Get location items that may be present. If they are not present
++c     they will be set to default values.  The default requests FEQUTL
++c     to omit the items.  
++      call GET_lctn_ITEMS(STDIN, STDOUT,
++     M                   EFLAG)
++      call  SET_lctn_ITEMS(
++     O             zone, hgrid, vdatum, unitsys, basis, easting,
++     O             northing)
++
++
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,2,ERR=991) CHAR5, LABEL
+@@ -3192,13 +3209,13 @@
+  
+ C     INPUT THE APPROACH SECTION DESCRIPTION
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE, 24,ERR=991) HEAD
+       WRITE(STDOUT,92) HEAD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       CALL READ_TABID
+@@ -3215,14 +3232,14 @@
+      M              APPTAB,
+      O              EFLAG)
+       ENDIF
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,6,ERR=991) CHAR6, APPELV
+  
+       WRITE(STDOUT,56) CHAR6, APPELV
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,6,ERR=991) CHAR6, APPLEN
+@@ -3233,7 +3250,7 @@
+         EFLAG = 1
+       ENDIF
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,6,ERR=991) CHAR6, APPLOS
+@@ -3243,7 +3260,7 @@
+         EFLAG = 1
+       ENDIF
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,6,ERR=991) CHAR6, APPEXP
+@@ -3257,27 +3274,27 @@
+ C     INPUT THE CULVERT DESCRIPTION.  TREAT LIKE A BRANCH IN FEQ AND
+ C     MAKE AS CLOSE TO A BRANCH AS POSSIBLE.
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24,ERR=991) HEAD
+       WRITE(STDOUT,92) HEAD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,20,ERR=991) CHAR6,NODEID
+       NODEID = GETTOK(NODEID)
+       WRITE(STDOUT,88) CHAR6,NODEID
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,22,ERR=991) CHAR4, SFAC
+       WRITE(STDOUT,90) CHAR4, SFAC
+  
+       NBRA = 1
+-C     TYPFLG at 1 request automatic interpolation for cross sections
++C     TYPFLG at 1 requests automatic interpolation for cross sections
+ C     along the barrel if the user only gives 2 crossections: one at the
+ C     barrel entrance and one at the barrel exit.  NEGTAB is not used
+ C     in culvert but it is used in XSINTERP where CLVIN is called as
+@@ -3288,7 +3305,7 @@
+      I           MRFTAB, FTPNT, TYPFLG,
+      M           EFLAG, FTKNT, FTP,
+      O           NBN, BRPT, NSEC, XVEC, ZBVEC, KA, KD, HLTAB, BNODID,
+-     O           NEGTAB, CHKBAR, IAT3D, IAT6D, BSHAPE)
++     O           NEGTAB, CHKBAR, IAT3D, IAT6D, BSHAPE, sbkind)
+  
+  
+ C     INPUT THE CULVERT CLASS.  USED TO DECIDE WHAT RELATIONSHIPS TO USE.
+@@ -3297,7 +3314,7 @@
+ C     A CLASS WHICH IS DESCRIPTIVE OF THE SHAPE.
+  
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,10,ERR=991) CHAR6, CULCLS
+@@ -3313,7 +3330,7 @@
+  
+ C     INPUT THE DEPARTURE SECTION DATA
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24,ERR=991) HEAD
+@@ -3321,7 +3338,7 @@
+  
+       CALL GET_DEPARTURE_ITEMS(STDIN, STDOUT,
+      M                   EFLAG)
+-C      CALL INL80
++C      CALL inline
+ C     I          (STDIN, STDOUT,
+ C     O           LINE)
+ C      READ(LINE,4,ERR=991)  CHAR6, DEPTAB, CHAR5, C5VEC(1)
+@@ -3367,7 +3384,7 @@
+         WRITE(STDOUT,63) RMFFAC
+         EFLAG = 1
+       ENDIF
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,7,ERR=991) CHAR6, DEPELV, CHAR10, C5VEC(1), C5VEC(2)
+@@ -3419,7 +3436,7 @@
+  
+ C     INPUT THE EXIT LOSS OPTIONS
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,12,ERR=991) CHAR6, LOSOPT
+@@ -3431,7 +3448,7 @@
+  
+       IF(LOSOPT.EQ.'ENERGY') THEN
+  
+-        CALL INL80
++        CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+         READ(LINE,6,ERR=991) CHAR6, DEPCON
+@@ -3445,28 +3462,28 @@
+ C     INPUT THE DISCHARGE COEFFICIENT RELATED FACTORS WHICH ARE
+ C     FUNCTIONS OF GEOMETRY ONLY.
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE, 24,ERR=991) HEAD
+       WRITE(STDOUT,92) HEAD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE, 14,ERR=991)  KRB
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,16,ERR=991) CHAR5, KWING
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,18,ERR=991) CHAR5, KPROJ
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,14,ERR=991)  C46, CHAR4
+@@ -3521,7 +3538,7 @@
+ C     Optional type 5 input may appear here.  If not the
+ C     roadway heading appears.
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24,ERR=991) HEAD
+@@ -3529,7 +3546,7 @@
+       IF(LINE(1:6).EQ.'TYPE 5'.OR.LINE(1:6).EQ.'Type 5') THEN
+ C       Type 5 flow parameters appear.
+         WRITE(STDOUT,92) HEAD
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,15,ERR=991) CHAR7, RBVAL
+@@ -3539,7 +3556,7 @@
+         ENDIF
+         WRITE(STDOUT,30) RBVAL
+  
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,17,ERR=991) BVANGL
+@@ -3549,7 +3566,7 @@
+         ENDIF
+         WRITE(STDOUT,25) BVANGL
+  
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,17,ERR=991) WWANGL
+@@ -3559,7 +3576,7 @@
+           EFLAG = 1
+         ENDIF
+  
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,17,ERR=991) LPOVD
+@@ -3569,7 +3586,7 @@
+           EFLAG = 1
+         ENDIF
+  
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,19,ERR=991) TY5SBF
+@@ -3579,7 +3596,7 @@
+           EFLAG = 1
+         ENDIF
+ 
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+       ENDIF
+@@ -3587,7 +3604,7 @@
+ C     Insert input of FHWA information after the Type 5 block
+       IF(LINE(1:4).EQ.'FHWA') THEN
+ C       Process the FHWA parameters.
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,1000,ERR=991) AFHWA
+@@ -3601,7 +3618,7 @@
+           ENDIF
+         ENDIF
+         WRITE(STDOUT,1050) AFHWA
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,1000,ERR=991) CFHWA
+@@ -3609,7 +3626,7 @@
+ C       Apply factor of 2g to CFHWA
+         CFHWA = GRAV2*CFHWA
+  
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,1000,ERR=991) YFHWA
+@@ -3621,7 +3638,7 @@
+         SFHWA = (ZBVEC(1) - ZBVEC(2))/(XVEC(2) - XVEC(1))
+         WRITE(STDOUT,1053) SFHWA
+ C       Read next line to prepare for what follows 
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+ 
+@@ -3629,7 +3646,7 @@
+       IF(LINE(1:5).EQ.'TABLE'.OR.LINE(1:5).EQ.'Table') THEN
+ C       Get the next line and read user assigned table numbers from it.
+         WRITE(STDOUT,92) LINE(1:80)
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,*,ERR=991)  TB6ADR, TB7ADR, TB8ADR, TB15AD,
+@@ -3640,7 +3657,7 @@
+ 
+ C       Read the next line.  Should be a heading of
+ C       some sort.
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+       ENDIF
+@@ -3696,7 +3713,7 @@
+       IF(LINE(1:6).EQ.'TYPE 1'.OR.LINE(1:6).EQ.'Type 1') THEN
+ C       Process optional type 1 parameters.
+         WRITE(STDOUT,92) LINE(1:80)
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,21,ERR=991) TY1YTD
+@@ -3705,7 +3722,7 @@
+           WRITE(STDOUT,53)
+           EFLAG = 1
+         ENDIF
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+         READ(LINE,23,ERR=991) TY1HTD
+@@ -3715,7 +3732,7 @@
+           EFLAG = 1
+         ENDIF
+ C       Read the next heading
+-        CALL INL80
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+       ENDIF
+@@ -3822,19 +3839,19 @@
+ C     INPUT THE FACTORS CONTROLLING THE UPSTREAM HEADS AND THE
+ C     DISTRIBUTION OF DROPS
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,24,ERR=991) HEAD
+       WRITE(STDOUT,92) HEAD
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,26,ERR=991) CHAR5, NFRAC
+       WRITE(STDOUT,94) NFRAC
+  
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+       READ(LINE,16,ERR=991) CHAR5, POWER
+@@ -3851,7 +3868,7 @@
+       I = 1
+       HUOLD = -1.0
+  300  CONTINUE
+-      CALL INL80
++      CALL inline
+      I          (STDIN, STDOUT,
+      O           LINE)
+         READ(LINE,'(F10.0)',ERR=991) HUVEC(I)
+@@ -4594,35 +4611,31 @@
+  2001 CONTINUE
+ C     OUTPUT THE TABLE
+       IF(EFLAG.EQ.0) THEN
++        zrhufd = 0.0
+         CALL TWDOUT
+      I             (STDOUT, STDTAB, TAB, LABEL, NHU, NFRAC, HUVEC,
+      I              FDVEC, PFDVEC, QMAT, HDATUM+ZDATUM,
+-     I              TABTYP, ' CULVERT',
++     I              TABTYP, ' CULVERT', zrhufd,
++     i              zone, hgrid, vdatum, unitsys, basis,
++     i              easting, northing,
+      O              EFLAG)
++
++        if(twod_cubic_out.eq.'YES') then
++          verbose = 1
++          CALL twodfit
++     I             (STDOUT, TAB, NHU, NFRAC, HUVEC,
++     I              FDVEC, PFDVEC, QMAT, HDATUM+ZDATUM,
++     I              TABTYP, ' CULVERT', zrhufd, verbose,
++     M              FTP,
++     O              EFLAG, ftpup)
++        endif
++
+         IF(PUTQ.GT.0) THEN
+           CALL TWOD13PUT
+      I                  (STDOUT, PUTQ, NHU, NFRAC, HUVEC, FDVEC,
+      I                   PFDVEC, QMAT, HDATUM+ZDATUM, TABTYP, 
+      M                   FTP, 
+      O                   EFLAG)
+-C          NHU = 0
+-C          NFRAC =0
+-C          HUVEC = 0.0
+-C          FDROP = 0.0
+-C          PFDVEC = 0.0
+-C          QMAT = 0.0
+-C          HDATUM = 0.0
+-C          TABTYP = 0
+-C          CALL TWOD13GET
+-C     I                  (STDOUT, 
+-C     O                   PUTQ, NHU, NFRAC, HUVEC, FDVEC,
+-C     O                   PFDVEC, QMAT, HDATUM, TABTYP, 
+-C     O                   EFLAG)
+-C        CALL TWDOUT
+-C     I             (STDOUT, STDOUT, PUTQ, LABEL, NHU, NFRAC, HUVEC,
+-C     I              FDVEC, PFDVEC, QMAT, HDATUM,
+-C     M              TABTYP, ' CULVERT',
+-C     O              EFLAG)
+         ENDIF
+         IF(PUTY2.GT.0) THEN
+ 

@@ -1,0 +1,1372 @@
+--- 9.98/feq/brnmat.for
++++ 10.61/feq/brnmat.for
+@@ -205,7 +205,7 @@
+  
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER STDOUT, WYR
+-      REAL CLSR(MNDIFA)
++      REAL*8 CLSR(MNDIFA)
+       REAL*8 JLTIME, DT
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -233,10 +233,6 @@
+  
+       DATA TEPS/1.D-6/
+ C     + + + OUTPUT FORMATS + + +
+- 50   FORMAT(' *BUG:35 SUBROUTINE LKTSF: UNEXPECTED END OF FILE',
+-     A  ' READING FROM DTSF. FILE JTIME=',1PD20.12,/,
+-     B  10X,'YEAR=',I5,' MONTH=',I3,' DAY=',I3,' DAYFRAC=',1PD20.12)
+- 52   FORMAT(10X,' RUN JTIME=',1PD20.12,' SEGMENT EJTIME=',1PD20.12)
+  54   FORMAT(' *BUG:37* JTIME= 0 IN DTSF IN LKTSF. LOOKUP JTIME=',
+      A         1PD20.12,/,
+      A        10X,' RUN JTIME=', 1PD20.12,' RUN EJTIME=',1PD20.12)
+@@ -258,17 +254,12 @@
+ C           RECORD IN THE BUFFER.
+  
+             IF(TIME_STEP_DIFF(1).LT.0) THEN
+-              IF(TSFTYP.EQ.0) THEN
+-                READ(TSFDSN, END=5000) BJTIME(LHEAD),
+-     A                                 DYF, YRT, MNT, DYT, NDFVAL,
+-     B                                 (RI(J),J=1,NDFVAL)
+-              ELSE
+-                READ(TSFDSN, END=5000) BJTIME(LHEAD), DYF, YRT, MNT,
+-     A                                 DYT, (RUNOFF(J), J=1,NDFVAL)
+-                DO 106 J=1,NDFVAL
+-                  RI(J) = RUNOFF(J)
+- 106            CONTINUE
+-              ENDIF
++              READ(TSFDSN, rec=dtsf_rec) BJTIME(LHEAD), DYF, YRT, MNT,
++     A                               DYT, (RUNOFF(J), J=1,NDFVAL)
++              dtsf_rec = dtsf_rec + 1
++              DO 106 J=1,NDFVAL
++                RI(J) = RUNOFF(J)
++ 106          CONTINUE
+  
+               IF(BJTIME(LHEAD).EQ.0.D0) THEN
+                 WRITE(STDOUT,54) JLTIME, JTIME, EJTIME
+@@ -461,10 +452,6 @@
+  
+       RETURN
+  
+- 5000 CONTINUE
+-      WRITE(STDOUT,50) BJTIME(LHEAD), YRT, MNT, DYT, DYF
+-      WRITE(STDOUT,52) JTIME, EJTIME
+-      STOP 'Abnormal stop: errors found.'
+       END
+ C
+ C
+@@ -499,8 +486,8 @@
+ C
+       SUBROUTINE   LOAD
+      I                 (DIFFUS, BRPT, NBRA, STDOUT, LPNT, MLPNT, NBN,
+-     I                  OUTPUT, POINT, TIME, WIND, PFPNT, QPN, 
+-     I                  DT, DTLOAD, DJLOAD, DTIMLD,
++     I                  OUTPUT, POINT, WIND, PFPNT, QPN, 
++     I                  DT, dtdy, DTLOAD, dtdyload, DJLOAD, 
+      M                  EMC,
+      O                  EFLAG, WYR)
+  
+@@ -515,8 +502,7 @@
+       INTEGER EFLAG, STDOUT, LPNT, MLPNT, NBN, NBRA,  OUTPUT,
+      A        QPN, WYR
+       INTEGER BRPT(8,NBRA),  EMC(MREMC), PFPNT(3,MLPNT)
+-      REAL DTIMLD, TIME
+-      REAL*8 DJLOAD, DT, DTLOAD
++      REAL*8 DJLOAD, DT, DTLOAD, dtdy, dtdyload
+       CHARACTER DIFFUS*4, POINT*4, WIND*4
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+@@ -538,7 +524,6 @@
+ C     NBN    - total number on nodes on branches in the model
+ C     OUTPUT - output level for diagnostic work
+ C     POINT  - if YES then point inflows to a branch are present
+-C     TIME   - elapsed time in seconds from start of run
+ C     WIND   - flag for presence of wind stress simulation
+ C     PFPNT  - point flow pointer array
+ C     QPN    - number of lateral inflows
+@@ -576,12 +561,19 @@
+      A        NB, NTAB, KS, KE, UNIT_PNT, TRIBA_PNT,
+      B        FRACTION_PNT, QP_PNT, CAT_CODE, DLAY_PNT, DTEN_PNT,
+      C        ROUT_TAB, KNT, NODE, PNT
+-      REAL ATIME, FLOW, PDV, RDUM, RI(MNDIFA), SHEAR,
+-     A     SHIFT, TEMP, TIME1, WX, WY, QQ1, QQ2, S1, S2, Q1P, Q2P,
+-     B      S2T, NUMBER_OF_PONDS, ELEV, DF, FRACTION, TIME2, DQ,
+-     C      TS_VALUE
++      REAL  FLOW, PDV, RDUM, RI(MNDIFA), SHEAR,
++     A     SHIFT, TEMP,  WX, WY, QQ1, QQ2, S1, S2, Q1P, Q2P,
++     B      S2T, NUMBER_OF_PONDS, ELEV, DF, FRACTION, DQ,
++     C      TS_VALUE, res
+       REAL*8 AJTIME, SUM, SUMA, HALF_DT, DT_OVER_12, QBAR, QEND,
+-     A       AJTIME1, AJTIME2
++     A       jtime1, fbtime, retime, dftime
++
++c     fbtime- julian time for lookup of forced boundary. At the end
++c             point of the current time step
++c     retime- julian time for lookup of rainfall-evap. At the mid-pont
++c             of the current time step. 
++c     dftime- julian time for lookup of diffuse loading from land surface. 
++c             At the end point of the current time step.
+  
+ C     + + + EQUIVALENCES + + +
+       EQUIVALENCE (RDUM, IDUM)
+@@ -598,13 +590,11 @@
+ C     + + + OUTPUT FORMATS + + +
+ 50    FORMAT(/,' *BUG:XXX* Invalid CAT_CODE=',I5,' in sub. LOAD')
+  52   FORMAT(/,' DIFFUSE, POINT & WIND LOADINGS AT ',
+-     A           'TIME ',F14.0,/,1X,
++     A           'JTIME ',F16.4,/,1X,
+      B           '  ELEMENT  ','   DISCHARGE  ','  WIND SHEAR  ')
+- 54   FORMAT(4X,I5,3(2X,1PE12.5))
++ 54   FORMAT(4X,I5,2(2X,1PE12.5))
+  56   FORMAT(/,'*ERR:161* Unable to set up vectors QPVEC, ',
+      A           ' WSVEC or forced boundary in SUBROUTINE LOAD')
+- 58   FORMAT(/,'Point flows read from table ',I5,' for branch ',
+-     A           'vector ',I5,' at time ',F14.0)
+ 60    FORMAT(/,' *ERR:324* Detention reservoir failed to converge.')
+ C***********************************************************************
+ C     INITIALIZE
+@@ -620,23 +610,28 @@
+ C     rainfall
+       L_WSI = 0.D0
+       L_WSQ = 0.D0
+-C     SET THE TIME VALUES FOR THIS LOOK UP. DTLOAD, DJLOAD, AND
+-C     DTIMLD ARE SET TO GIVE THE PROPER RESULT
+- 
+-      ATIME = TIME + DTIMLD
+-      AJTIME = JTIME + DJLOAD
+-      TIME2 = TIME - 0.5*DT
+-      AJTIME2 = AJTIME - 5.787037037D-6*DTLOAD
++C     SET THE TIME VALUES FOR THIS LOOK UP.
++c     During frozen time we use a time offest of 1 second (1.157407e-5 day)
++c     on jtime and c     a time step of one second.  However, jtime is 
++c     NOT incremented because frozen time is virtual time. During frozen time,
++c     ifrz is 0,  DJLOAD = 1.157407e-5, DTLOAD = 1.0, dtdyload = 1.157407e-5. 
++c     For ifrz=0, DJLOAD = 0, DTLOAD = DT, dtdyload= dt/86400..
++
++      fbtime = jtime + djload 
++      retime = jtime + djload - 0.5*dtdyload
++      dftime = jtime + djload
++ 
++c      AJTIME = JTIME + DJLOAD
++c      JTIME2 = JTIME - 0.5*DTDY
++c      AJTIME2 = AJTIME - 5.787037037D-6*DTLOAD
+  
+       IF(DIFFUS.EQ.YES.OR.DIFFUS.EQ.'DSS ') THEN
+         HALF_DT = 0.5D0*DT 
+         DT_OVER_12 = 0.0833333333333333D0*DT
+         CALL LKTSF
+-     I            (STDOUT, AJTIME, DT,
++     I            (STDOUT, dftime, DT,
+      O             CLSR2, WYR)
+  
+-C        ATIME = TIME + DTIMLD
+-C        AJTIME = JTIME + DJLOAD
+ 
+ C       Check if the time step has changed from the past time
+ C       step.  If so, we must recompute the routing coefficients
+@@ -749,7 +744,7 @@
+ C           Now use the predicted value in the correcter equation 
+ C           to get an improved value of S2.  Find the flow 
+ C           and its derivative wrt to storage at S2.  This begins a 
+-C           loop to make more than one correction. 
++C           loop to make more than one correction.
+ 1015        CONTINUE
+               CALL LKTAB
+      I                  (ROUT_TAB, S2, 0,
+@@ -759,9 +754,26 @@
+               QBAR = 0.5*(QQ1 + QQ2) + DT_OVER_12*
+      A                (Q1P*(SUMA - QQ1) - Q2P*(SUMA - QQ2))
+                     
+-              S2T = S1 + DT*(SUMA - QBAR)
+-              IF(ABS(S2T - S2)/(S2 + LPRMIN).GT.1.E-4) THEN
+-                KNT = KNT + 1
++c              S2T = S1 + DT*(SUMA - QBAR)
++c             Switch to using Newton's method because linear iteration
++c             may fail to converge in some cases.  Could happen when
++c             a detention basin goes way over it design limit.
++c             In any case the change only required modifying the 
++c             the line at the start of this comment and adding
++c             one more line.  Note:  The derative is correct for 
++c             the trapezoidal rule and is only approximate for 
++c             the corrected trapezoidal rule we are using.  So 
++c             strictly speaking we are using the modified Newton's
++c             method.  However, the term we have omitted involves
++c             the second derivative of the flow vs volume function 
++c             which is not provided by LKTAB.  Testing has shown however,
++c             that convergence is rapid, 1 to 3 Newton corrections 
++c             reach the criterion set. 
++              res = S2T - (S1 + DT*(SUMA - QBAR))
++              s2t = s2t - res/(1.0 + q2p*(half_dt + dt*dt_over_12*q2p))
++
++              KNT = KNT + 1
++              IF(ABS(S2T - S2)/(S2 + LPRMIN).GT.1.0E-6) THEN
+                 IF(KNT.GT.20) THEN
+                   WRITE(STDOUT,60) 
+                   STOP 'Abnormal stop.  Errors found.'
+@@ -770,6 +782,12 @@
+                   GOTO 1015
+                 ENDIF
+               ENDIF
++            s2 = s2t
++c           Get the benefit of the last correction!
++            CALL LKTAB
++     I                (ROUT_TAB, S2, 0,
++     O                 QQ2, NTAB, Q2P)
++
+             IF(S2.LT.0.0) THEN
+ C             The reservoir emptied at some point within the time step. 
+               S2 = 0.0
+@@ -777,6 +795,10 @@
+               Q2P = 0.0
+               QBAR = SUMA + S1/DT
+             ENDIF
++c            write(stdout,9576) knt, qq2, qbar, s2/43560., q2p, 
++c     a                  1.0 + half_dt*q2p + dt*dt_over_12*q2p**2
++c9576  format(' knt=',i5,' Q2=',f10.4,' Qbar=',f10.4,' s2=',f10.4,
++c     a     ' Q2P=',1pe12.5,' dFhat=',1pe12.5) 
+             QEND = QQ2*NUMBER_OF_PONDS
+             QBAR = QBAR*NUMBER_OF_PONDS
+             DTEN_S2(DTEN_PNT) = S2
+@@ -847,22 +869,20 @@
+         IT = SOURCE_ADDRESS(I)
+        
+         IF(DEST_CAT(I).EQ.FORCED_BDY) THEN
+-          TIME1 = TIME
+-          AJTIME1 = AJTIME
++          JTIME1 = fbtime
+         ELSE
+-          TIME1 = TIME2
+-          AJTIME1 = AJTIME2 
++          JTIME1 = retime
+         ENDIF
+         IF(SOURCE_CAT(I).EQ.TS_FROM_TABLE) THEN
+ C         From time-series table
+  
+-          CALL LKTAB
+-     I              (IT, TIME1, 0,
++          CALL LKTSTAB
++     I              (IT, JTIME1,
+      O               TS_VALUE, NTAB, PDV)
+         ELSE
+ C         From time-series file
+           CALL RDGET
+-     I              (IT, STDOUT, AJTIME1, DT,
++     I              (IT, STDOUT, JTIME1, DT,
+      O               TS_VALUE)
+         ENDIF
+ C       Now place the result in its destination(s).
+@@ -925,36 +945,13 @@
+        
+  200  CONTINUE
+  
+- 
+-      IF(POINT.EQ.YES) THEN
+-        DO 100 I=1,LPNT
+-          ITYPE = PFPNT(1,I)
+-          ADRS = PFPNT(2,I)
+-          SHIFT = FTAB(ADRS+4)
+-          NB   = PFPNT(3,I)
+- 
+-C         TAKE THE VALUE AT THE MIDPOINT OF THE CURRENT INTERVAL
+-C         AS THE AVERAGE VALUE TO USE.
+- 
+-          TIME1 = ATIME + SHIFT - 0.5*DTLOAD
+- 
+-          CALL LKTAB
+-     I              (ADRS, TIME1, 0,
+-     O               FLOW, NTAB, PDV)
+-          IF(ITYPE.EQ.2) FLOW = -FLOW
+-          QPVEC(NB) = QPVEC(NB) + FLOW
+-C          FPVEC(NB) = FPVEC(NB) + FLOW*ABS(FLOW)*MF(I)
+-          IF(OUTPUT.GT.1) WRITE(STDOUT,58) NTAB, NB, TIME
+- 100    CONTINUE
+-      ENDIF
+- 
+- 
++
+  
+ C     WIND LOADING
+  
+       IF(WIND.EQ.NO) GOTO 350
+         CALL WSHEAR
+-     I             (TIME,
++     I             (JTIME,
+      O              SHEAR, WX, WY)
+         DO 320 IBRA=1,NBRA
+           FNODE = BRPT(3,IBRA) + 1
+@@ -969,7 +966,7 @@
+  
+  350  CONTINUE
+       IF(OUTPUT.LT.3) GOTO 410
+-      WRITE(STDOUT,52) TIME
++      WRITE(STDOUT,52) JTIME
+       DO 400 I=1,NBN
+         WRITE(STDOUT,54) I, QPVEC(I), WSVEC(I)
+  400  CONTINUE
+@@ -1042,7 +1039,7 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER ADRS, ELMADR, FN, JCOL, LN, NINC, NND, NTAB, UBNBAS
+-      REAL ABARU, ALD, ALU, AMD, AMU, ARD, ARU, B, BLD, BLU, BRD, BRU,
++      REAL ALD, ALU, AMD, AMU, ARD, ARU, B, BLD, BLU, BRD, BRU,
+      A     C1, C2, C3, C4, CF, DBLU, DBRU, DH, DKHLM, DKLU, DKRU, DMALU,
+      B     DMARU, DMQLU, DMQRU, DQPYLU, DQPYRU, DTLU, DTRU, DV, DV2, DX,
+      C     DX2, DXDT, DXH, DXHDT, DY, DYNDIF, DZ, ERR, GDE, KAC, KDC,
+@@ -1052,7 +1049,7 @@
+      G     PFYRU, PGFU, QLD, QLU, QMAX, QP, QRD, QRU, RES, S1, S2, S3,
+      H     SFMT, SFMU, TLD, TLU, TP, TPA, TPB, TPC, TPD, TRD, TRU, VLD,
+      I     VLU, VRD, VRU, WA, WTC, WX, YC, YLD, YLU, YM, YRD, YRU, ZI,
+-     J     ZIT, ZIY
++     J     ZIT, ZIY, sgndv2, kp
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, SIGN, SQRT
+@@ -1203,14 +1200,13 @@
+               IF(DV.GT.0.0) THEN
+ C               FLOW IS UNDERGOING NEGATIVE ACCELERATION-TAKEN
+ C               TO INDICATE EXPANSION
+- 
+-                GDE = 0.5*SIGN(KDC, OLDSUM)*ABS(DV*(VLD + VRD))
++                kp = kdc
+               ELSE
+ C               FLOW IS UNDERGOING POSITIVE ACCELERATION- TAKEN TO
+ C               INDICATE CONTRACTION
+- 
+-                GDE = 0.5*SIGN(KAC, OLDSUM)*ABS(DV*(VLD + VRD))
++                kp = kac
+               ENDIF
++              GDE = 0.5*SIGN(kp, OLDSUM)*ABS(DV*(VLD + VRD))
+             ENDIF
+  
+             IF(ADRS.GT.0) THEN
+@@ -1484,28 +1480,29 @@
+      A      ZI*MQRU*DXHDT + WT*(TPB + 2.*ZI*BRU*VRU)
+  
+         IF(KDC.GT.0.0.OR.KAC.GT.0.0) THEN
+-          ABARU = 0.5*(ALU + ARU)
+ C         PROCESS EXPANSION AND CONTRACTION LOSSES
+-          DV2 = ABS((VRU - VLU)*(VRU + VLU))
++          DV2 = (VRU - VLU)*(VRU + VLU)
++c         Establish the sign of the difference in 
++c         the squared velocities.
++          sgndv2 = sign(1.0, DV2)
++c         Absolute value of difference of squares is 
++c         needed as well.
++          dv2 = abs(dv2)
+           IF(VLU.GE.VRU) THEN
+ C           FLOW IS UNDERGOING NEGATIVE ACCELERATION
+- 
+-            KDC = SIGN(KDC, NEWSUM)
+-            PFQLU = KDC*ABARU*VLU/ALU
+-            PFQRU = -KDC*ABARU*VRU/ARU
+-            PFYLU = TLU*(0.25*KDC*DV2 - PFQLU*VLU)
+-            PFYRU = TRU*(0.25*KDC*DV2 - PFQRU*VRU)
+-            GDE = 0.5*KDC*DV2
++c            idir = -1
++            kp = SIGN(KDC, NEWSUM)
+           ELSE
+ C           FLOW IS UNDERGOING POSITIVE ACCELERATION
+- 
+-            KAC = SIGN(KAC, NEWSUM)
+-            PFQLU = -KAC*ABARU*VLU/ALU
+-            PFQRU = KAC*ABARU*VRU/ARU
+-            PFYLU = TLU*(0.25*KAC*DV2 - PFQLU*VLU)
+-            PFYRU = TRU*(0.25*KAC*DV2 - PFQRU*VRU)
+-            GDE = 0.5*KAC*DV2
+-          ENDIF
++c            idir = +1
++            kp = SIGN(KAC, NEWSUM)
++          ENDIF
++ 
++          PFQLU = -kp*sgndv2*AMU*VLU/ALU
++          PFQRU =  kp*sgndv2*AMU*VRU/ARU
++          PFYLU = TLU*(0.25*kp*DV2 - PFQLU*VLU)
++          PFYRU = TRU*(0.25*kp*DV2 - PFQRU*VRU)
++          GDE = 0.5*kp*DV2
+  
+           PGFU = PGFU + GDE
+           C1 = C1 + WT*PFYLU
+@@ -1518,7 +1515,6 @@
+         IF(ADRS.GT.0) THEN
+ C         POINT LOSS BASED ON AVERAGE VELOCITY HEAD IN ELEMENT
+           YM = 0.5*(YLU + YRU)
+-          ABARU = 0.5*(ALU + ARU)
+           CALL LKTAB
+      I              (ADRS, YM, 0,
+      O               KHLM, NTAB, DKHLM)
+@@ -1531,7 +1527,7 @@
+           TPB = TPA*NEWSUM
+           GDE = 0.5*KHLM*TPB
+           PGFU = PGFU + GDE
+-          TPC = WT*ABARU
++          TPC = WT*AMU
+           TPD = KHLM*TPA
+  
+           C1 = C1 - TPC*(TPD*TLU - DKHLM*TPB)
+@@ -1688,7 +1684,7 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER ADRS, ELMADR, FN, JCOL, LN, NINC, NND, NTAB, UBNBAS, 
+-     A        STDOUT
++     A        STDOUT, idir
+       REAL  ALD, ALU, AMD, AMU, ARD, ARU, B, BLD, BLU, BRD, BRU,
+      A     C1, C2, C3, C4, CF, DBLU, DBRU, DH, DKHLM, DKLU, DKRU, DMALU,
+      B     DMARU, DMQLU, DMQRU, DQPYLU, DQPYRU, DTLU, DTRU, DV, DV2, DX,
+@@ -1699,7 +1695,7 @@
+      G     PFYRU, PGFU, QLD, QLU, QMAX, QP, QRD, QRU, RES, S1, S2, S3,
+      H     SFMT, SFMU, TLD, TLU, TP, TPA, TPB, TPC, TPD, TRD, TRU, VLD,
+      I     VLU, VRD, VRU, WTC, WX, YC, YLD, YLU, YM, YRD, YRU, ZI, ZIT,
+-     J     ZIY
++     J     ZIY, sgndv2, kp
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, SIGN, SQRT
+@@ -1849,14 +1845,13 @@
+               IF(DV.GT.0.0) THEN
+ C               FLOW IS UNDERGOING NEGATIVE ACCELERATION-TAKEN
+ C               TO INDICATE EXPANSION
+- 
+-                GDE = 0.5*SIGN(KDC, OLDSUM)*ABS(DV*(VLD + VRD))
++                kp = kdc
+               ELSE
+ C               FLOW IS UNDERGOING POSITIVE ACCELERATION- TAKEN TO
+ C               INDICATE CONTRACTION
+- 
+-                GDE = 0.5*SIGN(KAC, OLDSUM)*ABS(DV*(VLD + VRD))
++                kp = kac
+               ENDIF
++              GDE = 0.5*SIGN(kp, OLDSUM)*ABS(DV*(VLD + VRD))
+             ENDIF
+  
+             IF(ADRS.GT.0) THEN
+@@ -2131,71 +2126,81 @@
+      A      ZI*MQRU*DXHDT + WT*(TPB + 2.*ZI*BRU*VRU)
+  
+ 
+-C       Debugging output 
+-C        IF(JTIME.GE.PRTIME) THEN
+-C          IF(IEQ.EQ.99999) THEN
+-C           Output details for the momentum balance
+-C            WRITE(STDOUT,50)  IEQ + 1
+-C50    FORMAT(/,' Detail for Eqno=',I6)
+-C            WRITE(STDOUT,51) 
+-C51    FORMAT('Lctn        Flow       Depth        Area   Top Width',
+-C     A'  Conveyance dConveyance        Beta       dBeta          MA',
+-C     B'         dMA          MQ         dMQ')
+-C
+-C            WRITE(STDOUT,52) 'LU  ', QLU, YLU, ALU, TLU, KLU, DKLU, BLU,
+-C     A                       DBLU, MALU, DMALU, MQLU, DMQLU
+-C            WRITE(STDOUT,52) 'RU  ', QRU, YRU, ARU, TRU, KRU, DKRU, BRU,
+-C     A                       DBRU, MARU, DMARU, MQRU, DMQRU
+-C52    FORMAT(A4,12(1PE12.5))
+-C
+-C            WRITE(STDOUT,53) WT, WX, ZI, DYT, DZ, DX
+-C53    FORMAT( ' WT=',F5.3,' WX=',F5.3,' ZI=',F5.3,
+-C     A       ' DYT=',1PE12.5,' DZ=',1PE12.5,' DX=',1PE12.5)
+-C
+-C            WRITE(STDOUT,54) SFMT, SFMU, PGFU, VLU, VRU, TPA, TPB
+-C54    FORMAT(' SFMT=',1PE12.5,' SFMU=',1PE12.5,' PGFU=',1PE12.5,
+-C     A' VLU=',1PE12.5,' VRU=',1PE12.5,' TPA=',1PE12.5,
+-C     B' TPB=',1PE12.5)
+-C
+-C            WRITE(STDOUT,55) AMU, DXHDT
+-C55    FORMAT(' AMU=',1PE12.5,' DXHDT=',1PE12.5)
+-C
+-C            WRITE(STDOUT,56) 'first: ', C1, C2, C3, C4
+-C56    FORMAT(A7,' C1=',1PE12.5,' C2=',1PE12.5,' C3=',1PE12.5,
+-C     A           ' C4=',1PE12.5)
+-C          ENDIF
+-C        ENDIF
+ 
+         IF(KDC.GT.0.0.OR.KAC.GT.0.0) THEN
+ C         PROCESS EXPANSION AND CONTRACTION LOSSES
+-          DV2 = ABS((VRU - VLU)*(VRU + VLU))
++          DV2 = (VRU - VLU)*(VRU + VLU)
++c         Establish the sign of the difference in 
++c         the squared velocities.
++          sgndv2 = sign(1.0, DV2)
++c         Absolute value of difference of squares is 
++c         needed as well.
++          dv2 = abs(dv2)
+           IF(VLU.GE.VRU) THEN
+ C           FLOW IS UNDERGOING NEGATIVE ACCELERATION
+- 
+-            KDC = SIGN(KDC, NEWSUM)
+-            PFQLU = KDC*AMU*VLU/ALU
+-            PFQRU = -KDC*AMU*VRU/ARU
+-            PFYLU = TLU*(0.25*KDC*DV2 - PFQLU*VLU)
+-            PFYRU = TRU*(0.25*KDC*DV2 - PFQRU*VRU)
+-            GDE = 0.5*KDC*DV2
++c            idir = -1
++            kp = SIGN(KDC, NEWSUM)
+           ELSE
+ C           FLOW IS UNDERGOING POSITIVE ACCELERATION
+- 
+-            KAC = SIGN(KAC, NEWSUM)
+-            PFQLU = -KAC*AMU*VLU/ALU
+-            PFQRU = KAC*AMU*VRU/ARU
+-            PFYLU = TLU*(0.25*KAC*DV2 - PFQLU*VLU)
+-            PFYRU = TRU*(0.25*KAC*DV2 - PFQRU*VRU)
+-            GDE = 0.5*KAC*DV2
+-          ENDIF
+- 
+-          PGFU = PGFU + GDE
++c            idir = +1
++            kp = SIGN(KAC, NEWSUM)
++          ENDIF
++ 
++          PFQLU = -kp*sgndv2*AMU*VLU/ALU
++          PFYLU = TLU*(0.25*kp*DV2 - PFQLU*VLU)
++          PFQRU =  kp*sgndv2*AMU*VRU/ARU
++          PFYRU = TRU*(0.25*kp*DV2 - PFQRU*VRU)
++
++          PGFU = PGFU + 0.5*kp*DV2
+           C1 = C1 + WT*PFYLU
+           C2 = C2 + WT*PFQLU
+           C3 = C3 + WT*PFYRU
+           C4 = C4 + WT*PFQRU
+  
+         ENDIF
++
++cc       Debugging output 
++c        IF(JTIME.GE.PRTIME) THEN
++c          IF(IEQ.EQ.8906) THEN
++c            STDOUT = STD6
++cc           Output details for the momentum balance
++c            WRITE(STDOUT,50)  IEQ + 1
++c50    FORMAT(/,' Detail for Eqno=',I6)
++c            WRITE(STDOUT,51) 
++c51    FORMAT('Lctn        Flow       Depth        Area   Top Width',
++c     A'  Conveyance dConveyance        Beta       dBeta          MA',
++c     B'         dMA          MQ         dMQ')
++c
++c            WRITE(STDOUT,52) 'LU  ', QLU, YLU, ALU, TLU, KLU, DKLU, BLU,
++c     A                       DBLU, MALU, DMALU, MQLU, DMQLU
++c            WRITE(STDOUT,52) 'RU  ', QRU, YRU, ARU, TRU, KRU, DKRU, BRU,
++c     A                       DBRU, MARU, DMARU, MQRU, DMQRU
++c52    FORMAT(A4,12(1PE12.5))
++c
++c            WRITE(STDOUT,53) WT, WX, ZI, DYT, DZ, DX
++c53    FORMAT( ' WT=',F5.3,' WX=',F5.3,' ZI=',F5.3,
++c     A       ' DYT=',1PE12.5,' DZ=',1PE12.5,' DX=',1PE12.5)
++c
++c            WRITE(STDOUT,54) SFMT, SFMU, PGFU, VLU, VRU, TPA, TPB
++c54    FORMAT(' SFMT=',1PE12.5,' SFMU=',1PE12.5,' PGFU=',1PE12.5,
++c     A' VLU=',1PE12.5,' VRU=',1PE12.5,' TPA=',1PE12.5,
++c     B' TPB=',1PE12.5)
++c
++c            WRITE(STDOUT,55) AMU, DXHDT
++c55    FORMAT(' AMU=',1PE12.5,' DXHDT=',1PE12.5)
++c
++c            WRITE(STDOUT,56) 'first: ', C1, C2, C3, C4
++c56    FORMAT(A7,' C1=',1PE12.5,' C2=',1PE12.5,' C3=',1PE12.5,
++c     A           ' C4=',1PE12.5)
++c            write(stdout,58) elmadr, oldmom, newmom
++c58    format(' ELMADR=',i6,' OLDMOM=',1pe12.5,' NEWMOM=',1pe12.5)
++c            write(stdout,60) 0.5*kp*dv2, pfylu, pfqlu, pfyru, pfqru
++c60    format(' gde=',1pe12.5,' pfylu=',1pe12.5,' pfqlu=',1pe12.5,
++c     a  ' pfyru=',1pe12.5,' pfqru=',1pe12.5)
++c            write(stdout,62) idir, kac, kdc, kp
++c62    format(' idir=',i5,' kac=',f8.3,' kdc=',f8.3,' kp=',f8.3)
++c          ENDIF
++c        ENDIF
+  
+         IF(ADRS.GT.0) THEN
+ C         POINT LOSS BASED ON AVERAGE VELOCITY HEAD IN ELEMENT
+@@ -2372,7 +2377,7 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER ADRS, ELMADR, FN, JCOL, LN, NINC, NND, NTAB, UBNBAS
+-      REAL ABARU, ALD, ALU, AMD, AMU, ARD, ARU, B, BLD, BLU, BRD, BRU,
++      REAL ALD, ALU, AMD, AMU, ARD, ARU, B, BLD, BLU, BRD, BRU,
+      A     C1, C2, C3, C4, CF, DBLU, DBRU, DH, DKHLM, DKLU, DKRU,
+      B     DQPYLU, DQPYRU, DTLU, DTRU, DV, DV2, DX, DX2, DXDT, DXH,
+      C     DXHDT, DY, DYNDIF, DZ, ERR, GDE, KAC, KDC, KHLM, KLD, KLU,
+@@ -2380,7 +2385,8 @@
+      E     OLDVOL, OLDWND, PFQLU, PFQRU, PFYLU, PFYRU, PGFU, QLD, QLU,
+      F     QMAX, QP, QRD, QRU, RES, S1, S2, S3, SFMT, SFMU, TLD, TLU,
+      G     TP, TPA, TPB, TPC, TPD, TRD, TRU, VLD, VLU, VRD, VRU, WA,
+-     H     WTC, WX, YC, YLD, YLU, YM, YRD, YRU, ZI, ZIT, ZIY
++     H     WTC, WX, YC, YLD, YLU, YM, YRD, YRU, ZI, ZIT, ZIY, sgndv2,
++     I     kp
+  
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, SIGN, SQRT
+@@ -2517,14 +2523,13 @@
+               IF(DV.GT.0.0) THEN
+ C               FLOW IS UNDERGOING NEGATIVE ACCELERATION-TAKEN
+ C               TO INDICATE EXPANSION
+- 
+-                GDE = 0.5*SIGN(KDC, OLDSUM)*ABS(DV*(VLD + VRD))
++                kp = kdc
+               ELSE
+ C               FLOW IS UNDERGOING POSITIVE ACCELERATION- TAKEN TO
+ C               INDICATE CONTRACTION
+- 
+-                GDE = 0.5*SIGN(KAC, OLDSUM)*ABS(DV*(VLD + VRD))
++                kp = kac
+               ENDIF
++              GDE = 0.5*SIGN(kp, OLDSUM)*ABS(DV*(VLD + VRD))
+             ENDIF
+  
+             IF(ADRS.GT.0) THEN
+@@ -2794,28 +2799,29 @@
+      A      ZI*DXHDT + WT*(TPB + 2.*ZI*BRU*VRU)
+  
+         IF(KDC.GT.0.0.OR.KAC.GT.0.0) THEN
+-          ABARU = 0.5*(ALU + ARU)
+ C         PROCESS EXPANSION AND CONTRACTION LOSSES
+-          DV2 = ABS((VRU - VLU)*(VRU + VLU))
++          DV2 = (VRU - VLU)*(VRU + VLU)
++c         Establish the sign of the difference in 
++c         the squared velocities.
++          sgndv2 = sign(1.0, DV2)
++c         Absolute value of difference of squares is 
++c         needed as well.
++          dv2 = abs(dv2)
+           IF(VLU.GE.VRU) THEN
+ C           FLOW IS UNDERGOING NEGATIVE ACCELERATION
+- 
+-            KDC = SIGN(KDC, NEWSUM)
+-            PFQLU = KDC*ABARU*VLU/ALU
+-            PFQRU = -KDC*ABARU*VRU/ARU
+-            PFYLU = TLU*(0.25*KDC*DV2 - PFQLU*VLU)
+-            PFYRU = TRU*(0.25*KDC*DV2 - PFQRU*VRU)
+-            GDE = 0.5*KDC*DV2
++c            idir = -1
++            kp = SIGN(KDC, NEWSUM)
+           ELSE
+ C           FLOW IS UNDERGOING POSITIVE ACCELERATION
+- 
+-            KAC = SIGN(KAC, NEWSUM)
+-            PFQLU = -KAC*ABARU*VLU/ALU
+-            PFQRU = KAC*ABARU*VRU/ARU
+-            PFYLU = TLU*(0.25*KAC*DV2 - PFQLU*VLU)
+-            PFYRU = TRU*(0.25*KAC*DV2 - PFQRU*VRU)
+-            GDE = 0.5*KAC*DV2
+-          ENDIF
++c            idir = +1
++            kp = SIGN(KAC, NEWSUM)
++          ENDIF
++ 
++          PFQLU = -kp*sgndv2*AMU*VLU/ALU
++          PFQRU =  kp*sgndv2*AMU*VRU/ARU
++          PFYLU = TLU*(0.25*kp*DV2 - PFQLU*VLU)
++          PFYRU = TRU*(0.25*kp*DV2 - PFQRU*VRU)
++          GDE = 0.5*kp*DV2
+  
+           PGFU = PGFU + GDE
+           C1 = C1 + WT*PFYLU
+@@ -2828,7 +2834,6 @@
+         IF(ADRS.GT.0) THEN
+ C         POINT LOSS BASED ON AVERAGE VELOCITY HEAD IN ELEMENT
+           YM = 0.5*(YLU + YRU)
+-          ABARU = 0.5*(ALU + ARU)
+           CALL LKTAB
+      I              (ADRS, YM, 0,
+      O               KHLM, NTAB, DKHLM)
+@@ -2841,7 +2846,7 @@
+           TPB = TPA*NEWSUM
+           GDE = 0.5*KHLM*TPB
+           PGFU = PGFU + GDE
+-          TPC = WT*ABARU
++          TPC = WT*AMU
+           TPD = KHLM*TPA
+  
+           C1 = C1 - TPC*(TPD*TLU - DKHLM*TPB)
+@@ -2960,9 +2965,10 @@
+       INCLUDE 'offcom.cmn'
+  
+ C     + + + LOCAL VARIABLES + + +
+-      INTEGER  IT, L, TYPE, XOFF
+-      REAL B0, DY, DYI, H, K0, T0, Y, Y0
+- 
++      INTEGER  IT, L, TYPE, XOFF, doff
++      REAL B0, DY, DYI, H, K0, T0, Y, Y0, b1, k1,
++     a    db0, db1, dk0, dk1
++      real  flp, frp, fl, fr, dlp, drp, dmf, p
+ C***********************************************************************
+ C     L = ADDRESS FOUND ON THE LAST CALL TO XLKT20
+  
+@@ -2971,7 +2977,8 @@
+  
+       TYPE = ITAB(ADRS+2)
+       XOFF = OFFVEC(TYPE)
+- 
++      doff = itab(adrs+21)
++
+       IF(Y.GE.FTAB(L)) THEN
+  100   CONTINUE
+          IF(Y.GT.FTAB(L+XOFF)) THEN
+@@ -2997,7 +3004,10 @@
+       T0 = FTAB(L+1)
+       K0 = FTAB(L+3)
+       B0 = FTAB(L+4)
+- 
++      IT = L + XOFF
++      b1 = ftab(it+4)
++      k1 = ftab(it+3) 
++
+ C     DIRECT LINEAR INTERPOLATION FOR T AND SQRT(CONVEYANCE)
+ C     N.B. K IN FTAB IS SQRT(CONVEYANCE)
+  
+@@ -3005,13 +3015,46 @@
+       DY = FTAB(IT) - Y0
+       H = Y - Y0
+       DYI = 1.0/DY
+-      DB = (FTAB(IT+4) - B0)*DYI
+       DT = (FTAB(IT+1) - T0)*DYI
+-      DK = (FTAB(IT+3) - K0)*DYI
+       T = T0 + H*DT
+-      B = B0 + H*DB
+       A = FTAB(L+2) + 0.5*H*(T + T0)
+-      K = K0 + H*DK
++
++      if(doff.eq.0) then
++        DB = (b1 - B0)*DYI
++        B = B0 + H*DB
++        DK = (k1 - K0)*DYI
++        K = K0 + H*DK
++      else
++        p = h*dyi
++c       compute factors on left and right derivative. 
++        flp = (1.0 - p)*p*dy
++        frp = -flp*p
++        flp = flp*(1.0 - p)
++c       compute factors on left and right function value
++        fl = 2.*p + 1.0
++        fr = (4.0 - fl)*p*p
++        fl = fl*(1.0 - p)**2
++c       compute the factors based on relative interval for computing derivatives. 
++        dlp = 1. - 3.*p
++        drp = -(1. + dlp)*p
++        dlp = dlp*(1.0 - p)
++        dmf = 6.*(1.0 - p)*p*dyi
++
++        l = l + doff
++        it = it + doff
++        dk0 = ftab(l)
++        dk1 = ftab(it)
++
++        db0 = ftab(l+1)
++        db1 = ftab(it+1)
++
++        b =  flp*db0 + frp*db1 + fl*b0 + fr*b1
++        db = dlp*db0 + drp*db1 + dmf*(b1 - b0)
++
++        k =  flp*dk0 + frp*dk1 + fl*k0 + fr*k1
++        dk = dlp*dk0 + drp*dk1 + dmf*(k1 - k0)
++      endif
++
+       DK = (K + K)*DK
+       K = K*K
+  
+@@ -3080,7 +3123,7 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER ADRS, ELMADR, FN, JCOL, LN, NINC, NND, NTAB, UBNBAS
+-      REAL ABARU, ALD, ALU, AMD, AMU, ARD, ARU, B, BLD, BLU, BRD, BRU,
++      REAL ALD, ALU, AMD, AMU, ARD, ARU, B, BLD, BLU, BRD, BRU,
+      A     C1, C2, C3, C4, CF, DBLU, DBRU, DH, DK, DKHLM, DKLU, DKRU,
+      B     DQPYLU, DQPYRU, DTLU, DTRU, DV, DV2, DX, DX2, DXDT, DXH,
+      C     DXHDT, DY, DYNDIF, DZ, ERR, GDE, KAC, KDC, KHLM, KLD, KLU,
+@@ -3088,11 +3131,13 @@
+      E     OLDVOL, OLDWND, PFQLU, PFQRU, PFYLU, PFYRU, PGFU, QLD, QLU,
+      F     QMAX, QP, QRD, QRU, RES, S1, S2, S3, SFMT, SFMU, TLD, TLU,
+      G     TP, TPA, TPB, TPC, TPD, TRD, TRU, VLD, VLU, VRD, VRU, WTC,
+-     H     WX, YC, YLD, YLU, YM, YRD, YRU, ZI, ZIT, ZIY
++     H     WX, YC, YLD, YLU, YM, YRD, YRU, ZI, ZIT, ZIY, sgndv2, kp
+  
+ C     + + + LOCAL VARIABLES for inline table lookup
+-      INTEGER  IT, L, TYPE, XOFF
+-      REAL B0, DYI, H, K0, T0, Y0
++      INTEGER  IT, L, TYPE, XOFF, doff
++      REAL B0, DYI, H, K0, T0, Y0, beta1, kh1,
++     a    db0, db1, dk0, dk1
++      real  flp, frp, fl, fr, dlp, drp, dmf, p
+ 
+ C     + + + INTRINSICS + + +
+       INTRINSIC ABS, SIGN, SQRT
+@@ -3224,14 +3269,13 @@
+               IF(DV.GT.0.0) THEN
+ C               FLOW IS UNDERGOING NEGATIVE ACCELERATION-TAKEN
+ C               TO INDICATE EXPANSION
+- 
+-                GDE = 0.5*SIGN(KDC, OLDSUM)*ABS(DV*(VLD + VRD))
++                kp = kdc
+               ELSE
+ C               FLOW IS UNDERGOING POSITIVE ACCELERATION- TAKEN TO
+ C               INDICATE CONTRACTION
+- 
+-                GDE = 0.5*SIGN(KAC, OLDSUM)*ABS(DV*(VLD + VRD))
++                kp = kac
+               ENDIF
++              GDE = 0.5*SIGN(kp, OLDSUM)*ABS(DV*(VLD + VRD))
+             ENDIF
+  
+             IF(ADRS.GT.0) THEN
+@@ -3301,15 +3345,16 @@
+           IF(NINC.GT.0) THEN
+             QRU = Q2(NND)
+             YRU = Y2(NND)
+-C            CALL XXLKT20
+-C     I                 (NSEC(NND),
+-C     M                  YRU,
+-C     O                  ARU, TRU, DTRU, KRU, DKRU, BRU, DBRU)
++c            CALL XXLKT20
++c     I                 (NSEC(NND),
++c     M                  YRU,
++c     O                  ARU, TRU, DTRU, KRU, DKRU, BRU, DBRU)
+ 
+ C     Inline lookup code
+ 
+       IT = NSEC(NND)
+       L = ITAB(IT+3)
++      doff = itab(it+21)
+  
+       TYPE = ITAB(IT+2)
+       XOFF = OFFVEC(TYPE)
+@@ -3333,20 +3378,55 @@
+       B0 = FTAB(L+4)
+  
+       IT = L + XOFF
++      kh1 = ftab(it+3) 
++      beta1 = ftab(it+4)
++
+       DY = FTAB(IT) - Y0
+       H = YRU - Y0
+       DYI = 1.0/DY
+-      DBRU = (FTAB(IT+4) - B0)*DYI
+       DTRU = (FTAB(IT+1) - T0)*DYI
+-      DK = (FTAB(IT+3) - K0)*DYI
+       TRU = T0 + H*DTRU
+-      BRU = B0 + H*DBRU
+       ARU = FTAB(L+2) + 0.5*H*(TRU + T0)
+-      KRU = K0 + H*DK
+-      DKRU = (KRU + KRU)*DK
++      if(doff.eq.0) then
++        DBRU = (beta1 - B0)*DYI
++        BRU = B0 + H*DBRU
++        DKRU = (kh1 - K0)*DYI
++        KRU = K0 + H*DKRU
++      else
++        p = h*dyi
++c       compute factors on left and right derivative. 
++        flp = (1.0 - p)*p*dy
++        frp = -flp*p
++        flp = flp*(1.0 - p)
++c       compute factors on left and right function value
++        fl = 2.*p + 1.0
++        fr = (4.0 - fl)*p*p
++        fl = fl*(1.0 - p)**2
++c       compute the factors based on relative interval for computing derivatives. 
++        dlp = 1. - 3.*p
++        drp = -(1. + dlp)*p
++        dlp = dlp*(1.0 - p)
++        dmf = 6.*(1.0 - p)*p*dyi
++
++        l = l + doff
++        it = it + doff
++        dk0 = ftab(l)
++        dk1 = ftab(it)
++
++        db0 = ftab(l+1)
++        db1 = ftab(it+1)
++
++        bru =  flp*db0 + frp*db1 + fl*b0 + fr*beta1
++        dbru = dlp*db0 + drp*db1 + dmf*(beta1 - b0)
++
++        kru =  flp*dk0 + frp*dk1 + fl*k0 + fr*kh1
++        dkru = dlp*dk0 + drp*dk1 + dmf*(kh1 - k0)
++      endif
++
++      DKRU = (KRU + KRU)*DKRU
+       KRU = KRU*KRU
+ 
+-C     End inline lookup code.
++c     End inline lookup code.
+ 
+             T2(NND) = TRU
+             A2(NND) = ARU
+@@ -3355,16 +3435,17 @@
+           ELSE
+             QLU = Q2(NND)
+             YLU = Y2(NND)
+-C            CALL XXLKT20
+-C     I                 (NSEC(NND),
+-C     M                  YLU,
+-C     O                  ALU, TLU, DTLU, KLU, DKLU, BLU, DBLU)
++c            CALL XXLKT20
++c     I                 (NSEC(NND),
++c     M                  YLU,
++c     O                  ALU, TLU, DTLU, KLU, DKLU, BLU, DBLU)
+ 
+ C     Inline lookup code
+ 
+       IT = NSEC(NND)
+       L = ITAB(IT+3)
+- 
++      doff = itab(it+21)
++
+       TYPE = ITAB(IT+2)
+       XOFF = OFFVEC(TYPE)
+  
+@@ -3387,17 +3468,51 @@
+       B0 = FTAB(L+4)
+  
+       IT = L + XOFF
++      beta1 = ftab(it+4)
++      kh1 = ftab(it+3) 
+       DY = FTAB(IT) - Y0
+       H = YLU - Y0
+       DYI = 1.0/DY
+-      DBLU = (FTAB(IT+4) - B0)*DYI
+       DTLU = (FTAB(IT+1) - T0)*DYI
+-      DK = (FTAB(IT+3) - K0)*DYI
+       TLU = T0 + H*DTLU
+-      BLU = B0 + H*DBLU
+       ALU = FTAB(L+2) + 0.5*H*(TLU + T0)
+-      KLU = K0 + H*DK
+-      DKLU = (KLU + KLU)*DK
++      if(doff.eq.0) then
++        DBLU = (beta1 - B0)*DYI
++        BLU = B0 + H*DBLU
++        DKLU = (kh1 - K0)*DYI
++        KLU = K0 + H*DKLU
++      else
++        p = h*dyi
++c       compute factors on left and right derivative. 
++        flp = (1.0 - p)*p*dy
++        frp = -flp*p
++        flp = flp*(1.0 - p)
++c       compute factors on left and right function value
++        fl = 2.*p + 1.0
++        fr = (4.0 - fl)*p*p
++        fl = fl*(1.0 - p)**2
++c       compute the factors based on relative interval for computing derivatives. 
++        dlp = 1. - 3.*p
++        drp = -(1. + dlp)*p
++        dlp = dlp*(1.0 - p)
++        dmf = 6.*(1.0 - p)*p*dyi
++
++        l = l + doff
++        it = it + doff
++        dk0 = ftab(l)
++        dk1 = ftab(it)
++
++        db0 = ftab(l+1)
++        db1 = ftab(it+1)
++
++        blu =  flp*db0 + frp*db1 + fl*b0 + fr*beta1
++        dblu = dlp*db0 + drp*db1 + dmf*(beta1 - b0)
++
++        klu =  flp*dk0 + frp*dk1 + fl*k0 + fr*kh1
++        dklu = dlp*dk0 + drp*dk1 + dmf*(kh1 - k0)
++      endif
++
++      DKLU = (KLU + KLU)*DKLU
+       KLU = KLU*KLU
+ 
+ C     End inline lookup code.
+@@ -3572,30 +3687,30 @@
+      A      ZI*DXHDT + WT*(TPB + 2.*ZI*BRU*VRU)
+  
+         IF(KDC.GT.0.0.OR.KAC.GT.0.0) THEN
+-          ABARU = 0.5*(ALU + ARU)
+ C         PROCESS EXPANSION AND CONTRACTION LOSSES
+-          DV2 = ABS((VRU - VLU)*(VRU + VLU))
++          DV2 = (VRU - VLU)*(VRU + VLU)
++c         Establish the sign of the difference in 
++c         the squared velocities.
++          sgndv2 = sign(1.0, DV2)
++c         Absolute value of difference of squares is 
++c         needed as well.
++          dv2 = abs(dv2)
+           IF(VLU.GE.VRU) THEN
+ C           FLOW IS UNDERGOING NEGATIVE ACCELERATION
+- 
+-            KDC = SIGN(KDC, NEWSUM)
+-            PFQLU = KDC*ABARU*VLU/ALU
+-            PFQRU = -KDC*ABARU*VRU/ARU
+-            PFYLU = TLU*(0.25*KDC*DV2 - PFQLU*VLU)
+-            PFYRU = TRU*(0.25*KDC*DV2 - PFQRU*VRU)
+-            GDE = 0.5*KDC*DV2
++c            idir = -1
++            kp = SIGN(KDC, NEWSUM)
+           ELSE
+ C           FLOW IS UNDERGOING POSITIVE ACCELERATION
+- 
+-            KAC = SIGN(KAC, NEWSUM)
+-            PFQLU = -KAC*ABARU*VLU/ALU
+-            PFQRU = KAC*ABARU*VRU/ARU
+-            PFYLU = TLU*(0.25*KAC*DV2 - PFQLU*VLU)
+-            PFYRU = TRU*(0.25*KAC*DV2 - PFQRU*VRU)
+-            GDE = 0.5*KAC*DV2
+-          ENDIF
+- 
+-          PGFU = PGFU + GDE
++c            idir = +1
++            kp = SIGN(KAC, NEWSUM)
++          ENDIF
++ 
++          PFQLU = -kp*sgndv2*AMU*VLU/ALU
++          PFQRU =  kp*sgndv2*AMU*VRU/ARU
++          PFYLU = TLU*(0.25*kp*DV2 - PFQLU*VLU)
++          PFYRU = TRU*(0.25*kp*DV2 - PFQRU*VRU)
++ 
++          PGFU = PGFU + 0.5*kp*DV2
+           C1 = C1 + WT*PFYLU
+           C2 = C2 + WT*PFQLU
+           C3 = C3 + WT*PFYRU
+@@ -3606,7 +3721,6 @@
+         IF(ADRS.GT.0) THEN
+ C         POINT LOSS BASED ON AVERAGE VELOCITY HEAD IN ELEMENT
+           YM = 0.5*(YLU + YRU)
+-          ABARU = 0.5*(ALU + ARU)
+           CALL LKTAB
+      I              (ADRS, YM, 0,
+      O               KHLM, NTAB, DKHLM)
+@@ -3619,7 +3733,7 @@
+           TPB = TPA*NEWSUM
+           GDE = 0.5*KHLM*TPB
+           PGFU = PGFU + GDE
+-          TPC = WT*ABARU
++          TPC = WT*AMU
+           TPD = KHLM*TPA
+  
+           C1 = C1 - TPC*(TPD*TLU - DKHLM*TPB)
+@@ -3702,7 +3816,7 @@
+ C
+ C
+       SUBROUTINE   SIDEWR
+-     I                   (IPNT, STDOUT, TIME, NEX, MREMC, EMC,
++     I                   (IPNT, STDOUT, JTIME, NEX, MREMC, EMC,
+      I                    EXNODT, QE2, YE2, ZE,
+      O                    RES, PYL, PQL, PYR, PQR, PYM, PQM)
+  
+@@ -3714,8 +3828,9 @@
+ C     + + + DUMMY ARGUMENTS + + +
+       INTEGER IPNT, STDOUT, MREMC, NEX
+       INTEGER EMC(MREMC), EXNODT(9,NEX)
+-      REAL PQL, PQM, PQR, PYL, PYM, PYR, QE2(NEX), RES, TIME,
++      REAL PQL, PQM, PQR, PYL, PYM, PYR, QE2(NEX), RES, 
+      A     YE2(NEX), ZE(NEX)
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     IPNT   - pointer into EMC for description of control structure
+@@ -3757,10 +3872,11 @@
+  
+ C     + + + LOCAL VARIABLES + + +
+       INTEGER DNN, DUTAB, FREE, IDUM, MDN, MFTAB, TYPE, UDTAB, UNN,
+-     A        CREST_TAB, NTAB
++     A        CREST_TAB, NTAB, it, eflag, mftab_fail
+       REAL ABAR, B, CF, CON, DB, DCFQ, DCFY, DCON, DQZBAR, DQZM, DT,
+      A     HCREST, Q, QBAR, QM, RDUM, TBAR, W, WC, YBAR, ZBAR, ZM,
+-     B     HTOE, P, PDV, HEAD
++     B     HTOE, P, PDV, HEAD, hcrest_org, fac, q_org, dqzbar_org,
++     c     dqzm_org, fac_comp
+  
+ C     + + + EQUIVALENCES + + +
+       EQUIVALENCE (IDUM, RDUM)
+@@ -3788,11 +3904,14 @@
+       HCREST = RDUM
+       IDUM = EMC(IPNT+10)
+       HTOE = RDUM
++
++c     Disable special treatment of the flow factor.  Maybe enabled below. 
++      mftab_fail = 0      
+  
+ C     Compute current crest elevation. 
+       IF(CREST_TAB.GT.0) THEN
+-        CALL LKTAB
+-     I            (CREST_TAB, TIME, 1,
++        CALL LKTSTAB
++     I            (CREST_TAB, JTIME,
+      O             P, NTAB, PDV)
+ C       P gives the decimal fraction of the distance from 
+ C       the original crest to the toe of the overflow structure
+@@ -3801,6 +3920,26 @@
+ C       and P < 0 represent erosion, settling, or collapse 
+ C       during a levee failure. 
+ 
++        if(mftab.gt.0) then
++c         We have both a factor and a moving crest.  This changes the 
++c         application of the factor to give the weighted sum of flows
++c         at the head computed from the original crest and the head 
++c         computed at the current crest.  This approximates flow over 
++c         a levee segment that has part of its length eroding.  
++c         We need to have the potential for flow over the part that is
++c         not eroded and over the part that is eroding.  
++c         Remember the original crest elevation.
++          hcrest_org = hcrest
++
++c         We also change the point at which the factor on flow is applied. 
++          mftab_fail = mftab
++          mftab = 0
++          CALL LKTSTAB
++     I              (mftab_fail, JTIME,
++     O               fac, NTAB, PDV)
++          fac_comp = 1. - fac
++        endif
++
+         HCREST = HCREST + P*(HCREST - HTOE)
+       ENDIF
+ 
+@@ -3819,18 +3958,49 @@
+         IF(ZBAR.GT.HCREST) THEN
+ C         OUTFLOW FROM THE SOURCE CHANNEL
+           TYPE = GETTYP(UDTAB)
+-          IF(TYPE.EQ.6) THEN
++          IF(TYPE.EQ.43) THEN
++            call tdlk43
++     I               (STDOUT, udtab, 43, MFTAB, JTIME, zm, zbar, hcrest,
++     O                Q, DQZM, DQZBAR, FREE)
++          ELSEif(type.eq.13) then
++            CALL TDLK13
++     I               (STDOUT, UDTAB, 13, MFTAB, JTIME, ZM, ZBAR, HCREST,
++     O                Q, DQZM, DQZBAR, FREE)
++          else
+             CALL TDLK6
+-     I              (STDOUT, UDTAB, 6, MFTAB, TIME, ZM, ZBAR, HCREST,
++     I              (STDOUT, UDTAB, 6, MFTAB, JTIME, ZM, ZBAR, HCREST,
+      O               Q, DQZM, DQZBAR, FREE)
+-          ELSE
+-            CALL TDLK13
+-     I               (STDOUT, UDTAB, 13, MFTAB, TIME, ZM, ZBAR, HCREST,
+-     O                Q, DQZM, DQZBAR, FREE)
+-          ENDIF
++          ENDIF
++
++          if(mftab_fail.gt.0) then
++c           We have the case with both a moving crest and a flow factor. 
++c           The flow and derivatives we have in hand now are for the 
++c           moving crest. We must compute the values for the original crest
++c           and then compute a weighted sum. 
++            IF(TYPE.EQ.43) THEN
++              call tdlk43
++     I                 (STDOUT, udtab, 43, MFTAB, JTIME, zm, zbar, 
++     i                  hcrest_org,
++     O                  Q_org, DQZM_org, DQZBAR_org, FREE)
++            ELSEif(type.eq.13) then
++              CALL TDLK13
++     I                 (STDOUT, UDTAB, 13, MFTAB, JTIME, ZM, ZBAR, 
++     i                  HCREST_org,
++     O                  Q_org, DQZM_org, DQZBAR_org, FREE)
++            else
++              CALL TDLK6
++     I                (STDOUT, UDTAB, 6, MFTAB, JTIME, ZM, ZBAR, 
++     i                 HCREST_org,
++     O                 Q_org, DQZM_org, DQZBAR_org, FREE)
++            ENDIF
++
++            q = fac*q + fac_comp* q_org
++            dqzm = fac*dqzm + fac_comp*dqzm_org
++            dqzbar  = fac*dqzbar + fac_comp*dqzbar_org
++          endif
+ 
+ C         FIND THE AREA AND TOP WIDTH AT THE MEAN DEPTH IN THE
+-C         SOURCE CHANNEL
++C         SOURCE CHANNEL  to compute the Hager side-weir correction factor.
+  
+           CALL XLKT20
+      I             (EXNODT(4,UNN),
+@@ -3841,10 +4011,33 @@
+ C         FOR THE SIDE WEIR
+  
+           HEAD = ZBAR - HCREST
+-          CALL FINDCF
+-     I             (STDOUT, ABAR, TBAR, QBAR, HEAD,
+-     O              CF, DCFY, DCFQ)
+-
++          if(head > 0.0) then
++c           There are some cases where head=0 appears here even 
++c           though zbar tests as greater than hcrest!.
++            CALL FINDCF
++     I               (STDOUT, ABAR, TBAR, QBAR, HEAD,
++     O                CF, DCFY, DCFQ)
++          else
++            cf = 1.0
++            dcfy = 0.0
++            dcfq = 0.0
++          endif
++
++c         Set the sign of the tabulated flow and derivatives to match what
++c         the flow direction and the sign of the flow node require.   If the 
++c         sign of the flow node is -1, then the flow out of the source channel
++c         that we have here dictates positive flow.  That is what we get 
++c         from the table by default.  Thus we need only switch if the 
++c         sign of the flow node is +1.
++          if(exnodt(1,mdn).eq.1) then
++c           flow at flow node should be negative.  The values from the table
++c           are positive.  The derivatives change sign with the flow in the 
++c           table as well.  
++
++            q = -q
++            dqzm = -dqzm
++            dqzbar = -dqzbar
++          endif
+         ELSE
+ C         Water below crest on both sides.
+           Q = 0.0
+@@ -3861,21 +4054,8 @@
+         PYR = (CF*DQZBAR + DCFY*Q)*WC
+         PQR = DCFQ*WC*Q
+         PYM = CF*DQZM
+- 
+-C       EVALUATE THE FLOW NODE SIGN DEPENDENT TERMS.  IF FLOW NODE SIGN
+-C       IS -1 THEN FLOW AT THE FLOW NODE IS GIVEN AS POSITIVE FOR
+-C       OUTFLOW FROM THE SOURCE CHANNEL.  OTHERWISE IT IS NEGATIVE.
+-C       ALL VALUES DERIVED FROM THE TABLES GIVE POSITIVE FLOWS.  THUS
+-C       WE MUST ADJUST THE COMPUTATION OF THE RESIDUAL AND THE DERIVATIVE
+-C       WITH RESPECT TO FLOW AT THE  FLOW NODE.
+- 
+-        IF(EXNODT(1,MDN).EQ.-1) THEN
+-          RES = CF*Q - QM
+-          PQM = -1.
+-        ELSE
+-          RES = CF*Q + QM
+-          PQM = +1.
+-        ENDIF
++        PQM = -1.
++        RES = CF*Q - QM
+  
+       ELSE
+         IF(ZM.GT.HCREST) THEN
+@@ -3884,16 +4064,51 @@
+ C         UPSTREAM NODE.
+         
+           TYPE = GETTYP(DUTAB)
+-          IF(TYPE.EQ.6) THEN
++          IF(TYPE.EQ.43) THEN
++            call tdlk43
++     I               (STDOUT, dutab, 43, MFTAB, JTIME, zbar, zm, hcrest,
++     O                Q, DQZBAR, DQZM, FREE)
++          ELSEif(type.eq.13) then
++            CALL TDLK13
++     I               (STDOUT, DUTAB, 13, MFTAB, JTIME, ZBAR, ZM, HCREST,
++     O                Q, DQZBAR, DQZM, FREE)
++          else
+             CALL TDLK6
+-     I                (STDOUT, DUTAB, 6, MFTAB, TIME, ZBAR, ZM, HCREST,
++     I                (STDOUT, DUTAB, 6, MFTAB, JTIME, ZBAR, ZM, HCREST,
+      O                 Q, DQZBAR, DQZM, FREE)
+-          ELSE
+- 
+-            CALL TDLK13
+-     I               (STDOUT, DUTAB, 13, MFTAB, TIME, ZBAR, ZM, HCREST,
+-     O                Q, DQZBAR, DQZM, FREE)
+-          ENDIF
++          ENDIF
++
++          if(mftab_fail.gt.0) then
++            IF(TYPE.EQ.43) THEN
++              call tdlk43
++     I                 (STDOUT, dutab, 43, MFTAB, JTIME, zbar, zm, 
++     i                  hcrest_org,
++     O                  Q_org, DQZBAR_org, DQZM_org, FREE)
++            ELSEif(type.eq.13) then
++              CALL TDLK13
++     I                 (STDOUT, DUTAB, 13, MFTAB, JTIME, ZBAR, ZM, 
++     i                  HCREST_org,
++     O                  Q_org, DQZBAR_org, DQZM_org, FREE)
++            else
++              CALL TDLK6
++     I                  (STDOUT, DUTAB, 6, MFTAB, JTIME, ZBAR, ZM, 
++     i                   HCREST_org,
++     O                   Q_org, DQZBAR_org, DQZM_org, FREE)
++            ENDIF
++            q = fac*q + fac_comp* q_org
++            dqzm = fac*dqzm + fac_comp*dqzm_org
++            dqzbar  = fac*dqzbar + fac_comp*dqzbar_org
++          endif
++
++c         Set the sign.  We have flow into the source channel and therefore 
++c         out of the flow node.  Thus if the flow-node sign is -1 we need
++c         make the flow negative.  The default positive values from the table
++c         are in accord with a flow-node sign of +1.
++          if(exnodt(1,mdn).eq.-1) then
++            q = -q
++            dqzm = -dqzm
++            dqzbar = -dqzbar
++          endif
+         ELSE
+ C         No flow.  Both sides below crest
+           Q = 0.0
+@@ -3906,26 +4121,40 @@
+         PYR = DQZBAR*WC
+         PQR = 0.0
+         PYM = DQZM
+- 
+-        IF(EXNODT(1,MDN).EQ.-1) THEN
+-C         FLOW AT FLOW NODE IS NEGATIVE
+-          RES = Q + QM
+-          PQM = +1.
+-        ELSE
+-          RES = Q - QM
+-          PQM = -1.
+-        ENDIF
+- 
++        PQM = -1.
++        RES = Q - QM
+       ENDIF
+  
++ 
++cc     Debug code
++c      CALL GETINN
++c     M           ('F3283',
++c     O            EFLAG, it)
++c
++c      if(mdn.eq.it) then
++c        write(stdout,50) res, pyl, pql, pyr, pqr, pym, pqm
++c50    format(/,' Debug:',/,' res=',1pe12.5,' pyl=',1pe12.5,
++c     a ' pql=',1pe12.5,' pyr=',1pe12.5,' pqr=',1pe12.5,
++c     b ' pym=',1pe12.5,' pqm=',0pf5.1)      
++c        write(stdout,52) zbar, qbar, zm, qm
++c52    format(' zbar=',f10.4,' qbar=',1pe12.5,' zm=',0pf10.4,
++c     a   ' qm=',1pe12.5)
++c        write(stdout,54) q, dqzbar, dqzm
++c54    format(' q=',1pe12.5,' dqzbar=',1pe12.5,' dqzm=',1pe12.5)
++c        write(stdout,56) cf, DCFY, DCFQ
++c56    format(' cf=',1pe12.5,' dcfy=',1pe12.5,' dcfq=',1pe12.5)
++c        write(stdout,58) fac, p, hcrest
++c58    format(' fac=',1pe12.5,' p=',0pf10.4,'hcrest=',f10.4)
++c      endif
++
+       RETURN
+- 
++
+       END
+ C
+ C
+ C
+       SUBROUTINE   WSHEAR
+-     I                   (TIME,
++     I                   (JTIME,
+      O                    SHEAR, WX, WY)
+  
+ C     + + + PURPOSE + + +
+@@ -3933,7 +4162,8 @@
+  
+       IMPLICIT NONE
+ C     + + + DUMMY ARGUMENTS + + +
+-      REAL SHEAR, TIME, WX, WY
++      REAL SHEAR,  WX, WY
++      real*8 jtime
+  
+ C     + + +DUMMY ARGUMENT DEFINITIONS + + +
+ C     TIME   - elapsed time in seconds from start of run
+@@ -3953,10 +4183,10 @@
+       INTRINSIC COS, SIN
+  
+ C     + + + EXTERNAL NAMES + + +
+-      EXTERNAL LKTAB
++      EXTERNAL LKTSTAB
+ C***********************************************************************
+-      CALL LKTAB
+-     I          (WINTAB, TIME, 0,
++      CALL LKTSTAB
++     I          (WINTAB, JTIME,
+      O           WINDV, NTAB, WINDIR)
+  
+       IF(WINDV.GE.VAMAX) THEN

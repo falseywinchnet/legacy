@@ -1,0 +1,113 @@
+;This file contains tables required by FEQ if detention
+; ponds are being simulated. 
+
+; Table# 10000 is based on work done for Du Page County
+; by Tom Price of NIPC.  This table gives the number of
+; acre-feet/acre of detention storage required
+;  for each level of imperviousnes and allowed release
+; rate in ft^3/sec/acre.  The values in this table are
+; used to determine the detention pond volume given
+; a release rate, and the level of imperviousnous defined
+; in the TRIBUTARY-AREA input block for the detenion
+; basin. 
+
+TABLE#=10000
+TYPE=   10
+LABEL= Unit area detention volume function
+; left hand column contains impervious fraction
+; top row contains the release rate
+impfrc  0.05  0.10  0.20  0.30
+  0.00 0.266 0.245 0.210 0.185
+  0.25 0.353 0.330 0.288 0.255
+  0.50 0.441 0.393 0.335 0.301
+  0.75 0.534 0.468 0.398 0.362
+  1.00 0.638 0.554 0.467 0.429
+  -1.0
+
+
+; Table 10001 gives the orifice function defining
+; both weir and orifice flow through a circular 
+; orifice.  The table is in dimensionless form
+; so that it applies to all units of measure and
+; to all sizes of orifices within the typical
+; limits of meaningful flow.  See Bos and the
+; FEQUTL documention for more details.  Reference
+; to Bos is in the FEQUTL document. 
+
+TABLE#=10001
+TYPE=   -4
+REFL=0.0
+ norm head orifice f orifice d
+       0.0       0.0       0.0
+ 0.0143976.000162218 .02249323
+0.05246112.002132957 .08076644
+ 0.1124223 .00964235 0.1689641
+ 0.1913478 .02733669 0.2780604
+ 0.2853742 .05917116 0.3970152
+ 0.3899005  0.106931 0.5140246
+ 0.4998133 0.1693268 0.6178667
+ 0.6097365 0.2419379 0.6992076
+ 0.7142908 0.3180226 0.7517397
+ 0.8083596 0.3899610 0.7730629
+ 0.8873410 0.4508967 0.7652603
+ 0.9473709 0.4960722 0.7352597
+ 0.9855129 0.5234391 0.6954225
+ 1.0000000 0.5333319 0.6666667
+ 1.0126000 0.5415464 0.6403359
+ 1.0499500 0.5645465 0.5949014
+  1.113851 0.6008417 0.5444842
+  1.207394 0.6492799 0.4942622
+  1.335094 0.7091678 0.4465065
+  1.503214 0.7802921 0.4021519
+  1.719947 0.8627991 0.3615159
+  1.995159 0.9569395 0.3246689
+  2.342778  1.063685 0.2913357
+  2.779411  1.183972 0.2612993
+  3.326028  1.319015 0.2342928
+  4.009063  1.470306 0.2100372
+  4.861594   1.63958 0.1882672
+  5.926117  1.829018 0.1687182
+   7.25023  2.040204 0.1512253
+  8.902395  2.276367 0.1355198
+  10.95887  2.539804 0.1214536
+  13.52059  2.833897  0.108844
+  16.71133   3.16217 .09754146
+  20.68482  3.528522 .08741228
+  25.63291  3.937356 .07833478
+  31.79701  4.393764 .07019705
+   39.4709  4.902942 .06290662
+  49.02286  5.470922 .05637558
+  60.92115  6.104953 .05052056
+  75.73724   6.81247 .04527362
+  94.18502  7.601923 .04057196
+  117.1567  8.482882 .03635848
+  145.7617  9.465947 .03258254
+  181.3807  10.56294 .02919874
+  225.7335  11.78705 .02616638
+  280.9618  13.15302 .02344894
+  349.7333  14.67731 .02101368
+  435.3677  16.37824 .01883135
+     542.   18.27629 .01687566
+   -1.0
+
+; Table 10002 gives the only approximation to the relationship between 
+; total impervious area and the directly connected or hydrologically
+; significant impervious area that I could find.  It is based on a figure appearing for
+; many years with the SWM, HSP, HSPX, and HSPF.  Its origin is unknown.
+; The only two points that are known exactly are those at 0.0 
+; fraction of area and those at 1.0 fraction of area.  Between these
+; two extremes the directly connected impervious area will be less than
+; or equal to the total impervious area.  This table is for approximate
+; purposes.  It is only used to convert the directly connected impervious
+; area in the tributary area input for FEQ to the total impervious
+; area that is used in the lagtime equations. 
+TABLE#=10002
+TYPE=   -2
+REFL=0.0
+ DrImpArea TtImpArea
+       0.0       0.0
+     0.125      0.25
+      0.34      0.50
+     0.635      0.75
+     1.00       1.00
+    -1.0 

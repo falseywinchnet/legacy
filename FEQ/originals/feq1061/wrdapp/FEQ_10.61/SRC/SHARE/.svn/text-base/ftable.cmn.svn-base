@@ -1,0 +1,23 @@
+C**********************************************************************
+      COMMON/FTABLE/ DTAB
+      common/ftablea/longdummy, itmp, knt_of_ftabs, ftpnt
+      common/ftablec/ ft_loc_status
+
+      INTEGER FTPNT(MFTNUM+5)
+      character*1 ft_loc_status(MFTNUM)
+
+      REAL FTAB(0:MRFTAB)
+	real*8 dtab(0:MDFTAB)
+
+      real*8 longdummy
+
+      INTEGER ITMP, ITAB(0:MRFTAB), knt_of_ftabs
+
+      REAL RTMP
+
+      EQUIVALENCE (dtab, FTAB, ITAB)      
+      EQUIVALENCE (ITMP, RTMP)
+
+      SAVE /FTABLE/, /ftablea/, /ftablec/
+C**********************************************************************
+

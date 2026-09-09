@@ -1,0 +1,106 @@
+--- 9.98/fequtl/inv_gate.for
++++ 10.61/fequtl/inv_gate.for
+@@ -108,15 +108,16 @@
+ 
+ C     Local variables.
+       INTEGER MFTAB, FTYPE_CODE
+-      REAL TIME, DQED, DQEU, NEWHG, Q
+-
+-      DATA TIME/0.0/, MFTAB/0/
++      REAL  DQED, DQEU, NEWHG, Q
++      real*8 jtime
++
++      DATA JTIME/0.0d0/, MFTAB/0/
+ 
+ C***********************************************************************
+ C     Find the flow at the current gate opening 
+ 
+       CALL TDLK15
+-     I           (GATE_RES_STDOUT, GATE_RES_TABLE, MFTAB, TIME, 
++     I           (GATE_RES_STDOUT, GATE_RES_TABLE, MFTAB, JTIME, 
+      I            GATE_RES_EDN, GATE_RES_EUP, HG,
+      I            GATE_RES_HBASE,
+      O            Q, DQED, DQEU, NEWHG, GATE_RES_FTYPE, FTYPE_CODE)
+@@ -142,7 +143,7 @@
+ 
+       IMPLICIT NONE
+ 
+-      INTEGER STDOUT, UD_TABLE, DU_TABLE, RESULT_FLAG
++      INTEGER STDOUT, UD_TABLE, DU_TABLE, RESULT_FLAG, FTYPE_CODE
+ 
+       REAL EUP, EDN, GATE_FLOW, HG, P, HBASE, HG_MAX
+ 
+@@ -172,9 +173,10 @@
+ 
+ C     Local variables
+ 
+-      INTEGER MFTAB, FLAG, FTYPE_CODE
+-
+-      REAL TIME, DQED, DQEU, NEWHG, Q, A, B, HG_RESULT
++      INTEGER MFTAB, FLAG
++
++      REAL  DQED, DQEU, NEWHG, Q, A, B, HG_RESULT
++      real*8 jtime
+ 
+ 
+ C     Called program units
+@@ -191,7 +193,7 @@
+ C     Clear the multiplying-factor table address and the time 
+ C     value.
+       MFTAB = 0
+-      TIME = 0.
++      jTIME = 0.d0
+ 
+ C     Determine if a solution exists.  Set the gate to its maximum
+ C     opening with the given heads and see if the flow exceeds the
+@@ -200,12 +202,12 @@
+ 
+       IF(GATE_FLOW.GT.0.0) THEN
+         CALL TDLK15
+-     I             (STDOUT, UD_TABLE, MFTAB, TIME, EDN, EUP, HG_MAX,
++     I             (STDOUT, UD_TABLE, MFTAB, JTIME, EDN, EUP, HG_MAX,
+      I              HBASE,
+      O              Q, DQED, DQEU, NEWHG, FTYPE, FTYPE_CODE)
+       ELSE
+         CALL TDLK15
+-     I             (STDOUT, DU_TABLE, MFTAB, TIME, EUP, EDN, HG_MAX,
++     I             (STDOUT, DU_TABLE, MFTAB, JTIME, EUP, EDN, HG_MAX,
+      I              HBASE,
+      O              Q, DQED, DQEU, NEWHG, FTYPE, FTYPE_CODE)
+       ENDIF
+@@ -305,7 +307,7 @@
+      A        ITEM_TYPE(NVAL)
+       REAL RVAL(NVAL)
+       REAL*8 DPVAL(NVAL)
+-      CHARACTER CVAL(NVAL)*64, TERM(NVAL)*1, LINE*120,
++      CHARACTER CVAL(NVAL)*256, TERM(NVAL)*1, LINE*120,
+      A          KEY*16
+ 
+       INTEGER LENSTR
+@@ -377,7 +379,7 @@
+ 100   CONTINUE
+ 
+ 
+-        CALL INL120
++        CALL inline
+      I            (STDIN, STDOUT,
+      O             LINE)
+ 
+@@ -692,7 +694,7 @@
+       INTEGER DU_TABLE, UD_TABLE, N_COL_BDYS, N_ROW_BDYS, CONTROL_TAB,
+      A        CPNT_UNIT, UPS_UNIT, DNS_UNIT, GATE_UNIT, ICODE,
+      B        UPS_GIVEN, RESULT_FLAG, MJD, YR, MN, DY,
+-     C        N_PER_CELL(MRDT10,MCDT10), I, J, KNT
++     C        N_PER_CELL(MRDT10,MCDT10), I, J, KNT, FTYPE_CODE
+ 
+       REAL COL_BDYS(MCDT10+1), ROW_BDYS(MRDT10+1), FLOOD_ELEV, 
+      A     FLOOD_FLOW, CPNT_ELEV, UPS_ELEV, DNS_ELEV, GATE_FLOW, 
+@@ -955,7 +957,7 @@
+           CALL   FIND_GATE_OPENING(
+      I           STDOUT, UD_TABLE, DU_TABLE, UPS_ELEV, DNS_ELEV, 
+      I           GATE_FLOW, HG_MAX, HDATUM,
+-     O           HG, P, FTYPE, RESULT_FLAG)
++     O           HG, P, FTYPE, RESULT_FLAG, FTYPE_CODE)
+ 
+ 
+ 

@@ -1,0 +1,168 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; U) [Netscape]">
+   <title>Appendix A: Table of Contents</title>
+</head>
+<body bgcolor="#FFFFFF">
+<a href="http://www.usgs.gov"><img SRC="2935.gif" ALT="USGS" BORDER=0 height=72 width=480 align=TEXTTOP></a>
+<h2>
+APPENDIX A:<br>
+DIAGNOSING COMPUTATIONAL PROBLEMS IN FEQ</h2>
+
+<hr>
+<h3>
+TABLE OF CONTENTS</h3>
+
+<dl>
+<dt>
+<a href="sec1.html">1. Errors
+in Processing Model Input</a></dt>
+
+<dd>
+<a href="sec1.html#conversion">1.1
+Conversion Errors</a></dd>
+
+<dl>
+<dd>
+<a href="sec1.html#visible">1.1.1
+No visible format error</a></dd>
+
+<dd>
+<a href="sec1.html#eof">1.1.2
+End-of-file reached or wrong line read</a></dd>
+</dl>
+
+<dd>
+<a href="sec1.html#table">1.2
+Table Type and Range Errors</a></dd>
+
+<dl>
+<dd>
+<a href="sec1.html#invalid">1.2.1
+Invalid table type</a></dd>
+
+<dd>
+<a href="sec1.html#argument">1.2.2
+Argument below range in time-series table</a></dd>
+</dl>
+
+<dt>
+<a href="sec2.html">2. Checking
+Warning Messages</a></dt>
+
+<dt>
+<a href="sec3.html">3. Failure
+During Steady-Flow Computations</a></dt>
+
+<dd>
+<a href="sec3.html#missing">3.1
+Missing depth</a></dd>
+
+<dd>
+<a href="sec3.html#maximum">3.2
+Maximum iterations exceeded</a></dd>
+
+<dd>
+<a href="sec3.html#initial">3.3
+Initial conditions for tidal boundaries</a></dd>
+
+<dd>
+<a href="sec3.html#below">3.4
+Table below range</a></dd>
+
+<dt>
+<a href="sec4.html">4. Failure
+During Unsteady-Flow Computations</a></dt>
+
+<dd>
+<a href="sec4.html#frozen">4.1
+Frozen-time failures</a></dd>
+
+<dd>
+<a href="sec4.html#zero">4.2
+Zero pivots</a></dd>
+
+<dd>
+<a href="sec4.html#overflow">4.3
+Table overflows</a></dd>
+
+<dd>
+<a href="sec4.html#range">4.4
+Table below range</a></dd>
+
+<dt>
+<a href="flowdoc.html">5.
+Computational-Problem Diagnostic Chart</a></dt>
+</dl>
+
+<hr>
+<h3>
+FIGURES</h3>
+<a href="sec4.html#figure">Figure
+1.</a> Structure of the network matrix
+<p><a href="m0top.html">Plate
+1.</a> Diagnostic flow chart for resolving computational difficulties with
+FEQ
+<p>
+<hr>
+<h3>
+DIAGNOSING COMPUTATIONAL PROBLEMS IN FEQ</h3>
+Many different conditions may cause computational failure or difficulty
+in FEQ simulations. Computational failure means FEQ or FEQUTL stops running
+before all the computations are completed as directed. The failure may
+result from the time step decreasing to a size less than the specified
+minimum time step, so that FEQ stops running. FEQ also will stop if there
+is severe computational problem, such as a division by zero. FEQ will stop
+if a time-series table or file does not extend far enough for the iterative
+computations. Computational difficulty is less well defined. However, there
+are cases in which the FEQ simulation continues, but the time step, although
+greater than the user-established minimum value, is too small to make reasonable
+progress toward completion of the computations. The run time will be unreasonably
+long for the simulated problem. More seriously, long run times are almost
+always a sign of some problem in the model representation that needs to
+be addressed.
+<p>The unsteady-flow simulation of every new flood wave has the potential
+to encounter problems with hydraulic features that were not apparent with
+earlier flood waves. A model that has successfully computed 25 different
+flood waves may fail to complete the computations for the 26th flood wave.
+The reason may be that no two flood waves are exactly alike and, therefore,
+each new flood wave has the potential of making use of some function in
+a new argument range. Also the pattern of flows for the new flood wave
+may differ across the hydraulic system, which may introduce computational
+difficulties not experienced in previous flow simulations. These effects
+can be minimized by attempting to reduce the frequency of abrupt changes
+in values in any function involved in the computations. The more abrupt
+the change, the more likely are computational problems at that change;
+therefore, unnecessary abrupt changes should not be introduced.
+<p>A stepwise development of the unsteady-flow model representation of
+the simulated stream is assumed. This means that the complete model input
+has not been prepared before making test runs with a simplified version.
+This greatly reduces the probability of encountering so many problems in
+the initial runs that the causes cannot be determined. The model should
+start out simple even though it is not fully representative of the problem
+being considered. Once the simple model is debugged, a series of refinements
+is begun, with one or more test runs made for each refinement to determine
+the problems. This makes it easier to find the source or sources of the
+problems.
+<p>A step-by-step process is presented here to help find and solve the
+problem. These are guidelines only, and there is no guarantee that the
+solution will be found immediately. It is rare for a model to run to completion
+on the first try. Unsteady-flow computations are highly complex, and not
+tolerant of even minor errors in the model representation. Small and simple
+models sometimes do run to completion after the input-processing errors
+are fixed, but it is normal to make several runs before the desired computations
+are completed. Even after much user experience in unsteady-flow applications,
+there will still be computational problems that present a challenge. However,
+there is always a solution for every problem: not always as elegant or
+exact a solution as wanted, but one that will be acceptable given the design
+constraints.
+<hr>
+<a href="sec1.html">[Begin]</a>
+<a href="trouble.html">[Table of Contents]</a>
+<a href="../index.html">[Back to FEQ Web Resources]</a>
+<HR>
+<script type="application/javascript" src="http://www.usgs.gov/scripts/analytics/usgs-analytics.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a382cc124d67485c',t:'MTc4ODkyMTMwMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

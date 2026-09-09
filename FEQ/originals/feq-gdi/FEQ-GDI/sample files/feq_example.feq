@@ -1,0 +1,1973 @@
+FEQ INPUT FILE EXAMPLE
+FEQ v10.61
+
+RUN CONTROL BLOCK
+NBRA=00041
+NEX=00102
+SOPER=NO
+POINT=NO
+DIFFUS=YES 
+WIND=NO
+UNDERFLOW=NO
+ZL= 0.0
+STIME=2018/08/01:00.00
+ETIME=2018/12/01:00.00
+GRAV=32.2
+NODEID=YES
+SSEPS= 0.1
+PAGE=00022
+EPSSYS= 0.050
+ABSTOL= 0.010
+MKNT=    5
+NUMGT=    0
+PRTINT=99999
+DPTIME=2970 06 01 16.000    
+GEQOPT=STDX
+EPSB=0.000005
+MAXIT=00030
+SFAC=5280.
+QSMALL=     1.000
+IFRZ=   10  7200.0  7200.0  6400.0  3200.0  1600.0   800.0   400.0   200.0   100.0    50.0
+MAXDT=   900.0  MINDT=     0.1  AUTO= 0.70  SITER=  3.0  HIGH= 3.60  LOW= 2.40  HFAC= 1.50  LFAC= 0.50
+MRE=    0.10
+FAC=    0.00
+DWT=0.1
+BWT=0.67
+CHKGEO=NO
+ISTYLE=NEW
+EXTTOL= 0.0
+SQREPS= 1.0E35
+BRANCH DESCRIPTION TABLES
+BNUM=   60 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION
+ 6001 A-DGRC1   1423     9.428    785.4
+      A-DGRC1   1423     9.427    785.4
+   -1
+BNUM=   61 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION
+ 6101 A-DGRCZ   1421     9.390    776.7
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+      A-QUENZ   1420     9.361    776.1
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-DGRB1   1419     9.295    775.3
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-DGRBZ   1418     9.266    775.3
+   -1
+BNUM=   01 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 0101 A-QUEN-Z  2441    8.4990    768.9
+      A-QUEN-U  2441    8.4970    768.9
+   -1
+BNUM=   02 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 0201 A-QUEN-D  1414    8.4913    768.9
+      A-QUEN-Z  1414    8.4657    768.9
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-DUND-4  1413    8.3710    767.7
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-DUND-3  1440    8.1759    765.6
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-DUND-2  1412    7.9487    763.0
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-DUND-1  1411    7.8123    759.95
+      A-DUND-U  1411    7.8070    759.95
+   -1
+BNUM=   03                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 0301 A-DUND-D  1410    7.7986    759.95
+      A-DUND-Z  1410    7.7772    759.95
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CHER-2  1409    7.7128    757.8
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CHER-1  1408    7.6427    755.8
+ 
+ 
+      A-CHER-U  1408    7.6342    755.8
+   -1
+BNUM=   04 INERTIA=  0.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 0401 A-CHER-D  1407    7.6230    755.9
+      A-CHER-Z  1407    7.6162    755.9
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-PHGB-2  1406    7.4647    752.0
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-PHGB-1  1405    7.3794    752.0
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-SMIT-4  1403    7.2658    749.8
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-SMIT-3  1402    6.9666    741.5   0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+      A-SMIT-2  1401    6.6806    739.1   0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+      A-PHGA-1  1400    6.6427    739.3   0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+      A-PHGA-Z  1398    6.6275    739.4   0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+                   -                      0.3  0.5
+      A-SMIT-1  1397    6.6010    739.1
+ 
+ 
+ 
+ 
+ 
+      A-SMIT-U  1397    6.5726    739.1
+   -1
+BNUM=   05 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 0501 A-SMIT-D  1396    6.5577    739.1
+ 
+ 
+ 
+      A-SMIT-Z  1396    6.5367    739.1
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      TTHAM-WU  1395    6.5000    738.9
+   -1
+BNUM=   06 INERTIA=  0.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 0601 TTHAM-WD  1395    6.5000    738.9
+      A-HAMI-3  1395    6.4856    738.9
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-HAMI-2  1394    6.3397    739.0
+                   -
+      A-HAMI-1  1393    6.3322    739.12
+ 
+ 
+      HAM-DIVU  1393    6.2943    739.12
+   -1
+BNUM=   07                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 0701 HAM-DIVD  1392    6.2782     739.0
+ 
+ 
+ 
+      A-HAMI-Z  1392    6.2441     739.0
+ 
+      TTHAM-PU  1392    6.2250    739.0
+   -1
+BNUM=   08                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 0801 TTHAM-PD  1392    6.2250    739.0
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-HICK-5  1391    6.2100    737.8
+                   -
+                   -
+                   -
+      A-HICK-4  1390    5.9827    737.2
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-HICK-3  1389    5.9221    737.5
+                   -
+                   -
+                   -
+      A-HICK-2  1388    5.7460    735.2
+                   -
+                   -
+                   -
+      A-HICK-1  1387    5.6470    735.0
+      A-HICK-U  1387    5.6437    735.0
+   -1
+BNUM=   09                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 0901 A-HICK-D  1386    5.6223    734.6
+      A-HICK-Z  1386    5.6091    734.6
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-WILL-2  1385    5.4954    732.5
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-WILL-1  1384    5.4159    730.3
+      A-WILL-U  1384    5.4017    730.3
+   -1
+BNUM=   10                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 1001 A-WILL-D  1383    5.3920    730.4
+      A-WILL-Z  1383    5.3797    730.4
+                   -
+                   -
+      A-TAHO-2  1382    5.3361    729.1
+                   -
+                   -
+      A-TAHO-1  1381    5.2888    728.7
+      A-TAHO-U  1381    5.2774    728.7
+   -1
+BNUM=   11 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 1101 A-TAHO-D  1380    5.2661    728.5
+      A-TAHO-Z  1380    5.2528    728.5
+                   -
+                   -
+                   -
+                   -
+      A-ROHL-3  1379    5.1960    727.3
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-ROHL-2  1378    5.0066    721.8
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-ROHL-1  1377    4.8882    719.4
+      A-ROHL-U  1377    4.8788    719.4
+   -1
+BNUM=   12                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 1201 A-ROHL-D  1376    4.8640    718.4
+      A-ROHL-Z  1376    4.8564    718.4
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CLAR-2  1375    4.7863    716.6
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CLAR-1  1374    4.6253    715.5
+      A-CLAR-U  1374    4.6216    715.5
+   -1
+BNUM=   13 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 1301 A-CLAR-D  1373    4.6129    713.2
+      A-CLAR-Z  1373    4.6091    713.2
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-WILM-2  1372    4.5390    712.3
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-WILM-1  1371    4.2767    709.9
+      A-WILM-U  1371    4.2710    709.9
+   -1
+BNUM=   14                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 1401 A-WILM-D  1370    4.2585    709.9
+      A-WILM-Z  1370    4.2479    709.9
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      J-ANDE-U  1369    4.2100    708.7
+   -1
+BNUM=   15                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 1501 J-ANDE-D  1369    4.2100    708.7
+      A-PALA-3  1369    4.1930    708.7
+                   -
+                   -
+                   -
+                   -
+      A-PALA-2  1368    4.0462    708.0
+                   -
+                   -
+                   -
+                   -
+      A-PALA-1  1367    3.9383    706.8
+      A-PALA-U  1367    3.9104    706.8
+   -1
+BNUM=   16                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 1601 A-PALA-D  1366    3.8896    706.8
+      A-PALA-Z  1366    3.8801    706.8
+                   -
+                   -
+                   -
+      A-KENI-2  1365    3.7589    706.5
+                   -
+                   -
+                   -
+      A-KENI-1  1364    3.6794    706.0
+      A-KENI-U  1364    3.6515    706.0
+   -1
+BNUM=   17 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 1701 A-KENI-D  1363    3.6401    706.0
+      A-KENI-Z  1363    3.6287    706.0
+                   -
+                   -
+                   -
+      A-TWIA-2  1362    3.5473    705.9
+                   -
+                   -
+                   -
+      A-TWIA-1  1361    3.4999    706.1
+                   -
+      A-TWIA-Z  1359    3.4696    705.7
+                   -
+      A-TWIB-2  1358    3.4431    705.4
+                   -
+      A-TWIB-1  1357    3.4147    705.3
+      A-TWIB-U  1357    3.4140    705.3
+   -1
+BNUM=   18 INERTIA=  0.5                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 1801 A-IL53-D  1355    3.0776    704.48
+      A-IL53-Z  1355    3.0662    704.48
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-IL14-4  1704    2.9668    704.3
+                   -
+                   -
+                   -
+                   -
+      A-IL14-3  1702    2.9236    704.2
+                   -
+                   -
+                   -
+      A-IL14-2  1701    2.8872    704.1
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-IL14-1  1354    2.8105    704.0
+ 
+      A-IL14-U  1354    2.7774    704.0
+   -1
+BNUM=   19 INERTIA=  0.1                           ADDNOD=   -2
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 1901 A-IL14-D  1353    2.7490    703.2
+ 
+      A-IL14-Z  1353    2.7385    703.2
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-ART4-1  1352    2.6666    701.
+ 
+ 
+      A-ART4-U  1352    2.6476    701.
+   -1
+BNUM=   20 INERTIA=  0.1                           ADDNOD=   -2
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 2001 A-ART4-D  1351    2.6382    701. 
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-INDU-1  1350    2.5567    701.2
+ 
+ 
+      A-INDU-U  1350    2.5435    701.6
+   -1
+BNUM=   21                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 2101 A-INDU-D  1349    2.5321    692.0
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-ART3-1  1348    2.4384    701.5
+      A-ART3-U  1348    2.4253    701.5
+   -1
+BNUM=   22                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 2201 A-ART3-D  1347    2.4134    701.2
+      A-ART3-Z  1347    2.4023    701.2
+                   -
+                   -
+                   -
+      A-ART2-1  1346    2.3644    701.2
+      A-ART2-U  1346    2.3593    701.2
+   -1
+BNUM=   23                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 2301 A-ART2-D  1345    2.3241    701.2
+      A-ART2-Z  1345    2.3133    701.2
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-ART1-1  1344    2.1617    700.1
+      A-ART1-U  1344    2.1239    700.1
+   -1
+BNUM=   24                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 2401 A-ART1-D  1343    2.1144    700.2
+ 
+ 
+ 
+      A-EUCL-1  1343    2.0348    700.2
+      A-EUCL-U  1343    2.0070    700.2
+   -1
+BNUM=   25                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 2501 A-EUCL-D  1342    2.0013    699.8
+      A-EUCL-Z  1342    1.9852    699.8
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CAMP-2  1341    1.8337    698.2
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CAMP2A  1708    1.6954    696.5
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CAMP-1  1340    1.6727    696.
+ 
+ 
+      A-CAMP-U  1340    1.6670    696.
+   -1
+BNUM=   26 INERTIA=  0.5                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 2601 A-CAMP-D  1339    1.6589    696.
+ 
+ 
+      A-CAMP-Z  1339    1.6447    696.
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-KIRC-3  1338    1.5367    696.8
+                   -
+                   -
+                   -
+                   -
+      A-KIRC2C  1707    1.4847    696.6
+                   -
+                   -
+      A-KIRC2B  1706    1.4614    696.5
+                   -
+                   -
+      A-KIRC2A  1705    1.4288    696.4
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-KIRC-2  1337    1.3625    696.3
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-KIRC-1  1336    1.2583    695.6
+      A-KIRC-U  1336    1.2489    695.6
+   -1
+BNUM=   27 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 2701 A-KIRC-D  1335    1.2314    696.5
+      A-KIRC-Z  1335    1.1064    696.5
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CENT-5  1334    0.9814    694.7
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CENT-4  1333    0.8034    694.3
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CENT-3  1332    0.5932    693.5
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CENT-2  1331    0.3318    692.1
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-CENT-1  1330    0.2277    690.9
+      A-CENT-U  1330    0.2106    690.9
+   -1
+BNUM=   28 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 2801 A-CENT-D  1329    0.2011    690.9
+      A-CENT-Z  1329    0.1822    690.9
+                   -
+                   -
+                   -
+                   -
+      A-BARK-2  1328    0.0837    690.8
+                   -
+                   -
+                   -
+                   -
+      A-BARK-1  1327    0.0250    690.5
+      A-BARK-U  1327    0.0193    690.5
+   -1
+BNUM=   29                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 2901 A-BARK-D  1326    0.0152    689.9
+      A-BARK-Z  1326    0.0095    689.9
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      J-UPMS-U  1451    0.0000    688.9
+   -1
+BNUM=   38 INERTIA=  0.50                          ADDNOD=   -0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 3801 M-CENT-D   759    2.3168    692.52
+      M-CENT-Z   759    2.3073    692.52
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-BARK-3   758    2.1890    690.7
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-BARK-2   757    2.0848    690.3
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-BARK-1   756    1.9806    688.5
+      M-BARK-U   756    1.9674    688.5
+   -1
+BNUM=   39 INERTIA=  0.50                          ADDNOD=   -0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 3901 M-BARK-D   755    1.9617    689.36
+      M-BARK-Z   755    1.9541    689.36
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+       J-AHB-U  1451    1.9049    688.9
+   -1
+BNUM=   40 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 4001  J-AHB-D  1451    1.9049    688.9
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-ALGO-2   754    1.8102    687.42
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-ALGO-1   753    1.6964    685.14
+ 
+ 
+ 
+      M-ALGO-U   753    1.6662    685.14
+   -1
+BNUM=   41 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 4101 M-ALGO-D   752    1.6473    683.50
+ 
+ 
+ 
+      M-ALGO-Z   752    1.5905    683.50
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-CARR-3   751    1.5242    684.00
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-CARR-2   750    1.4238    682.80
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-CARR-1   749    1.3708    682.50
+      M-CARR-U   749    1.3594    682.50
+   -1
+BNUM=   42 INERTIA=  0.01                          ADDNOD=   -5
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 4201 M-CARR-D   748    1.3534    683.1
+      M-CARR-Z   748    1.3383    683.1
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-MEAD3A  1104    1.3023    683.1
+                   -
+      M-MEAD-3   747    1.2720    683.2
+                   -
+                   -
+      M-MEAD2A  1103    1.2540    683.5
+                   -
+                   -
+                   -
+                   -
+      M-MEAD-2   746    1.1915    684.11
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-MEAD-1   745    1.1404    683.6
+ 
+ 
+      M-MEAD-U   745    1.1158    683.6
+   -1
+BNUM=   43 INERTIA=  0.01                          ADDNOD=   -3
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 4301 M-MEAD-D   744    1.1098    684.8
+      M-MEAD-Z   744    1.0909    684.8
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-LOIS-2   743    0.9583    681.8
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-LOIS-1   742    0.8902    681.6
+      M-LOIS-U   742    0.8769    681.6
+   -1
+BNUM=   44 INERTIA=  0.1                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 4401 M-LOIS-D   741    0.8674    681.0
+ 
+ 
+      M-LOIS-Z   741    0.8258    681.0
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-NORO-U   740    0.7557    681.0
+   -1
+BNUM=   45 INERTIA=  1.0                           ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 4501 M-NORO-D   739    0.7178    681.5
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      M-GOLF-1   738    0.6799    681.6
+ 
+ 
+      M-GOLF-U   738    0.6420    681.5
+   -1
+BNUM=   50                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 5001 AAANDE-4  1433    0.6112    709.17
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      AAANDE-3  1432    0.4748    709.30
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      AAANDE-2  1431    0.3006    709.06
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      AAANDE-1  1430    0.1396    709.28
+ 
+      AAANDE-U  1430    0.1244    709.28
+   -1
+BNUM=   51                                         ADDNOD=    0
+ NODE NodeId__  XNUM   STATION ELEVATION   KA   KD HTAB  AZM
+ 5101 AAANDE-D  1429    0.1098    708.54
+ 
+      AAANDE-Z  1429    0.0947    708.54
+                   -
+                   -
+                   -
+                   -
+                   -
+                   -
+      A-PALA-4  1428    0.0568    708.57
+ 
+ 
+ 
+ 
+       J-AHB-U  1428    0.0000    708.57
+   -1
+TRIBUTARY AREA SPECIFICATION
+HOME=D:\HSPF\TSF
+TSFDSN=\c3g120413.tsf
+NLUSE=   24
+NGAGE=    4
+ GAGE  NLU
+    1    6
+    2    6
+    3    6
+    4    6
+BRANCH=    0 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+  F10    4 .7293 .2667 .7078 .0395 .1148 .0000
+BRANCH=    0 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+  F12    4 .4219 .1357 .3601 .0201 .0491 .0000
+BRANCH=    0 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+  F14    4 .0154 .0589 .3292 .0946 .1056 .0000
+BRANCH=    0 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+  F16    4 .2927 .2194 1.227 .3525 .2670 .0000
+BRANCH=    1 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0000 .0000 .0000 .0000 .0000 .0000
+BRANCH=    2 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0330 .0206 .1150 .0331 .0257 .0000
+BRANCH=    3 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0045 .0050 .0133 .0007 .0029 .0000
+BRANCH=    4 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1430 .1060 .2814 .0157 .0635 .0000
+BRANCH=    5 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .3124 .1294 .3435 .0192 .0681 .0000
+BRANCH=    6 FAC=  1.000 
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0000 .0000 .0000 .0000 .0000 .0000
+BRANCH=    7 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0000 .0000 .0000 .0000 .0000 .0000
+BRANCH=    8 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1002 .0415 .1102 .0062 .0218 .0000
+BRANCH=    9 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0211 .0104 .0276 .0015 .0033 .0000
+BRANCH=   10 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0153 .0075 .0200 .0011 .0024 .0000
+BRANCH=   11 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0403 .0199 .0528 .0029 .0062 .0000
+BRANCH=   12 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0399 .0197 .0522 .0029 .0062 .0000
+BRANCH=   13 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0396 .0211 .0561 .0031 .0072 .0000
+BRANCH=   14 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0000 .0000 .0000 .0000 .0000 .0000
+BRANCH=   15 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1010 .0557 .1477 .0083 .0169 .0000
+BRANCH=   16 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0686 .0220 .0585 .0033 .0080 .0000
+BRANCH=   17 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0136 .0044 .0116 .0006 .0016 .0000
+BRANCH=   18 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1539 .0477 .1265 .0071 .0205 .0000
+BRANCH=   19 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1189 .0079 .0211 .0012 .0011 .0000
+BRANCH=   20 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .4555 .0304 .0807 .0045 .0042 .0000
+BRANCH=   21 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1288 .0166 .0439 .0025 .0051 .0000
+BRANCH=   22 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0784 .0101 .0268 .0015 .0031 .0000
+BRANCH=   23 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1485 .0191 .0507 .0028 .0059 .0000
+BRANCH=   24 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .2818 .0362 .0962 .0054 .0111 .0000
+BRANCH=   25 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1789 .0731 .1940 .0108 .0247 .0000
+BRANCH=   26 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1039 .0513 .1361 .0076 .0192 .0000
+BRANCH=   27 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .2507 .1202 .3191 .0178 .0448 .0000
+BRANCH=   28 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0146 .0049 .0131 .0007 .0026 .0000
+BRANCH=   29 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0025 .0008 .0022 .0001 .0004 .0000
+BRANCH=   38 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0538 .0182 .0483 .0027 .0094 .0000
+BRANCH=   39 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0011 .0004 .0010 .0001 .0002 .0000
+BRANCH=   40 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0394 .0133 .0354 .0020 .0069 .0000
+BRANCH=   41 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1348 .0090 .0239 .0013 .0029 .0000
+BRANCH=   42 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1103 .0074 .0195 .0011 .0024 .0000
+BRANCH=   43 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .4114 .0927 .3488 .0389 .0530 .0000
+BRANCH=   44 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .1243 .0280 .1054 .0118 .0160 .0000
+BRANCH=   45 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0000 .0000 .0000 .0000 .0000 .0000
+BRANCH=   50 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0928 .0495 .1313 .0073 .0168 .0000
+BRANCH=   51 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0128 .0068 .0181 .0010 .0023 .0000
+BRANCH=   60 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0000 .0000 .0000 .0000 .0000 .0000
+BRANCH=   61 FAC=  1.000
+ NODE GAGE IMPRV FGRSS MGRSS SGRSS FORST AGRIC
+    0    4 .0000 .0000 .0000 .0000 .0000 .0000
+NEW NETWORK-MATRIX CONTROL INPUT
+ CODE   A   B   C   D   E   F   G   H   I   J     FA     FB     FC     FD
+************************************************************************************************************************************
+*   ARLINGTON HEIGHTS BRANCH
+************************************************************************************************************************************
+    6    1  U60   +1    0                               1.0      'BASE FLOW
+    1   60                                                       '
+    5    6  D60  F15  D60 7403 7404                     785.4    'EXPANSION-CONTRACTION INTO RESERVOIR
+    2    2  D60  F15                                             '
+    7  F16 4401    1  F15                                        'RESERVOIR
+    5    2  F16  U61  U61 9401   50 9401   50             0.0    'OUTFLOW
+    2    2  F16  U61                                             '
+    1   61                                                       '
+    5    6  D61  F13  D61 7405 7406                     775.9    'EXPANSION-CONTRACTION into Wetland Area
+    2    2  D61  F13                                             '
+    7  F14 4402    1  F13                                        'RESERVOIR
+    5    6  F14   U1   U1 8441 8441                     775.90   'Wetland Area WEIR flow
+    2    2  F14   U1                                             '
+    1    1                                                       '
+    5    6   D1   U2   U2 2401 2401                     768.94  /'CULVERT
+                          8401 8401                     773.97  /'(WEIR flow over the road)
+                          5401 5401                     782.4   /'(LOB non-weir flow over the road)
+                          6401 6401    *    *    *    0 776.0    '(ROB non-weir flow over the road)
+    2    2   D1   U2                                             '
+    1    2                                                       '
+    5    6   D2   U3   U3 2402 2402                     759.95  /'CULVERT
+                          8402 8402                     772.5   /'(WEIR flow over the road)
+                          5402 5402                     775.4   /'(LOB non-weir flow over the road)
+                          6402 6402    *    *    *    0 768.7    '(ROB non-weir flow over the road)
+    2    2   D2   U3                                             '
+    1    3                                                       '
+    5    6   D3   U4   U4 2403 2403                     756.3   /'CULVERT
+                          8403 8403                     761.14  /'(WEIR flow over the road)
+                          5403 5403                     762.3   /'(LOB non-weir flow over the road)
+                          6403 6403    *    *    *    0 761.6    '(ROB non-weir flow over the road)
+    2    2   D3   U4                                             '
+    1    4                                                       '
+    5    6   D4   U5   U5 2404 2404                     739.2   /'CULVERT
+                          8404 8404                     749.2   /'(WEIR flow over the road)
+                          5404 5404                     749.0   /'(LOB non-weir flow over the road)
+                          6404 6404    *    *    *    0 758.2    '(ROB non-weir flow over the road)
+    2    2   D4   U5                                             '
+    1    5                                                       '
+*----------------------------------------------------------------------------
+;   RESERVOIR
+;   OFF-LINE RESERVOIR, SIDE-WEIR WITH DIVERSION STRUCTURE AND PUMPED OUTFLOW
+*----------------------------------------------------------------------------
+    5    6   D5   F3   F3  501  501                     744.00  /'Inflow WEIR Structure
+                           502  502                     750.25  /'NON-WEIR Flow on LOB
+                           503  503    *    *    *    0 750.25   'NON-WEIR Flow on ROB
+    2    3   D5   F3   U6                                        '
+    3   D5   U6                                                  '
+    7   F4 4403    1   F3                                        'Inflow Weir LEVEL-POOL
+    5    6   F4   F5   F5   45   45                     737.8    'CHUTE SPILLWAY Inflow Structure
+    2    2   F4   F5                                             '
+    7   F6 4404    1   F5                                        'RESERVOIR
+    1    6                                                       '
+*------------------------------------
+*   DIVERSION STRUCTURE FOR RESERVOIR
+*------------------------------------
+   15   F1   F2                                                  'PLATES
+   15  F17  F18                                                  'WEIR FLOW NODES
+    5    6   D6   F1   F1 7407 7408                     739.12   'PLATES EXPCON
+    5    6   D6  F17  F17  511  511                     750.0   /'WEIR FLOW OVER PLATES
+                           512  512    *    *    *    0 748.0    '(ROB non-weir flow over the road)
+    2    3   D6   F1  F17                                        '
+    5    6   F2   U7   F2  510  510                     739.00   'DIVERSION Structure
+    3  F18   U7                                                  '
+    2    3   F2  F18   U7                                        '
+*---------------------------
+;   PUMPED RETURN (DISABLED)
+*---------------------------
+   15   F7   F8                                                  'PUMPS
+    3   F6   F7                                                  '
+    2    2   F6   F7                                             '
+    1    7                                                       '
+    5    2   F8   U8   F8 9404   50 9404   50    0      999.0       0.0 -50.0   999.9   999.9    '       PUMP RETURN DISABLED
+    2    3   F8   U8   D7                                        '
+   13   D7   U8                                                  '
+*-----------------------------------------------------
+;   END OF RESERVOIR
+*-----------------------------------------------------
+    1    8                                                       '
+    5    6   D8   U9   U9 2408 2408                     735.55  /'CULVERT
+                          8408 8408                     748.54  /'(WEIR flow over the road)
+                          5408 5408                     748.8   /'(LOB non-weir flow over the road)
+                          6408 6408    *    *    *    0 748.6    '(ROB non-weir flow over the road)
+    2    2   D8   U9                                             '
+    1    9                                                       '
+    5    6   D9  U10  U10 2409 2409                     731.0   /'CULVERT
+                          8409 8409                     742.8   /'(WEIR flow over the road)
+                          5409 5409                     742.2   /'(LOB non-weir flow over the road)
+                          6409 6409    *    *    *    0 743.9    '(ROB non-weir flow over the road)
+    2    2   D9  U10                                             '
+    1   10                                                       '
+    5    6  D10  U11  U11 2410 2410                     729.2   /'CULVERT
+                          8410 8410                     739.75  /'(WEIR flow over the road)
+                          5410 5410                     740.0   /'(LOB non-weir flow over the road)
+                          6410 6410    *    *    *    0 740.0    '(ROB non-weir flow over the road)
+    2    2  D10  U11                                             '
+    1   11                                                       '
+    5    6  D11  U12  U12 2411 2411                     719.6   /'CULVERT
+                          8411 8411                     728.5   /'(WEIR flow over the road)
+                          5411 5411                     730.3   /'(LOB non-weir flow over the road)
+                          6411 6411    *    *    *    0 728.5    '(ROB non-weir flow over the road)
+    2    2  D11  U12                                             '
+    1   12                                                       '
+    5    6  D12  U13  D12 2412 2412                     716.0   /'CULVERT
+                          8412 8412                     724.6   /'(WEIR flow over the road)
+                          5412 5412                     724.7   /'(LOB non-weir flow over the road)
+                          6412 6412    *    *    *    0 724.3    '(ROB non-weir flow over the road)
+    2    2  D12  U13                                             '
+    1   13                                                       '
+    5    6  D13  U14  U14 2413 2413                     710.0   /'CULVERT
+                          8413 8413                     719.6   /'(WEIR flow over the road)
+                          5413 5413                     719.57  /'(LOB non-weir flow over the road)
+                          6413 6413    *    *    *    0 718.27   '(ROB non-weir flow over the road)
+    2    2  D13  U14                                             '
+    1   14                                                       '
+    3  D14  U15                                                  '
+*----------------------------
+*   Confluence with Tributary
+*----------------------------
+    2    3  D14  D51  U15                                        '
+    1   15                                                       '
+    5    6  D15  U16  U16 2415 2415                     707.95  /'CULVERT
+                          8415 8415                     718.9   /'(WEIR flow over the road)
+                          5415 5415                     718.6   /'(LOB non-weir flow over the road)
+                          6415 6415    *    *    *    0 720.5    '(ROB non-weir flow over the road)
+    2    2  D15  U16                                             '
+    1   16                                                       '
+    5    6  D16  U17  U17 2416 2416                     706.1   /'CULVERT
+                          8416 8416                     718.9   /'(WEIR flow over the road)
+                          5416 5416                     718.8   /'(LOB non-weir flow over the road)
+                          6416 6416    *    *    *    0 719.0    '(ROB non-weir flow over the road)
+    2    2  D16  U17                                             '
+    1   17                                                       '
+*----------------------------------------------------
+;   RESERVOIR
+;   ON-LINE RESERVOIR, WITH OUTFLOW CONTROL STRUCTURE
+*----------------------------------------------------
+    5    6  D17  F11  F11 2417 2417                     705.5   /'CULVERT
+                          8417 8417                     711.0   /'OVERFLOW INFLOW WEIR
+                          5417 5417                     715.5   /'(LOB non-weir flow over the road)
+                          6417 6417    *    *    *    0 715.5    '(ROB non-weir flow over the road)
+    2    2  D17  F11                                             '
+    7  F12 4405    1  F11                                        'RESERVOIR
+   15  F19  F20                                                  'PRINCIPAL SPILLWAY OUTFLOW
+    5    2  F12  F19  F19 9403  999 9403  999           705.0    'PRINCIPAL SPILLWAY OUTFLOW
+    2    2  F12  F19                                             '
+    5    6  F20  U18  U18 2430 2430                     705.0   /'CULVERT
+                          5430 5430    *    *    *    0 719.4    '(non-weir flow over the road)
+    2    2  F20  U18                                             '
+    1   18                                                       '
+    5    6  D18  U19  U19 2418 2418                     704.0   /'CULVERT
+                          8418 8418                     713.55  /'(WEIR flow over the road)
+                          5418 5418                     713.36  /'(LOB non-weir flow over the road)
+                          6418 6418    *    *    *    0 713.78   '(ROB non-weir flow over the road)
+    2    2  D18  U19                                             '
+    1   19                                                       '
+    5    6  D19  U20  U20 2419 2419                     702.4   /'CULVERT
+                          8419 8419                     711.9   /'(WEIR flow over the road)
+                          5419 5419                     714.4   /'(LOB non-weir flow over the road)
+                          6419 6419    *    *    *    0 711.7    '(ROB non-weir flow over the road)
+    2    2  D19  U20                                             '
+    1   20                                                       '
+    5    6  D20  U21  U21 2420 2420                     702.4   /'CULVERT
+                          8420 8420                     713.7   /'(WEIR flow over the road)
+                          5420 5420                     715.5   /'(LOB non-weir flow over the road)
+                          6420 6420    *    *    *    0 713.3    '(ROB non-weir flow over the road)
+    2    2  D20  U21                                             '
+    1   21                                                       '
+    5    6  D21  U22  U22 2421 2421                     701.4   /'CULVERT
+                          8421 8421                     712.7   /'(WEIR flow over the road)
+                          5421 5421                     713.9   /'(LOB non-weir flow over the road)
+                          6421 6421    *    *    *    0 710.4    '(ROB non-weir flow over the road)
+    2    2  D21  U22                                             '
+    1   22                                                       '
+    5    6  D22  U23  U23 2422 2422                     702.4   /'CULVERT
+                          8422 8422                     714.0   /'(WEIR flow over the road)
+                          5422 5422                     716.3   /'(LOB non-weir flow over the road)
+                          6422 6422    *    *    *    0 708.7    '(ROB non-weir flow over the road)
+    2    2  D22  U23                                             '
+    1   23                                                       '
+    5    6  D23  U24  U24 2423 2423                     701.3   /'CULVERT
+                          8423 8423                     708.46  /'(WEIR flow over the road)
+                          5423 5423                     709.5   /'(LOB non-weir flow over the road)
+                          6423 6423    *    *    *    0 708.9    '(ROB non-weir flow over the road)
+    2    2  D23  U24                                             '
+    1   24                                                       '
+    5    6  D24  U25  U25 2424 2424                     703.1   /'CULVERT
+                          8424 8424                     712.75  /'(WEIR flow over the road)
+                          5424 5424                     712.5   /'(LOB non-weir flow over the road)
+                          6424 6424    *    *    *    0 713.0    '(ROB non-weir flow over the road)
+    2    2  D24  U25                                             '
+    1   25                                                       '
+    5    6  D25  U26  U26 2425 2425                     697.4   /'CULVERT
+                          8425 8425                     708.5   /'(WEIR flow over the road)
+                          5425 5425                     708.5   /'(LOB non-weir flow over the road)
+                          6425 6425    *    *    *    0 709.0    '(ROB non-weir flow over the road)
+    2    2  D25  U26                                             '
+    1   26                                                       '
+    5    6  D26  U27  U27 2426 2426                     696.2   /'CULVERT
+                          8426 8426                     709.15  /'(WEIR flow over the road)
+                          5426 5426                     709.5   /'(LOB non-weir flow over the road)
+                          6426 6426    *    *    *    0 709.2    '(ROB non-weir flow over the road)
+    2    2  D26  U27                                             '
+    1   27                                                       '
+    5    6  D27  U28  U28 2427 3427                     691.7   /'CULVERT
+                          8427 8427                     703.5   /'(WEIR flow over the road)
+                          5427 5427                     704.3   /'(LOB non-weir flow over the road)
+                          6427 6427    *    *    *    0 703.3    '(ROB non-weir flow over the road)
+    2    2  D27  U28                                             '
+    1   28                                                       '
+    5    6  D28  U29  U29 2428 2428                     692.8   /'CULVERT
+                          8428 8428                     697.54  /'(WEIR flow over the road)
+                          5428 5428                     699.8   /'(LOB non-weir flow over the road)
+                          6428 6428    *    *    *    0 701.2    '(ROB non-weir flow over the road)
+    2    2  D28  U29                                             '
+    1   29                                                       '
+*----------------------------------
+*   Confluence with Upper Main Stem
+*----------------------------------
+    5    6  D29  U40  D29 7060 7061                     688.9    'JUNCTION
+************************************************************************************************************************************
+*   UPPER MAIN STEM MODEL STUB
+************************************************************************************************************************************
+    6    1  U38   +1                                   20.0      'INFLOW
+    1   38                                                       '
+    5    6  D38  U39  U39 2038 2038                     689.5   /'CULVERT
+                          8038 8038                     700.77  /'(WEIR flow over the road)
+                          5038 5038                     699.6   /'(LOB non-weir flow over the road)
+                          6038 6038    *    *    *    0 701.0    '(ROB non-weir flow over the road)
+    2    2  D38  U39                                             '
+    1   39                                                       '
+*-------------
+*   Confluence
+*-------------
+    3  D39  U40                                                  '
+    2    3  D39  U40  D29                                        '
+    1   40                                                       '
+    5    6  D40  U41  U41 2040 2040                     687.32  /'CULVERT
+                          8040 8040                     700.0   /'(WEIR flow over the road)
+                          5040 5040                     700.0   /'(LOB non-weir flow over the road)
+                          6040 6040    *    *    *    0 700.0    '(ROB non-weir flow over the road)
+    2    2  D40  U41                                             '
+    1   41                                                       '
+    5    6  D41  U42  U42 2041 2041                     686.4   /'CULVERT
+                          8041 8041                     697.3   /'(WEIR flow over the road)
+                          5041 5041                     697.1   /'(LOB non-weir flow over the road)
+                          6041 6041    *    *    *    0 695.4    '(ROB non-weir flow over the road)
+    2    2  D41  U42                                             '
+    1   42                                                       '
+    5    6  D42  U43  U43 2042 2042                     684.8   /'CULVERT
+                          8042 8042                     699.0   /'(WEIR flow over the road)
+                          5042 5042                     693.5   /'(LOB non-weir flow over the road)
+                          6042 6042    *    *    *    0 696.8    '(ROB non-weir flow over the road)
+    2    2  D42  U43                                             '
+    1   43                                                       '
+    5    6  D43  U44  U44 2043 2043                     684.8   /'CULVERT
+                          8043 8043                     696.2   /'(WEIR flow over the road)
+                          5043 5043                     696.2   /'(LOB non-weir flow over the road)
+                          6043 6043    *    *    *    0 696.2    '(ROB non-weir flow over the road)
+    2    2  D43  U44                                             '
+    1   44                                                       '
+    5    6  D44  U45  U45 2044 2044                     681.5   /'CULVERT
+                          8044 8044                     707.5   /'(WEIR flow over the road)
+                          5044 5044                     708.0   /'(LOB non-weir flow over the road)
+                          6044 6044    *    *    *    0 702.43   '(ROB non-weir flow over the road)
+    2    2  D44  U45                                             '
+    1   45                                                       '
+    4    3  D45   -1  D45    0                                   'CHANNEL RATING FOR D/S BOUNDARY CONDITION
+************************************************************************************************************************************
+*   Tributary
+************************************************************************************************************************************
+    6    1   F9   +1    0                               1.0      'BASE FLOW RESERVOIR
+    7  F10 4410    1   F9                                        'RESERVOIR
+    5    6  F10  U50  U50 8450 8450                     710.0    '
+    2    2  F10  U50                                             '
+    1   50                                                       '
+    5    6  D50  U51  U51 2440 2440                     710.0   /'CULVERT
+                          8440 8440                     718.76  /'(WEIR flow over the road)
+                          5440 5440                     719.04  /'(LOB non-weir flow over the road)
+                          6440 6440    *    *    *    0 718.76   '(ROB non-weir flow over the road)
+    2    2  D50  U51                                             '
+    1   51                                                       '
+    3  D51  U15                                                  '
+************************************************************************************************************************************
+   -1                                                            '
+BNODE=
+SPECIAL OUTPUT LOCATIONS
+UNIT=
+  BRA NODE
+   -1
+INPUT FILE SPECIFICATION
+ UNIT NAME_____________________________________________________________________
+HOME= D:\FEQ\TimeSeries\PTSF
+   -1
+OUTPUT FILE SPECIFICATION
+ ACTN   BRA NODE ITEM TYPE NAME-------------------------------------------------------------------
+HOME= D:\FEQ\TimeSeries\PTSF
+          0  U27 FLOW PNT  D:/FEQ/TimeSeries/PTSF/input.PTSF
+   -1
+FUNCTION TABLES
+HOME= D:\FEQ\FunctionTables
+FILE=\TABLES\xs1.tab
+FILE=\TABLES\xs2.tab
+FILE=\TABLES\xs3.tab
+FILE=\TABLES\culvert1.tab
+FILE=\TABLES\culvert2.tab
+FILE=\TABLES\bridge1.tab
+
+TABID=    -1
+
+FREE NODE TABLE
+;         THERE ARE 18 FREE NODES
+ NODE NodeId__      LEVEL DISCHARGE     DATUM 
+   F1 PL-TTH5U      739.1       1.0       0.0 
+   F2 PL-TTH5D      739.1       1.0       0.0 
+   F3 W-TTH5 U      737.7       0.0       0.0 
+   F4 W-TTH5 D      737.7       0.0       0.0 
+   F5 R-TTH5 U      707.5       0.0       0.0 
+   F6 R-TTH5 D      707.5       0.0       0.0 
+   F7 P-TTH5 U      707.5       0.0       0.0 
+   F8 P-TTH5 D      707.5       0.0       0.0 
+   F9 R-LOUISI     710.65       1.0       0.0 
+  F10 R-LOUISO     710.65       1.0       0.0 
+  F11 R-TWIN4I     705.64       2.0       0.0 
+  F12 R-TWIN4O     705.64       2.0       0.0 
+  F13 R-DGWETI     775.95       1.0       0.0 
+  F14 R-DRWETO     775.95       1.0       0.0 
+  F15 R-DGRESI     785.44       1.0       0.0 
+  F16 R-DRRESO     785.44       1.0       0.0 
+  F17 WO-TTH5U      739.1       1.0       0.0 
+  F18 WO-TTH5D      739.1       1.0       0.0 
+  F19 C-TWIN4I     705.64       2.0       0.0 
+  F20 C-TWIN4O     705.64       2.0       0.0 
+BACKWATER ANALYSIS
+BRANCH NUMBER=   -1
+DISCHARGE=   1.
+BRANCH NUMBER=   -2
+DISCHARGE=   1.
+BRANCH NUMBER=   -3
+DISCHARGE=   1.
+BRANCH NUMBER=   -4
+DISCHARGE=   1.
+BRANCH NUMBER=   -5
+DISCHARGE=   1.
+BRANCH NUMBER=   -6
+DISCHARGE=   1.
+BRANCH NUMBER=   -7
+DISCHARGE=   1.
+BRANCH NUMBER=   -8
+DISCHARGE=   1.
+BRANCH NUMBER=   -9
+DISCHARGE=   1.
+BRANCH NUMBER=  -10
+DISCHARGE=   1.
+BRANCH NUMBER=  -11
+DISCHARGE=   1.
+BRANCH NUMBER=  -12
+DISCHARGE=   1.
+BRANCH NUMBER=  -13
+DISCHARGE=   1.
+BRANCH NUMBER=  -14
+DISCHARGE=   1.
+BRANCH NUMBER=  -15
+DISCHARGE=   2.
+BRANCH NUMBER=  -16
+DISCHARGE=   2.
+BRANCH NUMBER=  -17
+DISCHARGE=   2.
+BRANCH NUMBER=  -18
+DISCHARGE=   2.
+BRANCH NUMBER=  -19
+DISCHARGE=   2.
+BRANCH NUMBER=  -20
+DISCHARGE=   2.
+BRANCH NUMBER=  -21
+DISCHARGE=   2.
+BRANCH NUMBER=  -22
+DISCHARGE=   2.
+BRANCH NUMBER=  -23
+DISCHARGE=   2.
+BRANCH NUMBER=  -24
+DISCHARGE=   2.
+BRANCH NUMBER=  -25
+DISCHARGE=   2.
+BRANCH NUMBER=  -26
+DISCHARGE=   2.
+BRANCH NUMBER=  -27
+DISCHARGE=   2.
+BRANCH NUMBER=  -28
+DISCHARGE=   2.
+BRANCH NUMBER=  -29
+DISCHARGE=   2.
+BRANCH NUMBER=  -38
+DISCHARGE=   7.
+BRANCH NUMBER=  -39
+DISCHARGE=   7.
+BRANCH NUMBER=  -40
+DISCHARGE=   9.
+BRANCH NUMBER=  -41
+DISCHARGE=   9.
+BRANCH NUMBER=  -42
+DISCHARGE=   9.
+BRANCH NUMBER=  -43
+DISCHARGE=   9.
+BRANCH NUMBER=  -44
+DISCHARGE=   9.
+BRANCH NUMBER=  -45
+DISCHARGE=   9.
+BRANCH NUMBER=  -50
+DISCHARGE=   1.
+BRANCH NUMBER=  -51
+DISCHARGE=   1.
+BRANCH NUMBER=  -60
+DISCHARGE=   1.
+BRANCH NUMBER=  -61
+DISCHARGE=   1.
+  BRA CODE ELEVATION EXN#
+*************************
+*  Outflow              *
+*************************
+   45    3    683.1
+   44                 U45
+   43           1.66  U44
+   42                 U43
+   41           0.4   U42
+   40                 U41
+   39                 U40
+   38                 U39
+*************************
+*  Confluence           *
+*************************
+   29                 U40
+   28           2.7   U29
+   27                 U28
+   26                 U27
+   25                 U26
+   24           3.00  U25
+   23                 U24
+   22                 U23
+   21                 U22
+   20                 U21
+   19                 U20
+   18           0.45  U19
+    0  F20            U18
+    0  F19            F20
+    0  F12            F19
+    0  F11            F12
+   17           0.6   F12
+   16                 U17
+   15           0.59  U16
+   14                 U15
+   13           0.02  U14
+   12           2.51  U13
+   11           1.1   U12
+   10           0.52  U11
+    9           0.54  U10
+    8           0.77   U9
+    7                  U8
+    0  F18             U7
+    0  F17            F18
+    0   F2      0.09   U7
+    0   F1             F2
+    6           0.03   F1
+    5                  U6
+    4                  U5
+    3           0.20   U4
+    2                  U3
+    1                  U2
+   61    5     776.0  F14
+   60    5     785.6  F16
+***************************
+*  Tributary              *
+***************************
+   51                 U15
+   50           0.6   U51
+   -1
