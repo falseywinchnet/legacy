@@ -112,6 +112,13 @@ implementation preserves the Legendre recurrence, implicit QL rotations,
 convergence threshold and eigenvector ordering. See
 [`tests/reference/gaussian_rule/`](tests/reference/gaussian_rule/).
 
+Gaussian integration for linearly varying sinuosity matches **651 direct
+FBASEL calls**, including all eight integral sums and the stored subsection
+values. Both the C++ API and its engine adapter pass the same raw fixtures.
+These exercise OLDBETA, NEWBETA, NEWBETAX, clipped boundaries, multiple roughness
+modes and quadrature orders. See
+[`tests/reference/section_sinuosity/`](tests/reference/section_sinuosity/).
+
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,
 the caller's float store, and the head-loss result at three scales and around

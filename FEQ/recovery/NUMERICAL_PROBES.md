@@ -601,3 +601,49 @@ first differences are UTLEXM report line 1921, UTLEXM table line 1370, CULVERT
 report line 711 and CULVERT table line 13. This component establishes quadrature
 rule behavior; the separate linearly varying sinuosity integration and final
 application release work remain incomplete.
+
+
+## Linearly varying sinuosity integrals
+
+`probe_sinuous_flux_original.py` streams 651 controlled cross sections into a
+temporary PROGRAM driver. The driver calls unchanged GRULE and FBASEL after
+original runtime startup. The preserved executable is hash-checked and never
+modified. Cases cover OLDBETA, NEWBETA and NEWBETAX, rising/falling/horizontal
+boundaries, vertical and overhanging segments, dry and clipped sections, three
+coordinate scales, multiple subsections and roughness modes, seven quadrature
+orders, and the supplied triangular-channel geometry.
+
+Each 204-byte input contains water level, point/subsection counts, quadrature
+order, flux model, Manning factor, gravity, four roughness modes and eight
+padded boundary records. Each 112-byte output contains eight binary64 integral
+sums followed by four-element REAL arrays for SBSN, QS and KS. All output bits
+match both the independent core and its C++ engine adapter. The core receives
+subsection roughness after the existing geometry and depth-dependent lookup.
+
+Original clipped offsets and endpoint sinuosity stay wide. YL is stored as
+REAL while YR remains wide; the midpoint, half-width and local velocity have
+explicit REAL stores. The area-weighted sinuosity integral multiplies by the
+original REAL reciprocal of three at 0x496f8d. QS and KS round after every
+sample. NEWBETAX preserves the REAL gravity square-root store and the released
+DALOC expression's use of C2 in both derivative terms. Constant derivative
+factors are applied only after all segments have been integrated.
+
+The core carries the original negative-depth diagnostic values in
+`SinuosityDepthError`. The adapter catches that state, stores the original REAL
+diagnostic copies, and runs an unchanged copy of the existing FBASEL diagnostic
+and STOP block. The 651 raw fixtures cover normal returns; they do not exercise
+that fatal diagnostic.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_sinuous_flux_original.py \
+  --native FEQ/build/core/feq_sinuosity_probe --output FEQ/build/sinuosity-recapture
+```
+
+The whole-program integration fixes the UTLEXM table difference at line 1370.
+The table now agrees through line 1627, and the next difference is the first
+FDROP value in a UFGATE table at line 1628. Report differences remain at
+UTLEXM line 1921 and CULVERT line 711; the CULVERT table still differs at line
+13. All twelve FEQ outputs match with only report clocks excluded, and all
+2,092 active matrices remain byte-exact. The full comparison remains 13 of
+17 files. Four utility outputs and final application release work remain
+incomplete.

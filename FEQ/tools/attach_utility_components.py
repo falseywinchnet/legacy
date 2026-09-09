@@ -54,6 +54,56 @@ def integrate_geometry(data):
         (stop[0].end_byte,stop[0].end_byte,flux)])
 
 
+def integrate_sinuosity(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'fbasel_']
+    if len(targets) != 1:
+        raise ValueError('Expected one FBASEL for Gaussian sinuosity integration.')
+    function = targets[0]
+    analytical = [node for node in nodes(function) if node.type == 'if_statement' and
+                  content(node.child_by_field_name('condition'),data) == '(nbflag == 1 && *snflg != 1)']
+    guards = [node for node in nodes(function) if node.type == 'if_statement' and
+              content(node.child_by_field_name('condition'),data) == '(dabs(dx) < (float).1)']
+    if len(analytical) != 1 or len(guards) != 1:
+        raise ValueError('Expected the analytical insertion point and original negative-depth guard.')
+    alternative = guards[0].child_by_field_name('alternative')
+    diagnostic = alternative.named_children[0]
+    if diagnostic.type != 'compound_statement' or 's_stop(' not in content(diagnostic,data):
+        raise ValueError('Expected the complete original negative-depth diagnostic and STOP.')
+    report = content(diagnostic,data)[1:-1]
+    replacement = '''// Independently verified complete Gaussian sinuosity pass.
+    if (*snflg == 1) {
+        try {
+            feq_section_sinuosity(*zi,*npnt,*nsub,&x[1],&feq_gen_z_d_[1],&sb[1],&lsn[1],&nvar[1],
+                &n[1],&sn[1],*nfac,grvcom_1.grav,nbflag,nbx,gnicom_1.ngs,gnicom_1.xgs,gnicom_1.wgs,
+                sumq,sumfm,sumfe,sumdq,sumdfm,sumdfe,summa,summq,&qs[1],&ks[1]);
+            return 0;
+        } catch (const feq::SinuosityDepthError& error) {
+            // The original diagnostic writes REAL copies of retained positions.
+            feq_gen_h_d_ = error.state.depth;
+            igs = static_cast<integer>(error.state.quadrature_index+1);
+            xr = static_cast<float>(error.state.right_offset);
+            xl = static_cast<float>(error.state.left_offset);
+            zr = static_cast<float>(error.state.right_elevation);
+            zl = static_cast<float>(error.state.left_elevation);
+            s = error.state.station;
+            yl = error.state.left_depth;
+            m = error.state.slope;
+            xmid = error.state.midpoint;
+            dx = static_cast<float>(error.state.width);
+            halfdx = error.state.half_width;
+'''+report+'''
+            return 0;
+        }
+    }
+    '''
+    declaration = ('#include <feq/section_sinuosity.hpp>\n'
+        'extern "C" void feq_section_sinuosity(float,int,int,const float*,const float*,const int*,const float*,const int*,'
+        'const float*,const float*,float,float,int,int,int,const double*,const double*,'
+        'double*,double*,double*,double*,double*,double*,double*,double*,float*,float*);\n')
+    return declaration.encode()+edit_text(data,[(analytical[0].start_byte,analytical[0].start_byte,replacement)])
+
+
 PROPERTY_DECLARATION = ('extern "C" int feq_section_properties(int,int,int,const char*,float,float,float,int,int,int*,'
     'const float*,const float*,const double*,const double*,const float*,const float*,const float*,const float*,'
     'double,double,double,double,double,double,double,double,float*,float*,float*,int*,int*,float*);\n')
@@ -584,7 +634,7 @@ def main():
     integrated_files = set()
     for path in sorted(source.glob('*.cpp')):
         data = path.read_bytes();sources.append({'name':path.name,'sha256':hashlib.sha256(data).hexdigest()})
-        if path.name == 'xsection.cpp':data = integrate_section_slot(integrate_elevations(integrate_properties(integrate_geometry(data))))
+        if path.name == 'xsection.cpp':data = integrate_sinuosity(integrate_section_slot(integrate_elevations(integrate_properties(integrate_geometry(data)))))
         elif path.name == 'critq.cpp':data = integrate_critical_speed_store(data)
         elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
         elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
@@ -603,6 +653,9 @@ def main():
                 'component':'src/section_geometry.cpp','scope':'First pass: geometric accumulation and line roughness weights.'},
                 {'file':'xsection.cpp','function':'fbasel_','component':'src/section_flux.cpp',
                  'scope':'Analytical NEWBETA second pass; preserve the separate piecewise linear Gaussian path.'},
+                {'file':'xsection.cpp','function':'fbasel_','component':'src/section_sinuosity.cpp',
+                 'scope':'Gaussian linear-sinuosity pass, all flux modes, subsection REAL stores and original negative-depth report.',
+                 'verification':'tests/reference/section_sinuosity/manifest.json'},
                 {'file':'xsection.cpp','function':'compel_','component':'src/section_properties.cpp',
                  'scope':'Section aggregation, conveyance, coefficients, critical flows and KOLD/TSOLD updates; retain original diagnostic formats.'},
                 {'file':'xsection.cpp','function':'chkarg_','component':'src/elevation_arguments.cpp',

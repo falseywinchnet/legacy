@@ -8,6 +8,7 @@ target_include_directories(feq_numerics PUBLIC include)
 target_sources(feq_numerics PRIVATE src/root_solver.cpp src/culvert_loss.cpp src/steady_residual.cpp src/approach_residual.cpp)
 target_sources(feq_numerics PRIVATE src/section_extension.cpp)
 target_sources(feq_numerics PRIVATE src/gaussian_rule.cpp)
+target_sources(feq_numerics PRIVATE src/section_sinuosity.cpp)
 target_compile_features(feq_numerics PUBLIC cxx_std_20)
 set_target_properties(feq_numerics PROPERTIES CXX_EXTENSIONS OFF)
 
@@ -134,6 +135,13 @@ if(BUILD_TESTING)
     feq_checks(feq_gaussian_rule_probe)
     add_test(NAME gaussian_rule_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gaussian_rule_fixture.py $<TARGET_FILE:feq_gaussian_rule_probe>)
+    add_executable(feq_sinuosity_probe tools/sinuosity_probe.cpp tools/sinuosity_compat.cpp)
+    target_link_libraries(feq_sinuosity_probe PRIVATE feq_numerics)
+    feq_checks(feq_sinuosity_probe)
+    add_test(NAME section_sinuosity_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_sinuosity_fixture.py $<TARGET_FILE:feq_sinuosity_probe>)
+    add_test(NAME section_sinuosity_adapter_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_sinuosity_fixture.py $<TARGET_FILE:feq_sinuosity_probe> --adapter)
     add_test(NAME approach_residual_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_approach_residual_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
     foreach(method regflt rgf rgf5)
