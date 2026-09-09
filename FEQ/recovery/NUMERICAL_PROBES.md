@@ -1202,3 +1202,52 @@ python3 FEQ/tools/probe_transition_energy_original.py \
 python3 FEQ/tools/probe_transition_spacing_original.py \
   --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/transition-spacing-recapture
 ```
+
+## Closed-conduit critical-flow limit and complete example agreement
+
+The final differing UTLEXM report value originated in QCLIMIT's slot-flow
+extrapolation. The original sewer table 1057 contains critical flow
+221.99124145507812 at depth 3.51231050491333; the previous candidate stored
+221.99122619628906. That difference propagates through the downstream
+critical-flow lookup and the partial-flow product at report line 4420.
+The discrepancy came from missing REAL logarithm and exponential stores in
+the translation, rather than decimal formatting or convergence tolerance.
+
+`probe_critical_flow_limit_original.py` copies the unchanged QCLIM arithmetic
+at `0x409ef1..0x409f89`, its retained-flow spill and report conversion, and
+the critical-slope calculation at `0x409fb8..0x409fd9`. The three logarithms
+each store REAL. Their product/division stores REAL as the exponential's
+argument, and the exponential itself stores REAL. Q0*EXP(P)*factor then
+remains wide. The original report receives a REAL copy, the slope uses the
+retained flow, and slot table rows independently receive REAL copies.
+The slope also keeps sqrt(K)^2 wide before squaring it again.
+
+All 3,072 fixtures match the wide flow, REAL flow and REAL reported slope.
+They cover three scales, interpolation and extrapolation, increasing and
+decreasing flow, endpoint queries and zero/unit/nonunit factors. The first
+case preserves the actual sewer-table row values above. Input records have
+seven REAL fields; output records contain one binary64 and two binary32
+values. The manifest preserves every copied instruction block's hash.
+
+The transition-energy fixture now additionally captures FNDHPL's downstream
+total-head store at `0x4340af..0x4340d8`. Its Q/A velocity remains wide until
+the final REAL total-head assignment. All 3,072 extended records match both
+head stores and the three residuals; each output record is now 32 bytes.
+This verifies the arithmetic used to initialize the search, without claiming
+full independent verification of the search controller.
+
+Fresh release and sanitizer runs pass all 63 checks. The current complete
+FEQ and FEQUTL candidates execute all six supplied examples and match **all
+17 distributed output files**, excluding only the explicitly identified run
+timestamps and elapsed execution times. No hydraulic values, diagnostics,
+convergence results or formatting are masked. All four FEQ histories and the
+UTLEXM cross-section file match raw bytes. All 2,092 active FEQ matrices and
+19,701 gate residual entry records also match every byte; source, header,
+object, runtime, executable, input and output hashes were refreshed and
+checked in the recovery receipts. This establishes supplied-example
+agreement; broader numerical coverage and application release work remain.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_critical_flow_limit_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/critical-limit-recapture
+```

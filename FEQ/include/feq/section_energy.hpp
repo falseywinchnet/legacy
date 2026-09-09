@@ -22,6 +22,16 @@ struct EnergySectionProperties {
 // zero query depth; XLKT22 separately returns zero before evaluating logarithms.
 float logarithmic_critical_flow(float depth, float lower_depth, float upper_depth,
     float lower_flow, float upper_flow);
+
+// QCLIMIT extrapolates the last two open-section critical flows into the slot.
+// Require positive finite depths and flows, increasing row depths, and a finite
+// factor. Preserve the wide scaled result through table stores and slope use.
+double critical_flow_limit(float depth, float lower_depth, float upper_depth,
+    float lower_flow, float upper_flow, float factor);
+
+// The reported limiting critical slope is REAL(Qlimit^2/sqrt(K)^4).
+// Require finite flow and finite positive sqrt(conveyance).
+float critical_flow_limit_slope(double flow, float sqrt_conveyance);
 // XLKT22 interpolates the selected interval and its tabulated critical flow.
 // If the lower row has zero depth, critical-flow interpolation uses the upper
 // and following rows. Supply following in that case. The caller retains table

@@ -129,12 +129,19 @@ downstream elevations until their final subtraction. See
 
 Transition loss smoothing and generalized conveyance means match **3,072
 calls to each unchanged original routine**. The energy checks, head residuals,
-left total-head stores and Froude residuals match another **3,072 original
+both total-head stores and Froude residuals match another **3,072 original
 instruction-sequence cases**. Partial-flow spacing and the independently
 stored weir drop and downstream head match **3,072 cases**. The implementation
 preserves the branch-specific REAL store in the conveyance mean and the wide
 energy balances. See [`src/transition_energy.cpp`](src/transition_energy.cpp)
 and [`the numerical evidence`](recovery/NUMERICAL_PROBES.md).
+
+The `QCLIMIT` slot-flow extrapolation matches **3,072 original instruction
+sequence cases**, including the supplied sewer table. The logarithms and
+exponential round to REAL at their original stores; the resulting limiting
+flow stays wide across reporting, slope calculation and individual table
+stores. Both the retained flow and its REAL copies match every bit. See
+[`tests/reference/critical_flow_limit/`](tests/reference/critical_flow_limit/).
 
 The standalone conveyance lookup matches **2,688 calls to the complete original
 LKTK routine**, covering all fourteen accepted section table types, three
@@ -326,9 +333,9 @@ Complete translated research engines execute all six examples. **All twelve
 FEQ report files now match**, masking only execution clocks; all four FEQ
 water-level and discharge histories match raw bytes. Every numerical value,
 diagnostic, convergence location, and other report byte is included. Across
-both programs, the strict comparison passes 16 of 17 files. Both CULVERT outputs
-and the UTLEXM function table match with only their timestamps masked. The
-UTLEXM report still has numerical differences.
+both programs, the strict comparison passes **all 17 files**. Both CULVERT
+outputs, the complete UTLEXM report and its function table match with only
+their timestamps masked. The UTLEXM cross-section file matches raw bytes.
 [`recovery/cpp-research-status.json`](recovery/cpp-research-status.json) records
 the actual binaries, runtime changes, and all comparisons. These research
 engines are not application releases, and example coverage does not establish

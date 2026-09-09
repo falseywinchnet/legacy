@@ -15,7 +15,7 @@ mode={'gate_residual':'--gate','gate_levels':'--gate-levels','gate_free':'--gate
       'departure_energy':'--departure-energy','tailwater_momentum':'--tailwater-momentum',
       'tailwater_spacing':'--tailwater-spacing','channel_rating':'--channel-rating',
       'transition_factors':'--transition-factors','transition_energy':'--transition-energy',
-      'transition_spacing':'--transition-spacing'}[kind]
+      'transition_spacing':'--transition-spacing','critical_flow_limit':'--critical-limit'}[kind]
 fixtures=Path(__file__).resolve().parent/'reference'/kind
 inputs=(fixtures/'inputs.bin').read_bytes();expected=(fixtures/'outputs.bin').read_bytes()
 manifest=json.loads((fixtures/'manifest.json').read_text())

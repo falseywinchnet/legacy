@@ -43,6 +43,27 @@ float logarithmic_critical_flow(float depth, float lower_depth, float upper_dept
     return static_cast<float>(static_cast<double>(lower_flow)*multiplier);
 }
 
+double critical_flow_limit(float depth, float lower_depth, float upper_depth,
+    float lower_flow, float upper_flow, float factor) {
+    // QCLIM 0x409ef1..0x409f89: P=REAL(log(Y/Y0)*log(Q1/Q0)/log(Y1/Y0)).
+    // All three logarithms separately store REAL before forming P. EXP(P)
+    // stores REAL at 0x409f7d; Q0*EXP(P)*factor then remains wide across the
+    // report and slope calculation. Slot rows each receive a REAL copy.
+    const float depth_log = static_cast<float>(std::log(static_cast<double>(depth)/lower_depth));
+    const float flow_log = static_cast<float>(std::log(static_cast<double>(upper_flow)/lower_flow));
+    const float interval_log = static_cast<float>(std::log(static_cast<double>(upper_depth)/lower_depth));
+    const float exponent = static_cast<float>((static_cast<double>(depth_log)*flow_log)/interval_log);
+    const float multiplier = static_cast<float>(std::exp(static_cast<double>(exponent)));
+    return (static_cast<double>(lower_flow)*multiplier)*factor;
+}
+
+float critical_flow_limit_slope(double flow, float sqrt_conveyance) {
+    // QCLIM 0x409fb8..0x409fd9; only the report value stores REAL, at
+    // 0x409feb. Both Qlimit and sqrt(K)^2 retain the wide arithmetic.
+    const double conveyance = static_cast<double>(sqrt_conveyance)*sqrt_conveyance;
+    return static_cast<float>((flow*flow)/(conveyance*conveyance));
+}
+
 EnergySectionProperties interpolate_energy_section(float depth,
     const EnergySectionRow& lower, const EnergySectionRow& upper,
     bool has_slopes, const EnergySectionRow* following) {

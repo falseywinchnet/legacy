@@ -879,15 +879,56 @@ def integrate_transition_energy(data):
             edits.append((starts[0].start_byte,body.end_byte-1,
                 state+'    return feq::transition_head_residual(input);\n'))
             found.add(name)
+        elif name == 'fndhpl_':
+            heads = [node for node in nodes(body) if node.type == 'expression_statement' and content(node,data).startswith('htr = static_cast<double>(feccom_1.hpr)')]
+            if len(heads) != 1:raise ValueError('Expected FNDHPL downstream total-head store.')
+            edits.append((heads[0].start_byte,heads[0].end_byte,
+                'htr = feq::steady_specific_energy(feccom_1.hpr,feccom_1.q,\n'
+                '        feccom_1.ar,feccom_1.alphar,feccom_1.grv2);'))
+            found.add(name)
         elif name == 'expcon_':
             stores = [node for node in nodes(body) if node.type == 'expression_statement' and content(node,data).startswith('pfqvec[feq_gen_i_d_ - 1] = pow_dd(')]
             if len(stores) != 1:raise ValueError('Expected EXPCON partial-flow power loop.')
             edits.append((stores[0].start_byte,stores[0].end_byte,
                 'pfqvec[feq_gen_i_d_ - 1] = feq::transition_partial_free_flow(feq_gen_i_d_,nfrac,power);'))
             found.add(name)
-    if found != {'facdc_','gmean_','ecechk_','frlres_','fhpl_','expcon_'}:
+    if found != {'facdc_','gmean_','ecechk_','frlres_','fhpl_','fndhpl_','expcon_'}:
         raise ValueError('Missing transition-energy integration targets.')
     return b'#include <feq/transition_energy.hpp>\n#include <feq/steady_residual.hpp>\n'+edit_text(data,edits)
+
+
+def integrate_critical_flow_limit(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'qclim_']
+    if len(targets) != 1:raise ValueError('Expected QCLIM.')
+    body = targets[0].child_by_field_name('body');edits = [];found = set()
+    for node in nodes(body):
+        if node.type == 'declaration' and content(node.child_by_field_name('type'),data) == 'real':
+            declarators = node.children_by_field_name('declarator')
+            if any(item.type != 'identifier' for item in declarators):continue
+            names = [content(item,data) for item in declarators]
+            if 'qc' in names:
+                names.remove('qc')
+                edits.append((node.start_byte,node.end_byte,'real '+', '.join(names)+';\n    double qc;'))
+                found.add('declaration')
+        if node.type != 'expression_statement':continue
+        text = content(node,data)
+        if text.startswith('p = log('):replacement = '// The owned extrapolation preserves every REAL logarithm store.';key = 'exponent'
+        elif text == 'qc = qc0 * exp(p) * factor;':
+            replacement = 'qc = feq::critical_flow_limit(y,y0,y1,qc0,qc1,factor);';key = 'flow'
+        elif text.startswith('do_fio(') and '(char *)&qc,' in text:
+            replacement = ('{ real reported_qc = static_cast<real>(qc);\n            '+
+                text.replace('(char *)&qc,','(char *)&reported_qc,')+' }');key = 'flow-report'
+        elif text == 'feq_gen_r_d_1 = qc;':replacement = '// Retain the wide limiting flow for the critical slope.';key = 'flow-copy'
+        elif text == 'feq_gen_r_d_2 = k, feq_gen_r_d_2 *= feq_gen_r_d_2;':replacement = '// The owned slope squares conveyance without a REAL store.';key = 'conveyance-square'
+        elif text.startswith('sc = static_cast<double>('):
+            replacement = 'sc = feq::critical_flow_limit_slope(qc,k);';key = 'slope'
+        else:continue
+        if key in found:raise ValueError('Duplicate QCLIM integration site: '+key)
+        edits.append((node.start_byte,node.end_byte,replacement));found.add(key)
+    if found != {'declaration','exponent','flow','flow-report','flow-copy','conveyance-square','slope'}:
+        raise ValueError('Missing QCLIM extrapolation, report or slope boundary.')
+    return b'#include <feq/section_energy.hpp>\n'+edit_text(data,edits)
 
 
 def integrate_weir_report_head(data):
@@ -1136,7 +1177,7 @@ def main():
         data = path.read_bytes();sources.append({'name':path.name,'sha256':hashlib.sha256(data).hexdigest()})
         if path.name == 'xsection.cpp':data = integrate_sinuosity(integrate_section_slot(integrate_elevations(integrate_properties(integrate_geometry(data)))))
         elif path.name == 'critq.cpp':data = integrate_specific_energy(integrate_critical_speed_store(data))
-        elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
+        elif path.name == 'conduit.cpp':data = integrate_critical_flow_limit(integrate_conduit_boundaries(integrate_arch(data)))
         elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
         elif path.name == 'ufgate.cpp':data = integrate_gate_state(integrate_power_spacing(integrate_gate_orifice(integrate_gate_free(integrate_gate_levels(integrate_gate_residuals(data))))))
         elif path.name == 'tablook.cpp':data = integrate_scalar_moment(integrate_scalar_conveyance(data))
@@ -1207,6 +1248,9 @@ def main():
                 {'file':'conduit.cpp','functions':['urqte_','mkpipe_','mkbox_','rhmak_','urqmak_'],
                  'component':'src/conduit_boundary.cpp','scope':'Area corrections, boundary mirroring and slot intersections.',
                  'verification':'tests/reference/conduit_boundary/manifest.json'},
+                {'file':'conduit.cpp','function':'qclim_','component':'src/section_energy.cpp',
+                 'scope':'REAL logarithm and exponential stores, retained limiting flow, REAL report/table copies and wide critical-slope arithmetic.',
+                 'verification':'tests/reference/critical_flow_limit/manifest.json'},
                 {'file':'fqshrftb.cpp','functions':['xlkt20_','xlkt21_'],'component':'src/section_interpolation.cpp',
                  'verification':['tests/reference/section_interpolation/fequtl-manifest.json',
                                  'tests/reference/section_first_moment/fequtl-manifest.json']},
@@ -1242,7 +1286,7 @@ def main():
                 {'file':'chanrat.cpp','functions':['frfchn_','chntab_'],'component':'src/channel_rating.cpp',
                  'scope':'Retained upstream elevation, wide free-drop subtraction, stored REAL normal flow and partial-drop power sequence.',
                  'verification':'tests/reference/channel_rating/manifest.json'},
-                {'file':'expcon.cpp','functions':['facdc_','gmean_','ecechk_','frlres_','fhpl_','expcon_'],
+                {'file':'expcon.cpp','functions':['facdc_','gmean_','ecechk_','frlres_','fhpl_','fndhpl_','expcon_'],
                  'component':'src/transition_energy.cpp',
                  'scope':'Loss smoothing, generalized conveyance mean, energy residuals, head/Froude stores and partial-flow power sequence.',
                  'verification':['tests/reference/transition_factors/manifest.json','tests/reference/transition_energy/manifest.json','tests/reference/transition_spacing/manifest.json']},

@@ -150,7 +150,7 @@ if(BUILD_TESTING)
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_energy_section_probe> tailwater_spacing)
     add_test(NAME channel_rating_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_energy_section_probe> channel_rating)
-    foreach(transition_fixture transition_factors transition_energy transition_spacing)
+    foreach(transition_fixture transition_factors transition_energy transition_spacing critical_flow_limit)
         add_test(NAME ${transition_fixture}_original_bytes COMMAND ${Python3_EXECUTABLE}
             ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_energy_section_probe> ${transition_fixture})
     endforeach()

@@ -88,6 +88,7 @@ int main(int argc, char** argv) {
         const bool channel_rating = argc == 2 && std::strcmp(argv[1],"--channel-rating") == 0;
         const bool transition_factors = argc == 2 && std::strcmp(argv[1],"--transition-factors") == 0;
         const bool transition_energy = argc == 2 && std::strcmp(argv[1],"--transition-energy") == 0;
+        const bool critical_limit = argc == 2 && std::strcmp(argv[1],"--critical-limit") == 0;
         const bool transition_spacing = argc == 2 && std::strcmp(argv[1],"--transition-spacing") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
             if (transition_spacing) {
@@ -112,6 +113,16 @@ int main(int argc, char** argv) {
                 write_double(feq::transition_head_residual(input));
                 write_float(static_cast<float>(feq::steady_specific_energy(fields[16],fields[13],fields[2],fields[4],fields[12])));
                 write_double(feq::transition_froude_residual(fields[13],fields[17]));
+                write_float(static_cast<float>(feq::steady_specific_energy(fields[1],fields[13],fields[3],fields[5],fields[12])));
+                continue;
+            }
+            if (critical_limit) {
+                float fields[7]{};
+                for (int i = 0; i < 7; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const double flow = feq::critical_flow_limit(fields[0],fields[1],fields[2],fields[3],fields[4],fields[5]);
+                write_double(flow);
+                write_float(static_cast<float>(flow));
+                write_float(feq::critical_flow_limit_slope(flow,fields[6]));
                 continue;
             }
             if (transition_factors) {
