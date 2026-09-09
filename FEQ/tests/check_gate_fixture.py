@@ -7,7 +7,8 @@ import subprocess
 import sys
 
 kind=sys.argv[2]
-mode={'gate_residual':'--gate','gate_levels':'--gate-levels','gate_free':'--gate-free','specific_energy':'--specific-energy'}[kind]
+mode={'gate_residual':'--gate','gate_levels':'--gate-levels','gate_free':'--gate-free',
+      'gate_orifice':'--gate-orifice','specific_energy':'--specific-energy'}[kind]
 fixtures=Path(__file__).resolve().parent/'reference'/kind
 inputs=(fixtures/'inputs.bin').read_bytes();expected=(fixtures/'outputs.bin').read_bytes()
 manifest=json.loads((fixtures/'manifest.json').read_text())

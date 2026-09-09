@@ -763,3 +763,41 @@ FEQ/build/python312/bin/python FEQ/tools/probe_gate_free_original.py \
 FEQ/build/python312/bin/python FEQ/tools/probe_specific_energy_original.py \
   --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/specific-energy-recapture
 ```
+
+## Upstream gate transition and free-orifice flow
+
+The original FNDFOQ entry trace exposed an upstream transition-head difference
+despite matching INVTSE inputs and section properties. UFGATE's instructions
+at `0x480bf8..0x480c10` add depth to the upstream bottom, subtract the datum,
+and only then store H1FWUL as REAL. The translated Z1FWUL assignment had
+introduced an earlier REAL store, losing small depths above a large datum.
+`gate_upstream_head` preserves the original operation order and final store.
+
+`gate_free_orifice` implements FNDFOQ's arithmetic after its original XLKT22
+lookup. The effective area is `REAL(CD*CC*AG)`. The contracted surface and the
+approach-velocity denominator remain wide. The square-root velocity is stored
+as REAL before multiplication by effective area and the final discharge store.
+The formula and instruction addresses are documented beside the implementation.
+The complete original FNDFOQ disassembly is preserved in
+`assembly/fequtl/_fndfoq_.asm`.
+
+`probe_gate_orifice_original.py` captures the unchanged upstream-head block
+and FNDFOQ block at RVAs `0x80bf8..0x80c10` and `0x7ee92..0x7eef4`. It records
+1,278 cases covering three scales, gravity conventions, cancellation above
+six datums, zero flow, small positive heads and approach-velocity denominators
+close to zero. All three output floats match in every case: 15,336 bytes
+without tolerance. Both instruction blocks and all fixture bytes are hashed.
+
+The fresh complete example run passes 14 of 17 outputs. UTLEXM's entire
+function table now agrees with only the execution timestamp masked; its
+cross-section output remains byte-identical. All twelve FEQ outputs still
+match with only clocks masked, and all 2,092 active solver matrices match
+every word. The remaining first numerical differences are UTLEXM report
+line 1921 (`2.7975` versus `2.7976`), CULVERT report line 711 (`2.79815`
+versus `2.79818`) and CULVERT table line 13 (`1138-2` versus `1137-2`).
+The executable and comparison hashes are in `cpp-research-status.json`.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_gate_orifice_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/gate-orifice-recapture
+```

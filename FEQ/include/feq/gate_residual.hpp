@@ -84,5 +84,21 @@ struct GateFreeWeir {
 GateFreeWeir gate_free_weir(double head, float discharge_coefficient,
     float upstream_energy_factor, float width, float upstream_area, float gravity,
     float relative_tolerance);
+
+// The upstream limit is stored only after subtracting the head datum from
+// the retained water-surface elevation.
+float gate_upstream_head(float depth, float upstream_bottom, float datum);
+
+struct GateFreeOrifice {
+    float effective_area;
+    float flow;
+};
+
+// FND FOQ arithmetic after the upstream section lookup. The contraction
+// surface and velocity correction remain wide; area and speed have separate
+// REAL stores in the released program.
+GateFreeOrifice gate_free_orifice(float head, float datum, float discharge_coefficient,
+    float contraction_coefficient, float gate_area, float opening, float gate_bottom,
+    float upstream_area, float upstream_energy_factor, float gravity_twice);
 } // namespace feq
 #endif

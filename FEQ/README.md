@@ -145,6 +145,13 @@ six section selectors across 840 section fixtures. See
 [`tests/reference/gate_free/`](tests/reference/gate_free/) and
 [`tests/reference/specific_energy/`](tests/reference/specific_energy/).
 
+The upstream transition head and free-orifice flow match **1,278 original
+instruction-block cases**. The upstream elevation remains wide until the
+datum has been subtracted; effective area and square-root velocity each have
+their own REAL store. These distinctions restore the complete supplied
+UTLEXM function table, which now matches after masking only its timestamp.
+See [`tests/reference/gate_orifice/`](tests/reference/gate_orifice/).
+
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,
 the caller's float store, and the head-loss result at three scales and around
@@ -179,7 +186,7 @@ and even the original double-power subnormal normalization behavior. These
 components use explicit portable C++ arithmetic and do not call host `pow`.
 Their fixtures are in [`tests/reference/section_flux/`](tests/reference/section_flux/)
 and [`tests/reference/power/`](tests/reference/power/). Piecewise linear
-sinuosity uses a separate Gaussian integration path that remains to be verified.
+sinuosity uses the separately verified Gaussian integration path described above.
 
 Section-property aggregation matches **415 direct original-executable cases**,
 including old and new flux coefficients, critical-flow selection, averaged
@@ -229,8 +236,9 @@ Complete translated research engines execute all six examples. **All twelve
 FEQ report files now match**, masking only execution clocks; all four FEQ
 water-level and discharge histories match raw bytes. Every numerical value,
 diagnostic, convergence location, and other report byte is included. Across
-both programs, the strict comparison passes 13 of 17 files. Four FEQUTL reports
-and tables still have numerical differences.
+both programs, the strict comparison passes 14 of 17 files. The UTLEXM function
+table also matches with only its timestamp masked. Three FEQUTL reports and
+tables still have numerical differences.
 [`recovery/cpp-research-status.json`](recovery/cpp-research-status.json) records
 the actual binaries, runtime changes, and all comparisons. These research
 engines are not application releases, and example coverage does not establish

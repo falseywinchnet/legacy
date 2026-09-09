@@ -1,5 +1,5 @@
 // Work: Astra. Sponsor: Rainstar. Foundation: Hashem. MIT licensed.
-// FEQUTL 5.80 ufgate.for:4-155; released RSOMY3/4 and RSWMY3/4.
+// FEQUTL 5.80 ufgate.for; released residuals and free/submerged gate states.
 #include <feq/gate_residual.hpp>
 #include <cmath>
 
@@ -115,5 +115,29 @@ GateFreeWeir gate_free_weir(double head, float discharge_coefficient,
     const float speed = static_cast<float>(std::sqrt(static_cast<double>(stored_depth)*gravity));
     const float flow = static_cast<float>((static_cast<double>(stored_depth)*width)*speed);
     return GateFreeWeir{stored_depth,flow};
+}
+
+float gate_upstream_head(float depth, float upstream_bottom, float datum) {
+    // UFGATE 0x480bf8..0x480c10: H1FWUL=REAL((Z1B+Y)-HDATUM).
+    // There is no intervening REAL store of Z1FWUL=Z1B+Y.
+    return static_cast<float>((static_cast<double>(upstream_bottom)+depth)-datum);
+}
+
+GateFreeOrifice gate_free_orifice(float head, float datum, float discharge_coefficient,
+    float contraction_coefficient, float gate_area, float opening, float gate_bottom,
+    float upstream_area, float upstream_energy_factor, float gravity_twice) {
+    // FNDFOQ 0x47ee92..0x47eef4: AT=REAL(CD*CC*AG),
+    // HVC=(HG*CC+Z2B)-HDATUM, V=REAL(sqrt((H1-HVC)*2g /
+    // (1-(AT/A1)^2*alpha1))), Q=REAL(AT*V).
+    const float area = static_cast<float>((static_cast<double>(discharge_coefficient)*
+        contraction_coefficient)*gate_area);
+    const double contraction_head = (static_cast<double>(opening)*
+        contraction_coefficient+gate_bottom)-datum;
+    const double numerator = (head-contraction_head)*gravity_twice;
+    const double ratio = static_cast<double>(area)/upstream_area;
+    const double denominator = 1.0-(ratio*ratio)*upstream_energy_factor;
+    const float speed = static_cast<float>(std::sqrt(numerator/denominator));
+    const float flow = static_cast<float>(static_cast<double>(area)*speed);
+    return GateFreeOrifice{area,flow};
 }
 } // namespace feq

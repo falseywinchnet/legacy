@@ -242,6 +242,42 @@ def integrate_gate_free(data):
     return edit_text(data,edits)
 
 
+def integrate_gate_orifice(data):
+    edits = [];found = set()
+    for function in functions(data):
+        name = content(identifier(function.child_by_field_name('declarator')),data)
+        if name == 'ufgate_':
+            assignments = [node for node in nodes(function) if node.type == 'assignment_expression']
+            surface = [node for node in assignments if content(node.child_by_field_name('left'),data) == 'z1fwul']
+            head = [node for node in assignments if content(node.child_by_field_name('left'),data) == 'h1fwul']
+            uses = [node for node in nodes(function) if node.type == 'identifier' and content(node,data) == 'z1fwul']
+            if len(surface) != 1 or len(head) != 1 or len(uses) != 3:
+                raise ValueError('Unexpected upstream free-weir surface or head uses.')
+            if surface[0].parent.type != 'expression_statement' or 'z1fwul' not in content(head[0],data):
+                raise ValueError('Expected upstream head subtraction after surface addition.')
+            edits.append((surface[0].parent.start_byte,surface[0].parent.end_byte,''))
+            edits.append((head[0].start_byte,head[0].end_byte,
+                'h1fwul = feq::gate_upstream_head(y,ufcom_1.z1b,hdatum)'))
+            found.add(name)
+        elif name == 'fndfoq_':
+            body = function.child_by_field_name('body')
+            lookups = [node for node in body.named_children if node.type == 'expression_statement' and
+                       content(node,data).startswith('xlkt22_(')]
+            if len(lookups) != 1:raise ValueError('Expected one FNDFOQ upstream lookup.')
+            replacement = '''
+    // Keep the original upstream depth, section lookup and COMMON stores.
+    const feq::GateFreeOrifice result = feq::gate_free_orifice(*h1,*hdatum,
+        ufcom_1.cd,ufcom_1.cc,ufcom_1.ag,ufcom_1.hg,ufcom_1.z2b,
+        ufcom_1.a1,ufcom_1.alpha1,ufcom_1.twog);
+    ufcom_1.at = result.effective_area;
+    *q = result.flow;
+    return 0;
+'''
+            edits.append((lookups[0].end_byte,body.end_byte-1,replacement));found.add(name)
+    if found != {'ufgate_','fndfoq_'}:raise ValueError('Missing original gate free-orifice definitions.')
+    return edit_text(data,edits)
+
+
 def integrate_specific_energy(data):
     targets = [function for function in functions(data)
                if content(identifier(function.child_by_field_name('declarator')),data) == 'fise_']
@@ -805,7 +841,7 @@ def main():
         elif path.name == 'critq.cpp':data = integrate_specific_energy(integrate_critical_speed_store(data))
         elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
         elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
-        elif path.name == 'ufgate.cpp':data = integrate_gate_free(integrate_gate_levels(integrate_gate_residuals(data)))
+        elif path.name == 'ufgate.cpp':data = integrate_gate_orifice(integrate_gate_free(integrate_gate_levels(integrate_gate_residuals(data))))
         elif path.name == 'tablook.cpp':data = integrate_scalar_moment(data)
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
@@ -845,6 +881,9 @@ def main():
                 {'file':'ufgate.cpp','function':'ufgate_','component':'src/gate_residual.cpp',
                  'scope':'Critical setup area/speed REAL stores and free-weir iteration with retained head and depths.',
                  'verification':'tests/reference/gate_free/manifest.json'},
+                {'file':'ufgate.cpp','functions':['ufgate_','fndfoq_'],'component':'src/gate_residual.cpp',
+                 'scope':'Upstream head store after datum subtraction; free-orifice retained contraction head and separate area/speed REAL stores.',
+                 'verification':'tests/reference/gate_orifice/manifest.json'},
                 {'file':'critq.cpp','function':'fise_','component':'src/section_energy.cpp',
                  'scope':'Unrounded inverse-specific-energy residual after original selected section lookup.',
                  'verification':'tests/reference/specific_energy/manifest.json'},

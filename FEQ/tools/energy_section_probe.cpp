@@ -70,8 +70,19 @@ int main(int argc, char** argv) {
         const bool gate = argc == 2 && std::strcmp(argv[1],"--gate") == 0;
         const bool gate_levels = argc == 2 && std::strcmp(argv[1],"--gate-levels") == 0;
         const bool gate_free = argc == 2 && std::strcmp(argv[1],"--gate-free") == 0;
+        const bool gate_orifice = argc == 2 && std::strcmp(argv[1],"--gate-orifice") == 0;
         const bool specific_energy = argc == 2 && std::strcmp(argv[1],"--specific-energy") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (gate_orifice) {
+                float fields[12]{};
+                for (int i = 0; i < 12; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                write_float(feq::gate_upstream_head(fields[0],fields[1],fields[2]));
+                const feq::GateFreeOrifice result = feq::gate_free_orifice(fields[3],fields[2],
+                    fields[4],fields[5],fields[6],fields[7],fields[8],fields[9],fields[10],fields[11]);
+                write_float(result.effective_area);
+                write_float(result.flow);
+                continue;
+            }
             if (gate_free) {
                 const std::uint64_t low = read_word();
                 const std::uint64_t high = read_word();
