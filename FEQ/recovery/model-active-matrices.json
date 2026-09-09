@@ -1,0 +1,1401 @@
+{
+  "scope": "All active matrix words at every PROFAC call in each supplied FEQ model. Unused COMMON capacity is not compared.",
+  "native_executable_sha256": "0a73cca5fdb6afa16af3d52e174a11022bc2250db614bc050ac35aff86f5ea73",
+  "models": [
+    {
+      "scope": "All active solver inputs; no tolerance or masked words.",
+      "original_sha256": "127b2a59c41bf91ee87046dafdde4331c962e3a770cbeb5b896663420bb4e8b0",
+      "native_sha256": "127b2a59c41bf91ee87046dafdde4331c962e3a770cbeb5b896663420bb4e8b0",
+      "original_bytes": 784944,
+      "native_bytes": 784944,
+      "original_records": 621,
+      "native_records": 621,
+      "exact_records": 621,
+      "exact_bytes": true,
+      "first_difference": [],
+      "case": "feqex1",
+      "original_trace_manifest": {
+        "original": {
+          "path": "originals/feq1061/wrdapp/FEQ_10.61/BIN/feq.exe",
+          "bytes": 1857892,
+          "sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399"
+        },
+        "traced_sha256": "f8b8c59f1f26d9aedf4d6b3810d34ef82d07ebf75d97555d97acd9058814883c",
+        "command": [
+          "wine",
+          "/Users/joshuahkuttenkuler/legacy/FEQ/build/active-trace-original-1/TRACE.EXE",
+          "..\\data\\feqex1",
+          "feqex1.out"
+        ],
+        "returncode": 0,
+        "hooks": [
+          {
+            "routine": "_profac_",
+            "limit": 1024,
+            "captures": [
+              {
+                "symbol": "_matcom_",
+                "offset": 0,
+                "bytes": 12
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 12,
+                "bytes": 176
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 99212,
+                "bytes": 180
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 396816,
+                "bytes": 12
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 414420,
+                "bytes": 12
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 432024,
+                "bytes": 12
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 516828,
+                "bytes": 684
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 3492828,
+                "bytes": 176
+              }
+            ],
+            "file": "trace-00.bin",
+            "record_bytes": 1264,
+            "original_rva": 435664,
+            "hook_rva": 83648512,
+            "displaced_bytes": "83ec645553",
+            "displaced_instructions": [
+              "sub esp, 0x64",
+              "push ebp",
+              "push ebx"
+            ],
+            "replaced_header_padding": "244865616465723a202f70726a2f636f6e74726f6c2f7372632f6865616465722f77696e6e742f52",
+            "records": 621,
+            "sha256": "127b2a59c41bf91ee87046dafdde4331c962e3a770cbeb5b896663420bb4e8b0"
+          }
+        ],
+        "output_verification": {
+          "feqex1.out": {
+            "raw_equal": false,
+            "clock_masked_equal": true,
+            "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
+            "actual_sha256": "a41979c5e8137ec770b3f0faf9cc89277e3a7650156f4a8c1c780a88c54e1845",
+            "expected_clock_fields": {
+              "run_timestamp": 2,
+              "elapsed_time": 2
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 2,
+              "elapsed_time": 2
+            },
+            "expected_bytes": 1693210,
+            "actual_bytes": 1693210
+          },
+          "feqex1.out.spi": {
+            "raw_equal": false,
+            "clock_masked_equal": true,
+            "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
+            "actual_sha256": "aedb497fa0ab31c490d7e41733a29953fc45d21ad3fa136bbe8a3e78b5c2b03b",
+            "expected_clock_fields": {
+              "run_timestamp": 1,
+              "elapsed_time": 0
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 1,
+              "elapsed_time": 0
+            },
+            "expected_bytes": 1836,
+            "actual_bytes": 1836
+          },
+          "feqex1.out.wsq": {
+            "raw_equal": true,
+            "clock_masked_equal": true,
+            "expected_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
+            "actual_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
+            "expected_clock_fields": {
+              "run_timestamp": 0,
+              "elapsed_time": 0
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 0,
+              "elapsed_time": 0
+            },
+            "expected_bytes": 129731,
+            "actual_bytes": 129731
+          }
+        },
+        "outputs": [
+          {
+            "path": "test/feqex1.out",
+            "bytes": 1693210,
+            "sha256": "a41979c5e8137ec770b3f0faf9cc89277e3a7650156f4a8c1c780a88c54e1845"
+          },
+          {
+            "path": "test/feqex1.out.spi",
+            "bytes": 1836,
+            "sha256": "aedb497fa0ab31c490d7e41733a29953fc45d21ad3fa136bbe8a3e78b5c2b03b"
+          },
+          {
+            "path": "test/feqex1.out.wsq",
+            "bytes": 129731,
+            "sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b"
+          },
+          {
+            "path": "test/trace-00.bin",
+            "bytes": 784944,
+            "sha256": "127b2a59c41bf91ee87046dafdde4331c962e3a770cbeb5b896663420bb4e8b0"
+          }
+        ]
+      },
+      "native_run_manifest": {
+        "purpose": "C++ research execution; equivalence requires a separate comparison.",
+        "created_utc": "2026-09-09T05:40:38.244816+00:00",
+        "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
+        "legacy_path_links": false,
+        "inputs": [
+          {
+            "path": "data/CULVERT.IN",
+            "bytes": 8263,
+            "sha256": "fbd6ce4963c88319bf79469188e34422eef5d22c58a02f9ecb5ff483287a40b0"
+          },
+          {
+            "path": "data/FEQEX1",
+            "bytes": 13850,
+            "sha256": "29c0db7065d86cb04206b35aaaf932e260126b9c00de8034e4d61cf99eae24b4"
+          },
+          {
+            "path": "data/FEQEX2",
+            "bytes": 8996,
+            "sha256": "ef75e6c0c063a155e495a5f0f8b871fd2dc4e47f5297c7e6250236efa11b743c"
+          },
+          {
+            "path": "data/FEQEX3",
+            "bytes": 9767,
+            "sha256": "f85f8cb1566c6cfcb68739e7cb5dac3896d0b7c541746c6cd45cf1f08ff31ab7"
+          },
+          {
+            "path": "data/FEQEX4",
+            "bytes": 7604,
+            "sha256": "e48e0e0ea8329c9b1e732ec77ab08773984e39e13c4ffd449b443ff44b1c5fa6"
+          },
+          {
+            "path": "data/MODEL01.INP",
+            "bytes": 7363,
+            "sha256": "07764dad7c1bc3943ee5eb8da7bcc239cd5eeddcaa0ea092db83f4b860418df8"
+          },
+          {
+            "path": "data/TYPE5.TAB",
+            "bytes": 11513,
+            "sha256": "dd15462267c4a24caa402e6257e0f903c3b677dbf48344c8eb7021fe8acd81b1"
+          },
+          {
+            "path": "data/UTLEXM.IN",
+            "bytes": 60045,
+            "sha256": "53b079f89acbf771ed164c4bfbeec888426ee17e33073778b963f65abb1d3ea8"
+          },
+          {
+            "path": "data/WEIRTABS",
+            "bytes": 4689,
+            "sha256": "e818590713f9878ded0de329fd47142df35bd9c0f73ce0c161b7593c5892ee1d"
+          },
+          {
+            "path": "data/culvert.out",
+            "bytes": 141152,
+            "sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72"
+          },
+          {
+            "path": "data/culvert.tab",
+            "bytes": 6015,
+            "sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade"
+          },
+          {
+            "path": "data/feqex1.out",
+            "bytes": 1693210,
+            "sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e"
+          },
+          {
+            "path": "data/feqex1.out.spi",
+            "bytes": 1836,
+            "sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc"
+          },
+          {
+            "path": "data/feqex1.out.wsq",
+            "bytes": 129731,
+            "sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b"
+          },
+          {
+            "path": "data/feqex2.out",
+            "bytes": 876444,
+            "sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db"
+          },
+          {
+            "path": "data/feqex2.out.spi",
+            "bytes": 1132,
+            "sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60"
+          },
+          {
+            "path": "data/feqex2.out.wsq",
+            "bytes": 15809,
+            "sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b"
+          },
+          {
+            "path": "data/feqex3.out",
+            "bytes": 1340610,
+            "sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96"
+          },
+          {
+            "path": "data/feqex3.out.spi",
+            "bytes": 1132,
+            "sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41"
+          },
+          {
+            "path": "data/feqex3.out.wsq",
+            "bytes": 23579,
+            "sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2"
+          },
+          {
+            "path": "data/feqex4.out",
+            "bytes": 1371793,
+            "sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650"
+          },
+          {
+            "path": "data/feqex4.out.spi",
+            "bytes": 1132,
+            "sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6"
+          },
+          {
+            "path": "data/feqex4.out.wsq",
+            "bytes": 23579,
+            "sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff"
+          },
+          {
+            "path": "data/utlexm.chx",
+            "bytes": 12998,
+            "sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af"
+          },
+          {
+            "path": "data/utlexm.out",
+            "bytes": 775740,
+            "sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de"
+          },
+          {
+            "path": "data/utlexm.tab",
+            "bytes": 135953,
+            "sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705"
+          }
+        ],
+        "binaries": [
+          {
+            "path": "bin/feq",
+            "bytes": 1318952,
+            "sha256": "0a73cca5fdb6afa16af3d52e174a11022bc2250db614bc050ac35aff86f5ea73"
+          },
+          {
+            "path": "bin/fequtl",
+            "bytes": 1365568,
+            "sha256": "b998f9730147edea0b2b60f9f80a74122b2cb18369c2eec0a1fbd0db1ed66588"
+          }
+        ],
+        "cases": [
+          {
+            "case": "feqex1",
+            "program": "feq",
+            "arguments": [
+              "..\\data\\feqex1",
+              "feqex1.out"
+            ],
+            "returncode": 0,
+            "elapsed_seconds": 0.2856737079564482,
+            "process_completed": true,
+            "outputs": [
+              {
+                "path": "feqex1.out",
+                "bytes": 1693210,
+                "sha256": "7530c647e823ab2f358b22e62983f374f972d7646fd754a01d2a09c4139d2dff"
+              },
+              {
+                "path": "feqex1.out.spi",
+                "bytes": 1836,
+                "sha256": "00492e76a14880731e665d0da31c3f846c0ac8b56f91ef7837e97827cc8eb973"
+              },
+              {
+                "path": "feqex1.out.wsq",
+                "bytes": 129731,
+                "sha256": "092fc060bad3853f550b168b8ff61b3a137adfde0cf2db7bcc4816c1b0d53961"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scope": "All active solver inputs; no tolerance or masked words.",
+      "original_sha256": "a6fa44c28b535bdf2f9df3888fcdfc8c8ee5316a2098567df919248d1d823bdc",
+      "native_sha256": "a6fa44c28b535bdf2f9df3888fcdfc8c8ee5316a2098567df919248d1d823bdc",
+      "original_bytes": 674700,
+      "native_bytes": 674700,
+      "original_records": 325,
+      "native_records": 325,
+      "exact_records": 325,
+      "exact_bytes": true,
+      "first_difference": [],
+      "case": "feqex2",
+      "original_trace_manifest": {
+        "original": {
+          "path": "originals/feq1061/wrdapp/FEQ_10.61/BIN/feq.exe",
+          "bytes": 1857892,
+          "sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399"
+        },
+        "traced_sha256": "b2d71893478b987a6826069e7c4277dcb0201dedcdc0e226d783ed88099b9b33",
+        "command": [
+          "wine",
+          "/Users/joshuahkuttenkuler/legacy/FEQ/build/active-trace-ex2-1/TRACE.EXE",
+          "..\\data\\feqex2",
+          "feqex2.out"
+        ],
+        "returncode": 0,
+        "hooks": [
+          {
+            "routine": "_profac_",
+            "limit": 1024,
+            "captures": [
+              {
+                "symbol": "_matcom_",
+                "offset": 0,
+                "bytes": 12
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 12,
+                "bytes": 264
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 99212,
+                "bytes": 268
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 396816,
+                "bytes": 28
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 414420,
+                "bytes": 28
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 432024,
+                "bytes": 28
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 516828,
+                "bytes": 1184
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 3492828,
+                "bytes": 264
+              }
+            ],
+            "file": "trace-00.bin",
+            "record_bytes": 2076,
+            "original_rva": 435664,
+            "hook_rva": 83648512,
+            "displaced_bytes": "83ec645553",
+            "displaced_instructions": [
+              "sub esp, 0x64",
+              "push ebp",
+              "push ebx"
+            ],
+            "replaced_header_padding": "244865616465723a202f70726a2f636f6e74726f6c2f7372632f6865616465722f77696e6e742f52",
+            "records": 325,
+            "sha256": "a6fa44c28b535bdf2f9df3888fcdfc8c8ee5316a2098567df919248d1d823bdc"
+          }
+        ],
+        "output_verification": {
+          "feqex2.out": {
+            "raw_equal": false,
+            "clock_masked_equal": true,
+            "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
+            "actual_sha256": "d03d8c5333f725f560fd5b72f8c2d2648fd8d9ea3f11cb11d4993db9b21ce1e8",
+            "expected_clock_fields": {
+              "run_timestamp": 2,
+              "elapsed_time": 2
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 2,
+              "elapsed_time": 2
+            },
+            "expected_bytes": 876444,
+            "actual_bytes": 876444
+          },
+          "feqex2.out.spi": {
+            "raw_equal": false,
+            "clock_masked_equal": true,
+            "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
+            "actual_sha256": "a7e9747a362df70da5f56d08ac7ad3fe3ce1cae5d17f44125714fa486b0ffa55",
+            "expected_clock_fields": {
+              "run_timestamp": 1,
+              "elapsed_time": 0
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 1,
+              "elapsed_time": 0
+            },
+            "expected_bytes": 1132,
+            "actual_bytes": 1132
+          },
+          "feqex2.out.wsq": {
+            "raw_equal": true,
+            "clock_masked_equal": true,
+            "expected_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
+            "actual_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
+            "expected_clock_fields": {
+              "run_timestamp": 0,
+              "elapsed_time": 0
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 0,
+              "elapsed_time": 0
+            },
+            "expected_bytes": 15809,
+            "actual_bytes": 15809
+          }
+        },
+        "outputs": [
+          {
+            "path": "test/feqex2.out",
+            "bytes": 876444,
+            "sha256": "d03d8c5333f725f560fd5b72f8c2d2648fd8d9ea3f11cb11d4993db9b21ce1e8"
+          },
+          {
+            "path": "test/feqex2.out.spi",
+            "bytes": 1132,
+            "sha256": "a7e9747a362df70da5f56d08ac7ad3fe3ce1cae5d17f44125714fa486b0ffa55"
+          },
+          {
+            "path": "test/feqex2.out.wsq",
+            "bytes": 15809,
+            "sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b"
+          },
+          {
+            "path": "test/trace-00.bin",
+            "bytes": 674700,
+            "sha256": "a6fa44c28b535bdf2f9df3888fcdfc8c8ee5316a2098567df919248d1d823bdc"
+          }
+        ]
+      },
+      "native_run_manifest": {
+        "purpose": "C++ research execution; equivalence requires a separate comparison.",
+        "created_utc": "2026-09-09T05:40:38.597129+00:00",
+        "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
+        "legacy_path_links": false,
+        "inputs": [
+          {
+            "path": "data/CULVERT.IN",
+            "bytes": 8263,
+            "sha256": "fbd6ce4963c88319bf79469188e34422eef5d22c58a02f9ecb5ff483287a40b0"
+          },
+          {
+            "path": "data/FEQEX1",
+            "bytes": 13850,
+            "sha256": "29c0db7065d86cb04206b35aaaf932e260126b9c00de8034e4d61cf99eae24b4"
+          },
+          {
+            "path": "data/FEQEX2",
+            "bytes": 8996,
+            "sha256": "ef75e6c0c063a155e495a5f0f8b871fd2dc4e47f5297c7e6250236efa11b743c"
+          },
+          {
+            "path": "data/FEQEX3",
+            "bytes": 9767,
+            "sha256": "f85f8cb1566c6cfcb68739e7cb5dac3896d0b7c541746c6cd45cf1f08ff31ab7"
+          },
+          {
+            "path": "data/FEQEX4",
+            "bytes": 7604,
+            "sha256": "e48e0e0ea8329c9b1e732ec77ab08773984e39e13c4ffd449b443ff44b1c5fa6"
+          },
+          {
+            "path": "data/MODEL01.INP",
+            "bytes": 7363,
+            "sha256": "07764dad7c1bc3943ee5eb8da7bcc239cd5eeddcaa0ea092db83f4b860418df8"
+          },
+          {
+            "path": "data/TYPE5.TAB",
+            "bytes": 11513,
+            "sha256": "dd15462267c4a24caa402e6257e0f903c3b677dbf48344c8eb7021fe8acd81b1"
+          },
+          {
+            "path": "data/UTLEXM.IN",
+            "bytes": 60045,
+            "sha256": "53b079f89acbf771ed164c4bfbeec888426ee17e33073778b963f65abb1d3ea8"
+          },
+          {
+            "path": "data/WEIRTABS",
+            "bytes": 4689,
+            "sha256": "e818590713f9878ded0de329fd47142df35bd9c0f73ce0c161b7593c5892ee1d"
+          },
+          {
+            "path": "data/culvert.out",
+            "bytes": 141152,
+            "sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72"
+          },
+          {
+            "path": "data/culvert.tab",
+            "bytes": 6015,
+            "sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade"
+          },
+          {
+            "path": "data/feqex1.out",
+            "bytes": 1693210,
+            "sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e"
+          },
+          {
+            "path": "data/feqex1.out.spi",
+            "bytes": 1836,
+            "sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc"
+          },
+          {
+            "path": "data/feqex1.out.wsq",
+            "bytes": 129731,
+            "sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b"
+          },
+          {
+            "path": "data/feqex2.out",
+            "bytes": 876444,
+            "sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db"
+          },
+          {
+            "path": "data/feqex2.out.spi",
+            "bytes": 1132,
+            "sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60"
+          },
+          {
+            "path": "data/feqex2.out.wsq",
+            "bytes": 15809,
+            "sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b"
+          },
+          {
+            "path": "data/feqex3.out",
+            "bytes": 1340610,
+            "sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96"
+          },
+          {
+            "path": "data/feqex3.out.spi",
+            "bytes": 1132,
+            "sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41"
+          },
+          {
+            "path": "data/feqex3.out.wsq",
+            "bytes": 23579,
+            "sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2"
+          },
+          {
+            "path": "data/feqex4.out",
+            "bytes": 1371793,
+            "sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650"
+          },
+          {
+            "path": "data/feqex4.out.spi",
+            "bytes": 1132,
+            "sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6"
+          },
+          {
+            "path": "data/feqex4.out.wsq",
+            "bytes": 23579,
+            "sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff"
+          },
+          {
+            "path": "data/utlexm.chx",
+            "bytes": 12998,
+            "sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af"
+          },
+          {
+            "path": "data/utlexm.out",
+            "bytes": 775740,
+            "sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de"
+          },
+          {
+            "path": "data/utlexm.tab",
+            "bytes": 135953,
+            "sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705"
+          }
+        ],
+        "binaries": [
+          {
+            "path": "bin/feq",
+            "bytes": 1318952,
+            "sha256": "0a73cca5fdb6afa16af3d52e174a11022bc2250db614bc050ac35aff86f5ea73"
+          },
+          {
+            "path": "bin/fequtl",
+            "bytes": 1365568,
+            "sha256": "b998f9730147edea0b2b60f9f80a74122b2cb18369c2eec0a1fbd0db1ed66588"
+          }
+        ],
+        "cases": [
+          {
+            "case": "feqex2",
+            "program": "feq",
+            "arguments": [
+              "..\\data\\feqex2",
+              "feqex2.out"
+            ],
+            "returncode": 0,
+            "elapsed_seconds": 0.25207725004293025,
+            "process_completed": true,
+            "outputs": [
+              {
+                "path": "feqex2.out",
+                "bytes": 876444,
+                "sha256": "36c213f7f241b6100af7a98c5d377184a878cdbfcce123cd294596291e1d5e8b"
+              },
+              {
+                "path": "feqex2.out.spi",
+                "bytes": 1132,
+                "sha256": "89bdb2c5a57ad13d047c569fea91ba753785344a9771bfa3880d6ca141bdef36"
+              },
+              {
+                "path": "feqex2.out.wsq",
+                "bytes": 15809,
+                "sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scope": "All active solver inputs; no tolerance or masked words.",
+      "original_sha256": "c883b278e8269ee98019a3fe86a996e1c71a9de6b59b849bc1d864c4779870ed",
+      "native_sha256": "c883b278e8269ee98019a3fe86a996e1c71a9de6b59b849bc1d864c4779870ed",
+      "original_bytes": 1225360,
+      "native_bytes": 1225360,
+      "original_records": 578,
+      "native_records": 578,
+      "exact_records": 578,
+      "exact_bytes": true,
+      "first_difference": [],
+      "case": "feqex3",
+      "original_trace_manifest": {
+        "original": {
+          "path": "originals/feq1061/wrdapp/FEQ_10.61/BIN/feq.exe",
+          "bytes": 1857892,
+          "sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399"
+        },
+        "traced_sha256": "526a5fa469c5f70046906b70704fd059c648cab8cb95bf51ad9cb8e34ed94417",
+        "command": [
+          "wine",
+          "/Users/joshuahkuttenkuler/legacy/FEQ/build/active-trace-ex3-1/TRACE.EXE",
+          "..\\data\\feqex3",
+          "feqex3.out"
+        ],
+        "returncode": 0,
+        "hooks": [
+          {
+            "routine": "_profac_",
+            "limit": 1024,
+            "captures": [
+              {
+                "symbol": "_matcom_",
+                "offset": 0,
+                "bytes": 12
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 12,
+                "bytes": 280
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 99212,
+                "bytes": 284
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 396816,
+                "bytes": 28
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 414420,
+                "bytes": 28
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 432024,
+                "bytes": 28
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 516828,
+                "bytes": 1180
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 3492828,
+                "bytes": 280
+              }
+            ],
+            "file": "trace-00.bin",
+            "record_bytes": 2120,
+            "original_rva": 435664,
+            "hook_rva": 83648512,
+            "displaced_bytes": "83ec645553",
+            "displaced_instructions": [
+              "sub esp, 0x64",
+              "push ebp",
+              "push ebx"
+            ],
+            "replaced_header_padding": "244865616465723a202f70726a2f636f6e74726f6c2f7372632f6865616465722f77696e6e742f52",
+            "records": 578,
+            "sha256": "c883b278e8269ee98019a3fe86a996e1c71a9de6b59b849bc1d864c4779870ed"
+          }
+        ],
+        "output_verification": {
+          "feqex3.out": {
+            "raw_equal": false,
+            "clock_masked_equal": true,
+            "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
+            "actual_sha256": "b508d4474fef341fefda8d3dc1fbdba62d5f60941c34853bfebd4cea2b6e2159",
+            "expected_clock_fields": {
+              "run_timestamp": 2,
+              "elapsed_time": 2
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 2,
+              "elapsed_time": 2
+            },
+            "expected_bytes": 1340610,
+            "actual_bytes": 1340610
+          },
+          "feqex3.out.spi": {
+            "raw_equal": false,
+            "clock_masked_equal": true,
+            "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
+            "actual_sha256": "6bf9330ce8aa2fd62fc0d7fb3c8c26dd6a7d75b139498c0d747a7f9c33c06b1e",
+            "expected_clock_fields": {
+              "run_timestamp": 1,
+              "elapsed_time": 0
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 1,
+              "elapsed_time": 0
+            },
+            "expected_bytes": 1132,
+            "actual_bytes": 1132
+          },
+          "feqex3.out.wsq": {
+            "raw_equal": true,
+            "clock_masked_equal": true,
+            "expected_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
+            "actual_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
+            "expected_clock_fields": {
+              "run_timestamp": 0,
+              "elapsed_time": 0
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 0,
+              "elapsed_time": 0
+            },
+            "expected_bytes": 23579,
+            "actual_bytes": 23579
+          }
+        },
+        "outputs": [
+          {
+            "path": "test/feqex3.out",
+            "bytes": 1340610,
+            "sha256": "b508d4474fef341fefda8d3dc1fbdba62d5f60941c34853bfebd4cea2b6e2159"
+          },
+          {
+            "path": "test/feqex3.out.spi",
+            "bytes": 1132,
+            "sha256": "6bf9330ce8aa2fd62fc0d7fb3c8c26dd6a7d75b139498c0d747a7f9c33c06b1e"
+          },
+          {
+            "path": "test/feqex3.out.wsq",
+            "bytes": 23579,
+            "sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2"
+          },
+          {
+            "path": "test/trace-00.bin",
+            "bytes": 1225360,
+            "sha256": "c883b278e8269ee98019a3fe86a996e1c71a9de6b59b849bc1d864c4779870ed"
+          }
+        ]
+      },
+      "native_run_manifest": {
+        "purpose": "C++ research execution; equivalence requires a separate comparison.",
+        "created_utc": "2026-09-09T05:40:38.914131+00:00",
+        "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
+        "legacy_path_links": false,
+        "inputs": [
+          {
+            "path": "data/CULVERT.IN",
+            "bytes": 8263,
+            "sha256": "fbd6ce4963c88319bf79469188e34422eef5d22c58a02f9ecb5ff483287a40b0"
+          },
+          {
+            "path": "data/FEQEX1",
+            "bytes": 13850,
+            "sha256": "29c0db7065d86cb04206b35aaaf932e260126b9c00de8034e4d61cf99eae24b4"
+          },
+          {
+            "path": "data/FEQEX2",
+            "bytes": 8996,
+            "sha256": "ef75e6c0c063a155e495a5f0f8b871fd2dc4e47f5297c7e6250236efa11b743c"
+          },
+          {
+            "path": "data/FEQEX3",
+            "bytes": 9767,
+            "sha256": "f85f8cb1566c6cfcb68739e7cb5dac3896d0b7c541746c6cd45cf1f08ff31ab7"
+          },
+          {
+            "path": "data/FEQEX4",
+            "bytes": 7604,
+            "sha256": "e48e0e0ea8329c9b1e732ec77ab08773984e39e13c4ffd449b443ff44b1c5fa6"
+          },
+          {
+            "path": "data/MODEL01.INP",
+            "bytes": 7363,
+            "sha256": "07764dad7c1bc3943ee5eb8da7bcc239cd5eeddcaa0ea092db83f4b860418df8"
+          },
+          {
+            "path": "data/TYPE5.TAB",
+            "bytes": 11513,
+            "sha256": "dd15462267c4a24caa402e6257e0f903c3b677dbf48344c8eb7021fe8acd81b1"
+          },
+          {
+            "path": "data/UTLEXM.IN",
+            "bytes": 60045,
+            "sha256": "53b079f89acbf771ed164c4bfbeec888426ee17e33073778b963f65abb1d3ea8"
+          },
+          {
+            "path": "data/WEIRTABS",
+            "bytes": 4689,
+            "sha256": "e818590713f9878ded0de329fd47142df35bd9c0f73ce0c161b7593c5892ee1d"
+          },
+          {
+            "path": "data/culvert.out",
+            "bytes": 141152,
+            "sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72"
+          },
+          {
+            "path": "data/culvert.tab",
+            "bytes": 6015,
+            "sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade"
+          },
+          {
+            "path": "data/feqex1.out",
+            "bytes": 1693210,
+            "sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e"
+          },
+          {
+            "path": "data/feqex1.out.spi",
+            "bytes": 1836,
+            "sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc"
+          },
+          {
+            "path": "data/feqex1.out.wsq",
+            "bytes": 129731,
+            "sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b"
+          },
+          {
+            "path": "data/feqex2.out",
+            "bytes": 876444,
+            "sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db"
+          },
+          {
+            "path": "data/feqex2.out.spi",
+            "bytes": 1132,
+            "sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60"
+          },
+          {
+            "path": "data/feqex2.out.wsq",
+            "bytes": 15809,
+            "sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b"
+          },
+          {
+            "path": "data/feqex3.out",
+            "bytes": 1340610,
+            "sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96"
+          },
+          {
+            "path": "data/feqex3.out.spi",
+            "bytes": 1132,
+            "sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41"
+          },
+          {
+            "path": "data/feqex3.out.wsq",
+            "bytes": 23579,
+            "sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2"
+          },
+          {
+            "path": "data/feqex4.out",
+            "bytes": 1371793,
+            "sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650"
+          },
+          {
+            "path": "data/feqex4.out.spi",
+            "bytes": 1132,
+            "sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6"
+          },
+          {
+            "path": "data/feqex4.out.wsq",
+            "bytes": 23579,
+            "sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff"
+          },
+          {
+            "path": "data/utlexm.chx",
+            "bytes": 12998,
+            "sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af"
+          },
+          {
+            "path": "data/utlexm.out",
+            "bytes": 775740,
+            "sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de"
+          },
+          {
+            "path": "data/utlexm.tab",
+            "bytes": 135953,
+            "sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705"
+          }
+        ],
+        "binaries": [
+          {
+            "path": "bin/feq",
+            "bytes": 1318952,
+            "sha256": "0a73cca5fdb6afa16af3d52e174a11022bc2250db614bc050ac35aff86f5ea73"
+          },
+          {
+            "path": "bin/fequtl",
+            "bytes": 1365568,
+            "sha256": "b998f9730147edea0b2b60f9f80a74122b2cb18369c2eec0a1fbd0db1ed66588"
+          }
+        ],
+        "cases": [
+          {
+            "case": "feqex3",
+            "program": "feq",
+            "arguments": [
+              "..\\data\\feqex3",
+              "feqex3.out"
+            ],
+            "returncode": 0,
+            "elapsed_seconds": 0.2540247910656035,
+            "process_completed": true,
+            "outputs": [
+              {
+                "path": "feqex3.out",
+                "bytes": 1340610,
+                "sha256": "ad35e0520d054e699b782a06c85c749761057f0107cd34c526f6ae20bc9f3f52"
+              },
+              {
+                "path": "feqex3.out.spi",
+                "bytes": 1132,
+                "sha256": "4665975d90cc88daac273a5730fde0a3051d470d2921be8cac79c2b16fbbd800"
+              },
+              {
+                "path": "feqex3.out.wsq",
+                "bytes": 23579,
+                "sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scope": "All active solver inputs; no tolerance or masked words.",
+      "original_sha256": "8430bc57e382546f52dbdf30e6a5447b78a251f05e9ebfe01cb9febc0945536c",
+      "native_sha256": "b6e5a9324ab112d777db2410c650dd03e20f3bd5660764021ca5b32fdb84b510",
+      "original_bytes": 1365472,
+      "native_bytes": 1365472,
+      "original_records": 568,
+      "native_records": 568,
+      "exact_records": 40,
+      "exact_bytes": false,
+      "first_difference": [
+        {
+          "record": 41,
+          "original_dimensions": {
+            "blocks": 7,
+            "rows": 74,
+            "entries": 354
+          },
+          "native_dimensions": {
+            "blocks": 7,
+            "rows": 74,
+            "entries": 354
+          },
+          "fields": [
+            {
+              "field": "rhs",
+              "original_words": 74,
+              "native_words": 74,
+              "changed_words": 1,
+              "first_differences": [
+                {
+                  "zero_based_index": 44,
+                  "original_bits": "ad596dc0",
+                  "native_bits": "d3576dc0",
+                  "original": -3.7085983753204346,
+                  "native": -3.7084853649139404
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "case": "feqex4",
+      "original_trace_manifest": {
+        "original": {
+          "path": "originals/feq1061/wrdapp/FEQ_10.61/BIN/feq.exe",
+          "bytes": 1857892,
+          "sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399"
+        },
+        "traced_sha256": "ea7decd385123a7cfac7f409aaf5fd5e6aae6da82d4cbb6cd4f175e9f98c2e42",
+        "command": [
+          "wine",
+          "/Users/joshuahkuttenkuler/legacy/FEQ/build/active-trace-ex4-1/TRACE.EXE",
+          "..\\data\\feqex4",
+          "feqex4.out"
+        ],
+        "returncode": 0,
+        "hooks": [
+          {
+            "routine": "_profac_",
+            "limit": 1024,
+            "captures": [
+              {
+                "symbol": "_matcom_",
+                "offset": 0,
+                "bytes": 12
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 12,
+                "bytes": 296
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 99212,
+                "bytes": 300
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 396816,
+                "bytes": 28
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 414420,
+                "bytes": 28
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 432024,
+                "bytes": 28
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 516828,
+                "bytes": 1416
+              },
+              {
+                "symbol": "_matcom_",
+                "offset": 3492828,
+                "bytes": 296
+              }
+            ],
+            "file": "trace-00.bin",
+            "record_bytes": 2404,
+            "original_rva": 435664,
+            "hook_rva": 83648512,
+            "displaced_bytes": "83ec645553",
+            "displaced_instructions": [
+              "sub esp, 0x64",
+              "push ebp",
+              "push ebx"
+            ],
+            "replaced_header_padding": "244865616465723a202f70726a2f636f6e74726f6c2f7372632f6865616465722f77696e6e742f52",
+            "records": 568,
+            "sha256": "8430bc57e382546f52dbdf30e6a5447b78a251f05e9ebfe01cb9febc0945536c"
+          }
+        ],
+        "output_verification": {
+          "feqex4.out": {
+            "raw_equal": false,
+            "clock_masked_equal": true,
+            "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
+            "actual_sha256": "de47825ec5b8840ed5f7892597d8ad4376f7fc45761307a31fb8c07e8f4e532c",
+            "expected_clock_fields": {
+              "run_timestamp": 2,
+              "elapsed_time": 2
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 2,
+              "elapsed_time": 2
+            },
+            "expected_bytes": 1371793,
+            "actual_bytes": 1371793
+          },
+          "feqex4.out.spi": {
+            "raw_equal": false,
+            "clock_masked_equal": true,
+            "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
+            "actual_sha256": "d5c1d84105f491d1e97174be028dc662d956c5e65c90a1de6f205144b7215db3",
+            "expected_clock_fields": {
+              "run_timestamp": 1,
+              "elapsed_time": 0
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 1,
+              "elapsed_time": 0
+            },
+            "expected_bytes": 1132,
+            "actual_bytes": 1132
+          },
+          "feqex4.out.wsq": {
+            "raw_equal": true,
+            "clock_masked_equal": true,
+            "expected_sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff",
+            "actual_sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff",
+            "expected_clock_fields": {
+              "run_timestamp": 0,
+              "elapsed_time": 0
+            },
+            "actual_clock_fields": {
+              "run_timestamp": 0,
+              "elapsed_time": 0
+            },
+            "expected_bytes": 23579,
+            "actual_bytes": 23579
+          }
+        },
+        "outputs": [
+          {
+            "path": "test/feqex4.out",
+            "bytes": 1371793,
+            "sha256": "de47825ec5b8840ed5f7892597d8ad4376f7fc45761307a31fb8c07e8f4e532c"
+          },
+          {
+            "path": "test/feqex4.out.spi",
+            "bytes": 1132,
+            "sha256": "d5c1d84105f491d1e97174be028dc662d956c5e65c90a1de6f205144b7215db3"
+          },
+          {
+            "path": "test/feqex4.out.wsq",
+            "bytes": 23579,
+            "sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff"
+          },
+          {
+            "path": "test/trace-00.bin",
+            "bytes": 1365472,
+            "sha256": "8430bc57e382546f52dbdf30e6a5447b78a251f05e9ebfe01cb9febc0945536c"
+          }
+        ]
+      },
+      "native_run_manifest": {
+        "purpose": "C++ research execution; equivalence requires a separate comparison.",
+        "created_utc": "2026-09-09T05:40:39.237062+00:00",
+        "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
+        "legacy_path_links": false,
+        "inputs": [
+          {
+            "path": "data/CULVERT.IN",
+            "bytes": 8263,
+            "sha256": "fbd6ce4963c88319bf79469188e34422eef5d22c58a02f9ecb5ff483287a40b0"
+          },
+          {
+            "path": "data/FEQEX1",
+            "bytes": 13850,
+            "sha256": "29c0db7065d86cb04206b35aaaf932e260126b9c00de8034e4d61cf99eae24b4"
+          },
+          {
+            "path": "data/FEQEX2",
+            "bytes": 8996,
+            "sha256": "ef75e6c0c063a155e495a5f0f8b871fd2dc4e47f5297c7e6250236efa11b743c"
+          },
+          {
+            "path": "data/FEQEX3",
+            "bytes": 9767,
+            "sha256": "f85f8cb1566c6cfcb68739e7cb5dac3896d0b7c541746c6cd45cf1f08ff31ab7"
+          },
+          {
+            "path": "data/FEQEX4",
+            "bytes": 7604,
+            "sha256": "e48e0e0ea8329c9b1e732ec77ab08773984e39e13c4ffd449b443ff44b1c5fa6"
+          },
+          {
+            "path": "data/MODEL01.INP",
+            "bytes": 7363,
+            "sha256": "07764dad7c1bc3943ee5eb8da7bcc239cd5eeddcaa0ea092db83f4b860418df8"
+          },
+          {
+            "path": "data/TYPE5.TAB",
+            "bytes": 11513,
+            "sha256": "dd15462267c4a24caa402e6257e0f903c3b677dbf48344c8eb7021fe8acd81b1"
+          },
+          {
+            "path": "data/UTLEXM.IN",
+            "bytes": 60045,
+            "sha256": "53b079f89acbf771ed164c4bfbeec888426ee17e33073778b963f65abb1d3ea8"
+          },
+          {
+            "path": "data/WEIRTABS",
+            "bytes": 4689,
+            "sha256": "e818590713f9878ded0de329fd47142df35bd9c0f73ce0c161b7593c5892ee1d"
+          },
+          {
+            "path": "data/culvert.out",
+            "bytes": 141152,
+            "sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72"
+          },
+          {
+            "path": "data/culvert.tab",
+            "bytes": 6015,
+            "sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade"
+          },
+          {
+            "path": "data/feqex1.out",
+            "bytes": 1693210,
+            "sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e"
+          },
+          {
+            "path": "data/feqex1.out.spi",
+            "bytes": 1836,
+            "sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc"
+          },
+          {
+            "path": "data/feqex1.out.wsq",
+            "bytes": 129731,
+            "sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b"
+          },
+          {
+            "path": "data/feqex2.out",
+            "bytes": 876444,
+            "sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db"
+          },
+          {
+            "path": "data/feqex2.out.spi",
+            "bytes": 1132,
+            "sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60"
+          },
+          {
+            "path": "data/feqex2.out.wsq",
+            "bytes": 15809,
+            "sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b"
+          },
+          {
+            "path": "data/feqex3.out",
+            "bytes": 1340610,
+            "sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96"
+          },
+          {
+            "path": "data/feqex3.out.spi",
+            "bytes": 1132,
+            "sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41"
+          },
+          {
+            "path": "data/feqex3.out.wsq",
+            "bytes": 23579,
+            "sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2"
+          },
+          {
+            "path": "data/feqex4.out",
+            "bytes": 1371793,
+            "sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650"
+          },
+          {
+            "path": "data/feqex4.out.spi",
+            "bytes": 1132,
+            "sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6"
+          },
+          {
+            "path": "data/feqex4.out.wsq",
+            "bytes": 23579,
+            "sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff"
+          },
+          {
+            "path": "data/utlexm.chx",
+            "bytes": 12998,
+            "sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af"
+          },
+          {
+            "path": "data/utlexm.out",
+            "bytes": 775740,
+            "sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de"
+          },
+          {
+            "path": "data/utlexm.tab",
+            "bytes": 135953,
+            "sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705"
+          }
+        ],
+        "binaries": [
+          {
+            "path": "bin/feq",
+            "bytes": 1318952,
+            "sha256": "0a73cca5fdb6afa16af3d52e174a11022bc2250db614bc050ac35aff86f5ea73"
+          },
+          {
+            "path": "bin/fequtl",
+            "bytes": 1365568,
+            "sha256": "b998f9730147edea0b2b60f9f80a74122b2cb18369c2eec0a1fbd0db1ed66588"
+          }
+        ],
+        "cases": [
+          {
+            "case": "feqex4",
+            "program": "feq",
+            "arguments": [
+              "..\\data\\feqex4",
+              "feqex4.out"
+            ],
+            "returncode": 0,
+            "elapsed_seconds": 0.24981800001114607,
+            "process_completed": true,
+            "outputs": [
+              {
+                "path": "feqex4.out",
+                "bytes": 1371793,
+                "sha256": "9b9ff045f647417c4a794e00dbe5bc2a37fd8ea2b1f883fa7635de85d4d4b43b"
+              },
+              {
+                "path": "feqex4.out.spi",
+                "bytes": 1132,
+                "sha256": "130ec25da8bf8ea3943f832839e311140a9c085716c0edf48f5c1adaf0b78ee3"
+              },
+              {
+                "path": "feqex4.out.wsq",
+                "bytes": 23579,
+                "sha256": "b220377165f24b9d56aa28a778a97a4fe20f1842c5768e2d23993d6b24e29602"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

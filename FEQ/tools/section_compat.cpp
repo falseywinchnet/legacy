@@ -42,3 +42,14 @@ extern "C" void feq_interpolate_section_interval(integer first, integer next, in
     *beta = result.momentum_factor;
     *beta_slope = result.momentum_factor_slope;
 }
+
+extern "C" void feq_interpolate_section_interval_moment(integer first, integer next, integer slope_offset,
+    real depth, real* area, real* width, real* width_slope, real* moment, real* conveyance,
+    real* conveyance_slope, real* beta, real* beta_slope) {
+    feq_interpolate_section_interval(first,next,slope_offset,depth,area,width,width_slope,
+                                    conveyance,conveyance_slope,beta,beta_slope);
+    const feq::BitView<real> values(&ftable_,sizeof(ftable_));
+    const feq::SectionTableRow lower = read_row(values,first,slope_offset);
+    const feq::SectionTableRow upper = read_row(values,next,slope_offset);
+    *moment = feq::interpolate_section_first_moment(depth,lower,upper,values[first+5]);
+}

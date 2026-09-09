@@ -1,0 +1,50 @@
+{
+  "hooks": [
+    {
+      "routine": "_profac_",
+      "limit": 1024,
+      "captures": [
+        {
+          "symbol": "_matcom_",
+          "offset": 0,
+          "bytes": 12
+        },
+        {
+          "symbol": "_matcom_",
+          "offset": 12,
+          "bytes": 280
+        },
+        {
+          "symbol": "_matcom_",
+          "offset": 99212,
+          "bytes": 284
+        },
+        {
+          "symbol": "_matcom_",
+          "offset": 396816,
+          "bytes": 28
+        },
+        {
+          "symbol": "_matcom_",
+          "offset": 414420,
+          "bytes": 28
+        },
+        {
+          "symbol": "_matcom_",
+          "offset": 432024,
+          "bytes": 28
+        },
+        {
+          "symbol": "_matcom_",
+          "offset": 516828,
+          "bytes": 1180
+        },
+        {
+          "symbol": "_matcom_",
+          "offset": 3492828,
+          "bytes": 280
+        }
+      ]
+    }
+  ]
+}

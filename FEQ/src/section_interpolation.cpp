@@ -82,4 +82,25 @@ SectionProperties interpolate_section(float depth, const SectionTableRow& lower,
     return result;
 }
 
+float interpolate_section_first_moment(float depth, const SectionTableRow& lower,
+                                       const SectionTableRow& upper, float lower_first_moment) {
+    if (!std::isfinite(depth) || !std::isfinite(lower.depth) || !std::isfinite(upper.depth) ||
+        upper.depth <= lower.depth || depth < lower.depth || depth > upper.depth) {
+        throw std::invalid_argument("Section interpolation requires an increasing interval containing the depth.");
+    }
+    const double dy = static_cast<double>(upper.depth)-lower.depth;
+    const double h = static_cast<double>(depth)-lower.depth;
+    const double half_h = 0.5*h;
+    const double width_slope = (static_cast<double>(upper.top_width)-lower.top_width)*(1.0/dy);
+    const double wide_width = lower.top_width+h*width_slope;
+    const double wide_area = lower.area+half_h*(wide_width+lower.top_width);
+    // J(y) = J0 + h/2 * [A(y)+A0-h*(T(y)-T0)*0.1666667].
+    // The released decimal approximation to 1/6 is a binary32 constant.
+    // XLKT21 FST at 0x43b2c0 retains wide A. The subtraction at 0x43b2d2
+    // reloads T from binary32 storage; substituting wide T changes J's bits.
+    const float stored_width = static_cast<float>(wide_width);
+    const double correction = (h*(static_cast<double>(stored_width)-lower.top_width))*0.1666667f;
+    return static_cast<float>(lower_first_moment+half_h*((wide_area+lower.area)-correction));
+}
+
 } // namespace feq

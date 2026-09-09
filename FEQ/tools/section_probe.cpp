@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #if defined(_WIN32)
 #include <fcntl.h>
 #include <io.h>
@@ -40,12 +41,16 @@ void write_float(float value) {
 }
 }
 
-int main() {
+int main(int argc, char** argv) {
 #if defined(_WIN32)
     _setmode(_fileno(stdin),_O_BINARY);
     _setmode(_fileno(stdout),_O_BINARY);
 #endif
     try {
+        const bool with_moment = argc == 2 && std::string(argv[1]) == "--first-moment";
+        if (argc != 1 && !with_moment) {
+            throw std::runtime_error("Use no arguments or --first-moment.");
+        }
         while (std::cin.peek() != std::char_traits<char>::eof()) {
             const std::uint32_t mode = read_word();
             if (mode > 1) {
@@ -54,6 +59,12 @@ int main() {
             const float depth = read_float();
             const feq::SectionTableRow lower = read_row();
             const feq::SectionTableRow upper = read_row();
+            const float lower_moment = with_moment ? read_float() : 0.0f;
+            if (with_moment) {
+                // Retain the complete upper table row in the fixture even
+                // though this integral uses only the lower first moment.
+                static_cast<void>(read_float());
+            }
             const feq::SectionProperties result = feq::interpolate_section(depth,lower,upper,mode != 0);
             write_float(result.area);
             write_float(result.top_width);
@@ -62,6 +73,9 @@ int main() {
             write_float(result.conveyance_slope);
             write_float(result.momentum_factor);
             write_float(result.momentum_factor_slope);
+            if (with_moment) {
+                write_float(feq::interpolate_section_first_moment(depth,lower,upper,lower_moment));
+            }
         }
         return std::cout ? 0 : 1;
     } catch (const std::exception& error) {

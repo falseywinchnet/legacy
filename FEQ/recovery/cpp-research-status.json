@@ -1,11 +1,11 @@
 {
-  "status": "Research engines execute all six supplied cases. Full numerical equivalence remains incomplete.",
-  "created_utc": "2026-09-09T04:53:32.728220+00:00",
+  "status": "Research engines execute all six supplied cases; 10 of 17 outputs match after masking only execution clocks. All active matrices match throughout FEQEX1, FEQEX2, and FEQEX3. Full application equivalence remains incomplete.",
+  "created_utc": "2026-09-09T05:42:11.953030+00:00",
   "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
   "run_manifest": {
     "purpose": "C++ research execution; equivalence requires a separate comparison.",
-    "created_utc": "2026-09-09T04:49:33.692600+00:00",
-    "host": "macOS-26.5-arm64-arm-64bit",
+    "created_utc": "2026-09-09T05:40:12.248979+00:00",
+    "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
     "legacy_path_links": false,
     "inputs": [
       {
@@ -142,8 +142,8 @@
     "binaries": [
       {
         "path": "bin/feq",
-        "bytes": 1301288,
-        "sha256": "9d618edba70a86d648b5a2f992162ae0edfb0c202f3a74fb508dd4d174058873"
+        "bytes": 1318952,
+        "sha256": "0a73cca5fdb6afa16af3d52e174a11022bc2250db614bc050ac35aff86f5ea73"
       },
       {
         "path": "bin/fequtl",
@@ -160,23 +160,23 @@
           "feqex1.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.28226466686464846,
+        "elapsed_seconds": 0.291433917125687,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex1.out",
             "bytes": 1693210,
-            "sha256": "d426101f9e9057308a93c628be0b003d075ffeb818c80a99ecf1fadf49357b8b"
+            "sha256": "aeb1736f0e1ab0288e7cb577e384589a12f5499199ab2fe7e094c040015c34e0"
           },
           {
             "path": "feqex1.out.spi",
             "bytes": 1836,
-            "sha256": "57eb7e33bb3ff23d3c1fc5f0125e187f9145fb03ac9a9f711a9982d7912f87a0"
+            "sha256": "d625b8f9e6aabe4fe9db0735749dd323c0932d9dcb1a2977832dddf8aa570901"
           },
           {
             "path": "feqex1.out.wsq",
             "bytes": 129731,
-            "sha256": "61ed0d0adce1909450dbc6ed1df3c5602d39fc082ad8e8cc36733edf2d2af99b"
+            "sha256": "092fc060bad3853f550b168b8ff61b3a137adfde0cf2db7bcc4816c1b0d53961"
           }
         ]
       },
@@ -188,23 +188,23 @@
           "feqex2.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.024564958875998855,
+        "elapsed_seconds": 0.02566670812666416,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex2.out",
             "bytes": 876444,
-            "sha256": "af55875b297c0b8d7a9c196422001c45ceff029ad29e5d35e057362305ff84b6"
+            "sha256": "23729f0f8bd99250591119670012511bc132ef945db104950ef580e3c2f8e93b"
           },
           {
             "path": "feqex2.out.spi",
             "bytes": 1132,
-            "sha256": "7b011a0e1e66e910eadae20f992496dc4cb4e1ba3a01247483ced2d4d9fe9b60"
+            "sha256": "93388ee39d6009cee0bc2af0797c803b78fb1d52a553cd4c688308e6e22ad250"
           },
           {
             "path": "feqex2.out.wsq",
             "bytes": 15809,
-            "sha256": "e98e39a9be377a5d91d4352fad4e33109a76bd40d316f1f1b859cb7f8b1040ee"
+            "sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b"
           }
         ]
       },
@@ -216,23 +216,23 @@
           "feqex3.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.032461042050272226,
+        "elapsed_seconds": 0.03286904189735651,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex3.out",
             "bytes": 1340610,
-            "sha256": "85540928c6a809511e7b402514bebdbf399383af1522a58187e34d1d1a83b5c1"
+            "sha256": "c5f143a6d962935fa5f53bea6f4b73932d7ca61e3a99d6f94c3cbfd90035eef5"
           },
           {
             "path": "feqex3.out.spi",
             "bytes": 1132,
-            "sha256": "fa381eb2b815ba268bdb4ed11d60ae3aecf4315092e81b5458d91460e63ebc23"
+            "sha256": "e8c2c44a8bd982974526d894f9d2f932edac6cb2d1b345a18944f0bc724ba668"
           },
           {
             "path": "feqex3.out.wsq",
             "bytes": 23579,
-            "sha256": "1f3cc81e8f13dfbb7ce602d237941dd7f4a3399394e791f7e868e93239163c56"
+            "sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2"
           }
         ]
       },
@@ -244,23 +244,23 @@
           "feqex4.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.03217720799148083,
+        "elapsed_seconds": 0.032351542031392455,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex4.out",
             "bytes": 1371793,
-            "sha256": "ed56dc1993cded7725dd37196462d2d36864e25dd58b225f6e61fef4f48209d5"
+            "sha256": "2fdc5f2fc3a4b6e0ba0013cbbbf89544e2793f0dde1089f76098eab290b54fa9"
           },
           {
             "path": "feqex4.out.spi",
             "bytes": 1132,
-            "sha256": "f54ef6b322a665d48b72f9b456697bc90ba1f523afb8b9c8a0c9028c9eb2a9b0"
+            "sha256": "89787e7d6454ae1345d2a3ec969bd64fafd8f33be2d7fa03314635ef2539306f"
           },
           {
             "path": "feqex4.out.wsq",
             "bytes": 23579,
-            "sha256": "b3a05301e042eebef28768a256bfd30b09d7fec5875c589133a7f43380c9031d"
+            "sha256": "b220377165f24b9d56aa28a778a97a4fe20f1842c5768e2d23993d6b24e29602"
           }
         ]
       },
@@ -273,7 +273,7 @@
           "utlexm.tab"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.29155616695061326,
+        "elapsed_seconds": 0.29791591595858335,
         "process_completed": true,
         "outputs": [
           {
@@ -284,12 +284,12 @@
           {
             "path": "utlexm.out",
             "bytes": 775759,
-            "sha256": "7119b1ec7b7efd4646f72e8669fe1b782adf8e007ffe3dda99206ede8cd6ccbd"
+            "sha256": "03aa3f3bc03a379ab03f74d25465e028af6b8c7012fb880692328f479a09e970"
           },
           {
             "path": "utlexm.tab",
             "bytes": 135953,
-            "sha256": "36f0d5cc08069c3ba417052cc656ef0f82457d264e949da89997074248f48c12"
+            "sha256": "4b5549c4946b7a37b081daadeb925fd90659849af940e01da0facf74a37a99c3"
           }
         ]
       },
@@ -302,18 +302,18 @@
           "culvert.tab"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.01740658306516707,
+        "elapsed_seconds": 0.017148624872788787,
         "process_completed": true,
         "outputs": [
           {
             "path": "culvert.out",
             "bytes": 141152,
-            "sha256": "a506a15915d092cdcca58377b6b2132ba9d1827caa92c5c0755720902ad49925"
+            "sha256": "a1e5e791acdd4847d821280b803807f005534517bafe008773969db8803b096f"
           },
           {
             "path": "culvert.tab",
             "bytes": 6015,
-            "sha256": "e40d75ea4f576db784ffb50bfb4ccf8fff912a246e5435711f87f0273f2fc901"
+            "sha256": "98cae4a30cd11f00d520bd8b7bc9f3345ba77d6458a7c7ed819078f9a082d0d5"
           }
         ]
       }
@@ -323,9 +323,9 @@
     {
       "path": "feqex1.out",
       "raw_equal": false,
-      "clock_masked_equal": false,
+      "clock_masked_equal": true,
       "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
-      "actual_sha256": "d426101f9e9057308a93c628be0b003d075ffeb818c80a99ecf1fadf49357b8b",
+      "actual_sha256": "aeb1736f0e1ab0288e7cb577e384589a12f5499199ab2fe7e094c040015c34e0",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -335,20 +335,14 @@
         "elapsed_time": 2
       },
       "expected_bytes": 1693210,
-      "actual_bytes": 1693210,
-      "first_masked_difference": {
-        "byte_offset": 30892,
-        "line": 627,
-        "expected_context": "b'0 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-6.517E-03    Rel bal=BAL/(S2+BNQ)=-2.081E-08\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n I'",
-        "actual_context": "b'0 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-6.660E-03    Rel bal=BAL/(S2+BNQ)=-2.127E-08\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n I'"
-      }
+      "actual_bytes": 1693210
     },
     {
       "path": "feqex1.out.spi",
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
-      "actual_sha256": "57eb7e33bb3ff23d3c1fc5f0125e187f9145fb03ac9a9f711a9982d7912f87a0",
+      "actual_sha256": "d625b8f9e6aabe4fe9db0735749dd323c0932d9dcb1a2977832dddf8aa570901",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -365,7 +359,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
-      "actual_sha256": "61ed0d0adce1909450dbc6ed1df3c5602d39fc082ad8e8cc36733edf2d2af99b",
+      "actual_sha256": "092fc060bad3853f550b168b8ff61b3a137adfde0cf2db7bcc4816c1b0d53961",
       "expected_clock_fields": {
         "run_timestamp": 0,
         "elapsed_time": 0
@@ -386,9 +380,9 @@
     {
       "path": "feqex2.out",
       "raw_equal": false,
-      "clock_masked_equal": false,
+      "clock_masked_equal": true,
       "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
-      "actual_sha256": "af55875b297c0b8d7a9c196422001c45ceff029ad29e5d35e057362305ff84b6",
+      "actual_sha256": "23729f0f8bd99250591119670012511bc132ef945db104950ef580e3c2f8e93b",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -398,20 +392,14 @@
         "elapsed_time": 2
       },
       "expected_bytes": 876444,
-      "actual_bytes": 876444,
-      "first_masked_difference": {
-        "byte_offset": 20591,
-        "line": 491,
-        "expected_context": "b'202E+00  1.00183E+02  2.70000E+01\\r\\n     3  2.41131E+00  1.17683E-02  9.85089E+01  2.70000E+01\\r\\n\\r\\n Backwater analysis for branch#    3\\r\\n  STATION IT     YL      QL      AL     TL   '",
-        "actual_context": "b'202E+00  1.00183E+02  2.70000E+01\\r\\n     3  2.41131E+00  1.17702E-02  9.85089E+01  2.70000E+01\\r\\n\\r\\n Backwater analysis for branch#    3\\r\\n  STATION IT     YL      QL      AL     TL   '"
-      }
+      "actual_bytes": 876444
     },
     {
       "path": "feqex2.out.spi",
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
-      "actual_sha256": "7b011a0e1e66e910eadae20f992496dc4cb4e1ba3a01247483ced2d4d9fe9b60",
+      "actual_sha256": "93388ee39d6009cee0bc2af0797c803b78fb1d52a553cd4c688308e6e22ad250",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -425,10 +413,10 @@
     },
     {
       "path": "feqex2.out.wsq",
-      "raw_equal": false,
-      "clock_masked_equal": false,
+      "raw_equal": true,
+      "clock_masked_equal": true,
       "expected_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
-      "actual_sha256": "e98e39a9be377a5d91d4352fad4e33109a76bd40d316f1f1b859cb7f8b1040ee",
+      "actual_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
       "expected_clock_fields": {
         "run_timestamp": 0,
         "elapsed_time": 0
@@ -438,20 +426,14 @@
         "elapsed_time": 0
       },
       "expected_bytes": 15809,
-      "actual_bytes": 15809,
-      "first_masked_difference": {
-        "byte_offset": 4410,
-        "line": 119,
-        "expected_context": "b' 106.760 106.760 106.760\\r\\n   6.500000   169.4   374.8   544.2\\r\\n 1990/ 1/ 1 106.799 106.799 106.799\\r\\n   6.625000   173.1   371.9   545.0\\r\\n 1990/ 1/ 1 106.825 106.825 106.825\\r\\n   6.7'",
-        "actual_context": "b' 106.760 106.760 106.760\\r\\n   6.500000   169.4   374.8   544.3\\r\\n 1990/ 1/ 1 106.799 106.799 106.799\\r\\n   6.625000   173.1   371.9   545.0\\r\\n 1990/ 1/ 1 106.825 106.825 106.825\\r\\n   6.7'"
-      }
+      "actual_bytes": 15809
     },
     {
       "path": "feqex3.out",
       "raw_equal": false,
-      "clock_masked_equal": false,
+      "clock_masked_equal": true,
       "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
-      "actual_sha256": "85540928c6a809511e7b402514bebdbf399383af1522a58187e34d1d1a83b5c1",
+      "actual_sha256": "c5f143a6d962935fa5f53bea6f4b73932d7ca61e3a99d6f94c3cbfd90035eef5",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -461,20 +443,14 @@
         "elapsed_time": 2
       },
       "expected_bytes": 1340610,
-      "actual_bytes": 1340610,
-      "first_masked_difference": {
-        "byte_offset": 35565,
-        "line": 727,
-        "expected_context": "b'0 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-5.704E-01    Rel bal=BAL/(S2+BNQ)=-3.165E-08\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n I'",
-        "actual_context": "b'0 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-5.662E-01    Rel bal=BAL/(S2+BNQ)=-3.142E-08\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n I'"
-      }
+      "actual_bytes": 1340610
     },
     {
       "path": "feqex3.out.spi",
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
-      "actual_sha256": "fa381eb2b815ba268bdb4ed11d60ae3aecf4315092e81b5458d91460e63ebc23",
+      "actual_sha256": "e8c2c44a8bd982974526d894f9d2f932edac6cb2d1b345a18944f0bc724ba668",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -488,10 +464,10 @@
     },
     {
       "path": "feqex3.out.wsq",
-      "raw_equal": false,
-      "clock_masked_equal": false,
+      "raw_equal": true,
+      "clock_masked_equal": true,
       "expected_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
-      "actual_sha256": "1f3cc81e8f13dfbb7ce602d237941dd7f4a3399394e791f7e868e93239163c56",
+      "actual_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
       "expected_clock_fields": {
         "run_timestamp": 0,
         "elapsed_time": 0
@@ -501,20 +477,14 @@
         "elapsed_time": 0
       },
       "expected_bytes": 23579,
-      "actual_bytes": 23579,
-      "first_masked_difference": {
-        "byte_offset": 842,
-        "line": 23,
-        "expected_context": "b'9.0\\r\\n 1990/ 1/ 1 106.943 106.943 106.943\\r\\n   0.750000    20.2    45.2    29.3\\r\\n                                   \\r\\n                                   \\r\\n 1990/ 1/ 1 106.950 106.950'",
-        "actual_context": "b'9.0\\r\\n 1990/ 1/ 1 106.943 106.943 106.943\\r\\n   0.750000    20.1    45.2    29.3\\r\\n                                   \\r\\n                                   \\r\\n 1990/ 1/ 1 106.950 106.950'"
-      }
+      "actual_bytes": 23579
     },
     {
       "path": "feqex4.out",
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
-      "actual_sha256": "ed56dc1993cded7725dd37196462d2d36864e25dd58b225f6e61fef4f48209d5",
+      "actual_sha256": "2fdc5f2fc3a4b6e0ba0013cbbbf89544e2793f0dde1089f76098eab290b54fa9",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -526,10 +496,10 @@
       "expected_bytes": 1371793,
       "actual_bytes": 1371793,
       "first_masked_difference": {
-        "byte_offset": 24024,
-        "line": 564,
-        "expected_context": "b'46538E-01  1.24208E+02  5.40000E+01\\r\\n     4  2.65272E+00  7.24792E-05  1.24095E+02  5.40000E+01\\r\\n\\r\\n Backwater analysis for branch#    3\\r\\n  STATION IT     YL      QL      AL     TL '",
-        "actual_context": "b'46538E-01  1.24208E+02  5.40000E+01\\r\\n     4  2.65272E+00  7.62939E-05  1.24095E+02  5.40000E+01\\r\\n\\r\\n Backwater analysis for branch#    3\\r\\n  STATION IT     YL      QL      AL     TL '"
+        "byte_offset": 55874,
+        "line": 1022,
+        "expected_context": "b'5q 1.5E+01      3 1.2E+03    33        11\\r\\n    2 4.6E-04    1    110q 4.8E-01      5 1.3E+00     0        21\\r\\n CSUR= 0.0E+00 AT ND=   0:     0 RLTQ= 0.0E+00 AT ND=   0:     0 DT/IT'",
+        "actual_context": "b'5q 1.5E+01      3 1.2E+03    33        11\\r\\n    2 4.6E-04    2    200q 4.8E-01      5 1.3E+00     0        23\\r\\n CSUR= 0.0E+00 AT ND=   0:     0 RLTQ= 0.0E+00 AT ND=   0:     0 DT/IT'"
       }
     },
     {
@@ -537,7 +507,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
-      "actual_sha256": "f54ef6b322a665d48b72f9b456697bc90ba1f523afb8b9c8a0c9028c9eb2a9b0",
+      "actual_sha256": "89787e7d6454ae1345d2a3ec969bd64fafd8f33be2d7fa03314635ef2539306f",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -554,7 +524,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff",
-      "actual_sha256": "b3a05301e042eebef28768a256bfd30b09d7fec5875c589133a7f43380c9031d",
+      "actual_sha256": "b220377165f24b9d56aa28a778a97a4fe20f1842c5768e2d23993d6b24e29602",
       "expected_clock_fields": {
         "run_timestamp": 0,
         "elapsed_time": 0
@@ -566,10 +536,10 @@
       "expected_bytes": 23579,
       "actual_bytes": 23579,
       "first_masked_difference": {
-        "byte_offset": 10402,
-        "line": 281,
-        "expected_context": "b' 1 107.338 107.110 105.476\\r\\n  10.500000  1948.4  -429.3   212.9\\r\\n 1990/ 1/ 1 107.358 107.145 105.504\\r\\n  10.583333  1914.2  -403.0   223.4\\r\\n 1990/ 1/ 1 107.374 107.173 105.528\\r\\n  10'",
-        "actual_context": "b' 1 107.338 107.110 105.476\\r\\n  10.500000  1948.4  -429.3   213.0\\r\\n 1990/ 1/ 1 107.358 107.145 105.504\\r\\n  10.583333  1914.2  -403.0   223.4\\r\\n 1990/ 1/ 1 107.374 107.173 105.528\\r\\n  10'"
+        "byte_offset": 9204,
+        "line": 249,
+        "expected_context": "b'0.0\\r\\n 1990/ 1/ 1 106.174 105.347 105.162\\r\\n   9.250000  2625.8 -1023.5     0.0\\r\\n 1990/ 1/ 1 106.172 105.539 105.181\\r\\n   9.333333  2590.0 -1019.2     0.0\\r\\n 1990/ 1/ 1 106.326 105.727'",
+        "actual_context": "b'0.0\\r\\n 1990/ 1/ 1 106.174 105.347 105.162\\r\\n   9.250000  2625.9 -1023.5     0.0\\r\\n 1990/ 1/ 1 106.172 105.539 105.181\\r\\n   9.333333  2590.0 -1019.2     0.0\\r\\n 1990/ 1/ 1 106.326 105.727'"
       }
     },
     {
@@ -577,7 +547,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
-      "actual_sha256": "7119b1ec7b7efd4646f72e8669fe1b782adf8e007ffe3dda99206ede8cd6ccbd",
+      "actual_sha256": "03aa3f3bc03a379ab03f74d25465e028af6b8c7012fb880692328f479a09e970",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -600,7 +570,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
-      "actual_sha256": "36f0d5cc08069c3ba417052cc656ef0f82457d264e949da89997074248f48c12",
+      "actual_sha256": "4b5549c4946b7a37b081daadeb925fd90659849af940e01da0facf74a37a99c3",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -640,7 +610,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72",
-      "actual_sha256": "a506a15915d092cdcca58377b6b2132ba9d1827caa92c5c0755720902ad49925",
+      "actual_sha256": "a1e5e791acdd4847d821280b803807f005534517bafe008773969db8803b096f",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -663,7 +633,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade",
-      "actual_sha256": "e40d75ea4f576db784ffb50bfb4ccf8fff912a246e5435711f87f0273f2fc901",
+      "actual_sha256": "98cae4a30cd11f00d520bd8b7bc9f3345ba77d6458a7c7ed819078f9a082d0d5",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -741,7 +711,7 @@
         "file": "brnmat.cpp",
         "function": "xxlkt20_",
         "component": "src/section_interpolation.cpp",
-        "verification": "240 cases, 480 original calls, all seven output words exact"
+        "verification": "Original-executable fixture replay; see tests/reference/section_interpolation and section_first_moment."
       },
       {
         "file": "brnmat.cpp",
@@ -754,10 +724,52 @@
         "evidence": "recovery/probes/branch-distance-trace.json"
       },
       {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "rounding": "Restore original register precision and explicit binary32 stores.",
+        "evidence": "recovery/NUMERICAL_PROBES.md"
+      },
+      {
+        "file": "exnmat.cpp",
+        "function": "contrl_",
+        "rounding": "Restore original register precision and explicit binary32 stores.",
+        "evidence": "recovery/NUMERICAL_PROBES.md"
+      },
+      {
+        "file": "fqshrftb.cpp",
+        "function": "interp_",
+        "rounding": "Restore original register precision and explicit binary32 stores.",
+        "evidence": "recovery/NUMERICAL_PROBES.md"
+      },
+      {
+        "file": "fqshrftb.cpp",
+        "function": "lktab_",
+        "component": "src/table_interpolation.cpp",
+        "verification": "360 original-executable fixtures; all value and derivative bits exact."
+      },
+      {
         "file": "fqshrftb.cpp",
         "function": "xlkt20_",
         "component": "src/section_interpolation.cpp",
-        "verification": "240 cases, 480 original calls, all seven output words exact"
+        "verification": "Original-executable fixture replay; see tests/reference/section_interpolation and section_first_moment."
+      },
+      {
+        "file": "fqshrftb.cpp",
+        "function": "xlkt21_",
+        "component": "src/section_interpolation.cpp",
+        "verification": "Original-executable fixture replay; see tests/reference/section_interpolation and section_first_moment."
+      },
+      {
+        "file": "ntmatrix.cpp",
+        "function": "bdyflw_",
+        "rounding": "Restore original register precision and explicit binary32 stores.",
+        "evidence": "recovery/NUMERICAL_PROBES.md"
+      },
+      {
+        "file": "runinit.cpp",
+        "function": "sfpsbm_",
+        "rounding": "Retained scalar and power temporaries; separate REAL stores for output arguments.",
+        "evidence": "recovery/assembly/feq/_sfpsbm_.asm"
       }
     ],
     "source_files": [
@@ -1568,12 +1580,20 @@
   },
   "independent_components": [
     {
+      "source": "src/md5.cpp",
+      "sha256": "d6bb87806da3143f0ef1e0bcd0bdbd55313faf18877296122404a68e6833d11e"
+    },
+    {
       "source": "src/profile_matrix.cpp",
       "sha256": "c7d076f0db1fc662c715acf5c79a590ca410f034e5488a5d7f06b882447ae8fb"
     },
     {
       "source": "src/section_interpolation.cpp",
-      "sha256": "dca68000de242fd4a857079021f8f8f9dcfcdf0fd71d41ead255cd233f130608"
+      "sha256": "0316e89c1a6ec3453513fe83078426d99e2388544ba3e42416ae256415d85c56"
+    },
+    {
+      "source": "src/table_interpolation.cpp",
+      "sha256": "89e9e05005916cf4417c08871c9f23f7724a295563102cff54bfdd1c3a7e96f6"
     },
     {
       "source": "tools/profile_compat.cpp",
@@ -1581,8 +1601,719 @@
     },
     {
       "source": "tools/section_compat.cpp",
-      "sha256": "145d4296d83a63d5a30dd2864803f02f49862be21b04407259ce371be2a81aa5"
+      "sha256": "63aa92e9f4ee224b34ad4b1e25972f6bb3031a9ff53c4e672460d2fd04669a4c"
+    },
+    {
+      "source": "tools/table_compat.cpp",
+      "sha256": "d59a741ef18d4b965c8b4c5375d1c402a789d38877897f651e1bd5e56f6eb672"
     }
   ],
-  "first_matrix_comparison": "matrix-entry-comparison.json"
+  "first_matrix_comparison": "matrix-entry-comparison.json",
+  "active_matrix_comparison": "model-active-matrices.json",
+  "link_manifest": {
+    "status": "Research candidate; whole-model acceptance requires independent comparison.",
+    "matrix_trace": true,
+    "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
+    "compile_commands": [
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat",
+        "-DFEQ_RESEARCH_MATRIX_TRACE",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/md5.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/md5.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat",
+        "-DFEQ_RESEARCH_MATRIX_TRACE",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/profile_matrix.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/profile_matrix.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat",
+        "-DFEQ_RESEARCH_MATRIX_TRACE",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_interpolation.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/section_interpolation.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat",
+        "-DFEQ_RESEARCH_MATRIX_TRACE",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/table_interpolation.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/table_interpolation.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat",
+        "-DFEQ_RESEARCH_MATRIX_TRACE",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/profile_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/profile_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat",
+        "-DFEQ_RESEARCH_MATRIX_TRACE",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/section_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/section_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat",
+        "-DFEQ_RESEARCH_MATRIX_TRACE",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/table_compat.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/table_compat.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat",
+        "-DFEQ_RESEARCH_MATRIX_TRACE",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/probe_support.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/probe_support.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat",
+        "-DFEQ_RESEARCH_MATRIX_TRACE",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/tools/matrix_trace.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/matrix_trace.o"
+      ]
+    ],
+    "link_command": [
+      "c++",
+      "-o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/binsearch.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/block.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/brnmat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/chkinput.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/common.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/debug.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dmpmc.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/doeqz.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dtendlay.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dual_source.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dynamic_storage.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/exnmat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/feq.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrarg.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrftb.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrinl.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrlin.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrplg.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrstr.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrtdl.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrtim.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrunt.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/ftlookup.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/genscn.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/getcode.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/getsvn_msw_lf95.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/hecdmy.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/hi_iq_ns.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/home_name.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/input.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/inputuf.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/iounits.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/lf95_ms_s_npf.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/linuxcr.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/locsubs.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/macro.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/makpat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/miscfeq.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/mkdir_fun.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/newlookup.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/ntmatrix.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/ntwmxstr.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/nxttok.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/output.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/putpat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/pwd_msw_lf95.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/runinit.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/schematic.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/select.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/sideweir.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/svn_report.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/tableid.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/tdtchk_free.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/timeman.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/md5.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/profile_matrix.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/section_interpolation.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/table_interpolation.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/profile_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/section_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/table_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/probe_support.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/matrix_trace.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/libf2c.a"
+    ],
+    "inputs": [
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/binsearch.cpp",
+        "source_sha256": "5a6791d99b882ea1ca06b46ab058fe08d7c1e8800ec3aa2277ca7359efd5d47b",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/binsearch.o",
+        "object_sha256": "3ce0b04e05fcaa1cc8d6c4fc33b0db493170059e663309c7a2200720d883557f"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/block.cpp",
+        "source_sha256": "b21919efe2b90b5a6decdc93385dbc9d5a5f66e4f4546766803144a46bf7a500",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/block.o",
+        "object_sha256": "4a485d27798e737778f0166ffc62a517cee2eca4dcb35c5120fdcca0f650820f"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/brnmat.cpp",
+        "source_sha256": "8683deb48447965a4f94e9b70234ad6b4d7b50884874dc199b43aae5beca2f4e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/brnmat.o",
+        "object_sha256": "d465150a7e711d13af3ecfe19e27bef44f9ae908d9d1b9c1b2bd532d7726bc61"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/chkinput.cpp",
+        "source_sha256": "40c87e7f78c11c14b89faa60e62bb6e296ddfe562c54963f0199e3aa32345d8e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/chkinput.o",
+        "object_sha256": "495a37f4db05e20ebb2de1465c1585c078b49068cf6f66ca34a62c6d21ed2c9a"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/common.cpp",
+        "source_sha256": "73b57174abd1b095670c8d5c36fb4250193056984cbb1f99a5b12b81787b2b5a",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/common.o",
+        "object_sha256": "42c7390ceea1c40dcbbf14e94565c68e3725e2f11547697166c80f4574b58d1d"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/debug.cpp",
+        "source_sha256": "00ed52eaac2e259b07bcd851ee15757b78efbbfbeb31d5d56089e9ef3147d99f",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/debug.o",
+        "object_sha256": "7d2f1c4d04907216724650da39e2708b372360c0c6275e32254466334bef5245"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dmpmc.cpp",
+        "source_sha256": "3faeebb9da3402ed3a9289efed0d778f38cc258b29de839f798366b42af26637",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dmpmc.o",
+        "object_sha256": "59f150425d2fbbf77e5e4f4c0d0d43fac7a378f523890635624ddab586bbe1da"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/doeqz.cpp",
+        "source_sha256": "4581a78ec884732172be2ff9c6084915bb5c0efe8aa84397d2de3da0647625a5",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/doeqz.o",
+        "object_sha256": "d5d3ec1fc63222c10aeedd18b39dbbe22a8d098924afc16411080993e7ef1a4e"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dtendlay.cpp",
+        "source_sha256": "baa943b5c4609a3529b0f7074f89f7e1d6801702f9bb92dc76d81a55bb2ebe39",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dtendlay.o",
+        "object_sha256": "33068d4dc09fafc9a7195f21f628f8e9adba4e92461dfbaa252fd02bed817435"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dual_source.cpp",
+        "source_sha256": "525f19ed96348727e30e53b639fcc78e869dcfa7c3801cf7358ca250a323f510",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dual_source.o",
+        "object_sha256": "3becf89e24662bbd6605f567eb01b58376ea472c90d74fc1cc4eb753337fb302"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dynamic_storage.cpp",
+        "source_sha256": "e61e1cb32e2438a4b28d0739487f2142f5c3529b35b8d76b3bc40cca28fc3273",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/dynamic_storage.o",
+        "object_sha256": "a9c5fb9b2f4dd711f96801f8ba108eb3d8e1519ef5877a81492b4bacd0fd764f"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/exnmat.cpp",
+        "source_sha256": "1b5d9f678f49fee4041f1805a4ba2774893fd39aaba9b2b8365a1e3ffe936c99",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/exnmat.o",
+        "object_sha256": "c5707a91d5cf85208ae0b0bb21d98bfdb4f26df31f3a0ce221169e232f1d6aff"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/feq.cpp",
+        "source_sha256": "70ebcc244aaede2a4251fa91eeff55ebdfef5221a62422dd0c1561aa94974ae0",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/feq.o",
+        "object_sha256": "9a436264693d85e96f6b700d647ecab2252c96fb81497f8684fa21766b21d823"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrarg.cpp",
+        "source_sha256": "7ac0ea82b3b197095b5551f1ef8085e257d2bdd6866bb0d57a64eb8999c3645e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrarg.o",
+        "object_sha256": "cd85a6055f5914e6ac476b70af5efeeca41b0409f552064ad8e6c5f7cc6dd5cc"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrftb.cpp",
+        "source_sha256": "7ddc0acafed5e2db24dd6be1c54758ee21e0e2c7761a9b0aeddd3cbf9d70f28b",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrftb.o",
+        "object_sha256": "707274ca1e4e68e750f2ed5ae78dc7331f9069a69ec6349640efe9ed8bc30e3a"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrinl.cpp",
+        "source_sha256": "74d1d00ad7fa85a3c48c42f4910acec19a876e1bdf50756fb3cf231be6e0053b",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrinl.o",
+        "object_sha256": "0824838b5a301f08ceba1d961bfbec57a69d7e7761ba2e0e1082f8666c826006"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrlin.cpp",
+        "source_sha256": "ada5fd3081302d280fde00f2a6dc5992967b773427ffababc05ebfad266c0ef7",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrlin.o",
+        "object_sha256": "2ec0f26f4a688631502f5b6aca68f1eb8d43e0a22529e922728221e3b210359a"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrplg.cpp",
+        "source_sha256": "bf67f19bf68e42c4d1c23490295ae6d512d1ca6c55fda04f02dc4994daea5b1f",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrplg.o",
+        "object_sha256": "aefe4dfa7c7d4d778687518b09278aac80d6201d177675c7f7137910497b0e5b"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrstr.cpp",
+        "source_sha256": "f566adb62da438cf4f9c30126595a0dc893462da22aa8f6211f1a3a51f709c71",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrstr.o",
+        "object_sha256": "43b0729aa079cb11a81ae164cfbbc9c92e97523efe4ff1070efcfdb3174ba9e3"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrtdl.cpp",
+        "source_sha256": "421f208c79ad925184a0c2ba2f24e22a38072b173c4a8a1c6ac47aac373caf01",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrtdl.o",
+        "object_sha256": "77256cd100e3a4308c6a703567153e06852e5e851035abb3070a00c63bbb713d"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrtim.cpp",
+        "source_sha256": "b855c7cd9c1a481249a7350a4fcee20376de87d28886a15871eed037035bfd41",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrtim.o",
+        "object_sha256": "f792dbabb76da539d33c4098fdc0c6f93d7da191ba21fb4656b6d9a4dcc74dbe"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrunt.cpp",
+        "source_sha256": "2886b0baba483164aa75c50c30f29322afa68552cd78394cd76c50ee077fe84e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/fqshrunt.o",
+        "object_sha256": "b34c9e057f841cf6583b477dc59c662e6bb411e08019989976233485ba4ec74e"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/ftlookup.cpp",
+        "source_sha256": "b48c672598fdfb19ff230fbc889976f139c313d34a752cf47e9dc06e5e153458",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/ftlookup.o",
+        "object_sha256": "12eac8a74f6b3ee88da54d110a06f6c5f8202ac865e0bcd9d48b8cabdbee67ab"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/genscn.cpp",
+        "source_sha256": "2146ec44d1f046e0fae6c4732b50d549b7995e9f5ccc5668a2ca26373fd73fc4",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/genscn.o",
+        "object_sha256": "bc6d4e6e7f5f9da41eedd42b6d03ef563cf0941f38ed159d85202bb9603e2ceb"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/getcode.cpp",
+        "source_sha256": "b2edf705a1cc62736ddd8c83b7570f1c0501d05334c747d26706df4a843dda8e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/getcode.o",
+        "object_sha256": "ce40b09d0b78f201a1a16a6d5793ec8589438ffb1df6e988226a3a2263337cb2"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/getsvn_msw_lf95.cpp",
+        "source_sha256": "8c9461a1d8760b8307480f95120b132144e407e21959ada658c2bdc774e52b88",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/getsvn_msw_lf95.o",
+        "object_sha256": "54389061ca399fc5b00c4cbee07a3c77e081ae60de0e1e4eff8e0d7d2eda8528"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/hecdmy.cpp",
+        "source_sha256": "01ec56e197652e236f5d37a9825428145cdfb287e7db0de25b9cc68cc7cd101e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/hecdmy.o",
+        "object_sha256": "343b61b7945f423ad6ec43f978fa3ae1b32e3075d3ea24dd8223258038199bc8"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/hi_iq_ns.cpp",
+        "source_sha256": "b92941eaeea6a023665b215b815e19f6e6529fbc3bc982a866da023766211325",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/hi_iq_ns.o",
+        "object_sha256": "e4c242bf579f9d7939d76f491e04c80131ff637b6fa5c3d9e673df7439ed2acc"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/home_name.cpp",
+        "source_sha256": "6b2002f92149229fefe64a17e194f3f351be3bcf0a577ca663672cd3f667624f",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/home_name.o",
+        "object_sha256": "d48eb22903e2decc84c975673cbae9ad14cc7d1c5638aae2e6f6878df1368fb6"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/input.cpp",
+        "source_sha256": "32bc84501577f250e4b241d17e39fd0a70140a85e75592088a847564d4f564af",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/input.o",
+        "object_sha256": "f672e499c5b17f290a068fa7de5975e5c40530eceacd4a6bfaada6b36a09e5ec"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/inputuf.cpp",
+        "source_sha256": "0ebd2af4e3fab88047fb17c86426209a0ad553c5a4a8d354747f6cca8016e72e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/inputuf.o",
+        "object_sha256": "33b5146dadc4f5ae7f98ab07fc86f5f31b1bac5286a175dc1eea388966f088de"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/iounits.cpp",
+        "source_sha256": "832c17db5e85fdd3bec83f2b290b5acbf6e25e49608ec23207f9c734cb1de7c5",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/iounits.o",
+        "object_sha256": "ea8c11ab7cfc2593402ea3e8795186f3c4ec484d42d24fa13ec9f934ffbdd32e"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/lf95_ms_s_npf.cpp",
+        "source_sha256": "7150561583e3cc8aff59f769aacb7000b4cc7b9b215a2c2ea1e571f3bfdb47c3",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/lf95_ms_s_npf.o",
+        "object_sha256": "acbfa384b36a48af6888dce697bd742a6fc49830dbf359557cb63582cdc317e7"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/linuxcr.cpp",
+        "source_sha256": "bc0eb625c47638902508cac4a75e6e73594c4a450fd7bd1aac7b3d8c5c5aaf0e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/linuxcr.o",
+        "object_sha256": "9080dd13670991cf5abe9030bb7ff7cc66dab9b80b4461cf8d34cd23eff8bfb9"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/locsubs.cpp",
+        "source_sha256": "01a91da53ea73658770c5b640660faaee3646ec997a290ab58cbe2efa7be1b8a",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/locsubs.o",
+        "object_sha256": "0d81318ae20c63884e7c1d2753d5cecd34bf7f0068b3b93599ea21a11dd039a3"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/macro.cpp",
+        "source_sha256": "83eb74ddc0c3f2327a9071015e72b17e2ab0b9415e10e5fab3bdcb8a3779b120",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/macro.o",
+        "object_sha256": "cbd828f51a90e7c7c4c253595a428c19d03e3c4d7d148f6923f169fcf56f0760"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/makpat.cpp",
+        "source_sha256": "4150154107cda42bb7381a1be3c58d85c032e700f45eb6a648741f115c540643",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/makpat.o",
+        "object_sha256": "db875fda57dd51e5e6b2d24d04e9d12732ce1e935a87913ab05725a6be8259dd"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/miscfeq.cpp",
+        "source_sha256": "1045062b00a96be76a89531d58eeb13e12e4998b94e4b95cc750b7c1b285a177",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/miscfeq.o",
+        "object_sha256": "2918bddfe43ae42d4135ee92aef089cd2bdd69b2743693df5004acc6707c5e55"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/mkdir_fun.cpp",
+        "source_sha256": "5decc0b22b28a40b6f2bb23f2a0be5c2a5f1f2e42960d30b7706eb03722f7042",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/mkdir_fun.o",
+        "object_sha256": "05db4e183892113525e9f765e16a1aaae6423a12ac48f35e5979a43c07549e7a"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/newlookup.cpp",
+        "source_sha256": "24765bf7f97a395d93e6bb228f0aac58e56d40d1e9555d96821b7951acaf954e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/newlookup.o",
+        "object_sha256": "00108a45731903738fa0eee925bc6ef0afa4849a00b1d1fc69a347f068ce16e3"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/ntmatrix.cpp",
+        "source_sha256": "4699307922540dd5a1198d001eb4470d189a8dd07da155b5ea8eeefe2eb5498e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/ntmatrix.o",
+        "object_sha256": "a3b1387944a8dea372a6b6c5cf98cc3fffbf7b6a9675a0740e085b3c4094161a"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/ntwmxstr.cpp",
+        "source_sha256": "7b0e2c3a92e620cff74ad88c07016d75516741a8862bd8ab8e266b10abce3e63",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/ntwmxstr.o",
+        "object_sha256": "5ba38734af43520cfd2900e24b84ff3669cf3c896d44363e05146900837dda0b"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/nxttok.cpp",
+        "source_sha256": "71427cd25f2d5619e263b86ec6545ed04f7cc9b744c6b53519682be428e92462",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/nxttok.o",
+        "object_sha256": "f8a7d391d4d82ad7689ab7fbf99805914598d969a16bbf2ac2f4e92bf890a641"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/output.cpp",
+        "source_sha256": "f1e98f9470e99cce23a957defe9f58b2a24570a0a8ca9cdaff3c0f5e82e3b67a",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/output.o",
+        "object_sha256": "d9e90330ac496e2c99154b64a562c0b76d3ac91f2e1e4cfc507aed41fc47e7e8"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/putpat.cpp",
+        "source_sha256": "4b4afa04a4c65755ca61d6f0ac96b07672a9b088c2b0acb853bbfdc6173c144a",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/putpat.o",
+        "object_sha256": "5c5a4cfb3d8391ed3e524dcadcc50d4e18cb201d8c2bf4ec180cdf3957631848"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/pwd_msw_lf95.cpp",
+        "source_sha256": "60cccc3d508defe9995d4ac9df1fbb74d9ddce2adc4dad76c57168ebe53dbe68",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/pwd_msw_lf95.o",
+        "object_sha256": "f0a823c9b43d35b63900e594ef5192899fcc7b62de68bc67a92b36b3fb66df7b"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/runinit.cpp",
+        "source_sha256": "3d6fa5b565fceafc6548098404fc2b3bc05f0104092beab0beb971bf80c83d48",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/runinit.o",
+        "object_sha256": "81f33d35b8bdbe1df89576a41df1aea952408098d622395556a6ed8f659781d4"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/schematic.cpp",
+        "source_sha256": "4b4d9044d482c531d39cd43f03b3a35d4e2457e46206a4799fe79be66e531b03",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/schematic.o",
+        "object_sha256": "cef21a5e7892708cf29214bb5754f7c567b8bfaf2a6c35b129bb2539cfe0116a"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/select.cpp",
+        "source_sha256": "a63290a38da1436617744e890500974b1530c28f832714283019969b8f1282da",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/select.o",
+        "object_sha256": "a01d93a14337443a5ee2f96f61c0cc156e227636cfc1f608a49ebea736c910fd"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/sideweir.cpp",
+        "source_sha256": "119d1d27ea3719269469ef4e1a432ea0aea6d1783f056197065579e05b69c7a7",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/sideweir.o",
+        "object_sha256": "e383c8a46dc11a32bf3bec11a815660946b611c8c46b59817d71b0828ca8e912"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/svn_report.cpp",
+        "source_sha256": "3cc2211f1fa7a2d08bebc499f0ad1df71d89c023fa7745624ef89d4cda29884e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/svn_report.o",
+        "object_sha256": "07d4276b7215114936d57e1991dfa28db34bde829baf8d0c67e6d0e2ae31d56c"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/tableid.cpp",
+        "source_sha256": "d75520d3e86a27f4b1d9bf8cf8cb7863e01c7c7ea3e3b7a224fa1e5233dad020",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/tableid.o",
+        "object_sha256": "48c42af9e4da21ffc551b2add09f1e21cee718a9b02a7ac42e951ce7ee8aa737"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/tdtchk_free.cpp",
+        "source_sha256": "79d765220bd404ec270699e5d6b387b94f48f995f7d0d716bb1d600d5bd5d65d",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/tdtchk_free.o",
+        "object_sha256": "899acdab10645c58f2b40580ef322e4315467d96805e164fa2b11ada32c31eff"
+      },
+      {
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/timeman.cpp",
+        "source_sha256": "64f57d96e831605527e3c328bc76dbd6f6cc35aa16512016d6f5be88dba8b415",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/timeman.o",
+        "object_sha256": "efb2da7eba78dcf552799b49e680a1dbc3f3d5c79e11f0c02e6e9cfbbe3d1009"
+      },
+      {
+        "source": "src/md5.cpp",
+        "source_sha256": "d6bb87806da3143f0ef1e0bcd0bdbd55313faf18877296122404a68e6833d11e",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/md5.o",
+        "object_sha256": "9458a25fbc4fd9f1a803080b6bb3c302eaeb96cec009428f0800ace47a9265d7"
+      },
+      {
+        "source": "src/profile_matrix.cpp",
+        "source_sha256": "c7d076f0db1fc662c715acf5c79a590ca410f034e5488a5d7f06b882447ae8fb",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/profile_matrix.o",
+        "object_sha256": "6ec762774fbd54e64531b28448cba9567dad863a87f67446a2472ed8ade4adf4"
+      },
+      {
+        "source": "src/section_interpolation.cpp",
+        "source_sha256": "0316e89c1a6ec3453513fe83078426d99e2388544ba3e42416ae256415d85c56",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/section_interpolation.o",
+        "object_sha256": "ad38cfe3c5cdb51c9538d00d77d116225c11016c2853e3bfc06f46d90856f98d"
+      },
+      {
+        "source": "src/table_interpolation.cpp",
+        "source_sha256": "89e9e05005916cf4417c08871c9f23f7724a295563102cff54bfdd1c3a7e96f6",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/table_interpolation.o",
+        "object_sha256": "b7c3def15dcb1ff46a77d5e07a40b7408ab1100b18e6f78d02752bd49e6461d2"
+      },
+      {
+        "source": "tools/profile_compat.cpp",
+        "source_sha256": "cdcb14f55d9169b351994c16656483dc4a27a317ab3fe79d69d9de816b21e0d6",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/profile_compat.o",
+        "object_sha256": "2b68e1c394864511dfe9baa36891f33048c81668c1ef269dd2d87efdaf0f27cf"
+      },
+      {
+        "source": "tools/section_compat.cpp",
+        "source_sha256": "63aa92e9f4ee224b34ad4b1e25972f6bb3031a9ff53c4e672460d2fd04669a4c",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/section_compat.o",
+        "object_sha256": "04f070c6d85925a6707af6bbc86990ec3ada15cdc3f3a88241101881795e8554"
+      },
+      {
+        "source": "tools/table_compat.cpp",
+        "source_sha256": "d59a741ef18d4b965c8b4c5375d1c402a789d38877897f651e1bd5e56f6eb672",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/table_compat.o",
+        "object_sha256": "8ff3041767713131a846ed69d00b9760a0d7168c941a2666a3d77d940ba197cb"
+      },
+      {
+        "source": "tools/probe_support.cpp",
+        "source_sha256": "a870e589f7c3f23a167d557c8250b234ded6f46fc59a2f0e3f79ee93cd9219b8",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/probe_support.o",
+        "object_sha256": "52fa0014979dbf7582ea8d57a756d08b4342c4958ca117d4e6cc44c7a181c268"
+      },
+      {
+        "source": "tools/matrix_trace.cpp",
+        "source_sha256": "b51cff5d81acdfc206b277f9e051c454b3c53ca7b7f6b7b32087eacc64ad2f68",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5.objects/matrix_trace.o",
+        "object_sha256": "8668276a91f70cbbe28ca2cddbba711f1e0559f7a2809e48f1fa5d1f47722b32"
+      }
+    ],
+    "headers": [
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-integrated-4/common.hpp",
+        "sha256": "cb53a2b6c79c7ce15ef32867e3a1e2cbe30b7dd465e266a530cd13223e498b72"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/arith.h",
+        "sha256": "abc51ffe35d22dcdd92b51bbb118b3b5230257da152063ad348b4dcf476aaa81"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/ctype.h",
+        "sha256": "d0ad794c6aa175d755865b9031c148965df143d70bf0ddaa86fac0ec73077f10"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/f2c.h",
+        "sha256": "bfa7da7ffbe28587f448e973b0c9f05981ca2c623889f12e52c30908fea7d47d"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/fio.h",
+        "sha256": "7809841061835701ce0d57c458211957d4b99e2b605671a1ebddf927c30bbc2a"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/fmt.h",
+        "sha256": "fdf64c20b25ea3490115747d0d3da14145698c2f84749d5c3b6e3ef8719d5eab"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/fp.h",
+        "sha256": "e5d9cea765b3170c4dbabf33b441234ec9f1349c4ae84395f855ab68e916ab93"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/lio.h",
+        "sha256": "d13b5bb1c0217dd0456251dbd8400fd2ac75910b0c135cc45a59d7dfc2181345"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/rawio.h",
+        "sha256": "20b52b4a0cc686d625cd915b9c7b2852d2c816f2a568509a72db80bef647a97f"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/signal1.h",
+        "sha256": "df7c42b66f2614e157987e39903607cc1213706f110a46f65209dc60a0061350"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/sysdep1.h",
+        "sha256": "adb4392f31a4cf0f843ecd8b044b0c6e235281ee45953dd1198dc167a1a3431a"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/md5.hpp",
+        "sha256": "d2c953de7476991010daf3ab84d91efa765c7459499838451a48cc2cf3b3b3f1"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/profile_matrix.hpp",
+        "sha256": "e256c95d7f2263388ca3c008a52290bb56d86ca912dd66682894ffe786f914b1"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/section_interpolation.hpp",
+        "sha256": "d024f8f99e460362516306ea47d5ef65ddc3dffad52df98faef8ff903f59c893"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/storage.hpp",
+        "sha256": "bc54a4996aef1a7cbb73145107f7d5d56cb4fe6dc23c0bf1209ccc8761a348a8"
+      },
+      {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/table_interpolation.hpp",
+        "sha256": "4383b8f51ce6cb6109b772b0ddc05a7ef14dffdfc42e3d082436f76b2a236355"
+      }
+    ],
+    "runtime": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat/libf2c.a",
+    "runtime_sha256": "ce9868c9737e13cbce9dd07bce7c536b880dd06a0afc94dd49e4944d676f7b8b",
+    "executable": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-integrated-5",
+    "executable_sha256": "0a73cca5fdb6afa16af3d52e174a11022bc2250db614bc050ac35aff86f5ea73"
+  }
 }

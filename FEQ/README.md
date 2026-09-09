@@ -39,23 +39,31 @@ single-precision stores. Their captured inputs and outputs are committed in
 
 The independent cross-section interval interpolation matches **all seven output
 words in 240 cases against both original lookup routines**, for 480 original
-calls. It covers linear and cubic Hermite interpolation at three depth scales,
-including both interval endpoints. Equations and the exact machine-code rounding
+calls. An additional 240 cases verify the section's first moment and all seven
+shared properties against `XLKT21`. Scalar function-table interpolation matches
+both output words in **360 original-executable cases**, covering table types 2,
+3, and 4. These tests cover multiple scales and both interval endpoints.
+Equations and the exact machine-code rounding
 points accompany [`src/section_interpolation.cpp`](src/section_interpolation.cpp).
 The captured fixtures are in
 [`tests/reference/section_interpolation/`](tests/reference/section_interpolation/).
 
 Complete translated research engines also execute all six examples. Full-engine
-equivalence remains in progress: the current strict comparison passes 5 of the
-17 files, with numerical differences in the remaining reports and tables.
+equivalence remains in progress: the current strict comparison passes 10 of the
+17 files. Every FEQEX2 and FEQEX3 report matches, masking only execution clocks;
+their water-level and discharge histories match without masking. FEQEX1's main
+report also matches, with three decimal-rounding differences remaining in its
+history file. FEQEX4 and the FEQUTL reports/tables still have numerical differences.
 [`recovery/cpp-research-status.json`](recovery/cpp-research-status.json) records
 the actual binaries, runtime changes, and all comparisons. These research
 engines are not application releases.
 
-Tracing now establishes an exact first assembled matrix for FEQEX1, including
-all 3,790,428 bytes of the matrix COMMON block. Subsequent matrices still differ;
-this is a localization result, not full-model acceptance. The complete trace
-comparison is in [`recovery/matrix-entry-comparison.json`](recovery/matrix-entry-comparison.json).
+Tracing establishes exact active solver inputs at every matrix assembly in
+FEQEX1 (621 matrices), FEQEX2 (325), and FEQEX3 (578). FEQEX4 matches through
+40 matrices; matrix 41 first differs in one residual. These comparisons include
+every active coefficient, residual, and profile/block index, with no tolerance.
+The recorded comparison and trace configurations are in
+[`recovery/model-active-matrices.json`](recovery/model-active-matrices.json).
 
 ## Build and check the independent C++ components
 

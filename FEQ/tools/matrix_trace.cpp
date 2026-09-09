@@ -2,6 +2,7 @@
 // Work: Astra. Sponsor: Rainstar. Foundation: Hashem. MIT licensed.
 #include <cstddef>
 #include <bit>
+#include <charconv>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
@@ -11,10 +12,30 @@
 #include "common.hpp"
 
 namespace {
+unsigned int trace_limit() {
+    const char* text = std::getenv("FEQ_TRACE_LIMIT");
+    if (text == nullptr) {
+        return 8;
+    }
+    unsigned int limit = 0;
+    const char* end = text+std::strlen(text);
+    const std::from_chars_result parsed = std::from_chars(text,end,limit);
+    if (parsed.ec != std::errc{} || parsed.ptr != end || limit > 1024) {
+        throw std::invalid_argument("FEQ_TRACE_LIMIT must be an integer from 0 through 1024.");
+    }
+    return limit;
+}
+
+void append_storage(std::vector<unsigned char>& target, const void* source, std::size_t bytes) {
+    const std::size_t first = target.size();
+    target.resize(first+bytes);
+    std::memcpy(target.data()+first,source,bytes);
+}
+
 void write_words(const char* environment, const void* object, std::size_t size,
                  unsigned int& count) {
     const char* path = std::getenv(environment);
-    if (path == nullptr || count >= 8) {
+    if (path == nullptr || count >= trace_limit()) {
         return;
     }
     std::vector<unsigned char> bytes(size);
@@ -44,6 +65,32 @@ extern "C" void feq_research_trace_matrix() {
     static_assert(offsetof(Common_matcom_,pdavec) == 516828);
     static_assert(offsetof(Common_matcom_,rhs) == 3492828);
     static unsigned int count = 0;
+    const char* active_only = std::getenv("FEQ_MATRIX_TRACE_ACTIVE");
+    if (active_only != nullptr && std::strcmp(active_only,"1") == 0) {
+        if (std::getenv("FEQ_MATRIX_TRACE") == nullptr || count >= trace_limit()) {
+            return;
+        }
+        if (matcom_.numeq <= 0 || matcom_.numeq > 24800 || matcom_.matblk < 0 || matcom_.matblk > 4401) {
+            throw std::invalid_argument("Invalid active matrix trace dimensions.");
+        }
+        const integer entries = matcom_.feq_gen_c_d_[matcom_.numeq];
+        if (entries < 0 || entries > 744000) {
+            throw std::invalid_argument("Invalid active matrix coefficient count.");
+        }
+        const std::size_t rows = static_cast<std::size_t>(matcom_.numeq);
+        const std::size_t blocks = static_cast<std::size_t>(matcom_.matblk);
+        std::vector<unsigned char> record;
+        append_storage(record,&matcom_,12);
+        append_storage(record,matcom_.feq_gen_r_d_,rows*4);
+        append_storage(record,matcom_.feq_gen_c_d_,(rows+1)*4);
+        append_storage(record,matcom_.begrow,blocks*4);
+        append_storage(record,matcom_.endcon,blocks*4);
+        append_storage(record,matcom_.mbtype,blocks*4);
+        append_storage(record,matcom_.pdavec,static_cast<std::size_t>(entries)*4);
+        append_storage(record,matcom_.rhs,rows*4);
+        write_words("FEQ_MATRIX_TRACE",record.data(),record.size(),count);
+        return;
+    }
     write_words("FEQ_MATRIX_TRACE",&matcom_,sizeof(matcom_),count);
 }
 
@@ -56,7 +103,7 @@ extern "C" void feq_research_trace_branch() {
 extern "C" void feq_research_trace_branch_scalars(const double* values, unsigned int size) {
     static unsigned int count = 0;
     const char* path = std::getenv("FEQ_BRANCH_SCALARS_TRACE");
-    if (path == nullptr || count >= 8) {
+    if (path == nullptr || count >= trace_limit()) {
         return;
     }
     if (size > 64) {

@@ -150,7 +150,7 @@ units, including their unified COMMON definitions and dynamic-array adapters.
 All 27 callback parameters use four concrete function-pointer signatures,
 derived from 91 recorded call constraints or inspected unused routine bodies.
 All six supplied cases execute. The current whole-file acceptance result is
-**5 of 17 files matching**; the remaining numerical differences are unresolved.
+**10 of 17 files matching**; the remaining numerical and decimal-formatting differences are unresolved.
 The full results are in `cpp-research-status.json`. Passing a direct routine test
 does not establish equivalence of an entire hydraulic model.
 
@@ -185,10 +185,46 @@ used as a correctness rule. Original addresses `0x40c5fd` and `0x40c680`, and
 the recorded stack trace, support the explicit conversion in the research
 adapter.
 
-The next matrix still differs in 14 words even though the branch-state inputs
-to the first two branch calls match every byte. This locates the next difference
-inside the subsequent branch calculation. These findings do not change the
-whole-engine acceptance result of 5 out of 17 matching files. The current
-run hashes and complete comparisons are recorded in `cpp-research-status.json`
-and `matrix-entry-comparison.json`. See [NUMERICAL_PROBES.md](NUMERICAL_PROBES.md)
-for commands and limits of the probes.
+Subsequent tracing identified retained old/new impulse sums, original SIGN
+semantics at signed zero, single-precision square-root call boundaries, and a
+wider boundary-flow report temporary. With these corrections, every active
+solver word matches in all 621 FEQEX1 matrices. Its main report matches except
+execution clocks. Its history has three decimal-rounding differences, including
+98.25 printed as 98.3 by the released runtime and 98.2 by the current candidate.
+Direct original `VAR_DECIMAL` probes also produce 0.12 for 0.125 in an F5.2
+field, so a blanket change to half-away rounding is not justified.
+
+## First moments, scalar tables, and steady initialization
+
+The independent section implementation now includes `XLKT21`'s first moment,
+verified in 240 additional cases with eight binary32 output words. The original
+retains a wider area intermediate but reloads rounded top width in the first
+moment correction. Its coefficient is the actual single-precision 0.1666667
+constant, rather than exact one sixth. These distinctions are explicit beside
+the formula. Section interpolation during `INTERP` also retains double-precision
+interval distance, depth difference, and reciprocal multiplication. Together,
+these changes reproduce all 325 FEQEX2 matrices and all three output files.
+
+`src/table_interpolation.cpp` implements type-2 linear functions, type-3
+integrated linear derivatives, and type-4 cubic Hermite functions. All 360 cases
+match both original `LKTAB` output words exactly. In type 3, the original writes
+the interpolated derivative as binary32 but retains the wider register for the
+function integral. Reloading the rounded area in the reservoir example changed
+storage by whole cubic feet. Preserving that register value reproduces every
+word in all 578 FEQEX3 matrices and all three output files.
+
+FEQEX4 additionally requires wider steady-initialization locals in `SFPSBM`,
+including the compiler-generated temporary used when squaring conveyance and
+velocity. Formatted output and `NINT` still receive explicitly rounded float
+copies; passing the wide object at those interfaces would change the call ABI.
+The current candidate matches all active inputs of the first 40 FEQEX4 matrices.
+Matrix 41 first differs only in residual 45: original -3.7085983753204346 versus
+candidate -3.7084853649139404. This remains unresolved.
+
+The current whole-output result is 10 of 17 files. The seven failures include
+FEQEX1's history, FEQEX4's main report and history, and four FEQUTL outputs.
+`cpp-research-status.json` records the current executable and output hashes.
+`model-active-matrices.json` records complete active-matrix trace comparisons,
+with the original trace runs' independent report checks. The older full-COMMON
+comparison is retained in `matrix-entry-comparison.json`. See
+[NUMERICAL_PROBES.md](NUMERICAL_PROBES.md) for commands and probe limits.

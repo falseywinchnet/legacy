@@ -37,6 +37,12 @@ FEQ/build/research-python/bin/python FEQ/tools/probe_profile_original.py \
 
 FEQ/build/research-python/bin/python FEQ/tools/probe_section_original.py \
   --native FEQ/build/core/feq_section_probe --output FEQ/build/section-recapture
+
+FEQ/build/research-python/bin/python FEQ/tools/probe_section_moment_original.py \
+  --native FEQ/build/core/feq_section_probe --output FEQ/build/moment-recapture
+
+FEQ/build/research-python/bin/python FEQ/tools/probe_table_original.py \
+  --native FEQ/build/core/feq_table_probe --output FEQ/build/table-recapture
 ```
 
 Use the corresponding `Release/*.exe` driver paths for a multi-configuration
@@ -49,6 +55,10 @@ The profile generator exercises 48 synthetic matrices. The section generator
 exercises 240 intervals and calls each of `XLKT20` and `XXLKT20`, requiring the
 two original implementations to agree before comparing C++. It preserves all
 seven binary32 output words, including signed zeros.
+The first-moment generator adds 240 `XLKT21` cases with eight output words and
+also checks the original `XLKT20` shared properties. The function-table generator
+adds 360 cases across types 2, 3, and 4. Their committed binary fixtures run as
+ordinary CTest tests without Wine.
 
 ## Model traces and captured matrix tests
 
@@ -94,13 +104,56 @@ promotion is not a proof of the original rounding behavior. `SETINX`'s explicit
 `DXDT` store demonstrates why that distinction matters.
 
 `attach_verified_components.py` selects actual C++ function definitions through
-the syntax tree, connects the two lookup routines to the independent interval
-implementation, and optionally restores the traced `SETINX` distance rounding.
+the syntax tree, connects section and scalar lookup routines to the independent
+interval implementations, and optionally restores traced register/store behavior.
 It records each change and all source hashes. The standalone profile adapter
 connects the independently tested solver to the research COMMON layout.
 `matrix_trace.cpp` is an optional development adapter, controlled by explicit
 trace environment variables; it is not an end-user interface.
 
-The current first FEQEX1 matrix matches every COMMON byte. The next seven have
-14, 19, 17, 22, 29, 26, and 36 differing words. The strict whole-output comparison
-still passes 5 of 17 files. Those remaining differences are active work.
+The current integration options are `--setinx-distance-rounding`,
+`--traced-register-stores`, and `--steady-initialization-registers`. These
+preserve specific observed conversions, including single-precision call and
+formatted-I/O boundaries within wider steady-initialization expressions.
+
+After generating and integrating a translation, compile and link it explicitly:
+
+```sh
+python3 FEQ/tools/compile_cpp_probe.py FEQ/build/candidate --runtime FEQ/build/f2c/compat
+python3 FEQ/tools/link_feq_research.py FEQ/build/candidate --runtime FEQ/build/f2c/compat \
+  --output FEQ/build/feq-candidate --matrix-trace
+```
+
+The linker requires successful current compilation receipts. It verifies the
+source set, source hashes, complete local/runtime header inventory, and object
+hashes before rebuilding the independent components. Its manifest records the
+compiler, commands, headers, objects, runtime archive, and executable hashes.
+The source staging and compatibility runtime remain research prerequisites;
+these commands do not constitute the final application installation procedure.
+
+## Complete active-matrix traces
+
+`probes/active-matrix-feqex1.json` through `active-matrix-feqex4.json` capture every
+active matrix field for each supplied model at `PROFAC` entry. Each configuration
+allows 1024 records; each completed run has fewer records, so the capture limit
+does not truncate these examples. The counts are 621, 325, 578, and 568.
+`compare_active_matrices.py configure` can derive the capture ranges from one
+full COMMON record. Original trace ranges are fixed for the selected model;
+the comparison validates the dimensions in each record.
+
+For a native candidate linked with `--matrix-trace`, set `FEQ_MATRIX_TRACE` to
+a new absolute output filename, `FEQ_MATRIX_TRACE_ACTIVE=1`, and
+`FEQ_TRACE_LIMIT=1024` while running the corresponding example. Compare it using:
+
+```sh
+python3 FEQ/tools/compare_active_matrices.py compare \
+  FEQ/build/original-trace/test/trace-00.bin FEQ/build/native-trace.bin \
+  --output FEQ/build/matrix-comparison.json
+```
+
+Every active word now matches throughout FEQEX1, FEQEX2, and FEQEX3. FEQEX4's
+first 40 matrices match; the next differs in residual 45. The current full-output
+comparison passes 10 of 17 files. `model-active-matrices.json` preserves all
+trace hashes, counts, original-output checks, and the first remaining difference.
+Unused COMMON capacity is outside this compact comparison. The older full-COMMON
+capture remains in `matrix-entry-comparison.json` as historical evidence.

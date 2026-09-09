@@ -31,5 +31,10 @@ struct SectionProperties {
 SectionProperties interpolate_section(float depth, const SectionTableRow& lower,
                                       const SectionTableRow& upper, bool has_slopes);
 
+// Integral of area from the interval's lower depth, added to the tabulated
+// first moment. Preserves XLKT21's stored-width and retained-area distinction.
+float interpolate_section_first_moment(float depth, const SectionTableRow& lower,
+                                       const SectionTableRow& upper, float lower_first_moment);
+
 } // namespace feq
 #endif

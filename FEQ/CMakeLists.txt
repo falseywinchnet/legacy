@@ -3,7 +3,7 @@ project(FEQNumerics VERSION 0.0.1 LANGUAGES CXX)
 
 option(FEQ_SANITIZERS "Check authored C++ for invalid memory and undefined behavior" OFF)
 
-add_library(feq_numerics STATIC src/md5.cpp src/profile_matrix.cpp src/section_interpolation.cpp)
+add_library(feq_numerics STATIC src/md5.cpp src/profile_matrix.cpp src/section_interpolation.cpp src/table_interpolation.cpp)
 target_include_directories(feq_numerics PUBLIC include)
 target_compile_features(feq_numerics PUBLIC cxx_std_20)
 set_target_properties(feq_numerics PROPERTIES CXX_EXTENSIONS OFF)
@@ -50,4 +50,11 @@ if(BUILD_TESTING)
     feq_checks(feq_section_probe)
     add_test(NAME section_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_section_fixture.py $<TARGET_FILE:feq_section_probe>)
+    add_test(NAME section_first_moment_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_section_fixture.py $<TARGET_FILE:feq_section_probe> --first-moment)
+    add_executable(feq_table_probe tools/table_probe.cpp)
+    target_link_libraries(feq_table_probe PRIVATE feq_numerics)
+    feq_checks(feq_table_probe)
+    add_test(NAME function_table_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_table_fixture.py $<TARGET_FILE:feq_table_probe>)
 endif()
