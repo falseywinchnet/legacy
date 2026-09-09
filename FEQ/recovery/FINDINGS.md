@@ -111,3 +111,43 @@ PDF/PostScript distributions, FEMA review guidance, historical release notices,
 and FEQinput and FEQ-GDI user documentation. FEQinput's Windows installer and the
 FEQ-GDI distribution are preserved as separate companion software. Recovery of a
 companion installer does not imply that its source has been recovered or ported.
+
+## Independent profile solver and complete research engines
+
+The independent C++ profile solver in `src/profile_matrix.cpp` reproduces the
+original `PROFAC` and `PROSLV` routines bit for bit across 48 controlled fixtures.
+`tools/probe_profile_original.py` replaces only PROGRAM entry in a disposable
+copy of FEQ. The original runtime initializes normally, then the driver calls
+the original factorization and solution addresses with explicitly populated
+COMMON arrays. It captures every resulting coefficient and solution word.
+The original executable hash is checked before any temporary copy is patched.
+
+The fixtures comprise 24 dense systems (orders 1, 2, 3, 5, 8, 12, 20, and 24,
+at scales 0.0001, 1, and 10000) and 24 specialized branch-block factorizations.
+The native comparison also passed AddressSanitizer and UndefinedBehaviorSanitizer.
+The committed fixtures are under `tests/reference/profile_matrix/`; the original
+instruction listings are in `recovery/assembly/feq/`.
+
+This comparison resolves two precision details that a source-level translation
+misses. Dot-product sums remain in 53-bit x87 registers across loop iterations.
+Three branch-block stores use `FST`, which writes a rounded four-byte value but
+retains the wider register value for the next operation. The C++ implementation
+expresses those retained values as named doubles and casts only at the observed
+stores. Equations, source locations, and instruction addresses accompany the code.
+
+The original diagnostic `SAVEMAT` has a separate type mismatch. Its caller uses
+the shipped single-precision matrix arrays, while `ntmatrix.for:636-647` declares
+eight-byte elements. The original `_savemat_` at RVA `0x75c00` actually copies
+eight bytes per element. The research adapter preserves those copies within the
+complete COMMON objects and reports an error if a copy would overrun them. This
+is a diagnostic-path defect in the recovered release, not a reason to reinterpret
+the shipped solver as double precision.
+
+Complete research translations compile as 55 FEQ and 59 FEQUTL translation
+units, including their unified COMMON definitions and dynamic-array adapters.
+All 27 callback parameters use four concrete function-pointer signatures,
+derived from 91 recorded call constraints or inspected unused routine bodies.
+All six supplied cases execute. The current whole-file acceptance result is
+**5 of 17 files matching**; the remaining numerical differences are unresolved.
+The full results are in `cpp-research-status.json`. Passing a direct routine test
+does not establish equivalence of an entire hydraulic model.

@@ -79,6 +79,14 @@ void check_storage() {
     caught = false;
     try { signed_integers[0] /= -1; } catch (const std::overflow_error&) { caught = true; }
     require(caught, "Reject an unrepresentable signed quotient.");
+    std::array<unsigned char, 8> copied{};
+    const std::array<unsigned char, 8> source = {1,2,3,4,5,6,7,8};
+    feq::copy_object_bytes(copied.data(),copied.size(),2,source.data(),source.size(),1,5);
+    require(copied == std::array<unsigned char,8>{0,0,2,3,4,5,6,0}, "Copy exact object bytes at explicit offsets.");
+    caught = false;
+    try { feq::copy_object_bytes(copied.data(),copied.size(),7,source.data(),source.size(),0,2); }
+    catch (const std::out_of_range&) { caught = true; }
+    require(caught, "Reject a historical byte copy beyond destination storage.");
 }
 
 } // namespace

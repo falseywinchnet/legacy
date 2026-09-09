@@ -1,0 +1,737 @@
+{
+  "status": "Research engines execute all six supplied cases. Full numerical equivalence remains incomplete.",
+  "created_utc": "2026-09-09T04:09:30.674650+00:00",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
+  "run_manifest": {
+    "purpose": "C++ research execution; equivalence requires a separate comparison.",
+    "created_utc": "2026-09-09T04:04:56.816283+00:00",
+    "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
+    "legacy_path_links": false,
+    "inputs": [
+      {
+        "path": "data/CULVERT.IN",
+        "bytes": 8263,
+        "sha256": "fbd6ce4963c88319bf79469188e34422eef5d22c58a02f9ecb5ff483287a40b0"
+      },
+      {
+        "path": "data/FEQEX1",
+        "bytes": 13850,
+        "sha256": "29c0db7065d86cb04206b35aaaf932e260126b9c00de8034e4d61cf99eae24b4"
+      },
+      {
+        "path": "data/FEQEX2",
+        "bytes": 8996,
+        "sha256": "ef75e6c0c063a155e495a5f0f8b871fd2dc4e47f5297c7e6250236efa11b743c"
+      },
+      {
+        "path": "data/FEQEX3",
+        "bytes": 9767,
+        "sha256": "f85f8cb1566c6cfcb68739e7cb5dac3896d0b7c541746c6cd45cf1f08ff31ab7"
+      },
+      {
+        "path": "data/FEQEX4",
+        "bytes": 7604,
+        "sha256": "e48e0e0ea8329c9b1e732ec77ab08773984e39e13c4ffd449b443ff44b1c5fa6"
+      },
+      {
+        "path": "data/MODEL01.INP",
+        "bytes": 7363,
+        "sha256": "07764dad7c1bc3943ee5eb8da7bcc239cd5eeddcaa0ea092db83f4b860418df8"
+      },
+      {
+        "path": "data/TYPE5.TAB",
+        "bytes": 11513,
+        "sha256": "dd15462267c4a24caa402e6257e0f903c3b677dbf48344c8eb7021fe8acd81b1"
+      },
+      {
+        "path": "data/UTLEXM.IN",
+        "bytes": 60045,
+        "sha256": "53b079f89acbf771ed164c4bfbeec888426ee17e33073778b963f65abb1d3ea8"
+      },
+      {
+        "path": "data/WEIRTABS",
+        "bytes": 4689,
+        "sha256": "e818590713f9878ded0de329fd47142df35bd9c0f73ce0c161b7593c5892ee1d"
+      },
+      {
+        "path": "data/culvert.out",
+        "bytes": 141152,
+        "sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72"
+      },
+      {
+        "path": "data/culvert.tab",
+        "bytes": 6015,
+        "sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade"
+      },
+      {
+        "path": "data/feqex1.out",
+        "bytes": 1693210,
+        "sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e"
+      },
+      {
+        "path": "data/feqex1.out.spi",
+        "bytes": 1836,
+        "sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc"
+      },
+      {
+        "path": "data/feqex1.out.wsq",
+        "bytes": 129731,
+        "sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b"
+      },
+      {
+        "path": "data/feqex2.out",
+        "bytes": 876444,
+        "sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db"
+      },
+      {
+        "path": "data/feqex2.out.spi",
+        "bytes": 1132,
+        "sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60"
+      },
+      {
+        "path": "data/feqex2.out.wsq",
+        "bytes": 15809,
+        "sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b"
+      },
+      {
+        "path": "data/feqex3.out",
+        "bytes": 1340610,
+        "sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96"
+      },
+      {
+        "path": "data/feqex3.out.spi",
+        "bytes": 1132,
+        "sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41"
+      },
+      {
+        "path": "data/feqex3.out.wsq",
+        "bytes": 23579,
+        "sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2"
+      },
+      {
+        "path": "data/feqex4.out",
+        "bytes": 1371793,
+        "sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650"
+      },
+      {
+        "path": "data/feqex4.out.spi",
+        "bytes": 1132,
+        "sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6"
+      },
+      {
+        "path": "data/feqex4.out.wsq",
+        "bytes": 23579,
+        "sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff"
+      },
+      {
+        "path": "data/utlexm.chx",
+        "bytes": 12998,
+        "sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af"
+      },
+      {
+        "path": "data/utlexm.out",
+        "bytes": 775740,
+        "sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de"
+      },
+      {
+        "path": "data/utlexm.tab",
+        "bytes": 135953,
+        "sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705"
+      }
+    ],
+    "binaries": [
+      {
+        "path": "bin/feq",
+        "bytes": 1299120,
+        "sha256": "108b44fe3c1bf78d7da17305cee1952a75408835c510a0cad0f1659a919d013e"
+      },
+      {
+        "path": "bin/fequtl",
+        "bytes": 1365568,
+        "sha256": "b998f9730147edea0b2b60f9f80a74122b2cb18369c2eec0a1fbd0db1ed66588"
+      }
+    ],
+    "cases": [
+      {
+        "case": "feqex1",
+        "program": "feq",
+        "arguments": [
+          "..\\data\\feqex1",
+          "feqex1.out"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.2923325418960303,
+        "process_completed": true,
+        "outputs": [
+          {
+            "path": "feqex1.out",
+            "bytes": 1693210,
+            "sha256": "69fe72963aa7a441f72985f8dfa8a01e88b821b2016abc23edd3b241a46e82f8"
+          },
+          {
+            "path": "feqex1.out.spi",
+            "bytes": 1836,
+            "sha256": "75115229f11b81a1b295a8dc09945e046894bd18277fb31166004132431a867f"
+          },
+          {
+            "path": "feqex1.out.wsq",
+            "bytes": 129731,
+            "sha256": "e636e5cd5a12787c76e7cb19652b0ba360446ad2cd97f73c593a7482f6c8d9c1"
+          }
+        ]
+      },
+      {
+        "case": "feqex2",
+        "program": "feq",
+        "arguments": [
+          "..\\data\\feqex2",
+          "feqex2.out"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.025302166119217873,
+        "process_completed": true,
+        "outputs": [
+          {
+            "path": "feqex2.out",
+            "bytes": 876444,
+            "sha256": "c4236c5e2dde34955dc958b697e6c7119cc977288e498f0246a830eb083c4c69"
+          },
+          {
+            "path": "feqex2.out.spi",
+            "bytes": 1132,
+            "sha256": "92133faddbe004557c006b9982cc415d34542c17804eac8d297e8b58fb817d48"
+          },
+          {
+            "path": "feqex2.out.wsq",
+            "bytes": 15809,
+            "sha256": "277b2df7a317ad3bd39215cb4dbedabc16483cc32271c18b2eb7b90ed9db7705"
+          }
+        ]
+      },
+      {
+        "case": "feqex3",
+        "program": "feq",
+        "arguments": [
+          "..\\data\\feqex3",
+          "feqex3.out"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.0317044158000499,
+        "process_completed": true,
+        "outputs": [
+          {
+            "path": "feqex3.out",
+            "bytes": 1340610,
+            "sha256": "237848456408537b4084700d766b139e08fc04d51fd8bc0b706ce237019645c9"
+          },
+          {
+            "path": "feqex3.out.spi",
+            "bytes": 1132,
+            "sha256": "3dd38a601666a68e2509b0d760fa868a04004194602db1d6a3832d848c2a4276"
+          },
+          {
+            "path": "feqex3.out.wsq",
+            "bytes": 23579,
+            "sha256": "080f88946c0818defd0dd0c2316819f64ad6c2e22ad42f8a369b9e5186e499f1"
+          }
+        ]
+      },
+      {
+        "case": "feqex4",
+        "program": "feq",
+        "arguments": [
+          "..\\data\\feqex4",
+          "feqex4.out"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.03224441688507795,
+        "process_completed": true,
+        "outputs": [
+          {
+            "path": "feqex4.out",
+            "bytes": 1371793,
+            "sha256": "8285231d20daa223e7b742280a2e606a178d192d188ad205b1c08ad4a2450185"
+          },
+          {
+            "path": "feqex4.out.spi",
+            "bytes": 1132,
+            "sha256": "a42f05c05ae99d927d707c137d228a9146d23b93ddfdc0c04032555f9e9ee356"
+          },
+          {
+            "path": "feqex4.out.wsq",
+            "bytes": 23579,
+            "sha256": "8ebdb6bf26455ac30f087ba3094350f56f4adfc9bbe7ab2107f96d36389fd3dc"
+          }
+        ]
+      },
+      {
+        "case": "utlexm",
+        "program": "fequtl",
+        "arguments": [
+          "..\\data\\utlexm.in",
+          "utlexm.out",
+          "utlexm.tab"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.29766541603021324,
+        "process_completed": true,
+        "outputs": [
+          {
+            "path": "utlexm.chx",
+            "bytes": 12998,
+            "sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af"
+          },
+          {
+            "path": "utlexm.out",
+            "bytes": 775759,
+            "sha256": "47a7d5d1b5a08233c180575eee5ec879b30cc4e3893bd025e103d68a1dfe925c"
+          },
+          {
+            "path": "utlexm.tab",
+            "bytes": 135953,
+            "sha256": "30179fcb83a0c388136df714c5f6f8967701de5383f81b26996e7f86b8c5331b"
+          }
+        ]
+      },
+      {
+        "case": "culvert",
+        "program": "fequtl",
+        "arguments": [
+          "..\\data\\culvert.in",
+          "culvert.out",
+          "culvert.tab"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.016990415984764695,
+        "process_completed": true,
+        "outputs": [
+          {
+            "path": "culvert.out",
+            "bytes": 141152,
+            "sha256": "07edd8a02eedf036a39ca584721e5df44c919b1546671304a4a8dd9d0e02db2e"
+          },
+          {
+            "path": "culvert.tab",
+            "bytes": 6015,
+            "sha256": "c0e645f8285af807c5c4fed3ca4e1ddadef6aa59974396e5f7a6062d7b49660a"
+          }
+        ]
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": "feqex1.out",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
+      "actual_sha256": "69fe72963aa7a441f72985f8dfa8a01e88b821b2016abc23edd3b241a46e82f8",
+      "expected_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "expected_bytes": 1693210,
+      "actual_bytes": 1693210,
+      "first_masked_difference": {
+        "byte_offset": 30890,
+        "line": 627,
+        "expected_context": "b'+00 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-6.517E-03    Rel bal=BAL/(S2+BNQ)=-2.081E-08\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n'",
+        "actual_context": "b'+00 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-2.823E-03    Rel bal=BAL/(S2+BNQ)=-9.017E-09\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n'"
+      }
+    },
+    {
+      "path": "feqex1.out.spi",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
+      "actual_sha256": "75115229f11b81a1b295a8dc09945e046894bd18277fb31166004132431a867f",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 1836,
+      "actual_bytes": 1836
+    },
+    {
+      "path": "feqex1.out.wsq",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
+      "actual_sha256": "e636e5cd5a12787c76e7cb19652b0ba360446ad2cd97f73c593a7482f6c8d9c1",
+      "expected_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 129731,
+      "actual_bytes": 129731,
+      "first_masked_difference": {
+        "byte_offset": 11276,
+        "line": 113,
+        "expected_context": "b' 103.478 103.458 103.438 103.417 103.395\\r\\n   4.083333    98.3    98.1    98.0    98.4    99.2    99.7   100.5   101.3   102.1   103.0   104.0\\r\\n 1990/ 1/ 1 103.583 103.566 103.548 1'",
+        "actual_context": "b' 103.478 103.458 103.438 103.417 103.395\\r\\n   4.083333    98.2    98.1    98.0    98.4    99.2    99.7   100.5   101.3   102.1   103.0   104.0\\r\\n 1990/ 1/ 1 103.583 103.566 103.548 1'"
+      }
+    },
+    {
+      "path": "feqex2.out",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
+      "actual_sha256": "c4236c5e2dde34955dc958b697e6c7119cc977288e498f0246a830eb083c4c69",
+      "expected_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "expected_bytes": 876444,
+      "actual_bytes": 876444,
+      "first_masked_difference": {
+        "byte_offset": 20591,
+        "line": 491,
+        "expected_context": "b'202E+00  1.00183E+02  2.70000E+01\\r\\n     3  2.41131E+00  1.17683E-02  9.85089E+01  2.70000E+01\\r\\n\\r\\n Backwater analysis for branch#    3\\r\\n  STATION IT     YL      QL      AL     TL   '",
+        "actual_context": "b'202E+00  1.00183E+02  2.70000E+01\\r\\n     3  2.41131E+00  1.17702E-02  9.85089E+01  2.70000E+01\\r\\n\\r\\n Backwater analysis for branch#    3\\r\\n  STATION IT     YL      QL      AL     TL   '"
+      }
+    },
+    {
+      "path": "feqex2.out.spi",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
+      "actual_sha256": "92133faddbe004557c006b9982cc415d34542c17804eac8d297e8b58fb817d48",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 1132,
+      "actual_bytes": 1132
+    },
+    {
+      "path": "feqex2.out.wsq",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
+      "actual_sha256": "277b2df7a317ad3bd39215cb4dbedabc16483cc32271c18b2eb7b90ed9db7705",
+      "expected_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 15809,
+      "actual_bytes": 15809,
+      "first_masked_difference": {
+        "byte_offset": 3218,
+        "line": 87,
+        "expected_context": "b'90/ 1/ 1 105.748 105.748 105.748\\r\\n   4.750000   106.5   234.1   340.6\\r\\n 1990/ 1/ 1 105.792 105.792 105.792\\r\\n   4.875000   109.7   243.2   352.9\\r\\n                                   '",
+        "actual_context": "b'90/ 1/ 1 105.748 105.748 105.748\\r\\n   4.750000   106.5   234.2   340.6\\r\\n 1990/ 1/ 1 105.792 105.792 105.792\\r\\n   4.875000   109.7   243.2   352.9\\r\\n                                   '"
+      }
+    },
+    {
+      "path": "feqex3.out",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
+      "actual_sha256": "237848456408537b4084700d766b139e08fc04d51fd8bc0b706ce237019645c9",
+      "expected_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "expected_bytes": 1340610,
+      "actual_bytes": 1340610,
+      "first_masked_difference": {
+        "byte_offset": 27896,
+        "line": 619,
+        "expected_context": "b'2 5.849+1 0.0 0.000+0\\r\\n   106                    0.6000 9.006+0 2.576+2  0.03   6.51  106.91 5.909+1 0.0 0.000+0\\r\\n   107                    0.7000 9.006+0 2.636+2  0.03   6.61  106'",
+        "actual_context": "b'2 5.849+1 0.0 0.000+0\\r\\n   106                    0.6000 9.005+0 2.576+2  0.03   6.51  106.91 5.909+1 0.0 0.000+0\\r\\n   107                    0.7000 9.006+0 2.636+2  0.03   6.61  106'"
+      }
+    },
+    {
+      "path": "feqex3.out.spi",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
+      "actual_sha256": "3dd38a601666a68e2509b0d760fa868a04004194602db1d6a3832d848c2a4276",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 1132,
+      "actual_bytes": 1132
+    },
+    {
+      "path": "feqex3.out.wsq",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
+      "actual_sha256": "080f88946c0818defd0dd0c2316819f64ad6c2e22ad42f8a369b9e5186e499f1",
+      "expected_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 23579,
+      "actual_bytes": 23579,
+      "first_masked_difference": {
+        "byte_offset": 842,
+        "line": 23,
+        "expected_context": "b'9.0\\r\\n 1990/ 1/ 1 106.943 106.943 106.943\\r\\n   0.750000    20.2    45.2    29.3\\r\\n                                   \\r\\n                                   \\r\\n 1990/ 1/ 1 106.950 106.950'",
+        "actual_context": "b'9.0\\r\\n 1990/ 1/ 1 106.943 106.943 106.943\\r\\n   0.750000    20.1    45.2    29.3\\r\\n                                   \\r\\n                                   \\r\\n 1990/ 1/ 1 106.950 106.950'"
+      }
+    },
+    {
+      "path": "feqex4.out",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
+      "actual_sha256": "8285231d20daa223e7b742280a2e606a178d192d188ad205b1c08ad4a2450185",
+      "expected_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 2,
+        "elapsed_time": 2
+      },
+      "expected_bytes": 1371793,
+      "actual_bytes": 1371793,
+      "first_masked_difference": {
+        "byte_offset": 24024,
+        "line": 564,
+        "expected_context": "b'46538E-01  1.24208E+02  5.40000E+01\\r\\n     4  2.65272E+00  7.24792E-05  1.24095E+02  5.40000E+01\\r\\n\\r\\n Backwater analysis for branch#    3\\r\\n  STATION IT     YL      QL      AL     TL '",
+        "actual_context": "b'46538E-01  1.24208E+02  5.40000E+01\\r\\n     4  2.65272E+00  7.62939E-05  1.24095E+02  5.40000E+01\\r\\n\\r\\n Backwater analysis for branch#    3\\r\\n  STATION IT     YL      QL      AL     TL '"
+      }
+    },
+    {
+      "path": "feqex4.out.spi",
+      "raw_equal": false,
+      "clock_masked_equal": true,
+      "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
+      "actual_sha256": "a42f05c05ae99d927d707c137d228a9146d23b93ddfdc0c04032555f9e9ee356",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 1132,
+      "actual_bytes": 1132
+    },
+    {
+      "path": "feqex4.out.wsq",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff",
+      "actual_sha256": "8ebdb6bf26455ac30f087ba3094350f56f4adfc9bbe7ab2107f96d36389fd3dc",
+      "expected_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 23579,
+      "actual_bytes": 23579,
+      "first_masked_difference": {
+        "byte_offset": 5039,
+        "line": 136,
+        "expected_context": "b'                        \\r\\n 1990/ 1/ 1 104.127  97.637 101.448\\r\\n   5.000000   789.4  -218.1     0.0\\r\\n 1990/ 1/ 1 104.165  97.705 101.486\\r\\n   5.083333   815.1  -229.6     0.0\\r\\n 1990/'",
+        "actual_context": "b'                        \\r\\n 1990/ 1/ 1 104.127  97.637 101.449\\r\\n   5.000000   789.4  -218.1     0.0\\r\\n 1990/ 1/ 1 104.165  97.705 101.486\\r\\n   5.083333   815.1  -229.6     0.0\\r\\n 1990/'"
+      }
+    },
+    {
+      "path": "utlexm.out",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
+      "actual_sha256": "47a7d5d1b5a08233c180575eee5ec879b30cc4e3893bd025e103d68a1dfe925c",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 775740,
+      "actual_bytes": 775759,
+      "first_masked_difference": {
+        "byte_offset": 9661,
+        "line": 187,
+        "expected_context": "b'2  1.000 1.356+4  1.000 3.793+4  1.000  1.000  0.0300  30.162   0.0000^  0.0000^  0.0000   0.0000 \\r\\n  18.824 1.000+2 1.882+3 7.312+2  1.000 1.772+4  1.000 4.634+4  1.000  1.000  0.'",
+        "actual_context": "b'2  1.000 1.356+4  1.000 3.793+4  1.000  1.000  0.0300  30.163   0.0000^  0.0000^  0.0000   0.0000 \\r\\n  18.824 1.000+2 1.882+3 7.312+2  1.000 1.772+4  1.000 4.634+4  1.000  1.000  0.'"
+      }
+    },
+    {
+      "path": "utlexm.tab",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
+      "actual_sha256": "30179fcb83a0c388136df714c5f6f8967701de5383f81b26996e7f86b8c5331b",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 135953,
+      "actual_bytes": 135953,
+      "first_masked_difference": {
+        "byte_offset": 537,
+        "line": 10,
+        "expected_context": "b'669 0.0000000000  1.185188 0.0000000000\\r\\n 0.0800171 11.336185 0.4535442590 1.1988022300  1.066669 0.0120970979  1.185188 0.4854781930\\r\\n 0.2999878 42.499886 6.3747234300 6.981928830'",
+        "actual_context": "b'669 0.0000000000  1.185188 0.0000000000\\r\\n 0.0800171 11.336182 0.4535441399 1.1988019943  1.066669 0.0120970942  1.185188 0.4854780436\\r\\n 0.2999878 42.499878 6.3747224808 6.981927871'"
+      }
+    },
+    {
+      "path": "utlexm.chx",
+      "raw_equal": true,
+      "clock_masked_equal": true,
+      "expected_sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af",
+      "actual_sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af",
+      "expected_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 0,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 12998,
+      "actual_bytes": 12998
+    },
+    {
+      "path": "culvert.out",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72",
+      "actual_sha256": "07edd8a02eedf036a39ca584721e5df44c919b1546671304a4a8dd9d0e02db2e",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 141152,
+      "actual_bytes": 141152,
+      "first_masked_difference": {
+        "byte_offset": 7714,
+        "line": 188,
+        "expected_context": "b'   0.0391   0.1088   0.0000   0.0000 \\r\\n   1.550 8.146+0 8.674+0 1.364+1  1.063 5.477+0  1.166 4.989+1  1.000  1.000  0.0678   8.910   0.0215   0.0590   0.0000   0.0000 \\r\\n   2.025 9'",
+        "actual_context": "b'   0.0391   0.1088   0.0000   0.0000 \\r\\n   1.550 8.146+0 8.673+0 1.364+1  1.063 5.477+0  1.166 4.989+1  1.000  1.000  0.0678   8.910   0.0215   0.0590   0.0000   0.0000 \\r\\n   2.025 9'"
+      }
+    },
+    {
+      "path": "culvert.tab",
+      "raw_equal": false,
+      "clock_masked_equal": false,
+      "expected_sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade",
+      "actual_sha256": "c0e645f8285af807c5c4fed3ca4e1ddadef6aa59974396e5f7a6062d7b49660a",
+      "expected_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "actual_clock_fields": {
+        "run_timestamp": 1,
+        "elapsed_time": 0
+      },
+      "expected_bytes": 6015,
+      "actual_bytes": 6015,
+      "first_masked_difference": {
+        "byte_offset": 513,
+        "line": 12,
+        "expected_context": "b'    Flows for HUP and Proportion of FDROP\\r\\n 3162-5 2888-4 1039-3 2161-3 3580-3 5246-3 7017-3 8998-3 1091-2 1491-2 1825-2\\r\\n 8944-5 4502-4 1659-3 3469-3 5772-3 8476-3 1138-2 1462-2 1'",
+        "actual_context": "b'    Flows for HUP and Proportion of FDROP\\r\\n 3162-5 2888-4 1040-3 2161-3 3580-3 5246-3 7017-3 8998-3 1091-2 1491-2 1825-2\\r\\n 8944-5 4502-4 1659-3 3469-3 5772-3 8477-3 1138-2 1462-2 1'"
+      }
+    }
+  ],
+  "runtime": {
+    "upstream": "https://www.netlib.org/f2c/libf2c.zip",
+    "header_sha256": "3a5bcb7c693224ca5dc35714350874dee733c32a20aae10b031ffce06088c555",
+    "changes": [
+      {
+        "file": "f2c.h",
+        "reason": "Use the translator integer32 ABI; integer64 remains explicitly long long on LLP64 and LP64 hosts.",
+        "before_sha256": "7d323c009951dbd40201124b9302cb21daab2d98bed3d4a56b51b48958bc76ef",
+        "after_sha256": "bfa7da7ffbe28587f448e973b0c9f05981ca2c623889f12e52c30908fea7d47d"
+      },
+      {
+        "file": "fio.h",
+        "reason": "forunit.cmn permits logical unit 1024; formatted input must consume CRLF as one newline.",
+        "before_sha256": "8f982ce5c09be2794975d1a758ff10b4e06fc110d324fe6dd8a7cb531ad373e4",
+        "after_sha256": "7809841061835701ce0d57c458211957d4b99e2b605671a1ebddf927c30bbc2a"
+      },
+      {
+        "file": "open.c",
+        "reason": "Sequential formatted output uses the original CRLF bytes on every host.",
+        "before_sha256": "0b24258c852fa675ec901e827ec25ddc0de2cbe4ab19ed3f759d28408bd5d5ed",
+        "after_sha256": "b0579892c7465b1ce2d621c5873cea822d10b7407a409fdcc3e9fb82f517e1cb"
+      },
+      {
+        "file": "open.c",
+        "reason": "Interpret the released Windows path separators through the native filesystem.",
+        "before_sha256": "b0579892c7465b1ce2d621c5873cea822d10b7407a409fdcc3e9fb82f517e1cb",
+        "after_sha256": "309ac2279e5307bde4e5f7a329896ab1c6dc1bec867336736a7ab2def0c9e3ea"
+      },
+      {
+        "file": "inquire.c",
+        "reason": "Interpret the released Windows path separators through the native filesystem.",
+        "before_sha256": "c95d8cb1609b3804025e13930941b44ab511a801ed130c307bed23860f7df88a",
+        "after_sha256": "e7151944b5c14e73607ff8ad06588965349c80a34653fc7a1335dbb6fdf6210f"
+      },
+      {
+        "file": "makefile.u",
+        "reason": "Link the explicit CRLF reader into the isolated research runtime.",
+        "before_sha256": "49e21183a0855e219410e90bc25b1f6807a83a6712e8327094c80b814280de0f",
+        "after_sha256": "347d357efa29497b3d9789fba3bffbcf9b11f9c8a0beeaae902d7546d91512c5"
+      }
+    ],
+    "command": [
+      "make",
+      "-f",
+      "makefile.u",
+      "-j4",
+      "CFLAGS=-O1 -fno-fast-math -ffp-contract=off -DWANT_LEAD_0 -DUIOLEN_int"
+    ],
+    "returncode": 0,
+    "numeric_format_policy": "Leading zero enabled; no output values rounded or normalized after writing.",
+    "library_sha256": "ce9868c9737e13cbce9dd07bce7c536b880dd06a0afc94dd49e4944d676f7b8b"
+  }
+}

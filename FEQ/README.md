@@ -5,8 +5,9 @@ portable C++. FEQ solves one-dimensional unsteady flow in channel networks and
 control structures. FEQUTL produces the hydraulic function tables used by FEQ.
 
 **Implementation in progress. A native C++ application is not released yet.**
-The original releases, manuals, source comparison, and executable regression
-baseline are available here. The completed coastal software is a separate
+The original releases, manuals, source comparison, executable regression
+baseline, and first verified independent C++ numerical components are available
+here. The completed coastal software is a separate
 project in [`../CHAMP/`](../CHAMP/).
 
 **Work: Astra · Sponsor: Rainstar · Foundation: Hashem.** New project work is
@@ -26,6 +27,36 @@ fields, or convergence results are excluded from this comparison.
 This establishes the original executable baseline. It does not yet establish
 C++ equivalence. See [the recorded comparison](recovery/reference-1061-comparison.json)
 and [recovery findings](recovery/FINDINGS.md).
+
+The independent C++ profile-matrix factorization and solution routines now match
+**every output bit in 48 direct tests of the original executable**. These include
+dense matrices at three scales and the specialized branch blocks. The tests
+preserve the original compiler's wider register intermediates and explicit
+single-precision stores. Their captured inputs and outputs are committed in
+[`tests/reference/profile_matrix/`](tests/reference/profile_matrix/).
+
+Complete translated research engines also execute all six examples. Full-engine
+equivalence remains in progress: the current strict comparison passes 5 of the
+17 files, with numerical differences in the remaining reports and tables.
+[`recovery/cpp-research-status.json`](recovery/cpp-research-status.json) records
+the actual binaries, runtime changes, and all comparisons. These research
+engines are not application releases.
+
+## Build and check the independent C++ components
+
+A C++20 compiler and CMake 3.20 or newer build the numerical library. Python 3
+runs the fixture comparison during testing. From the collection root:
+
+```sh
+cmake -S FEQ -B FEQ/build/core -DCMAKE_BUILD_TYPE=Release
+cmake --build FEQ/build/core --config Release
+ctest --test-dir FEQ/build/core -C Release --output-on-failure
+```
+
+This checks the original-executable matrix fixtures, defined shared storage,
+and the historical input fingerprint algorithm. It does not require Wine,
+Fortran, or a source translator. The CI workflow runs these checks on Windows,
+macOS, and Linux, with a separate sanitizer build.
 
 ## Reproduce the original baseline
 

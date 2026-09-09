@@ -87,7 +87,7 @@ def main():
             text = f'{instruction.address:08x}  {instruction.bytes.hex():24} {instruction.mnemonic:9} {instruction.op_str}'
             if annotations:
                 text += ' ; '+', '.join(annotations)
-            lines.append(text)
+            lines.append(text.rstrip())
         filename = ''.join(char if char.isalnum() or char in '_-' else '_' for char in function['name'])+'.asm'
         (args.output / filename).write_text('\n'.join(lines)+'\n')
         written.append(function['name'])

@@ -14,6 +14,27 @@
 
 namespace feq {
 
+// Copy bytes only within complete object representations. This supports an
+// observed historical diagnostic copy whose width differs from its caller's
+// scalar type, while rejecting the original program's memory overrun cases.
+inline void copy_object_bytes(void* destination, std::size_t destination_bytes,
+                              std::size_t destination_offset, const void* source,
+                              std::size_t source_bytes, std::size_t source_offset,
+                              std::size_t count) {
+    if (destination_offset > destination_bytes || count > destination_bytes-destination_offset ||
+        source_offset > source_bytes || count > source_bytes-source_offset) {
+        throw std::out_of_range("Historical byte copy exceeds its COMMON storage.");
+    }
+    if (count == 0) {
+        return;
+    }
+    if (destination == nullptr || source == nullptr) {
+        throw std::invalid_argument("Historical byte copy has no storage.");
+    }
+    std::memmove(static_cast<unsigned char*>(destination)+destination_offset,
+                 static_cast<const unsigned char*>(source)+source_offset, count);
+}
+
 namespace detail {
 
 template <typename T>

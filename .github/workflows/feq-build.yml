@@ -1,0 +1,32 @@
+name: FEQ numerical core
+on:
+  push:
+    paths: ['FEQ/**', '.github/workflows/feq-build.yml']
+  pull_request:
+    paths: ['FEQ/**', '.github/workflows/feq-build.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S FEQ -B FEQ/build/core -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build FEQ/build/core --config Release --parallel 2
+      - name: Compare original executable fixtures
+        run: ctest --test-dir FEQ/build/core -C Release --output-on-failure
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S FEQ -B FEQ/build/core -DCMAKE_BUILD_TYPE=Debug -DFEQ_SANITIZERS=ON
+      - run: cmake --build FEQ/build/core --parallel 2
+      - run: ctest --test-dir FEQ/build/core --output-on-failure
