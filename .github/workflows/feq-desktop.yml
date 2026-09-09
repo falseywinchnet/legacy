@@ -78,13 +78,11 @@ jobs:
             FEQ/build/installers/*.zip
             FEQ/build/installers/*.deb
             FEQ/build/installers/*.tar.gz
+      - name: Collect verification records without following package symlinks
+        if: always()
+        run: python FEQ/tools/collect_desktop_evidence.py --build FEQ/build --output FEQ/build/desktop-evidence
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: FEQ-Desktop-verification-${{ runner.os }}-${{ runner.arch }}
-          path: |
-            FEQ/build/desktop/Testing/Temporary/LastTest.log
-            FEQ/build/desktop/desktop-verification
-            FEQ/build/desktop/example-verification
-            FEQ/build/installation-verification
-            FEQ/build/installer-verification
+          path: FEQ/build/desktop-evidence
