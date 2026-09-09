@@ -6,6 +6,7 @@ option(FEQ_SANITIZERS "Check authored C++ for invalid memory and undefined behav
 add_library(feq_numerics STATIC src/section_energy.cpp src/conduit_boundary.cpp src/weir_flow.cpp src/arch_perimeter.cpp src/trigonometry.cpp src/elevation_arguments.cpp src/section_properties.cpp src/section_flux.cpp src/power.cpp src/section_geometry.cpp src/decimal.cpp src/md5.cpp src/profile_matrix.cpp src/section_interpolation.cpp src/table_interpolation.cpp)
 target_include_directories(feq_numerics PUBLIC include)
 target_sources(feq_numerics PRIVATE src/root_solver.cpp src/culvert_loss.cpp src/steady_residual.cpp src/approach_residual.cpp)
+target_sources(feq_numerics PRIVATE src/section_extension.cpp)
 target_compile_features(feq_numerics PUBLIC cxx_std_20)
 set_target_properties(feq_numerics PROPERTIES CXX_EXTENSIONS OFF)
 
@@ -122,6 +123,11 @@ if(BUILD_TESTING)
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_steady_profile_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
     add_test(NAME station_fraction_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_station_fraction_fixture.py $<TARGET_FILE:feq_section_probe>)
+    add_executable(feq_slot_probe tools/slot_probe.cpp)
+    target_link_libraries(feq_slot_probe PRIVATE feq_numerics)
+    feq_checks(feq_slot_probe)
+    add_test(NAME section_slot_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_slot_fixture.py $<TARGET_FILE:feq_slot_probe>)
     add_test(NAME approach_residual_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_approach_residual_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
     foreach(method regflt rgf rgf5)

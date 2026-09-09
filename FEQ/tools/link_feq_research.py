@@ -75,7 +75,7 @@ def main():
                         'src/elevation_arguments.cpp','tools/elevation_compat.cpp',
                         'src/trigonometry.cpp','src/arch_perimeter.cpp','tools/arch_compat.cpp',
                         'src/conduit_boundary.cpp','tools/conduit_compat.cpp',
-                        'src/section_interpolation.cpp','tools/section_compat.cpp',
+                        'src/section_interpolation.cpp','src/section_extension.cpp','tools/section_compat.cpp',
                         'src/table_interpolation.cpp','tools/table_compat.cpp',
                         'src/weir_flow.cpp','tools/weir_compat.cpp','src/root_solver.cpp','tools/root_compat.cpp',
                         'src/culvert_loss.cpp','src/steady_residual.cpp','src/approach_residual.cpp',

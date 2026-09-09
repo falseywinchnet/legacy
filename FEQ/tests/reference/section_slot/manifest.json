@@ -1,0 +1,3142 @@
+{
+  "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+  "routines": [
+    "_cuttab_"
+  ],
+  "cases": 625,
+  "input_record_bytes": 424,
+  "output_record_bytes": 424,
+  "input_sha256": "5088bc0f485506c9148b2b88c1ac1668ad226ca29fa12eb791f3d5cc50eb16b4",
+  "output_sha256": "075b963ffd7d1c7685f31646e6b9339092b19d56484ff5ddeb70de05e404df63",
+  "probe_sha256": "0d95a0691a85b71529b10a4fe2d8ed6a365f67e7675ae9de63967e99b3e188e3",
+  "fixtures": [
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0-row-1",
+      "offset": 0,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0-row-2",
+      "offset": 424,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0-row-5",
+      "offset": 848,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0-row-7",
+      "offset": 1272,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0009999-row-1",
+      "offset": 1696,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0009999-row-2",
+      "offset": 2120,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0009999-row-5",
+      "offset": 2544,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0009999-row-7",
+      "offset": 2968,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.001-row-1",
+      "offset": 3392,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.001-row-2",
+      "offset": 3816,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.001-row-5",
+      "offset": 4240,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.001-row-7",
+      "offset": 4664,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0010001-row-1",
+      "offset": 5088,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0010001-row-2",
+      "offset": 5512,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0010001-row-5",
+      "offset": 5936,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.0010001-row-7",
+      "offset": 6360,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.002-row-1",
+      "offset": 6784,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.002-row-2",
+      "offset": 7208,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.002-row-5",
+      "offset": 7632,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.00533499987795949-delta-0.002-row-7",
+      "offset": 8056,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0-row-1",
+      "offset": 8480,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0-row-2",
+      "offset": 8904,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0-row-5",
+      "offset": 9328,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0-row-7",
+      "offset": 9752,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0009999-row-1",
+      "offset": 10176,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0009999-row-2",
+      "offset": 10600,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0009999-row-5",
+      "offset": 11024,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0009999-row-7",
+      "offset": 11448,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.001-row-1",
+      "offset": 11872,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.001-row-2",
+      "offset": 12296,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.001-row-5",
+      "offset": 12720,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.001-row-7",
+      "offset": 13144,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0010001-row-1",
+      "offset": 13568,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0010001-row-2",
+      "offset": 13992,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0010001-row-5",
+      "offset": 14416,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.0010001-row-7",
+      "offset": 14840,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.002-row-1",
+      "offset": 15264,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.002-row-2",
+      "offset": 15688,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.002-row-5",
+      "offset": 16112,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999764919281-delta-0.002-row-7",
+      "offset": 16536,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0-row-1",
+      "offset": 16960,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0-row-2",
+      "offset": 17384,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0-row-5",
+      "offset": 17808,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0-row-7",
+      "offset": 18232,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0009999-row-1",
+      "offset": 18656,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0009999-row-2",
+      "offset": 19080,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0009999-row-5",
+      "offset": 19504,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0009999-row-7",
+      "offset": 19928,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.001-row-1",
+      "offset": 20352,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.001-row-2",
+      "offset": 20776,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.001-row-5",
+      "offset": 21200,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.001-row-7",
+      "offset": 21624,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0010001-row-1",
+      "offset": 22048,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0010001-row-2",
+      "offset": 22472,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0010001-row-5",
+      "offset": 22896,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.0010001-row-7",
+      "offset": 23320,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.002-row-1",
+      "offset": 23744,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.002-row-2",
+      "offset": 24168,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.002-row-5",
+      "offset": 24592,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02133999951183796-delta-0.002-row-7",
+      "offset": 25016,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0-row-1",
+      "offset": 25440,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0-row-2",
+      "offset": 25864,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0-row-5",
+      "offset": 26288,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0-row-7",
+      "offset": 26712,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0009999-row-1",
+      "offset": 27136,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0009999-row-2",
+      "offset": 27560,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0009999-row-5",
+      "offset": 27984,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0009999-row-7",
+      "offset": 28408,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.001-row-1",
+      "offset": 28832,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.001-row-2",
+      "offset": 29256,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.001-row-5",
+      "offset": 29680,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.001-row-7",
+      "offset": 30104,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0010001-row-1",
+      "offset": 30528,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0010001-row-2",
+      "offset": 30952,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0010001-row-5",
+      "offset": 31376,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.0010001-row-7",
+      "offset": 31800,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.002-row-1",
+      "offset": 32224,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.002-row-2",
+      "offset": 32648,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.002-row-5",
+      "offset": 33072,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-width-0.02134000137448311-delta-0.002-row-7",
+      "offset": 33496,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-skip-widths-[0.0, 0.0, 0.0]",
+      "offset": 33920,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-skip-widths-[0.01, 0.0, 0.01]",
+      "offset": 34344,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-skip-widths-[0.01, -0.0, 0.01]",
+      "offset": 34768,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-skip-widths-[0.01, 0.0, 0.02, 0.020001]",
+      "offset": 35192,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-skip-widths-[3.0, 2.0, 1.0]",
+      "offset": 35616,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-skip-widths-[0.01]",
+      "offset": 36040,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-skip-widths-[0.01, 0.01]",
+      "offset": 36464,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-skip-widths-[0.01, 0.01, 0.01]",
+      "offset": 36888,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-skip-widths-[0.0, 0.01, 0.01]",
+      "offset": 37312,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-0",
+      "offset": 37736,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-1",
+      "offset": 38160,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-2",
+      "offset": 38584,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-3",
+      "offset": 39008,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-4",
+      "offset": 39432,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-5",
+      "offset": 39856,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-6",
+      "offset": 40280,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-7",
+      "offset": 40704,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-8",
+      "offset": 41128,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-9",
+      "offset": 41552,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-10",
+      "offset": 41976,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-11",
+      "offset": 42400,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-12",
+      "offset": 42824,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-13",
+      "offset": 43248,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-14",
+      "offset": 43672,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-15",
+      "offset": 44096,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-16",
+      "offset": 44520,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-17",
+      "offset": 44944,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-18",
+      "offset": 45368,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-19",
+      "offset": 45792,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-20",
+      "offset": 46216,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-21",
+      "offset": 46640,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-22",
+      "offset": 47064,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-23",
+      "offset": 47488,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-24",
+      "offset": 47912,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-25",
+      "offset": 48336,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-26",
+      "offset": 48760,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-27",
+      "offset": 49184,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-28",
+      "offset": 49608,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-29",
+      "offset": 50032,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-30",
+      "offset": 50456,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-31",
+      "offset": 50880,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-32",
+      "offset": 51304,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-33",
+      "offset": 51728,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-34",
+      "offset": 52152,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-9.81-random-35",
+      "offset": 52576,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0-row-1",
+      "offset": 53000,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0-row-2",
+      "offset": 53424,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0-row-5",
+      "offset": 53848,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0-row-7",
+      "offset": 54272,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0009999-row-1",
+      "offset": 54696,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0009999-row-2",
+      "offset": 55120,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0009999-row-5",
+      "offset": 55544,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0009999-row-7",
+      "offset": 55968,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.001-row-1",
+      "offset": 56392,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.001-row-2",
+      "offset": 56816,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.001-row-5",
+      "offset": 57240,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.001-row-7",
+      "offset": 57664,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0010001-row-1",
+      "offset": 58088,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0010001-row-2",
+      "offset": 58512,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0010001-row-5",
+      "offset": 58936,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.0010001-row-7",
+      "offset": 59360,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.002-row-1",
+      "offset": 59784,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.002-row-2",
+      "offset": 60208,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.002-row-5",
+      "offset": 60632,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.00533499987795949-delta-0.002-row-7",
+      "offset": 61056,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0-row-1",
+      "offset": 61480,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0-row-2",
+      "offset": 61904,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0-row-5",
+      "offset": 62328,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0-row-7",
+      "offset": 62752,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0009999-row-1",
+      "offset": 63176,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0009999-row-2",
+      "offset": 63600,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0009999-row-5",
+      "offset": 64024,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0009999-row-7",
+      "offset": 64448,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.001-row-1",
+      "offset": 64872,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.001-row-2",
+      "offset": 65296,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.001-row-5",
+      "offset": 65720,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.001-row-7",
+      "offset": 66144,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0010001-row-1",
+      "offset": 66568,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0010001-row-2",
+      "offset": 66992,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0010001-row-5",
+      "offset": 67416,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.0010001-row-7",
+      "offset": 67840,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.002-row-1",
+      "offset": 68264,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.002-row-2",
+      "offset": 68688,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.002-row-5",
+      "offset": 69112,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999764919281-delta-0.002-row-7",
+      "offset": 69536,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0-row-1",
+      "offset": 69960,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0-row-2",
+      "offset": 70384,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0-row-5",
+      "offset": 70808,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0-row-7",
+      "offset": 71232,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0009999-row-1",
+      "offset": 71656,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0009999-row-2",
+      "offset": 72080,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0009999-row-5",
+      "offset": 72504,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0009999-row-7",
+      "offset": 72928,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.001-row-1",
+      "offset": 73352,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.001-row-2",
+      "offset": 73776,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.001-row-5",
+      "offset": 74200,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.001-row-7",
+      "offset": 74624,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0010001-row-1",
+      "offset": 75048,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0010001-row-2",
+      "offset": 75472,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0010001-row-5",
+      "offset": 75896,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.0010001-row-7",
+      "offset": 76320,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.002-row-1",
+      "offset": 76744,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.002-row-2",
+      "offset": 77168,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.002-row-5",
+      "offset": 77592,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02133999951183796-delta-0.002-row-7",
+      "offset": 78016,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0-row-1",
+      "offset": 78440,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0-row-2",
+      "offset": 78864,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0-row-5",
+      "offset": 79288,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0-row-7",
+      "offset": 79712,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0009999-row-1",
+      "offset": 80136,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0009999-row-2",
+      "offset": 80560,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0009999-row-5",
+      "offset": 80984,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0009999-row-7",
+      "offset": 81408,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.001-row-1",
+      "offset": 81832,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.001-row-2",
+      "offset": 82256,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.001-row-5",
+      "offset": 82680,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.001-row-7",
+      "offset": 83104,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0010001-row-1",
+      "offset": 83528,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0010001-row-2",
+      "offset": 83952,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0010001-row-5",
+      "offset": 84376,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.0010001-row-7",
+      "offset": 84800,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.002-row-1",
+      "offset": 85224,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.002-row-2",
+      "offset": 85648,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.002-row-5",
+      "offset": 86072,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-width-0.02134000137448311-delta-0.002-row-7",
+      "offset": 86496,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-skip-widths-[0.0, 0.0, 0.0]",
+      "offset": 86920,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-skip-widths-[0.01, 0.0, 0.01]",
+      "offset": 87344,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-skip-widths-[0.01, -0.0, 0.01]",
+      "offset": 87768,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-skip-widths-[0.01, 0.0, 0.02, 0.020001]",
+      "offset": 88192,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-skip-widths-[3.0, 2.0, 1.0]",
+      "offset": 88616,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-skip-widths-[0.01]",
+      "offset": 89040,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-skip-widths-[0.01, 0.01]",
+      "offset": 89464,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-skip-widths-[0.01, 0.01, 0.01]",
+      "offset": 89888,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-skip-widths-[0.0, 0.01, 0.01]",
+      "offset": 90312,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-0",
+      "offset": 90736,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-1",
+      "offset": 91160,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-2",
+      "offset": 91584,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-3",
+      "offset": 92008,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-4",
+      "offset": 92432,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-5",
+      "offset": 92856,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-6",
+      "offset": 93280,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-7",
+      "offset": 93704,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-8",
+      "offset": 94128,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-9",
+      "offset": 94552,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-10",
+      "offset": 94976,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-11",
+      "offset": 95400,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-12",
+      "offset": 95824,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-13",
+      "offset": 96248,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-14",
+      "offset": 96672,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-15",
+      "offset": 97096,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-16",
+      "offset": 97520,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-17",
+      "offset": 97944,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-18",
+      "offset": 98368,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-19",
+      "offset": 98792,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-20",
+      "offset": 99216,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-21",
+      "offset": 99640,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-22",
+      "offset": 100064,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-23",
+      "offset": 100488,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-24",
+      "offset": 100912,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-25",
+      "offset": 101336,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-26",
+      "offset": 101760,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-27",
+      "offset": 102184,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-28",
+      "offset": 102608,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-29",
+      "offset": 103032,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-30",
+      "offset": 103456,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-31",
+      "offset": 103880,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-32",
+      "offset": 104304,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-33",
+      "offset": 104728,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-34",
+      "offset": 105152,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-14.999999046325684-random-35",
+      "offset": 105576,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0-row-1",
+      "offset": 106000,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0-row-2",
+      "offset": 106424,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0-row-5",
+      "offset": 106848,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0-row-7",
+      "offset": 107272,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0009999-row-1",
+      "offset": 107696,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0009999-row-2",
+      "offset": 108120,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0009999-row-5",
+      "offset": 108544,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0009999-row-7",
+      "offset": 108968,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.001-row-1",
+      "offset": 109392,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.001-row-2",
+      "offset": 109816,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.001-row-5",
+      "offset": 110240,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.001-row-7",
+      "offset": 110664,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0010001-row-1",
+      "offset": 111088,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0010001-row-2",
+      "offset": 111512,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0010001-row-5",
+      "offset": 111936,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.0010001-row-7",
+      "offset": 112360,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.002-row-1",
+      "offset": 112784,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.002-row-2",
+      "offset": 113208,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.002-row-5",
+      "offset": 113632,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.00533499987795949-delta-0.002-row-7",
+      "offset": 114056,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0-row-1",
+      "offset": 114480,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0-row-2",
+      "offset": 114904,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0-row-5",
+      "offset": 115328,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0-row-7",
+      "offset": 115752,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0009999-row-1",
+      "offset": 116176,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0009999-row-2",
+      "offset": 116600,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0009999-row-5",
+      "offset": 117024,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0009999-row-7",
+      "offset": 117448,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.001-row-1",
+      "offset": 117872,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.001-row-2",
+      "offset": 118296,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.001-row-5",
+      "offset": 118720,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.001-row-7",
+      "offset": 119144,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0010001-row-1",
+      "offset": 119568,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0010001-row-2",
+      "offset": 119992,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0010001-row-5",
+      "offset": 120416,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.0010001-row-7",
+      "offset": 120840,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.002-row-1",
+      "offset": 121264,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.002-row-2",
+      "offset": 121688,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.002-row-5",
+      "offset": 122112,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999764919281-delta-0.002-row-7",
+      "offset": 122536,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0-row-1",
+      "offset": 122960,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0-row-2",
+      "offset": 123384,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0-row-5",
+      "offset": 123808,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0-row-7",
+      "offset": 124232,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0009999-row-1",
+      "offset": 124656,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0009999-row-2",
+      "offset": 125080,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0009999-row-5",
+      "offset": 125504,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0009999-row-7",
+      "offset": 125928,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.001-row-1",
+      "offset": 126352,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.001-row-2",
+      "offset": 126776,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.001-row-5",
+      "offset": 127200,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.001-row-7",
+      "offset": 127624,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0010001-row-1",
+      "offset": 128048,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0010001-row-2",
+      "offset": 128472,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0010001-row-5",
+      "offset": 128896,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.0010001-row-7",
+      "offset": 129320,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.002-row-1",
+      "offset": 129744,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.002-row-2",
+      "offset": 130168,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.002-row-5",
+      "offset": 130592,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02133999951183796-delta-0.002-row-7",
+      "offset": 131016,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0-row-1",
+      "offset": 131440,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0-row-2",
+      "offset": 131864,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0-row-5",
+      "offset": 132288,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0-row-7",
+      "offset": 132712,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0009999-row-1",
+      "offset": 133136,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0009999-row-2",
+      "offset": 133560,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0009999-row-5",
+      "offset": 133984,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0009999-row-7",
+      "offset": 134408,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.001-row-1",
+      "offset": 134832,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.001-row-2",
+      "offset": 135256,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.001-row-5",
+      "offset": 135680,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.001-row-7",
+      "offset": 136104,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0010001-row-1",
+      "offset": 136528,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0010001-row-2",
+      "offset": 136952,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0010001-row-5",
+      "offset": 137376,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.0010001-row-7",
+      "offset": 137800,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.002-row-1",
+      "offset": 138224,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.002-row-2",
+      "offset": 138648,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.002-row-5",
+      "offset": 139072,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-width-0.02134000137448311-delta-0.002-row-7",
+      "offset": 139496,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-skip-widths-[0.0, 0.0, 0.0]",
+      "offset": 139920,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-skip-widths-[0.01, 0.0, 0.01]",
+      "offset": 140344,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-skip-widths-[0.01, -0.0, 0.01]",
+      "offset": 140768,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-skip-widths-[0.01, 0.0, 0.02, 0.020001]",
+      "offset": 141192,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-skip-widths-[3.0, 2.0, 1.0]",
+      "offset": 141616,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-skip-widths-[0.01]",
+      "offset": 142040,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-skip-widths-[0.01, 0.01]",
+      "offset": 142464,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-skip-widths-[0.01, 0.01, 0.01]",
+      "offset": 142888,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-skip-widths-[0.0, 0.01, 0.01]",
+      "offset": 143312,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-0",
+      "offset": 143736,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-1",
+      "offset": 144160,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-2",
+      "offset": 144584,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-3",
+      "offset": 145008,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-4",
+      "offset": 145432,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-5",
+      "offset": 145856,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-6",
+      "offset": 146280,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-7",
+      "offset": 146704,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-8",
+      "offset": 147128,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-9",
+      "offset": 147552,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-10",
+      "offset": 147976,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-11",
+      "offset": 148400,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-12",
+      "offset": 148824,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-13",
+      "offset": 149248,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-14",
+      "offset": 149672,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-15",
+      "offset": 150096,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-16",
+      "offset": 150520,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-17",
+      "offset": 150944,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-18",
+      "offset": 151368,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-19",
+      "offset": 151792,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-20",
+      "offset": 152216,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-21",
+      "offset": 152640,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-22",
+      "offset": 153064,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-23",
+      "offset": 153488,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-24",
+      "offset": 153912,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-25",
+      "offset": 154336,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-26",
+      "offset": 154760,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-27",
+      "offset": 155184,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-28",
+      "offset": 155608,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-29",
+      "offset": 156032,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-30",
+      "offset": 156456,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-31",
+      "offset": 156880,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-32",
+      "offset": 157304,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-33",
+      "offset": 157728,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-34",
+      "offset": 158152,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.0-random-35",
+      "offset": 158576,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0-row-1",
+      "offset": 159000,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0-row-2",
+      "offset": 159424,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0-row-5",
+      "offset": 159848,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0-row-7",
+      "offset": 160272,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0009999-row-1",
+      "offset": 160696,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0009999-row-2",
+      "offset": 161120,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0009999-row-5",
+      "offset": 161544,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0009999-row-7",
+      "offset": 161968,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.001-row-1",
+      "offset": 162392,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.001-row-2",
+      "offset": 162816,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.001-row-5",
+      "offset": 163240,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.001-row-7",
+      "offset": 163664,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0010001-row-1",
+      "offset": 164088,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0010001-row-2",
+      "offset": 164512,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0010001-row-5",
+      "offset": 164936,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.0010001-row-7",
+      "offset": 165360,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.002-row-1",
+      "offset": 165784,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.002-row-2",
+      "offset": 166208,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.002-row-5",
+      "offset": 166632,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.017500000074505806-delta-0.002-row-7",
+      "offset": 167056,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0-row-1",
+      "offset": 167480,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0-row-2",
+      "offset": 167904,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0-row-5",
+      "offset": 168328,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0-row-7",
+      "offset": 168752,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0009999-row-1",
+      "offset": 169176,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0009999-row-2",
+      "offset": 169600,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0009999-row-5",
+      "offset": 170024,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0009999-row-7",
+      "offset": 170448,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.001-row-1",
+      "offset": 170872,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.001-row-2",
+      "offset": 171296,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.001-row-5",
+      "offset": 171720,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.001-row-7",
+      "offset": 172144,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0010001-row-1",
+      "offset": 172568,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0010001-row-2",
+      "offset": 172992,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0010001-row-5",
+      "offset": 173416,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.0010001-row-7",
+      "offset": 173840,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.002-row-1",
+      "offset": 174264,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.002-row-2",
+      "offset": 174688,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.002-row-5",
+      "offset": 175112,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.06999999284744263-delta-0.002-row-7",
+      "offset": 175536,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0-row-1",
+      "offset": 175960,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0-row-2",
+      "offset": 176384,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0-row-5",
+      "offset": 176808,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0-row-7",
+      "offset": 177232,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0009999-row-1",
+      "offset": 177656,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0009999-row-2",
+      "offset": 178080,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0009999-row-5",
+      "offset": 178504,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0009999-row-7",
+      "offset": 178928,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.001-row-1",
+      "offset": 179352,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.001-row-2",
+      "offset": 179776,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.001-row-5",
+      "offset": 180200,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.001-row-7",
+      "offset": 180624,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0010001-row-1",
+      "offset": 181048,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0010001-row-2",
+      "offset": 181472,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0010001-row-5",
+      "offset": 181896,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.0010001-row-7",
+      "offset": 182320,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.002-row-1",
+      "offset": 182744,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.002-row-2",
+      "offset": 183168,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.002-row-5",
+      "offset": 183592,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000029802322-delta-0.002-row-7",
+      "offset": 184016,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0-row-1",
+      "offset": 184440,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0-row-2",
+      "offset": 184864,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0-row-5",
+      "offset": 185288,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0-row-7",
+      "offset": 185712,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0009999-row-1",
+      "offset": 186136,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0009999-row-2",
+      "offset": 186560,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0009999-row-5",
+      "offset": 186984,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0009999-row-7",
+      "offset": 187408,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.001-row-1",
+      "offset": 187832,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.001-row-2",
+      "offset": 188256,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.001-row-5",
+      "offset": 188680,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.001-row-7",
+      "offset": 189104,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0010001-row-1",
+      "offset": 189528,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0010001-row-2",
+      "offset": 189952,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0010001-row-5",
+      "offset": 190376,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.0010001-row-7",
+      "offset": 190800,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.002-row-1",
+      "offset": 191224,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.002-row-2",
+      "offset": 191648,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.002-row-5",
+      "offset": 192072,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-width-0.07000000774860382-delta-0.002-row-7",
+      "offset": 192496,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-skip-widths-[0.0, 0.0, 0.0]",
+      "offset": 192920,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-skip-widths-[0.01, 0.0, 0.01]",
+      "offset": 193344,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-skip-widths-[0.01, -0.0, 0.01]",
+      "offset": 193768,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-skip-widths-[0.01, 0.0, 0.02, 0.020001]",
+      "offset": 194192,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-skip-widths-[3.0, 2.0, 1.0]",
+      "offset": 194616,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-skip-widths-[0.01]",
+      "offset": 195040,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-skip-widths-[0.01, 0.01]",
+      "offset": 195464,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-skip-widths-[0.01, 0.01, 0.01]",
+      "offset": 195888,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-skip-widths-[0.0, 0.01, 0.01]",
+      "offset": 196312,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-0",
+      "offset": 196736,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-1",
+      "offset": 197160,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-2",
+      "offset": 197584,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-3",
+      "offset": 198008,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-4",
+      "offset": 198432,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-5",
+      "offset": 198856,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-6",
+      "offset": 199280,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-7",
+      "offset": 199704,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-8",
+      "offset": 200128,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-9",
+      "offset": 200552,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-10",
+      "offset": 200976,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-11",
+      "offset": 201400,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-12",
+      "offset": 201824,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-13",
+      "offset": 202248,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-14",
+      "offset": 202672,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-15",
+      "offset": 203096,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-16",
+      "offset": 203520,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-17",
+      "offset": 203944,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-18",
+      "offset": 204368,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-19",
+      "offset": 204792,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-20",
+      "offset": 205216,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-21",
+      "offset": 205640,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-22",
+      "offset": 206064,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-23",
+      "offset": 206488,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-24",
+      "offset": 206912,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-25",
+      "offset": 207336,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-26",
+      "offset": 207760,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-27",
+      "offset": 208184,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-28",
+      "offset": 208608,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-29",
+      "offset": 209032,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-30",
+      "offset": 209456,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-31",
+      "offset": 209880,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-32",
+      "offset": 210304,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-33",
+      "offset": 210728,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-34",
+      "offset": 211152,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-15.000000953674316-random-35",
+      "offset": 211576,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0-row-1",
+      "offset": 212000,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0-row-2",
+      "offset": 212424,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0-row-5",
+      "offset": 212848,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0-row-7",
+      "offset": 213272,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0009999-row-1",
+      "offset": 213696,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0009999-row-2",
+      "offset": 214120,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0009999-row-5",
+      "offset": 214544,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0009999-row-7",
+      "offset": 214968,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.001-row-1",
+      "offset": 215392,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.001-row-2",
+      "offset": 215816,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.001-row-5",
+      "offset": 216240,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.001-row-7",
+      "offset": 216664,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0010001-row-1",
+      "offset": 217088,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0010001-row-2",
+      "offset": 217512,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0010001-row-5",
+      "offset": 217936,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.0010001-row-7",
+      "offset": 218360,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.002-row-1",
+      "offset": 218784,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.002-row-2",
+      "offset": 219208,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.002-row-5",
+      "offset": 219632,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.017500000074505806-delta-0.002-row-7",
+      "offset": 220056,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0-row-1",
+      "offset": 220480,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0-row-2",
+      "offset": 220904,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0-row-5",
+      "offset": 221328,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0-row-7",
+      "offset": 221752,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0009999-row-1",
+      "offset": 222176,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0009999-row-2",
+      "offset": 222600,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0009999-row-5",
+      "offset": 223024,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0009999-row-7",
+      "offset": 223448,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.001-row-1",
+      "offset": 223872,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.001-row-2",
+      "offset": 224296,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.001-row-5",
+      "offset": 224720,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.001-row-7",
+      "offset": 225144,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0010001-row-1",
+      "offset": 225568,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0010001-row-2",
+      "offset": 225992,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0010001-row-5",
+      "offset": 226416,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.0010001-row-7",
+      "offset": 226840,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.002-row-1",
+      "offset": 227264,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.002-row-2",
+      "offset": 227688,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.002-row-5",
+      "offset": 228112,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.06999999284744263-delta-0.002-row-7",
+      "offset": 228536,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0-row-1",
+      "offset": 228960,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0-row-2",
+      "offset": 229384,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0-row-5",
+      "offset": 229808,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0-row-7",
+      "offset": 230232,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0009999-row-1",
+      "offset": 230656,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0009999-row-2",
+      "offset": 231080,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0009999-row-5",
+      "offset": 231504,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0009999-row-7",
+      "offset": 231928,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.001-row-1",
+      "offset": 232352,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.001-row-2",
+      "offset": 232776,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.001-row-5",
+      "offset": 233200,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.001-row-7",
+      "offset": 233624,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0010001-row-1",
+      "offset": 234048,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0010001-row-2",
+      "offset": 234472,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0010001-row-5",
+      "offset": 234896,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.0010001-row-7",
+      "offset": 235320,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.002-row-1",
+      "offset": 235744,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.002-row-2",
+      "offset": 236168,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.002-row-5",
+      "offset": 236592,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000029802322-delta-0.002-row-7",
+      "offset": 237016,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0-row-1",
+      "offset": 237440,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0-row-2",
+      "offset": 237864,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0-row-5",
+      "offset": 238288,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0-row-7",
+      "offset": 238712,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0009999-row-1",
+      "offset": 239136,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0009999-row-2",
+      "offset": 239560,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0009999-row-5",
+      "offset": 239984,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0009999-row-7",
+      "offset": 240408,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.001-row-1",
+      "offset": 240832,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.001-row-2",
+      "offset": 241256,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.001-row-5",
+      "offset": 241680,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.001-row-7",
+      "offset": 242104,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0010001-row-1",
+      "offset": 242528,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0010001-row-2",
+      "offset": 242952,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0010001-row-5",
+      "offset": 243376,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.0010001-row-7",
+      "offset": 243800,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.002-row-1",
+      "offset": 244224,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.002-row-2",
+      "offset": 244648,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.002-row-5",
+      "offset": 245072,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-width-0.07000000774860382-delta-0.002-row-7",
+      "offset": 245496,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-skip-widths-[0.0, 0.0, 0.0]",
+      "offset": 245920,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-skip-widths-[0.01, 0.0, 0.01]",
+      "offset": 246344,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-skip-widths-[0.01, -0.0, 0.01]",
+      "offset": 246768,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-skip-widths-[0.01, 0.0, 0.02, 0.020001]",
+      "offset": 247192,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-skip-widths-[3.0, 2.0, 1.0]",
+      "offset": 247616,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-skip-widths-[0.01]",
+      "offset": 248040,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-skip-widths-[0.01, 0.01]",
+      "offset": 248464,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-skip-widths-[0.01, 0.01, 0.01]",
+      "offset": 248888,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-skip-widths-[0.0, 0.01, 0.01]",
+      "offset": 249312,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-0",
+      "offset": 249736,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-1",
+      "offset": 250160,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-2",
+      "offset": 250584,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-3",
+      "offset": 251008,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-4",
+      "offset": 251432,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-5",
+      "offset": 251856,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-6",
+      "offset": 252280,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-7",
+      "offset": 252704,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-8",
+      "offset": 253128,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-9",
+      "offset": 253552,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-10",
+      "offset": 253976,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-11",
+      "offset": 254400,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-12",
+      "offset": 254824,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-13",
+      "offset": 255248,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-14",
+      "offset": 255672,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-15",
+      "offset": 256096,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-16",
+      "offset": 256520,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-17",
+      "offset": 256944,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-18",
+      "offset": 257368,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-19",
+      "offset": 257792,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-20",
+      "offset": 258216,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-21",
+      "offset": 258640,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-22",
+      "offset": 259064,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-23",
+      "offset": 259488,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-24",
+      "offset": 259912,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-25",
+      "offset": 260336,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-26",
+      "offset": 260760,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-27",
+      "offset": 261184,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-28",
+      "offset": 261608,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-29",
+      "offset": 262032,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-30",
+      "offset": 262456,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-31",
+      "offset": 262880,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-32",
+      "offset": 263304,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-33",
+      "offset": 263728,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-34",
+      "offset": 264152,
+      "bytes": 424
+    },
+    {
+      "name": "gravity-32.2-random-35",
+      "offset": 264576,
+      "bytes": 424
+    }
+  ],
+  "native_sha256": "a52934d9d73129b2f974cb3a8d885909d7a77aeda0150503a912632aa2d88bc8",
+  "native_returncode": 0,
+  "exact_bytes": true
+}

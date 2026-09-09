@@ -99,6 +99,13 @@ multiplication. These distinctions are observable: 116 fixtures differ under
 direct division, and 443 differ with single-precision distances and fraction.
 See [`tests/reference/station_fraction/`](tests/reference/station_fraction/).
 
+The standard closed-section slot replacement matches **625 direct CUTTAB
+calls**, including the retained row count and every value in thirteen table
+columns. Of these, 354 change a slot row and 271 preserve the input table.
+The implementation keeps the unrounded new area for the first-moment integral
+and preserves the original zero-width skip and unit thresholds. See
+[`tests/reference/section_slot/`](tests/reference/section_slot/).
+
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,
 the caller's float store, and the head-loss result at three scales and around

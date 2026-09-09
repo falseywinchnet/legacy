@@ -525,3 +525,42 @@ remain at lines 1921, 711 and 13. All twelve FEQ outputs still agree with only
 execution clocks excluded, and all 2,092 active FEQ matrices remain byte-exact.
 The full comparison still passes 13 of 17 files; four FEQUTL outputs and the
 final application release remain incomplete.
+
+
+## Standard closed-section slot
+
+`probe_slot_original.py` calls unchanged CUTTAB at RVA 0x93530 with 625 table
+fixtures. Its temporary PROGRAM driver streams fixed-size records through
+Win32 ReadFile and WriteFile and scatters the input columns to the original
+PMXPNT=999 stride. The preserved executable is hash-checked and never edited.
+Original runtime startup and the complete CUTTAB routine execute normally.
+
+Each 424-byte record contains the row count, gravity and eight rows of thirteen
+column-major float fields. The output has the same layout, including all rows
+after the returned count. Every output bit matches the independent
+`cut_section_slot` implementation. There are 354 modified slot rows and 271
+unchanged tables. Fixtures exercise both unit systems, gravity immediately
+around 15, width and relative-change thresholds, zero-width skip behavior,
+odd/even loop positions, short tables and random field values.
+
+CUTTAB detects a slot when `abs(Tnew-Told)/Tnew <= REAL(0.001)` and the width is
+at most REAL(0.07) for gravity greater than 15, or REAL(0.02134) otherwise.
+It extends the detected row to depth 500 or 150, copies conveyance, beta, alpha
+and critical flow from the preceding row, and integrates area and first moment.
+The original FST instructions at 0x493652, 0x493735 and 0x493830 store new area
+as REAL without discarding the wide register used in the next integral.
+Depth difference also remains wide. Zero-width rows leave the prior width
+unchanged for the next detection test.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_slot_original.py \
+  --native FEQ/build/core/feq_slot_probe --output FEQ/build/slot-recapture
+```
+
+The whole-program integration fixes the first-moment difference at UTLEXM table
+line 1046. The table now agrees through line 1369, with the next difference in
+velocity-distribution properties at line 1370. UTLEXM and CULVERT report
+differences remain at lines 1921 and 711; the CULVERT table still differs at
+line 13. The combined comparison remains 13 of 17 files, with all twelve FEQ
+outputs and all 2,092 active matrices still exact apart from report clocks.
+Four utility outputs and final application release work remain incomplete.

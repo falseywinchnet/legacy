@@ -15,6 +15,7 @@
 #include <feq/section_flux.hpp>
 #include <feq/section_geometry.hpp>
 #include <feq/section_interpolation.hpp>
+#include <feq/section_extension.hpp>
 #include <feq/section_properties.hpp>
 #include <feq/storage.hpp>
 #include <feq/table_interpolation.hpp>

@@ -240,6 +240,22 @@ def integrate_station_fractions(data):
     return b'#include <feq/section_interpolation.hpp>\n'+edit_text(data,[(function.start_byte,function.end_byte,body)])
 
 
+def integrate_section_slot(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'cuttab_']
+    if len(targets) != 1:
+        raise ValueError('Expected exactly one CUTTAB definition.')
+    body = targets[0].child_by_field_name('body')
+    replacement = '''{
+    // Original CUTTAB: slot detection, retained wide area, and complete table stores.
+    // The released XST column stride is PMXPNT=999; CUTTAB accesses 13 columns.
+    *ndep = static_cast<integer>(feq::cut_section_slot(
+        std::span<float>(feq_storage_xst,999*13),999,static_cast<std::size_t>(*ndep),grvcom_1.grav));
+    return 0;
+}'''
+    return b'#include <feq/section_extension.hpp>\n'+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
+
+
 def integrate_section_lookup(data):
     edits = []
     found = set()
@@ -550,7 +566,7 @@ def main():
     integrated_files = set()
     for path in sorted(source.glob('*.cpp')):
         data = path.read_bytes();sources.append({'name':path.name,'sha256':hashlib.sha256(data).hexdigest()})
-        if path.name == 'xsection.cpp':data = integrate_elevations(integrate_properties(integrate_geometry(data)))
+        if path.name == 'xsection.cpp':data = integrate_section_slot(integrate_elevations(integrate_properties(integrate_geometry(data))))
         elif path.name == 'critq.cpp':data = integrate_critical_speed_store(data)
         elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
         elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
@@ -572,6 +588,9 @@ def main():
                  'scope':'Section aggregation, conveyance, coefficients, critical flows and KOLD/TSOLD updates; retain original diagnostic formats.'},
                 {'file':'xsection.cpp','function':'chkarg_','component':'src/elevation_arguments.cpp',
                  'scope':'Elevation spacing, near-zero insertion, stable sort and duplicate removal; retain ERR:525 formatting.'},
+                {'file':'xsection.cpp','function':'cuttab_','component':'src/section_extension.cpp',
+                 'scope':'Standard slot detection, wide area/first moment, copied properties and retained row count.',
+                 'verification':'tests/reference/section_slot/manifest.json'},
                 {'file':'critq.cpp','function':'critq_','scope':'REAL critical-speed store before multiplication by area.',
                  'evidence':'recovery/assembly/fequtl/_critq_.asm, VA 0x411964.'},
                 {'file':'conduit.cpp','function':'rharch_','component':'src/arch_perimeter.cpp',
