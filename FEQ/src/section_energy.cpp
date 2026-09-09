@@ -1,10 +1,38 @@
 // XLKT22: hydraulic section properties including alpha and critical flow.
 // Work: Astra. Sponsor: Rainstar. Foundation: Hashem. MIT licensed.
 #include <feq/section_energy.hpp>
+#include <bit>
 #include <cmath>
+#include <cstdint>
 #include <stdexcept>
 
 namespace feq {
+float logarithmic_critical_flow(float depth, float lower_depth, float upper_depth,
+    float lower_flow, float upper_flow) {
+    if (!std::isfinite(depth) || depth < 0.0F || !std::isfinite(lower_depth) ||
+        !std::isfinite(upper_depth) || lower_depth <= 0.0F || upper_depth <= lower_depth ||
+        !std::isfinite(lower_flow) || !std::isfinite(upper_flow) || lower_flow <= 0.0F || upper_flow <= 0.0F) {
+        throw std::invalid_argument("Critical-flow interpolation requires positive flows and increasing positive depths.");
+    }
+    if (depth == 0.0F) {
+        // LKTQC evaluates log(0), then the inline exponential subtracts
+        // infinite integer and fractional parts. The released x87 result is
+        // the negative quiet indefinite NaN, captured as REAL bits ffc00000.
+        return std::bit_cast<float>(std::uint32_t{0xffc00000U});
+    }
+    // P = REAL(REAL(log(y/y0))*REAL(log(Qc1/Qc0))/REAL(log(y1/y0))).
+    // Ratios remain wide through FYL2X; each log and then P store REAL.
+    // XLKT22: 0x4496dd/0x4496f3/0x449708/0x449710.
+    // LKTQC: 0x44b963/0x44b973/0x44b987/0x44b98d.
+    const float depth_log = static_cast<float>(std::log(static_cast<double>(depth)/lower_depth));
+    const float flow_log = static_cast<float>(std::log(static_cast<double>(upper_flow)/lower_flow));
+    const float interval_log = static_cast<float>(std::log(static_cast<double>(upper_depth)/lower_depth));
+    const float exponent = static_cast<float>((static_cast<double>(depth_log)*flow_log)/interval_log);
+    // Qc = Qc0*REAL(exp(P)); original REAL stores 0x449732 and 0x44b9ad.
+    const float multiplier = static_cast<float>(std::exp(static_cast<double>(exponent)));
+    return static_cast<float>(static_cast<double>(lower_flow)*multiplier);
+}
+
 EnergySectionProperties interpolate_energy_section(float depth,
     const EnergySectionRow& lower, const EnergySectionRow& upper,
     bool has_slopes, const EnergySectionRow* following) {
@@ -41,22 +69,8 @@ EnergySectionProperties interpolate_energy_section(float depth,
             }
             critical_lower = &upper; critical_upper = following;
         }
-        if (!std::isfinite(critical_upper->section.depth) ||
-            critical_upper->section.depth <= critical_lower->section.depth ||
-            !std::isfinite(critical_lower->critical_flow) || !std::isfinite(critical_upper->critical_flow) ||
-            critical_lower->critical_flow <= 0.0F || critical_upper->critical_flow <= 0.0F) {
-            throw std::invalid_argument("Critical-flow interpolation requires positive flows and increasing positive depths.");
-        }
-        // P = REAL(REAL(log(y/y0))*REAL(log(Qc1/Qc0))/REAL(log(y1/y0))).
-        // Ratios stay wide through FYL2X; logs store REAL at 0x4496dd,
-        // 0x4496f3 and 0x449708, then P stores REAL at 0x449710.
-        const float depth_log = static_cast<float>(std::log(static_cast<double>(depth)/critical_lower->section.depth));
-        const float flow_log = static_cast<float>(std::log(static_cast<double>(critical_upper->critical_flow)/critical_lower->critical_flow));
-        const float interval_log = static_cast<float>(std::log(static_cast<double>(critical_upper->section.depth)/critical_lower->section.depth));
-        const float exponent = static_cast<float>((static_cast<double>(depth_log)*flow_log)/interval_log);
-        // Qc = Qc0*REAL(exp(P)); original exponential store at 0x449732.
-        const float multiplier = static_cast<float>(std::exp(static_cast<double>(exponent)));
-        result.critical_flow = static_cast<float>(static_cast<double>(critical_lower->critical_flow)*multiplier);
+        result.critical_flow = logarithmic_critical_flow(depth,critical_lower->section.depth,
+            critical_upper->section.depth,critical_lower->critical_flow,critical_upper->critical_flow);
     }
 
     float root = 0.0F;

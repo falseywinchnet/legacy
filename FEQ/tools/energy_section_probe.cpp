@@ -3,6 +3,7 @@
 #include <feq/section_energy.hpp>
 #include <bit>
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -47,18 +48,26 @@ feq::EnergySectionRow read_row() {
 
 }
 
-int main() {
+int main(int argc, char** argv) {
 #if defined(_WIN32)
     _setmode(_fileno(stdin),_O_BINARY);
     _setmode(_fileno(stdout),_O_BINARY);
 #endif
     try {
+        const bool critical_only = argc == 2 && std::strcmp(argv[1],"--critical-flow") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
             const std::uint32_t table_type = read_word();
             const float depth = std::bit_cast<float>(read_word());
             const feq::EnergySectionRow lower = read_row();
             const feq::EnergySectionRow upper = read_row();
             const feq::EnergySectionRow following = read_row();
+            if (critical_only) {
+                const feq::EnergySectionRow& low = lower.section.depth == 0.0F ? upper : lower;
+                const feq::EnergySectionRow& high = lower.section.depth == 0.0F ? following : upper;
+                write_float(feq::logarithmic_critical_flow(depth,low.section.depth,high.section.depth,
+                    low.critical_flow,high.critical_flow));
+                continue;
+            }
             const feq::EnergySectionProperties result = feq::interpolate_energy_section(depth,lower,upper,
                 table_type == 32 || table_type == 35,&following);
             write_float(result.section.area);

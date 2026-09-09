@@ -15,7 +15,8 @@ import shutil
 from prepare_cpp_probe import content, edit_text, functions, identifier, nodes
 
 ROOT = Path(__file__).resolve().parents[1]
-DECLARATION = ('extern "C" void feq_interpolate_energy_section_interval(int,int,int,int,float,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*);\n'
+DECLARATION = ('extern "C" void feq_interpolate_critical_flow_interval(int,int,float,float*);\n'
+               'extern "C" void feq_interpolate_energy_section_interval(int,int,int,int,float,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*);\n'
                'extern "C" void feq_interpolate_section_interval(int,int,int,float,'
                'float*,float*,float*,float*,float*,float*,float*);\n'
                'extern "C" void feq_interpolate_section_interval_moment(int,int,int,float,'
@@ -234,6 +235,7 @@ def main():
         shutil.copy2(path,output/path.name)
     changes = []
     energy_definitions = 0
+    critical_definitions = 0
     for path in sorted(source.glob('*.cpp')):
         data = path.read_bytes()
         edits = []
@@ -259,6 +261,14 @@ def main():
                 energy_definitions += 1
                 changes.append({'file':path.name,'function':name,'component':'src/section_energy.cpp',
                                 'verification':'tests/reference/section_energy/manifest.json and feq-manifest.json'})
+            elif name == 'lktqc_':
+                begin = body.index('/*     FETCH VALUES FROM FTAB */')
+                end = body.rindex('    return 0;')
+                body = body[:begin]+'    feq_interpolate_critical_flow_interval(l,l+xoff,*ya,qc);\n'+body[end:]
+                needs_declaration = True
+                critical_definitions += 1
+                changes.append({'file':path.name,'function':name,'component':'src/section_energy.cpp',
+                                'verification':'tests/reference/critical_flow/manifest.json and feq-manifest.json'})
             elif name == 'lktab_':
                 begin = body.index('L2:')
                 end = body.index('L5:',begin)
@@ -305,6 +315,8 @@ def main():
         (output/path.name).write_bytes(result)
     if energy_definitions != 1:
         raise ValueError('Expected exactly one XLKT22 definition in the FEQ translation.')
+    if critical_definitions != 1:
+        raise ValueError('Expected exactly one LKTQC definition in the FEQ translation.')
     manifest = {'status':'Research integration; passing component fixtures does not establish whole-engine acceptance.',
                 'changes':changes,'source_files':[{'name':path.name,'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
                                                 for path in sorted(source.glob('*.cpp'))]}

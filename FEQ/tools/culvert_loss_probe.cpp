@@ -3,6 +3,7 @@
 #include <feq/culvert_loss.hpp>
 #include <bit>
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <stdexcept>
 #if defined(_WIN32)
@@ -31,13 +32,31 @@ void write_double(double value) {
     write_word(static_cast<std::uint32_t>(word >> 32));
 }
 }
-int main() {
+int main(int argc, char** argv) {
 #if defined(_WIN32)
     _setmode(_fileno(stdin),_O_BINARY);
     _setmode(_fileno(stdout),_O_BINARY);
 #endif
     try {
+        const bool coefficient_only = argc == 2 && std::strcmp(argv[1],"--coefficient") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (coefficient_only) {
+                feq::CulvertCoefficientInput input{};
+                input.shape = static_cast<feq::CulvertShape>(read_word());
+                input.flow_type = static_cast<int>(read_word());
+                int flag = std::bit_cast<std::int32_t>(read_word());
+                input.upstream_height = read_float();
+                input.upstream_level = read_float();
+                input.entrance_bed = read_float();
+                input.flow = read_float();
+                input.critical_flow = read_float();
+                input.rounding_factor = read_float();
+                input.wing_factor = read_float();
+                input.projection_factor = read_float();
+                write_double(feq::culvert_discharge_coefficient(input,flag));
+                write_word(static_cast<std::uint32_t>(flag));
+                continue;
+            }
             const float coefficient = read_float();
             const float approach = read_float();
             const float area = read_float();

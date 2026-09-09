@@ -234,7 +234,7 @@ def integrate_section_lookup(data):
     found = set()
     for function in functions(data):
         name = content(identifier(function.child_by_field_name('declarator')),data)
-        if name not in ('xlkt20_','xlkt21_','xlkt22_'):
+        if name not in ('xlkt20_','xlkt21_','xlkt22_','lktqc_'):
             continue
         body = content(function,data)
         begin = body.index('/*     FETCH VALUES FROM FTAB */')
@@ -243,12 +243,15 @@ def integrate_section_lookup(data):
                 if name == 'xlkt21_' else 'feq_interpolate_section_interval(l,l+xoff,doff,*ya,a,t,dt,k,dk,b,db);')
         if name == 'xlkt22_':
             call = 'feq_interpolate_energy_section_interval(l,l+xoff,doff,feq_gen_type_d_,*ya,a,t,dt,j,k,dk,b,db,alp,dalp,qc);'
+        elif name == 'lktqc_':
+            call = 'feq_interpolate_critical_flow_interval(l,l+xoff,*ya,qc);'
         body = body[:begin]+'    // Directly verified against both FEQ and FEQUTL releases.\n    '+call+'\n'+body[end:]
         edits.append((function.start_byte,function.end_byte,body))
         found.add(name)
-    if found != {'xlkt20_','xlkt21_','xlkt22_'}:
-        raise ValueError('Expected all three section lookup routines.')
-    declaration = ('extern "C" void feq_interpolate_energy_section_interval(int,int,int,int,float,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*);\n'
+    if found != {'xlkt20_','xlkt21_','xlkt22_','lktqc_'}:
+        raise ValueError('Expected all four section lookup routines.')
+    declaration = ('extern "C" void feq_interpolate_critical_flow_interval(int,int,float,float*);\n'
+                   'extern "C" void feq_interpolate_energy_section_interval(int,int,int,int,float,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*);\n'
                    'extern "C" void feq_interpolate_section_interval(int,int,int,float,float*,float*,float*,float*,float*,float*,float*);\n'
                    'extern "C" void feq_interpolate_section_interval_moment(int,int,int,float,float*,float*,float*,float*,float*,float*,float*,float*);\n')
     return declaration.encode()+edit_text(data,edits)
@@ -351,8 +354,8 @@ def integrate_root3(data):
 def integrate_culvert_losses(data):
     definitions = {content(identifier(function.child_by_field_name('declarator')),data):function
                    for function in functions(data)}
-    if 'degcon_' not in definitions or 'rqvstw_' not in definitions:
-        raise ValueError('Expected DEGCON and RQVSTW definitions.')
+    if not {'degcon_','rqvstw_','fcd123_'}.issubset(definitions):
+        raise ValueError('Expected DEGCON, RQVSTW and FCD123 definitions.')
     body = definitions['degcon_'].child_by_field_name('body')
     edits = [(body.start_byte,body.end_byte,
         '{\n    return feq::culvert_contraction(*c123,*a1,*a);\n}')]
@@ -369,6 +372,56 @@ def integrate_culvert_losses(data):
     edits.append((prior[0].start_byte,store.end_byte,
         '// Original Q/AVH stays wide through its square; DH is the only REAL store.\n'
         '    dh = feq::culvert_head_loss(cdcom_1.cd,*q,cdcom_1.avh,grvcom_1.grav2);'))
+    function = definitions['fcd123_']
+    statements = [node for node in function.child_by_field_name('body').named_children if node.type != 'comment']
+    branches = [node for node in statements if node.type == 'if_statement']
+    returns = [node for node in statements if node.type == 'return_statement']
+    if len(branches) != 2 or len(returns) != 1 or 's_cmp(culcls' not in content(branches[0],data):
+        raise ValueError('Expected the original FCD123 shape dispatch and return.')
+    replacement = r"""
+    feq::CulvertCoefficientInput feq_input{};
+    if (s_cmp(culcls,const_cast<char*>("PIPE"),8,4) == 0) {
+        feq_input.shape = feq::CulvertShape::pipe;
+    } else if (s_cmp(culcls,const_cast<char*>("FLARED"),8,6) == 0) {
+        feq_input.shape = feq::CulvertShape::flared;
+    } else if (s_cmp(culcls,const_cast<char*>("BOX"),8,3) == 0) {
+        feq_input.shape = feq::CulvertShape::box;
+    } else if (s_cmp(culcls,const_cast<char*>("MITER"),8,5) == 0) {
+        feq_input.shape = feq::CulvertShape::miter;
+    } else if (s_cmp(culcls,const_cast<char*>("RCPTG"),8,5) == 0) {
+        feq_input.shape = feq::CulvertShape::rcptg;
+    } else {
+        feq_gen_io_d__103.ciunit = *stdout;
+        s_wsfe(&feq_gen_io_d__103);
+        do_fio(&feq_gen_c_d_1,culcls,static_cast<ftnlen>(8));
+        e_wsfe();
+        s_stop(const_cast<char*>("Abnormal stop. Errors found."),static_cast<ftnlen>(28));
+        return 0.0;
+    }
+    if (feq_input.shape == feq::CulvertShape::box && *feq_gen_type_d_ == 3) {
+        if (xs2com_1.a2 < xs3com_1.a3) {
+            adrtab = xs2com_1.adrxs2;
+            y = xs2com_1.y2;
+        } else {
+            adrtab = xs3com_1.adrxs3;
+            y = xs3com_1.y3;
+        }
+        lktqc_(&adrtab,&y,&qc);
+        feq_input.critical_flow = qc;
+    }
+    feq_input.flow_type = *feq_gen_type_d_;
+    feq_input.upstream_height = *dup;
+    feq_input.upstream_level = *z1true;
+    feq_input.entrance_bed = xs2com_1.zb2;
+    feq_input.flow = xs3com_1.q3;
+    feq_input.rounding_factor = cdcom_1.krb;
+    feq_input.wing_factor = cdcom_1.kwing;
+    feq_input.projection_factor = cdcom_1.kproj;
+    return feq::culvert_discharge_coefficient(feq_input,cdcom_1.ratflg);
+    """
+    if 'feq_gen_io_d__103.ciunit = *stdout;' not in content(function,data):
+        raise ValueError('FCD123 unsupported-class diagnostic changed.')
+    edits.append((branches[0].start_byte,returns[0].end_byte,replacement))
     return b'#include <feq/culvert_loss.hpp>\n'+edit_text(data,edits)
 
 
@@ -418,6 +471,9 @@ def main():
                 {'file':'fqshrftb.cpp','function':'xlkt22_','component':'src/section_energy.cpp',
                  'scope':'All eleven properties including logarithmic critical flow; XLKTAL delegates to this routine.',
                  'verification':'tests/reference/section_energy/manifest.json'},
+                {'file':'fqshrftb.cpp','function':'lktqc_','component':'src/section_energy.cpp',
+                 'scope':'Standalone critical flow, including the original zero-depth NaN.',
+                 'verification':'tests/reference/critical_flow/manifest.json'},
                 {'file':'fqshrftb.cpp','function':'lktab_','component':'src/table_interpolation.cpp',
                  'scope':'Scalar table types 2, 3 and 4.',
                  'verification':'tests/reference/function_tables/fequtl-manifest.json'},
@@ -430,9 +486,9 @@ def main():
                 {'file':'rootfind.cpp','function':'rgf3_','component':'src/root_solver.cpp',
                  'scope':'Modified false position, wide callback results, mutable trial arguments and exact failure outputs.',
                  'verification':'tests/reference/root_solver/manifest.json'},
-                {'file':'culvertd.cpp','functions':['degcon_','rqvstw_'],'component':'src/culvert_loss.cpp',
-                 'scope':'Contraction-adjusted discharge coefficient and RQVSTW velocity head loss.',
-                 'verification':'tests/reference/culvert_loss/manifest.json'},
+                {'file':'culvertd.cpp','functions':['degcon_','rqvstw_','fcd123_'],'component':'src/culvert_loss.cpp',
+                 'scope':'Discharge curves, contraction adjustment and RQVSTW velocity head loss.',
+                 'verification':['tests/reference/culvert_loss/manifest.json','tests/reference/culvert_coefficient/manifest.json']},
                 {'file':'embank.cpp','function':'embank_','component':'src/power.cpp',
                  'scope':'Original reciprocal and REAL power argument/result for partial free-drop fractions.',
                  'evidence':'recovery/assembly/fequtl/_embank_.asm, VA 0x431d10..0x431d4a.'}]}

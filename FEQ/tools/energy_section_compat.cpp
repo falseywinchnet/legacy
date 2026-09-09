@@ -30,6 +30,24 @@ feq::EnergySectionRow read_energy_row(const feq::BitView<real>& values,
 }
 }
 
+extern "C" void feq_interpolate_critical_flow_interval(integer first, integer next,
+    real depth, real* flow) {
+    const feq::BitView<real> values(&ftable_,sizeof(ftable_));
+    const std::int64_t count = static_cast<std::int64_t>(sizeof(ftable_)/sizeof(real));
+    if (first < 0 || next <= first || static_cast<std::int64_t>(next)+7 >= count) {
+        throw std::out_of_range("Critical-flow interval exceeds the released table bank.");
+    }
+    if (values[first] == 0.0F) {
+        const integer stride = next-first;
+        first = next;
+        if (static_cast<std::int64_t>(next)+stride+7 >= count) {
+            throw std::out_of_range("Critical-flow following row exceeds the released table bank.");
+        }
+        next += stride;
+    }
+    *flow = feq::logarithmic_critical_flow(depth,values[first],values[next],values[first+7],values[next+7]);
+}
+
 extern "C" void feq_interpolate_energy_section_interval(integer first, integer next,
     integer slope_offset, integer table_type, real depth, real* area, real* width,
     real* width_slope, real* moment, real* conveyance, real* conveyance_slope,

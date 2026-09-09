@@ -71,6 +71,14 @@ the contraction threshold. The fixtures retain the exact original head-loss
 instruction bytes by hash in
 [`tests/reference/culvert_loss/`](tests/reference/culvert_loss/).
 
+The fitted discharge coefficients match **879 original calls** across all five
+supported culvert classes, all three flow types, head and Froude thresholds,
+entrance adjustment factors, and head-ratio flags. The separate critical-flow
+lookup matches **840 cases in each original program**, including its distinct
+zero-depth result. The fixtures are in
+[`tests/reference/culvert_coefficient/`](tests/reference/culvert_coefficient/) and
+[`tests/reference/critical_flow/`](tests/reference/critical_flow/).
+
 The independent section-boundary geometry also matches **every geometric output
 bit in 363 direct FEQUTL tests**. These cover dry, partially submerged, and fully
 submerged boundaries, multiple subsections, three scales, vertical/horizontal

@@ -106,6 +106,8 @@ if(BUILD_TESTING)
     feq_checks(feq_energy_section_probe)
     add_test(NAME energy_section_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_energy_section_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
+    add_test(NAME critical_flow_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_critical_flow_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
 
     add_executable(feq_root_probe tools/root_probe.cpp tools/root_compat.cpp)
     target_link_libraries(feq_root_probe PRIVATE feq_numerics)
@@ -120,6 +122,8 @@ if(BUILD_TESTING)
     feq_checks(feq_culvert_loss_probe)
     add_test(NAME culvert_loss_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_culvert_loss_fixture.py $<TARGET_FILE:feq_culvert_loss_probe>)
+    add_test(NAME culvert_coefficient_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_culvert_coefficient_fixture.py $<TARGET_FILE:feq_culvert_loss_probe>)
 
     add_executable(feq_conduit_probe tools/conduit_probe.cpp)
     target_link_libraries(feq_conduit_probe PRIVATE feq_numerics)

@@ -17,6 +17,11 @@ struct EnergySectionProperties {
     float energy_factor_slope;
     float critical_flow;
 };
+// Shared logarithmic interpolation of critical flow. Both row depths and flows
+// must be positive. Standalone LKTQC returns the original negative quiet NaN at
+// zero query depth; XLKT22 separately returns zero before evaluating logarithms.
+float logarithmic_critical_flow(float depth, float lower_depth, float upper_depth,
+    float lower_flow, float upper_flow);
 // XLKT22 interpolates the selected interval and its tabulated critical flow.
 // If the lower row has zero depth, critical-flow interpolation uses the upper
 // and following rows. Supply following in that case. The caller retains table

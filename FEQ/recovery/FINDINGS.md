@@ -421,3 +421,27 @@ clock-only comparison policy. The four outstanding numerical differences are
 still in FEQUTL. All 23 local component checks pass in release and sanitizer
 builds. The published numerical fixtures and these focused checks are evidence
 for the recovered operations, not whole-application acceptance.
+
+## Discharge curves and standalone critical flow
+
+FCD123's fitted coefficients, adjustment factors, cap, and ratio-flag effects
+match all 879 original calls. The cases cover PIPE, FLARED, BOX, MITER, and
+RCPTG; flow types 1, 2, and 3; head and Froude threshold neighbors; three scales;
+and positive adjustment factors below and above one. Head ratio, Froude ratio,
+the fitted polynomial, and factor products retain wide intermediates through
+the final 0.98F cap. The calling routine supplies any later REAL store.
+The box probe invokes unchanged LKTQC on a constant critical-flow table, keeping
+the captured coefficient independent of separate interpolation differences.
+
+Standalone LKTQC matches 840 cases in each released executable. It shares
+XLKT22's logarithmic arithmetic and REAL log/exponential stores. At zero depth,
+however, LKTQC evaluates the logarithm and its inline exponential produces the
+negative quiet NaN with bits `ffc00000`; XLKT22 branches around this computation
+and returns zero. Both behaviors are preserved and captured independently.
+The two lookups now share one documented C++ arithmetic implementation.
+
+All six complete examples finish after integration. All twelve FEQ output files
+remain exact after masking only execution clocks, all four FEQ histories remain
+raw-byte exact, and all 2,092 active matrix records match in a fresh complete
+rerun. FEQUTL's CHX file remains exact; four numerical output files still differ.
+All 25 local component checks pass in release and sanitizer builds.
