@@ -44,15 +44,20 @@ foreach(program feq fequtl)
     # by the adapter, so preserve archive ordering on one-pass linkers.
     target_link_libraries(${program} PRIVATE feq_runtime feq_numerics)
     feq_engine_checks(${program})
+    if(MSVC)
+        target_link_options(${program} PRIVATE "/MANIFEST:EMBED" "/MANIFESTINPUT:${CMAKE_CURRENT_SOURCE_DIR}/engines/support/windows.manifest")
+    endif()
 endforeach()
 
 include(GNUInstallDirs)
 if(MSVC)
     include(InstallRequiredSystemLibraries)
 endif()
-install(TARGETS feq fequtl RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES LICENSE NOTICE.md engines/runtime/NOTICE.txt
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/feq/licenses)
+if(NOT (APPLE AND FEQ_BUILD_DESKTOP))
+    install(TARGETS feq fequtl RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(FILES LICENSE NOTICE.md engines/runtime/NOTICE.txt
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/feq/licenses)
+endif()
 
 if(BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)

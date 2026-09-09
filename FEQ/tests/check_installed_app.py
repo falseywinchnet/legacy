@@ -31,7 +31,7 @@ def main():
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     output = Path(tempfile.mkdtemp(prefix='installation-', dir=args.output.resolve()))
-    package = output/'relocated installation with spaces'
+    package = output/'relocated installation with spaces café 河'
     shutil.copytree(args.package, package, symlinks=True)
     system = platform.system()
     if system == 'Darwin':

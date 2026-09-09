@@ -25,7 +25,7 @@ paths are interpreted. The results folder must be outside the model folder.
 The application copies the model before running. Absolute paths pointing into
 the original model are redirected into the copy; paths outside the complete
 model folder are rejected with a message. The command-line engines remain
-available in bin for existing workflows.
+available in bin (or the macOS app's Contents/MacOS) for existing workflows.
 
 An engine's normal completion can still include model diagnostics. Read the
 status and report before using the results. Stop run saves partial results and

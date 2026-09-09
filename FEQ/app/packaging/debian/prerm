@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+if [ "$1" = remove ] || [ "$1" = deconfigure ]; then
+    for feq_link in /usr/bin/feq-workbench /usr/share/applications/feq-workbench.desktop /usr/share/icons/hicolor/scalable/apps/feq-workbench.svg; do
+        if [ -L "$feq_link" ]; then
+            case "$(readlink "$feq_link")" in /opt/feq-workbench/*) rm "$feq_link" ;; esac
+        fi
+    done
+fi

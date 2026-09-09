@@ -10,6 +10,8 @@ import json
 from pathlib import Path, PurePosixPath
 import shutil
 import tarfile
+import time
+import urllib.error
 import urllib.request
 VERSION = '6.11.2'
 ARCHIVES = {
@@ -32,9 +34,18 @@ def main():
         archive = args.cache/name
         if not archive.exists():
             temporary = archive.with_suffix('.download')
-            with urllib.request.urlopen(url, timeout=120) as response, temporary.open('wb') as output:
-                shutil.copyfileobj(response, output)
-            temporary.replace(archive)
+            for attempt in range(4):
+                try:
+                    with urllib.request.urlopen(url, timeout=60) as response, temporary.open('wb') as output:
+                        shutil.copyfileobj(response, output)
+                    temporary.replace(archive)
+                    break
+                except (OSError, urllib.error.URLError) as error:
+                    temporary.unlink(missing_ok=True)
+                    if attempt == 3:
+                        raise
+                    print('Retrying Qt source download after '+str(error), flush=True)
+                    time.sleep(2**attempt)
         actual = hashlib.sha256(archive.read_bytes()).hexdigest()
         if actual != expected:
             raise ValueError('Qt source checksum mismatch: '+str(archive))

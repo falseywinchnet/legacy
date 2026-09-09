@@ -1,4 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
+# Qt 6.11's macOS binaries support 13.0. Do not accidentally require the
+# developer's much newer host OS merely because it supplied the build SDK.
+if(CMAKE_HOST_APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" CACHE STRING "Minimum macOS version" FORCE)
+endif()
 project(FEQ VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_EXTENSIONS OFF)
 

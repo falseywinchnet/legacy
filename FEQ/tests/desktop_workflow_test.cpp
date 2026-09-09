@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
         feq_app::MainWindow window;
         QLineEdit* results = window.findChild<QLineEdit*>(QStringLiteral("resultsFolder"));
         require(results != nullptr, "Results folder control missing");
-        results->setText(QDir(output).filePath(QStringLiteral("runs with spaces")));
+        results->setText(QDir(output).filePath(QStringLiteral("runs with spaces café 河")));
         window.show();
         application.processEvents();
         require(window.grab().save(QDir(output).filePath(QStringLiteral("run-page.png"))), "Cannot save application screenshot");

@@ -33,6 +33,10 @@ jobs:
           arch: ${{ matrix.qt_arch }}
           cache: true
           setup-python: false
+      - uses: actions/cache@v4
+        with:
+          path: FEQ/build/qt-sources
+          key: feq-qt-sources-6.11.2-v1
       - name: Prepare matching Qt source archives and license notices
         run: python FEQ/tools/prepare_qt_bundle.py --output FEQ/build/qt-licenses --cache FEQ/build/qt-sources
       - name: Configure
@@ -52,10 +56,18 @@ jobs:
       - name: Install Windows installer compiler
         if: runner.os == 'Windows'
         run: |
-          choco install nsis --version=3.11 -y --no-progress
+          choco install nsis -y --no-progress
           'C:\Program Files (x86)\NSIS' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Create installers
         run: cpack --config FEQ/build/desktop/CPackConfig.cmake -C Release -B FEQ/build/installers
+      - name: Verify the actual installer
+        if: runner.os != 'Linux'
+        run: python FEQ/tests/check_installer.py --installers FEQ/build/installers --output FEQ/build/installer-verification
+      - name: Install and verify the Debian package in clean Ubuntu
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p FEQ/build/installer-verification
+          docker run --rm -v "$PWD/FEQ:/work:ro" -v "$PWD/FEQ/build/installer-verification:/evidence" ubuntu:24.04 bash -c 'set -e; apt-get update -qq; DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /work/build/installers/*.deb python3 xvfb xauth fonts-dejavu-core; xvfb-run -a python3 /work/tests/check_installed_app.py --package /opt/feq-workbench --output /evidence; test -L /usr/share/applications/feq-workbench.desktop; apt-get remove -y -qq feq-workbench; test ! -e /usr/share/applications/feq-workbench.desktop'
       - uses: actions/upload-artifact@v4
         with:
           name: FEQ-Workbench-${{ runner.os }}-${{ runner.arch }}
@@ -74,3 +86,4 @@ jobs:
             FEQ/build/desktop/desktop-verification
             FEQ/build/desktop/example-verification
             FEQ/build/installation-verification
+            FEQ/build/installer-verification

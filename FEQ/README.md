@@ -469,7 +469,7 @@ directory conventions still apply to these historical programs.
 
 The published `LOAD` source uses detention-corrector variable `S2T` before its
 first source-level assignment. The released executable defines it in static
-storage at address `0x00517be4`, with initial bytes `00000000`; the only five
+storage at address `0x00517be4`, with initial bytes `00000000`; the five direct
 machine-code references are inside `LOAD`. The native engine therefore uses
 `static real s2t = 0.0F`, preserving its value across calls. The source-level
 equations and their ordering are unchanged. The byte evidence is recorded in
