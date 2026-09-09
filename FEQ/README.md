@@ -99,6 +99,19 @@ slope. NDRSD returns `(sqrt(S)*K-Q)/Q` without a REAL store; its lookup receives
 a private copy of the trial depth. See
 [`tests/reference/normal_flow_residual/`](tests/reference/normal_flow_residual/).
 
+Both departure-reach energy residuals match **3,072 original instruction-sequence
+cases each**. R4TO44 and R44TO4 preserve the private depth used by section
+lookup and return their energy imbalance without rounding the velocity or
+residual to REAL. See
+[`tests/reference/departure_energy/`](tests/reference/departure_energy/).
+
+The tailwater momentum balance and normalized residual match **3,072 original
+instruction-sequence cases**, retaining both returned binary64 values. The
+upstream balance stays wide across downstream calculations, and the final
+residual stays wide through the root-solver return. Flap force is an input to
+these fixtures. See [`src/tailwater_residual.cpp`](src/tailwater_residual.cpp) and
+[`tests/reference/tailwater_momentum/`](tests/reference/tailwater_momentum/).
+
 The standalone conveyance lookup matches **2,688 calls to the complete original
 LKTK routine**, covering all fourteen accepted section table types, three
 scales, interval endpoints, and increasing or decreasing conveyance. Its

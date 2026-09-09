@@ -6,6 +6,7 @@
 #include <feq/gate_residual.hpp>
 #include <feq/power_spacing.hpp>
 #include <feq/full_barrel.hpp>
+#include <feq/tailwater_residual.hpp>
 #include <array>
 #include <bit>
 #include <cstdint>
@@ -78,7 +79,29 @@ int main(int argc, char** argv) {
         const bool specific_energy = argc == 2 && std::strcmp(argv[1],"--specific-energy") == 0;
         const bool full_barrel = argc == 2 && std::strcmp(argv[1],"--full-barrel") == 0;
         const bool normal_flow = argc == 2 && std::strcmp(argv[1],"--normal-flow-residual") == 0;
+        const bool departure_energy = argc == 2 && std::strcmp(argv[1],"--departure-energy") == 0;
+        const bool tailwater_momentum = argc == 2 && std::strcmp(argv[1],"--tailwater-momentum") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (tailwater_momentum) {
+                float fields[10]{};
+                for (int i = 0; i < 10; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const std::uint64_t low = read_word();
+                const std::uint64_t high = read_word();
+                const double force = std::bit_cast<double>(low | (high << 32));
+                const double upstream = feq::tailwater_upstream_momentum(fields[0],fields[1],fields[2],fields[3],fields[4],fields[5]);
+                write_double(upstream);
+                write_double(feq::tailwater_momentum_residual(upstream,force,fields[6],fields[7],fields[8],fields[9],fields[5]));
+                continue;
+            }
+            if (departure_energy) {
+                float fields[6]{};
+                for (int i = 0; i < 6; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const double result = feq::departure_energy_residual(fields[0],fields[1],fields[2],fields[3],fields[4],fields[5]);
+                // Both original routines apply this formula to distinct sections.
+                write_double(result);
+                write_double(result);
+                continue;
+            }
             if (normal_flow) {
                 float fields[3]{};
                 for (int i = 0; i < 3; ++i) { fields[i] = std::bit_cast<float>(read_word()); }

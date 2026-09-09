@@ -12,6 +12,7 @@ target_sources(feq_numerics PRIVATE src/section_sinuosity.cpp)
 target_sources(feq_numerics PRIVATE src/gate_residual.cpp)
 target_sources(feq_numerics PRIVATE src/power_spacing.cpp)
 target_sources(feq_numerics PRIVATE src/full_barrel.cpp)
+target_sources(feq_numerics PRIVATE src/tailwater_residual.cpp)
 target_compile_features(feq_numerics PUBLIC cxx_std_20)
 set_target_properties(feq_numerics PROPERTIES CXX_EXTENSIONS OFF)
 
@@ -139,6 +140,10 @@ if(BUILD_TESTING)
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_steady_profile_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
     add_test(NAME normal_flow_residual_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_energy_section_probe> normal_flow_residual)
+    add_test(NAME departure_energy_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_energy_section_probe> departure_energy)
+    add_test(NAME tailwater_momentum_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_energy_section_probe> tailwater_momentum)
     add_test(NAME station_fraction_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_station_fraction_fixture.py $<TARGET_FILE:feq_section_probe>)
     add_executable(feq_slot_probe tools/slot_probe.cpp)

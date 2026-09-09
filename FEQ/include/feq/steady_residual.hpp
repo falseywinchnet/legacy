@@ -12,6 +12,10 @@ double steady_normal_flow(float conveyance, float slope);
 // NDRSD = (sqrt(S)*K-Q)/Q. Lookup supplies stored REAL K; the residual
 // returns wide to the root solver, without an intermediate REAL store.
 double normal_flow_residual(float root_slope, float conveyance, float flow);
+// R4TO44/R44TO4 = y + alpha*(Q/A)^2/(2g) - E. The private lookup
+// depth may be clamped; velocity, energy and the returned residual stay wide.
+double departure_energy_residual(float depth, float flow, float area,
+    float energy_factor, float gravity_twice, float target_energy);
 struct SteadyResidualInput {
     float depth;
     float area;

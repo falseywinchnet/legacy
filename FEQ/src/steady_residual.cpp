@@ -27,6 +27,13 @@ double normal_flow_residual(float root_slope, float conveyance, float flow) {
     return (static_cast<double>(root_slope)*conveyance-flow)/flow;
 }
 
+double departure_energy_residual(float depth, float flow, float area,
+    float energy_factor, float gravity_twice, float target_energy) {
+    // R4TO44 0x42b1a5..0x42b1c8 and R44TO4 0x42b125..0x42b148
+    // have identical arithmetic, with no intermediate or return REAL store.
+    return steady_specific_energy(depth,flow,area,energy_factor,gravity_twice)-target_energy;
+}
+
 double steady_subcritical_residual(const SteadyResidualInput& input) {
     const double area = input.area;
     const double neighbor_area = input.neighbor_area;

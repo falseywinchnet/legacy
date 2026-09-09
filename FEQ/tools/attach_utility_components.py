@@ -843,6 +843,53 @@ def integrate_normal_flow_residual(data):
     return b'#include <feq/steady_residual.hpp>\n'+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
 
 
+def integrate_tailwater_momentum(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'rty7rf_']
+    if len(targets) != 1:raise ValueError('Expected RTY7RF.')
+    body = targets[0].child_by_field_name('body');edits = [];promoted = False
+    for node in nodes(body):
+        if node.type != 'declaration' or content(node.child_by_field_name('type'),data) != 'real':continue
+        declarators = node.children_by_field_name('declarator')
+        if any(item.type != 'identifier' for item in declarators):continue
+        names = [content(item,data) for item in declarators]
+        if 'm43' not in names:continue
+        narrow = [name for name in names if name != 'm43']
+        edits.append((node.start_byte,node.end_byte,
+            ('real '+', '.join(narrow)+';\n    ' if narrow else '')+'double m43;'))
+        promoted = True
+    stores = {name:[node for node in body.named_children if node.type == 'expression_statement' and
+                    content(node,data).startswith(name+' = ')] for name in ('m43','m44')}
+    if not promoted or any(len(value) != 1 for value in stores.values()):
+        raise ValueError('Expected the original momentum declaration and both balance stores.')
+    edits.append((stores['m43'][0].start_byte,stores['m43'][0].end_byte,
+        'm43 = feq::tailwater_upstream_momentum(xs3com_1.q3,typtrn_1.beta3,xs3com_1.a3,\n'
+        '        rdfcom_1.mfrd,x43com_1.j43,grvcom_1.grav);'))
+    edits.append((stores['m44'][0].start_byte,body.end_byte-1,
+        '// Flap force is supplied by the preceding flow-condition branch.\n'
+        '    return feq::tailwater_momentum_residual(m43,feq_gen_flap_force_d_,\n'
+        '        x44com_1.bet44,xs4com_1.q4,x44com_1.a44,x44com_1.j44,grvcom_1.grav);\n'))
+    return b'#include <feq/tailwater_residual.hpp>\n'+edit_text(data,edits)
+
+
+def integrate_departure_energy(data):
+    edits = [];found = set()
+    for function in functions(data):
+        name = content(identifier(function.child_by_field_name('declarator')),data)
+        if name not in ('r4to44_','r44to4_'):continue
+        body = function.child_by_field_name('body')
+        lookups = [node for node in body.named_children if node.type == 'expression_statement' and
+                   content(node,data).startswith('xlktal_(')]
+        if len(lookups) != 1:raise ValueError('Expected the departure section lookup.')
+        suffix,common = ('44','x44com_1') if name == 'r4to44_' else ('4','xs4com_1')
+        replacement = ('\n    // The original lookup clamps its private Y; the root argument stays unchanged.\n'
+            f'    return feq::departure_energy_residual(y,{common}.q{suffix},{common}.a{suffix},\n'
+            f'        {common}.alp{suffix},grvcom_1.grav2,depmc_1.e{suffix});\n')
+        edits.append((lookups[0].end_byte,body.end_byte-1,replacement));found.add(name)
+    if found != {'r4to44_','r44to4_'}:raise ValueError('Expected both departure energy residuals.')
+    return b'#include <feq/steady_residual.hpp>\n'+edit_text(data,edits)
+
+
 def integrate_approach_residual(data):
     definitions = {content(identifier(function.child_by_field_name('declarator')),data):function
                    for function in functions(data)}
@@ -979,13 +1026,14 @@ def main():
         elif path.name == 'tablook.cpp':data = integrate_scalar_moment(integrate_scalar_conveyance(data))
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
+        elif path.name == 'culverta.cpp':data = integrate_tailwater_momentum(data)
         elif path.name == 'culvertc.cpp':data = integrate_full_barrel(integrate_steady_profile(integrate_steady_residuals(data)))
-        elif path.name == 'culvertd.cpp':data = integrate_normal_flow_residual(integrate_approach_residual(integrate_culvert_losses(data)))
+        elif path.name == 'culvertd.cpp':data = integrate_departure_energy(integrate_normal_flow_residual(integrate_approach_residual(integrate_culvert_losses(data))))
         elif path.name == 'numrmath.cpp':data = integrate_gaussian_rule(data)
-        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'):
+        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'):
             integrated_files.add(path.name)
         (output/path.name).write_bytes(data)
-    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'}:
+    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'}:
         raise ValueError('Prepared utility sources are missing required integration files.')
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
@@ -1067,6 +1115,9 @@ def main():
                  'verification':['tests/reference/root_solver/manifest.json','tests/reference/root_solver_regflt/manifest.json',
                      'tests/reference/root_solver_rgf/manifest.json','tests/reference/root_solver_rgf5/manifest.json',
                      'tests/reference/root_search_regfal/manifest.json','tests/reference/root_search_fdroot/manifest.json']},
+                {'file':'culverta.cpp','function':'rty7rf_','component':'src/tailwater_residual.cpp',
+                 'scope':'Wide section-43 momentum preserved across calls and normalized section-44 momentum residual.',
+                 'verification':'tests/reference/tailwater_momentum/manifest.json'},
                 {'file':'culvertc.cpp','functions':['sber_','sper_','sfpsbe_'],'component':'src/steady_residual.cpp',
                  'scope':'Wide velocity, energy, eddy loss and normalized residuals after original section lookup.',
                  'verification':['tests/reference/steady_residual/manifest.json','tests/reference/steady_profile/manifest.json']},
@@ -1080,6 +1131,9 @@ def main():
                 {'file':'culvertd.cpp','function':'ndrsd_','component':'src/steady_residual.cpp',
                  'scope':'Wide normal-flow residual after original lookup of a private depth copy.',
                  'verification':'tests/reference/normal_flow_residual/manifest.json'},
+                {'file':'culvertd.cpp','functions':['r4to44_','r44to4_'],'component':'src/steady_residual.cpp',
+                 'scope':'Wide departure energy residuals after lookup of a private trial-depth copy.',
+                 'verification':'tests/reference/departure_energy/manifest.json'},
                 {'file':'culvertd.cpp','functions':['rapp_','rqvstw_'],'component':'src/approach_residual.cpp',
                  'scope':'Wide approach energy balance, expansion/contraction transition and final head residual.',
                  'verification':'tests/reference/approach_residual/manifest.json'},

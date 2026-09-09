@@ -1036,3 +1036,49 @@ and the application release remain unfinished.
 FEQ/build/python312/bin/python FEQ/tools/probe_scalar_conveyance_original.py \
   --native FEQ/build/core/feq_section_probe --output FEQ/build/scalar-conveyance-recapture
 ```
+
+## Departure energy and tailwater momentum
+
+`probe_departure_energy_original.py` runs both unchanged departure-energy
+instruction sequences: R4TO44 at `0x42b1a5..0x42b1c8` and R44TO4 at
+`0x42b125..0x42b148`. All 3,072 cases match both binary64 returns, including
+three scales, signed or zero flow and targets close to the section energy.
+Their shared equation is `y + alpha*(Q/A)^2/(2g) - E`. The velocity and
+residual have no REAL store. The adapter preserves the private depth passed
+to XLKTAL and uses its possibly adjusted value in the energy calculation.
+
+`probe_tailwater_momentum_original.py` runs the unchanged RTY7RF arithmetic
+at `0x41222b..0x41225d` and `0x4123ec..0x412422`. It captures the upstream
+momentum and returned residual for 3,072 cases. Both binary64 values match
+exactly across three scales, signed or zero flow, road momentum, applied
+flap force and near-balanced sections. The equations are:
+
+```text
+M43 = beta3*Q3*Q3/A3 + Mroad + g*J43
+M44 = beta44*Q4*Q4/A44 + g*J44
+RTY7RF = (M43 - Fflap)/M44 - 1
+```
+
+M43 survives the downstream calls in a wide spill at `EBP-0x1c`; the supplied
+flap force occupies `EBP-0x10`. M44 and the normalized residual remain wide
+through return. The adapter computes M43 before the downstream calls, then
+returns the independent momentum residual directly. The fixture supplies
+flap force and section properties; it does not validate the flap-force law,
+transition-coefficient interpolation or complete RTY7RF control flow.
+
+The combined integration moves the earliest UTLEXM report difference from
+line 1921 to line 2102 and the earliest culvert-report difference from line
+804 to line 887. There are now 66 and 166 differing non-clock report lines,
+respectively, with six culvert-table lines still differing. All 57 CMake
+checks pass in Release and sanitizer builds. Fresh complete-model runs
+preserve all 2,092 FEQ matrices and 19,701 gate residual entries, the entire
+276,813-byte gate report section, and the existing 14 of 17 passing combined
+output comparisons. The three remaining FEQUTL outputs and application
+release are still incomplete.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_departure_energy_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/departure-energy-recapture
+FEQ/build/python312/bin/python FEQ/tools/probe_tailwater_momentum_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/tailwater-momentum-recapture
+```
