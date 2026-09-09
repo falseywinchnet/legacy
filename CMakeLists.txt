@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.24)
 project(LegacyCoastal VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(legacy_champ src/champ/access.cpp src/champ/geometry.cpp
-  src/champ/project.cpp src/champ/erosion.cpp src/champ/workflow.cpp)
+  src/champ/project.cpp src/champ/erosion.cpp src/champ/workflow.cpp src/champ/io.cpp src/champ/results.cpp)
 target_include_directories(legacy_champ PUBLIC include third_party)
 if(MSVC)
   target_compile_options(legacy_champ PRIVATE /W4 /fp:strict)
@@ -44,6 +44,9 @@ target_link_libraries(legacy_champ PUBLIC legacy_runup legacy_whafis)
 
 include(CTest)
 if(BUILD_TESTING)
+  add_executable(io_probe tests/io_probe.cpp)
+  target_link_libraries(io_probe PRIVATE legacy_champ)
+  add_test(NAME champ_import_export COMMAND io_probe)
   add_executable(project_probe tests/project_probe.cpp)
   target_link_libraries(project_probe PRIVATE legacy_champ)
   add_executable(access_probe tests/access_probe.cpp)
@@ -88,4 +91,9 @@ if(BUILD_TESTING)
         $<TARGET_FILE:runup_math_probe> ${routine}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/reference/runup/routines)
   endforeach()
+endif()
+
+option(LEGACY_DESKTOP "Build the Dear ImGui desktop application" ON)
+if(LEGACY_DESKTOP)
+  include(cmake/Desktop.cmake)
 endif()

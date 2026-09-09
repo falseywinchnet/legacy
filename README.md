@@ -1,10 +1,50 @@
 # Legacy — CHAMP, WHAFIS, and RUNUP forward port
 
-Recover the original FEMA **CHAMP 2.0 (Coastal Hazard Analysis Modeling Program)** and its two numerical engines, **WHAFIS** and **RUNUP**, then carry all three forward into clean, legible, modern orthodox C++ with a simple **Dear ImGui** interface.
+Legacy Coastal is a native desktop application for coastal transects, dune erosion,
+WHAFIS wave heights, and RUNUP. It opens original CHAMP 2.0 projects directly and
+saves studies, inputs, and reports in an open `.coastal` project file.
 
-The intended targets are **macOS, Linux, and Windows**, using **Make/CMake** and **GitHub Actions runners**. CHAMP's project and transect workflow is part of the port, alongside both numerical engines.
+**Work: Astra · Sponsor: Rainstar · Foundation: Hashem.** New code is MIT licensed.
 
-**Native implementation is underway.** RUNUP and WHAFIS now run as standalone C++ programs. RUNUP matches 113 complete original reports; WHAFIS matches 17 complete reports after excluding only execution metadata, including all four supplied CHAMP reports. The CHAMP workflow and Dear ImGui application remain in progress. The original executables and recovered source are the behavior baseline; further source hunting is not a prerequisite.
+## Start here
+
+Download the package for your computer from [Releases](https://github.com/falseywinchnet/legacy/releases).
+The [Actions builds](https://github.com/falseywinchnet/legacy/actions) also retain packages for each tested revision.
+
+- **Mac:** open the DMG, drag **Legacy Coastal** into Applications, and open it.
+- **Windows:** extract the ZIP and double-click **Legacy Coastal.exe**. Keep the
+  example and font folders beside the application.
+- **Linux:** extract the archive and open **Start Legacy Coastal.sh**, or run the
+  **Legacy Coastal** executable in that folder.
+
+Choose **Open the example project**. Four transects include surveyed, adjusted,
+and eroded profiles plus historical analysis data. Select **WHAFIS wave heights**
+and **Run WHAFIS**, or **RUNUP** and **Run RUNUP**. Review the Results page, then
+use **Save project** to keep a copy. The Getting started page explains a new study
+from profile import through results export. No emulator, Python, Fortran compiler,
+Access installation, or original executable is needed to use the application.
+
+The interface uses Dear ImGui and SDL. It supports CSV/TSV and DXF profile import,
+editable profiles, shoreline adjustment, dune removal and retreat, both annual
+chance scenarios, obstruction and vegetation cards, runup surface selection,
+undo/redo, native file dialogs, and CSV/SVG/DXF/report export. Original `.mdb`
+files are read without modification; all imported tables and fields survive a
+save to `.coastal`.
+
+## Numerical evidence
+
+RUNUP matches **113 complete original reports and 6,209 raw routine records**.
+WHAFIS matches **17 complete original reports and 4,000 raw routine records**,
+excluding only execution date and file-path metadata in its reports. The connected
+CHAMP workflow also matches eight newly captured original reports, the supplied
+retreat coordinates, and the original mean-runup zone coordinates. The database
+reader preserves every cell in all 670 rows of the supplied project. The four
+recovered CHAMP geometry routines have 4,000 original raw numerical records.
+
+These comparisons establish the tested behavior; they are not a proof of equality
+for every possible input. See [implementation evidence](docs/IMPLEMENTATION.md),
+[CHAMP implementation](docs/CHAMP_IMPLEMENTATION.md), and
+[RUNUP historical differences](docs/RUNUP_DIFFERENCES.md).
 
 ## Recovered so far
 
@@ -36,7 +76,16 @@ Keep the original algorithms, numerical tables, data formats, and CHAMP workflow
 
 The current RUNUP calculation includes profile geometry, breaking depth, curve selection, roughness, scaling, structure/composite branches, convergence, and historical reports and diagnostics. The expanded reference suite contains 113 complete report files and 6,209 raw numerical routine records. All 113 reports and the 6,209 routine records passed on macOS, Linux, and Windows at commit `d656bbc`. These fixtures do not establish universal equivalence. See [implementation evidence and remaining work](docs/IMPLEMENTATION.md).
 
-For the current development build:
+## Build from source
+
+Use CMake 3.24 or newer and a C++20 compiler. The desktop build downloads
+hash-pinned SDL and Dear ImGui sources once. Linux additionally needs the window
+system development packages listed in [the CI workflow](.github/workflows/build.yml).
+`make package` runs the tests and creates a desktop package. For engines and
+project libraries only, use `make test DESKTOP=OFF`; that build has no downloaded
+UI dependency.
+
+For a development build:
 
 ```sh
 make test
@@ -44,7 +93,7 @@ build/native/runup originals/runup2/test.in result.out
 build/native/whafis originals/champ2/w1.dat wave-result.out
 ```
 
-Both command-line programs have no emulator, Python, Fortran, or original-executable dependency. WHAFIS includes the original marsh-grass defaults and exposes calculated wave points through a C++ library interface. GitHub Actions builds and checks C++ on macOS, Linux, and Windows. Ready-to-run desktop packages will follow the completed interface.
+Both command-line programs have no emulator, Python, Fortran, or original-executable dependency. WHAFIS includes the original marsh-grass defaults and exposes calculated wave points through a C++ library interface. GitHub Actions builds and checks C++ on macOS, Linux, and Windows. The same workflow installs and launches the desktop example before creating Mac, Windows, and Linux packages.
 
 ## Attribution
 

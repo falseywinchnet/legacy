@@ -312,7 +312,7 @@ Parameters Project::parameters(std::string_view id, Scenario s) const {
 }
 void Project::set_parameters(std::string_view id, Scenario s,
                              const Parameters &p) {
-  auto &r = transect(id);
+  auto r = transect(id);
   const bool five = s == Scenario::annual_0_2_percent;
   const auto put = [&](const char *one, const char *five_key, float v) {
     if (!std::isfinite(v))
@@ -333,6 +333,7 @@ void Project::set_parameters(std::string_view id, Scenario s,
   put("WINDOF", "WINDOF500", p.wind_overwater);
   put("WINDIF", "WINDIF500", p.wind_inland);
   put("WINDVH", "WINDVH500", p.wind_vegetation);
+  transect(id) = std::move(r);
 }
 std::vector<TransectPoint>
 Project::profile(std::string_view id, ProfileKind kind, Scenario s) const {

@@ -1,22 +1,70 @@
-name: Build and original-engine comparisons
-on: [push, pull_request]
+name: Build, original-engine comparisons, and desktop packages
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   native:
+    name: ${{ matrix.name }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-22.04
+            name: Linux
+            cmake_args: ''
+          - os: macos-latest
+            name: macOS
+            cmake_args: '-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0'
+          - os: windows-latest
+            name: Windows
+            cmake_args: '-A x64'
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      - name: Configure
+      - name: Install Linux desktop development libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev libxfixes-dev libxss-dev libxtst-dev libwayland-dev libxkbcommon-dev libegl1-mesa-dev libgbm-dev libdecor-0-dev libdbus-1-dev xvfb
+      - name: Configure Linux
+        if: runner.os == 'Linux'
         run: cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release
+      - name: Configure macOS
+        if: runner.os == 'macOS'
+        run: cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release "-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
+      - name: Configure Windows
+        if: runner.os == 'Windows'
+        run: cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release -A x64
       - name: Build
-        run: cmake --build build/native --config Release --parallel
-      - name: Compare against original routine outputs
+        run: cmake --build build/native --config Release --parallel 3
+      - name: Compare against original routine outputs and test project workflow
         run: ctest --test-dir build/native -C Release --output-on-failure
+      - name: Install package contents
+        run: cmake --install build/native --config Release --prefix build/installed
+      - name: Exercise installed macOS desktop
+        if: runner.os == 'macOS'
+        run: '"build/installed/Legacy Coastal.app/Contents/MacOS/Legacy Coastal" --smoke-test --screenshot build/desktop.bmp'
+      - name: Exercise installed Linux desktop
+        if: runner.os == 'Linux'
+        run: xvfb-run -a "build/installed/Legacy Coastal" --smoke-test --screenshot build/desktop.bmp
+      - name: Exercise installed Windows desktop
+        if: runner.os == 'Windows'
+        run: '& "build/installed/Legacy Coastal.exe" --smoke-test --screenshot build/desktop.bmp'
+      - name: Package
+        run: cpack --config build/native/CPackConfig.cmake -C Release -B build/packages
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Legacy-Coastal-${{ matrix.name }}
+          path: |
+            build/packages/*.dmg
+            build/packages/*.zip
+            build/packages/*.tar.gz
+            build/desktop.bmp
+          if-no-files-found: error

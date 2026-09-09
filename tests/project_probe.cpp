@@ -77,6 +77,18 @@ int main(int argc, char **argv) {
                 "Original removal intersection differs.");
       }
     }
+    const int expected_counts[] = {9, 29, 1, 3, 1, 17};
+    for (int part = 1; part <= 6; ++part)
+      require(p.rows("WHAFIS PART " + std::to_string(part), "1").size() == std::size_t(expected_counts[part-1]),
+              "WHAFIS report table lost records.");
+    require(numeric(p.rows("WHAFIS PART 2", "1").front(), "STATION") == -22.6f &&
+        numeric(p.rows("WHAFIS PART 5", "1").front(), "STATION") == 242.01f,
+        "WHAFIS result tables retain stale imported values.");
+    auto zones = p.rows("WHAFIS PART 6", "1");
+    require(textual(zones.at(9), "ZONE") == "X" && numeric(zones.at(9), "FHF") == 55,
+        "WHAFIS unprinted high-ground interval did not become the original X zone.");
+    require(p.rows("RUNUP ZONE", "1") == Project::deserialize(before).rows("RUNUP ZONE", "1"),
+        "Original CHAMP mean-runup zone coordinates differ.");
     auto baseline_one = p.rows("EROSION", "1");
     auto params = p.parameters("1", one);
     p.set_parameters("1", five, params);

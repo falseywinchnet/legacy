@@ -9,6 +9,11 @@
 #include <stdexcept>
 
 namespace legacy::champ {
+namespace detail {
+void extract_whafis_tables(Project &, std::string_view, Scenario,
+                           const std::string &);
+void update_runup_zones(Project &, std::string_view, Scenario, float);
+} // namespace detail
 namespace {
 std::string trim(std::string s) {
   auto first = s.find_first_not_of(" \t\r\n");
@@ -222,9 +227,14 @@ RunupSummary Project::run_runup(std::string_view id, Scenario scenario) {
   std::vector<Json> output;
   float sum = 0;
   for (const auto &w : summary.result.waves) {
-    if (w.fatal_error || !w.error.empty())
-      throw std::runtime_error("RUNUP could not complete this wave: " +
-                               w.error);
+    if (w.fatal_error || !w.error.empty()) {
+      const auto error = "RUNUP could not complete this wave: " + w.error;
+      stored_document(*this, id, scenario, "runup") = {
+          {"input", summary.input}, {"report", summary.report}, {"error", error}};
+      replace_rows(scenario_table("RUNUP OUTPUT", scenario), id, {});
+      replace_rows(scenario_table("RUNUP ZONE", scenario), id, {});
+      throw std::runtime_error(error);
+    }
     const auto value = printed(w.runup);
     sum = double(sum) + std::stod(printed_text(w.runup));
     output.push_back({{"WATER LEVEL ABOVE DATUM", w.wave.water_level},
@@ -244,6 +254,7 @@ RunupSummary Project::run_runup(std::string_view id, Scenario scenario) {
   transect(id)[scenario == Scenario::annual_0_2_percent ? "AVERAGERUNUP500"
                                                         : "AVERAGERUNUP"] =
       summary.average_runup;
+  detail::update_runup_zones(*this, id, scenario, summary.average_runup);
   stored_document(*this, id, scenario, "runup") = {
       {"input", summary.input},
       {"report", summary.report},
@@ -359,19 +370,11 @@ whafis::Report Project::run_whafis(std::string_view id, Scenario scenario,
   auto result = whafis::calculate(input, options);
   stored_document(*this, id, scenario, "whafis") = {
       {"input", input}, {"report", result.text}, {"error", result.error}};
-  if (result.error.empty()) {
-    std::vector<Json> records;
-    for (const auto &t : result.transects)
-      for (const auto &p : t.points)
-        records.push_back({{"WHAFIS CARD", p.kind},
-                           {"STATION", p.station},
-                           {"WAVE HEIGHT", p.height},
-                           {"WAVE PERIOD", p.period},
-                           {"WAVE CREST ELEVATION", p.crest_elevation},
-                           {"STILLWATER ELEVATION", p.surge_elevation}});
-    replace_rows(scenario_table("WHAFIS PART 2", scenario), id,
-                 std::move(records));
-  }
+  if (result.error.empty())
+    detail::extract_whafis_tables(*this, id, scenario, result.text);
+  else
+    for (int part = 1; part <= 6; ++part)
+      replace_rows(scenario_table("WHAFIS PART " + std::to_string(part), scenario), id, {});
   return result;
 }
 } // namespace legacy::champ
