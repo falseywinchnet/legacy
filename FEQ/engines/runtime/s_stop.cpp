@@ -34,11 +34,7 @@ f_exit();
 #endif
 exit(0);
 
-/* We cannot avoid (useless) compiler diagnostics here:		*/
-/* some compilers complain if there is no return statement,	*/
-/* and others complain that this one cannot be reached.		*/
-
-return 0; /* NOT REACHED */
+/* exit above implements the non-returning Fortran STOP contract. */
 }
 #ifdef __cplusplus
 }

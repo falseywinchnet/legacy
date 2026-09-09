@@ -465,6 +465,18 @@ directory conventions still apply to these historical programs.
 | [`recovery/`](recovery/) | Download hashes and provenance, archive-member hashes, source inventory, revision diffs, and reference results. |
 | [`tools/`](tools/) | Reproducible recovery, source analysis, and original-executable comparison tools. |
 
+## Preserved detention-state lifetime
+
+The published `LOAD` source uses detention-corrector variable `S2T` before its
+first source-level assignment. The released executable defines it in static
+storage at address `0x00517be4`, with initial bytes `00000000`; the only five
+machine-code references are inside `LOAD`. The native engine therefore uses
+`static real s2t = 0.0F`, preserving its value across calls. The source-level
+equations and their ordering are unchanged. The byte evidence is recorded in
+[`engines/provenance/detention-storage.json`](engines/provenance/detention-storage.json).
+This establishes the variable's lifetime and initial state; the six supplied
+models do not exercise that detention branch.
+
 ## Numerical compatibility requirements
 
 The implementation must retain the requested releases' input semantics, table

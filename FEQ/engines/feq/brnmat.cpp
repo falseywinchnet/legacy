@@ -1819,7 +1819,13 @@ converge.\002)";
     integer ke;
     real dq, ri[128];
     integer it, ks;
-    real wx, wy, qq1, qq2, q1p, q2p, s2t, pdv, res;
+    real wx, wy, qq1, qq2, q1p, q2p, pdv, res;
+    // Released FEQ stores S2T at VA 0x00517be4, initialized to 00000000.
+    // LOAD reads it at 0x0040663a and writes it at 0x00406672; no other
+    // routine accesses that cell. Preserve its lifetime across LOAD calls.
+    // The published Fortran omits SAVE here; automatic C++ storage would
+    // introduce an indeterminate read in detention routing.
+    static real s2t = 0.0F;
     integer knt, pnt;
     doublereal sum;
     integer gage;

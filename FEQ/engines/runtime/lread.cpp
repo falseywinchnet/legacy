@@ -77,7 +77,7 @@ un_getc(int x, FILE *f__cf)
 #ifdef KR_headers
  extern int ungetc();
 #else
-extern int ungetc(int, FILE*);	/* for systems with a buggy stdio.h */
+/* Standard <stdio.h> supplies ungetc, including its platform linkage. */
 #endif
 #endif
 

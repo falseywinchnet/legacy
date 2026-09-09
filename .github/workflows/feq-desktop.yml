@@ -49,6 +49,11 @@ jobs:
       - name: Verify the relocated installed application on X11
         if: runner.os == 'Linux'
         run: xvfb-run -a python FEQ/tests/check_installed_app.py --package FEQ/build/desktop-package --output FEQ/build/installation-verification
+      - name: Install Windows installer compiler
+        if: runner.os == 'Windows'
+        run: |
+          choco install nsis --version=3.11 -y --no-progress
+          'C:\Program Files (x86)\NSIS' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Create installers
         run: cpack --config FEQ/build/desktop/CPackConfig.cmake -C Release -B FEQ/build/installers
       - uses: actions/upload-artifact@v4

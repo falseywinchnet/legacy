@@ -33,6 +33,16 @@ feq_checks(feq_desktop_support)
 
 qt_add_executable(feq-workbench WIN32 MACOSX_BUNDLE app/main.cpp app/verify_installation.cpp)
 target_link_libraries(feq-workbench PRIVATE feq_desktop_support)
+if(APPLE)
+    target_sources(feq-workbench PRIVATE app/packaging/feq-workbench.icns)
+    set_source_files_properties(app/packaging/feq-workbench.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    set_target_properties(feq-workbench PROPERTIES MACOSX_BUNDLE_ICON_FILE "feq-workbench.icns")
+elseif(WIN32)
+    enable_language(RC)
+    set(FEQ_ICON_ICO "${CMAKE_CURRENT_SOURCE_DIR}/app/packaging/feq-workbench.ico")
+    configure_file(app/packaging/windows-icon.rc.in "${CMAKE_CURRENT_BINARY_DIR}/windows-icon.rc" @ONLY)
+    target_sources(feq-workbench PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/windows-icon.rc")
+endif()
 set_target_properties(feq-workbench PROPERTIES
     MACOSX_BUNDLE_BUNDLE_NAME "FEQ Workbench"
     MACOSX_BUNDLE_GUI_IDENTIFIER "org.rainstar.feq-workbench"
@@ -116,3 +126,8 @@ else()
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.39), libstdc++6, libgcc-s1, libgl1, libegl1, libopengl0, libx11-6, libx11-xcb1, libxcb1, libxcb-cursor0, libxcb-icccm4, libxcb-image0, libxcb-keysyms1, libxcb-randr0, libxcb-render-util0, libxcb-shape0, libxcb-shm0, libxcb-sync1, libxcb-xfixes0, libxcb-xkb1, libxkbcommon0, libxkbcommon-x11-0, libfontconfig1, libfreetype6, libdbus-1-3, libsm6, libice6, libglib2.0-0t64")
 endif()
 include(CPack)
+
+add_executable(feq_icon_export EXCLUDE_FROM_ALL tools/build_desktop_icons.cpp)
+target_link_libraries(feq_icon_export PRIVATE Qt6::Widgets)
+target_compile_features(feq_icon_export PRIVATE cxx_std_20)
+feq_checks(feq_icon_export)

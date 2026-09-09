@@ -1,0 +1,40 @@
+{
+  "description": "Restore LOAD detention-iteration S2T lifetime from the released executable; no equation or iteration order changes.",
+  "original_executable": "originals/feq1061/wrdapp/FEQ_10.61/BIN/feq.exe",
+  "original_sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399",
+  "storage_va": "0x00517be4",
+  "initial_bytes": "00000000",
+  "routine_entry": "0x00405e10",
+  "references": [
+    {
+      "address": "0x0040663a",
+      "instruction": "fld dword ptr [0x517be4]",
+      "bytes": "d905e47b5100"
+    },
+    {
+      "address": "0x00406672",
+      "instruction": "fstp dword ptr [0x517be4]",
+      "bytes": "d91de47b5100"
+    },
+    {
+      "address": "0x00406685",
+      "instruction": "fld dword ptr [0x517be4]",
+      "bytes": "d905e47b5100"
+    },
+    {
+      "address": "0x00406712",
+      "instruction": "mov eax, dword ptr [0x517be4]",
+      "bytes": "8b05e47b5100"
+    },
+    {
+      "address": "0x0040673a",
+      "instruction": "mov eax, dword ptr [0x517be4]",
+      "bytes": "8b05e47b5100"
+    }
+  ],
+  "source_file": "engines/feq/brnmat.cpp",
+  "source_before_sha256": "716ad11cc407775c385ff65b02d464990b5722098614126cf624efcc17262c37",
+  "source_after_sha256": "7ea7f9b2b482f85e9e6cd57e3b142af910e522bc105cf72d3d8a0b089588c97b",
+  "native_storage": "static real s2t = 0.0F;",
+  "scope": "This receipt establishes storage initialization and lifetime. The six distributed examples do not exercise this detention branch."
+}

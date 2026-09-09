@@ -296,7 +296,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), runner_(this) {
         "QLabel#title { font-size: 28px; font-weight: 650; }"
         "QLabel#subtitle { color: #526572; padding-bottom: 8px; }"
         "QTabWidget::pane { border: 1px solid #d4deda; border-radius: 6px; }"
-        "QTabBar::tab { padding: 10px 18px; }"
+        "QTabBar::tab { padding: 10px 18px; border: 0; border-bottom: 3px solid transparent; background: transparent; }"
         "QTabBar::tab:selected { color: #126b72; border-bottom: 3px solid #187c80; }"
         "QLineEdit, QComboBox { background: white; border: 1px solid #becdc8; border-radius: 5px; padding: 8px; }"
         "QPushButton { border: 1px solid #b9cac4; border-radius: 5px; padding: 9px 14px; background: #ffffff; }"

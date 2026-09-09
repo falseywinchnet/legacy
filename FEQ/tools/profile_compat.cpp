@@ -10,7 +10,7 @@ void feq_research_trace_matrix();
 integer s_wsfe(cilist*);
 integer do_fio(integer*, char*, ftnlen);
 integer e_wsfe();
-void s_stop(char*, ftnlen);
+[[noreturn]] int s_stop(char*, ftnlen);
 
 int profac_(integer* output_unit) {
 #if defined(FEQ_RESEARCH_MATRIX_TRACE)

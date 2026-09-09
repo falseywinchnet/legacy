@@ -4,6 +4,7 @@
 #include <QApplication>
 int main(int argc, char** argv) {
     QApplication application(argc, argv);
+    QApplication::setStyle(QStringLiteral("Fusion"));
     QCoreApplication::setOrganizationName(QStringLiteral("Rainstar"));
     QCoreApplication::setApplicationName(QStringLiteral("FEQ Workbench"));
     QCoreApplication::setApplicationVersion(QStringLiteral("0.1.0"));

@@ -47,6 +47,12 @@ typedef int ftnlen;
 typedef int ftnint;
 #endif
 
+// STOP always terminates the engine process. Expose that contract to every
+// C++ translation unit, including callers with generated local declarations.
+#ifdef __cplusplus
+extern "C" { [[noreturn]] int s_stop(char *, ftnlen); }
+#endif
+
 /*external read, write*/
 typedef struct
 {	flag cierr;
@@ -361,7 +367,6 @@ extern integer s_rsli(icilist *);
 extern integer s_rsne(cilist *);
 extern integer s_rsni(icilist *);
 extern integer s_rsue(cilist *);
-extern int s_stop(char *, ftnlen);
 extern integer s_wdfe(cilist *);
 extern integer s_wdue(cilist *);
 extern integer s_wsfe(cilist *);
