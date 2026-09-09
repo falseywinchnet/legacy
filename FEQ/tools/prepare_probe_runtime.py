@@ -83,6 +83,27 @@ def main():
                             '\t} else {\n'+text[start:end]+'\n\t}\n')+text[end:]
         return text
     change('wref.c',decimal,'Use original-verified REAL*4 decimal conversion; retain the existing field layout and REAL*8 path.')
+    def list_real(text):
+        anchor = 'ftnint L_len;'
+        if text.count(anchor) != 1:
+            raise ValueError('Unexpected list-output declarations.')
+        text = text.replace(anchor, 'int feq_decimal_list_real(char*, int, real);\n\n'+anchor)
+        anchor = ' static VOID\n#ifdef KR_headers\nlwrt_F(n) double n;'
+        helper = (' static VOID\nlwrt_R(real n)\n{\n'
+                  '\tchar buf[LEFBL];\n'
+                  '\tint length = feq_decimal_list_real(buf, sizeof(buf), n);\n'
+                  '\tif (length < 0) f__fatal(117, "REAL*4 list conversion");\n'
+                  '\tif (f__recpos + length >= L_len) donewrec();\n'
+                  '\tl_put(buf);\n}\n\n')
+        if text.count(anchor) != 1:
+            raise ValueError('Unexpected list-real writer.')
+        text = text.replace(anchor, helper+anchor)
+        original = '\t\tcase TYREAL:\n\t\t\ty=Ptr->flreal;\n\t\t\tgoto xfloat;'
+        if text.count(original) != 1:
+            raise ValueError('Unexpected list-real dispatch.')
+        text = text.replace(original, '\t\tcase TYREAL:\n\t\t\tlwrt_R(Ptr->flreal);\n\t\t\tbreak;')
+        return text.replace('\t\txfloat: lwrt_F(y);', '\t\t\tlwrt_F(y);')
+    change('lwrite.c',list_real,'Use original-verified scalar REAL*4 list fields, including trailing zeros and one-blank separators; retain other type writers.')
     compatibility = r'''#include "f2c.h"
 #include "fio.h"
 #undef getc
@@ -110,7 +131,7 @@ int feq_compat_getc(FILE* stream) {
     manifest = {'upstream':'https://www.netlib.org/f2c/libf2c.zip',
                 'header_sha256':hashlib.sha256(args.header.read_bytes()).hexdigest(),
                 'changes':records,'command':command,'returncode':process.returncode,
-                'numeric_format_policy':'Leading zero enabled; REAL*4 uses independently verified original decimal conversion before field layout; REAL*8 retains Netlib conversion. No output rewriting.'}
+                'numeric_format_policy':'Leading zero enabled; REAL*4 uses independently verified original decimal conversion and scalar list fields; REAL*8 retains Netlib conversion. No output rewriting.'}
     if process.returncode == 0:
         manifest['library_sha256'] = hashlib.sha256((output/'libf2c.a').read_bytes()).hexdigest()
     (output/'compatibility-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')

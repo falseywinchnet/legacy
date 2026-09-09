@@ -28,14 +28,34 @@ void write_word(std::uint32_t word) {
 }
 }
 
-int main() {
+int main(int argc, char** argv) {
 #if defined(_WIN32)
     _setmode(_fileno(stdin),_O_BINARY);
     _setmode(_fileno(stdout),_O_BINARY);
 #endif
     try {
+        const bool list_mode = argc == 2 && std::string(argv[1]) == "--list-real";
+        if (argc != 1 && !list_mode) {
+            throw std::runtime_error("Unknown decimal probe mode.");
+        }
         while (std::cin.peek() != std::char_traits<char>::eof()) {
             const float value = std::bit_cast<float>(read_word());
+            if (list_mode) {
+                const std::uint32_t style = read_word();
+                if (style > 3) {
+                    throw std::runtime_error("Unknown list-output fixture style.");
+                }
+                // The original unit 6 suppresses the report file's leading
+                // carriage-control blank. The item separator is one blank.
+                if (style >= 2) {
+                    std::cout << ' ';
+                }
+                if (style%2 == 0) {
+                    std::cout << " FW flow at its upper limit= ";
+                }
+                std::cout << feq::list_real(value) << "\r\n";
+                continue;
+            }
             const feq::DecimalEdit edit = static_cast<feq::DecimalEdit>(read_word());
             const int precision = std::bit_cast<std::int32_t>(read_word());
             const int scale = std::bit_cast<std::int32_t>(read_word());

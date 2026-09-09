@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstdint>
+#include <string>
 
 namespace feq {
 
@@ -32,6 +33,11 @@ struct DecimalDigits {
 // Both input signs produce the same magnitude digits. IEEE special values are
 // handled by bit inspection; no arithmetic is performed on signaling NaNs.
 DecimalDigits decimal_digits(float value, DecimalEdit edit, int precision, int scale = 0);
+
+// Released list-directed REAL*4 field, before the record's one-blank separator.
+// Preserves nine significant digits, trailing zeros, uppercase exponents and
+// the original signed-zero/special-value spelling. Independent of C locale.
+std::string list_real(float value);
 
 } // namespace feq
 #endif

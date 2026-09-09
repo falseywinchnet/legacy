@@ -80,3 +80,11 @@ extern "C" int feq_decimal_exponential(char* buffer, int capacity, float value, 
         return -1;
     }
 }
+
+extern "C" int feq_decimal_list_real(char* buffer, int capacity, float value) {
+    try {
+        return copy_result(buffer,capacity," "+feq::list_real(value));
+    } catch (...) {
+        return -1;
+    }
+}

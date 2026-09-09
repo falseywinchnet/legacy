@@ -145,4 +145,47 @@ DecimalDigits decimal_digits(float value, DecimalEdit edit, int precision, int s
     }
     return result;
 }
+
+std::string list_real(float value) {
+    const std::uint32_t bits = std::bit_cast<std::uint32_t>(value);
+    const std::uint32_t magnitude = bits&0x7fffffffU;
+    if (magnitude == 0) {
+        return "0.00000000E+00";
+    }
+    const DecimalDigits converted = decimal_digits(value,DecimalEdit::general,9);
+    std::string text;
+    if ((bits&0x80000000U) != 0) {
+        text += '-';
+    }
+    if (converted.status != 0) {
+        text.append(converted.digits.data(),3);
+        return text;
+    }
+    // _jwe_ilor selects a G field for 0.1 <= |value| < 10^9, and a
+    // one-leading-digit exponential field outside that interval. G's decimal
+    // point follows exponent digits: value = 0.<digits> * 10^exponent.
+    if (converted.general_state == 4) {
+        if (converted.exponent == 0) {
+            text += "0.";
+        }
+        for (int index = 0; index < 9; ++index) {
+            text += converted.digits[static_cast<std::size_t>(index)];
+            if (index+1 == converted.exponent) {
+                text += '.';
+            }
+        }
+    } else {
+        text += converted.digits[0];
+        text += '.';
+        text.append(converted.digits.data()+1,8);
+        const int exponent = converted.exponent-1;
+        const int absolute_exponent = exponent < 0 ? -exponent : exponent;
+        text += exponent < 0 ? "E-" : "E+";
+        if (absolute_exponent < 10) {
+            text += '0';
+        }
+        text += std::to_string(absolute_exponent);
+    }
+    return text;
+}
 } // namespace feq

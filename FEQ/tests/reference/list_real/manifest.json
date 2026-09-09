@@ -1,0 +1,16 @@
+{
+  "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+  "routine": "_jwe_ilst, _jwe_ilor, _jwe_iedo",
+  "probe_sha256": "385de12304616368a94df2e24781132ef8ebd6b58828dfbfffd7d737038e5620",
+  "compiler_options": 7368723,
+  "cases": 6488,
+  "input_record_bytes": 8,
+  "output_records": "One complete CRLF-terminated record per input, with scalar or label/scalar descriptors.",
+  "input_sha256": "11ff90b331881bc29161895a203a8bc1b5dc8ea565e29b3bd60117e8e5b9ff3a",
+  "output_sha256": "20384e603f265f31207deaa0effedea6df039670941f6300bb20fa62d47676d6",
+  "console_sha256": "c92bcf6df1170430487dda7ddd9014b53808a19a95ed7e5241765a1891651da3",
+  "report_sha256": "2090ab1e3a5809986bae3e04940e95b44cb9730a7f294b3d5afcb4785a722500",
+  "native_sha256": "8aeb3189464f4ce156f6e97da8813293e3eeea2cce679133e56827159cb08880",
+  "native_returncode": 0,
+  "exact_bytes": true
+}

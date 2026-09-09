@@ -893,3 +893,46 @@ remain, and all 2,092 FEQ solver matrices still match every word.
 FEQ/build/python312/bin/python FEQ/tools/probe_gate_state_original.py \
   --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/gate-state-recapture
 ```
+
+## List-directed REAL output
+
+`probe_list_real_original.py` captures 6,488 complete records through the
+released `_jwe_ilst` and `_jwe_ilor` runtime. It repeats MAIN's original
+`_jwe_xcop(0x707013,0,0,0)` compiler-options call before writing. This is
+essential: omitting those options changes item separators, exponent case
+and zero formatting. The driver executes a bounded loop over literal input
+bits; the decimal conversion and I/O runtime remain unchanged.
+
+The cases cover console unit 6 and a sequential report file on unit 10,
+with both scalar and label/scalar descriptors. Console records omit the
+report file's initial carriage-control blank; numeric item separators use
+one blank. Both untouched streams are retained, and their records are merged
+in input order without rewriting any byte. All 199,836 resulting bytes match
+the independent C++ fixture writer. Coverage includes both signs, zeros,
+subnormals, all finite exponent fields, infinities, quiet/signaling NaNs,
+decimal decades and adjacent floats, halfway cases and actual gate outputs.
+
+`feq::list_real` preserves nine significant digits and trailing zeros. The
+released runtime uses fixed notation for magnitudes from 0.1 through values
+below 10^9, and a one-leading-digit exponential field elsewhere. The existing
+verified digit converter supplies the original rounding, including
+`82432.40625` rendered as `82432.4063`. Both signed zeros render as
+`0.00000000E+00`. The C++ field function is independent of the C locale and
+leaves record margins and item separators to the caller.
+
+The research runtime now dispatches scalar REAL list output to that function.
+All twenty remaining UFGATE formatting differences are resolved, and the
+complete UFGATE report section matches every byte. A fresh instrumented run
+also retains all 19,701 identical gate residual-entry records. The complete
+examples still pass 14 of 17 files; UTLEXM has 68 differing non-clock lines
+in its earlier culvert and expansion/contraction calculations. The first
+remaining differences are unchanged. All 2,092 FEQ active matrices remain
+identical, and all 51 CMake checks pass in Release and sanitizer builds.
+
+These scalar field tests do not assert complete list-runtime equivalence
+for complex values, other numeric types, long-record wrapping or input.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_list_real_original.py \
+  --native FEQ/build/core/feq_decimal_probe --output FEQ/build/list-real-recapture
+```

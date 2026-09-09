@@ -191,6 +191,8 @@ if(BUILD_TESTING)
     feq_checks(feq_decimal_probe)
     add_test(NAME decimal_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_decimal_fixture.py $<TARGET_FILE:feq_decimal_probe>)
+    add_test(NAME list_real_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_list_real_fixture.py $<TARGET_FILE:feq_decimal_probe>)
 
     add_executable(feq_table_probe tools/table_probe.cpp)
     target_link_libraries(feq_table_probe PRIVATE feq_numerics)

@@ -166,8 +166,8 @@ and the separately stored jet depth and square-root velocity. See
 
 The complete supplied gate example also matches **all 19,701 residual-entry
 records**, including every trial argument and every value in the gate COMMON
-block. The capture limits exceed the complete call counts. Its remaining
-twenty report-line differences are list-directed number formatting; see
+block. The capture limits exceed the complete call counts. Its complete
+UFGATE report section also matches every byte; see
 [`recovery/gate-residual-trajectories.json`](recovery/gate-residual-trajectories.json).
 
 Contraction adjustment and culvert velocity-head loss match **528 direct
@@ -249,6 +249,13 @@ signed zeros, halfway values and their adjacent floats, infinities, and NaNs.
 It preserves the original nine digit ceiling and binary scaling steps. The
 captured digit bytes, counts, exponents, and G/EN descriptor states are committed
 under [`tests/reference/decimal_digits/`](tests/reference/decimal_digits/).
+
+List-directed REAL fields match **all 6,488 complete original output records**,
+including console and report-file margins, scalar and label/scalar writes,
+trailing zeros, exponent spelling and the original decimal rounding decisions.
+These preserve the compiler I/O options installed by the original MAIN.
+The fixtures retain both raw output streams in
+[`tests/reference/list_real/`](tests/reference/list_real/).
 
 Complete translated research engines execute all six examples. **All twelve
 FEQ report files now match**, masking only execution clocks; all four FEQ
