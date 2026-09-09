@@ -12,6 +12,10 @@
 5. Choose **Save project** to save a separate `.coastal` study containing its
    tables, inputs, and reports. Original Access projects are never overwritten.
 
+Packages target Windows x64, macOS 11+ (Intel and Apple Silicon), and Linux x64
+with an Ubuntu 22.04-compatible C/C++ runtime and a graphical desktop. The Actions
+run records the operating systems actually used for each release check.
+
 The application needs no original executable, emulator, Access installation,
 Python, or compiler. Calculation takes place on the computer running the app.
 
@@ -112,6 +116,9 @@ cpack --config build/universal/CPackConfig.cmake -B build/packages
 Mac targets and the completed bundle receive ad-hoc integrity signatures for all
 architectures. The install step signs again after bundling command-line programs,
 manuals, and notices. CI verifies that signature and launches both Mac slices.
+
+Windows builds link the C/C++ runtime statically. CI also inspects PE imports
+to reject accidental dependencies on a separately installed Visual C++ runtime.
 
 The desktop's `--smoke-test` option opens the packaged example, checks pending
 edits and undo, runs both engines, saves and reopens a temporary project, renders
