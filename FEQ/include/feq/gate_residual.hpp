@@ -59,5 +59,30 @@ struct GateSubmergedLevels {
 // Store the trial section-4 depth as REAL while retaining its head and drop.
 GateSubmergedLevels gate_submerged_levels(float upstream_depth, float upstream_bottom,
     double free_drop, float drop_fraction, float tailwater_bottom, float datum);
+
+struct GateCriticalSetup {
+    float area;
+    float depth;
+    float flow;
+    float specific_energy;
+    float initial_depth;
+};
+
+// Establish the free-weir upper limit when critical depth equals the opening.
+// The stored energy and first depth estimate feed the inverse-energy solver.
+GateCriticalSetup gate_critical_setup(float opening, float width, float gravity,
+    float gravity_twice, float discharge_coefficient, float gate_bottom, float upstream_bottom);
+
+struct GateFreeWeir {
+    float depth;
+    float flow;
+};
+
+// Original UFGATE fixed-point iteration. The input must describe a convergent
+// free-weir state; the released routine has no iteration limit. The head and
+// iterates remain wide until the converged gate depth is stored as REAL.
+GateFreeWeir gate_free_weir(double head, float discharge_coefficient,
+    float upstream_energy_factor, float width, float upstream_area, float gravity,
+    float relative_tolerance);
 } // namespace feq
 #endif

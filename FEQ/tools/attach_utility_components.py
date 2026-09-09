@@ -205,6 +205,64 @@ def integrate_gate_levels(data):
     return edit_text(data,edits)
 
 
+def integrate_gate_free(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'ufgate_']
+    if len(targets) != 1:raise ValueError('Expected one UFGATE free-flow definition.')
+    function = targets[0];body = function.child_by_field_name('body');edits = []
+    assignments = [node for node in nodes(function) if node.type == 'assignment_expression']
+    def unique_assignment(name):
+        found = [node for node in assignments if content(node.child_by_field_name('left'),data) == name]
+        if len(found) != 1:raise ValueError('Expected one gate '+name+' assignment.')
+        return found[0]
+    area = unique_assignment('ufcom_1.ag');initial_depth = unique_assignment('y')
+    setup = '// Original critical-flow setup, with explicit REAL area and speed stores.\n        critical_setup = feq::gate_critical_setup(ufcom_1.hg,ufcom_1.bg,ufcom_1.g,\n            ufcom_1.twog,ufcom_1.cd,ufcom_1.z2b,ufcom_1.z1b);\n        ufcom_1.ag = critical_setup.area;\n        ufcom_1.y2 = critical_setup.depth;\n        q = critical_setup.flow;\n        rhs = critical_setup.specific_energy;\n        y = critical_setup.initial_depth;\n'
+    edits.append((area.parent.start_byte,initial_depth.parent.end_byte,setup))
+    factors = [node for node in assignments if content(node.child_by_field_name('left'),data) == 'fac' and
+               content(node.child_by_field_name('right'),data) == '(float)0.']
+    if len(factors) != 1:raise ValueError('Expected original free-weir initialization.')
+    saved_depth = unique_assignment('y2fw')
+    free_flow = '// Original iteration retains the gate depth until convergence.\n        free_weir = feq::gate_free_weir(h1,ufcom_1.cd,ufcom_1.alpha1,\n            ufcom_1.bg,ufcom_1.a1,ufcom_1.g,epscom_1.epsarg);\n        ufcom_1.y2 = free_weir.depth;\n        qfree = free_weir.flow;\n        '
+    removed = data[factors[0].parent.start_byte:saved_depth.parent.start_byte].decode()
+    if removed.count('L320:') != 1 or removed.count('goto L320;') != 1 or removed.count('qfree =') != 1:
+        raise ValueError('Unexpected gate fixed-point iteration boundaries.')
+    edits.append((factors[0].parent.start_byte,saved_depth.parent.start_byte,free_flow))
+    promoted = 0
+    for node in nodes(function):
+        if node.type == 'declaration' and content(node.child_by_field_name('type'),data) == 'real':
+            names = [content(item,data) for item in node.children_by_field_name('declarator')]
+            if 'h1' in names:
+                names.remove('h1');promoted += 1
+                edits.append((node.start_byte,node.end_byte,'double h1;\n    real '+', '.join(names)+';'))
+        if node.type == 'pointer_expression' and content(node,data) == '&h1':
+            raise ValueError('Retained gate H1 unexpectedly passed by address.')
+    if promoted != 1:raise ValueError('Expected original local gate head.')
+    edits.append((body.start_byte+1,body.start_byte+1,
+        '\n    feq::GateCriticalSetup critical_setup{};\n    feq::GateFreeWeir free_weir{};\n'))
+    return edit_text(data,edits)
+
+
+def integrate_specific_energy(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'fise_']
+    if len(targets) != 1:raise ValueError('Expected one FISE definition.')
+    function = targets[0];edits = [];calls = [];returns = []
+    for node in nodes(function):
+        if node.type == 'expression_statement' and content(node,data).startswith(('xlkt20_(','xlkt22_(')):
+            calls.append(node)
+        if node.type == 'return_statement':returns.append(node)
+    if len(calls) != 2 or len(returns) != 1:raise ValueError('Unexpected FISE lookups or return.')
+    for call in calls:
+        siblings = [node for node in call.parent.named_children if node.type != 'comment']
+        if siblings[-1].type != 'expression_statement' or not content(siblings[-1],data).startswith('ret_val ='):
+            raise ValueError('Expected FISE arithmetic immediately after lookup.')
+        factor = '1.0F' if content(call,data).startswith('xlkt20_(') else 'alp'
+        replacement = '\n        return feq::specific_energy_residual(*y,at,'+factor+',isecom_1.qt,isecom_1.gravt,isecom_1.et);\n'
+        edits.append((call.end_byte,siblings[-1].end_byte,replacement))
+    edits.append((returns[0].start_byte,returns[0].end_byte,''))
+    return b'#include <feq/section_energy.hpp>\n'+edit_text(data,edits)
+
+
 PROPERTY_DECLARATION = ('extern "C" int feq_section_properties(int,int,int,const char*,float,float,float,int,int,int*,'
     'const float*,const float*,const double*,const double*,const float*,const float*,const float*,const float*,'
     'double,double,double,double,double,double,double,double,float*,float*,float*,int*,int*,float*);\n')
@@ -744,10 +802,10 @@ def main():
     for path in sorted(source.glob('*.cpp')):
         data = path.read_bytes();sources.append({'name':path.name,'sha256':hashlib.sha256(data).hexdigest()})
         if path.name == 'xsection.cpp':data = integrate_sinuosity(integrate_section_slot(integrate_elevations(integrate_properties(integrate_geometry(data)))))
-        elif path.name == 'critq.cpp':data = integrate_critical_speed_store(data)
+        elif path.name == 'critq.cpp':data = integrate_specific_energy(integrate_critical_speed_store(data))
         elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
         elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
-        elif path.name == 'ufgate.cpp':data = integrate_gate_levels(integrate_gate_residuals(data))
+        elif path.name == 'ufgate.cpp':data = integrate_gate_free(integrate_gate_levels(integrate_gate_residuals(data)))
         elif path.name == 'tablook.cpp':data = integrate_scalar_moment(data)
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
@@ -784,6 +842,12 @@ def main():
                 {'file':'ufgate.cpp','function':'ufgate_','component':'src/gate_residual.cpp',
                  'scope':'Retained free/submerged tailwater surfaces, heads and drops; section-depth and report REAL stores.',
                  'verification':'tests/reference/gate_levels/manifest.json'},
+                {'file':'ufgate.cpp','function':'ufgate_','component':'src/gate_residual.cpp',
+                 'scope':'Critical setup area/speed REAL stores and free-weir iteration with retained head and depths.',
+                 'verification':'tests/reference/gate_free/manifest.json'},
+                {'file':'critq.cpp','function':'fise_','component':'src/section_energy.cpp',
+                 'scope':'Unrounded inverse-specific-energy residual after original selected section lookup.',
+                 'verification':'tests/reference/specific_energy/manifest.json'},
                 {'file':'tablook.cpp','function':'lktj_','component':'src/section_interpolation.cpp',
                  'scope':'Wide width and area, released REAL reciprocal of six; retain original bounds and cached row.',
                  'verification':'tests/reference/gate_residual/manifest.json'},

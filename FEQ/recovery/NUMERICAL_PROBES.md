@@ -726,3 +726,40 @@ original and `7935-2` in C++. Other first differences remain at UTLEXM report
 line 1921, CULVERT report line 711 and CULVERT table line 13. The full
 comparison remains 13 of 17 files; four utility outputs and final application
 release work remain incomplete.
+
+
+## Gate critical setup, free-weir flow and inverse energy
+
+`probe_gate_free_original.py` captures the unchanged UFGATE instruction blocks
+at RVAs `0x80b47..0x80bbd` and `0x816af..0x81762`. The first stores the gate
+area, critical speed, discharge, specific-energy target and initial upstream
+depth. The second executes the original fixed-point loop, with its head and
+intermediate depths retained until convergence. The square root then crosses
+a separate REAL store before multiplication into discharge. All 894 fixtures
+match all seven output floats. Cases cover three dimensional scales, both
+gravity conventions, cancellation above large datums, retained heads between
+adjacent floats, convergence tolerances and zero head.
+
+`probe_specific_energy_original.py` calls the complete unchanged FISE routine
+six times for each of 840 section fixtures, selecting each TYPE from 20 to 25.
+The actual section tables independently exercise types 12, 22, 25, 32 and 35.
+The original XLKT20/XLKT22 lookup and NOALP selector execute normally. All
+5,040 binary64 residuals and all 840 unchanged query depths match. FISE copies
+the query into YLOC for lookup and returns the residual without a REAL store;
+the C++ integration preserves both behaviors. The residual formula and exact
+operation order are documented beside `specific_energy_residual`.
+
+Both probes stream input through a regular file, hash-check the preserved
+original executable, and write complete input/output provenance. The CMake
+gate fixture checks verify the recorded hashes before comparing every byte.
+The utility integration uses the verified routines after preserving the
+original table selection and diagnostic paths. The full examples still have
+four numerically different utility outputs; these isolated matches do not
+establish whole-program equivalence.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_gate_free_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/gate-free-recapture
+FEQ/build/python312/bin/python FEQ/tools/probe_specific_energy_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/specific-energy-recapture
+```

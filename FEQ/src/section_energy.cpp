@@ -7,6 +7,16 @@
 #include <stdexcept>
 
 namespace feq {
+double specific_energy_residual(float depth, float area, float energy_factor,
+    float flow, float gravity, float target_energy) {
+    // FEQUTL 5.80 FISE 0x411100/0x411189:
+    // R = (Y + (0.5*alpha)*Q^2/(A^2*g))/ET - 1.
+    // Q^2, A^2 and the returned residual retain the original wide arithmetic.
+    const double squared_flow = static_cast<double>(flow)*flow;
+    const double numerator = (static_cast<double>(energy_factor)*0.5)*squared_flow;
+    const double denominator = (static_cast<double>(area)*area)*gravity;
+    return (numerator/denominator+depth)/target_energy-1.0;
+}
 float logarithmic_critical_flow(float depth, float lower_depth, float upper_depth,
     float lower_flow, float upper_flow) {
     if (!std::isfinite(depth) || depth < 0.0F || !std::isfinite(lower_depth) ||

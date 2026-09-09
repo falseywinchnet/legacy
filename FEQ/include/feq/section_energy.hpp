@@ -29,5 +29,11 @@ float logarithmic_critical_flow(float depth, float lower_depth, float upper_dept
 EnergySectionProperties interpolate_energy_section(float depth,
     const EnergySectionRow& lower, const EnergySectionRow& upper,
     bool has_slopes, const EnergySectionRow* following = nullptr);
+
+// FISE residual for inversion of specific energy, after the table lookup.
+// Pass energy_factor=1 when the selected section model omits ALPHA. The
+// original function returns the retained result without a REAL conversion.
+double specific_energy_residual(float depth, float area, float energy_factor,
+    float flow, float gravity, float target_energy);
 }
 #endif

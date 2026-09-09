@@ -154,7 +154,7 @@ if(BUILD_TESTING)
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_sinuosity_fixture.py $<TARGET_FILE:feq_sinuosity_probe> --adapter)
     add_test(NAME approach_residual_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_approach_residual_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
-    foreach(gate_fixture gate_residual gate_levels)
+    foreach(gate_fixture gate_residual gate_levels gate_free specific_energy)
         add_test(NAME ${gate_fixture}_original_bytes COMMAND ${Python3_EXECUTABLE}
             ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_energy_section_probe> ${gate_fixture})
     endforeach()

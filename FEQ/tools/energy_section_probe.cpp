@@ -69,7 +69,28 @@ int main(int argc, char** argv) {
         const bool approach = argc == 2 && std::strcmp(argv[1],"--approach") == 0;
         const bool gate = argc == 2 && std::strcmp(argv[1],"--gate") == 0;
         const bool gate_levels = argc == 2 && std::strcmp(argv[1],"--gate-levels") == 0;
+        const bool gate_free = argc == 2 && std::strcmp(argv[1],"--gate-free") == 0;
+        const bool specific_energy = argc == 2 && std::strcmp(argv[1],"--specific-energy") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (gate_free) {
+                const std::uint64_t low = read_word();
+                const std::uint64_t high = read_word();
+                const double head = std::bit_cast<double>(low | (high << 32));
+                float fields[13]{};
+                for (int i = 0; i < 13; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const feq::GateCriticalSetup setup = feq::gate_critical_setup(
+                    fields[0],fields[1],fields[2],fields[3],fields[4],fields[5],fields[6]);
+                write_float(setup.area);
+                write_float(setup.depth);
+                write_float(setup.flow);
+                write_float(setup.specific_energy);
+                write_float(setup.initial_depth);
+                const feq::GateFreeWeir result = feq::gate_free_weir(head,
+                    fields[7],fields[8],fields[9],fields[10],fields[11],fields[12]);
+                write_float(result.depth);
+                write_float(result.flow);
+                continue;
+            }
             if (gate_levels) {
                 float fields[6]{};
                 for (int i = 0; i < 6; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
@@ -97,6 +118,19 @@ int main(int argc, char** argv) {
             const feq::EnergySectionRow lower = read_row();
             const feq::EnergySectionRow upper = read_row();
             const feq::EnergySectionRow following = read_row();
+            if (specific_energy) {
+                float fields[3]{};
+                for (int i = 0; i < 3; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const feq::EnergySectionProperties properties = feq::interpolate_energy_section(
+                    depth,lower,upper,table_type == 32 || table_type == 35,&following);
+                for (int type = 20; type <= 25; ++type) {
+                    const float factor = type == 22 || type == 25 ? properties.energy_factor : 1.0F;
+                    write_double(feq::specific_energy_residual(depth,properties.section.area,
+                        factor,fields[0],fields[2],fields[1]));
+                }
+                write_float(depth);
+                continue;
+            }
             if (gate) {
                 static_cast<void>(read_word());
                 static_cast<void>(read_word());

@@ -1,6 +1,7 @@
 // Work: Astra. Sponsor: Rainstar. Foundation: Hashem. MIT licensed.
 // FEQUTL 5.80 ufgate.for:4-155; released RSOMY3/4 and RSWMY3/4.
 #include <feq/gate_residual.hpp>
+#include <cmath>
 
 namespace feq {
 namespace {
@@ -74,5 +75,45 @@ GateSubmergedLevels gate_submerged_levels(float upstream_depth, float upstream_b
     const double drop = free_drop*drop_fraction;
     const double surface = (static_cast<double>(upstream_depth)+upstream_bottom)-drop;
     return GateSubmergedLevels{static_cast<float>(surface-tailwater_bottom),surface-datum,drop};
+}
+
+GateCriticalSetup gate_critical_setup(float opening, float width, float gravity,
+    float gravity_twice, float discharge_coefficient, float gate_bottom, float upstream_bottom) {
+    // UFGATE 0x480b47..0x480bbd: AG=REAL(HG*BG), V=REAL(sqrt(HG*g)),
+    // Q=REAL(AG*V). Both REAL stores precede the energy calculation.
+    const float area = static_cast<float>(static_cast<double>(opening)*width);
+    const float speed = static_cast<float>(std::sqrt(static_cast<double>(opening)*gravity));
+    const float flow = static_cast<float>(static_cast<double>(area)*speed);
+    const double surface = static_cast<double>(opening)+gate_bottom;
+    const double velocity = flow/(static_cast<double>(area)*discharge_coefficient);
+    // RHS=REAL(Z2+HG+(Q/(AG*CD))^2/(2g)-Z1), Y=REAL(Z2+HG-Z1).
+    const float energy = static_cast<float>((surface+(velocity*velocity)/gravity_twice)-upstream_bottom);
+    return GateCriticalSetup{area,opening,flow,energy,static_cast<float>(surface-upstream_bottom)};
+}
+
+GateFreeWeir gate_free_weir(double head, float discharge_coefficient,
+    float upstream_energy_factor, float width, float upstream_area, float gravity,
+    float relative_tolerance) {
+    // UFGATE 0x4816af..0x481762: D=1+0.5/CD^2,
+    // Y=H1/(D-F), F=0.5*alpha1*(Y*BG/A1)^2.
+    const double coefficient = discharge_coefficient;
+    const double divisor = 0.5/(coefficient*coefficient)+1.0;
+    double factor = 0.0;
+    double previous_depth = 0.0;
+    double depth = 0.0;
+    for (;;) {
+        depth = head/(divisor-factor);
+        // Preserve the original unordered-comparison exit for zero depth.
+        if (!(std::abs(depth-previous_depth)/depth > relative_tolerance)) { break; }
+        previous_depth = depth;
+        const double ratio = (depth*width)/upstream_area;
+        factor = (static_cast<double>(upstream_energy_factor)*0.5)*(ratio*ratio);
+    }
+    // Only the converged depth is stored. The square root is separately
+    // rounded to REAL at 0x481750 before Q=REAL(Y*BG*REAL(sqrt(Y*g))).
+    const float stored_depth = static_cast<float>(depth);
+    const float speed = static_cast<float>(std::sqrt(static_cast<double>(stored_depth)*gravity));
+    const float flow = static_cast<float>((static_cast<double>(stored_depth)*width)*speed);
+    return GateFreeWeir{stored_depth,flow};
 }
 } // namespace feq

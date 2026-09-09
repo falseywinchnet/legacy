@@ -137,6 +137,14 @@ elevation instructions, including small drops above large datums. See
 [`tests/reference/gate_residual/`](tests/reference/gate_residual/) and
 [`tests/reference/gate_levels/`](tests/reference/gate_levels/).
 
+The gate critical-flow setup and free-weir iteration match **894 original
+instruction-block cases**. They preserve the stored area and square-root
+velocity and retain the head and iterative depths until convergence. Inverse
+specific energy also matches **5,040 full original FISE calls**, covering all
+six section selectors across 840 section fixtures. See
+[`tests/reference/gate_free/`](tests/reference/gate_free/) and
+[`tests/reference/specific_energy/`](tests/reference/specific_energy/).
+
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,
 the caller's float store, and the head-loss result at three scales and around
