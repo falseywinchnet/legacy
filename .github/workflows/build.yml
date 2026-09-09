@@ -59,6 +59,18 @@ jobs:
         run: |
           codesign --verify --deep --strict --all-architectures --verbose=2 "build/installed/Legacy Coastal.app"
           arch -x86_64 "build/installed/Legacy Coastal.app/Contents/MacOS/Legacy Coastal" --smoke-test
+      - name: Verify normal macOS application launch
+        if: runner.os == 'macOS'
+        run: |
+          python3 - <<'PY'
+          import pathlib, subprocess
+          app = pathlib.Path('build/installed/Legacy Coastal.app').resolve()
+          screenshot = pathlib.Path('build/desktop-launchservices.bmp').resolve()
+          subprocess.run(['open', '-W', '-n', str(app), '--args', '--smoke-test',
+                          '--screenshot', str(screenshot)], check=True, timeout=90)
+          assert screenshot.is_file() and screenshot.stat().st_size > 1024
+          print('Normal application launch completed the example workflow and rendered.')
+          PY
       - name: Exercise installed Linux desktop
         if: runner.os == 'Linux'
         run: xvfb-run -a "build/installed/Legacy Coastal" --smoke-test --screenshot build/desktop.bmp
@@ -83,4 +95,5 @@ jobs:
             build/packages/*.zip
             build/packages/*.tar.gz
             build/desktop.bmp
+            build/desktop-launchservices.bmp
           if-no-files-found: error
