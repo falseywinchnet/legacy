@@ -94,7 +94,7 @@ struct GateFreeOrifice {
     float flow;
 };
 
-// FND FOQ arithmetic after the upstream section lookup. The contraction
+// FNDFOQ arithmetic after the upstream section lookup. The contraction
 // surface and velocity correction remain wide; area and speed have separate
 // REAL stores in the released program.
 GateFreeOrifice gate_free_orifice(float head, float datum, float discharge_coefficient,

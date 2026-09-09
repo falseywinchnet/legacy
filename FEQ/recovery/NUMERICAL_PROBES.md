@@ -801,3 +801,42 @@ The executable and comparison hashes are in `cpp-research-status.json`.
 FEQ/build/python312/bin/python FEQ/tools/probe_gate_orifice_original.py \
   --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/gate-orifice-recapture
 ```
+
+## Power-function breakpoint spacing
+
+`probe_power_spacing_original.py` captures LSTOPF's complete arithmetic block
+at RVA `0x7f002..0x7f174`, after the argument-ratio table lookup. The driver
+provides the ratio, retained interval bounds and original stack arguments,
+then executes the unchanged instruction bytes. All 1,531 cases match the
+point count, error flag and every byte of the 512-float output buffer.
+There are 736 successful sequences containing 9,803 points, and 795 capacity
+failures that preserve the entire input buffer while returning `N=-1` and
+setting `EFLAG=1`. Successful calls preserve the incoming error flag.
+
+The interval ratio and both logarithms have REAL stores. The logarithm
+quotient remains wide until conversion of `LB/LR+1` to the interval count.
+The spacing factor is `REAL(exp(LB/IPOW))`, using the stored logarithm and
+retained division. Each pair of points begins from a previously stored point;
+the first multiplication is stored but also retained for the second one.
+This detail is visible at `0x47f0e4` (FST) and `0x47f0e8` (FMULP). Reloading
+the stored first product changes 236 successful fixture sequences. Removing
+the logarithm store changes the spacing factor in 79 successful cases.
+
+The original lookup, table choice and invalid-range diagnostic remain in the
+research integration. The bounds are captured before that lookup, as in the
+released routine. The C++ API documents its valid input domain, preserves the
+capacity failure behavior and performs the final offset subtraction only
+after every point has been stored. Formula comments and the complete LSTOPF
+disassembly accompany the implementation. These arithmetic fixtures do not
+claim to verify the preceding two-dimensional ratio lookup.
+
+In the supplied UTLEXM report this removes 90 differing gate lines, reducing
+the complete report's differing line count from 184 to 94. The UTLEXM table
+continues to match after masking its timestamp. The complete run still passes
+14 of 17 files; the first remaining report differences are unchanged in the
+culvert calculations. Fresh FEQ traces retain all 2,092 exact active matrices.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_power_spacing_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/power-spacing-recapture
+```

@@ -4,6 +4,7 @@
 #include <feq/steady_residual.hpp>
 #include <feq/approach_residual.hpp>
 #include <feq/gate_residual.hpp>
+#include <feq/power_spacing.hpp>
 #include <array>
 #include <bit>
 #include <cstdint>
@@ -71,8 +72,23 @@ int main(int argc, char** argv) {
         const bool gate_levels = argc == 2 && std::strcmp(argv[1],"--gate-levels") == 0;
         const bool gate_free = argc == 2 && std::strcmp(argv[1],"--gate-free") == 0;
         const bool gate_orifice = argc == 2 && std::strcmp(argv[1],"--gate-orifice") == 0;
+        const bool power_spacing = argc == 2 && std::strcmp(argv[1],"--power-spacing") == 0;
         const bool specific_energy = argc == 2 && std::strcmp(argv[1],"--specific-energy") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (power_spacing) {
+                float fields[4]{};
+                for (int i = 0; i < 4; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const std::int32_t capacity = std::bit_cast<std::int32_t>(read_word());
+                int flag = std::bit_cast<std::int32_t>(read_word());
+                if (capacity < 0 || capacity > 512) { throw std::runtime_error("Invalid breakpoint fixture capacity."); }
+                float points[512]{};
+                for (int i = 0; i < 512; ++i) { points[i] = -7.25F; }
+                const int count = feq::power_breakpoints(fields[0],fields[1],fields[2],fields[3],points,capacity,flag);
+                write_word(std::bit_cast<std::uint32_t>(static_cast<std::int32_t>(count)));
+                write_word(std::bit_cast<std::uint32_t>(static_cast<std::int32_t>(flag)));
+                for (int i = 0; i < 512; ++i) { write_float(points[i]); }
+                continue;
+            }
             if (gate_orifice) {
                 float fields[12]{};
                 for (int i = 0; i < 12; ++i) { fields[i] = std::bit_cast<float>(read_word()); }

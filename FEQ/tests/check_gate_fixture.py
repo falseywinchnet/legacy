@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Require every gate or inverse-energy output bit from the original."""
+"""Require every gate, inverse-energy or breakpoint output bit from the original."""
 from pathlib import Path
 import hashlib
 import json
@@ -8,7 +8,7 @@ import sys
 
 kind=sys.argv[2]
 mode={'gate_residual':'--gate','gate_levels':'--gate-levels','gate_free':'--gate-free',
-      'gate_orifice':'--gate-orifice','specific_energy':'--specific-energy'}[kind]
+      'gate_orifice':'--gate-orifice','specific_energy':'--specific-energy','power_spacing':'--power-spacing'}[kind]
 fixtures=Path(__file__).resolve().parent/'reference'/kind
 inputs=(fixtures/'inputs.bin').read_bytes();expected=(fixtures/'outputs.bin').read_bytes()
 manifest=json.loads((fixtures/'manifest.json').read_text())

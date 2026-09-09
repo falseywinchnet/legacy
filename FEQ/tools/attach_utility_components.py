@@ -278,6 +278,23 @@ def integrate_gate_orifice(data):
     return edit_text(data,edits)
 
 
+def integrate_power_spacing(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'lstopf_']
+    if len(targets) != 1:raise ValueError('Expected one LSTOPF definition.')
+    body = targets[0].child_by_field_name('body')
+    start = [node for node in body.named_children if node.type == 'expression_statement' and
+             content(node,data).startswith('rbtoa =')]
+    if len(start) != 1:raise ValueError('Expected original breakpoint arithmetic after the ratio lookup.')
+    replacement = '''// Preserve the original table selection and invalid-range diagnostic.
+    *n = feq::power_breakpoints(spacing_first,spacing_last,*offset,argrat,feq_storage_xbrk,*nmax,*eflag);
+    return 0;
+'''
+    cached = '\n    // The released routine retains both bounds across the ratio lookup.\n    const float spacing_first = *a;\n    const float spacing_last = *b;\n'
+    return b'#include <feq/power_spacing.hpp>\n'+edit_text(data,[(body.start_byte+1,body.start_byte+1,cached),
+        (start[0].start_byte,body.end_byte-1,replacement)])
+
+
 def integrate_specific_energy(data):
     targets = [function for function in functions(data)
                if content(identifier(function.child_by_field_name('declarator')),data) == 'fise_']
@@ -841,7 +858,7 @@ def main():
         elif path.name == 'critq.cpp':data = integrate_specific_energy(integrate_critical_speed_store(data))
         elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
         elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
-        elif path.name == 'ufgate.cpp':data = integrate_gate_orifice(integrate_gate_free(integrate_gate_levels(integrate_gate_residuals(data))))
+        elif path.name == 'ufgate.cpp':data = integrate_power_spacing(integrate_gate_orifice(integrate_gate_free(integrate_gate_levels(integrate_gate_residuals(data)))))
         elif path.name == 'tablook.cpp':data = integrate_scalar_moment(data)
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
@@ -884,6 +901,9 @@ def main():
                 {'file':'ufgate.cpp','functions':['ufgate_','fndfoq_'],'component':'src/gate_residual.cpp',
                  'scope':'Upstream head store after datum subtraction; free-orifice retained contraction head and separate area/speed REAL stores.',
                  'verification':'tests/reference/gate_orifice/manifest.json'},
+                {'file':'ufgate.cpp','function':'lstopf_','component':'src/power_spacing.cpp',
+                 'scope':'Geometric breakpoint counts, REAL logarithms, paired retained products and capacity failure; preserve original ratio lookup.',
+                 'verification':'tests/reference/power_spacing/manifest.json'},
                 {'file':'critq.cpp','function':'fise_','component':'src/section_energy.cpp',
                  'scope':'Unrounded inverse-specific-energy residual after original selected section lookup.',
                  'verification':'tests/reference/specific_energy/manifest.json'},

@@ -152,6 +152,12 @@ their own REAL store. These distinctions restore the complete supplied
 UTLEXM function table, which now matches after masking only its timestamp.
 See [`tests/reference/gate_orifice/`](tests/reference/gate_orifice/).
 
+Power-function breakpoint spacing matches **1,531 original instruction-block
+cases**, including point counts, error flags, complete point storage and
+capacity failures. It preserves the REAL logarithms and the paired products
+used by LSTOPF's released loop. See
+[`tests/reference/power_spacing/`](tests/reference/power_spacing/).
+
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,
 the caller's float store, and the head-loss result at three scales and around
