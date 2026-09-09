@@ -283,6 +283,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), runner_(this) {
     QObject::connect(manual, &QAction::triggered, this, [this]() {
         openLocal(QDir(resourceFolder()).filePath(engine_->currentIndex() == 0 ? QStringLiteral("manuals/feq.pdf") : QStringLiteral("manuals/fequtl.pdf")));
     });
+    QAction* licenses = help->addAction(QStringLiteral("Open licenses and Qt sources"));
+    QObject::connect(licenses, &QAction::triggered, this, []() {
+        openLocal(QDir(resourceFolder()).filePath(QStringLiteral("licenses")));
+    });
     QAction* about = help->addAction(QStringLiteral("About FEQ Workbench"));
     QObject::connect(about, &QAction::triggered, this, [this]() {
         QMessageBox::about(this, QStringLiteral("About FEQ Workbench"), QStringLiteral("FEQ Workbench\nNative FEQ 10.61 and FEQUTL 5.80\n\nWork: Astra\nSponsor: Rainstar\nFoundation: Hashem\n\nNew project work is MIT licensed. Historical program and runtime notices are preserved with the installation.\n\nUses Qt, copyright The Qt Company Ltd. and contributors, under LGPL version 3. License texts and matching Qt sources are included in licenses/qt."));

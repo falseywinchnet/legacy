@@ -63,6 +63,10 @@ if(BUILD_TESTING)
     add_executable(feq_native_path_test tests/native_path_test.cpp engines/support/paths.cpp)
     target_include_directories(feq_native_path_test PRIVATE engines/runtime)
     target_compile_features(feq_native_path_test PRIVATE cxx_std_20)
+    if(MSVC)
+        # getenv is standard C++; this process does not mutate its environment.
+        target_compile_definitions(feq_native_path_test PRIVATE _CRT_SECURE_NO_WARNINGS)
+    endif()
     feq_checks(feq_native_path_test)
     add_test(NAME native_path_compatibility COMMAND feq_native_path_test)
     add_test(NAME complete_engine_examples COMMAND ${Python3_EXECUTABLE}

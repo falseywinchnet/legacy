@@ -26,9 +26,12 @@ target_link_libraries(feq_desktop_support PUBLIC Qt6::Widgets Qt6::Concurrent)
 target_compile_features(feq_desktop_support PUBLIC cxx_std_20)
 set_target_properties(feq_desktop_support PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_definitions(feq_desktop_support PRIVATE "FEQ_APPLICATION_RESOURCES=\"${FEQ_APPLICATION_RESOURCES}\"")
+if(MSVC)
+    target_compile_options(feq_desktop_support PUBLIC /utf-8)
+endif()
 feq_checks(feq_desktop_support)
 
-qt_add_executable(feq-workbench WIN32 MACOSX_BUNDLE app/main.cpp)
+qt_add_executable(feq-workbench WIN32 MACOSX_BUNDLE app/main.cpp app/verify_installation.cpp)
 target_link_libraries(feq-workbench PRIVATE feq_desktop_support)
 set_target_properties(feq-workbench PROPERTIES
     MACOSX_BUNDLE_BUNDLE_NAME "FEQ Workbench"
