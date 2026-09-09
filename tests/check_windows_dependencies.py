@@ -1,86 +1,106 @@
-name: Build, original-engine comparisons, and desktop packages
-on:
-  push:
-  pull_request:
-  workflow_dispatch:
-permissions:
-  contents: read
-jobs:
-  native:
-    name: ${{ matrix.name }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-22.04
-            name: Linux
-            cmake_args: ''
-          - os: macos-latest
-            name: macOS
-            cmake_args: '-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0'
-          - os: windows-latest
-            name: Windows
-            cmake_args: '-A x64'
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 35
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-      - name: Install Linux desktop development libraries
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev libxfixes-dev libxss-dev libxtst-dev libwayland-dev libxkbcommon-dev libegl1-mesa-dev libgbm-dev libdecor-0-dev libdbus-1-dev xvfb
-      - name: Configure Linux
-        if: runner.os == 'Linux'
-        run: cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release
-      - name: Configure macOS
-        if: runner.os == 'macOS'
-        run: cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release "-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
-      - name: Configure Windows
-        if: runner.os == 'Windows'
-        run: cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release -A x64
-      - name: Build
-        run: cmake --build build/native --config Release --parallel 3
-      - name: Compare against original routine outputs and test project workflow
-        run: ctest --test-dir build/native -C Release --output-on-failure
-      - name: Compare Intel slices on macOS
-        if: runner.os == 'macOS'
-        run: python3 tests/check_macos_intel.py build/native
-      - name: Install package contents
-        run: cmake --install build/native --config Release --prefix build/installed
-      - name: Exercise installed macOS desktop
-        if: runner.os == 'macOS'
-        run: '"build/installed/Legacy Coastal.app/Contents/MacOS/Legacy Coastal" --smoke-test --screenshot build/desktop.bmp'
-      - name: Verify macOS bundle and Intel launch
-        if: runner.os == 'macOS'
-        run: |
-          codesign --verify --deep --strict --all-architectures --verbose=2 "build/installed/Legacy Coastal.app"
-          arch -x86_64 "build/installed/Legacy Coastal.app/Contents/MacOS/Legacy Coastal" --smoke-test
-      - name: Exercise installed Linux desktop
-        if: runner.os == 'Linux'
-        run: xvfb-run -a "build/installed/Legacy Coastal" --smoke-test --screenshot build/desktop.bmp
-      - name: Verify standalone Windows runtime
-        if: runner.os == 'Windows'
-        run: python tests/check_windows_dependencies.py "build/installed/Legacy Coastal.exe" build/installed/tools/runup.exe build/installed/tools/whafis.exe
-      - name: Exercise installed Windows desktop
-        if: runner.os == 'Windows'
-        run: |
-          $binary = (Resolve-Path "build/installed/Legacy Coastal.exe").Path
-          $capture = Join-Path $PWD "build/desktop.bmp"
-          $process = Start-Process -FilePath $binary -ArgumentList @('--smoke-test', '--screenshot', $capture) -Wait -PassThru
-          if ($process.ExitCode -ne 0) { throw "Desktop smoke check failed with exit code $($process.ExitCode)" }
-          if (!(Test-Path $capture)) { throw "Desktop did not produce its screenshot" }
-      - name: Package
-        run: cpack --config build/native/CPackConfig.cmake -C Release -B build/packages
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Legacy-Coastal-${{ matrix.name }}
-          path: |
-            build/packages/*.dmg
-            build/packages/*.zip
-            build/packages/*.tar.gz
-            build/desktop.bmp
-          if-no-files-found: error
+#!/usr/bin/env python3
+"""Check PE import tables without needing a Windows SDK or third-party module."""
+
+import struct
+import sys
+from pathlib import Path
+
+
+def imported_dlls(path):
+    data = Path(path).read_bytes()
+
+    def unpack(fmt, offset):
+        if offset < 0 or offset + struct.calcsize(fmt) > len(data):
+            raise ValueError("truncated PE structure")
+        return struct.unpack_from(fmt, data, offset)
+
+    if data[:2] != b"MZ":
+        raise ValueError("missing DOS header")
+    pe, = unpack("<I", 0x3C)
+    if data[pe:pe + 4] != b"PE\0\0":
+        raise ValueError("missing PE signature")
+    sections, = unpack("<H", pe + 6)
+    optional_size, = unpack("<H", pe + 20)
+    optional = pe + 24
+    magic, = unpack("<H", optional)
+    if magic == 0x20B:
+        directory_offset = 112
+        image_base, = unpack("<Q", optional + 24)
+    elif magic == 0x10B:
+        directory_offset = 96
+        image_base, = unpack("<I", optional + 28)
+    else:
+        raise ValueError("unsupported PE optional header")
+    directory_count, = unpack("<I", optional + directory_offset - 4)
+    header_size, = unpack("<I", optional + 60)
+    section_table = optional + optional_size
+
+    def file_offset(rva):
+        if 0 <= rva < header_size and rva < len(data):
+            return rva
+        for index in range(sections):
+            size, address, raw_size, raw_offset = unpack(
+                "<IIII", section_table + index * 40 + 8
+            )
+            if address <= rva < address + max(size, raw_size):
+                delta = rva - address
+                if delta >= raw_size or raw_offset + delta >= len(data):
+                    raise ValueError("RVA has no file contents")
+                return raw_offset + delta
+        raise ValueError(f"unmapped RVA {rva:#x}")
+
+    def dll_name(rva):
+        offset = file_offset(rva)
+        end = data.find(b"\0", offset, min(offset + 1024, len(data)))
+        if end < 0:
+            raise ValueError("unterminated imported DLL name")
+        return data[offset:end].decode("ascii")
+
+    names = set()
+    # Normal and delay-load imports use different descriptor layouts.
+    for directory, descriptor_size in ((1, 20), (13, 32)):
+        if directory >= directory_count:
+            continue
+        entry = directory_offset + directory * 8
+        if entry + 8 > optional_size:
+            raise ValueError("truncated PE data directory")
+        rva, size = unpack("<II", optional + entry)
+        if rva == 0:
+            continue
+        for relative in range(0, size - descriptor_size + 1, descriptor_size):
+            offset = file_offset(rva + relative)
+            words = unpack("<" + "I" * (descriptor_size // 4), offset)
+            if not any(words):
+                break
+            if directory == 1:
+                name_rva = words[3]
+            else:
+                name_rva = words[1] if words[0] & 1 else words[1] - image_base
+            names.add(dll_name(name_rva))
+        else:
+            raise ValueError("unterminated PE import directory")
+    return sorted(names, key=str.lower)
+
+
+def main():
+    if len(sys.argv) < 2:
+        raise SystemExit("usage: check_windows_dependencies.py PROGRAM.exe [...]")
+    failed = False
+    for name in sys.argv[1:]:
+        try:
+            imports = imported_dlls(name)
+            runtime = [dll for dll in imports if dll.lower().startswith(
+                ("vcruntime", "msvcp", "msvcr", "ucrtbase", "api-ms-win-crt-")
+            )]
+            print(f"{name}: {', '.join(imports)}")
+            if runtime:
+                print(f"ERROR: separately installed C/C++ runtime required: {runtime}")
+                failed = True
+        except (ValueError, OSError, struct.error) as error:
+            print(f"ERROR: {name}: {error}")
+            failed = True
+    raise SystemExit(1 if failed else 0)
+
+
+if __name__ == "__main__":
+    main()
