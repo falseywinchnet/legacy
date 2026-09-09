@@ -56,14 +56,23 @@ input. The original RUNUP digital Fortran and CHAMP Visual Basic project remain
 missing; surviving binaries, debug data, tables, and p-code supplied the evidence
 used to reconstruct their behavior.
 
-## In development: FEQ / FEQUTL
+## Available now: FEQ / FEQUTL
 
-**[FEQ 10.61 / FEQUTL 5.80](FEQ/)** is the collection's next project: modern,
-portable C++ programs for unsteady channel-network flow and hydraulic function
-tables. Its directory contains the original USGS releases, manuals, detailed
-source comparisons, and a reproducible six-example baseline that matches all
-17 original output files apart from explicitly identified execution clocks.
-The native C++ applications are in development and are not released yet.
+**[Download FEQ Workbench 0.1.0](https://github.com/falseywinchnet/legacy/releases/tag/FEQ-v0.1.0)**
+· **[FEQ project, instructions, and evidence](FEQ/)**
+
+FEQ Workbench includes **FEQ 10.61** for unsteady channel-network flow and
+**FEQUTL 5.80** for hydraulic function tables. Both engines are native C++20.
+Windows x64, Apple silicon macOS, and Ubuntu 24.04 x64 packages include the
+desktop interface, six supplied models, original manuals, and a report viewer.
+Open **Examples**, choose a model, click **Use selected example**, then **Run model**.
+
+The native builds pass 69 automated checks on all three operating systems;
+desktop builds pass 70. Actual installed applications reproduce all 17 supplied
+output files with only run timestamps and execution clocks masked. The project
+also preserves original-machine-code fixtures, source revision comparisons,
+formula comments, and the recovered USGS distributions. The documented evidence
+establishes the tested cases, rather than every possible model input.
 
 ## Collection structure and licensing
 

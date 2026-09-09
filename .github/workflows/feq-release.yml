@@ -1,0 +1,104 @@
+name: Publish FEQ desktop release
+on:
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: Successful FEQ desktop packages run to publish
+        required: true
+        type: string
+      release_tag:
+        description: Existing FEQ release tag
+        required: true
+        default: FEQ-v0.1.0
+        type: string
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+      FEQ_BUILD_RUN: ${{ inputs.build_run_id }}
+      FEQ_RELEASE_TAG: ${{ inputs.release_tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify the tested build and release source
+        run: |
+          python3 - <<'PY'
+          import json, os, re, subprocess
+          from pathlib import Path
+          run_id = os.environ['FEQ_BUILD_RUN']
+          tag = os.environ['FEQ_RELEASE_TAG']
+          assert run_id.isdecimal()
+          assert re.fullmatch(r'FEQ-v[0-9]+\.[0-9]+\.[0-9]+', tag)
+          repo = os.environ['GITHUB_REPOSITORY']
+          run = json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/actions/runs/{run_id}']))
+          assert run['name'] == 'FEQ desktop packages' and run['conclusion'] == 'success'
+          assert run['head_repository']['full_name'] == repo
+          revision = subprocess.check_output(['git','rev-parse',f'refs/tags/{tag}^{{commit}}'],text=True).strip()
+          changed = subprocess.check_output(['git','diff','--name-only',run['head_sha'],revision],text=True).splitlines()
+          allowed = {'README.md','FEQ/README.md','FEQ/recovery/native-engine-build.json',
+                     'FEQ/recovery/desktop-release.json','.github/workflows/feq-release.yml'}
+          assert all(p in allowed or p.startswith('FEQ/docs/') for p in changed), changed
+          Path('release').mkdir()
+          Path('release/build.json').write_text(json.dumps({'build_run':run['html_url'],
+              'tested_source_commit':run['head_sha'],'release_tag':tag,
+              'release_tag_commit':revision,'documentation_changes_after_build':changed},indent=2)+'\n')
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.build_run_id }}
+          pattern: FEQ-Workbench-*
+          merge-multiple: true
+          path: release/packages
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.build_run_id }}
+          pattern: FEQ-Desktop-verification-*
+          path: release/verification
+      - name: Assemble checksums and durable verification evidence
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, zipfile
+          from pathlib import Path
+          version = os.environ['FEQ_RELEASE_TAG'][5:]
+          output = Path('release/packages')
+          expected = {f'FEQ-Workbench-{version}-{suffix}' for suffix in
+              ['Windows-AMD64.exe','Windows-AMD64.zip','Darwin-arm64.dmg',
+               'Linux-x86_64.deb','Linux-x86_64.tar.gz']}
+          assert {p.name for p in output.iterdir()} == expected
+          with zipfile.ZipFile(output/'FEQ-verification.zip','w',zipfile.ZIP_DEFLATED) as archive:
+              for p in sorted(Path('release/verification').rglob('*')):
+                  assert not p.is_symlink()
+                  if p.is_file():
+                      archive.write(p,p.relative_to('release/verification'))
+          def entry(p):
+              h = hashlib.sha256()
+              with p.open('rb') as f:
+                  for chunk in iter(lambda:f.read(1048576),b''):
+                      h.update(chunk)
+              return {'name':p.name,'bytes':p.stat().st_size,'sha256':h.hexdigest()}
+          receipt = json.loads(Path('release/build.json').read_text())
+          receipt['assets'] = [entry(p) for p in sorted(output.iterdir())]
+          receipt['verification'] = '70 checks and installed-application acceptance on each of Windows, macOS and Linux; all six models and all 17 reports match with only execution clocks masked.'
+          (output/'FEQ-release.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          entries = [entry(p) for p in sorted(output.iterdir())]
+          (output/'SHA256SUMS.txt').write_text(''.join(p['sha256']+'  '+p['name']+'\n' for p in entries))
+          PY
+      - name: Publish the reviewed release
+        run: |
+          python3 - <<'PY'
+          import os, subprocess
+          from pathlib import Path
+          tag = os.environ['FEQ_RELEASE_TAG']
+          subprocess.run(['gh','release','create',tag,'--verify-tag','--draft','--latest=false',
+              '--title','FEQ Workbench '+tag[5:],'--notes-file','FEQ/docs/release-v0.1.0.md'],check=True)
+          assets = [str(p) for p in sorted(Path('release/packages').iterdir())]
+          subprocess.run(['gh','release','upload',tag,*assets],check=True)
+          subprocess.run(['gh','release','edit',tag,'--draft=false','--latest=false'],check=True)
+          PY

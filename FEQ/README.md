@@ -1,19 +1,64 @@
 # FEQ / FEQUTL
 
-This project is bringing **USGS FEQ 10.61** and **FEQUTL 5.80** to modern,
-portable C++. FEQ solves one-dimensional unsteady flow in channel networks and
-control structures. FEQUTL produces the hydraulic function tables used by FEQ.
+This project provides **USGS FEQ 10.61** and **FEQUTL 5.80** as native,
+portable C++20 programs. FEQ solves one-dimensional unsteady flow in channel
+networks and control structures. FEQUTL produces the hydraulic function tables used by FEQ.
 
 **Both complete engines now build as native C++20 programs.** FEQ Workbench
-provides a native desktop interface; its installation packages are undergoing
-Windows, macOS, and Linux verification. The build requires
-no Fortran compiler, source translator, Wine installation, or runtime download.
+provides a native desktop interface with installers for Windows, macOS, and
+Ubuntu Linux. The application requires no Fortran compiler, source translator,
+Wine installation, or runtime download.
 It includes the independently verified numerical library and the preserved
 engine implementation, with defined C++ storage and native file handling.
 
 **Work: Astra · Sponsor: Rainstar · Foundation: Hashem.** New project work is
 covered by the [MIT license](LICENSE), subject to the explicit scope and preserved
 historical notices in [NOTICE.md](NOTICE.md).
+
+## Download and run
+
+[**Download FEQ Workbench 0.1.0**](https://github.com/falseywinchnet/legacy/releases/tag/FEQ-v0.1.0)
+
+| Your computer | Download | Install |
+| --- | --- | --- |
+| Windows 10 version 1903 or later / Windows 11, x64 | [Windows installer](https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-Workbench-0.1.0-Windows-AMD64.exe) | Open it and follow the installer. Launch **FEQ Workbench** from Start. |
+| macOS 13 or later, Apple silicon | [macOS disk image](https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-Workbench-0.1.0-Darwin-arm64.dmg) | Open it and drag **FEQ Workbench** to Applications. |
+| Ubuntu 24.04, x64 | [Ubuntu package](https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-Workbench-0.1.0-Linux-x86_64.deb) | Open it with the system package installer, then launch **FEQ Workbench**. |
+
+Portable Windows ZIP and Linux tar.gz packages are also available. Extract the
+whole archive, then open `Start-FEQ.cmd` or `Start-FEQ.sh`. The Linux archive
+requires the system libraries listed in the Debian package metadata. All
+packages include both engines, the interface libraries, examples and manuals.
+The release includes SHA-256 checksums and the exact tested source revision.
+
+These first packages have no verified publisher certificate: Windows may show
+SmartScreen, and macOS may require **System Settings → Privacy & Security →
+Open Anyway** after the first launch attempt. The macOS build is ad hoc signed
+and is not notarized. No compiler or terminal is needed to run the installed app.
+
+For a first run:
+
+1. Open **Examples** and choose a model.
+2. Click **Use selected example**, then **Run model**.
+3. Read the completion message and open **Results**.
+
+![FEQ Workbench showing the completed original FEQEX1 report](docs/workbench-results.png)
+
+FEQ Workbench includes six supplied models, the original PDF manuals, saved run
+history, and a report viewer. Each run has its own folder containing the copied model, results, console log, and a JSON record of
+input and output hashes. The workflow tests compare all 17 desktop-generated
+reports with the original results and verify failure/cancellation behavior.
+
+Choose a main input file to run an existing model. **Model folders** lets you set
+the complete source folder and the working folder used for relative references.
+Absolute paths inside the selected model are redirected into the copy; references
+outside it are rejected. The command-line engines retain unrestricted native
+file access when launched without the desktop's run environment.
+
+The fourth supplied FEQ example reaches normal completion while printing an
+`ERR:174` diagnostic followed by `ERR/WRN:234`. Workbench reports the completed
+run and both diagnostic counts. It preserves the original model and outputs;
+it does not silently amend the hydraulic input.
 
 ## What has been verified
 
@@ -368,36 +413,6 @@ the printed reports; those differences are now corrected. The trace hooks,
 build provenance and report checks are recorded in
 [`recovery/utility-state-trajectories.json`](recovery/utility-state-trajectories.json).
 
-## Desktop application
-
-FEQ Workbench includes both programs, six supplied models, the original PDF
-manuals, saved run history, and a report viewer. Select **Examples**, choose a
-model, click **Use selected example**, then **Run model**. Each run has its own
-folder containing the copied model, results, console log, and a JSON record of
-input and output hashes. The workflow tests compare all 17 desktop-generated
-reports with the original results and verify failure/cancellation behavior.
-
-Choose a main input file to run an existing model. **Model folders** lets you set
-the complete source folder and the working folder used for relative references.
-Absolute paths inside the selected model are redirected into the copy; references
-outside it are rejected. The command-line engines retain unrestricted native
-file access when launched without the desktop's run environment.
-
-The fourth supplied FEQ example reaches normal completion while printing an
-`ERR:174` diagnostic followed by `ERR/WRN:234`. Workbench reports the completed
-run and both diagnostic counts. It preserves the original model and outputs;
-it does not silently amend the hydraulic input.
-
-To build the desktop, install Qt 6.11.2 (Widgets and Concurrent) and pass
-`-DFEQ_BUILD_DESKTOP=ON -DCMAKE_PREFIX_PATH=/path/to/Qt` to CMake. For distributable
-packages, first run `python tools/prepare_qt_bundle.py --output build/qt-licenses
---cache build/qt-sources` and configure with
-`-DFEQ_QT_LICENSE_DIR=/absolute/path/to/build/qt-licenses`. The helper verifies
-pinned source checksums and includes the complete matching Qt source archives
-and notices in the package. Qt is dynamically linked under LGPL version 3;
-new FEQ project work remains MIT licensed. Run `cpack` using the generated
-`build/desktop/CPackConfig.cmake` to create platform installers.
-
 ## Build and run the native programs
 
 A C++20 compiler and CMake 3.20 or newer build both programs and the numerical
@@ -425,15 +440,33 @@ separators and uniquely matching ASCII filename casing are accepted on other
 operating systems. Input files and hydraulic tables retain their original
 formats; the reports retain their original CRLF bytes.
 
-The 68 automated checks include all 17 complete example outputs, original
+The 69 native automated checks include all 17 complete example outputs, original
 numerical fixtures, shared storage, input fingerprints, and unaligned scalar I/O.
 The CI workflow builds and tests the complete programs on Windows, macOS, and
-Linux, with a separate sanitizer build. To build only the numerical library,
+Linux, with a separate sanitizer build. Desktop builds pass 70 checks, including
+the complete interface workflow. Actual installer checks additionally run the six
+models from relocated folders containing spaces and Unicode characters, verify
+the bundled dependencies and license-source hashes, and preserve the installed
+examples. See [the release receipt](recovery/desktop-release.json) and
+[the native build receipt](recovery/native-engine-build.json).
+To build only the numerical library,
 configure with `-DFEQ_BUILD_ENGINES=OFF`. Maintainer details and the runtime's
 preserved license are in [`engines/README.md`](engines/README.md).
 
 [`recovery/NUMERICAL_PROBES.md`](recovery/NUMERICAL_PROBES.md) explains how to
 recapture the original-machine-code fixtures and trace a full model.
+
+## Build the desktop application
+
+To build the desktop, install Qt 6.11.2 (Widgets and Concurrent) and pass
+`-DFEQ_BUILD_DESKTOP=ON -DCMAKE_PREFIX_PATH=/path/to/Qt` to CMake. For distributable
+packages, first run `python tools/prepare_qt_bundle.py --output build/qt-licenses
+--cache build/qt-sources` and configure with
+`-DFEQ_QT_LICENSE_DIR=/absolute/path/to/build/qt-licenses`. The helper verifies
+pinned source checksums and includes the complete matching Qt source archives
+and notices in the package. Qt is dynamically linked under LGPL version 3;
+new FEQ project work remains MIT licensed. Run `cpack` using the generated
+`build/desktop/CPackConfig.cmake` to create platform installers.
 
 ## Reproduce the original baseline
 

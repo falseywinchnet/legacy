@@ -1,0 +1,402 @@
+{
+  "release": "FEQ Workbench 0.1.0",
+  "status": "All native, desktop and actual installer checks passed.",
+  "tested_source_commit": "dd78e004ea3c14a6974fa007c04e02e61eb56d8f",
+  "native_workflow": "https://github.com/falseywinchnet/legacy/actions/runs/34381997444",
+  "desktop_workflow": "https://github.com/falseywinchnet/legacy/actions/runs/34381997409",
+  "release_url": "https://github.com/falseywinchnet/legacy/releases/tag/FEQ-v0.1.0",
+  "published_asset_manifest": "https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-release.json",
+  "published_checksums": "https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/SHA256SUMS.txt",
+  "durable_verification_archive": "https://github.com/falseywinchnet/legacy/releases/download/FEQ-v0.1.0/FEQ-verification.zip",
+  "platforms": [
+    {
+      "platform": "Windows x64",
+      "job_url": "https://github.com/falseywinchnet/legacy/actions/runs/34381997409/job/102568864537",
+      "conclusion": "success",
+      "desktop_ctest_count": 70,
+      "complete_model_count": 6,
+      "compared_report_count": 17,
+      "log_sha256": "a7ec2899b0b6dc324f6dd1ed463f28398c69126c3b4844c873771d93d7e5fa0e",
+      "installer_check": "Installed NSIS package, ran relocated installed application, invoked uninstaller successfully."
+    },
+    {
+      "platform": "macOS Apple silicon",
+      "job_url": "https://github.com/falseywinchnet/legacy/actions/runs/34381997409/job/102568864803",
+      "conclusion": "success",
+      "desktop_ctest_count": 70,
+      "complete_model_count": 6,
+      "compared_report_count": 17,
+      "log_sha256": "3a3d9397e81ce96bdce29875e6da499c5780f000302e2a8ba6bd473d69f25e5a",
+      "installer_check": "Mounted distributed DMG, ran relocated installed application, unmounted image."
+    },
+    {
+      "platform": "Ubuntu 24.04 x64",
+      "job_url": "https://github.com/falseywinchnet/legacy/actions/runs/34381997409/job/102568864767",
+      "conclusion": "success",
+      "desktop_ctest_count": 70,
+      "complete_model_count": 6,
+      "compared_report_count": 17,
+      "log_sha256": "f0ba149d1ab0b25a5017f2608d724b4f5c610c1ef05eced7625491714eb23137",
+      "installer_check": "Installed DEB in clean Ubuntu 24.04 container, ran relocated application, removed package and verified application-menu removal."
+    }
+  ],
+  "ci_artifacts": [
+    {
+      "id": 10116400437,
+      "name": "FEQ-Desktop-verification-Windows-X64",
+      "bytes": 22426338,
+      "digest": "sha256:c6ad3ca4f562b3e1a1a545aee4574cdfaeea44074096c24e8a089d256bb46166"
+    },
+    {
+      "id": 10116396353,
+      "name": "FEQ-Workbench-Windows-X64",
+      "bytes": 155384637,
+      "digest": "sha256:da710551ff84989ab59defe96ef1558c77a988d9e84afa1975f312e06354b9df"
+    },
+    {
+      "id": 10116328908,
+      "name": "FEQ-Desktop-verification-Linux-X64",
+      "bytes": 22745854,
+      "digest": "sha256:205e7e5ae2fd63e6881d32f75f9603284227682fca2c038d81f15f77cfcd7096"
+    },
+    {
+      "id": 10116325893,
+      "name": "FEQ-Desktop-verification-macOS-ARM64",
+      "bytes": 22661329,
+      "digest": "sha256:f5b3febb4f493d2b9a208e3c1c477bbed9368e6ce5bb7a428910d0dd80276721"
+    },
+    {
+      "id": 10116325443,
+      "name": "FEQ-Workbench-Linux-X64",
+      "bytes": 176180659,
+      "digest": "sha256:d70984ce546fe9956d3ccc4d4312e74d3662a4892d24938191656e4e0060c9cd"
+    },
+    {
+      "id": 10116323042,
+      "name": "FEQ-Workbench-macOS-ARM64",
+      "bytes": 78566844,
+      "digest": "sha256:f0aab8e81ab1a6c1a9d81c976a44f0ccc96e99acdaa58dde829a7dc86586db3c"
+    }
+  ],
+  "local_macos_validation": {
+    "compiled_source_commit": "5cc89328eaf3993012fff6d06294cb053c0bfde3",
+    "source_difference_to_final_ci": "The final CI revision changes only evidence collection and its workflow; application and engine source are unchanged.",
+    "ctest_count": 70,
+    "ctest_log_sha256": "c912d7b11dfecbeeb0253f31ad0cf925f709fe9232f8bd08bc0e1a82d6714161",
+    "installer_log_sha256": "27bc14eef0182978629baa344048c350199c7229bee32770ba358200b5beeb6d",
+    "dmg_sha256": "27cfc242f732c46fe44cfdc9b45b4cde6272e3c1414d582ed6d7ed7e006b1394",
+    "complete_reports": [
+      {
+        "path": "feqex1.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
+        "actual_sha256": "5a3de984b3628ef63180cbab8df7710e3e3b08716f9fb53ace79e7f850693cf1",
+        "expected_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "expected_bytes": 1693210,
+        "actual_bytes": 1693210
+      },
+      {
+        "path": "feqex1.out.spi",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
+        "actual_sha256": "0ff256b26ef2cb93c3650732d31c247070f95eadcdc8625e35294b1cdc951b65",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 1836,
+        "actual_bytes": 1836
+      },
+      {
+        "path": "feqex1.out.wsq",
+        "raw_equal": true,
+        "clock_masked_equal": true,
+        "expected_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
+        "actual_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
+        "expected_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 129731,
+        "actual_bytes": 129731
+      },
+      {
+        "path": "feqex2.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
+        "actual_sha256": "187c366fa3891f49615d1195874e104d7805ff8d4b6b129702ebebf1e61683e7",
+        "expected_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "expected_bytes": 876444,
+        "actual_bytes": 876444
+      },
+      {
+        "path": "feqex2.out.spi",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
+        "actual_sha256": "44fb64856007c16637eaa8b891e4d7fd59974a9f781d00f3a3b6a543b4f22775",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 1132,
+        "actual_bytes": 1132
+      },
+      {
+        "path": "feqex2.out.wsq",
+        "raw_equal": true,
+        "clock_masked_equal": true,
+        "expected_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
+        "actual_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
+        "expected_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 15809,
+        "actual_bytes": 15809
+      },
+      {
+        "path": "feqex3.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
+        "actual_sha256": "cbe14ab0717ba1ff678e0f0d7f8ac0e14634a23f2aa2601f3e9d600dde27e2fb",
+        "expected_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "expected_bytes": 1340610,
+        "actual_bytes": 1340610
+      },
+      {
+        "path": "feqex3.out.spi",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
+        "actual_sha256": "36bf80666acc6aef9770cfd07c635da230a0333fc4abd368c0d9441c4f69d40d",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 1132,
+        "actual_bytes": 1132
+      },
+      {
+        "path": "feqex3.out.wsq",
+        "raw_equal": true,
+        "clock_masked_equal": true,
+        "expected_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
+        "actual_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
+        "expected_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 23579,
+        "actual_bytes": 23579
+      },
+      {
+        "path": "feqex4.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
+        "actual_sha256": "3fc244a334b399a9ac81b236bcdf8ad6e4f588ad299cc97733fed003fd62f5e2",
+        "expected_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "expected_bytes": 1371793,
+        "actual_bytes": 1371793
+      },
+      {
+        "path": "feqex4.out.spi",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
+        "actual_sha256": "3e39722c9df64b5848a467b34e1ce468e4b604daa576d23420c9bc03905ffc85",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 1132,
+        "actual_bytes": 1132
+      },
+      {
+        "path": "feqex4.out.wsq",
+        "raw_equal": true,
+        "clock_masked_equal": true,
+        "expected_sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff",
+        "actual_sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff",
+        "expected_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 23579,
+        "actual_bytes": 23579
+      },
+      {
+        "path": "utlexm.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
+        "actual_sha256": "15a469c821d3d16f878c1bd77cbdf7d20bfb7dee225e540d04a00cc4987e99af",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 775740,
+        "actual_bytes": 775740
+      },
+      {
+        "path": "utlexm.tab",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
+        "actual_sha256": "84afc9960e9f0c1fd072d234bcccd00acc9f2091b31f45a0b3114d02ea4b0bd4",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 135953,
+        "actual_bytes": 135953
+      },
+      {
+        "path": "utlexm.chx",
+        "raw_equal": true,
+        "clock_masked_equal": true,
+        "expected_sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af",
+        "actual_sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af",
+        "expected_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 12998,
+        "actual_bytes": 12998
+      },
+      {
+        "path": "culvert.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72",
+        "actual_sha256": "00ed13787f496f1911e66d98dc9b4827f622e1a93b92ded2f3c3268c9c4ad7d6",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 141152,
+        "actual_bytes": 141152
+      },
+      {
+        "path": "culvert.tab",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade",
+        "actual_sha256": "983d83c5f1f0ecec40d18d832c98b48688c83f95c0aad2f95efc09559711c563",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 6015,
+        "actual_bytes": 6015
+      }
+    ],
+    "screenshot_sha256": "f832c95f291d5b54459bac0763d3429036649475c1e1c737127470a8020c392e"
+  },
+  "acceptance_details": [
+    "Relocated installation path contains spaces, café and 河.",
+    "The application starts with a scrubbed PATH and no Qt SDK environment.",
+    "The installed application executes all six original example models.",
+    "All 17 report files match with only explicit execution clocks masked; five match raw bytes.",
+    "Engine hashes, output hashes, bundled manuals, matching Qt source hashes and unchanged installed examples are checked.",
+    "Failure, normal completion with diagnostics, cancellation during preparation and execution, nested-results rejection, and repeat-run behavior are exercised by the desktop workflow test."
+  ],
+  "scope": "The evidence establishes the committed numerical fixtures and six supplied model comparisons. It is not a proof for every possible input deck. Known historical defects remain documented; no hydraulic diagnostics or numerical fields are masked.",
+  "distribution_requirements": {
+    "Windows": "x64; Windows 10 version 1903 or later / Windows 11. Unsigned installer.",
+    "macOS": "Apple silicon; macOS 13 or later. Ad hoc signed, not notarized.",
+    "Linux": "x64; Ubuntu 24.04. The Debian package declares required system libraries.",
+    "Qt": "6.11.2, dynamically linked; LGPL version 3 notices and matching qtbase, qtsvg and qtwayland source archives are bundled."
+  },
+  "credits": {
+    "work": "Astra",
+    "sponsor": "Rainstar",
+    "foundation": "Hashem"
+  },
+  "licensing": "MIT applies to new project work. Historical FEQ/FEQUTL, Netlib and Qt notices are preserved."
+}
