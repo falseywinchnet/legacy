@@ -456,3 +456,36 @@ retain their existing interfaces. The first supplied utility report difference
 moves from line 1732 to line 1785, and the first culvert table difference moves
 from line 10 to line 55. Those are progress measurements, not acceptance of the
 remaining utility outputs.
+
+
+## Approach-section energy balance
+
+`probe_approach_residual_original.py` calls the unchanged RAPP routine and its
+original XLKTAL lookup for 840 synthetic intervals. It covers five table types,
+three depth scales, both interval endpoints, the contraction/expansion boundary,
+and adjacent area ratios around the original REAL 0.95 threshold. Each 200-byte
+input contains an energy-table fixture and fifteen hydraulic fields. Each
+72-byte output contains the wide RAPP return, integer contraction flag, thirteen
+stored section fields, and the wide RQVSTW head residual. All output bits match
+the independent C++ implementation.
+
+RAPP retains both velocity heads, friction, the interpolated discharge and
+expansion coefficients, and the clamped expansion loss in wide registers.
+At area ratio r > REAL(0.95), its transition factor is 20*(1-r), while the
+limiting discharge coefficient is the original REAL(0.98) constant. The
+contraction branch has a different entrance-loss placement. The explicit
+formulas and operation order are documented in `src/approach_residual.cpp`.
+The wrapper keeps the original REAL section stores and lookup interface.
+
+RQVSTW's final subtraction at 0x42dd67..0x42dd73 has no REAL store. The probe
+copies that complete instruction sequence unchanged and records its hash.
+The integration returns the helper result directly; earlier failure returns
+retain their existing sentinel values.
+
+With these changes the first culvert-flow table in UTLEXM agrees with the
+original. Its first report difference moves from line 1785 to line 1921 and
+its first table difference from line 257 to line 545. The CULVERT table's
+first difference moves from line 55 back to line 13, demonstrating that
+independent rounding errors can cancel. Four utility outputs still differ;
+these changes do not establish whole-program equivalence. Fresh complete
+FEQ runs retain all twelve matching outputs and all 2,092 exact active matrices.

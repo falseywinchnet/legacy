@@ -2,6 +2,7 @@
 // Work: Astra. Sponsor: Rainstar. Foundation: Hashem. MIT licensed.
 #include <feq/section_energy.hpp>
 #include <feq/steady_residual.hpp>
+#include <feq/approach_residual.hpp>
 #include <bit>
 #include <cstdint>
 #include <cstring>
@@ -63,6 +64,7 @@ int main(int argc, char** argv) {
         const bool critical_only = argc == 2 && std::strcmp(argv[1],"--critical-flow") == 0;
         const bool steady = argc == 2 && std::strcmp(argv[1],"--steady") == 0;
         const bool profile = argc == 2 && std::strcmp(argv[1],"--profile") == 0;
+        const bool approach = argc == 2 && std::strcmp(argv[1],"--approach") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
             if (profile) {
                 float fields[8]{};
@@ -77,6 +79,34 @@ int main(int argc, char** argv) {
             const feq::EnergySectionRow lower = read_row();
             const feq::EnergySectionRow upper = read_row();
             const feq::EnergySectionRow following = read_row();
+            if (approach) {
+                float fields[15]{};
+                for (int i = 0; i < 15; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const feq::EnergySectionProperties properties = feq::interpolate_energy_section(
+                    depth,lower,upper,table_type == 32 || table_type == 35,&following);
+                const feq::ApproachResidualInput input{depth,properties.section.area,properties.section.conveyance,
+                    properties.energy_factor,fields[0],fields[1],fields[2],fields[3],fields[4],fields[5],
+                    fields[6],fields[7],fields[8],fields[9],fields[10],fields[11],fields[12],fields[13]};
+                const feq::ApproachResidual result = feq::approach_residual(input);
+                const float head = static_cast<float>(static_cast<double>(fields[1])+depth);
+                write_double(result.value);
+                write_word(result.contracting ? 1U : 0U);
+                write_float(head);
+                write_float(fields[1]);
+                write_float(depth);
+                write_float(properties.section.top_width);
+                write_float(properties.section.top_width_slope);
+                write_float(properties.section.area);
+                write_float(properties.first_moment);
+                write_float(properties.section.conveyance);
+                write_float(properties.section.conveyance_slope);
+                write_float(properties.section.momentum_factor);
+                write_float(properties.section.momentum_factor_slope);
+                write_float(properties.energy_factor);
+                write_float(properties.energy_factor_slope);
+                write_double(feq::approach_head_residual(head,fields[14]));
+                continue;
+            }
             if (steady) {
                 float fields[11]{};
                 for (int i = 0; i < 11; ++i) { fields[i] = std::bit_cast<float>(read_word()); }

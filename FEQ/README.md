@@ -83,6 +83,15 @@ square roots store REAL before multiplication. The integration preserves
 those distinctions and the separate REAL value used by the initial-depth
 error message. See [`tests/reference/steady_profile/`](tests/reference/steady_profile/).
 
+The approach-section energy balance matches **840 direct original RAPP calls**,
+including every returned bit, the contraction flag, and all thirteen stored
+section fields. These cover the expansion/contraction transition and both sides
+of the area-ratio threshold. The same fixtures verify the untouched RQVSTW
+head-difference instruction sequence. The independent implementation preserves
+the wide velocity heads, friction, interpolated loss coefficients and returned
+residual. See [`src/approach_residual.cpp`](src/approach_residual.cpp) and
+[`tests/reference/approach_residual/`](tests/reference/approach_residual/).
+
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,
 the caller's float store, and the head-loss result at three scales and around

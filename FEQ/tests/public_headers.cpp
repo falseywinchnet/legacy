@@ -1,3 +1,4 @@
+#include <feq/approach_residual.hpp>
 #include <feq/root_solver.hpp>
 #include <feq/steady_residual.hpp>
 #include <feq/culvert_loss.hpp>

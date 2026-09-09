@@ -1,0 +1,4219 @@
+{
+  "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+  "routines": [
+    "_rapp_",
+    "_xlktal_",
+    "_rqvstw_ return instructions"
+  ],
+  "cases": 840,
+  "input_sha256": "c457ee63af8618ec38f15aff1da63c744e70a37399b9dc1698f90f6e0dfdf339",
+  "output_sha256": "a714432f21407e44983e8e4f6543dd27eb702cfa8870fde6a4bf0292844e5134",
+  "probe_sha256": "02ead5e11e581154811613d965dcec336a33efd77d31a42003f5ec75fa26db1d",
+  "fixtures": [
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-0-fraction-0.0",
+      "offset": 0,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-0-fraction-1e-05",
+      "offset": 72,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-0-fraction-0.2",
+      "offset": 144,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-0-fraction-0.51",
+      "offset": 216,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-0-fraction-0.87",
+      "offset": 288,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-0-fraction-0.999999",
+      "offset": 360,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-0-fraction-1.0",
+      "offset": 432,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-1-fraction-0.0",
+      "offset": 504,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-1-fraction-1e-05",
+      "offset": 576,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-1-fraction-0.2",
+      "offset": 648,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-1-fraction-0.51",
+      "offset": 720,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-1-fraction-0.87",
+      "offset": 792,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-1-fraction-0.999999",
+      "offset": 864,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-1-fraction-1.0",
+      "offset": 936,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-2-fraction-0.0",
+      "offset": 1008,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-2-fraction-1e-05",
+      "offset": 1080,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-2-fraction-0.2",
+      "offset": 1152,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-2-fraction-0.51",
+      "offset": 1224,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-2-fraction-0.87",
+      "offset": 1296,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-2-fraction-0.999999",
+      "offset": 1368,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-2-fraction-1.0",
+      "offset": 1440,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-3-fraction-0.0",
+      "offset": 1512,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-3-fraction-1e-05",
+      "offset": 1584,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-3-fraction-0.2",
+      "offset": 1656,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-3-fraction-0.51",
+      "offset": 1728,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-3-fraction-0.87",
+      "offset": 1800,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-3-fraction-0.999999",
+      "offset": 1872,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-False-interval-3-fraction-1.0",
+      "offset": 1944,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-0-fraction-0.0",
+      "offset": 2016,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-0-fraction-1e-05",
+      "offset": 2088,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-0-fraction-0.2",
+      "offset": 2160,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-0-fraction-0.51",
+      "offset": 2232,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-0-fraction-0.87",
+      "offset": 2304,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-0-fraction-0.999999",
+      "offset": 2376,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-0-fraction-1.0",
+      "offset": 2448,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-1-fraction-0.0",
+      "offset": 2520,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-1-fraction-1e-05",
+      "offset": 2592,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-1-fraction-0.2",
+      "offset": 2664,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-1-fraction-0.51",
+      "offset": 2736,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-1-fraction-0.87",
+      "offset": 2808,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-1-fraction-0.999999",
+      "offset": 2880,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-1-fraction-1.0",
+      "offset": 2952,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-2-fraction-0.0",
+      "offset": 3024,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-2-fraction-1e-05",
+      "offset": 3096,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-2-fraction-0.2",
+      "offset": 3168,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-2-fraction-0.51",
+      "offset": 3240,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-2-fraction-0.87",
+      "offset": 3312,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-2-fraction-0.999999",
+      "offset": 3384,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-2-fraction-1.0",
+      "offset": 3456,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-3-fraction-0.0",
+      "offset": 3528,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-3-fraction-1e-05",
+      "offset": 3600,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-3-fraction-0.2",
+      "offset": 3672,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-3-fraction-0.51",
+      "offset": 3744,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-3-fraction-0.87",
+      "offset": 3816,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-3-fraction-0.999999",
+      "offset": 3888,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-0.0001-zero-True-interval-3-fraction-1.0",
+      "offset": 3960,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-0-fraction-0.0",
+      "offset": 4032,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-0-fraction-1e-05",
+      "offset": 4104,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-0-fraction-0.2",
+      "offset": 4176,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-0-fraction-0.51",
+      "offset": 4248,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-0-fraction-0.87",
+      "offset": 4320,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-0-fraction-0.999999",
+      "offset": 4392,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-0-fraction-1.0",
+      "offset": 4464,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-1-fraction-0.0",
+      "offset": 4536,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-1-fraction-1e-05",
+      "offset": 4608,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-1-fraction-0.2",
+      "offset": 4680,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-1-fraction-0.51",
+      "offset": 4752,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-1-fraction-0.87",
+      "offset": 4824,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-1-fraction-0.999999",
+      "offset": 4896,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-1-fraction-1.0",
+      "offset": 4968,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-2-fraction-0.0",
+      "offset": 5040,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-2-fraction-1e-05",
+      "offset": 5112,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-2-fraction-0.2",
+      "offset": 5184,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-2-fraction-0.51",
+      "offset": 5256,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-2-fraction-0.87",
+      "offset": 5328,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-2-fraction-0.999999",
+      "offset": 5400,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-2-fraction-1.0",
+      "offset": 5472,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-3-fraction-0.0",
+      "offset": 5544,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-3-fraction-1e-05",
+      "offset": 5616,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-3-fraction-0.2",
+      "offset": 5688,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-3-fraction-0.51",
+      "offset": 5760,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-3-fraction-0.87",
+      "offset": 5832,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-3-fraction-0.999999",
+      "offset": 5904,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-False-interval-3-fraction-1.0",
+      "offset": 5976,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-0-fraction-0.0",
+      "offset": 6048,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-0-fraction-1e-05",
+      "offset": 6120,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-0-fraction-0.2",
+      "offset": 6192,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-0-fraction-0.51",
+      "offset": 6264,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-0-fraction-0.87",
+      "offset": 6336,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-0-fraction-0.999999",
+      "offset": 6408,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-0-fraction-1.0",
+      "offset": 6480,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-1-fraction-0.0",
+      "offset": 6552,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-1-fraction-1e-05",
+      "offset": 6624,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-1-fraction-0.2",
+      "offset": 6696,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-1-fraction-0.51",
+      "offset": 6768,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-1-fraction-0.87",
+      "offset": 6840,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-1-fraction-0.999999",
+      "offset": 6912,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-1-fraction-1.0",
+      "offset": 6984,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-2-fraction-0.0",
+      "offset": 7056,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-2-fraction-1e-05",
+      "offset": 7128,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-2-fraction-0.2",
+      "offset": 7200,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-2-fraction-0.51",
+      "offset": 7272,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-2-fraction-0.87",
+      "offset": 7344,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-2-fraction-0.999999",
+      "offset": 7416,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-2-fraction-1.0",
+      "offset": 7488,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-3-fraction-0.0",
+      "offset": 7560,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-3-fraction-1e-05",
+      "offset": 7632,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-3-fraction-0.2",
+      "offset": 7704,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-3-fraction-0.51",
+      "offset": 7776,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-3-fraction-0.87",
+      "offset": 7848,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-3-fraction-0.999999",
+      "offset": 7920,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-1.0-zero-True-interval-3-fraction-1.0",
+      "offset": 7992,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-0-fraction-0.0",
+      "offset": 8064,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-0-fraction-1e-05",
+      "offset": 8136,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-0-fraction-0.2",
+      "offset": 8208,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-0-fraction-0.51",
+      "offset": 8280,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-0-fraction-0.87",
+      "offset": 8352,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-0-fraction-0.999999",
+      "offset": 8424,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-0-fraction-1.0",
+      "offset": 8496,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-1-fraction-0.0",
+      "offset": 8568,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-1-fraction-1e-05",
+      "offset": 8640,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-1-fraction-0.2",
+      "offset": 8712,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-1-fraction-0.51",
+      "offset": 8784,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-1-fraction-0.87",
+      "offset": 8856,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-1-fraction-0.999999",
+      "offset": 8928,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-1-fraction-1.0",
+      "offset": 9000,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-2-fraction-0.0",
+      "offset": 9072,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-2-fraction-1e-05",
+      "offset": 9144,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-2-fraction-0.2",
+      "offset": 9216,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-2-fraction-0.51",
+      "offset": 9288,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-2-fraction-0.87",
+      "offset": 9360,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-2-fraction-0.999999",
+      "offset": 9432,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-2-fraction-1.0",
+      "offset": 9504,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-3-fraction-0.0",
+      "offset": 9576,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-3-fraction-1e-05",
+      "offset": 9648,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-3-fraction-0.2",
+      "offset": 9720,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-3-fraction-0.51",
+      "offset": 9792,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-3-fraction-0.87",
+      "offset": 9864,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-3-fraction-0.999999",
+      "offset": 9936,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-False-interval-3-fraction-1.0",
+      "offset": 10008,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-0-fraction-0.0",
+      "offset": 10080,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-0-fraction-1e-05",
+      "offset": 10152,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-0-fraction-0.2",
+      "offset": 10224,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-0-fraction-0.51",
+      "offset": 10296,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-0-fraction-0.87",
+      "offset": 10368,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-0-fraction-0.999999",
+      "offset": 10440,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-0-fraction-1.0",
+      "offset": 10512,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-1-fraction-0.0",
+      "offset": 10584,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-1-fraction-1e-05",
+      "offset": 10656,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-1-fraction-0.2",
+      "offset": 10728,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-1-fraction-0.51",
+      "offset": 10800,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-1-fraction-0.87",
+      "offset": 10872,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-1-fraction-0.999999",
+      "offset": 10944,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-1-fraction-1.0",
+      "offset": 11016,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-2-fraction-0.0",
+      "offset": 11088,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-2-fraction-1e-05",
+      "offset": 11160,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-2-fraction-0.2",
+      "offset": 11232,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-2-fraction-0.51",
+      "offset": 11304,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-2-fraction-0.87",
+      "offset": 11376,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-2-fraction-0.999999",
+      "offset": 11448,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-2-fraction-1.0",
+      "offset": 11520,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-3-fraction-0.0",
+      "offset": 11592,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-3-fraction-1e-05",
+      "offset": 11664,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-3-fraction-0.2",
+      "offset": 11736,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-3-fraction-0.51",
+      "offset": 11808,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-3-fraction-0.87",
+      "offset": 11880,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-3-fraction-0.999999",
+      "offset": 11952,
+      "bytes": 72
+    },
+    {
+      "name": "type-12-scale-10000.0-zero-True-interval-3-fraction-1.0",
+      "offset": 12024,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-0-fraction-0.0",
+      "offset": 12096,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-0-fraction-1e-05",
+      "offset": 12168,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-0-fraction-0.2",
+      "offset": 12240,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-0-fraction-0.51",
+      "offset": 12312,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-0-fraction-0.87",
+      "offset": 12384,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-0-fraction-0.999999",
+      "offset": 12456,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-0-fraction-1.0",
+      "offset": 12528,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-1-fraction-0.0",
+      "offset": 12600,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-1-fraction-1e-05",
+      "offset": 12672,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-1-fraction-0.2",
+      "offset": 12744,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-1-fraction-0.51",
+      "offset": 12816,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-1-fraction-0.87",
+      "offset": 12888,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-1-fraction-0.999999",
+      "offset": 12960,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-1-fraction-1.0",
+      "offset": 13032,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-2-fraction-0.0",
+      "offset": 13104,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-2-fraction-1e-05",
+      "offset": 13176,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-2-fraction-0.2",
+      "offset": 13248,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-2-fraction-0.51",
+      "offset": 13320,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-2-fraction-0.87",
+      "offset": 13392,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-2-fraction-0.999999",
+      "offset": 13464,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-2-fraction-1.0",
+      "offset": 13536,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-3-fraction-0.0",
+      "offset": 13608,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-3-fraction-1e-05",
+      "offset": 13680,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-3-fraction-0.2",
+      "offset": 13752,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-3-fraction-0.51",
+      "offset": 13824,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-3-fraction-0.87",
+      "offset": 13896,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-3-fraction-0.999999",
+      "offset": 13968,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-False-interval-3-fraction-1.0",
+      "offset": 14040,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-0-fraction-0.0",
+      "offset": 14112,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-0-fraction-1e-05",
+      "offset": 14184,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-0-fraction-0.2",
+      "offset": 14256,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-0-fraction-0.51",
+      "offset": 14328,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-0-fraction-0.87",
+      "offset": 14400,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-0-fraction-0.999999",
+      "offset": 14472,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-0-fraction-1.0",
+      "offset": 14544,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-1-fraction-0.0",
+      "offset": 14616,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-1-fraction-1e-05",
+      "offset": 14688,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-1-fraction-0.2",
+      "offset": 14760,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-1-fraction-0.51",
+      "offset": 14832,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-1-fraction-0.87",
+      "offset": 14904,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-1-fraction-0.999999",
+      "offset": 14976,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-1-fraction-1.0",
+      "offset": 15048,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-2-fraction-0.0",
+      "offset": 15120,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-2-fraction-1e-05",
+      "offset": 15192,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-2-fraction-0.2",
+      "offset": 15264,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-2-fraction-0.51",
+      "offset": 15336,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-2-fraction-0.87",
+      "offset": 15408,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-2-fraction-0.999999",
+      "offset": 15480,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-2-fraction-1.0",
+      "offset": 15552,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-3-fraction-0.0",
+      "offset": 15624,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-3-fraction-1e-05",
+      "offset": 15696,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-3-fraction-0.2",
+      "offset": 15768,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-3-fraction-0.51",
+      "offset": 15840,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-3-fraction-0.87",
+      "offset": 15912,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-3-fraction-0.999999",
+      "offset": 15984,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-0.0001-zero-True-interval-3-fraction-1.0",
+      "offset": 16056,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-0-fraction-0.0",
+      "offset": 16128,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-0-fraction-1e-05",
+      "offset": 16200,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-0-fraction-0.2",
+      "offset": 16272,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-0-fraction-0.51",
+      "offset": 16344,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-0-fraction-0.87",
+      "offset": 16416,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-0-fraction-0.999999",
+      "offset": 16488,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-0-fraction-1.0",
+      "offset": 16560,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-1-fraction-0.0",
+      "offset": 16632,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-1-fraction-1e-05",
+      "offset": 16704,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-1-fraction-0.2",
+      "offset": 16776,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-1-fraction-0.51",
+      "offset": 16848,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-1-fraction-0.87",
+      "offset": 16920,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-1-fraction-0.999999",
+      "offset": 16992,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-1-fraction-1.0",
+      "offset": 17064,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-2-fraction-0.0",
+      "offset": 17136,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-2-fraction-1e-05",
+      "offset": 17208,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-2-fraction-0.2",
+      "offset": 17280,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-2-fraction-0.51",
+      "offset": 17352,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-2-fraction-0.87",
+      "offset": 17424,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-2-fraction-0.999999",
+      "offset": 17496,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-2-fraction-1.0",
+      "offset": 17568,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-3-fraction-0.0",
+      "offset": 17640,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-3-fraction-1e-05",
+      "offset": 17712,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-3-fraction-0.2",
+      "offset": 17784,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-3-fraction-0.51",
+      "offset": 17856,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-3-fraction-0.87",
+      "offset": 17928,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-3-fraction-0.999999",
+      "offset": 18000,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-False-interval-3-fraction-1.0",
+      "offset": 18072,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-0-fraction-0.0",
+      "offset": 18144,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-0-fraction-1e-05",
+      "offset": 18216,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-0-fraction-0.2",
+      "offset": 18288,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-0-fraction-0.51",
+      "offset": 18360,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-0-fraction-0.87",
+      "offset": 18432,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-0-fraction-0.999999",
+      "offset": 18504,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-0-fraction-1.0",
+      "offset": 18576,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-1-fraction-0.0",
+      "offset": 18648,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-1-fraction-1e-05",
+      "offset": 18720,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-1-fraction-0.2",
+      "offset": 18792,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-1-fraction-0.51",
+      "offset": 18864,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-1-fraction-0.87",
+      "offset": 18936,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-1-fraction-0.999999",
+      "offset": 19008,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-1-fraction-1.0",
+      "offset": 19080,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-2-fraction-0.0",
+      "offset": 19152,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-2-fraction-1e-05",
+      "offset": 19224,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-2-fraction-0.2",
+      "offset": 19296,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-2-fraction-0.51",
+      "offset": 19368,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-2-fraction-0.87",
+      "offset": 19440,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-2-fraction-0.999999",
+      "offset": 19512,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-2-fraction-1.0",
+      "offset": 19584,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-3-fraction-0.0",
+      "offset": 19656,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-3-fraction-1e-05",
+      "offset": 19728,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-3-fraction-0.2",
+      "offset": 19800,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-3-fraction-0.51",
+      "offset": 19872,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-3-fraction-0.87",
+      "offset": 19944,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-3-fraction-0.999999",
+      "offset": 20016,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-1.0-zero-True-interval-3-fraction-1.0",
+      "offset": 20088,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-0-fraction-0.0",
+      "offset": 20160,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-0-fraction-1e-05",
+      "offset": 20232,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-0-fraction-0.2",
+      "offset": 20304,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-0-fraction-0.51",
+      "offset": 20376,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-0-fraction-0.87",
+      "offset": 20448,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-0-fraction-0.999999",
+      "offset": 20520,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-0-fraction-1.0",
+      "offset": 20592,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-1-fraction-0.0",
+      "offset": 20664,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-1-fraction-1e-05",
+      "offset": 20736,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-1-fraction-0.2",
+      "offset": 20808,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-1-fraction-0.51",
+      "offset": 20880,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-1-fraction-0.87",
+      "offset": 20952,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-1-fraction-0.999999",
+      "offset": 21024,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-1-fraction-1.0",
+      "offset": 21096,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-2-fraction-0.0",
+      "offset": 21168,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-2-fraction-1e-05",
+      "offset": 21240,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-2-fraction-0.2",
+      "offset": 21312,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-2-fraction-0.51",
+      "offset": 21384,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-2-fraction-0.87",
+      "offset": 21456,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-2-fraction-0.999999",
+      "offset": 21528,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-2-fraction-1.0",
+      "offset": 21600,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-3-fraction-0.0",
+      "offset": 21672,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-3-fraction-1e-05",
+      "offset": 21744,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-3-fraction-0.2",
+      "offset": 21816,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-3-fraction-0.51",
+      "offset": 21888,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-3-fraction-0.87",
+      "offset": 21960,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-3-fraction-0.999999",
+      "offset": 22032,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-False-interval-3-fraction-1.0",
+      "offset": 22104,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-0-fraction-0.0",
+      "offset": 22176,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-0-fraction-1e-05",
+      "offset": 22248,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-0-fraction-0.2",
+      "offset": 22320,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-0-fraction-0.51",
+      "offset": 22392,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-0-fraction-0.87",
+      "offset": 22464,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-0-fraction-0.999999",
+      "offset": 22536,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-0-fraction-1.0",
+      "offset": 22608,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-1-fraction-0.0",
+      "offset": 22680,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-1-fraction-1e-05",
+      "offset": 22752,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-1-fraction-0.2",
+      "offset": 22824,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-1-fraction-0.51",
+      "offset": 22896,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-1-fraction-0.87",
+      "offset": 22968,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-1-fraction-0.999999",
+      "offset": 23040,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-1-fraction-1.0",
+      "offset": 23112,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-2-fraction-0.0",
+      "offset": 23184,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-2-fraction-1e-05",
+      "offset": 23256,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-2-fraction-0.2",
+      "offset": 23328,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-2-fraction-0.51",
+      "offset": 23400,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-2-fraction-0.87",
+      "offset": 23472,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-2-fraction-0.999999",
+      "offset": 23544,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-2-fraction-1.0",
+      "offset": 23616,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-3-fraction-0.0",
+      "offset": 23688,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-3-fraction-1e-05",
+      "offset": 23760,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-3-fraction-0.2",
+      "offset": 23832,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-3-fraction-0.51",
+      "offset": 23904,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-3-fraction-0.87",
+      "offset": 23976,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-3-fraction-0.999999",
+      "offset": 24048,
+      "bytes": 72
+    },
+    {
+      "name": "type-22-scale-10000.0-zero-True-interval-3-fraction-1.0",
+      "offset": 24120,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-0-fraction-0.0",
+      "offset": 24192,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-0-fraction-1e-05",
+      "offset": 24264,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-0-fraction-0.2",
+      "offset": 24336,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-0-fraction-0.51",
+      "offset": 24408,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-0-fraction-0.87",
+      "offset": 24480,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-0-fraction-0.999999",
+      "offset": 24552,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-0-fraction-1.0",
+      "offset": 24624,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-1-fraction-0.0",
+      "offset": 24696,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-1-fraction-1e-05",
+      "offset": 24768,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-1-fraction-0.2",
+      "offset": 24840,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-1-fraction-0.51",
+      "offset": 24912,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-1-fraction-0.87",
+      "offset": 24984,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-1-fraction-0.999999",
+      "offset": 25056,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-1-fraction-1.0",
+      "offset": 25128,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-2-fraction-0.0",
+      "offset": 25200,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-2-fraction-1e-05",
+      "offset": 25272,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-2-fraction-0.2",
+      "offset": 25344,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-2-fraction-0.51",
+      "offset": 25416,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-2-fraction-0.87",
+      "offset": 25488,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-2-fraction-0.999999",
+      "offset": 25560,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-2-fraction-1.0",
+      "offset": 25632,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-3-fraction-0.0",
+      "offset": 25704,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-3-fraction-1e-05",
+      "offset": 25776,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-3-fraction-0.2",
+      "offset": 25848,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-3-fraction-0.51",
+      "offset": 25920,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-3-fraction-0.87",
+      "offset": 25992,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-3-fraction-0.999999",
+      "offset": 26064,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-False-interval-3-fraction-1.0",
+      "offset": 26136,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-0-fraction-0.0",
+      "offset": 26208,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-0-fraction-1e-05",
+      "offset": 26280,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-0-fraction-0.2",
+      "offset": 26352,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-0-fraction-0.51",
+      "offset": 26424,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-0-fraction-0.87",
+      "offset": 26496,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-0-fraction-0.999999",
+      "offset": 26568,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-0-fraction-1.0",
+      "offset": 26640,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-1-fraction-0.0",
+      "offset": 26712,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-1-fraction-1e-05",
+      "offset": 26784,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-1-fraction-0.2",
+      "offset": 26856,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-1-fraction-0.51",
+      "offset": 26928,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-1-fraction-0.87",
+      "offset": 27000,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-1-fraction-0.999999",
+      "offset": 27072,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-1-fraction-1.0",
+      "offset": 27144,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-2-fraction-0.0",
+      "offset": 27216,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-2-fraction-1e-05",
+      "offset": 27288,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-2-fraction-0.2",
+      "offset": 27360,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-2-fraction-0.51",
+      "offset": 27432,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-2-fraction-0.87",
+      "offset": 27504,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-2-fraction-0.999999",
+      "offset": 27576,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-2-fraction-1.0",
+      "offset": 27648,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-3-fraction-0.0",
+      "offset": 27720,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-3-fraction-1e-05",
+      "offset": 27792,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-3-fraction-0.2",
+      "offset": 27864,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-3-fraction-0.51",
+      "offset": 27936,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-3-fraction-0.87",
+      "offset": 28008,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-3-fraction-0.999999",
+      "offset": 28080,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-0.0001-zero-True-interval-3-fraction-1.0",
+      "offset": 28152,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-0-fraction-0.0",
+      "offset": 28224,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-0-fraction-1e-05",
+      "offset": 28296,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-0-fraction-0.2",
+      "offset": 28368,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-0-fraction-0.51",
+      "offset": 28440,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-0-fraction-0.87",
+      "offset": 28512,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-0-fraction-0.999999",
+      "offset": 28584,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-0-fraction-1.0",
+      "offset": 28656,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-1-fraction-0.0",
+      "offset": 28728,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-1-fraction-1e-05",
+      "offset": 28800,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-1-fraction-0.2",
+      "offset": 28872,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-1-fraction-0.51",
+      "offset": 28944,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-1-fraction-0.87",
+      "offset": 29016,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-1-fraction-0.999999",
+      "offset": 29088,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-1-fraction-1.0",
+      "offset": 29160,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-2-fraction-0.0",
+      "offset": 29232,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-2-fraction-1e-05",
+      "offset": 29304,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-2-fraction-0.2",
+      "offset": 29376,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-2-fraction-0.51",
+      "offset": 29448,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-2-fraction-0.87",
+      "offset": 29520,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-2-fraction-0.999999",
+      "offset": 29592,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-2-fraction-1.0",
+      "offset": 29664,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-3-fraction-0.0",
+      "offset": 29736,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-3-fraction-1e-05",
+      "offset": 29808,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-3-fraction-0.2",
+      "offset": 29880,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-3-fraction-0.51",
+      "offset": 29952,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-3-fraction-0.87",
+      "offset": 30024,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-3-fraction-0.999999",
+      "offset": 30096,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-False-interval-3-fraction-1.0",
+      "offset": 30168,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-0-fraction-0.0",
+      "offset": 30240,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-0-fraction-1e-05",
+      "offset": 30312,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-0-fraction-0.2",
+      "offset": 30384,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-0-fraction-0.51",
+      "offset": 30456,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-0-fraction-0.87",
+      "offset": 30528,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-0-fraction-0.999999",
+      "offset": 30600,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-0-fraction-1.0",
+      "offset": 30672,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-1-fraction-0.0",
+      "offset": 30744,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-1-fraction-1e-05",
+      "offset": 30816,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-1-fraction-0.2",
+      "offset": 30888,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-1-fraction-0.51",
+      "offset": 30960,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-1-fraction-0.87",
+      "offset": 31032,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-1-fraction-0.999999",
+      "offset": 31104,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-1-fraction-1.0",
+      "offset": 31176,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-2-fraction-0.0",
+      "offset": 31248,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-2-fraction-1e-05",
+      "offset": 31320,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-2-fraction-0.2",
+      "offset": 31392,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-2-fraction-0.51",
+      "offset": 31464,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-2-fraction-0.87",
+      "offset": 31536,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-2-fraction-0.999999",
+      "offset": 31608,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-2-fraction-1.0",
+      "offset": 31680,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-3-fraction-0.0",
+      "offset": 31752,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-3-fraction-1e-05",
+      "offset": 31824,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-3-fraction-0.2",
+      "offset": 31896,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-3-fraction-0.51",
+      "offset": 31968,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-3-fraction-0.87",
+      "offset": 32040,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-3-fraction-0.999999",
+      "offset": 32112,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-1.0-zero-True-interval-3-fraction-1.0",
+      "offset": 32184,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-0-fraction-0.0",
+      "offset": 32256,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-0-fraction-1e-05",
+      "offset": 32328,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-0-fraction-0.2",
+      "offset": 32400,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-0-fraction-0.51",
+      "offset": 32472,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-0-fraction-0.87",
+      "offset": 32544,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-0-fraction-0.999999",
+      "offset": 32616,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-0-fraction-1.0",
+      "offset": 32688,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-1-fraction-0.0",
+      "offset": 32760,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-1-fraction-1e-05",
+      "offset": 32832,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-1-fraction-0.2",
+      "offset": 32904,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-1-fraction-0.51",
+      "offset": 32976,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-1-fraction-0.87",
+      "offset": 33048,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-1-fraction-0.999999",
+      "offset": 33120,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-1-fraction-1.0",
+      "offset": 33192,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-2-fraction-0.0",
+      "offset": 33264,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-2-fraction-1e-05",
+      "offset": 33336,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-2-fraction-0.2",
+      "offset": 33408,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-2-fraction-0.51",
+      "offset": 33480,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-2-fraction-0.87",
+      "offset": 33552,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-2-fraction-0.999999",
+      "offset": 33624,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-2-fraction-1.0",
+      "offset": 33696,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-3-fraction-0.0",
+      "offset": 33768,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-3-fraction-1e-05",
+      "offset": 33840,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-3-fraction-0.2",
+      "offset": 33912,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-3-fraction-0.51",
+      "offset": 33984,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-3-fraction-0.87",
+      "offset": 34056,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-3-fraction-0.999999",
+      "offset": 34128,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-False-interval-3-fraction-1.0",
+      "offset": 34200,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-0-fraction-0.0",
+      "offset": 34272,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-0-fraction-1e-05",
+      "offset": 34344,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-0-fraction-0.2",
+      "offset": 34416,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-0-fraction-0.51",
+      "offset": 34488,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-0-fraction-0.87",
+      "offset": 34560,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-0-fraction-0.999999",
+      "offset": 34632,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-0-fraction-1.0",
+      "offset": 34704,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-1-fraction-0.0",
+      "offset": 34776,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-1-fraction-1e-05",
+      "offset": 34848,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-1-fraction-0.2",
+      "offset": 34920,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-1-fraction-0.51",
+      "offset": 34992,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-1-fraction-0.87",
+      "offset": 35064,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-1-fraction-0.999999",
+      "offset": 35136,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-1-fraction-1.0",
+      "offset": 35208,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-2-fraction-0.0",
+      "offset": 35280,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-2-fraction-1e-05",
+      "offset": 35352,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-2-fraction-0.2",
+      "offset": 35424,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-2-fraction-0.51",
+      "offset": 35496,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-2-fraction-0.87",
+      "offset": 35568,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-2-fraction-0.999999",
+      "offset": 35640,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-2-fraction-1.0",
+      "offset": 35712,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-3-fraction-0.0",
+      "offset": 35784,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-3-fraction-1e-05",
+      "offset": 35856,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-3-fraction-0.2",
+      "offset": 35928,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-3-fraction-0.51",
+      "offset": 36000,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-3-fraction-0.87",
+      "offset": 36072,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-3-fraction-0.999999",
+      "offset": 36144,
+      "bytes": 72
+    },
+    {
+      "name": "type-25-scale-10000.0-zero-True-interval-3-fraction-1.0",
+      "offset": 36216,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-0-fraction-0.0",
+      "offset": 36288,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-0-fraction-1e-05",
+      "offset": 36360,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-0-fraction-0.2",
+      "offset": 36432,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-0-fraction-0.51",
+      "offset": 36504,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-0-fraction-0.87",
+      "offset": 36576,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-0-fraction-0.999999",
+      "offset": 36648,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-0-fraction-1.0",
+      "offset": 36720,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-1-fraction-0.0",
+      "offset": 36792,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-1-fraction-1e-05",
+      "offset": 36864,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-1-fraction-0.2",
+      "offset": 36936,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-1-fraction-0.51",
+      "offset": 37008,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-1-fraction-0.87",
+      "offset": 37080,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-1-fraction-0.999999",
+      "offset": 37152,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-1-fraction-1.0",
+      "offset": 37224,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-2-fraction-0.0",
+      "offset": 37296,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-2-fraction-1e-05",
+      "offset": 37368,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-2-fraction-0.2",
+      "offset": 37440,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-2-fraction-0.51",
+      "offset": 37512,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-2-fraction-0.87",
+      "offset": 37584,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-2-fraction-0.999999",
+      "offset": 37656,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-2-fraction-1.0",
+      "offset": 37728,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-3-fraction-0.0",
+      "offset": 37800,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-3-fraction-1e-05",
+      "offset": 37872,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-3-fraction-0.2",
+      "offset": 37944,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-3-fraction-0.51",
+      "offset": 38016,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-3-fraction-0.87",
+      "offset": 38088,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-3-fraction-0.999999",
+      "offset": 38160,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-False-interval-3-fraction-1.0",
+      "offset": 38232,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-0-fraction-0.0",
+      "offset": 38304,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-0-fraction-1e-05",
+      "offset": 38376,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-0-fraction-0.2",
+      "offset": 38448,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-0-fraction-0.51",
+      "offset": 38520,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-0-fraction-0.87",
+      "offset": 38592,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-0-fraction-0.999999",
+      "offset": 38664,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-0-fraction-1.0",
+      "offset": 38736,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-1-fraction-0.0",
+      "offset": 38808,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-1-fraction-1e-05",
+      "offset": 38880,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-1-fraction-0.2",
+      "offset": 38952,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-1-fraction-0.51",
+      "offset": 39024,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-1-fraction-0.87",
+      "offset": 39096,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-1-fraction-0.999999",
+      "offset": 39168,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-1-fraction-1.0",
+      "offset": 39240,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-2-fraction-0.0",
+      "offset": 39312,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-2-fraction-1e-05",
+      "offset": 39384,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-2-fraction-0.2",
+      "offset": 39456,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-2-fraction-0.51",
+      "offset": 39528,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-2-fraction-0.87",
+      "offset": 39600,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-2-fraction-0.999999",
+      "offset": 39672,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-2-fraction-1.0",
+      "offset": 39744,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-3-fraction-0.0",
+      "offset": 39816,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-3-fraction-1e-05",
+      "offset": 39888,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-3-fraction-0.2",
+      "offset": 39960,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-3-fraction-0.51",
+      "offset": 40032,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-3-fraction-0.87",
+      "offset": 40104,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-3-fraction-0.999999",
+      "offset": 40176,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-0.0001-zero-True-interval-3-fraction-1.0",
+      "offset": 40248,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-0-fraction-0.0",
+      "offset": 40320,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-0-fraction-1e-05",
+      "offset": 40392,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-0-fraction-0.2",
+      "offset": 40464,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-0-fraction-0.51",
+      "offset": 40536,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-0-fraction-0.87",
+      "offset": 40608,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-0-fraction-0.999999",
+      "offset": 40680,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-0-fraction-1.0",
+      "offset": 40752,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-1-fraction-0.0",
+      "offset": 40824,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-1-fraction-1e-05",
+      "offset": 40896,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-1-fraction-0.2",
+      "offset": 40968,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-1-fraction-0.51",
+      "offset": 41040,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-1-fraction-0.87",
+      "offset": 41112,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-1-fraction-0.999999",
+      "offset": 41184,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-1-fraction-1.0",
+      "offset": 41256,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-2-fraction-0.0",
+      "offset": 41328,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-2-fraction-1e-05",
+      "offset": 41400,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-2-fraction-0.2",
+      "offset": 41472,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-2-fraction-0.51",
+      "offset": 41544,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-2-fraction-0.87",
+      "offset": 41616,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-2-fraction-0.999999",
+      "offset": 41688,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-2-fraction-1.0",
+      "offset": 41760,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-3-fraction-0.0",
+      "offset": 41832,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-3-fraction-1e-05",
+      "offset": 41904,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-3-fraction-0.2",
+      "offset": 41976,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-3-fraction-0.51",
+      "offset": 42048,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-3-fraction-0.87",
+      "offset": 42120,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-3-fraction-0.999999",
+      "offset": 42192,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-False-interval-3-fraction-1.0",
+      "offset": 42264,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-0-fraction-0.0",
+      "offset": 42336,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-0-fraction-1e-05",
+      "offset": 42408,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-0-fraction-0.2",
+      "offset": 42480,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-0-fraction-0.51",
+      "offset": 42552,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-0-fraction-0.87",
+      "offset": 42624,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-0-fraction-0.999999",
+      "offset": 42696,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-0-fraction-1.0",
+      "offset": 42768,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-1-fraction-0.0",
+      "offset": 42840,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-1-fraction-1e-05",
+      "offset": 42912,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-1-fraction-0.2",
+      "offset": 42984,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-1-fraction-0.51",
+      "offset": 43056,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-1-fraction-0.87",
+      "offset": 43128,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-1-fraction-0.999999",
+      "offset": 43200,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-1-fraction-1.0",
+      "offset": 43272,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-2-fraction-0.0",
+      "offset": 43344,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-2-fraction-1e-05",
+      "offset": 43416,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-2-fraction-0.2",
+      "offset": 43488,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-2-fraction-0.51",
+      "offset": 43560,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-2-fraction-0.87",
+      "offset": 43632,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-2-fraction-0.999999",
+      "offset": 43704,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-2-fraction-1.0",
+      "offset": 43776,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-3-fraction-0.0",
+      "offset": 43848,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-3-fraction-1e-05",
+      "offset": 43920,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-3-fraction-0.2",
+      "offset": 43992,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-3-fraction-0.51",
+      "offset": 44064,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-3-fraction-0.87",
+      "offset": 44136,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-3-fraction-0.999999",
+      "offset": 44208,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-1.0-zero-True-interval-3-fraction-1.0",
+      "offset": 44280,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-0-fraction-0.0",
+      "offset": 44352,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-0-fraction-1e-05",
+      "offset": 44424,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-0-fraction-0.2",
+      "offset": 44496,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-0-fraction-0.51",
+      "offset": 44568,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-0-fraction-0.87",
+      "offset": 44640,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-0-fraction-0.999999",
+      "offset": 44712,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-0-fraction-1.0",
+      "offset": 44784,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-1-fraction-0.0",
+      "offset": 44856,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-1-fraction-1e-05",
+      "offset": 44928,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-1-fraction-0.2",
+      "offset": 45000,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-1-fraction-0.51",
+      "offset": 45072,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-1-fraction-0.87",
+      "offset": 45144,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-1-fraction-0.999999",
+      "offset": 45216,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-1-fraction-1.0",
+      "offset": 45288,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-2-fraction-0.0",
+      "offset": 45360,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-2-fraction-1e-05",
+      "offset": 45432,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-2-fraction-0.2",
+      "offset": 45504,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-2-fraction-0.51",
+      "offset": 45576,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-2-fraction-0.87",
+      "offset": 45648,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-2-fraction-0.999999",
+      "offset": 45720,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-2-fraction-1.0",
+      "offset": 45792,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-3-fraction-0.0",
+      "offset": 45864,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-3-fraction-1e-05",
+      "offset": 45936,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-3-fraction-0.2",
+      "offset": 46008,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-3-fraction-0.51",
+      "offset": 46080,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-3-fraction-0.87",
+      "offset": 46152,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-3-fraction-0.999999",
+      "offset": 46224,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-False-interval-3-fraction-1.0",
+      "offset": 46296,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-0-fraction-0.0",
+      "offset": 46368,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-0-fraction-1e-05",
+      "offset": 46440,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-0-fraction-0.2",
+      "offset": 46512,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-0-fraction-0.51",
+      "offset": 46584,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-0-fraction-0.87",
+      "offset": 46656,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-0-fraction-0.999999",
+      "offset": 46728,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-0-fraction-1.0",
+      "offset": 46800,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-1-fraction-0.0",
+      "offset": 46872,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-1-fraction-1e-05",
+      "offset": 46944,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-1-fraction-0.2",
+      "offset": 47016,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-1-fraction-0.51",
+      "offset": 47088,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-1-fraction-0.87",
+      "offset": 47160,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-1-fraction-0.999999",
+      "offset": 47232,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-1-fraction-1.0",
+      "offset": 47304,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-2-fraction-0.0",
+      "offset": 47376,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-2-fraction-1e-05",
+      "offset": 47448,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-2-fraction-0.2",
+      "offset": 47520,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-2-fraction-0.51",
+      "offset": 47592,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-2-fraction-0.87",
+      "offset": 47664,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-2-fraction-0.999999",
+      "offset": 47736,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-2-fraction-1.0",
+      "offset": 47808,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-3-fraction-0.0",
+      "offset": 47880,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-3-fraction-1e-05",
+      "offset": 47952,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-3-fraction-0.2",
+      "offset": 48024,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-3-fraction-0.51",
+      "offset": 48096,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-3-fraction-0.87",
+      "offset": 48168,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-3-fraction-0.999999",
+      "offset": 48240,
+      "bytes": 72
+    },
+    {
+      "name": "type-32-scale-10000.0-zero-True-interval-3-fraction-1.0",
+      "offset": 48312,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-0-fraction-0.0",
+      "offset": 48384,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-0-fraction-1e-05",
+      "offset": 48456,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-0-fraction-0.2",
+      "offset": 48528,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-0-fraction-0.51",
+      "offset": 48600,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-0-fraction-0.87",
+      "offset": 48672,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-0-fraction-0.999999",
+      "offset": 48744,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-0-fraction-1.0",
+      "offset": 48816,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-1-fraction-0.0",
+      "offset": 48888,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-1-fraction-1e-05",
+      "offset": 48960,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-1-fraction-0.2",
+      "offset": 49032,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-1-fraction-0.51",
+      "offset": 49104,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-1-fraction-0.87",
+      "offset": 49176,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-1-fraction-0.999999",
+      "offset": 49248,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-1-fraction-1.0",
+      "offset": 49320,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-2-fraction-0.0",
+      "offset": 49392,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-2-fraction-1e-05",
+      "offset": 49464,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-2-fraction-0.2",
+      "offset": 49536,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-2-fraction-0.51",
+      "offset": 49608,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-2-fraction-0.87",
+      "offset": 49680,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-2-fraction-0.999999",
+      "offset": 49752,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-2-fraction-1.0",
+      "offset": 49824,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-3-fraction-0.0",
+      "offset": 49896,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-3-fraction-1e-05",
+      "offset": 49968,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-3-fraction-0.2",
+      "offset": 50040,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-3-fraction-0.51",
+      "offset": 50112,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-3-fraction-0.87",
+      "offset": 50184,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-3-fraction-0.999999",
+      "offset": 50256,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-False-interval-3-fraction-1.0",
+      "offset": 50328,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-0-fraction-0.0",
+      "offset": 50400,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-0-fraction-1e-05",
+      "offset": 50472,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-0-fraction-0.2",
+      "offset": 50544,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-0-fraction-0.51",
+      "offset": 50616,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-0-fraction-0.87",
+      "offset": 50688,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-0-fraction-0.999999",
+      "offset": 50760,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-0-fraction-1.0",
+      "offset": 50832,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-1-fraction-0.0",
+      "offset": 50904,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-1-fraction-1e-05",
+      "offset": 50976,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-1-fraction-0.2",
+      "offset": 51048,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-1-fraction-0.51",
+      "offset": 51120,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-1-fraction-0.87",
+      "offset": 51192,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-1-fraction-0.999999",
+      "offset": 51264,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-1-fraction-1.0",
+      "offset": 51336,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-2-fraction-0.0",
+      "offset": 51408,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-2-fraction-1e-05",
+      "offset": 51480,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-2-fraction-0.2",
+      "offset": 51552,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-2-fraction-0.51",
+      "offset": 51624,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-2-fraction-0.87",
+      "offset": 51696,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-2-fraction-0.999999",
+      "offset": 51768,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-2-fraction-1.0",
+      "offset": 51840,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-3-fraction-0.0",
+      "offset": 51912,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-3-fraction-1e-05",
+      "offset": 51984,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-3-fraction-0.2",
+      "offset": 52056,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-3-fraction-0.51",
+      "offset": 52128,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-3-fraction-0.87",
+      "offset": 52200,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-3-fraction-0.999999",
+      "offset": 52272,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-0.0001-zero-True-interval-3-fraction-1.0",
+      "offset": 52344,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-0-fraction-0.0",
+      "offset": 52416,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-0-fraction-1e-05",
+      "offset": 52488,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-0-fraction-0.2",
+      "offset": 52560,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-0-fraction-0.51",
+      "offset": 52632,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-0-fraction-0.87",
+      "offset": 52704,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-0-fraction-0.999999",
+      "offset": 52776,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-0-fraction-1.0",
+      "offset": 52848,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-1-fraction-0.0",
+      "offset": 52920,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-1-fraction-1e-05",
+      "offset": 52992,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-1-fraction-0.2",
+      "offset": 53064,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-1-fraction-0.51",
+      "offset": 53136,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-1-fraction-0.87",
+      "offset": 53208,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-1-fraction-0.999999",
+      "offset": 53280,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-1-fraction-1.0",
+      "offset": 53352,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-2-fraction-0.0",
+      "offset": 53424,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-2-fraction-1e-05",
+      "offset": 53496,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-2-fraction-0.2",
+      "offset": 53568,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-2-fraction-0.51",
+      "offset": 53640,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-2-fraction-0.87",
+      "offset": 53712,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-2-fraction-0.999999",
+      "offset": 53784,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-2-fraction-1.0",
+      "offset": 53856,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-3-fraction-0.0",
+      "offset": 53928,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-3-fraction-1e-05",
+      "offset": 54000,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-3-fraction-0.2",
+      "offset": 54072,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-3-fraction-0.51",
+      "offset": 54144,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-3-fraction-0.87",
+      "offset": 54216,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-3-fraction-0.999999",
+      "offset": 54288,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-False-interval-3-fraction-1.0",
+      "offset": 54360,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-0-fraction-0.0",
+      "offset": 54432,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-0-fraction-1e-05",
+      "offset": 54504,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-0-fraction-0.2",
+      "offset": 54576,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-0-fraction-0.51",
+      "offset": 54648,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-0-fraction-0.87",
+      "offset": 54720,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-0-fraction-0.999999",
+      "offset": 54792,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-0-fraction-1.0",
+      "offset": 54864,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-1-fraction-0.0",
+      "offset": 54936,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-1-fraction-1e-05",
+      "offset": 55008,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-1-fraction-0.2",
+      "offset": 55080,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-1-fraction-0.51",
+      "offset": 55152,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-1-fraction-0.87",
+      "offset": 55224,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-1-fraction-0.999999",
+      "offset": 55296,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-1-fraction-1.0",
+      "offset": 55368,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-2-fraction-0.0",
+      "offset": 55440,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-2-fraction-1e-05",
+      "offset": 55512,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-2-fraction-0.2",
+      "offset": 55584,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-2-fraction-0.51",
+      "offset": 55656,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-2-fraction-0.87",
+      "offset": 55728,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-2-fraction-0.999999",
+      "offset": 55800,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-2-fraction-1.0",
+      "offset": 55872,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-3-fraction-0.0",
+      "offset": 55944,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-3-fraction-1e-05",
+      "offset": 56016,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-3-fraction-0.2",
+      "offset": 56088,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-3-fraction-0.51",
+      "offset": 56160,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-3-fraction-0.87",
+      "offset": 56232,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-3-fraction-0.999999",
+      "offset": 56304,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-1.0-zero-True-interval-3-fraction-1.0",
+      "offset": 56376,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-0-fraction-0.0",
+      "offset": 56448,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-0-fraction-1e-05",
+      "offset": 56520,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-0-fraction-0.2",
+      "offset": 56592,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-0-fraction-0.51",
+      "offset": 56664,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-0-fraction-0.87",
+      "offset": 56736,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-0-fraction-0.999999",
+      "offset": 56808,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-0-fraction-1.0",
+      "offset": 56880,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-1-fraction-0.0",
+      "offset": 56952,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-1-fraction-1e-05",
+      "offset": 57024,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-1-fraction-0.2",
+      "offset": 57096,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-1-fraction-0.51",
+      "offset": 57168,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-1-fraction-0.87",
+      "offset": 57240,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-1-fraction-0.999999",
+      "offset": 57312,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-1-fraction-1.0",
+      "offset": 57384,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-2-fraction-0.0",
+      "offset": 57456,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-2-fraction-1e-05",
+      "offset": 57528,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-2-fraction-0.2",
+      "offset": 57600,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-2-fraction-0.51",
+      "offset": 57672,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-2-fraction-0.87",
+      "offset": 57744,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-2-fraction-0.999999",
+      "offset": 57816,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-2-fraction-1.0",
+      "offset": 57888,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-3-fraction-0.0",
+      "offset": 57960,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-3-fraction-1e-05",
+      "offset": 58032,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-3-fraction-0.2",
+      "offset": 58104,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-3-fraction-0.51",
+      "offset": 58176,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-3-fraction-0.87",
+      "offset": 58248,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-3-fraction-0.999999",
+      "offset": 58320,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-False-interval-3-fraction-1.0",
+      "offset": 58392,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-0-fraction-0.0",
+      "offset": 58464,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-0-fraction-1e-05",
+      "offset": 58536,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-0-fraction-0.2",
+      "offset": 58608,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-0-fraction-0.51",
+      "offset": 58680,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-0-fraction-0.87",
+      "offset": 58752,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-0-fraction-0.999999",
+      "offset": 58824,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-0-fraction-1.0",
+      "offset": 58896,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-1-fraction-0.0",
+      "offset": 58968,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-1-fraction-1e-05",
+      "offset": 59040,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-1-fraction-0.2",
+      "offset": 59112,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-1-fraction-0.51",
+      "offset": 59184,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-1-fraction-0.87",
+      "offset": 59256,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-1-fraction-0.999999",
+      "offset": 59328,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-1-fraction-1.0",
+      "offset": 59400,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-2-fraction-0.0",
+      "offset": 59472,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-2-fraction-1e-05",
+      "offset": 59544,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-2-fraction-0.2",
+      "offset": 59616,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-2-fraction-0.51",
+      "offset": 59688,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-2-fraction-0.87",
+      "offset": 59760,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-2-fraction-0.999999",
+      "offset": 59832,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-2-fraction-1.0",
+      "offset": 59904,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-3-fraction-0.0",
+      "offset": 59976,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-3-fraction-1e-05",
+      "offset": 60048,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-3-fraction-0.2",
+      "offset": 60120,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-3-fraction-0.51",
+      "offset": 60192,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-3-fraction-0.87",
+      "offset": 60264,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-3-fraction-0.999999",
+      "offset": 60336,
+      "bytes": 72
+    },
+    {
+      "name": "type-35-scale-10000.0-zero-True-interval-3-fraction-1.0",
+      "offset": 60408,
+      "bytes": 72
+    }
+  ],
+  "return_instruction_rva": "0x2dd67..0x2dd73",
+  "return_instruction_sha256": "412ea1d7b2dfd9158042f81c8032c1387413053d64d8ecc955304bdeb2c11b92",
+  "native_sha256": "909031f6d31236b45194c898afa646fc4fc0246c8eb387b029ae83bf7379986f",
+  "native_returncode": 0,
+  "exact_bytes": true
+}

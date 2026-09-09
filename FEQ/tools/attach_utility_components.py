@@ -423,6 +423,37 @@ def integrate_steady_profile(data):
     return comment.encode()+edit_text(data,edits)
 
 
+def integrate_approach_residual(data):
+    definitions = {content(identifier(function.child_by_field_name('declarator')),data):function
+                   for function in functions(data)}
+    if not {'rapp_','rqvstw_'}.issubset(definitions):raise ValueError('Expected RAPP and RQVSTW.')
+    body = definitions['rapp_'].child_by_field_name('body')
+    replacement = """{
+    extern int xlktal_(int*,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*,float*);
+    xs1com_1.y1 = *y;
+    xlktal_(&xs1com_1.adrxs1,&xs1com_1.y1,&xs1com_1.a1,&xs1com_1.t1,&xs1com_1.dt1,
+        &xs1com_1.j1,&xs1com_1.k1,&xs1com_1.dk1,&xs1com_1.bet1,&xs1com_1.dbet1,
+        &xs1com_1.alp1,&xs1com_1.dalp1);
+    xs1com_1.z1 = static_cast<float>(static_cast<double>(xs1com_1.zb1)+xs1com_1.y1);
+    const feq::ApproachResidualInput input{xs1com_1.y1,xs1com_1.a1,xs1com_1.k1,xs1com_1.alp1,
+        xs1com_1.q1,xs1com_1.zb1,xs2com_1.q2,xs2com_1.zb2,xs2com_1.y2,xs2com_1.a2,
+        xs2com_1.k2,xs2com_1.alp2,appcom_1.applen,appcom_1.applos,appcom_1.appexp,
+        rappc_1.cdin,rappc_1.vhloss,grvcom_1.grav2};
+    const feq::ApproachResidual result = feq::approach_residual(input);
+    rappc_1.conf = result.contracting ? 1 : 0;
+    return result.value;
+}"""
+    edits = [(body.start_byte,body.end_byte,replacement)]
+    stores = [node for node in nodes(definitions['rqvstw_']) if node.type == 'expression_statement' and
+              content(node,data) == 'ret_val = static_cast<double>(xs1com_1.z1) - rqvtw_1.z1t;']
+    if len(stores) != 1:raise ValueError('Expected the RQVSTW head-residual store.')
+    # This is the final result assignment: return directly to retain the wide
+    # register value. Earlier failure returns keep their existing sentinel.
+    edits.append((stores[0].start_byte,stores[0].end_byte,
+        'return feq::approach_head_residual(xs1com_1.z1,rqvtw_1.z1t);'))
+    return b'#include <feq/approach_residual.hpp>\n'+edit_text(data,edits)
+
+
 def integrate_culvert_losses(data):
     definitions = {content(identifier(function.child_by_field_name('declarator')),data):function
                    for function in functions(data)}
@@ -515,7 +546,7 @@ def main():
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
         elif path.name == 'culvertc.cpp':data = integrate_steady_profile(integrate_steady_residuals(data))
-        elif path.name == 'culvertd.cpp':data = integrate_culvert_losses(data)
+        elif path.name == 'culvertd.cpp':data = integrate_approach_residual(integrate_culvert_losses(data))
         if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp'):
             integrated_files.add(path.name)
         (output/path.name).write_bytes(data)
@@ -566,6 +597,9 @@ def main():
                 {'file':'culvertd.cpp','functions':['degcon_','rqvstw_','fcd123_'],'component':'src/culvert_loss.cpp',
                  'scope':'Discharge curves, contraction adjustment and RQVSTW velocity head loss.',
                  'verification':['tests/reference/culvert_loss/manifest.json','tests/reference/culvert_coefficient/manifest.json']},
+                {'file':'culvertd.cpp','functions':['rapp_','rqvstw_'],'component':'src/approach_residual.cpp',
+                 'scope':'Wide approach energy balance, expansion/contraction transition and final head residual.',
+                 'verification':'tests/reference/approach_residual/manifest.json'},
                 {'file':'embank.cpp','function':'embank_','component':'src/power.cpp',
                  'scope':'Original reciprocal and REAL power argument/result for partial free-drop fractions.',
                  'evidence':'recovery/assembly/fequtl/_embank_.asm, VA 0x431d10..0x431d4a.'}]}
