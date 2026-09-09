@@ -39,7 +39,16 @@ int main(int argc, char** argv) {
 #endif
     try {
         const bool coefficient_only = argc == 2 && std::strcmp(argv[1],"--coefficient") == 0;
+        const bool head_loss_only = argc == 2 && std::strcmp(argv[1],"--head-loss") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (head_loss_only) {
+                const float coefficient = read_float();
+                const float flow = read_float();
+                const float area = read_float();
+                const float gravity = read_float();
+                write_float(feq::culvert_head_loss(coefficient,flow,area,gravity));
+                continue;
+            }
             if (coefficient_only) {
                 feq::CulvertCoefficientInput input{};
                 input.shape = static_cast<feq::CulvertShape>(read_word());

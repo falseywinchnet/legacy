@@ -812,6 +812,22 @@ def integrate_full_barrel(data):
     return b'#include <feq/full_barrel.hpp>\n'+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
 
 
+def integrate_normal_flow_residual(data):
+    definitions = {content(identifier(function.child_by_field_name('declarator')),data):function
+                   for function in functions(data)}
+    if 'ndrsd_' not in definitions:raise ValueError('Expected NDRSD.')
+    body = definitions['ndrsd_'].child_by_field_name('body')
+    replacement = """{
+    // Preserve the private lookup copy: LKTK may clamp YLOC, not the root argument.
+    float yloc = *y;
+    float k;
+    extern int lktk_(int*,float*,float*);
+    lktk_(&ndrsdc_1.adr,&yloc,&k);
+    return feq::normal_flow_residual(ndrsdc_1.rtsbot,k,ndrsdc_1.flow);
+}"""
+    return b'#include <feq/steady_residual.hpp>\n'+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
+
+
 def integrate_approach_residual(data):
     definitions = {content(identifier(function.child_by_field_name('declarator')),data):function
                    for function in functions(data)}
@@ -846,8 +862,8 @@ def integrate_approach_residual(data):
 def integrate_culvert_losses(data):
     definitions = {content(identifier(function.child_by_field_name('declarator')),data):function
                    for function in functions(data)}
-    if not {'degcon_','rqvstw_','fcd123_'}.issubset(definitions):
-        raise ValueError('Expected DEGCON, RQVSTW and FCD123 definitions.')
+    if not {'degcon_','rqvstw_','fcd123_','rty2_'}.issubset(definitions):
+        raise ValueError('Expected DEGCON, RQVSTW, FCD123 and RTY2 definitions.')
     body = definitions['degcon_'].child_by_field_name('body')
     edits = [(body.start_byte,body.end_byte,
         '{\n    return feq::culvert_contraction(*c123,*a1,*a);\n}')]
@@ -864,6 +880,18 @@ def integrate_culvert_losses(data):
     edits.append((prior[0].start_byte,store.end_byte,
         '// Original Q/AVH stays wide through its square; DH is the only REAL store.\n'
         '    dh = feq::culvert_head_loss(cdcom_1.cd,*q,cdcom_1.avh,grvcom_1.grav2);'))
+    statements = [node for node in nodes(definitions['rty2_']) if node.type == 'expression_statement']
+    stores = [node for node in statements if content(node,data).startswith('dh =')]
+    if len(stores) != 1:raise ValueError('Expected one RTY2 head-loss store.')
+    store = stores[0]
+    prior = statements[statements.index(store)-2:statements.index(store)]
+    if [content(node,data) for node in prior] != [
+            'feq_gen_r_d_1 = cdcom_1.cd;',
+            'feq_gen_r_d_2 = static_cast<double>(xs3com_1.q3) / xs3com_1.a3;']:
+        raise ValueError('Unexpected RTY2 head-loss power temporaries.')
+    edits.append((prior[0].start_byte,store.end_byte,
+        '// RTY2 0x42e25c..0x42e293 retains Q3/A3 until the DH store.\n'
+        '    dh = feq::culvert_head_loss(cdcom_1.cd,xs3com_1.q3,xs3com_1.a3,grvcom_1.grav2);'))
     function = definitions['fcd123_']
     statements = [node for node in function.child_by_field_name('body').named_children if node.type != 'comment']
     branches = [node for node in statements if node.type == 'if_statement']
@@ -937,7 +965,7 @@ def main():
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
         elif path.name == 'culvertc.cpp':data = integrate_full_barrel(integrate_steady_profile(integrate_steady_residuals(data)))
-        elif path.name == 'culvertd.cpp':data = integrate_approach_residual(integrate_culvert_losses(data))
+        elif path.name == 'culvertd.cpp':data = integrate_normal_flow_residual(integrate_approach_residual(integrate_culvert_losses(data)))
         elif path.name == 'numrmath.cpp':data = integrate_gaussian_rule(data)
         if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'):
             integrated_files.add(path.name)
@@ -1027,9 +1055,13 @@ def main():
                 {'file':'culvertc.cpp','function':'fulbar_','component':'src/full_barrel.cpp',
                  'scope':'Full-barrel flow, road-flow iteration and entrance piezometric elevation with original REAL stores.',
                  'verification':'tests/reference/full_barrel/manifest.json'},
-                {'file':'culvertd.cpp','functions':['degcon_','rqvstw_','fcd123_'],'component':'src/culvert_loss.cpp',
-                 'scope':'Discharge curves, contraction adjustment and RQVSTW velocity head loss.',
-                 'verification':['tests/reference/culvert_loss/manifest.json','tests/reference/culvert_coefficient/manifest.json']},
+                {'file':'culvertd.cpp','functions':['degcon_','rqvstw_','fcd123_','rty2_'],'component':'src/culvert_loss.cpp',
+                 'scope':'Discharge curves, contraction adjustment and RQVSTW/RTY2 velocity head loss.',
+                 'verification':['tests/reference/culvert_loss/manifest.json','tests/reference/culvert_coefficient/manifest.json',
+                     'tests/reference/type2_head_loss/manifest.json']},
+                {'file':'culvertd.cpp','function':'ndrsd_','component':'src/steady_residual.cpp',
+                 'scope':'Wide normal-flow residual after original lookup of a private depth copy.',
+                 'verification':'tests/reference/normal_flow_residual/manifest.json'},
                 {'file':'culvertd.cpp','functions':['rapp_','rqvstw_'],'component':'src/approach_residual.cpp',
                  'scope':'Wide approach energy balance, expansion/contraction transition and final head residual.',
                  'verification':'tests/reference/approach_residual/manifest.json'},

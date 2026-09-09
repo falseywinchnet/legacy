@@ -93,6 +93,12 @@ square roots store REAL before multiplication. The integration preserves
 those distinctions and the separate REAL value used by the initial-depth
 error message. See [`tests/reference/steady_profile/`](tests/reference/steady_profile/).
 
+The standalone normal-flow residual matches **3,072 original instruction-sequence
+cases**, including near-root cancellation, three scales, signed flow and zero
+slope. NDRSD returns `(sqrt(S)*K-Q)/Q` without a REAL store; its lookup receives
+a private copy of the trial depth. See
+[`tests/reference/normal_flow_residual/`](tests/reference/normal_flow_residual/).
+
 Full-barrel flow and entrance piezometric elevation match **3,072 calls to the
 unchanged original FULBAR routine**. These cover three geometric scales,
 discharge coefficients through unity, zero and positive road flow, zero and
@@ -185,6 +191,12 @@ the caller's float store, and the head-loss result at three scales and around
 the contraction threshold. The fixtures retain the exact original head-loss
 instruction bytes by hash in
 [`tests/reference/culvert_loss/`](tests/reference/culvert_loss/).
+
+The type-2 culvert head-loss calculation separately matches **3,073 original
+instruction-sequence cases**. RTY2 retains `Q3/A3` through its square and stores
+only the completed head loss. These fixtures include the first type-2 call in
+the supplied culvert example; see
+[`tests/reference/type2_head_loss/`](tests/reference/type2_head_loss/).
 
 The fitted discharge coefficients match **879 original calls** across all five
 supported culvert classes, all three flow types, head and Froude thresholds,

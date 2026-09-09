@@ -77,7 +77,14 @@ int main(int argc, char** argv) {
         const bool gate_state = argc == 2 && std::strcmp(argv[1],"--gate-state") == 0;
         const bool specific_energy = argc == 2 && std::strcmp(argv[1],"--specific-energy") == 0;
         const bool full_barrel = argc == 2 && std::strcmp(argv[1],"--full-barrel") == 0;
+        const bool normal_flow = argc == 2 && std::strcmp(argv[1],"--normal-flow-residual") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (normal_flow) {
+                float fields[3]{};
+                for (int i = 0; i < 3; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                write_double(feq::normal_flow_residual(fields[0],fields[1],fields[2]));
+                continue;
+            }
             if (full_barrel) {
                 float fields[15]{};
                 for (int i = 0; i < 15; ++i) { fields[i] = std::bit_cast<float>(read_word()); }

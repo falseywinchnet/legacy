@@ -135,6 +135,8 @@ if(BUILD_TESTING)
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_steady_residual_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
     add_test(NAME steady_profile_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_steady_profile_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
+    add_test(NAME normal_flow_residual_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_energy_section_probe> normal_flow_residual)
     add_test(NAME station_fraction_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_station_fraction_fixture.py $<TARGET_FILE:feq_section_probe>)
     add_executable(feq_slot_probe tools/slot_probe.cpp)
@@ -170,6 +172,8 @@ if(BUILD_TESTING)
     add_executable(feq_culvert_loss_probe tools/culvert_loss_probe.cpp)
     target_link_libraries(feq_culvert_loss_probe PRIVATE feq_numerics)
     feq_checks(feq_culvert_loss_probe)
+    add_test(NAME type2_head_loss_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_culvert_loss_probe> type2_head_loss)
     add_test(NAME culvert_loss_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_culvert_loss_fixture.py $<TARGET_FILE:feq_culvert_loss_probe>)
     add_test(NAME culvert_coefficient_original_bytes COMMAND ${Python3_EXECUTABLE}

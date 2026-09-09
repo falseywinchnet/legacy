@@ -970,3 +970,36 @@ remaining FEQUTL output comparisons or the application release.
 FEQ/build/python312/bin/python FEQ/tools/probe_full_barrel_original.py \
   --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/full-barrel-recapture
 ```
+
+## Type-2 head loss and normal-flow residual
+
+`probe_type2_head_loss_original.py` executes the unchanged RTY2 arithmetic at
+`0x42e25c..0x42e293`. All 3,073 results match every output bit. The fixtures
+cover three flow/area scales, signed flow, eight discharge coefficients and
+three gravity values, plus the first RTY2 call in the supplied culvert example.
+The equation is `DH = (1/CD^2-1)*(Q3/A3)^2/(2g)`. The velocity ratio remains
+wide through squaring; DH is the only REAL store. The research adapter now
+uses the independently verified `culvert_head_loss` implementation here as
+well as in RQVSTW.
+
+`probe_normal_flow_original.py` executes the unchanged NDRSD arithmetic at
+`0x428627..0x42863c`, after section lookup. All 3,072 returned binary64 values
+match exactly, including cases close to the normal-flow root, three scales,
+signed flow and zero slope. The equation is `(RTSBOT*K-FLOW)/FLOW`; all three
+inputs are stored REAL values, but the residual has no REAL store before
+return. The adapter preserves the private depth copy passed to LKTK, whose
+range handling can change its argument. These arithmetic fixtures do not
+independently validate LKTK's table lookup or the whole FNDND search.
+
+All 54 CMake checks pass in Release and sanitizer builds. Fresh full-model
+runs preserve the existing 14 of 17 report comparisons, all 2,092 active FEQ
+matrices and all 19,701 gate residual entries. The complete 276,813-byte gate
+report section remains exact. UTLEXM and CULVERT retain 68 and 176 differing
+non-clock report lines, and seven culvert-table lines still differ.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_type2_head_loss_original.py \
+  --native FEQ/build/core/feq_culvert_loss_probe --output FEQ/build/type2-loss-recapture
+FEQ/build/python312/bin/python FEQ/tools/probe_normal_flow_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/normal-flow-recapture
+```

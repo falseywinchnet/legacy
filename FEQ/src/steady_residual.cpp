@@ -21,6 +21,12 @@ double steady_normal_flow(float conveyance, float slope) {
     return 0.0;
 }
 
+double normal_flow_residual(float root_slope, float conveyance, float flow) {
+    // NDRSD 0x428627..0x42863c: (RTSBOT*K-FLOW)/FLOW. All operands
+    // were stored REAL, but every arithmetic result remains wide through RET.
+    return (static_cast<double>(root_slope)*conveyance-flow)/flow;
+}
+
 double steady_subcritical_residual(const SteadyResidualInput& input) {
     const double area = input.area;
     const double neighbor_area = input.neighbor_area;

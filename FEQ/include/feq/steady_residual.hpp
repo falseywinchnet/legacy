@@ -9,6 +9,9 @@ double steady_specific_energy(double depth, float flow, float area,
 // Qn = K*REAL(sqrt(S)) for positive S, otherwise zero. The square root
 // stores REAL before multiplication; the product remains wide.
 double steady_normal_flow(float conveyance, float slope);
+// NDRSD = (sqrt(S)*K-Q)/Q. Lookup supplies stored REAL K; the residual
+// returns wide to the root solver, without an intermediate REAL store.
+double normal_flow_residual(float root_slope, float conveyance, float flow);
 struct SteadyResidualInput {
     float depth;
     float area;
