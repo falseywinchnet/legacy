@@ -73,6 +73,7 @@ def main():
         sources.extend(['src/section_geometry.cpp','src/section_flux.cpp','src/section_properties.cpp','src/power.cpp',
                         'src/elevation_arguments.cpp','tools/elevation_compat.cpp',
                         'src/trigonometry.cpp','src/arch_perimeter.cpp','tools/arch_compat.cpp',
+                        'src/conduit_boundary.cpp','tools/conduit_compat.cpp',
                         'src/section_interpolation.cpp','tools/section_compat.cpp',
                         'src/table_interpolation.cpp','tools/table_compat.cpp',
                         'src/weir_flow.cpp','tools/weir_compat.cpp',

@@ -91,6 +91,15 @@ bits agreeing with the corresponding FEQ fixtures. The fixtures are in
 [`tests/reference/arch_perimeter/`](tests/reference/arch_perimeter/) and
 [`tests/reference/trigonometry/`](tests/reference/trigonometry/).
 
+The circular, rectangular, elliptical, and mirrored conduit constructors match
+**959 direct original-executable cases**, including circular polygons with
+3 through 128 sides and selected counts through 10,000. The circular constructor
+preserves x87's 66-bit pi reduction, which matters for the small nonzero invert
+coordinate. Ellipse area correction, box spacing, and slot intersections retain
+the released intermediate precision and single precision stores. The raw point
+counts and coordinates are in
+[`tests/reference/conduit_boundary/`](tests/reference/conduit_boundary/).
+
 The submerged-weir iteration matches **2,901 direct FEQUTL calls**: 2,691
 distinct calls captured from the supplied example and 210 added cases around
 the low/high-head table boundary, free-flow bypass, and complete submergence.

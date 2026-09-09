@@ -1,3 +1,4 @@
+#include <feq/conduit_boundary.hpp>
 // Public headers must coexist in one client translation unit.
 // Work: Astra. Sponsor: Rainstar. Foundation: Hashem. MIT licensed.
 #include <feq/arch_perimeter.hpp>

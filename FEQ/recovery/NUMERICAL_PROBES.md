@@ -329,3 +329,40 @@ segment values and the original REAL reciprocal of six. Drop-fraction generation
 uses the already verified REAL power kernel, including the original ratio
 rounding before the call. Whole-output comparisons remain separate from these
 component fixtures.
+
+
+## Conduit boundary constructors
+
+`probe_conduit_original.py` captures unchanged `URQTE`, `MKPIPE`, `MKBOX`,
+`RHMAK`, and `URQMAK` code with a temporary PROGRAM driver. The 959 fixtures
+contain 192 ellipse quadrants, 459 circular polygons, 84 boxes, 140 right-half
+mirrors, and 84 quadrant mirrors. They cover varied dimensions and offsets,
+all circular side counts from 3 through 128, selected counts through 10,000,
+and right-half coordinates taken directly from the original arch fixtures.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_conduit_original.py \
+  --native FEQ/build/core/feq_conduit_probe --output FEQ/build/conduit-recapture
+```
+
+Each input record has two little-endian 32-bit integers (constructor kind and
+side count), six binary32 values (rise, span, slot width, slot height, horizontal
+offset, vertical offset), and a 32-bit input point count. The input x and y
+vectors follow as separate binary32 arrays. Constructor kinds 0 through 4 name
+the five routines above in that order. Each output is a 32-bit point count,
+followed by its complete x vector and complete y vector, both binary32.
+
+The released circular constructor uses DOUBLE angles with x87 `FSINCOS`.
+Its internal pi is rounded to 66 significant bits. At angles near pi, its sine
+is observably different from a host library sine even after storing the final
+coordinate as REAL. `conduit_boundary.cpp` reduces the angle using both parts
+of that historical constant before the host sine/cosine call. The ellipse and
+box constructors also store their square roots as REAL before multiplying,
+while the ellipse analytic area and mirror slot intersection stay wide.
+The committed fixtures compare every output bit, including near-zero coordinates.
+
+`attach_utility_components.py` connects all five constructors and preserves the
+original `RHMAK` zero-divide diagnostic. With this integration, the combined
+conduit geometry differences in the supplied utility example are resolved;
+the first remaining report difference is in culvert flow at line 1,731. This
+is component and example evidence; complete application acceptance remains open.

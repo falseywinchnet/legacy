@@ -201,6 +201,34 @@ def integrate_arch(data):
     return declaration.encode()+edit_text(data,[(starts[0].start_byte,statements[-1].start_byte,replacement)])
 
 
+def integrate_conduit_boundaries(data):
+    replacements = {
+        'urqte_': 'feq_conduit_boundary(0,0,*rise,*span,0.0F,0.0F,0.0F,0.0F,nullptr,nullptr,nurq,&urqx[1],&urqy[1]);',
+        'mkpipe_': 'feq_conduit_boundary(1,*nsides,*feq_gen_d_d_,*feq_gen_d_d_,*wslot,*hslot,*xoff,*zoff,nullptr,nullptr,npnts,&x[1],&feq_gen_z_d_[1]);',
+        'mkbox_': 'feq_conduit_boundary(2,0,*rise,*span,*wslot,*hslot,*xoff,*zoff,nullptr,nullptr,npnts,&x[1],&feq_gen_z_d_[1]);',
+        'rhmak_': 'feq_conduit_boundary(3,*nrh,0.0F,0.0F,*wslot,*hslot,*xoff,*yoff,&rhx[1],&rhy[1],npnts,&x[1],&y[1]);',
+        'urqmak_': 'feq_conduit_boundary(4,*nurq,0.0F,0.0F,*wslot,*hslot,*xoff,*yoff,&urqx[1],&urqy[1],npnts,&x[1],&y[1]);',
+    }
+    edits = []; found = set()
+    for function in functions(data):
+        name = content(identifier(function.child_by_field_name('declarator')),data)
+        if name not in replacements:continue
+        statements = [node for node in function.child_by_field_name('body').named_children
+                      if node.type not in ('comment','declaration')]
+        start = 1 if name == 'rhmak_' else 0
+        if statements[-1].type != 'return_statement' or statements[start].type != 'expression_statement':
+            raise ValueError('Unexpected conduit constructor boundaries: '+name)
+        if name == 'rhmak_' and (statements[0].type != 'if_statement' or
+            content(statements[0].child_by_field_name('condition'),data) != '(rhx[2] == (float)0.)'):
+            raise ValueError('Expected RHMAK zero-divide diagnostic guard.')
+        replacement = '// Independently verified original conduit coordinates and REAL stores.\n    '+replacements[name]+'\n    '
+        edits.append((statements[start].start_byte,statements[-1].start_byte,replacement));found.add(name)
+    if found != set(replacements):raise ValueError('Missing a conduit boundary constructor.')
+    declaration = ('extern "C" void feq_conduit_boundary(int,int,float,float,float,float,float,float,'
+                   'const float*,const float*,int*,float*,float*);\n')
+    return declaration.encode()+edit_text(data,edits)
+
+
 def integrate_section_lookup(data):
     edits = []
     found = set()
@@ -318,7 +346,7 @@ def main():
         data = path.read_bytes();sources.append({'name':path.name,'sha256':hashlib.sha256(data).hexdigest()})
         if path.name == 'xsection.cpp':data = integrate_elevations(integrate_properties(integrate_geometry(data)))
         elif path.name == 'critq.cpp':data = integrate_critical_speed_store(data)
-        elif path.name == 'conduit.cpp':data = integrate_arch(data)
+        elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
         elif path.name == 'fqshrftb.cpp':data = integrate_scalar_lookup(integrate_section_lookup(data))
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp'):
@@ -340,6 +368,9 @@ def main():
                 {'file':'conduit.cpp','function':'rharch_','component':'src/arch_perimeter.cpp',
                  'scope':'Standard interpolation and area-adjusted perimeter; retain original diagnostic formats.',
                  'verification':'tests/reference/arch_perimeter/manifest.json'},
+                {'file':'conduit.cpp','functions':['urqte_','mkpipe_','mkbox_','rhmak_','urqmak_'],
+                 'component':'src/conduit_boundary.cpp','scope':'Area corrections, boundary mirroring and slot intersections.',
+                 'verification':'tests/reference/conduit_boundary/manifest.json'},
                 {'file':'fqshrftb.cpp','functions':['xlkt20_','xlkt21_'],'component':'src/section_interpolation.cpp',
                  'verification':['tests/reference/section_interpolation/fequtl-manifest.json',
                                  'tests/reference/section_first_moment/fequtl-manifest.json']},
