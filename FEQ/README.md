@@ -29,11 +29,21 @@ C++ equivalence. See [the recorded comparison](recovery/reference-1061-compariso
 and [recovery findings](recovery/FINDINGS.md).
 
 The independent C++ profile-matrix factorization and solution routines now match
-**every output bit in 48 direct tests of the original executable**. These include
-dense matrices at three scales and the specialized branch blocks. The tests
+**every output bit in 56 direct tests of the original executable**. These include
+dense matrices at three scales, specialized branch blocks, and eight mixed-block
+matrices captured during the original FEQEX1 model. The tests
 preserve the original compiler's wider register intermediates and explicit
 single-precision stores. Their captured inputs and outputs are committed in
-[`tests/reference/profile_matrix/`](tests/reference/profile_matrix/).
+[`tests/reference/profile_matrix/`](tests/reference/profile_matrix/) and
+[`tests/reference/profile_models/`](tests/reference/profile_models/).
+
+The independent cross-section interval interpolation matches **all seven output
+words in 240 cases against both original lookup routines**, for 480 original
+calls. It covers linear and cubic Hermite interpolation at three depth scales,
+including both interval endpoints. Equations and the exact machine-code rounding
+points accompany [`src/section_interpolation.cpp`](src/section_interpolation.cpp).
+The captured fixtures are in
+[`tests/reference/section_interpolation/`](tests/reference/section_interpolation/).
 
 Complete translated research engines also execute all six examples. Full-engine
 equivalence remains in progress: the current strict comparison passes 5 of the
@@ -41,6 +51,11 @@ equivalence remains in progress: the current strict comparison passes 5 of the
 [`recovery/cpp-research-status.json`](recovery/cpp-research-status.json) records
 the actual binaries, runtime changes, and all comparisons. These research
 engines are not application releases.
+
+Tracing now establishes an exact first assembled matrix for FEQEX1, including
+all 3,790,428 bytes of the matrix COMMON block. Subsequent matrices still differ;
+this is a localization result, not full-model acceptance. The complete trace
+comparison is in [`recovery/matrix-entry-comparison.json`](recovery/matrix-entry-comparison.json).
 
 ## Build and check the independent C++ components
 
@@ -53,10 +68,13 @@ cmake --build FEQ/build/core --config Release
 ctest --test-dir FEQ/build/core -C Release --output-on-failure
 ```
 
-This checks the original-executable matrix fixtures, defined shared storage,
-and the historical input fingerprint algorithm. It does not require Wine,
+This checks the original-executable matrix and interpolation fixtures, defined
+shared storage, and the historical input fingerprint algorithm. It does not require Wine,
 Fortran, or a source translator. The CI workflow runs these checks on Windows,
 macOS, and Linux, with a separate sanitizer build.
+
+[`recovery/NUMERICAL_PROBES.md`](recovery/NUMERICAL_PROBES.md) explains how to
+recapture the original-machine-code fixtures and trace a full model.
 
 ## Reproduce the original baseline
 

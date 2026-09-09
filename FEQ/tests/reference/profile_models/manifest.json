@@ -1,0 +1,207 @@
+{
+  "original_sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399",
+  "native_sha256": "4f974be24eeffb1b8e47e5fa213e5a1ff441bb8bac3f2a27e83156814379aa13",
+  "wine_version": "wine-11.4",
+  "native_returncode": 0,
+  "fixtures": [
+    {
+      "name": "feqex1-matrix-1",
+      "offset": 0,
+      "bytes": 860,
+      "sha256": "cbeeeb9179c5eebc47319f56f37814772ed537a6cf8f91956c16a0b6fb3af4df",
+      "exact_bytes": true
+    },
+    {
+      "name": "feqex1-matrix-2",
+      "offset": 860,
+      "bytes": 860,
+      "sha256": "60c2fe13302eca6245fa9c9994c452a0a95ab70c3a76c12c2fc0d36fa29cec23",
+      "exact_bytes": true
+    },
+    {
+      "name": "feqex1-matrix-3",
+      "offset": 1720,
+      "bytes": 860,
+      "sha256": "3fb880327f2c40bac5a9fdcad2f556405684b31d84460f36e548aabd5695b860",
+      "exact_bytes": true
+    },
+    {
+      "name": "feqex1-matrix-4",
+      "offset": 2580,
+      "bytes": 860,
+      "sha256": "0d3f3f607241c461deae50449345685649659ce0ebca057ff8dc35499535a6b6",
+      "exact_bytes": true
+    },
+    {
+      "name": "feqex1-matrix-5",
+      "offset": 3440,
+      "bytes": 860,
+      "sha256": "2fc54bbb13d743b5f8c8a713f859b9fe4c525dbf30cf272134b082564aa2a7ff",
+      "exact_bytes": true
+    },
+    {
+      "name": "feqex1-matrix-6",
+      "offset": 4300,
+      "bytes": 860,
+      "sha256": "dc6789edc7be3bd239ad1a65014f30b045e416f0546a9387c3f17309c354549e",
+      "exact_bytes": true
+    },
+    {
+      "name": "feqex1-matrix-7",
+      "offset": 5160,
+      "bytes": 860,
+      "sha256": "beddf486b8b8810b121e89ae517df4179153bfd1e56508caac32372554839ef6",
+      "exact_bytes": true
+    },
+    {
+      "name": "feqex1-matrix-8",
+      "offset": 6020,
+      "bytes": 860,
+      "sha256": "8721c1e803c913bec827f4d1c5a85d21ef4829ab79dcbc9d8a3c67ce170cfd72",
+      "exact_bytes": true
+    }
+  ],
+  "exact_bytes": true,
+  "input_sha256": "80fc550003a1d9eb43ace9483f2f7fa4f0a1649a265e0b0e7603e495c9dbb358",
+  "output_sha256": "c9a332e8a5441d3a933c589c64e0f4683ec6820c5db6e22ea3975797c8301a56",
+  "source": "First eight matrices at PROFAC entry during the original FEQEX1 model, captured without changing its numerical outputs. Each 44-equation matrix has 171 coefficients and three mixed blocks.",
+  "trace_manifest": {
+    "original": {
+      "path": "originals/feq1061/wrdapp/FEQ_10.61/BIN/feq.exe",
+      "bytes": 1857892,
+      "sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399"
+    },
+    "traced_sha256": "27840e1222dd4b4d538d6c8cde08f9549c316fb64c988364e2e5416b02a325df",
+    "command": [
+      "wine",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/branch-trace-original-1/TRACE.EXE",
+      "..\\data\\feqex1",
+      "feqex1.out"
+    ],
+    "returncode": 0,
+    "hooks": [
+      {
+        "routine": "_profac_",
+        "limit": 8,
+        "captures": [
+          {
+            "symbol": "_matcom_",
+            "bytes": 3790428
+          }
+        ],
+        "file": "trace-00.bin",
+        "record_bytes": 3790428,
+        "original_rva": 435664,
+        "hook_rva": 83648512,
+        "displaced_bytes": "83ec645553",
+        "displaced_instructions": [
+          "sub esp, 0x64",
+          "push ebp",
+          "push ebx"
+        ],
+        "replaced_header_padding": "244865616465723a202f70726a2f636f6e74726f6c2f7372632f6865616465722f77696e6e742f52",
+        "records": 8,
+        "sha256": "3db8ed5c55ed5d417f4634a6dd977558184957357bef457e25ebe0a8c7c4a401"
+      },
+      {
+        "routine": "_setinx_",
+        "limit": 8,
+        "captures": [
+          {
+            "symbol": "_bnelem_",
+            "bytes": 1176008
+          }
+        ],
+        "file": "trace-01.bin",
+        "record_bytes": 1176008,
+        "original_rva": 49904,
+        "hook_rva": 83652608,
+        "displaced_bytes": "81ec84040000",
+        "displaced_instructions": [
+          "sub esp, 0x484"
+        ],
+        "replaced_header_padding": "244865616465723a202f70726a2f636f6e74726f6c2f7372632f6865616465722f77696e6e742f52",
+        "records": 8,
+        "sha256": "5344c54c20801e5bfcae3de93fc9e02714a5f5d528adcb21a15d8d7ab22a61eb"
+      }
+    ],
+    "output_verification": {
+      "feqex1.out": {
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
+        "actual_sha256": "37221a517c9d1615927a8f08f26b0326a18b20c93a4a56a59e579dd0286573fc",
+        "expected_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "expected_bytes": 1693210,
+        "actual_bytes": 1693210
+      },
+      "feqex1.out.spi": {
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
+        "actual_sha256": "0d18e4d9f490d744ff25a95276dbed73226c3bf4826f1d373d3977919e5b1563",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 1836,
+        "actual_bytes": 1836
+      },
+      "feqex1.out.wsq": {
+        "raw_equal": true,
+        "clock_masked_equal": true,
+        "expected_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
+        "actual_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
+        "expected_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 129731,
+        "actual_bytes": 129731
+      }
+    },
+    "outputs": [
+      {
+        "path": "test/feqex1.out",
+        "bytes": 1693210,
+        "sha256": "37221a517c9d1615927a8f08f26b0326a18b20c93a4a56a59e579dd0286573fc"
+      },
+      {
+        "path": "test/feqex1.out.spi",
+        "bytes": 1836,
+        "sha256": "0d18e4d9f490d744ff25a95276dbed73226c3bf4826f1d373d3977919e5b1563"
+      },
+      {
+        "path": "test/feqex1.out.wsq",
+        "bytes": 129731,
+        "sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b"
+      },
+      {
+        "path": "test/trace-00.bin",
+        "bytes": 30323424,
+        "sha256": "3db8ed5c55ed5d417f4634a6dd977558184957357bef457e25ebe0a8c7c4a401"
+      },
+      {
+        "path": "test/trace-01.bin",
+        "bytes": 9408064,
+        "sha256": "5344c54c20801e5bfcae3de93fc9e02714a5f5d528adcb21a15d8d7ab22a61eb"
+      }
+    ]
+  },
+  "capture_config": "recovery/probes/matrix-and-branch-trace.json"
+}

@@ -1,11 +1,11 @@
 {
   "status": "Research engines execute all six supplied cases. Full numerical equivalence remains incomplete.",
-  "created_utc": "2026-09-09T04:09:30.674650+00:00",
+  "created_utc": "2026-09-09T04:53:32.728220+00:00",
   "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
   "run_manifest": {
     "purpose": "C++ research execution; equivalence requires a separate comparison.",
-    "created_utc": "2026-09-09T04:04:56.816283+00:00",
-    "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
+    "created_utc": "2026-09-09T04:49:33.692600+00:00",
+    "host": "macOS-26.5-arm64-arm-64bit",
     "legacy_path_links": false,
     "inputs": [
       {
@@ -142,8 +142,8 @@
     "binaries": [
       {
         "path": "bin/feq",
-        "bytes": 1299120,
-        "sha256": "108b44fe3c1bf78d7da17305cee1952a75408835c510a0cad0f1659a919d013e"
+        "bytes": 1301288,
+        "sha256": "9d618edba70a86d648b5a2f992162ae0edfb0c202f3a74fb508dd4d174058873"
       },
       {
         "path": "bin/fequtl",
@@ -160,23 +160,23 @@
           "feqex1.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.2923325418960303,
+        "elapsed_seconds": 0.28226466686464846,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex1.out",
             "bytes": 1693210,
-            "sha256": "69fe72963aa7a441f72985f8dfa8a01e88b821b2016abc23edd3b241a46e82f8"
+            "sha256": "d426101f9e9057308a93c628be0b003d075ffeb818c80a99ecf1fadf49357b8b"
           },
           {
             "path": "feqex1.out.spi",
             "bytes": 1836,
-            "sha256": "75115229f11b81a1b295a8dc09945e046894bd18277fb31166004132431a867f"
+            "sha256": "57eb7e33bb3ff23d3c1fc5f0125e187f9145fb03ac9a9f711a9982d7912f87a0"
           },
           {
             "path": "feqex1.out.wsq",
             "bytes": 129731,
-            "sha256": "e636e5cd5a12787c76e7cb19652b0ba360446ad2cd97f73c593a7482f6c8d9c1"
+            "sha256": "61ed0d0adce1909450dbc6ed1df3c5602d39fc082ad8e8cc36733edf2d2af99b"
           }
         ]
       },
@@ -188,23 +188,23 @@
           "feqex2.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.025302166119217873,
+        "elapsed_seconds": 0.024564958875998855,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex2.out",
             "bytes": 876444,
-            "sha256": "c4236c5e2dde34955dc958b697e6c7119cc977288e498f0246a830eb083c4c69"
+            "sha256": "af55875b297c0b8d7a9c196422001c45ceff029ad29e5d35e057362305ff84b6"
           },
           {
             "path": "feqex2.out.spi",
             "bytes": 1132,
-            "sha256": "92133faddbe004557c006b9982cc415d34542c17804eac8d297e8b58fb817d48"
+            "sha256": "7b011a0e1e66e910eadae20f992496dc4cb4e1ba3a01247483ced2d4d9fe9b60"
           },
           {
             "path": "feqex2.out.wsq",
             "bytes": 15809,
-            "sha256": "277b2df7a317ad3bd39215cb4dbedabc16483cc32271c18b2eb7b90ed9db7705"
+            "sha256": "e98e39a9be377a5d91d4352fad4e33109a76bd40d316f1f1b859cb7f8b1040ee"
           }
         ]
       },
@@ -216,23 +216,23 @@
           "feqex3.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.0317044158000499,
+        "elapsed_seconds": 0.032461042050272226,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex3.out",
             "bytes": 1340610,
-            "sha256": "237848456408537b4084700d766b139e08fc04d51fd8bc0b706ce237019645c9"
+            "sha256": "85540928c6a809511e7b402514bebdbf399383af1522a58187e34d1d1a83b5c1"
           },
           {
             "path": "feqex3.out.spi",
             "bytes": 1132,
-            "sha256": "3dd38a601666a68e2509b0d760fa868a04004194602db1d6a3832d848c2a4276"
+            "sha256": "fa381eb2b815ba268bdb4ed11d60ae3aecf4315092e81b5458d91460e63ebc23"
           },
           {
             "path": "feqex3.out.wsq",
             "bytes": 23579,
-            "sha256": "080f88946c0818defd0dd0c2316819f64ad6c2e22ad42f8a369b9e5186e499f1"
+            "sha256": "1f3cc81e8f13dfbb7ce602d237941dd7f4a3399394e791f7e868e93239163c56"
           }
         ]
       },
@@ -244,23 +244,23 @@
           "feqex4.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.03224441688507795,
+        "elapsed_seconds": 0.03217720799148083,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex4.out",
             "bytes": 1371793,
-            "sha256": "8285231d20daa223e7b742280a2e606a178d192d188ad205b1c08ad4a2450185"
+            "sha256": "ed56dc1993cded7725dd37196462d2d36864e25dd58b225f6e61fef4f48209d5"
           },
           {
             "path": "feqex4.out.spi",
             "bytes": 1132,
-            "sha256": "a42f05c05ae99d927d707c137d228a9146d23b93ddfdc0c04032555f9e9ee356"
+            "sha256": "f54ef6b322a665d48b72f9b456697bc90ba1f523afb8b9c8a0c9028c9eb2a9b0"
           },
           {
             "path": "feqex4.out.wsq",
             "bytes": 23579,
-            "sha256": "8ebdb6bf26455ac30f087ba3094350f56f4adfc9bbe7ab2107f96d36389fd3dc"
+            "sha256": "b3a05301e042eebef28768a256bfd30b09d7fec5875c589133a7f43380c9031d"
           }
         ]
       },
@@ -273,7 +273,7 @@
           "utlexm.tab"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.29766541603021324,
+        "elapsed_seconds": 0.29155616695061326,
         "process_completed": true,
         "outputs": [
           {
@@ -284,12 +284,12 @@
           {
             "path": "utlexm.out",
             "bytes": 775759,
-            "sha256": "47a7d5d1b5a08233c180575eee5ec879b30cc4e3893bd025e103d68a1dfe925c"
+            "sha256": "7119b1ec7b7efd4646f72e8669fe1b782adf8e007ffe3dda99206ede8cd6ccbd"
           },
           {
             "path": "utlexm.tab",
             "bytes": 135953,
-            "sha256": "30179fcb83a0c388136df714c5f6f8967701de5383f81b26996e7f86b8c5331b"
+            "sha256": "36f0d5cc08069c3ba417052cc656ef0f82457d264e949da89997074248f48c12"
           }
         ]
       },
@@ -302,18 +302,18 @@
           "culvert.tab"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.016990415984764695,
+        "elapsed_seconds": 0.01740658306516707,
         "process_completed": true,
         "outputs": [
           {
             "path": "culvert.out",
             "bytes": 141152,
-            "sha256": "07edd8a02eedf036a39ca584721e5df44c919b1546671304a4a8dd9d0e02db2e"
+            "sha256": "a506a15915d092cdcca58377b6b2132ba9d1827caa92c5c0755720902ad49925"
           },
           {
             "path": "culvert.tab",
             "bytes": 6015,
-            "sha256": "c0e645f8285af807c5c4fed3ca4e1ddadef6aa59974396e5f7a6062d7b49660a"
+            "sha256": "e40d75ea4f576db784ffb50bfb4ccf8fff912a246e5435711f87f0273f2fc901"
           }
         ]
       }
@@ -325,7 +325,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
-      "actual_sha256": "69fe72963aa7a441f72985f8dfa8a01e88b821b2016abc23edd3b241a46e82f8",
+      "actual_sha256": "d426101f9e9057308a93c628be0b003d075ffeb818c80a99ecf1fadf49357b8b",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -337,10 +337,10 @@
       "expected_bytes": 1693210,
       "actual_bytes": 1693210,
       "first_masked_difference": {
-        "byte_offset": 30890,
+        "byte_offset": 30892,
         "line": 627,
-        "expected_context": "b'+00 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-6.517E-03    Rel bal=BAL/(S2+BNQ)=-2.081E-08\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n'",
-        "actual_context": "b'+00 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-2.823E-03    Rel bal=BAL/(S2+BNQ)=-9.017E-09\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n'"
+        "expected_context": "b'0 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-6.517E-03    Rel bal=BAL/(S2+BNQ)=-2.081E-08\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n I'",
+        "actual_context": "b'0 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-6.660E-03    Rel bal=BAL/(S2+BNQ)=-2.127E-08\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n I'"
       }
     },
     {
@@ -348,7 +348,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
-      "actual_sha256": "75115229f11b81a1b295a8dc09945e046894bd18277fb31166004132431a867f",
+      "actual_sha256": "57eb7e33bb3ff23d3c1fc5f0125e187f9145fb03ac9a9f711a9982d7912f87a0",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -365,7 +365,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
-      "actual_sha256": "e636e5cd5a12787c76e7cb19652b0ba360446ad2cd97f73c593a7482f6c8d9c1",
+      "actual_sha256": "61ed0d0adce1909450dbc6ed1df3c5602d39fc082ad8e8cc36733edf2d2af99b",
       "expected_clock_fields": {
         "run_timestamp": 0,
         "elapsed_time": 0
@@ -388,7 +388,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
-      "actual_sha256": "c4236c5e2dde34955dc958b697e6c7119cc977288e498f0246a830eb083c4c69",
+      "actual_sha256": "af55875b297c0b8d7a9c196422001c45ceff029ad29e5d35e057362305ff84b6",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -411,7 +411,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
-      "actual_sha256": "92133faddbe004557c006b9982cc415d34542c17804eac8d297e8b58fb817d48",
+      "actual_sha256": "7b011a0e1e66e910eadae20f992496dc4cb4e1ba3a01247483ced2d4d9fe9b60",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -428,7 +428,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
-      "actual_sha256": "277b2df7a317ad3bd39215cb4dbedabc16483cc32271c18b2eb7b90ed9db7705",
+      "actual_sha256": "e98e39a9be377a5d91d4352fad4e33109a76bd40d316f1f1b859cb7f8b1040ee",
       "expected_clock_fields": {
         "run_timestamp": 0,
         "elapsed_time": 0
@@ -440,10 +440,10 @@
       "expected_bytes": 15809,
       "actual_bytes": 15809,
       "first_masked_difference": {
-        "byte_offset": 3218,
-        "line": 87,
-        "expected_context": "b'90/ 1/ 1 105.748 105.748 105.748\\r\\n   4.750000   106.5   234.1   340.6\\r\\n 1990/ 1/ 1 105.792 105.792 105.792\\r\\n   4.875000   109.7   243.2   352.9\\r\\n                                   '",
-        "actual_context": "b'90/ 1/ 1 105.748 105.748 105.748\\r\\n   4.750000   106.5   234.2   340.6\\r\\n 1990/ 1/ 1 105.792 105.792 105.792\\r\\n   4.875000   109.7   243.2   352.9\\r\\n                                   '"
+        "byte_offset": 4410,
+        "line": 119,
+        "expected_context": "b' 106.760 106.760 106.760\\r\\n   6.500000   169.4   374.8   544.2\\r\\n 1990/ 1/ 1 106.799 106.799 106.799\\r\\n   6.625000   173.1   371.9   545.0\\r\\n 1990/ 1/ 1 106.825 106.825 106.825\\r\\n   6.7'",
+        "actual_context": "b' 106.760 106.760 106.760\\r\\n   6.500000   169.4   374.8   544.3\\r\\n 1990/ 1/ 1 106.799 106.799 106.799\\r\\n   6.625000   173.1   371.9   545.0\\r\\n 1990/ 1/ 1 106.825 106.825 106.825\\r\\n   6.7'"
       }
     },
     {
@@ -451,7 +451,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
-      "actual_sha256": "237848456408537b4084700d766b139e08fc04d51fd8bc0b706ce237019645c9",
+      "actual_sha256": "85540928c6a809511e7b402514bebdbf399383af1522a58187e34d1d1a83b5c1",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -463,10 +463,10 @@
       "expected_bytes": 1340610,
       "actual_bytes": 1340610,
       "first_masked_difference": {
-        "byte_offset": 27896,
-        "line": 619,
-        "expected_context": "b'2 5.849+1 0.0 0.000+0\\r\\n   106                    0.6000 9.006+0 2.576+2  0.03   6.51  106.91 5.909+1 0.0 0.000+0\\r\\n   107                    0.7000 9.006+0 2.636+2  0.03   6.61  106'",
-        "actual_context": "b'2 5.849+1 0.0 0.000+0\\r\\n   106                    0.6000 9.005+0 2.576+2  0.03   6.51  106.91 5.909+1 0.0 0.000+0\\r\\n   107                    0.7000 9.006+0 2.636+2  0.03   6.61  106'"
+        "byte_offset": 35565,
+        "line": 727,
+        "expected_context": "b'0 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-5.704E-01    Rel bal=BAL/(S2+BNQ)=-3.165E-08\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n I'",
+        "actual_context": "b'0 WSQ=0.000E+00\\r\\n Bal diff=BAL=S2-S1-BNI-TAQ+BNQ-WSI+WSQ=-5.662E-01    Rel bal=BAL/(S2+BNQ)=-3.142E-08\\r\\n\\r\\n SIMULATION ending at  1990/ 1/ 1: 0.1666667.  Time step=   300.00 sec\\r\\n I'"
       }
     },
     {
@@ -474,7 +474,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
-      "actual_sha256": "3dd38a601666a68e2509b0d760fa868a04004194602db1d6a3832d848c2a4276",
+      "actual_sha256": "fa381eb2b815ba268bdb4ed11d60ae3aecf4315092e81b5458d91460e63ebc23",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -491,7 +491,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
-      "actual_sha256": "080f88946c0818defd0dd0c2316819f64ad6c2e22ad42f8a369b9e5186e499f1",
+      "actual_sha256": "1f3cc81e8f13dfbb7ce602d237941dd7f4a3399394e791f7e868e93239163c56",
       "expected_clock_fields": {
         "run_timestamp": 0,
         "elapsed_time": 0
@@ -514,7 +514,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
-      "actual_sha256": "8285231d20daa223e7b742280a2e606a178d192d188ad205b1c08ad4a2450185",
+      "actual_sha256": "ed56dc1993cded7725dd37196462d2d36864e25dd58b225f6e61fef4f48209d5",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -537,7 +537,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
-      "actual_sha256": "a42f05c05ae99d927d707c137d228a9146d23b93ddfdc0c04032555f9e9ee356",
+      "actual_sha256": "f54ef6b322a665d48b72f9b456697bc90ba1f523afb8b9c8a0c9028c9eb2a9b0",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -554,7 +554,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff",
-      "actual_sha256": "8ebdb6bf26455ac30f087ba3094350f56f4adfc9bbe7ab2107f96d36389fd3dc",
+      "actual_sha256": "b3a05301e042eebef28768a256bfd30b09d7fec5875c589133a7f43380c9031d",
       "expected_clock_fields": {
         "run_timestamp": 0,
         "elapsed_time": 0
@@ -566,10 +566,10 @@
       "expected_bytes": 23579,
       "actual_bytes": 23579,
       "first_masked_difference": {
-        "byte_offset": 5039,
-        "line": 136,
-        "expected_context": "b'                        \\r\\n 1990/ 1/ 1 104.127  97.637 101.448\\r\\n   5.000000   789.4  -218.1     0.0\\r\\n 1990/ 1/ 1 104.165  97.705 101.486\\r\\n   5.083333   815.1  -229.6     0.0\\r\\n 1990/'",
-        "actual_context": "b'                        \\r\\n 1990/ 1/ 1 104.127  97.637 101.449\\r\\n   5.000000   789.4  -218.1     0.0\\r\\n 1990/ 1/ 1 104.165  97.705 101.486\\r\\n   5.083333   815.1  -229.6     0.0\\r\\n 1990/'"
+        "byte_offset": 10402,
+        "line": 281,
+        "expected_context": "b' 1 107.338 107.110 105.476\\r\\n  10.500000  1948.4  -429.3   212.9\\r\\n 1990/ 1/ 1 107.358 107.145 105.504\\r\\n  10.583333  1914.2  -403.0   223.4\\r\\n 1990/ 1/ 1 107.374 107.173 105.528\\r\\n  10'",
+        "actual_context": "b' 1 107.338 107.110 105.476\\r\\n  10.500000  1948.4  -429.3   213.0\\r\\n 1990/ 1/ 1 107.358 107.145 105.504\\r\\n  10.583333  1914.2  -403.0   223.4\\r\\n 1990/ 1/ 1 107.374 107.173 105.528\\r\\n  10'"
       }
     },
     {
@@ -577,7 +577,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
-      "actual_sha256": "47a7d5d1b5a08233c180575eee5ec879b30cc4e3893bd025e103d68a1dfe925c",
+      "actual_sha256": "7119b1ec7b7efd4646f72e8669fe1b782adf8e007ffe3dda99206ede8cd6ccbd",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -600,7 +600,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
-      "actual_sha256": "30179fcb83a0c388136df714c5f6f8967701de5383f81b26996e7f86b8c5331b",
+      "actual_sha256": "36f0d5cc08069c3ba417052cc656ef0f82457d264e949da89997074248f48c12",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -640,7 +640,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72",
-      "actual_sha256": "07edd8a02eedf036a39ca584721e5df44c919b1546671304a4a8dd9d0e02db2e",
+      "actual_sha256": "a506a15915d092cdcca58377b6b2132ba9d1827caa92c5c0755720902ad49925",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -663,7 +663,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade",
-      "actual_sha256": "c0e645f8285af807c5c4fed3ca4e1ddadef6aa59974396e5f7a6062d7b49660a",
+      "actual_sha256": "e40d75ea4f576db784ffb50bfb4ccf8fff912a246e5435711f87f0273f2fc901",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -733,5 +733,856 @@
     "returncode": 0,
     "numeric_format_policy": "Leading zero enabled; no output values rounded or normalized after writing.",
     "library_sha256": "ce9868c9737e13cbce9dd07bce7c536b880dd06a0afc94dd49e4944d676f7b8b"
-  }
+  },
+  "component_integration": {
+    "status": "Research integration; passing component fixtures does not establish whole-engine acceptance.",
+    "changes": [
+      {
+        "file": "brnmat.cpp",
+        "function": "xxlkt20_",
+        "component": "src/section_interpolation.cpp",
+        "verification": "240 cases, 480 original calls, all seven output words exact"
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "rounding": "double reciprocal followed by binary32 distance/time ratio",
+        "original_addresses": [
+          "0x40c5fd",
+          "0x40c680"
+        ],
+        "evidence": "recovery/probes/branch-distance-trace.json"
+      },
+      {
+        "file": "fqshrftb.cpp",
+        "function": "xlkt20_",
+        "component": "src/section_interpolation.cpp",
+        "verification": "240 cases, 480 original calls, all seven output words exact"
+      }
+    ],
+    "source_files": [
+      {
+        "name": "binsearch.cpp",
+        "sha256": "5a6791d99b882ea1ca06b46ab058fe08d7c1e8800ec3aa2277ca7359efd5d47b"
+      },
+      {
+        "name": "block.cpp",
+        "sha256": "b21919efe2b90b5a6decdc93385dbc9d5a5f66e4f4546766803144a46bf7a500"
+      },
+      {
+        "name": "brnmat.cpp",
+        "sha256": "dffc1744123a7f66c61730f9d3b752773efadc3f152bba4ac949ff445e0c1e78"
+      },
+      {
+        "name": "chkinput.cpp",
+        "sha256": "40c87e7f78c11c14b89faa60e62bb6e296ddfe562c54963f0199e3aa32345d8e"
+      },
+      {
+        "name": "common.cpp",
+        "sha256": "73b57174abd1b095670c8d5c36fb4250193056984cbb1f99a5b12b81787b2b5a"
+      },
+      {
+        "name": "debug.cpp",
+        "sha256": "00ed52eaac2e259b07bcd851ee15757b78efbbfbeb31d5d56089e9ef3147d99f"
+      },
+      {
+        "name": "dmpmc.cpp",
+        "sha256": "3faeebb9da3402ed3a9289efed0d778f38cc258b29de839f798366b42af26637"
+      },
+      {
+        "name": "doeqz.cpp",
+        "sha256": "4581a78ec884732172be2ff9c6084915bb5c0efe8aa84397d2de3da0647625a5"
+      },
+      {
+        "name": "dtendlay.cpp",
+        "sha256": "baa943b5c4609a3529b0f7074f89f7e1d6801702f9bb92dc76d81a55bb2ebe39"
+      },
+      {
+        "name": "dual_source.cpp",
+        "sha256": "525f19ed96348727e30e53b639fcc78e869dcfa7c3801cf7358ca250a323f510"
+      },
+      {
+        "name": "dynamic_storage.cpp",
+        "sha256": "e61e1cb32e2438a4b28d0739487f2142f5c3529b35b8d76b3bc40cca28fc3273"
+      },
+      {
+        "name": "exnmat.cpp",
+        "sha256": "07fd25ce9c0616a675a1b5eb0187ed51a7101e127a5e17303bebb6a6a402a004"
+      },
+      {
+        "name": "feq.cpp",
+        "sha256": "70ebcc244aaede2a4251fa91eeff55ebdfef5221a62422dd0c1561aa94974ae0"
+      },
+      {
+        "name": "fqshrarg.cpp",
+        "sha256": "7ac0ea82b3b197095b5551f1ef8085e257d2bdd6866bb0d57a64eb8999c3645e"
+      },
+      {
+        "name": "fqshrftb.cpp",
+        "sha256": "f37c9dbfda49fb577ade3cea89b187ed46df13a7baedcedea37079e8864aa313"
+      },
+      {
+        "name": "fqshrinl.cpp",
+        "sha256": "74d1d00ad7fa85a3c48c42f4910acec19a876e1bdf50756fb3cf231be6e0053b"
+      },
+      {
+        "name": "fqshrlin.cpp",
+        "sha256": "ada5fd3081302d280fde00f2a6dc5992967b773427ffababc05ebfad266c0ef7"
+      },
+      {
+        "name": "fqshrplg.cpp",
+        "sha256": "bf67f19bf68e42c4d1c23490295ae6d512d1ca6c55fda04f02dc4994daea5b1f"
+      },
+      {
+        "name": "fqshrstr.cpp",
+        "sha256": "f566adb62da438cf4f9c30126595a0dc893462da22aa8f6211f1a3a51f709c71"
+      },
+      {
+        "name": "fqshrtdl.cpp",
+        "sha256": "421f208c79ad925184a0c2ba2f24e22a38072b173c4a8a1c6ac47aac373caf01"
+      },
+      {
+        "name": "fqshrtim.cpp",
+        "sha256": "b855c7cd9c1a481249a7350a4fcee20376de87d28886a15871eed037035bfd41"
+      },
+      {
+        "name": "fqshrunt.cpp",
+        "sha256": "2886b0baba483164aa75c50c30f29322afa68552cd78394cd76c50ee077fe84e"
+      },
+      {
+        "name": "ftlookup.cpp",
+        "sha256": "b48c672598fdfb19ff230fbc889976f139c313d34a752cf47e9dc06e5e153458"
+      },
+      {
+        "name": "genscn.cpp",
+        "sha256": "2146ec44d1f046e0fae6c4732b50d549b7995e9f5ccc5668a2ca26373fd73fc4"
+      },
+      {
+        "name": "getcode.cpp",
+        "sha256": "b2edf705a1cc62736ddd8c83b7570f1c0501d05334c747d26706df4a843dda8e"
+      },
+      {
+        "name": "getsvn_msw_lf95.cpp",
+        "sha256": "8c9461a1d8760b8307480f95120b132144e407e21959ada658c2bdc774e52b88"
+      },
+      {
+        "name": "hecdmy.cpp",
+        "sha256": "01ec56e197652e236f5d37a9825428145cdfb287e7db0de25b9cc68cc7cd101e"
+      },
+      {
+        "name": "hi_iq_ns.cpp",
+        "sha256": "b92941eaeea6a023665b215b815e19f6e6529fbc3bc982a866da023766211325"
+      },
+      {
+        "name": "home_name.cpp",
+        "sha256": "6b2002f92149229fefe64a17e194f3f351be3bcf0a577ca663672cd3f667624f"
+      },
+      {
+        "name": "input.cpp",
+        "sha256": "32bc84501577f250e4b241d17e39fd0a70140a85e75592088a847564d4f564af"
+      },
+      {
+        "name": "inputuf.cpp",
+        "sha256": "0ebd2af4e3fab88047fb17c86426209a0ad553c5a4a8d354747f6cca8016e72e"
+      },
+      {
+        "name": "iounits.cpp",
+        "sha256": "832c17db5e85fdd3bec83f2b290b5acbf6e25e49608ec23207f9c734cb1de7c5"
+      },
+      {
+        "name": "lf95_ms_s_npf.cpp",
+        "sha256": "7150561583e3cc8aff59f769aacb7000b4cc7b9b215a2c2ea1e571f3bfdb47c3"
+      },
+      {
+        "name": "linsys.cpp",
+        "sha256": "ec50035e6a6b44eb23a8b7aad7e97539d67dd3507a69cd6a23fb543c951a7457"
+      },
+      {
+        "name": "linuxcr.cpp",
+        "sha256": "bc0eb625c47638902508cac4a75e6e73594c4a450fd7bd1aac7b3d8c5c5aaf0e"
+      },
+      {
+        "name": "locsubs.cpp",
+        "sha256": "01a91da53ea73658770c5b640660faaee3646ec997a290ab58cbe2efa7be1b8a"
+      },
+      {
+        "name": "macro.cpp",
+        "sha256": "83eb74ddc0c3f2327a9071015e72b17e2ab0b9415e10e5fab3bdcb8a3779b120"
+      },
+      {
+        "name": "makpat.cpp",
+        "sha256": "4150154107cda42bb7381a1be3c58d85c032e700f45eb6a648741f115c540643"
+      },
+      {
+        "name": "miscfeq.cpp",
+        "sha256": "1045062b00a96be76a89531d58eeb13e12e4998b94e4b95cc750b7c1b285a177"
+      },
+      {
+        "name": "mkdir_fun.cpp",
+        "sha256": "5decc0b22b28a40b6f2bb23f2a0be5c2a5f1f2e42960d30b7706eb03722f7042"
+      },
+      {
+        "name": "newlookup.cpp",
+        "sha256": "24765bf7f97a395d93e6bb228f0aac58e56d40d1e9555d96821b7951acaf954e"
+      },
+      {
+        "name": "ntmatrix.cpp",
+        "sha256": "b1d6a446d0a442f9b4f5503d3fa59947da524b41480e3154fcf080cb5b050d8c"
+      },
+      {
+        "name": "ntwmxstr.cpp",
+        "sha256": "7b0e2c3a92e620cff74ad88c07016d75516741a8862bd8ab8e266b10abce3e63"
+      },
+      {
+        "name": "nxttok.cpp",
+        "sha256": "71427cd25f2d5619e263b86ec6545ed04f7cc9b744c6b53519682be428e92462"
+      },
+      {
+        "name": "output.cpp",
+        "sha256": "f1e98f9470e99cce23a957defe9f58b2a24570a0a8ca9cdaff3c0f5e82e3b67a"
+      },
+      {
+        "name": "putpat.cpp",
+        "sha256": "4b4afa04a4c65755ca61d6f0ac96b07672a9b088c2b0acb853bbfdc6173c144a"
+      },
+      {
+        "name": "pwd_msw_lf95.cpp",
+        "sha256": "60cccc3d508defe9995d4ac9df1fbb74d9ddce2adc4dad76c57168ebe53dbe68"
+      },
+      {
+        "name": "runinit.cpp",
+        "sha256": "92b77b2c69f82168b0999c65aa95e4c6b116f4f09dfd6477ba983567d36fa8a4"
+      },
+      {
+        "name": "schematic.cpp",
+        "sha256": "4b4d9044d482c531d39cd43f03b3a35d4e2457e46206a4799fe79be66e531b03"
+      },
+      {
+        "name": "select.cpp",
+        "sha256": "a63290a38da1436617744e890500974b1530c28f832714283019969b8f1282da"
+      },
+      {
+        "name": "sideweir.cpp",
+        "sha256": "119d1d27ea3719269469ef4e1a432ea0aea6d1783f056197065579e05b69c7a7"
+      },
+      {
+        "name": "svn_report.cpp",
+        "sha256": "3cc2211f1fa7a2d08bebc499f0ad1df71d89c023fa7745624ef89d4cda29884e"
+      },
+      {
+        "name": "tableid.cpp",
+        "sha256": "d75520d3e86a27f4b1d9bf8cf8cb7863e01c7c7ea3e3b7a224fa1e5233dad020"
+      },
+      {
+        "name": "tdtchk_free.cpp",
+        "sha256": "79d765220bd404ec270699e5d6b387b94f48f995f7d0d716bb1d600d5bd5d65d"
+      },
+      {
+        "name": "timeman.cpp",
+        "sha256": "64f57d96e831605527e3c328bc76dbd6f6cc35aa16512016d6f5be88dba8b415"
+      }
+    ]
+  },
+  "local_precision_experiment": {
+    "status": "Unverified precision experiment; never infer acceptance from promotion alone.",
+    "source_files": [
+      {
+        "name": "binsearch.cpp",
+        "sha256": "5a6791d99b882ea1ca06b46ab058fe08d7c1e8800ec3aa2277ca7359efd5d47b"
+      },
+      {
+        "name": "block.cpp",
+        "sha256": "b21919efe2b90b5a6decdc93385dbc9d5a5f66e4f4546766803144a46bf7a500"
+      },
+      {
+        "name": "brnmat.cpp",
+        "sha256": "328ea597628c3c9bff1dcd0260cd37e41ebea92999947a76d2c29b390a1baee6"
+      },
+      {
+        "name": "chkinput.cpp",
+        "sha256": "40c87e7f78c11c14b89faa60e62bb6e296ddfe562c54963f0199e3aa32345d8e"
+      },
+      {
+        "name": "common.cpp",
+        "sha256": "73b57174abd1b095670c8d5c36fb4250193056984cbb1f99a5b12b81787b2b5a"
+      },
+      {
+        "name": "debug.cpp",
+        "sha256": "00ed52eaac2e259b07bcd851ee15757b78efbbfbeb31d5d56089e9ef3147d99f"
+      },
+      {
+        "name": "dmpmc.cpp",
+        "sha256": "3faeebb9da3402ed3a9289efed0d778f38cc258b29de839f798366b42af26637"
+      },
+      {
+        "name": "doeqz.cpp",
+        "sha256": "4581a78ec884732172be2ff9c6084915bb5c0efe8aa84397d2de3da0647625a5"
+      },
+      {
+        "name": "dtendlay.cpp",
+        "sha256": "baa943b5c4609a3529b0f7074f89f7e1d6801702f9bb92dc76d81a55bb2ebe39"
+      },
+      {
+        "name": "dual_source.cpp",
+        "sha256": "525f19ed96348727e30e53b639fcc78e869dcfa7c3801cf7358ca250a323f510"
+      },
+      {
+        "name": "dynamic_storage.cpp",
+        "sha256": "e61e1cb32e2438a4b28d0739487f2142f5c3529b35b8d76b3bc40cca28fc3273"
+      },
+      {
+        "name": "exnmat.cpp",
+        "sha256": "07fd25ce9c0616a675a1b5eb0187ed51a7101e127a5e17303bebb6a6a402a004"
+      },
+      {
+        "name": "feq.cpp",
+        "sha256": "70ebcc244aaede2a4251fa91eeff55ebdfef5221a62422dd0c1561aa94974ae0"
+      },
+      {
+        "name": "fqshrarg.cpp",
+        "sha256": "7ac0ea82b3b197095b5551f1ef8085e257d2bdd6866bb0d57a64eb8999c3645e"
+      },
+      {
+        "name": "fqshrftb.cpp",
+        "sha256": "45d823b1bdce2d1f46bd6b787ea30975850156f0b595da3fbcce5a18ca6a7c85"
+      },
+      {
+        "name": "fqshrinl.cpp",
+        "sha256": "74d1d00ad7fa85a3c48c42f4910acec19a876e1bdf50756fb3cf231be6e0053b"
+      },
+      {
+        "name": "fqshrlin.cpp",
+        "sha256": "ada5fd3081302d280fde00f2a6dc5992967b773427ffababc05ebfad266c0ef7"
+      },
+      {
+        "name": "fqshrplg.cpp",
+        "sha256": "bf67f19bf68e42c4d1c23490295ae6d512d1ca6c55fda04f02dc4994daea5b1f"
+      },
+      {
+        "name": "fqshrstr.cpp",
+        "sha256": "f566adb62da438cf4f9c30126595a0dc893462da22aa8f6211f1a3a51f709c71"
+      },
+      {
+        "name": "fqshrtdl.cpp",
+        "sha256": "421f208c79ad925184a0c2ba2f24e22a38072b173c4a8a1c6ac47aac373caf01"
+      },
+      {
+        "name": "fqshrtim.cpp",
+        "sha256": "b855c7cd9c1a481249a7350a4fcee20376de87d28886a15871eed037035bfd41"
+      },
+      {
+        "name": "fqshrunt.cpp",
+        "sha256": "2886b0baba483164aa75c50c30f29322afa68552cd78394cd76c50ee077fe84e"
+      },
+      {
+        "name": "ftlookup.cpp",
+        "sha256": "b48c672598fdfb19ff230fbc889976f139c313d34a752cf47e9dc06e5e153458"
+      },
+      {
+        "name": "genscn.cpp",
+        "sha256": "2146ec44d1f046e0fae6c4732b50d549b7995e9f5ccc5668a2ca26373fd73fc4"
+      },
+      {
+        "name": "getcode.cpp",
+        "sha256": "b2edf705a1cc62736ddd8c83b7570f1c0501d05334c747d26706df4a843dda8e"
+      },
+      {
+        "name": "getsvn_msw_lf95.cpp",
+        "sha256": "8c9461a1d8760b8307480f95120b132144e407e21959ada658c2bdc774e52b88"
+      },
+      {
+        "name": "hecdmy.cpp",
+        "sha256": "01ec56e197652e236f5d37a9825428145cdfb287e7db0de25b9cc68cc7cd101e"
+      },
+      {
+        "name": "hi_iq_ns.cpp",
+        "sha256": "b92941eaeea6a023665b215b815e19f6e6529fbc3bc982a866da023766211325"
+      },
+      {
+        "name": "home_name.cpp",
+        "sha256": "6b2002f92149229fefe64a17e194f3f351be3bcf0a577ca663672cd3f667624f"
+      },
+      {
+        "name": "input.cpp",
+        "sha256": "32bc84501577f250e4b241d17e39fd0a70140a85e75592088a847564d4f564af"
+      },
+      {
+        "name": "inputuf.cpp",
+        "sha256": "0ebd2af4e3fab88047fb17c86426209a0ad553c5a4a8d354747f6cca8016e72e"
+      },
+      {
+        "name": "iounits.cpp",
+        "sha256": "832c17db5e85fdd3bec83f2b290b5acbf6e25e49608ec23207f9c734cb1de7c5"
+      },
+      {
+        "name": "lf95_ms_s_npf.cpp",
+        "sha256": "7150561583e3cc8aff59f769aacb7000b4cc7b9b215a2c2ea1e571f3bfdb47c3"
+      },
+      {
+        "name": "linsys.cpp",
+        "sha256": "ec50035e6a6b44eb23a8b7aad7e97539d67dd3507a69cd6a23fb543c951a7457"
+      },
+      {
+        "name": "linuxcr.cpp",
+        "sha256": "bc0eb625c47638902508cac4a75e6e73594c4a450fd7bd1aac7b3d8c5c5aaf0e"
+      },
+      {
+        "name": "locsubs.cpp",
+        "sha256": "01a91da53ea73658770c5b640660faaee3646ec997a290ab58cbe2efa7be1b8a"
+      },
+      {
+        "name": "macro.cpp",
+        "sha256": "83eb74ddc0c3f2327a9071015e72b17e2ab0b9415e10e5fab3bdcb8a3779b120"
+      },
+      {
+        "name": "makpat.cpp",
+        "sha256": "4150154107cda42bb7381a1be3c58d85c032e700f45eb6a648741f115c540643"
+      },
+      {
+        "name": "miscfeq.cpp",
+        "sha256": "1045062b00a96be76a89531d58eeb13e12e4998b94e4b95cc750b7c1b285a177"
+      },
+      {
+        "name": "mkdir_fun.cpp",
+        "sha256": "5decc0b22b28a40b6f2bb23f2a0be5c2a5f1f2e42960d30b7706eb03722f7042"
+      },
+      {
+        "name": "newlookup.cpp",
+        "sha256": "24765bf7f97a395d93e6bb228f0aac58e56d40d1e9555d96821b7951acaf954e"
+      },
+      {
+        "name": "ntmatrix.cpp",
+        "sha256": "b1d6a446d0a442f9b4f5503d3fa59947da524b41480e3154fcf080cb5b050d8c"
+      },
+      {
+        "name": "ntwmxstr.cpp",
+        "sha256": "7b0e2c3a92e620cff74ad88c07016d75516741a8862bd8ab8e266b10abce3e63"
+      },
+      {
+        "name": "nxttok.cpp",
+        "sha256": "71427cd25f2d5619e263b86ec6545ed04f7cc9b744c6b53519682be428e92462"
+      },
+      {
+        "name": "output.cpp",
+        "sha256": "f1e98f9470e99cce23a957defe9f58b2a24570a0a8ca9cdaff3c0f5e82e3b67a"
+      },
+      {
+        "name": "putpat.cpp",
+        "sha256": "4b4afa04a4c65755ca61d6f0ac96b07672a9b088c2b0acb853bbfdc6173c144a"
+      },
+      {
+        "name": "pwd_msw_lf95.cpp",
+        "sha256": "60cccc3d508defe9995d4ac9df1fbb74d9ddce2adc4dad76c57168ebe53dbe68"
+      },
+      {
+        "name": "runinit.cpp",
+        "sha256": "92b77b2c69f82168b0999c65aa95e4c6b116f4f09dfd6477ba983567d36fa8a4"
+      },
+      {
+        "name": "schematic.cpp",
+        "sha256": "4b4d9044d482c531d39cd43f03b3a35d4e2457e46206a4799fe79be66e531b03"
+      },
+      {
+        "name": "select.cpp",
+        "sha256": "a63290a38da1436617744e890500974b1530c28f832714283019969b8f1282da"
+      },
+      {
+        "name": "sideweir.cpp",
+        "sha256": "119d1d27ea3719269469ef4e1a432ea0aea6d1783f056197065579e05b69c7a7"
+      },
+      {
+        "name": "svn_report.cpp",
+        "sha256": "3cc2211f1fa7a2d08bebc499f0ad1df71d89c023fa7745624ef89d4cda29884e"
+      },
+      {
+        "name": "tableid.cpp",
+        "sha256": "d75520d3e86a27f4b1d9bf8cf8cb7863e01c7c7ea3e3b7a224fa1e5233dad020"
+      },
+      {
+        "name": "tdtchk_free.cpp",
+        "sha256": "79d765220bd404ec270699e5d6b387b94f48f995f7d0d716bb1d600d5bd5d65d"
+      },
+      {
+        "name": "timeman.cpp",
+        "sha256": "64f57d96e831605527e3c328bc76dbd6f6cc35aa16512016d6f5be88dba8b415"
+      }
+    ],
+    "changes": [
+      {
+        "file": "brnmat.cpp",
+        "function": "xxlkt20_",
+        "line": 7902,
+        "wide_candidates": [
+          "feq_gen_r_d_1"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "xxlkt20_",
+        "line": 7905,
+        "wide_candidates": [
+          "feq_gen_h_d_"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "xxlkt20_",
+        "line": 7907,
+        "wide_candidates": [
+          "p",
+          "y",
+          "b0",
+          "b1",
+          "k0",
+          "k1",
+          "t0",
+          "y0",
+          "fl",
+          "fr"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "xxlkt20_",
+        "line": 7909,
+        "wide_candidates": [
+          "dy",
+          "db0",
+          "db1",
+          "dk0",
+          "dk1",
+          "dmf",
+          "dlp",
+          "flp",
+          "dyi",
+          "drp",
+          "frp"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8361,
+        "wide_candidates": [
+          "feq_gen_r_d_1"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8367,
+        "wide_candidates": [
+          "b",
+          "feq_gen_h_d_"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8369,
+        "wide_candidates": [
+          "p",
+          "c1",
+          "c2",
+          "c3",
+          "c4",
+          "b0",
+          "k0",
+          "s1",
+          "s2",
+          "s3",
+          "t0",
+          "y0",
+          "cf",
+          "dh",
+          "fl"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8371,
+        "wide_candidates": [
+          "fr"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8373,
+        "wide_candidates": [
+          "dv",
+          "dx",
+          "dy",
+          "dz",
+          "yc",
+          "qp",
+          "zi",
+          "tp"
+        ],
+        "addressed_locals_retained": [
+          "kp"
+        ]
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8375,
+        "wide_candidates": [
+          "wx",
+          "db0",
+          "db1",
+          "dk0",
+          "dk1",
+          "kh1",
+          "dx2",
+          "gde",
+          "ald",
+          "amd",
+          "bld",
+          "ard",
+          "brd",
+          "dmf",
+          "kld",
+          "kmd"
+        ],
+        "addressed_locals_retained": [
+          "ym",
+          "dv2",
+          "kac",
+          "kdc"
+        ]
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8378,
+        "wide_candidates": [
+          "krd",
+          "amu",
+          "dxh",
+          "qld",
+          "err",
+          "qrd",
+          "kmu",
+          "res",
+          "tld",
+          "tpa",
+          "qlu",
+          "tpb",
+          "tpc",
+          "tpd",
+          "qru",
+          "trd",
+          "vld",
+          "vlu",
+          "vrd",
+          "vru",
+          "wtc",
+          "yld",
+          "yrd",
+          "zit",
+          "ziy",
+          "dyi",
+          "flp",
+          "frp",
+          "dlp",
+          "drp"
+        ],
+        "addressed_locals_retained": [
+          "alu",
+          "blu",
+          "aru",
+          "bru",
+          "klu",
+          "kru",
+          "tlu",
+          "tru",
+          "ylu",
+          "yru"
+        ]
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8385,
+        "wide_candidates": [
+          "dxdt"
+        ],
+        "addressed_locals_retained": [
+          "dblu",
+          "dbru",
+          "dklu",
+          "khlm",
+          "dkru",
+          "dtlu",
+          "dtru"
+        ]
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8387,
+        "wide_candidates": [
+          "ksum",
+          "pgfu",
+          "qmax",
+          "sfmt",
+          "sfmu"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8389,
+        "wide_candidates": [
+          "beta1"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8392,
+        "wide_candidates": [
+          "dxhdt",
+          "pfqlu",
+          "pfqru",
+          "pfylu",
+          "pfyru",
+          "sgndv2"
+        ],
+        "addressed_locals_retained": [
+          "dkhlm"
+        ]
+      },
+      {
+        "file": "brnmat.cpp",
+        "function": "setinx_",
+        "line": 8394,
+        "wide_candidates": [
+          "dqpylu",
+          "dqpyru",
+          "dyndif",
+          "oldflw",
+          "oldimp",
+          "oldvol",
+          "oldwnd"
+        ],
+        "addressed_locals_retained": [
+          "newsum",
+          "oldsum"
+        ]
+      },
+      {
+        "file": "fqshrftb.cpp",
+        "function": "xlkt20_",
+        "line": 18561,
+        "wide_candidates": [
+          "feq_gen_r_d_1"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "fqshrftb.cpp",
+        "function": "xlkt20_",
+        "line": 18570,
+        "wide_candidates": [
+          "feq_gen_h_d_"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "fqshrftb.cpp",
+        "function": "xlkt20_",
+        "line": 18572,
+        "wide_candidates": [
+          "p",
+          "b0",
+          "b1",
+          "k0",
+          "k1",
+          "t0",
+          "y0"
+        ],
+        "addressed_locals_retained": [
+          "y"
+        ]
+      },
+      {
+        "file": "fqshrftb.cpp",
+        "function": "xlkt20_",
+        "line": 18574,
+        "wide_candidates": [
+          "hh",
+          "fl"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "fqshrftb.cpp",
+        "function": "xlkt20_",
+        "line": 18576,
+        "wide_candidates": [
+          "fr"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "fqshrftb.cpp",
+        "function": "xlkt20_",
+        "line": 18578,
+        "wide_candidates": [
+          "dy",
+          "db0",
+          "db1",
+          "dk0",
+          "dk1",
+          "dmf"
+        ],
+        "addressed_locals_retained": []
+      },
+      {
+        "file": "fqshrftb.cpp",
+        "function": "xlkt20_",
+        "line": 18581,
+        "wide_candidates": [
+          "dlp",
+          "flp",
+          "dyi",
+          "drp",
+          "frp"
+        ],
+        "addressed_locals_retained": []
+      }
+    ]
+  },
+  "independent_components": [
+    {
+      "source": "src/profile_matrix.cpp",
+      "sha256": "c7d076f0db1fc662c715acf5c79a590ca410f034e5488a5d7f06b882447ae8fb"
+    },
+    {
+      "source": "src/section_interpolation.cpp",
+      "sha256": "dca68000de242fd4a857079021f8f8f9dcfcdf0fd71d41ead255cd233f130608"
+    },
+    {
+      "source": "tools/profile_compat.cpp",
+      "sha256": "cdcb14f55d9169b351994c16656483dc4a27a317ab3fe79d69d9de816b21e0d6"
+    },
+    {
+      "source": "tools/section_compat.cpp",
+      "sha256": "145d4296d83a63d5a30dd2864803f02f49862be21b04407259ce371be2a81aa5"
+    }
+  ],
+  "first_matrix_comparison": "matrix-entry-comparison.json"
 }

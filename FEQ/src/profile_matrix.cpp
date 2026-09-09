@@ -53,7 +53,8 @@ void factor_profile(std::int32_t block_count,
                     IndexedView<const std::int32_t> lower_end,
                     IndexedView<float> coefficients) {
     validate_layout(diagonal,lower_end,coefficients.size());
-    if (block_count < 0 || static_cast<std::size_t>(block_count) > block_start.size() ||
+    if (block_count < 0 || block_count > std::numeric_limits<std::int32_t>::max()/8 ||
+        static_cast<std::size_t>(block_count) > block_start.size() ||
         static_cast<std::size_t>(block_count) > block_end.size() ||
         static_cast<std::size_t>(block_count) > block_kind.size()) {
         throw std::invalid_argument("Inconsistent profile-matrix block count.");

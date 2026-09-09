@@ -159,6 +159,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--native',type=Path,required=True)
+    parser.add_argument('--fixtures',type=Path,help='Explicit JSON case list, such as model matrices captured by trace_original.py.')
     parser.add_argument('--wine-prefix',type=Path,default=ROOT/'build/wineprefix')
     args = parser.parse_args()
     output = args.output.resolve()
@@ -170,7 +171,7 @@ def main():
         raise ValueError('Recovered FEQ executable hash changed.')
     pe = pefile.PE(data=original)
     symbols = {item['name']:item for item in coff_symbols(original)}
-    cases = fixtures()
+    cases = json.loads(args.fixtures.read_text()) if args.fixtures else fixtures()
     inputs = b''.join(record(case) for case in cases)
     (output/'inputs.bin').write_bytes(inputs)
     env = os.environ.copy()
@@ -179,7 +180,8 @@ def main():
     records = []
     for case in cases:
         (output/'PROBE.EXE').write_bytes(image(original,pe,symbols,case))
-        process = subprocess.run(['wine','PROBE.EXE'],cwd=output,env=env,capture_output=True,timeout=30,stdin=subprocess.DEVNULL)
+        command = [str(output/'PROBE.EXE')] if os.name == 'nt' else ['wine','PROBE.EXE']
+        process = subprocess.run(command,cwd=output,env=env,capture_output=True,timeout=30,stdin=subprocess.DEVNULL)
         count = 4*(len(case['coefficients'])+case['n'])
         if process.returncode or len(process.stdout)!=count:
             (output/(case['name']+'.error.log')).write_bytes(process.stdout+process.stderr)
@@ -196,7 +198,7 @@ def main():
         if not item['exact_bytes']:
             print(item['name']+': DIFFERENT',flush=True)
     result = {'original_sha256':ORIGINAL_SHA256,'native_sha256':hashlib.sha256(args.native.read_bytes()).hexdigest(),
-        'wine_version':subprocess.check_output(['wine','--version'],text=True).strip(),
+        'wine_version':subprocess.check_output(['wine','--version'],text=True).strip() if os.name != 'nt' else None,
         'native_returncode':native.returncode,'fixtures':records,
         'exact_bytes':native.returncode==0 and bytes(expected)==native.stdout,
         'input_sha256':hashlib.sha256(inputs).hexdigest(),'output_sha256':hashlib.sha256(expected).hexdigest()}

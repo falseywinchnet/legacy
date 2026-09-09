@@ -1,0 +1,24 @@
+{
+  "hooks": [
+    {
+      "routine": "_profac_",
+      "limit": 8,
+      "captures": [
+        {
+          "symbol": "_matcom_",
+          "bytes": 3790428
+        }
+      ]
+    },
+    {
+      "routine": "_setinx_",
+      "limit": 8,
+      "captures": [
+        {
+          "symbol": "_bnelem_",
+          "bytes": 1176008
+        }
+      ]
+    }
+  ]
+}

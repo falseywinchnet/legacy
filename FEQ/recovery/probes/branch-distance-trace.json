@@ -1,0 +1,23 @@
+{
+  "hooks": [
+    {
+      "routine": "_setinx_",
+      "offset": 6239,
+      "limit": 8,
+      "captures": [
+        {
+          "stack_offset": 0,
+          "bytes": 1172
+        },
+        {
+          "rva": 1148272,
+          "bytes": 256
+        },
+        {
+          "fpu": true,
+          "bytes": 108
+        }
+      ]
+    }
+  ]
+}

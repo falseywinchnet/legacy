@@ -115,7 +115,7 @@ companion installer does not imply that its source has been recovered or ported.
 ## Independent profile solver and complete research engines
 
 The independent C++ profile solver in `src/profile_matrix.cpp` reproduces the
-original `PROFAC` and `PROSLV` routines bit for bit across 48 controlled fixtures.
+original `PROFAC` and `PROSLV` routines bit for bit across 56 controlled fixtures.
 `tools/probe_profile_original.py` replaces only PROGRAM entry in a disposable
 copy of FEQ. The original runtime initializes normally, then the driver calls
 the original factorization and solution addresses with explicitly populated
@@ -123,9 +123,11 @@ COMMON arrays. It captures every resulting coefficient and solution word.
 The original executable hash is checked before any temporary copy is patched.
 
 The fixtures comprise 24 dense systems (orders 1, 2, 3, 5, 8, 12, 20, and 24,
-at scales 0.0001, 1, and 10000) and 24 specialized branch-block factorizations.
+at scales 0.0001, 1, and 10000), 24 specialized branch-block factorizations,
+and eight 44-equation mixed-block matrices captured during the original FEQEX1 run.
 The native comparison also passed AddressSanitizer and UndefinedBehaviorSanitizer.
-The committed fixtures are under `tests/reference/profile_matrix/`; the original
+The committed fixtures are under `tests/reference/profile_matrix/` and
+`tests/reference/profile_models/`; the original
 instruction listings are in `recovery/assembly/feq/`.
 
 This comparison resolves two precision details that a source-level translation
@@ -151,3 +153,42 @@ All six supplied cases execute. The current whole-file acceptance result is
 **5 of 17 files matching**; the remaining numerical differences are unresolved.
 The full results are in `cpp-research-status.json`. Passing a direct routine test
 does not establish equivalence of an entire hydraulic model.
+
+## Section interpolation and first-divergence tracing
+
+`src/section_interpolation.cpp` independently implements the linear top-width
+integral and the linear or cubic Hermite interpolation of square-root
+conveyance and momentum factor. It matches all seven binary32 outputs in 240
+cases against both released lookup entry points (`XLKT20`, RVA `0x3a7f0`, and
+`XXLKT20`, RVA `0xbf70`). The two original routines agree across all 480 calls.
+Inputs and golden outputs are committed under `tests/reference/section_interpolation/`.
+
+Both original routines write rounded top-width and width-derivative outputs
+with `FST` while retaining the wider values for integration. Re-reading the
+rounded top-width output in the area expression changes an initial-state area
+in FEQEX1. The independent implementation explicitly retains those doubles.
+By contrast, the square-root conveyance and its derivative are reloaded from
+binary32 storage before squaring and applying the chain rule. Both rounding
+patterns are recorded beside the equations.
+
+Full-model tracing preserves flags, general registers, and the complete x87
+state. Every trace run also checks that its model outputs still reproduce the
+published original outputs. At the first `PROFAC` call, the earlier research
+engine had 36 different coefficient words and 23 different residual words.
+The current first matrix matches the complete 3,790,428-byte COMMON block.
+
+The last rounding step needed for that first matrix was `DXDT`. The original
+forms `1/DT` in double precision, multiplies by `DX`, and stores the result as
+binary32 before computing `DXHDT`. Its subsequent local intermediates can again
+remain wider. Blanket promotion of all local variables therefore cannot be
+used as a correctness rule. Original addresses `0x40c5fd` and `0x40c680`, and
+the recorded stack trace, support the explicit conversion in the research
+adapter.
+
+The next matrix still differs in 14 words even though the branch-state inputs
+to the first two branch calls match every byte. This locates the next difference
+inside the subsequent branch calculation. These findings do not change the
+whole-engine acceptance result of 5 out of 17 matching files. The current
+run hashes and complete comparisons are recorded in `cpp-research-status.json`
+and `matrix-entry-comparison.json`. See [NUMERICAL_PROBES.md](NUMERICAL_PROBES.md)
+for commands and limits of the probes.

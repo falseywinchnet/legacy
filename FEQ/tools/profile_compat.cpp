@@ -4,12 +4,18 @@
 #include "common.hpp"
 
 extern "C" {
+#if defined(FEQ_RESEARCH_MATRIX_TRACE)
+void feq_research_trace_matrix();
+#endif
 integer s_wsfe(cilist*);
 integer do_fio(integer*, char*, ftnlen);
 integer e_wsfe();
 void s_stop(char*, ftnlen);
 
 int profac_(integer* output_unit) {
+#if defined(FEQ_RESEARCH_MATRIX_TRACE)
+    feq_research_trace_matrix();
+#endif
     if (matcom_.numeq <= 0 || matcom_.numeq > 24800) {
         throw std::invalid_argument("Profile equation count exceeds the released storage.");
     }
