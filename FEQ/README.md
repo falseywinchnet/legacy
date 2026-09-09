@@ -93,6 +93,15 @@ square roots store REAL before multiplication. The integration preserves
 those distinctions and the separate REAL value used by the initial-depth
 error message. See [`tests/reference/steady_profile/`](tests/reference/steady_profile/).
 
+Full-barrel flow and entrance piezometric elevation match **3,072 calls to the
+unchanged original FULBAR routine**. These cover three geometric scales,
+discharge coefficients through unity, zero and positive road flow, zero and
+positive barrel friction, and seven convergence tolerances. The implementation
+preserves the original single-precision divisor and square-root stores, and
+the iteration's choice of the previous flow estimate on convergence. See
+[`src/full_barrel.cpp`](src/full_barrel.cpp) and
+[`tests/reference/full_barrel/`](tests/reference/full_barrel/).
+
 The approach-section energy balance matches **840 direct original RAPP calls**,
 including every returned bit, the contraction flag, and all thirteen stored
 section fields. These cover the expansion/contraction transition and both sides

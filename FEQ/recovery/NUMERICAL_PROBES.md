@@ -936,3 +936,37 @@ for complex values, other numeric types, long-record wrapping or input.
 FEQ/build/python312/bin/python FEQ/tools/probe_list_real_original.py \
   --native FEQ/build/core/feq_decimal_probe --output FEQ/build/list-real-recapture
 ```
+
+## Full-barrel flow
+
+`probe_full_barrel_original.py` calls the entire unchanged `FULBAR` routine in
+the released FEQUTL executable. Only MAIN is replaced by the input/output
+driver. All 3,072 cases match both output REAL words: barrel discharge and
+entrance piezometric elevation. The fixtures vary geometry over three scales,
+approach and barrel friction, six discharge coefficients including unity,
+zero and positive road flow, and seven relative convergence tolerances.
+
+`full_barrel.cpp` records the source equations and the executable's rounding
+boundaries. FULBAR stores the energy divisor at `0x4259ef`; the initial and
+iterated square-root velocities store at `0x425a02` and `0x425a9f`.
+The numerator and the candidate flow product remain wide. On convergence,
+the released routine returns the previous stored Q, because assignment of
+the candidate occurs only on the repeat branch. The contraction calculation
+likewise rounds the square root at `0x425afe`, while retaining its reciprocal
+and subsequent velocity calculations. The original never increments its
+declared iteration counter; the port preserves the released loop behavior.
+
+Integration fixes one line of the supplied culvert report. The earliest
+remaining differences are unchanged: UTLEXM line 1921 and CULVERT line 711.
+There are 68 and 176 differing non-clock report lines respectively. All
+twelve FEQ outputs, the UTLEXM function table and cross-section file remain
+exact after masking only execution clocks. Fresh tracing preserves every
+word in all 2,092 FEQ matrices and all 19,701 gate residual entries, plus
+the entire 276,813-byte UFGATE report section. All 52 CMake checks pass in
+Release and sanitizer builds. This component does not complete the three
+remaining FEQUTL output comparisons or the application release.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_full_barrel_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/full-barrel-recapture
+```

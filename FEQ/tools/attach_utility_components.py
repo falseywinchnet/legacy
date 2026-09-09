@@ -794,6 +794,24 @@ def integrate_steady_profile(data):
     return comment.encode()+edit_text(data,edits)
 
 
+def integrate_full_barrel(data):
+    definitions = {content(identifier(function.child_by_field_name('declarator')),data):function
+                   for function in functions(data)}
+    if 'fulbar_' not in definitions:raise ValueError('Expected FULBAR.')
+    body = definitions['fulbar_'].child_by_field_name('body')
+    replacement = """{
+    static_cast<void>(stdout);
+    const feq::FullBarrelInput input{*a1true,*alp1t,*k1true,*z1true,*a2full,*k2full,
+        *a3full,*cdis,*avh,*z3p,appcom_1.applen,appcom_1.applos,grvcom_1.grav2,
+        rdfcom_1.wfrd,epscom_1.epsf,culcom_1.frcfac};
+    const feq::FullBarrelResult result = feq::full_barrel(input);
+    *q = result.flow;
+    *zat2 = result.entrance_piezometric_elevation;
+    return 0;
+}"""
+    return b'#include <feq/full_barrel.hpp>\n'+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
+
+
 def integrate_approach_residual(data):
     definitions = {content(identifier(function.child_by_field_name('declarator')),data):function
                    for function in functions(data)}
@@ -918,7 +936,7 @@ def main():
         elif path.name == 'tablook.cpp':data = integrate_scalar_moment(data)
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
-        elif path.name == 'culvertc.cpp':data = integrate_steady_profile(integrate_steady_residuals(data))
+        elif path.name == 'culvertc.cpp':data = integrate_full_barrel(integrate_steady_profile(integrate_steady_residuals(data)))
         elif path.name == 'culvertd.cpp':data = integrate_approach_residual(integrate_culvert_losses(data))
         elif path.name == 'numrmath.cpp':data = integrate_gaussian_rule(data)
         if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'):
@@ -1006,6 +1024,9 @@ def main():
                 {'file':'culvertc.cpp','functions':['sber_','sper_','sfpsbe_'],'component':'src/steady_residual.cpp',
                  'scope':'Wide velocity, energy, eddy loss and normalized residuals after original section lookup.',
                  'verification':['tests/reference/steady_residual/manifest.json','tests/reference/steady_profile/manifest.json']},
+                {'file':'culvertc.cpp','function':'fulbar_','component':'src/full_barrel.cpp',
+                 'scope':'Full-barrel flow, road-flow iteration and entrance piezometric elevation with original REAL stores.',
+                 'verification':'tests/reference/full_barrel/manifest.json'},
                 {'file':'culvertd.cpp','functions':['degcon_','rqvstw_','fcd123_'],'component':'src/culvert_loss.cpp',
                  'scope':'Discharge curves, contraction adjustment and RQVSTW velocity head loss.',
                  'verification':['tests/reference/culvert_loss/manifest.json','tests/reference/culvert_coefficient/manifest.json']},

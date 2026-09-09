@@ -5,6 +5,7 @@
 #include <feq/approach_residual.hpp>
 #include <feq/gate_residual.hpp>
 #include <feq/power_spacing.hpp>
+#include <feq/full_barrel.hpp>
 #include <array>
 #include <bit>
 #include <cstdint>
@@ -75,7 +76,22 @@ int main(int argc, char** argv) {
         const bool power_spacing = argc == 2 && std::strcmp(argv[1],"--power-spacing") == 0;
         const bool gate_state = argc == 2 && std::strcmp(argv[1],"--gate-state") == 0;
         const bool specific_energy = argc == 2 && std::strcmp(argv[1],"--specific-energy") == 0;
+        const bool full_barrel = argc == 2 && std::strcmp(argv[1],"--full-barrel") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (full_barrel) {
+                float fields[15]{};
+                for (int i = 0; i < 15; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const std::uint64_t low = read_word();
+                const std::uint64_t high = read_word();
+                const double friction = std::bit_cast<double>(low | (high << 32));
+                const feq::FullBarrelInput input{fields[0],fields[1],fields[2],fields[3],fields[4],
+                    fields[5],fields[6],fields[7],fields[8],fields[9],fields[10],fields[11],
+                    fields[12],fields[13],fields[14],friction};
+                const feq::FullBarrelResult result = feq::full_barrel(input);
+                write_float(result.flow);
+                write_float(result.entrance_piezometric_elevation);
+                continue;
+            }
             if (gate_state) {
                 float fields[14]{};
                 for (int i = 0; i < 14; ++i) { fields[i] = std::bit_cast<float>(read_word()); }

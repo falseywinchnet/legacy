@@ -9,7 +9,8 @@ import sys
 kind=sys.argv[2]
 mode={'gate_residual':'--gate','gate_levels':'--gate-levels','gate_free':'--gate-free',
       'gate_orifice':'--gate-orifice','gate_state':'--gate-state',
-      'specific_energy':'--specific-energy','power_spacing':'--power-spacing'}[kind]
+      'specific_energy':'--specific-energy','power_spacing':'--power-spacing',
+      'full_barrel':'--full-barrel'}[kind]
 fixtures=Path(__file__).resolve().parent/'reference'/kind
 inputs=(fixtures/'inputs.bin').read_bytes();expected=(fixtures/'outputs.bin').read_bytes()
 manifest=json.loads((fixtures/'manifest.json').read_text())

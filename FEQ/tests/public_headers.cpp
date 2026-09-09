@@ -25,3 +25,4 @@
 #include <feq/table_interpolation.hpp>
 #include <feq/trigonometry.hpp>
 #include <feq/weir_flow.hpp>
+#include <feq/full_barrel.hpp>
