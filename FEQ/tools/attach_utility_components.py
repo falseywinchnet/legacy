@@ -134,6 +134,21 @@ def integrate_gate_residuals(data):
     return b'#include <feq/gate_residual.hpp>\n'+edit_text(data,edits)
 
 
+def integrate_scalar_conveyance(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'lktk_']
+    if len(targets) != 1:raise ValueError('Expected one scalar conveyance lookup.')
+    body = targets[0].child_by_field_name('body')
+    start = [node for node in body.named_children if node.type == 'expression_statement' and
+             content(node,data) == 'y0 = ftab[l];']
+    if len(start) != 1:raise ValueError('Expected the start of LKTK interval arithmetic.')
+    replacement = '''// Preserve the original interval selection, diagnostics and cached row.
+    *k = feq::interpolate_scalar_conveyance(y,ftab[l],ftab[l+3],ftab[l+xoff],ftab[l+xoff+3]);
+    return 0;
+'''
+    return b'#include <feq/section_interpolation.hpp>\n'+edit_text(data,[(start[0].start_byte,body.end_byte-1,replacement)])
+
+
 def integrate_scalar_moment(data):
     targets = [function for function in functions(data)
                if content(identifier(function.child_by_field_name('declarator')),data) == 'lktj_']
@@ -961,7 +976,7 @@ def main():
         elif path.name == 'conduit.cpp':data = integrate_conduit_boundaries(integrate_arch(data))
         elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
         elif path.name == 'ufgate.cpp':data = integrate_gate_state(integrate_power_spacing(integrate_gate_orifice(integrate_gate_free(integrate_gate_levels(integrate_gate_residuals(data))))))
-        elif path.name == 'tablook.cpp':data = integrate_scalar_moment(data)
+        elif path.name == 'tablook.cpp':data = integrate_scalar_moment(integrate_scalar_conveyance(data))
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
         elif path.name == 'culvertc.cpp':data = integrate_full_barrel(integrate_steady_profile(integrate_steady_residuals(data)))
@@ -1012,6 +1027,9 @@ def main():
                 {'file':'critq.cpp','function':'fise_','component':'src/section_energy.cpp',
                  'scope':'Unrounded inverse-specific-energy residual after original selected section lookup.',
                  'verification':'tests/reference/specific_energy/manifest.json'},
+                {'file':'tablook.cpp','function':'lktk_','component':'src/section_interpolation.cpp',
+                 'scope':'Scalar conveyance interpolation with wide root and final REAL square store.',
+                 'verification':'tests/reference/scalar_conveyance/manifest.json'},
                 {'file':'tablook.cpp','function':'lktj_','component':'src/section_interpolation.cpp',
                  'scope':'Wide width and area, released REAL reciprocal of six; retain original bounds and cached row.',
                  'verification':'tests/reference/gate_residual/manifest.json'},

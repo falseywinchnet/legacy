@@ -112,6 +112,17 @@ float interpolate_section_first_moment(float depth, const SectionTableRow& lower
     return static_cast<float>(lower_first_moment+half_h*((wide_area+lower.area)-correction));
 }
 
+float interpolate_scalar_conveyance(float depth, float lower_depth,
+    float lower_root_conveyance, float upper_depth, float upper_root_conveyance) {
+    // K(y) = [sqrt(K0)+(y-y0)*(sqrt(K1)-sqrt(K0))/(y1-y0)]^2.
+    // LKTK 0x477a9b..0x477ad0 keeps the interval, derivative and interpolated
+    // root in wide registers. Only the final squared conveyance stores REAL.
+    const double interval = static_cast<double>(upper_depth)-lower_depth;
+    const double slope = (static_cast<double>(upper_root_conveyance)-lower_root_conveyance)/interval;
+    const double root = (static_cast<double>(depth)-lower_depth)*slope+lower_root_conveyance;
+    return static_cast<float>(root*root);
+}
+
 float interpolate_scalar_first_moment(float depth, float lower_depth,
     float lower_width, float lower_area, float lower_first_moment,
     float upper_depth, float upper_width) {

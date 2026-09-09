@@ -99,6 +99,13 @@ slope. NDRSD returns `(sqrt(S)*K-Q)/Q` without a REAL store; its lookup receives
 a private copy of the trial depth. See
 [`tests/reference/normal_flow_residual/`](tests/reference/normal_flow_residual/).
 
+The standalone conveyance lookup matches **2,688 calls to the complete original
+LKTK routine**, covering all fourteen accepted section table types, three
+scales, interval endpoints, and increasing or decreasing conveyance. Its
+linear interpolation of `sqrt(K)` stays wide through squaring. The integration
+preserves the existing interval search, diagnostics and cached row. See
+[`tests/reference/scalar_conveyance/`](tests/reference/scalar_conveyance/).
+
 Full-barrel flow and entrance piezometric elevation match **3,072 calls to the
 unchanged original FULBAR routine**. These cover three geometric scales,
 discharge coefficients through unity, zero and positive road flow, zero and

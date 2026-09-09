@@ -65,6 +65,8 @@ if(BUILD_TESTING)
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_section_fixture.py $<TARGET_FILE:feq_section_probe>)
     add_test(NAME section_first_moment_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_section_fixture.py $<TARGET_FILE:feq_section_probe> --first-moment)
+    add_test(NAME scalar_conveyance_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_section_probe> scalar_conveyance)
     add_executable(feq_geometry_probe tools/geometry_probe.cpp)
     target_link_libraries(feq_geometry_probe PRIVATE feq_numerics)
     feq_checks(feq_geometry_probe)

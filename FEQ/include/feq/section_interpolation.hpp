@@ -47,5 +47,10 @@ float interpolate_scalar_first_moment(float depth, float lower_depth,
     float lower_width, float lower_area, float lower_first_moment,
     float upper_depth, float upper_width);
 
+// LKTK linearly interpolates sqrt(K) and squares its unrounded result.
+// The caller selects the interval and handles range diagnostics.
+float interpolate_scalar_conveyance(float depth, float lower_depth,
+    float lower_root_conveyance, float upper_depth, float upper_root_conveyance);
+
 } // namespace feq
 #endif

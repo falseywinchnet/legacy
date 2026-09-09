@@ -11,7 +11,7 @@ mode={'gate_residual':'--gate','gate_levels':'--gate-levels','gate_free':'--gate
       'gate_orifice':'--gate-orifice','gate_state':'--gate-state',
       'specific_energy':'--specific-energy','power_spacing':'--power-spacing',
       'full_barrel':'--full-barrel','type2_head_loss':'--head-loss',
-      'normal_flow_residual':'--normal-flow-residual'}[kind]
+      'normal_flow_residual':'--normal-flow-residual','scalar_conveyance':'--scalar-conveyance'}[kind]
 fixtures=Path(__file__).resolve().parent/'reference'/kind
 inputs=(fixtures/'inputs.bin').read_bytes();expected=(fixtures/'outputs.bin').read_bytes()
 manifest=json.loads((fixtures/'manifest.json').read_text())

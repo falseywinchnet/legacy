@@ -57,10 +57,20 @@ int main(int argc, char** argv) {
     try {
         const bool with_moment = argc == 2 && std::string(argv[1]) == "--first-moment";
         const bool station_mode = argc == 2 && std::string(argv[1]) == "--station";
-        if (argc != 1 && !with_moment && !station_mode) {
-            throw std::runtime_error("Use no arguments, --first-moment, or --station.");
+        const bool conveyance_mode = argc == 2 && std::string(argv[1]) == "--scalar-conveyance";
+        if (argc != 1 && !with_moment && !station_mode && !conveyance_mode) {
+            throw std::runtime_error("Use no arguments, --first-moment, --station, or --scalar-conveyance.");
         }
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (conveyance_mode) {
+                // The original fixtures exercise all accepted section table types.
+                // Their selected intervals use the same scalar arithmetic.
+                static_cast<void>(read_word());
+                float fields[5]{};
+                for (int i = 0; i < 5; ++i) { fields[i] = read_float(); }
+                write_float(feq::interpolate_scalar_conveyance(fields[0],fields[1],fields[2],fields[3],fields[4]));
+                continue;
+            }
             if (station_mode) {
                 const float left = read_float();
                 const float right = read_float();

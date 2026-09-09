@@ -1003,3 +1003,36 @@ FEQ/build/python312/bin/python FEQ/tools/probe_type2_head_loss_original.py \
 FEQ/build/python312/bin/python FEQ/tools/probe_normal_flow_original.py \
   --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/normal-flow-recapture
 ```
+
+## Scalar conveyance lookup
+
+`probe_scalar_conveyance_original.py` calls the complete unchanged LKTK routine
+in FEQUTL 5.80 with controlled two-row tables. The released FEQ solver does not
+include this utility helper. All 2,688 outputs match exactly across fourteen
+accepted table types, three scales, both interval endpoints and six interior
+fractions, zero endpoints and increasing or decreasing conveyance. Each type
+uses its original OFFCOM row stride, ranging from five to fifteen words.
+
+The equation is
+`K(y) = [sqrt(K0)+(y-y0)*(sqrt(K1)-sqrt(K0))/(y1-y0)]^2`.
+LKTK retains the depth interval, derivative and interpolated square root in
+wide registers at `0x477a9b..0x477ace`, then stores only the final squared value
+as REAL at `0x477ad0`. It uses division for the slope. This differs from the
+multi-property section lookup, which stores its interpolated square root
+before squaring. The adapter replaces only interval arithmetic; the existing
+search, range diagnostics and cached-row update remain in place. These
+fixtures stay within a selected interval and do not cover range diagnostics.
+
+This correction fixes eight differing culvert report lines and one table line.
+The earliest culvert-report difference moves from line 711 to line 804; 168
+non-clock report lines and six table lines still differ. UTLEXM retains its
+68 differing report lines. All 55 CMake checks pass in Release and sanitizer
+builds. Fresh regression captures preserve all 2,092 active FEQ matrices,
+all 19,701 gate residual entries and the complete 276,813-byte gate report
+section. Fourteen of seventeen combined outputs pass; three FEQUTL outputs
+and the application release remain unfinished.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_scalar_conveyance_original.py \
+  --native FEQ/build/core/feq_section_probe --output FEQ/build/scalar-conveyance-recapture
+```
