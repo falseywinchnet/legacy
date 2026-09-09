@@ -269,3 +269,34 @@ does not imply verification of every formatted-I/O descriptor. Fresh full-model
 runs produce twelve exact FEQ report comparisons and unchanged, exact active
 matrix traces. FEQUTL still requires numerical recovery, and application
 packaging and broader input coverage remain open.
+
+
+## FEQUTL section-boundary geometry
+
+`src/section_geometry.cpp` independently implements FBASEL's first pass over
+piecewise linear boundary segments. All six geometric output arrays match every
+bit in 363 controlled calls to the released FEQUTL `_fbasel_` (RVA `0x96250`).
+The arrays are top width, wetted perimeter, double precision area and first
+moment, weighted line roughness, and maximum depth. Cases span three scales,
+multiple subsections, dry/partial/full submergence, vertical and horizontal
+segments, overhangs, and the fixed/depth-dependent roughness branches. Original
+flux calculations are disabled in these geometric probes with OLDBETA and no
+sinuosity, so this result does not claim verification of those separate formulas.
+
+The original water-surface intersection and its horizontal increment remain in
+53-bit registers or x87 spills, while each top-width accumulation stores a
+binary32 result. Truncating the intersection early changes widths and areas.
+The partial-segment first moment multiplies by a binary64 one-third constant;
+the fully submerged segment uses a binary32 one-third constant. The square root
+for wetted perimeter has an explicit binary32 store before either perimeter or
+weighted-roughness accumulation. These are separate, tested arithmetic choices,
+with the formulas and instruction addresses beside the C++ implementation.
+
+`attach_utility_components.py` selects the FBASEL definition using its syntax
+tree and replaces its first geometric pass with the independent component.
+It retains the roughness interpolation, second pass, and all flux formulas.
+The bridge checks the released 999-point and 200-subsection extents and keeps
+both geometric accumulation types intact. Fresh complete example runs still
+pass all twelve FEQ files and FEQUTL's CHX file; four FEQUTL outputs remain
+numerically different. A decrease in differing table lines is diagnostic only,
+not an acceptance criterion.

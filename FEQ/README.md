@@ -50,6 +50,14 @@ points accompany [`src/section_interpolation.cpp`](src/section_interpolation.cpp
 The captured fixtures are in
 [`tests/reference/section_interpolation/`](tests/reference/section_interpolation/).
 
+The independent section-boundary geometry also matches **every geometric output
+bit in 363 direct FEQUTL tests**. These cover dry, partially submerged, and fully
+submerged boundaries, multiple subsections, three scales, vertical/horizontal
+segments, overhangs, and fixed or depth-dependent roughness modes. Area and first
+moment retain their original double precision; width, wetted perimeter, weighted
+roughness, and maximum depth retain their observed single precision stores.
+The fixtures are in [`tests/reference/section_geometry/`](tests/reference/section_geometry/).
+
 The independent single precision decimal converter matches **all 2,360 direct
 original-executable cases**, including every finite exponent field, subnormals,
 signed zeros, halfway values and their adjacent floats, infinities, and NaNs.

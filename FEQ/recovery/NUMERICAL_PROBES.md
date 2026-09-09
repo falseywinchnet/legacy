@@ -193,3 +193,38 @@ recompile translated sources so their header receipts are current, then use
 `link_feq_research.py`. The linker also accepts `--program fequtl` for the utility
 research engine; matrix tracing is restricted to FEQ. Its final application
 runtime and installation workflow are still being developed.
+
+
+## FEQUTL boundary geometry
+
+The section-geometry probe calls the original FEQUTL FBASEL with explicit
+boundary points and subsection parameters. The input and six output arrays
+preserve their mixed binary32/binary64 representations. The complete 363-case
+fixture set includes fixed and depth-dependent roughness modes. OLDBETA and
+zero sinuosity isolate geometric outputs from the separate flux calculations.
+
+```sh
+FEQ/build/research-python/bin/python FEQ/tools/probe_geometry_original.py \
+  --native FEQ/build/core/feq_geometry_probe --output FEQ/build/geometry-recapture
+```
+
+`--fixtures` accepts an explicit JSON case list, for recapturing a selected
+boundary. The manifest records per-case output offsets and input/output hashes.
+The committed fixture set combines the 336 initial geometric cases and 27
+additional depth-dependent roughness cases; both original capture hashes are
+retained. The normal CMake replay needs no original executable or Wine.
+
+To connect the component to a prepared FEQUTL translation:
+
+```sh
+FEQ/build/research-python/bin/python FEQ/tools/attach_utility_components.py \
+  FEQ/build/prepared-utility FEQ/build/utility-candidate
+python3 FEQ/tools/compile_cpp_probe.py FEQ/build/utility-candidate --runtime FEQ/build/f2c/compat
+python3 FEQ/tools/link_feq_research.py FEQ/build/utility-candidate --program fequtl \
+  --runtime FEQ/build/f2c/compat --output FEQ/build/fequtl-candidate
+```
+
+The utility integration replaces only the first geometric pass. Native output
+verification must still use the unmodified full reports with the existing
+clock-only comparison policy. Flux, conveyance, derivative fitting and culvert
+computations remain separate recovery work.

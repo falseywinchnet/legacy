@@ -3,7 +3,7 @@ project(FEQNumerics VERSION 0.0.1 LANGUAGES CXX)
 
 option(FEQ_SANITIZERS "Check authored C++ for invalid memory and undefined behavior" OFF)
 
-add_library(feq_numerics STATIC src/decimal.cpp src/md5.cpp src/profile_matrix.cpp src/section_interpolation.cpp src/table_interpolation.cpp)
+add_library(feq_numerics STATIC src/section_geometry.cpp src/decimal.cpp src/md5.cpp src/profile_matrix.cpp src/section_interpolation.cpp src/table_interpolation.cpp)
 target_include_directories(feq_numerics PUBLIC include)
 target_compile_features(feq_numerics PUBLIC cxx_std_20)
 set_target_properties(feq_numerics PROPERTIES CXX_EXTENSIONS OFF)
@@ -55,6 +55,12 @@ if(BUILD_TESTING)
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_section_fixture.py $<TARGET_FILE:feq_section_probe>)
     add_test(NAME section_first_moment_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_section_fixture.py $<TARGET_FILE:feq_section_probe> --first-moment)
+    add_executable(feq_geometry_probe tools/geometry_probe.cpp)
+    target_link_libraries(feq_geometry_probe PRIVATE feq_numerics)
+    feq_checks(feq_geometry_probe)
+    add_test(NAME geometry_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_geometry_fixture.py $<TARGET_FILE:feq_geometry_probe>)
+
     add_executable(feq_decimal_probe tools/decimal_probe.cpp)
     target_link_libraries(feq_decimal_probe PRIVATE feq_numerics)
     feq_checks(feq_decimal_probe)

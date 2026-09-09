@@ -69,6 +69,8 @@ def main():
     if args.program == 'feq':
         sources.extend(['src/profile_matrix.cpp','src/section_interpolation.cpp','src/table_interpolation.cpp',
                         'tools/profile_compat.cpp','tools/section_compat.cpp','tools/table_compat.cpp'])
+    else:
+        sources.extend(['src/section_geometry.cpp','tools/geometry_compat.cpp'])
     if args.matrix_trace:
         sources.append('tools/matrix_trace.cpp')
     commands = []
