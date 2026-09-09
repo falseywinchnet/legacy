@@ -398,3 +398,26 @@ remain exact except execution clocks, and the FEQUTL CHX remains byte-exact.
 Four FEQUTL numerical outputs remain different. All 22 local component checks
 pass in both release and address/undefined-behavior sanitizer builds. Full
 application equivalence and end-user packaging remain in progress.
+
+## Contraction adjustment and velocity-head loss
+
+`src/culvert_loss.cpp` matches 528 original-executable cases, including the
+binary64 DEGCON return, the subsequent REAL coefficient store, and RQVSTW's
+REAL head loss. Contraction stays wide through the 0.80F threshold comparison.
+The original implements division by 0.80 using a stored 1.25F reciprocal,
+which differs from dividing by the rounded float 0.80F. DEGCON's return has
+no REAL store; its caller supplies that rounding point.
+
+The loss formula is `(1/CD^2-1)*(Q/A)^2/GRAV2`. Its Q/A intermediate remains
+wide through the square, and only the final head loss rounds to REAL. The
+original probe calls unchanged DEGCON and relocates the complete, unmodified
+RQVSTW loss instruction sequence into its temporary driver. This sequence has
+no relative addresses, branches, or calls; its original byte hash is recorded
+alongside the executable hash. The wrapper preserves its general registers.
+
+Both operations are integrated into the research executable. All six examples
+finish and thirteen of seventeen output files remain exact under the same
+clock-only comparison policy. The four outstanding numerical differences are
+still in FEQUTL. All 23 local component checks pass in release and sanitizer
+builds. The published numerical fixtures and these focused checks are evidence
+for the recovered operations, not whole-application acceptance.

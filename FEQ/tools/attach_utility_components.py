@@ -348,6 +348,30 @@ def integrate_root3(data):
     return declaration.encode()+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
 
 
+def integrate_culvert_losses(data):
+    definitions = {content(identifier(function.child_by_field_name('declarator')),data):function
+                   for function in functions(data)}
+    if 'degcon_' not in definitions or 'rqvstw_' not in definitions:
+        raise ValueError('Expected DEGCON and RQVSTW definitions.')
+    body = definitions['degcon_'].child_by_field_name('body')
+    edits = [(body.start_byte,body.end_byte,
+        '{\n    return feq::culvert_contraction(*c123,*a1,*a);\n}')]
+    statements = [node for node in nodes(definitions['rqvstw_']) if node.type == 'expression_statement']
+    stores = [node for node in statements if content(node,data).startswith('dh =')]
+    if len(stores) != 1:
+        raise ValueError('Expected one RQVSTW head-loss store.')
+    store = stores[0]
+    prior = statements[statements.index(store)-2:statements.index(store)]
+    if [content(node,data) for node in prior] != [
+            'feq_gen_r_d_1 = cdcom_1.cd;',
+            'feq_gen_r_d_2 = static_cast<double>(*q) / cdcom_1.avh;']:
+        raise ValueError('Unexpected RQVSTW head-loss power temporaries.')
+    edits.append((prior[0].start_byte,store.end_byte,
+        '// Original Q/AVH stays wide through its square; DH is the only REAL store.\n'
+        '    dh = feq::culvert_head_loss(cdcom_1.cd,*q,cdcom_1.avh,grvcom_1.grav2);'))
+    return b'#include <feq/culvert_loss.hpp>\n'+edit_text(data,edits)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('source',type=Path);parser.add_argument('output',type=Path)
@@ -365,10 +389,11 @@ def main():
         elif path.name == 'fqshrftb.cpp':data = integrate_scalar_lookup(integrate_section_lookup(data))
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_root3(data)
-        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp'):
+        elif path.name == 'culvertd.cpp':data = integrate_culvert_losses(data)
+        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertd.cpp'):
             integrated_files.add(path.name)
         (output/path.name).write_bytes(data)
-    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp'}:
+    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertd.cpp'}:
         raise ValueError('Prepared utility sources are missing required integration files.')
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
@@ -405,6 +430,9 @@ def main():
                 {'file':'rootfind.cpp','function':'rgf3_','component':'src/root_solver.cpp',
                  'scope':'Modified false position, wide callback results, mutable trial arguments and exact failure outputs.',
                  'verification':'tests/reference/root_solver/manifest.json'},
+                {'file':'culvertd.cpp','functions':['degcon_','rqvstw_'],'component':'src/culvert_loss.cpp',
+                 'scope':'Contraction-adjusted discharge coefficient and RQVSTW velocity head loss.',
+                 'verification':'tests/reference/culvert_loss/manifest.json'},
                 {'file':'embank.cpp','function':'embank_','component':'src/power.cpp',
                  'scope':'Original reciprocal and REAL power argument/result for partial free-drop fractions.',
                  'evidence':'recovery/assembly/fequtl/_embank_.asm, VA 0x431d10..0x431d4a.'}]}

@@ -1,10 +1,10 @@
 {
   "status": "All twelve supplied FEQ reports match after masking only execution clocks; all four FEQ histories match raw bytes. Every active matrix word matches throughout all four FEQ models. Thirteen of seventeen combined FEQ/FEQUTL outputs pass; four FEQUTL numerical outputs and application release work remain incomplete.",
-  "created_utc": "2026-09-09T09:09:16.373940+00:00",
+  "created_utc": "2026-09-09T09:17:09.005382+00:00",
   "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
   "run_manifest": {
     "purpose": "C++ research execution; equivalence requires a separate comparison.",
-    "created_utc": "2026-09-09T09:09:15.486430+00:00",
+    "created_utc": "2026-09-09T09:16:11.007711+00:00",
     "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
     "legacy_path_links": false,
     "inputs": [
@@ -143,12 +143,12 @@
       {
         "path": "bin/feq",
         "bytes": 1319072,
-        "sha256": "f4857c594656d5fbb149ccd9538590fa5ad934b5867a98560b4b42b538ed91b2"
+        "sha256": "b288c61f95cc559d6bf533bca9148192fa2543105f60082ef7c180ca9b21965f"
       },
       {
         "path": "bin/fequtl",
-        "bytes": 1410960,
-        "sha256": "4484fd987306e0bc779f2a88e936ecfda171090e2ef35d617a94bc39d60dcd2e"
+        "bytes": 1411120,
+        "sha256": "8263e2d0449d12896672aa9d2cab2457275450ef99f2d6e4317d5f6dd9104ef3"
       }
     ],
     "cases": [
@@ -160,18 +160,18 @@
           "feqex1.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.2724195830523968,
+        "elapsed_seconds": 0.29789445898495615,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex1.out",
             "bytes": 1693210,
-            "sha256": "1a242cdad13916669f3851123cef18a24cd50eae9a7607183532f5abbca0cabe"
+            "sha256": "9cb9bcafb12ad3d2b87a17215def1468b9a1ce276818ccc033060b5368a6ff5b"
           },
           {
             "path": "feqex1.out.spi",
             "bytes": 1836,
-            "sha256": "fbdf2177a645b712db3f3c10f2de87ecc57cafef7222843964df4b3c586939e5"
+            "sha256": "fa84348be5c5b299a1ed08fdd9fc09dbe9dd2e50bab4c775cfdc5a1035937603"
           },
           {
             "path": "feqex1.out.wsq",
@@ -188,18 +188,18 @@
           "feqex2.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.025756417075172067,
+        "elapsed_seconds": 0.02627362497150898,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex2.out",
             "bytes": 876444,
-            "sha256": "5a884f068da400929f938f6cf9dfce42475e5a85c1e02cada2b99ce0cf720446"
+            "sha256": "3f80ce0668c5a8528f28d155317be9e15a3dcf7ee6b8646e75b6d2ed1f181b87"
           },
           {
             "path": "feqex2.out.spi",
             "bytes": 1132,
-            "sha256": "df5283f9a529f8da9f5ee892be9d0f59f9cdd3ea3cc5d91e0d8e06a58235e8df"
+            "sha256": "05fabf77494bb7d0c967b0cf7e82db23092c6c8480d6d780c66de36a539018c6"
           },
           {
             "path": "feqex2.out.wsq",
@@ -216,18 +216,18 @@
           "feqex3.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.03350133402273059,
+        "elapsed_seconds": 0.03384212497621775,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex3.out",
             "bytes": 1340610,
-            "sha256": "5dd15ecc09f8915814acaf60ee327bd2c2eaf3481adb71d96e977d700d6b6023"
+            "sha256": "69104fa0c6255627a7f9d45b78648abf07e1a0d463b5a1b1b5ef397e75808479"
           },
           {
             "path": "feqex3.out.spi",
             "bytes": 1132,
-            "sha256": "e537a8bf20465fab8062d4a824001110df5afdab1638070b9d4aa8ae4ac6962e"
+            "sha256": "974e698ab247833bc4969f817e2a24584c7ff71372e18f2e7daeae8029aadbbb"
           },
           {
             "path": "feqex3.out.wsq",
@@ -244,18 +244,18 @@
           "feqex4.out"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.03497695806436241,
+        "elapsed_seconds": 0.03481887490488589,
         "process_completed": true,
         "outputs": [
           {
             "path": "feqex4.out",
             "bytes": 1371793,
-            "sha256": "adf83f24248def1f2d618de6a0158abc591f77b02f819b153e59cb0e2fe29444"
+            "sha256": "49939edca66410ba7ce7544c2110bb63425f128e6c7daae289c37d803b46234e"
           },
           {
             "path": "feqex4.out.spi",
             "bytes": 1132,
-            "sha256": "e4e4eb35ba6d06ba2296148d41163bf7b9dcb952dd0cb46707c2ec0fa62a10fc"
+            "sha256": "cfe93b3bbe150a4d1d5290bf1a86e5ff8b0f1f7905dbb3cf2e0cc85784e103a5"
           },
           {
             "path": "feqex4.out.wsq",
@@ -273,7 +273,7 @@
           "utlexm.tab"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.3028422917705029,
+        "elapsed_seconds": 0.29934587492607534,
         "process_completed": true,
         "outputs": [
           {
@@ -284,12 +284,12 @@
           {
             "path": "utlexm.out",
             "bytes": 775759,
-            "sha256": "89ab4f9937fabc57ba634e50b0c1862e67df048c4b7ebf4186ec03f98a321425"
+            "sha256": "e68283e42633a30347167e74349e13314a9d50a76a6276860665cbf5fa4ff707"
           },
           {
             "path": "utlexm.tab",
             "bytes": 135953,
-            "sha256": "4714d029a86caf3e080690b4e321f0ebcd573a18ba11868fa7b37bd3e4f0faf1"
+            "sha256": "a6e9957ba2b1418bca1f819953c2c7e123853b64f8d6bd7dad60e560e5930bbe"
           }
         ]
       },
@@ -302,18 +302,18 @@
           "culvert.tab"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.018407833063974977,
+        "elapsed_seconds": 0.017549125012010336,
         "process_completed": true,
         "outputs": [
           {
             "path": "culvert.out",
             "bytes": 141152,
-            "sha256": "e4110680a57e6cd2af1ded6447098e321e4bc0db77dcc5085500265d7ccb79cb"
+            "sha256": "0e281e9a8681f93231fc6620aa49b8f235444cfed54e4604076f93bb9a8aa998"
           },
           {
             "path": "culvert.tab",
             "bytes": 6015,
-            "sha256": "4e8f77e4d5fd021a6be342ed383ece6d1d9ec54ebea027627ea0781cae2bdea9"
+            "sha256": "a7ebad1f9f79e518d0c21963dc1b2c7f9debffc39c98b08f3e1dd57479911ce3"
           }
         ]
       }
@@ -325,7 +325,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
-      "actual_sha256": "1a242cdad13916669f3851123cef18a24cd50eae9a7607183532f5abbca0cabe",
+      "actual_sha256": "9cb9bcafb12ad3d2b87a17215def1468b9a1ce276818ccc033060b5368a6ff5b",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -342,7 +342,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
-      "actual_sha256": "fbdf2177a645b712db3f3c10f2de87ecc57cafef7222843964df4b3c586939e5",
+      "actual_sha256": "fa84348be5c5b299a1ed08fdd9fc09dbe9dd2e50bab4c775cfdc5a1035937603",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -376,7 +376,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
-      "actual_sha256": "5a884f068da400929f938f6cf9dfce42475e5a85c1e02cada2b99ce0cf720446",
+      "actual_sha256": "3f80ce0668c5a8528f28d155317be9e15a3dcf7ee6b8646e75b6d2ed1f181b87",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -393,7 +393,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
-      "actual_sha256": "df5283f9a529f8da9f5ee892be9d0f59f9cdd3ea3cc5d91e0d8e06a58235e8df",
+      "actual_sha256": "05fabf77494bb7d0c967b0cf7e82db23092c6c8480d6d780c66de36a539018c6",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -427,7 +427,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
-      "actual_sha256": "5dd15ecc09f8915814acaf60ee327bd2c2eaf3481adb71d96e977d700d6b6023",
+      "actual_sha256": "69104fa0c6255627a7f9d45b78648abf07e1a0d463b5a1b1b5ef397e75808479",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -444,7 +444,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
-      "actual_sha256": "e537a8bf20465fab8062d4a824001110df5afdab1638070b9d4aa8ae4ac6962e",
+      "actual_sha256": "974e698ab247833bc4969f817e2a24584c7ff71372e18f2e7daeae8029aadbbb",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -478,7 +478,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
-      "actual_sha256": "adf83f24248def1f2d618de6a0158abc591f77b02f819b153e59cb0e2fe29444",
+      "actual_sha256": "49939edca66410ba7ce7544c2110bb63425f128e6c7daae289c37d803b46234e",
       "expected_clock_fields": {
         "run_timestamp": 2,
         "elapsed_time": 2
@@ -495,7 +495,7 @@
       "raw_equal": false,
       "clock_masked_equal": true,
       "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
-      "actual_sha256": "e4e4eb35ba6d06ba2296148d41163bf7b9dcb952dd0cb46707c2ec0fa62a10fc",
+      "actual_sha256": "cfe93b3bbe150a4d1d5290bf1a86e5ff8b0f1f7905dbb3cf2e0cc85784e103a5",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -529,7 +529,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
-      "actual_sha256": "89ab4f9937fabc57ba634e50b0c1862e67df048c4b7ebf4186ec03f98a321425",
+      "actual_sha256": "e68283e42633a30347167e74349e13314a9d50a76a6276860665cbf5fa4ff707",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -552,7 +552,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
-      "actual_sha256": "4714d029a86caf3e080690b4e321f0ebcd573a18ba11868fa7b37bd3e4f0faf1",
+      "actual_sha256": "a6e9957ba2b1418bca1f819953c2c7e123853b64f8d6bd7dad60e560e5930bbe",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -592,7 +592,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72",
-      "actual_sha256": "e4110680a57e6cd2af1ded6447098e321e4bc0db77dcc5085500265d7ccb79cb",
+      "actual_sha256": "0e281e9a8681f93231fc6620aa49b8f235444cfed54e4604076f93bb9a8aa998",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -615,7 +615,7 @@
       "raw_equal": false,
       "clock_masked_equal": false,
       "expected_sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade",
-      "actual_sha256": "4e8f77e4d5fd021a6be342ed383ece6d1d9ec54ebea027627ea0781cae2bdea9",
+      "actual_sha256": "a7ebad1f9f79e518d0c21963dc1b2c7f9debffc39c98b08f3e1dd57479911ce3",
       "expected_clock_fields": {
         "run_timestamp": 1,
         "elapsed_time": 0
@@ -1710,6 +1710,10 @@
     {
       "source": "tools/root_compat.cpp",
       "sha256": "49c848be9d8bd9ecc97073fb747e2451aacf9b39309952b83cefb8f7f5456f03"
+    },
+    {
+      "source": "src/culvert_loss.cpp",
+      "sha256": "6192631aa351b71a03d216ad982bbdf5d8f9ffb9de2ac4c5c86a46f81974f488"
     }
   ],
   "first_matrix_comparison": "matrix-entry-comparison.json",
@@ -3107,7 +3111,7 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/decimal.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/decimal.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/decimal.o"
       ],
       [
         "c++",
@@ -3126,7 +3130,7 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/decimal_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/decimal_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/decimal_compat.o"
       ],
       [
         "c++",
@@ -3145,7 +3149,7 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/md5.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/md5.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/md5.o"
       ],
       [
         "c++",
@@ -3164,7 +3168,7 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/probe_support.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/probe_support.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/probe_support.o"
       ],
       [
         "c++",
@@ -3183,7 +3187,7 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_energy.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/section_energy.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/section_energy.o"
       ],
       [
         "c++",
@@ -3202,7 +3206,7 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/energy_section_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/energy_section_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/energy_section_compat.o"
       ],
       [
         "c++",
@@ -3221,7 +3225,7 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/profile_matrix.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/profile_matrix.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/profile_matrix.o"
       ],
       [
         "c++",
@@ -3240,7 +3244,7 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_interpolation.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/section_interpolation.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/section_interpolation.o"
       ],
       [
         "c++",
@@ -3259,7 +3263,7 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/table_interpolation.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/table_interpolation.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/table_interpolation.o"
       ],
       [
         "c++",
@@ -3278,7 +3282,7 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/profile_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/profile_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/profile_compat.o"
       ],
       [
         "c++",
@@ -3297,7 +3301,7 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/section_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/section_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/section_compat.o"
       ],
       [
         "c++",
@@ -3316,13 +3320,13 @@
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/table_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/table_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/table_compat.o"
       ]
     ],
     "link_command": [
       "c++",
       "-o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1",
       "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-energy-1/binsearch.o",
       "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-energy-1/block.o",
       "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-energy-1/brnmat.o",
@@ -3377,18 +3381,18 @@
       "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-energy-1/tableid.o",
       "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-energy-1/tdtchk_free.o",
       "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-feq-energy-1/timeman.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/decimal.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/decimal_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/md5.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/probe_support.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/section_energy.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/energy_section_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/profile_matrix.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/section_interpolation.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/table_interpolation.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/profile_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/section_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/table_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/decimal.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/decimal_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/md5.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/probe_support.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/section_energy.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/energy_section_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/profile_matrix.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/section_interpolation.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/table_interpolation.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/profile_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/section_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/table_compat.o",
       "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/libf2c.a"
     ],
     "inputs": [
@@ -3719,73 +3723,73 @@
       {
         "source": "src/decimal.cpp",
         "source_sha256": "fc4ea6c7bc0d9c2c9c11f6ade6a0af446f70387055a02d23ce1440856129a943",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/decimal.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/decimal.o",
         "object_sha256": "5e33d5bb3be0a524c6d3d03dcf18252d412d1dca1c0bda94eee273a0b2d1c893"
       },
       {
         "source": "tools/decimal_compat.cpp",
         "source_sha256": "92c6799d779f38c7127439d15d1f10db3e4008bf1e7626190dacf8e4568b1e46",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/decimal_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/decimal_compat.o",
         "object_sha256": "66871cc40bdcb6ccdbb11f0d132637bd50368bbc48567862c7c1e1d39d257f15"
       },
       {
         "source": "src/md5.cpp",
         "source_sha256": "d6bb87806da3143f0ef1e0bcd0bdbd55313faf18877296122404a68e6833d11e",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/md5.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/md5.o",
         "object_sha256": "9458a25fbc4fd9f1a803080b6bb3c302eaeb96cec009428f0800ace47a9265d7"
       },
       {
         "source": "tools/probe_support.cpp",
         "source_sha256": "a870e589f7c3f23a167d557c8250b234ded6f46fc59a2f0e3f79ee93cd9219b8",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/probe_support.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/probe_support.o",
         "object_sha256": "52fa0014979dbf7582ea8d57a756d08b4342c4958ca117d4e6cc44c7a181c268"
       },
       {
         "source": "src/section_energy.cpp",
         "source_sha256": "09bfe02381925b184fb938460b92f921b9c2d1e53fa61f5d37b549cf1a49f027",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/section_energy.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/section_energy.o",
         "object_sha256": "e7f2eed3f421558164d6f8f048771fa1277d79e95cec74ff68d7d1fc13a92ef2"
       },
       {
         "source": "tools/energy_section_compat.cpp",
         "source_sha256": "a737949e269f6345fff2e2f139bb02f87bcdad61f73babdb9d6751be0d189bb2",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/energy_section_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/energy_section_compat.o",
         "object_sha256": "b54d1d1dcf6b015b27d7f1c18f8a9d3ade87509597765e70b38c5ff9d63e54b3"
       },
       {
         "source": "src/profile_matrix.cpp",
         "source_sha256": "c7d076f0db1fc662c715acf5c79a590ca410f034e5488a5d7f06b882447ae8fb",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/profile_matrix.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/profile_matrix.o",
         "object_sha256": "6ec762774fbd54e64531b28448cba9567dad863a87f67446a2472ed8ade4adf4"
       },
       {
         "source": "src/section_interpolation.cpp",
         "source_sha256": "0316e89c1a6ec3453513fe83078426d99e2388544ba3e42416ae256415d85c56",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/section_interpolation.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/section_interpolation.o",
         "object_sha256": "ad38cfe3c5cdb51c9538d00d77d116225c11016c2853e3bfc06f46d90856f98d"
       },
       {
         "source": "src/table_interpolation.cpp",
         "source_sha256": "89e9e05005916cf4417c08871c9f23f7724a295563102cff54bfdd1c3a7e96f6",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/table_interpolation.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/table_interpolation.o",
         "object_sha256": "b7c3def15dcb1ff46a77d5e07a40b7408ab1100b18e6f78d02752bd49e6461d2"
       },
       {
         "source": "tools/profile_compat.cpp",
         "source_sha256": "cdcb14f55d9169b351994c16656483dc4a27a317ab3fe79d69d9de816b21e0d6",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/profile_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/profile_compat.o",
         "object_sha256": "0a0785521c442a8aac95fdbdd860756d8e56e1b69b4e110aed6b73241db32642"
       },
       {
         "source": "tools/section_compat.cpp",
         "source_sha256": "63aa92e9f4ee224b34ad4b1e25972f6bb3031a9ff53c4e672460d2fd04669a4c",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/section_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/section_compat.o",
         "object_sha256": "04f070c6d85925a6707af6bbc86990ec3ada15cdc3f3a88241101881795e8554"
       },
       {
         "source": "tools/table_compat.cpp",
         "source_sha256": "d59a741ef18d4b965c8b4c5375d1c402a789d38877897f651e1bd5e56f6eb672",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1.objects/table_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1.objects/table_compat.o",
         "object_sha256": "8ff3041767713131a846ed69d00b9760a0d7168c941a2666a3d77d940ba197cb"
       }
     ],
@@ -3843,6 +3847,10 @@
         "sha256": "e54b39d885c76d6326af109bea40d1a39ace4b14cd7a808d591d0469cef287d7"
       },
       {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/culvert_loss.hpp",
+        "sha256": "6d109303403c6df6c92786ba36b6ec9ceba5f4c0695a2aab623786d6465b8f52"
+      },
+      {
         "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/decimal.hpp",
         "sha256": "d4ad5b2782e6ec3fb25a012e0c995b90a21f3ee04a80f25892ce3492fce5a6b9"
       },
@@ -3909,8 +3917,8 @@
     ],
     "runtime": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/libf2c.a",
     "runtime_sha256": "fcea1684c9f9c944ecb34ec18d59a29c91c70a0875f7d0b10bf557e74d1a4700",
-    "executable": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-root-1",
-    "executable_sha256": "f4857c594656d5fbb149ccd9538590fa5ad934b5867a98560b4b42b538ed91b2"
+    "executable": "/Users/joshuahkuttenkuler/legacy/FEQ/build/feq-cpp-loss-1",
+    "executable_sha256": "b288c61f95cc559d6bf533bca9148192fa2543105f60082ef7c180ca9b21965f"
   },
   "fequtl_link_manifest": {
     "status": "Research candidate; whole-model acceptance requires independent comparison.",
@@ -3929,13 +3937,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/decimal.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/decimal.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/decimal.o"
       ],
       [
         "c++",
@@ -3948,13 +3956,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/decimal_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/decimal_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/decimal_compat.o"
       ],
       [
         "c++",
@@ -3967,13 +3975,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/md5.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/md5.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/md5.o"
       ],
       [
         "c++",
@@ -3986,13 +3994,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/probe_support.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/probe_support.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/probe_support.o"
       ],
       [
         "c++",
@@ -4005,13 +4013,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_energy.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_energy.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_energy.o"
       ],
       [
         "c++",
@@ -4024,13 +4032,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/energy_section_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/energy_section_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/energy_section_compat.o"
       ],
       [
         "c++",
@@ -4043,13 +4051,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_geometry.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_geometry.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_geometry.o"
       ],
       [
         "c++",
@@ -4062,13 +4070,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_flux.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_flux.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_flux.o"
       ],
       [
         "c++",
@@ -4081,13 +4089,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_properties.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_properties.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_properties.o"
       ],
       [
         "c++",
@@ -4100,13 +4108,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/power.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/power.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/power.o"
       ],
       [
         "c++",
@@ -4119,13 +4127,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/elevation_arguments.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/elevation_arguments.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/elevation_arguments.o"
       ],
       [
         "c++",
@@ -4138,13 +4146,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/elevation_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/elevation_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/elevation_compat.o"
       ],
       [
         "c++",
@@ -4157,13 +4165,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/trigonometry.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/trigonometry.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/trigonometry.o"
       ],
       [
         "c++",
@@ -4176,13 +4184,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/arch_perimeter.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/arch_perimeter.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/arch_perimeter.o"
       ],
       [
         "c++",
@@ -4195,13 +4203,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/arch_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/arch_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/arch_compat.o"
       ],
       [
         "c++",
@@ -4214,13 +4222,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/conduit_boundary.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/conduit_boundary.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/conduit_boundary.o"
       ],
       [
         "c++",
@@ -4233,13 +4241,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/conduit_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/conduit_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/conduit_compat.o"
       ],
       [
         "c++",
@@ -4252,13 +4260,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/section_interpolation.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_interpolation.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_interpolation.o"
       ],
       [
         "c++",
@@ -4271,13 +4279,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/section_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_compat.o"
       ],
       [
         "c++",
@@ -4290,13 +4298,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/table_interpolation.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/table_interpolation.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/table_interpolation.o"
       ],
       [
         "c++",
@@ -4309,13 +4317,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/table_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/table_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/table_compat.o"
       ],
       [
         "c++",
@@ -4328,13 +4336,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/weir_flow.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/weir_flow.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/weir_flow.o"
       ],
       [
         "c++",
@@ -4347,13 +4355,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/weir_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/weir_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/weir_compat.o"
       ],
       [
         "c++",
@@ -4366,13 +4374,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/src/root_solver.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/root_solver.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/root_solver.o"
       ],
       [
         "c++",
@@ -4385,13 +4393,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/root_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/root_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/root_compat.o"
       ],
       [
         "c++",
@@ -4404,13 +4412,32 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
+        "-c",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/src/culvert_loss.cpp",
+        "-o",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/culvert_loss.o"
+      ],
+      [
+        "c++",
+        "-std=c++20",
+        "-pedantic-errors",
+        "-fstrict-aliasing",
+        "-ffp-contract=off",
+        "-fno-fast-math",
+        "-O1",
+        "-I",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/include",
+        "-iquote",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/geometry_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/geometry_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/geometry_compat.o"
       ],
       [
         "c++",
@@ -4423,13 +4450,13 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/flux_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/flux_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/flux_compat.o"
       ],
       [
         "c++",
@@ -4442,639 +4469,646 @@
         "-I",
         "/Users/joshuahkuttenkuler/legacy/FEQ/include",
         "-iquote",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1",
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1",
         "-iquote",
         "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1",
         "-c",
         "/Users/joshuahkuttenkuler/legacy/FEQ/tools/properties_compat.cpp",
         "-o",
-        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/properties_compat.o"
+        "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/properties_compat.o"
       ]
     ],
     "link_command": [
       "c++",
       "-o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/binsearch.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/bridge.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/chanrat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/common.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/conduit.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/critq.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culverta.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culvertb.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culvertc.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culvertd.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culverte.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/dynamic_storage.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/embank.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/expcon.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fequtl.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/findbrk.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/floodway.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrftb.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrinl.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrlin.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrplg.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrstr.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrtdl.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrtim.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrunt.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/getsvn_msw_lf95.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/hec2x.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/home_name.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/imptrap.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/inputproc.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/inv_gate.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/lf95_ms_s_npf.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/linuxcr.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/location.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/lprfit.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/makelakexs.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/mkembank.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/mkwspro.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/newlookup.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/numrmath.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/nxttok.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/orifice.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/pumpitem.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/pwd.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/riserclv.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/ritter.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/rootfind.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/sinuous.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/sortser.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/svn_report.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tabfit.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tableid.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tablook.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tabstore.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tracking.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/ufgate.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/ufgculv.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/wspro.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/xsection.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/decimal.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/decimal_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/md5.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/probe_support.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_energy.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/energy_section_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_geometry.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_flux.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_properties.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/power.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/elevation_arguments.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/elevation_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/trigonometry.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/arch_perimeter.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/arch_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/conduit_boundary.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/conduit_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_interpolation.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/table_interpolation.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/table_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/weir_flow.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/weir_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/root_solver.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/root_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/geometry_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/flux_compat.o",
-      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/properties_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/binsearch.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/bridge.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/chanrat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/common.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/conduit.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/critq.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culverta.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culvertb.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culvertc.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culvertd.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culverte.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/dynamic_storage.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/embank.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/expcon.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fequtl.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/findbrk.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/floodway.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrftb.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrinl.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrlin.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrplg.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrstr.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrtdl.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrtim.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrunt.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/getsvn_msw_lf95.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/hec2x.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/home_name.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/imptrap.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/inputproc.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/inv_gate.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/lf95_ms_s_npf.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/linuxcr.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/location.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/lprfit.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/makelakexs.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/mkembank.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/mkwspro.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/newlookup.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/numrmath.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/nxttok.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/orifice.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/pumpitem.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/pwd.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/riserclv.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/ritter.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/rootfind.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/sinuous.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/sortser.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/svn_report.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tabfit.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tableid.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tablook.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tabstore.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tracking.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/ufgate.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/ufgculv.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/wspro.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/xsection.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/decimal.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/decimal_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/md5.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/probe_support.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_energy.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/energy_section_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_geometry.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_flux.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_properties.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/power.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/elevation_arguments.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/elevation_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/trigonometry.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/arch_perimeter.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/arch_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/conduit_boundary.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/conduit_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_interpolation.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/table_interpolation.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/table_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/weir_flow.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/weir_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/root_solver.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/root_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/culvert_loss.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/geometry_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/flux_compat.o",
+      "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/properties_compat.o",
       "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/libf2c.a"
     ],
     "inputs": [
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/binsearch.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/binsearch.cpp",
         "source_sha256": "5a6791d99b882ea1ca06b46ab058fe08d7c1e8800ec3aa2277ca7359efd5d47b",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/binsearch.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/binsearch.o",
         "object_sha256": "3ce0b04e05fcaa1cc8d6c4fc33b0db493170059e663309c7a2200720d883557f"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/bridge.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/bridge.cpp",
         "source_sha256": "1d78bf5cc998d1441fa6ba5e1b74c1e35dccc200b7fbd6ec36653fa4dbd5b4fd",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/bridge.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/bridge.o",
         "object_sha256": "f2688ceba1eb619d57e003c49af6eaaf934a3333d71ac6fe1ef7fa179bcbee3f"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/chanrat.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/chanrat.cpp",
         "source_sha256": "838ce0c8d0a22cd29c5c699b920a8e73a0b5b6f0252aa57f277c1f42c945d1ed",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/chanrat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/chanrat.o",
         "object_sha256": "aa6183353829ffdb49f72f818d4a12f3a14928403ea53bbb025b5c7182db11fb"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/common.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/common.cpp",
         "source_sha256": "5a6d92d7e54e8e55ffdd37865b2d73d015a2931bd1c0a8d2da4448746060023f",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/common.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/common.o",
         "object_sha256": "7f7f16c8a367cc28ecd46a5425a2ed18c3bd97334b308396fbbbe61df1f7494f"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/conduit.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/conduit.cpp",
         "source_sha256": "dba18eb87589311246c445a27d849928f4492219a68dc78b63faae7ccfe7dd3b",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/conduit.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/conduit.o",
         "object_sha256": "da2f1147946a756d99e588257f4a8937a2abaaf6c2fe89d83f86f6efed0b84ff"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/critq.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/critq.cpp",
         "source_sha256": "c91e6be8c58216b865761fd9c7bed6621ba13f7d227994ca05843b794b0832f4",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/critq.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/critq.o",
         "object_sha256": "89d4c7e2d33c12bb329b50b5a2bc9192f205acb870140933dd32730c71417def"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culverta.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culverta.cpp",
         "source_sha256": "7b00da2b49889bd10fdd6ffcf98587c8842ac14f973dccbdef1340e09c5e2688",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culverta.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culverta.o",
         "object_sha256": "0e26239343035d0295494aeb2e150b1ff41ae2dd8cdc1107bdb7c1f6beb96e08"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culvertb.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culvertb.cpp",
         "source_sha256": "bea115d83efe031689bacff9463b32621d3ae2857652293c56d49f0884a4c8f7",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culvertb.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culvertb.o",
         "object_sha256": "ae94aa10c1e3d8ba0d71efd1cc927a262c42bb197d4897f4d97479473b44e9f4"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culvertc.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culvertc.cpp",
         "source_sha256": "7ed9e0dd925eda9b4f7016d2a2111110f72bf413782e72cb2924f4ff4710f208",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culvertc.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culvertc.o",
         "object_sha256": "3448b22525fb8b4d4b5e99ff0ca1b3f8f593a4978a98f83f8d1d46b31a94f050"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culvertd.cpp",
-        "source_sha256": "156f5a31cb55b0bf47340f52b65c25c94aff8ee209cbd81e81839cafc2ed5b52",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culvertd.o",
-        "object_sha256": "1fbf85daed228b13514172412e58686583c79303edeed6742dbcd16280fa737b"
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culvertd.cpp",
+        "source_sha256": "d641e62e272e5767d524b038d14d74a766a7db324ca6c5ec5ca9d439619a92f6",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culvertd.o",
+        "object_sha256": "6730a607cd718e9f0de6c77cd42802ffe1a0c8641a8735afb5677463a408c008"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culverte.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culverte.cpp",
         "source_sha256": "1fedd007e50584cb978662586c8615b8c58f4592d8cbe0b31063ea9228738b24",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/culverte.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/culverte.o",
         "object_sha256": "aec0f33a3a4d36ccc7f1f73747795a87b53590e4e3a4c7af5e5a107f0d2daf6d"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/dynamic_storage.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/dynamic_storage.cpp",
         "source_sha256": "e61e1cb32e2438a4b28d0739487f2142f5c3529b35b8d76b3bc40cca28fc3273",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/dynamic_storage.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/dynamic_storage.o",
         "object_sha256": "a9c5fb9b2f4dd711f96801f8ba108eb3d8e1519ef5877a81492b4bacd0fd764f"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/embank.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/embank.cpp",
         "source_sha256": "fe7e05dee0ebac7ffda8a408e5a7754fad041176975ed8e173449407d9a3576d",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/embank.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/embank.o",
         "object_sha256": "69731bf5586d3a5a22ca85c9d2a09ada312a6db90334b38ea557a359a10fbfd2"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/expcon.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/expcon.cpp",
         "source_sha256": "ab9c08ddfdc424a76b001e825563b5a1dc783b3833737238006595a7140c7efd",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/expcon.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/expcon.o",
         "object_sha256": "42890646cbab96f86bf67395410e1f03b2ee7def7039b83074284fb9e34640f3"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fequtl.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fequtl.cpp",
         "source_sha256": "a2da6edabe2225231188677892a6631bc0906d3581e44b6d0f1f301aa51f604b",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fequtl.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fequtl.o",
         "object_sha256": "ae2c990d1cf6df6e4762b92030082bb7c1debde94af8a7347c5d546c223d9387"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/findbrk.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/findbrk.cpp",
         "source_sha256": "a5adce98534929732933e2d42531fb97b72c5bdd7fb8276637823f91d0e94871",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/findbrk.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/findbrk.o",
         "object_sha256": "63d64c3d1896c6ccbdf36c85ffe71c59fd69a7a00b43175092f027b99af4b955"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/floodway.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/floodway.cpp",
         "source_sha256": "7d6547f771e8adb4837df727487d9cf4e325f02770f21bf01f9e155cce0e7f52",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/floodway.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/floodway.o",
         "object_sha256": "03995d10348f0e5756e29dad66f26c97b4f864f47ac4302a56fafee52a798d2b"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrftb.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrftb.cpp",
         "source_sha256": "671344517aeab784ea59bd1c4b354112aed3c683bb78c572f2a6a44fa06e0bef",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrftb.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrftb.o",
         "object_sha256": "6c1daf5057f391c6df7afd5f6a1e49a7b39b4fa436efdfcf14b55be916f42902"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrinl.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrinl.cpp",
         "source_sha256": "74d1d00ad7fa85a3c48c42f4910acec19a876e1bdf50756fb3cf231be6e0053b",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrinl.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrinl.o",
         "object_sha256": "0824838b5a301f08ceba1d961bfbec57a69d7e7761ba2e0e1082f8666c826006"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrlin.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrlin.cpp",
         "source_sha256": "ada5fd3081302d280fde00f2a6dc5992967b773427ffababc05ebfad266c0ef7",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrlin.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrlin.o",
         "object_sha256": "2ec0f26f4a688631502f5b6aca68f1eb8d43e0a22529e922728221e3b210359a"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrplg.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrplg.cpp",
         "source_sha256": "bf67f19bf68e42c4d1c23490295ae6d512d1ca6c55fda04f02dc4994daea5b1f",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrplg.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrplg.o",
         "object_sha256": "aefe4dfa7c7d4d778687518b09278aac80d6201d177675c7f7137910497b0e5b"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrstr.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrstr.cpp",
         "source_sha256": "f566adb62da438cf4f9c30126595a0dc893462da22aa8f6211f1a3a51f709c71",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrstr.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrstr.o",
         "object_sha256": "43b0729aa079cb11a81ae164cfbbc9c92e97523efe4ff1070efcfdb3174ba9e3"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrtdl.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrtdl.cpp",
         "source_sha256": "421f208c79ad925184a0c2ba2f24e22a38072b173c4a8a1c6ac47aac373caf01",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrtdl.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrtdl.o",
         "object_sha256": "77256cd100e3a4308c6a703567153e06852e5e851035abb3070a00c63bbb713d"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrtim.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrtim.cpp",
         "source_sha256": "b855c7cd9c1a481249a7350a4fcee20376de87d28886a15871eed037035bfd41",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrtim.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrtim.o",
         "object_sha256": "f792dbabb76da539d33c4098fdc0c6f93d7da191ba21fb4656b6d9a4dcc74dbe"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrunt.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrunt.cpp",
         "source_sha256": "2886b0baba483164aa75c50c30f29322afa68552cd78394cd76c50ee077fe84e",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/fqshrunt.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/fqshrunt.o",
         "object_sha256": "b34c9e057f841cf6583b477dc59c662e6bb411e08019989976233485ba4ec74e"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/getsvn_msw_lf95.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/getsvn_msw_lf95.cpp",
         "source_sha256": "8c9461a1d8760b8307480f95120b132144e407e21959ada658c2bdc774e52b88",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/getsvn_msw_lf95.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/getsvn_msw_lf95.o",
         "object_sha256": "54389061ca399fc5b00c4cbee07a3c77e081ae60de0e1e4eff8e0d7d2eda8528"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/hec2x.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/hec2x.cpp",
         "source_sha256": "b739149fbff46d7e1a608a2435ef0f777e43465bd2ac8a8f855a0738b98f07f6",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/hec2x.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/hec2x.o",
         "object_sha256": "b3ef6f241cd0df5055e6867aae2cea9966ee6d06165fed28cc8a3733b3e32f13"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/home_name.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/home_name.cpp",
         "source_sha256": "6b2002f92149229fefe64a17e194f3f351be3bcf0a577ca663672cd3f667624f",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/home_name.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/home_name.o",
         "object_sha256": "d48eb22903e2decc84c975673cbae9ad14cc7d1c5638aae2e6f6878df1368fb6"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/imptrap.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/imptrap.cpp",
         "source_sha256": "5d5bcff011305f50f3f4f22fe5c0306680a9d19ae9e79d329f841cbf68a701b5",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/imptrap.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/imptrap.o",
         "object_sha256": "ff011325bc5dee142a694a5bdda2d94f42ffe17240793aff80918236a9a27d35"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/inputproc.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/inputproc.cpp",
         "source_sha256": "08f521044f51ffe8c0031fc5263140e2912e1aaec12fa7b7ea9fdb3160ea20a9",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/inputproc.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/inputproc.o",
         "object_sha256": "521cc316fde71f5043f285a8930b36165f48645f62a3e71ee435a891cd7edb11"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/inv_gate.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/inv_gate.cpp",
         "source_sha256": "bb3bc989c900de3a58c4726c5a34eca34a40c41faa09b0a83117a6b307835aa8",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/inv_gate.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/inv_gate.o",
         "object_sha256": "5a86b98214b6bac2717bfb98a8fadea8f957c6d2950bd681f2c9d8a44fce2e23"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/lf95_ms_s_npf.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/lf95_ms_s_npf.cpp",
         "source_sha256": "7150561583e3cc8aff59f769aacb7000b4cc7b9b215a2c2ea1e571f3bfdb47c3",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/lf95_ms_s_npf.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/lf95_ms_s_npf.o",
         "object_sha256": "acbfa384b36a48af6888dce697bd742a6fc49830dbf359557cb63582cdc317e7"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/linuxcr.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/linuxcr.cpp",
         "source_sha256": "bc0eb625c47638902508cac4a75e6e73594c4a450fd7bd1aac7b3d8c5c5aaf0e",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/linuxcr.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/linuxcr.o",
         "object_sha256": "9080dd13670991cf5abe9030bb7ff7cc66dab9b80b4461cf8d34cd23eff8bfb9"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/location.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/location.cpp",
         "source_sha256": "820e2d18c08925498bd21a335673141cc1d3c317022a294fb063fca140014831",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/location.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/location.o",
         "object_sha256": "624cf09f2297839abb68d57251732a6355f7c3dbc86d2f2eac8a29925351d83c"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/lprfit.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/lprfit.cpp",
         "source_sha256": "620f6488d4e82bb6eff6e0194b69e8fbf38a2e7d0a83d619c8f2d750403001f5",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/lprfit.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/lprfit.o",
         "object_sha256": "cb5440827d1d2e765940efb0f6fd6377e1826671c5e4e1cce1d48a3df54e3302"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/makelakexs.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/makelakexs.cpp",
         "source_sha256": "77862c33b11ab7040e8199cff3690602671e3f29559dc7f1b2e40f3b2a1f928b",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/makelakexs.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/makelakexs.o",
         "object_sha256": "bf2c01b3e57aa2921f58a7da58587d4cfaba63430915683adf22a23b9474ff96"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/mkembank.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/mkembank.cpp",
         "source_sha256": "b69ac59dae79046546ca4238e6f334225ea028898f97ddc17c2c86cbc9e077b1",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/mkembank.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/mkembank.o",
         "object_sha256": "ca9c4340c63fa42f49f02c5da4aa5eb3711f2e7dc1ea3b81521be0c184ec36d1"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/mkwspro.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/mkwspro.cpp",
         "source_sha256": "74c1ed793697db2ccfb8f3076dd929a818057ee2ac86ba6f43e782f699fbb46c",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/mkwspro.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/mkwspro.o",
         "object_sha256": "487a1a5fc28f22b57b041093f1df3e061a37afa4f66514ec71ce41c429ad20c7"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/newlookup.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/newlookup.cpp",
         "source_sha256": "24765bf7f97a395d93e6bb228f0aac58e56d40d1e9555d96821b7951acaf954e",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/newlookup.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/newlookup.o",
         "object_sha256": "00108a45731903738fa0eee925bc6ef0afa4849a00b1d1fc69a347f068ce16e3"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/numrmath.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/numrmath.cpp",
         "source_sha256": "48a1d60115d22fdd43bd90de257c866a739bbb7a91bba5b9636a1b719c114603",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/numrmath.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/numrmath.o",
         "object_sha256": "1cde7ad953848f6225f82452a1c5b9d51eeaf28bd1a7fa4584ea54a4910d1609"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/nxttok.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/nxttok.cpp",
         "source_sha256": "71427cd25f2d5619e263b86ec6545ed04f7cc9b744c6b53519682be428e92462",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/nxttok.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/nxttok.o",
         "object_sha256": "f8a7d391d4d82ad7689ab7fbf99805914598d969a16bbf2ac2f4e92bf890a641"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/orifice.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/orifice.cpp",
         "source_sha256": "cfa7866c66d6f3eb054d28831cb75d49ac12bdcce1a1619af8a60d3ba9eb4043",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/orifice.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/orifice.o",
         "object_sha256": "88295c15f9a422a53f484af693393d0f0fa2a5ed6a68fda4690a9c9fa8d6f444"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/pumpitem.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/pumpitem.cpp",
         "source_sha256": "fa94b234cadaa560492b6848085d82af6b58053d8065f3383a8e6f39b07ec360",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/pumpitem.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/pumpitem.o",
         "object_sha256": "8d26f15b8b66de1c4e48ffdbe9e9a9b2f466f44bdc71c2b62d4bf403385e42d1"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/pwd.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/pwd.cpp",
         "source_sha256": "6679ef34de4899c817e39673d61e3987979ad1063ce81ac0798bfdfdb51dc938",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/pwd.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/pwd.o",
         "object_sha256": "f0a823c9b43d35b63900e594ef5192899fcc7b62de68bc67a92b36b3fb66df7b"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/riserclv.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/riserclv.cpp",
         "source_sha256": "aeec638520fcdb0b8667d8ae41ae0733a690557354c2466df206eeafd8470481",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/riserclv.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/riserclv.o",
         "object_sha256": "fdec651e962eb8ba10e53f376d19eb090128e2557fd49c63d45233e169886317"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/ritter.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/ritter.cpp",
         "source_sha256": "0067382a05e15388f040855fb50cd8588972bac3f0ef3f8145d74e942705eccf",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/ritter.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/ritter.o",
         "object_sha256": "afed68ae434601ab06ddf30106f34dc61518b5c6f791826c256d07b6e4d2407b"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/rootfind.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/rootfind.cpp",
         "source_sha256": "1523265ba0e9177a2586cf12e82d397f35541f00f737aab0db0d0c7078b1fe42",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/rootfind.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/rootfind.o",
         "object_sha256": "5e300f21d735bdb6da8c7ba543730ca3c15c9e7335178b77ce738ffe47379ad2"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/sinuous.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/sinuous.cpp",
         "source_sha256": "a409008144f7da71505acec4db5064e359836fe19ce569e15e2504c7e458c56a",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/sinuous.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/sinuous.o",
         "object_sha256": "a9c1582ed60b0e4d8edd0e909e70d04e97ef2e229afc5dc0965622dbffb2743b"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/sortser.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/sortser.cpp",
         "source_sha256": "a19c500fbb7e6b18f95632c9471a7413d1f9247f1147b78719da6f7fc0be4f5c",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/sortser.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/sortser.o",
         "object_sha256": "a2c7d3942514c482e14b979c63d42a775d6d0aa64771b122daf3e80ad76fb9ff"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/svn_report.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/svn_report.cpp",
         "source_sha256": "3cc2211f1fa7a2d08bebc499f0ad1df71d89c023fa7745624ef89d4cda29884e",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/svn_report.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/svn_report.o",
         "object_sha256": "07d4276b7215114936d57e1991dfa28db34bde829baf8d0c67e6d0e2ae31d56c"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tabfit.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tabfit.cpp",
         "source_sha256": "dc44d72625019d8e34c89c59d4453faa117bd2f0d1f7a3046a8602ab78bd34d4",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tabfit.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tabfit.o",
         "object_sha256": "a97c5a872b66ce924776976b7f9d03d93ae339e30ad6832b45bf3840a99dffe5"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tableid.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tableid.cpp",
         "source_sha256": "d75520d3e86a27f4b1d9bf8cf8cb7863e01c7c7ea3e3b7a224fa1e5233dad020",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tableid.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tableid.o",
         "object_sha256": "48c42af9e4da21ffc551b2add09f1e21cee718a9b02a7ac42e951ce7ee8aa737"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tablook.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tablook.cpp",
         "source_sha256": "2e03b600d5816fab2341748235d5fc9d29e279f57ddb0bb66520277181a86c2a",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tablook.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tablook.o",
         "object_sha256": "98280d20448bb25dfe9dcb98490fdb959c1a44297a5629f0416ac57d0b5928b2"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tabstore.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tabstore.cpp",
         "source_sha256": "50da306e0d73129eabf85348712033ba1d9198405a09ca2d77233ebecb6017e3",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tabstore.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tabstore.o",
         "object_sha256": "553abefb9a2c3906aff83571c157527ac59a17b3edf45c459f8af5a9efba6518"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tracking.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tracking.cpp",
         "source_sha256": "c4abfdfb99d746e697c1e52489868498d0318873c789ed5ac5ed24168519fb14",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/tracking.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/tracking.o",
         "object_sha256": "bab222e0d36ca39cd49b994e3b6660271c093977660c15f1d5c9bcb3a46e178b"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/ufgate.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/ufgate.cpp",
         "source_sha256": "1b4a5b46080793b82e0de3918307430f59c599ecb978f9c2ddc6bd6ab7bbee03",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/ufgate.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/ufgate.o",
         "object_sha256": "ff2a42180c709ee3af3181be5793e473b1426bb9cf66de4f4ddaf1f2fe18c7d3"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/ufgculv.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/ufgculv.cpp",
         "source_sha256": "2083e6c02a4beff3cf711e476f4008eac05ad1a0b31a27aaf06ae413d9ec0bfc",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/ufgculv.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/ufgculv.o",
         "object_sha256": "3cc39cd568457e19fc32b027f4732728b57ec65956c56067fec9f8544a2c696b"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/wspro.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/wspro.cpp",
         "source_sha256": "77c117af1ba041120029243b3dfa7b25d710b2a872133d9d4a8ae127654e2a02",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/wspro.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/wspro.o",
         "object_sha256": "b30c2cea20d85fadce8f3be464af591051a9d0f16f4dbac2fa6f556c59bc9244"
       },
       {
-        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/xsection.cpp",
+        "source": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/xsection.cpp",
         "source_sha256": "21cd45274f675f52d49595863f7244dcc82205e39dc4279c8be2b72e4baf9abb",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/xsection.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/xsection.o",
         "object_sha256": "3eedf898ca647157f454d2269b1a5beb49de013ce902cfbc406c454a78198a68"
       },
       {
         "source": "src/decimal.cpp",
         "source_sha256": "fc4ea6c7bc0d9c2c9c11f6ade6a0af446f70387055a02d23ce1440856129a943",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/decimal.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/decimal.o",
         "object_sha256": "5e33d5bb3be0a524c6d3d03dcf18252d412d1dca1c0bda94eee273a0b2d1c893"
       },
       {
         "source": "tools/decimal_compat.cpp",
         "source_sha256": "92c6799d779f38c7127439d15d1f10db3e4008bf1e7626190dacf8e4568b1e46",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/decimal_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/decimal_compat.o",
         "object_sha256": "66871cc40bdcb6ccdbb11f0d132637bd50368bbc48567862c7c1e1d39d257f15"
       },
       {
         "source": "src/md5.cpp",
         "source_sha256": "d6bb87806da3143f0ef1e0bcd0bdbd55313faf18877296122404a68e6833d11e",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/md5.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/md5.o",
         "object_sha256": "9458a25fbc4fd9f1a803080b6bb3c302eaeb96cec009428f0800ace47a9265d7"
       },
       {
         "source": "tools/probe_support.cpp",
         "source_sha256": "a870e589f7c3f23a167d557c8250b234ded6f46fc59a2f0e3f79ee93cd9219b8",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/probe_support.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/probe_support.o",
         "object_sha256": "52fa0014979dbf7582ea8d57a756d08b4342c4958ca117d4e6cc44c7a181c268"
       },
       {
         "source": "src/section_energy.cpp",
         "source_sha256": "09bfe02381925b184fb938460b92f921b9c2d1e53fa61f5d37b549cf1a49f027",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_energy.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_energy.o",
         "object_sha256": "e7f2eed3f421558164d6f8f048771fa1277d79e95cec74ff68d7d1fc13a92ef2"
       },
       {
         "source": "tools/energy_section_compat.cpp",
         "source_sha256": "a737949e269f6345fff2e2f139bb02f87bcdad61f73babdb9d6751be0d189bb2",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/energy_section_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/energy_section_compat.o",
         "object_sha256": "b54d1d1dcf6b015b27d7f1c18f8a9d3ade87509597765e70b38c5ff9d63e54b3"
       },
       {
         "source": "src/section_geometry.cpp",
         "source_sha256": "fe34c3e7d094078c40ff38b9dbeda2c3c5bfa72c4ea90651535d84edde41168d",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_geometry.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_geometry.o",
         "object_sha256": "bb67306426abd995cc69ea39aed94e598f9eecf2ad750f45715573bcd3b9093a"
       },
       {
         "source": "src/section_flux.cpp",
         "source_sha256": "15e58322bf295bf3cd281d3e09c8fda83271d44202e429ce432b6f5f8210379b",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_flux.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_flux.o",
         "object_sha256": "e69c7626b70530b7b7383dea2f062f0462b31c711f159f675e5a27a0780da97b"
       },
       {
         "source": "src/section_properties.cpp",
         "source_sha256": "4c508f788eb69367b7b8e13f3cb7b94890955b4bddcf5bf4f50cb4c52eb3f0df",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_properties.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_properties.o",
         "object_sha256": "05630609d209094d578a5bf65774168cc8c78026f23bfa011c1b9023d8bf4fcd"
       },
       {
         "source": "src/power.cpp",
         "source_sha256": "3741294df8a60132910b84901bb5fd6aef4972fba1b0a7aced643ca0672cc5d6",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/power.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/power.o",
         "object_sha256": "f6f732848d9fb19ead94e76088e09d31c492b13605d8b5e785d988ff2a5f6806"
       },
       {
         "source": "src/elevation_arguments.cpp",
         "source_sha256": "1805f69ca14dc57e28385b1010aa80ad54dc4282fb1b55f8804b8db23bcc6cea",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/elevation_arguments.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/elevation_arguments.o",
         "object_sha256": "82c7ad84b3227fa77ac9d7c8a48baf73cb9d5c78ce1e9eb9bc0e1e0aef93c501"
       },
       {
         "source": "tools/elevation_compat.cpp",
         "source_sha256": "7c8939b4793a8559278bd086d3d7000f2d5c976228347a6bcf355e273463859a",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/elevation_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/elevation_compat.o",
         "object_sha256": "8fb3e6eb8581569e5cff8958600f6767d1fa0e6ee79de1a293e1ecfb90a7a961"
       },
       {
         "source": "src/trigonometry.cpp",
         "source_sha256": "2c27e7b70b181f0370a86a180394e49af0f11700554023559bc6de9425b294ad",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/trigonometry.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/trigonometry.o",
         "object_sha256": "322efe0afe0f77b94162531b318fb33e416a7b43c3005d1271d987a235bd9c3d"
       },
       {
         "source": "src/arch_perimeter.cpp",
         "source_sha256": "52c3a12bd53c622c0b9adaebc661f2e79fcb453b055140f6c255ed3e595dbf2f",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/arch_perimeter.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/arch_perimeter.o",
         "object_sha256": "10b59f3522bf725babc8dd7445eec89b18f0667de0664be2828087ce8221e2b8"
       },
       {
         "source": "tools/arch_compat.cpp",
         "source_sha256": "0fb78497c1243d37764ad54d1af772e3c260a1f3f357ae834bd6ec031a1b9f8c",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/arch_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/arch_compat.o",
         "object_sha256": "f0fd8bc8b20d285deddfadb76cc7fa0d509180cd6e33bb40a7297d7473030e31"
       },
       {
         "source": "src/conduit_boundary.cpp",
         "source_sha256": "710b3caed76592b0a9662a7c58507a95d89f8037117b3b34516a339ef0de0eb5",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/conduit_boundary.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/conduit_boundary.o",
         "object_sha256": "6986393b2a18c1552086f279e011ffdaab725054f2e3d334f355ddd54cb7af2f"
       },
       {
         "source": "tools/conduit_compat.cpp",
         "source_sha256": "ee435a41589135678427e26951ef56ddffbcad8d8f2d4dc754ace7ad2f5cc629",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/conduit_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/conduit_compat.o",
         "object_sha256": "c287d075d6e0fbb55502fe7c0e79f17ca93e35df944f906f9d392c45ea296071"
       },
       {
         "source": "src/section_interpolation.cpp",
         "source_sha256": "0316e89c1a6ec3453513fe83078426d99e2388544ba3e42416ae256415d85c56",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_interpolation.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_interpolation.o",
         "object_sha256": "ad38cfe3c5cdb51c9538d00d77d116225c11016c2853e3bfc06f46d90856f98d"
       },
       {
         "source": "tools/section_compat.cpp",
         "source_sha256": "63aa92e9f4ee224b34ad4b1e25972f6bb3031a9ff53c4e672460d2fd04669a4c",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/section_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/section_compat.o",
         "object_sha256": "04f070c6d85925a6707af6bbc86990ec3ada15cdc3f3a88241101881795e8554"
       },
       {
         "source": "src/table_interpolation.cpp",
         "source_sha256": "89e9e05005916cf4417c08871c9f23f7724a295563102cff54bfdd1c3a7e96f6",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/table_interpolation.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/table_interpolation.o",
         "object_sha256": "b7c3def15dcb1ff46a77d5e07a40b7408ab1100b18e6f78d02752bd49e6461d2"
       },
       {
         "source": "tools/table_compat.cpp",
         "source_sha256": "d59a741ef18d4b965c8b4c5375d1c402a789d38877897f651e1bd5e56f6eb672",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/table_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/table_compat.o",
         "object_sha256": "8ff3041767713131a846ed69d00b9760a0d7168c941a2666a3d77d940ba197cb"
       },
       {
         "source": "src/weir_flow.cpp",
         "source_sha256": "b341e80eb668e8398729731336b7c8e99587fd7c252ebedbb9d9564b5a9950aa",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/weir_flow.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/weir_flow.o",
         "object_sha256": "d0e398656f046f3cbb21fccddabd478a09346a28d4465b99c3b2b843ad26f497"
       },
       {
         "source": "tools/weir_compat.cpp",
         "source_sha256": "803cab87339b7a26718b32f4abd767b01f1d886bccdbb1d5af8d3142e819000f",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/weir_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/weir_compat.o",
         "object_sha256": "d13effd2fad2007fc8829f2671b0c0395e3316f0189d8957a2594f0be5f1686d"
       },
       {
         "source": "src/root_solver.cpp",
         "source_sha256": "e893ed691510cb0c23e5803a0df86b20989348db36290a24e5bd17c37e27eaab",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/root_solver.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/root_solver.o",
         "object_sha256": "f9add88841cbec978a5f2d7600c4c3d175a247a6ff4136428a08b570bb133093"
       },
       {
         "source": "tools/root_compat.cpp",
         "source_sha256": "49c848be9d8bd9ecc97073fb747e2451aacf9b39309952b83cefb8f7f5456f03",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/root_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/root_compat.o",
         "object_sha256": "ff3b50c1d6421ad37a740f505c76953fb7a63db4afdf2f7c97f78c76622c953b"
+      },
+      {
+        "source": "src/culvert_loss.cpp",
+        "source_sha256": "6192631aa351b71a03d216ad982bbdf5d8f9ffb9de2ac4c5c86a46f81974f488",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/culvert_loss.o",
+        "object_sha256": "9295812ac81298ca1efddfcb8f456bde168eadbd0723f7394235c8f09925c31f"
       },
       {
         "source": "tools/geometry_compat.cpp",
         "source_sha256": "476a40591bc2a69578c115c0e96e21b0d1f9e42b49e0d74d9e877b37b3d18e36",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/geometry_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/geometry_compat.o",
         "object_sha256": "d8fdb6c63b3a3c9640af81e168480ef0cd9273dcd76840689284b24c530732c7"
       },
       {
         "source": "tools/flux_compat.cpp",
         "source_sha256": "41b96881f6aab1d80653286d5c66b1e0ec105fdaec5467e28dbcf04e614022ba",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/flux_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/flux_compat.o",
         "object_sha256": "c5750ab9730f2733145a5641e129b897b87d61f851be8ff9f9f4b6fe645aa340"
       },
       {
         "source": "tools/properties_compat.cpp",
         "source_sha256": "582c4e8eba11c644ae04e369fa564f4e88a041ccab35d6ad424521800b83ccf4",
-        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2.objects/properties_compat.o",
+        "object": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1.objects/properties_compat.o",
         "object_sha256": "de09b970b4e79ae5cc650ee3a0ceb019ea7ec0bae54e3e9d9bc84cd7c1e8d842"
       }
     ],
     "headers": [
       {
-        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/callbacks.hpp",
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/callbacks.hpp",
         "sha256": "489b0339684878499380fb54784eeefbdcc8ed824b39836cbd21a3acfb726659"
       },
       {
-        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-root-1/common.hpp",
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/build/cpp-fequtl-loss-1/common.hpp",
         "sha256": "d73d86c7d3cd9e6cca1440c9923f6ac343e29d04cb34d6632d3457eb577cc682"
       },
       {
@@ -5126,6 +5160,10 @@
         "sha256": "e54b39d885c76d6326af109bea40d1a39ace4b14cd7a808d591d0469cef287d7"
       },
       {
+        "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/culvert_loss.hpp",
+        "sha256": "6d109303403c6df6c92786ba36b6ec9ceba5f4c0695a2aab623786d6465b8f52"
+      },
+      {
         "path": "/Users/joshuahkuttenkuler/legacy/FEQ/include/feq/decimal.hpp",
         "sha256": "d4ad5b2782e6ec3fb25a012e0c995b90a21f3ee04a80f25892ce3492fce5a6b9"
       },
@@ -5192,8 +5230,8 @@
     ],
     "runtime": "/Users/joshuahkuttenkuler/legacy/FEQ/build/f2c/compat-decimal-1/libf2c.a",
     "runtime_sha256": "fcea1684c9f9c944ecb34ec18d59a29c91c70a0875f7d0b10bf557e74d1a4700",
-    "executable": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-root-2",
-    "executable_sha256": "4484fd987306e0bc779f2a88e936ecfda171090e2ef35d617a94bc39d60dcd2e"
+    "executable": "/Users/joshuahkuttenkuler/legacy/FEQ/build/fequtl-cpp-loss-1",
+    "executable_sha256": "8263e2d0449d12896672aa9d2cab2457275450ef99f2d6e4317d5f6dd9104ef3"
   },
   "decimal_fixture_manifest": {
     "original_sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399",
@@ -5547,6 +5585,16 @@
         "component": "src/root_solver.cpp",
         "scope": "Modified false position, wide callback results, mutable trial arguments and exact failure outputs.",
         "verification": "tests/reference/root_solver/manifest.json"
+      },
+      {
+        "file": "culvertd.cpp",
+        "functions": [
+          "degcon_",
+          "rqvstw_"
+        ],
+        "component": "src/culvert_loss.cpp",
+        "scope": "Contraction-adjusted discharge coefficient and RQVSTW velocity head loss.",
+        "verification": "tests/reference/culvert_loss/manifest.json"
       },
       {
         "file": "embank.cpp",
@@ -54179,6 +54227,2664 @@
       }
     ],
     "native_sha256": "ec26fe22fc4472db42549a712e490665594c7f2f5c3dc50ad374557e0afc963c",
+    "native_returncode": 0,
+    "exact_bytes": true
+  },
+  "culvert_loss_fixture_manifest": {
+    "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+    "routines": [
+      "_degcon_"
+    ],
+    "head_loss_rva_start": "0x2dbd1",
+    "head_loss_rva_end": "0x2dc04",
+    "head_loss_instruction_sha256": "4dc2cc65ba98f34813fd852844be64b6a07bf0b11e531740e81555a588032014",
+    "cases": 528,
+    "input_sha256": "c8d9ff6a30cb7a9c37597d61cad4fe626a496454a15e2d4bb012e784b047c5fc",
+    "output_sha256": "96941d061e84793846a27aec27bf2b166940a67a5a3b6d58262f05af723ad85f",
+    "probe_sha256": "48303deeff7df62e7dc1a92c658983b7a3a10b990e17aa10eeacf66523236cf6",
+    "fixtures": [
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-0.3-sign--1.0",
+        "offset": 0,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-0.3-sign-1.0",
+        "offset": 16,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-0.5-sign--1.0",
+        "offset": 32,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-0.5-sign-1.0",
+        "offset": 48,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-0.8-sign--1.0",
+        "offset": 64,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-0.8-sign-1.0",
+        "offset": 80,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-0.98-sign--1.0",
+        "offset": 96,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-0.98-sign-1.0",
+        "offset": 112,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-1.0-sign--1.0",
+        "offset": 128,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-1.0-sign-1.0",
+        "offset": 144,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-1.2-sign--1.0",
+        "offset": 160,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1e-06-coefficient-1.2-sign-1.0",
+        "offset": 176,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-0.3-sign--1.0",
+        "offset": 192,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-0.3-sign-1.0",
+        "offset": 208,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-0.5-sign--1.0",
+        "offset": 224,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-0.5-sign-1.0",
+        "offset": 240,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-0.8-sign--1.0",
+        "offset": 256,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-0.8-sign-1.0",
+        "offset": 272,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-0.98-sign--1.0",
+        "offset": 288,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-0.98-sign-1.0",
+        "offset": 304,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-1.0-sign--1.0",
+        "offset": 320,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-1.0-sign-1.0",
+        "offset": 336,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-1.2-sign--1.0",
+        "offset": 352,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.05-coefficient-1.2-sign-1.0",
+        "offset": 368,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-0.3-sign--1.0",
+        "offset": 384,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-0.3-sign-1.0",
+        "offset": 400,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-0.5-sign--1.0",
+        "offset": 416,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-0.5-sign-1.0",
+        "offset": 432,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-0.8-sign--1.0",
+        "offset": 448,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-0.8-sign-1.0",
+        "offset": 464,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-0.98-sign--1.0",
+        "offset": 480,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-0.98-sign-1.0",
+        "offset": 496,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-1.0-sign--1.0",
+        "offset": 512,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-1.0-sign-1.0",
+        "offset": 528,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-1.2-sign--1.0",
+        "offset": 544,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.19999997-coefficient-1.2-sign-1.0",
+        "offset": 560,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-0.3-sign--1.0",
+        "offset": 576,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-0.3-sign-1.0",
+        "offset": 592,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-0.5-sign--1.0",
+        "offset": 608,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-0.5-sign-1.0",
+        "offset": 624,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-0.8-sign--1.0",
+        "offset": 640,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-0.8-sign-1.0",
+        "offset": 656,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-0.98-sign--1.0",
+        "offset": 672,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-0.98-sign-1.0",
+        "offset": 688,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-1.0-sign--1.0",
+        "offset": 704,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-1.0-sign-1.0",
+        "offset": 720,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-1.2-sign--1.0",
+        "offset": 736,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.2-coefficient-1.2-sign-1.0",
+        "offset": 752,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-0.3-sign--1.0",
+        "offset": 768,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-0.3-sign-1.0",
+        "offset": 784,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-0.5-sign--1.0",
+        "offset": 800,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-0.5-sign-1.0",
+        "offset": 816,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-0.8-sign--1.0",
+        "offset": 832,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-0.8-sign-1.0",
+        "offset": 848,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-0.98-sign--1.0",
+        "offset": 864,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-0.98-sign-1.0",
+        "offset": 880,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-1.0-sign--1.0",
+        "offset": 896,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-1.0-sign-1.0",
+        "offset": 912,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-1.2-sign--1.0",
+        "offset": 928,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.20000003-coefficient-1.2-sign-1.0",
+        "offset": 944,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-0.3-sign--1.0",
+        "offset": 960,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-0.3-sign-1.0",
+        "offset": 976,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-0.5-sign--1.0",
+        "offset": 992,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-0.5-sign-1.0",
+        "offset": 1008,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-0.8-sign--1.0",
+        "offset": 1024,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-0.8-sign-1.0",
+        "offset": 1040,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-0.98-sign--1.0",
+        "offset": 1056,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-0.98-sign-1.0",
+        "offset": 1072,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-1.0-sign--1.0",
+        "offset": 1088,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-1.0-sign-1.0",
+        "offset": 1104,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-1.2-sign--1.0",
+        "offset": 1120,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-0.7-coefficient-1.2-sign-1.0",
+        "offset": 1136,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-0.3-sign--1.0",
+        "offset": 1152,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-0.3-sign-1.0",
+        "offset": 1168,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-0.5-sign--1.0",
+        "offset": 1184,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-0.5-sign-1.0",
+        "offset": 1200,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-0.8-sign--1.0",
+        "offset": 1216,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-0.8-sign-1.0",
+        "offset": 1232,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-0.98-sign--1.0",
+        "offset": 1248,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-0.98-sign-1.0",
+        "offset": 1264,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-1.0-sign--1.0",
+        "offset": 1280,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-1.0-sign-1.0",
+        "offset": 1296,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-1.2-sign--1.0",
+        "offset": 1312,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.0-coefficient-1.2-sign-1.0",
+        "offset": 1328,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-0.3-sign--1.0",
+        "offset": 1344,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-0.3-sign-1.0",
+        "offset": 1360,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-0.5-sign--1.0",
+        "offset": 1376,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-0.5-sign-1.0",
+        "offset": 1392,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-0.8-sign--1.0",
+        "offset": 1408,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-0.8-sign-1.0",
+        "offset": 1424,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-0.98-sign--1.0",
+        "offset": 1440,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-0.98-sign-1.0",
+        "offset": 1456,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-1.0-sign--1.0",
+        "offset": 1472,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-1.0-sign-1.0",
+        "offset": 1488,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-1.2-sign--1.0",
+        "offset": 1504,
+        "bytes": 16
+      },
+      {
+        "name": "scale-0.0001-ratio-1.2-coefficient-1.2-sign-1.0",
+        "offset": 1520,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-0",
+        "offset": 1536,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-1",
+        "offset": 1552,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-2",
+        "offset": 1568,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-3",
+        "offset": 1584,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-4",
+        "offset": 1600,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-5",
+        "offset": 1616,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-6",
+        "offset": 1632,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-7",
+        "offset": 1648,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-8",
+        "offset": 1664,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-9",
+        "offset": 1680,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-10",
+        "offset": 1696,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-11",
+        "offset": 1712,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-12",
+        "offset": 1728,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-13",
+        "offset": 1744,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-14",
+        "offset": 1760,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-15",
+        "offset": 1776,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-16",
+        "offset": 1792,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-17",
+        "offset": 1808,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-18",
+        "offset": 1824,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-19",
+        "offset": 1840,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-20",
+        "offset": 1856,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-21",
+        "offset": 1872,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-22",
+        "offset": 1888,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-23",
+        "offset": 1904,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-24",
+        "offset": 1920,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-25",
+        "offset": 1936,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-26",
+        "offset": 1952,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-27",
+        "offset": 1968,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-28",
+        "offset": 1984,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-29",
+        "offset": 2000,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-30",
+        "offset": 2016,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-31",
+        "offset": 2032,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-32",
+        "offset": 2048,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-33",
+        "offset": 2064,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-34",
+        "offset": 2080,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-35",
+        "offset": 2096,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-36",
+        "offset": 2112,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-37",
+        "offset": 2128,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-38",
+        "offset": 2144,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-39",
+        "offset": 2160,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-40",
+        "offset": 2176,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-41",
+        "offset": 2192,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-42",
+        "offset": 2208,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-43",
+        "offset": 2224,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-44",
+        "offset": 2240,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-45",
+        "offset": 2256,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-46",
+        "offset": 2272,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-47",
+        "offset": 2288,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-48",
+        "offset": 2304,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-49",
+        "offset": 2320,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-50",
+        "offset": 2336,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-51",
+        "offset": 2352,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-52",
+        "offset": 2368,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-53",
+        "offset": 2384,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-54",
+        "offset": 2400,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-55",
+        "offset": 2416,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-56",
+        "offset": 2432,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-57",
+        "offset": 2448,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-58",
+        "offset": 2464,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-59",
+        "offset": 2480,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-60",
+        "offset": 2496,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-61",
+        "offset": 2512,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-62",
+        "offset": 2528,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-63",
+        "offset": 2544,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-64",
+        "offset": 2560,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-65",
+        "offset": 2576,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-66",
+        "offset": 2592,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-67",
+        "offset": 2608,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-68",
+        "offset": 2624,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-69",
+        "offset": 2640,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-70",
+        "offset": 2656,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-71",
+        "offset": 2672,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-72",
+        "offset": 2688,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-73",
+        "offset": 2704,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-74",
+        "offset": 2720,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-75",
+        "offset": 2736,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-76",
+        "offset": 2752,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-77",
+        "offset": 2768,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-78",
+        "offset": 2784,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-0.0001-trial-79",
+        "offset": 2800,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-0.3-sign--1.0",
+        "offset": 2816,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-0.3-sign-1.0",
+        "offset": 2832,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-0.5-sign--1.0",
+        "offset": 2848,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-0.5-sign-1.0",
+        "offset": 2864,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-0.8-sign--1.0",
+        "offset": 2880,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-0.8-sign-1.0",
+        "offset": 2896,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-0.98-sign--1.0",
+        "offset": 2912,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-0.98-sign-1.0",
+        "offset": 2928,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-1.0-sign--1.0",
+        "offset": 2944,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-1.0-sign-1.0",
+        "offset": 2960,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-1.2-sign--1.0",
+        "offset": 2976,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1e-06-coefficient-1.2-sign-1.0",
+        "offset": 2992,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-0.3-sign--1.0",
+        "offset": 3008,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-0.3-sign-1.0",
+        "offset": 3024,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-0.5-sign--1.0",
+        "offset": 3040,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-0.5-sign-1.0",
+        "offset": 3056,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-0.8-sign--1.0",
+        "offset": 3072,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-0.8-sign-1.0",
+        "offset": 3088,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-0.98-sign--1.0",
+        "offset": 3104,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-0.98-sign-1.0",
+        "offset": 3120,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-1.0-sign--1.0",
+        "offset": 3136,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-1.0-sign-1.0",
+        "offset": 3152,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-1.2-sign--1.0",
+        "offset": 3168,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.05-coefficient-1.2-sign-1.0",
+        "offset": 3184,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-0.3-sign--1.0",
+        "offset": 3200,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-0.3-sign-1.0",
+        "offset": 3216,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-0.5-sign--1.0",
+        "offset": 3232,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-0.5-sign-1.0",
+        "offset": 3248,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-0.8-sign--1.0",
+        "offset": 3264,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-0.8-sign-1.0",
+        "offset": 3280,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-0.98-sign--1.0",
+        "offset": 3296,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-0.98-sign-1.0",
+        "offset": 3312,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-1.0-sign--1.0",
+        "offset": 3328,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-1.0-sign-1.0",
+        "offset": 3344,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-1.2-sign--1.0",
+        "offset": 3360,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.19999997-coefficient-1.2-sign-1.0",
+        "offset": 3376,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-0.3-sign--1.0",
+        "offset": 3392,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-0.3-sign-1.0",
+        "offset": 3408,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-0.5-sign--1.0",
+        "offset": 3424,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-0.5-sign-1.0",
+        "offset": 3440,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-0.8-sign--1.0",
+        "offset": 3456,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-0.8-sign-1.0",
+        "offset": 3472,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-0.98-sign--1.0",
+        "offset": 3488,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-0.98-sign-1.0",
+        "offset": 3504,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-1.0-sign--1.0",
+        "offset": 3520,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-1.0-sign-1.0",
+        "offset": 3536,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-1.2-sign--1.0",
+        "offset": 3552,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.2-coefficient-1.2-sign-1.0",
+        "offset": 3568,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-0.3-sign--1.0",
+        "offset": 3584,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-0.3-sign-1.0",
+        "offset": 3600,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-0.5-sign--1.0",
+        "offset": 3616,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-0.5-sign-1.0",
+        "offset": 3632,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-0.8-sign--1.0",
+        "offset": 3648,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-0.8-sign-1.0",
+        "offset": 3664,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-0.98-sign--1.0",
+        "offset": 3680,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-0.98-sign-1.0",
+        "offset": 3696,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-1.0-sign--1.0",
+        "offset": 3712,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-1.0-sign-1.0",
+        "offset": 3728,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-1.2-sign--1.0",
+        "offset": 3744,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.20000003-coefficient-1.2-sign-1.0",
+        "offset": 3760,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-0.3-sign--1.0",
+        "offset": 3776,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-0.3-sign-1.0",
+        "offset": 3792,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-0.5-sign--1.0",
+        "offset": 3808,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-0.5-sign-1.0",
+        "offset": 3824,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-0.8-sign--1.0",
+        "offset": 3840,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-0.8-sign-1.0",
+        "offset": 3856,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-0.98-sign--1.0",
+        "offset": 3872,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-0.98-sign-1.0",
+        "offset": 3888,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-1.0-sign--1.0",
+        "offset": 3904,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-1.0-sign-1.0",
+        "offset": 3920,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-1.2-sign--1.0",
+        "offset": 3936,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-0.7-coefficient-1.2-sign-1.0",
+        "offset": 3952,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-0.3-sign--1.0",
+        "offset": 3968,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-0.3-sign-1.0",
+        "offset": 3984,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-0.5-sign--1.0",
+        "offset": 4000,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-0.5-sign-1.0",
+        "offset": 4016,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-0.8-sign--1.0",
+        "offset": 4032,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-0.8-sign-1.0",
+        "offset": 4048,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-0.98-sign--1.0",
+        "offset": 4064,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-0.98-sign-1.0",
+        "offset": 4080,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-1.0-sign--1.0",
+        "offset": 4096,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-1.0-sign-1.0",
+        "offset": 4112,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-1.2-sign--1.0",
+        "offset": 4128,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.0-coefficient-1.2-sign-1.0",
+        "offset": 4144,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-0.3-sign--1.0",
+        "offset": 4160,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-0.3-sign-1.0",
+        "offset": 4176,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-0.5-sign--1.0",
+        "offset": 4192,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-0.5-sign-1.0",
+        "offset": 4208,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-0.8-sign--1.0",
+        "offset": 4224,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-0.8-sign-1.0",
+        "offset": 4240,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-0.98-sign--1.0",
+        "offset": 4256,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-0.98-sign-1.0",
+        "offset": 4272,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-1.0-sign--1.0",
+        "offset": 4288,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-1.0-sign-1.0",
+        "offset": 4304,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-1.2-sign--1.0",
+        "offset": 4320,
+        "bytes": 16
+      },
+      {
+        "name": "scale-1.0-ratio-1.2-coefficient-1.2-sign-1.0",
+        "offset": 4336,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-0",
+        "offset": 4352,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-1",
+        "offset": 4368,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-2",
+        "offset": 4384,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-3",
+        "offset": 4400,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-4",
+        "offset": 4416,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-5",
+        "offset": 4432,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-6",
+        "offset": 4448,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-7",
+        "offset": 4464,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-8",
+        "offset": 4480,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-9",
+        "offset": 4496,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-10",
+        "offset": 4512,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-11",
+        "offset": 4528,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-12",
+        "offset": 4544,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-13",
+        "offset": 4560,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-14",
+        "offset": 4576,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-15",
+        "offset": 4592,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-16",
+        "offset": 4608,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-17",
+        "offset": 4624,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-18",
+        "offset": 4640,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-19",
+        "offset": 4656,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-20",
+        "offset": 4672,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-21",
+        "offset": 4688,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-22",
+        "offset": 4704,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-23",
+        "offset": 4720,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-24",
+        "offset": 4736,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-25",
+        "offset": 4752,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-26",
+        "offset": 4768,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-27",
+        "offset": 4784,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-28",
+        "offset": 4800,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-29",
+        "offset": 4816,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-30",
+        "offset": 4832,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-31",
+        "offset": 4848,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-32",
+        "offset": 4864,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-33",
+        "offset": 4880,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-34",
+        "offset": 4896,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-35",
+        "offset": 4912,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-36",
+        "offset": 4928,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-37",
+        "offset": 4944,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-38",
+        "offset": 4960,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-39",
+        "offset": 4976,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-40",
+        "offset": 4992,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-41",
+        "offset": 5008,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-42",
+        "offset": 5024,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-43",
+        "offset": 5040,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-44",
+        "offset": 5056,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-45",
+        "offset": 5072,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-46",
+        "offset": 5088,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-47",
+        "offset": 5104,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-48",
+        "offset": 5120,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-49",
+        "offset": 5136,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-50",
+        "offset": 5152,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-51",
+        "offset": 5168,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-52",
+        "offset": 5184,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-53",
+        "offset": 5200,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-54",
+        "offset": 5216,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-55",
+        "offset": 5232,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-56",
+        "offset": 5248,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-57",
+        "offset": 5264,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-58",
+        "offset": 5280,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-59",
+        "offset": 5296,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-60",
+        "offset": 5312,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-61",
+        "offset": 5328,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-62",
+        "offset": 5344,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-63",
+        "offset": 5360,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-64",
+        "offset": 5376,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-65",
+        "offset": 5392,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-66",
+        "offset": 5408,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-67",
+        "offset": 5424,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-68",
+        "offset": 5440,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-69",
+        "offset": 5456,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-70",
+        "offset": 5472,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-71",
+        "offset": 5488,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-72",
+        "offset": 5504,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-73",
+        "offset": 5520,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-74",
+        "offset": 5536,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-75",
+        "offset": 5552,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-76",
+        "offset": 5568,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-77",
+        "offset": 5584,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-78",
+        "offset": 5600,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-1.0-trial-79",
+        "offset": 5616,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-0.3-sign--1.0",
+        "offset": 5632,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-0.3-sign-1.0",
+        "offset": 5648,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-0.5-sign--1.0",
+        "offset": 5664,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-0.5-sign-1.0",
+        "offset": 5680,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-0.8-sign--1.0",
+        "offset": 5696,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-0.8-sign-1.0",
+        "offset": 5712,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-0.98-sign--1.0",
+        "offset": 5728,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-0.98-sign-1.0",
+        "offset": 5744,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-1.0-sign--1.0",
+        "offset": 5760,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-1.0-sign-1.0",
+        "offset": 5776,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-1.2-sign--1.0",
+        "offset": 5792,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1e-06-coefficient-1.2-sign-1.0",
+        "offset": 5808,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-0.3-sign--1.0",
+        "offset": 5824,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-0.3-sign-1.0",
+        "offset": 5840,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-0.5-sign--1.0",
+        "offset": 5856,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-0.5-sign-1.0",
+        "offset": 5872,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-0.8-sign--1.0",
+        "offset": 5888,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-0.8-sign-1.0",
+        "offset": 5904,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-0.98-sign--1.0",
+        "offset": 5920,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-0.98-sign-1.0",
+        "offset": 5936,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-1.0-sign--1.0",
+        "offset": 5952,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-1.0-sign-1.0",
+        "offset": 5968,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-1.2-sign--1.0",
+        "offset": 5984,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.05-coefficient-1.2-sign-1.0",
+        "offset": 6000,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-0.3-sign--1.0",
+        "offset": 6016,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-0.3-sign-1.0",
+        "offset": 6032,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-0.5-sign--1.0",
+        "offset": 6048,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-0.5-sign-1.0",
+        "offset": 6064,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-0.8-sign--1.0",
+        "offset": 6080,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-0.8-sign-1.0",
+        "offset": 6096,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-0.98-sign--1.0",
+        "offset": 6112,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-0.98-sign-1.0",
+        "offset": 6128,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-1.0-sign--1.0",
+        "offset": 6144,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-1.0-sign-1.0",
+        "offset": 6160,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-1.2-sign--1.0",
+        "offset": 6176,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.19999997-coefficient-1.2-sign-1.0",
+        "offset": 6192,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-0.3-sign--1.0",
+        "offset": 6208,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-0.3-sign-1.0",
+        "offset": 6224,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-0.5-sign--1.0",
+        "offset": 6240,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-0.5-sign-1.0",
+        "offset": 6256,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-0.8-sign--1.0",
+        "offset": 6272,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-0.8-sign-1.0",
+        "offset": 6288,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-0.98-sign--1.0",
+        "offset": 6304,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-0.98-sign-1.0",
+        "offset": 6320,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-1.0-sign--1.0",
+        "offset": 6336,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-1.0-sign-1.0",
+        "offset": 6352,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-1.2-sign--1.0",
+        "offset": 6368,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.2-coefficient-1.2-sign-1.0",
+        "offset": 6384,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-0.3-sign--1.0",
+        "offset": 6400,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-0.3-sign-1.0",
+        "offset": 6416,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-0.5-sign--1.0",
+        "offset": 6432,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-0.5-sign-1.0",
+        "offset": 6448,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-0.8-sign--1.0",
+        "offset": 6464,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-0.8-sign-1.0",
+        "offset": 6480,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-0.98-sign--1.0",
+        "offset": 6496,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-0.98-sign-1.0",
+        "offset": 6512,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-1.0-sign--1.0",
+        "offset": 6528,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-1.0-sign-1.0",
+        "offset": 6544,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-1.2-sign--1.0",
+        "offset": 6560,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.20000003-coefficient-1.2-sign-1.0",
+        "offset": 6576,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-0.3-sign--1.0",
+        "offset": 6592,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-0.3-sign-1.0",
+        "offset": 6608,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-0.5-sign--1.0",
+        "offset": 6624,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-0.5-sign-1.0",
+        "offset": 6640,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-0.8-sign--1.0",
+        "offset": 6656,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-0.8-sign-1.0",
+        "offset": 6672,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-0.98-sign--1.0",
+        "offset": 6688,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-0.98-sign-1.0",
+        "offset": 6704,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-1.0-sign--1.0",
+        "offset": 6720,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-1.0-sign-1.0",
+        "offset": 6736,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-1.2-sign--1.0",
+        "offset": 6752,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-0.7-coefficient-1.2-sign-1.0",
+        "offset": 6768,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-0.3-sign--1.0",
+        "offset": 6784,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-0.3-sign-1.0",
+        "offset": 6800,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-0.5-sign--1.0",
+        "offset": 6816,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-0.5-sign-1.0",
+        "offset": 6832,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-0.8-sign--1.0",
+        "offset": 6848,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-0.8-sign-1.0",
+        "offset": 6864,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-0.98-sign--1.0",
+        "offset": 6880,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-0.98-sign-1.0",
+        "offset": 6896,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-1.0-sign--1.0",
+        "offset": 6912,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-1.0-sign-1.0",
+        "offset": 6928,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-1.2-sign--1.0",
+        "offset": 6944,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.0-coefficient-1.2-sign-1.0",
+        "offset": 6960,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-0.3-sign--1.0",
+        "offset": 6976,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-0.3-sign-1.0",
+        "offset": 6992,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-0.5-sign--1.0",
+        "offset": 7008,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-0.5-sign-1.0",
+        "offset": 7024,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-0.8-sign--1.0",
+        "offset": 7040,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-0.8-sign-1.0",
+        "offset": 7056,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-0.98-sign--1.0",
+        "offset": 7072,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-0.98-sign-1.0",
+        "offset": 7088,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-1.0-sign--1.0",
+        "offset": 7104,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-1.0-sign-1.0",
+        "offset": 7120,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-1.2-sign--1.0",
+        "offset": 7136,
+        "bytes": 16
+      },
+      {
+        "name": "scale-10000.0-ratio-1.2-coefficient-1.2-sign-1.0",
+        "offset": 7152,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-0",
+        "offset": 7168,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-1",
+        "offset": 7184,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-2",
+        "offset": 7200,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-3",
+        "offset": 7216,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-4",
+        "offset": 7232,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-5",
+        "offset": 7248,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-6",
+        "offset": 7264,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-7",
+        "offset": 7280,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-8",
+        "offset": 7296,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-9",
+        "offset": 7312,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-10",
+        "offset": 7328,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-11",
+        "offset": 7344,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-12",
+        "offset": 7360,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-13",
+        "offset": 7376,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-14",
+        "offset": 7392,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-15",
+        "offset": 7408,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-16",
+        "offset": 7424,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-17",
+        "offset": 7440,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-18",
+        "offset": 7456,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-19",
+        "offset": 7472,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-20",
+        "offset": 7488,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-21",
+        "offset": 7504,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-22",
+        "offset": 7520,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-23",
+        "offset": 7536,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-24",
+        "offset": 7552,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-25",
+        "offset": 7568,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-26",
+        "offset": 7584,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-27",
+        "offset": 7600,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-28",
+        "offset": 7616,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-29",
+        "offset": 7632,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-30",
+        "offset": 7648,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-31",
+        "offset": 7664,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-32",
+        "offset": 7680,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-33",
+        "offset": 7696,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-34",
+        "offset": 7712,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-35",
+        "offset": 7728,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-36",
+        "offset": 7744,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-37",
+        "offset": 7760,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-38",
+        "offset": 7776,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-39",
+        "offset": 7792,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-40",
+        "offset": 7808,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-41",
+        "offset": 7824,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-42",
+        "offset": 7840,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-43",
+        "offset": 7856,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-44",
+        "offset": 7872,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-45",
+        "offset": 7888,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-46",
+        "offset": 7904,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-47",
+        "offset": 7920,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-48",
+        "offset": 7936,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-49",
+        "offset": 7952,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-50",
+        "offset": 7968,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-51",
+        "offset": 7984,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-52",
+        "offset": 8000,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-53",
+        "offset": 8016,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-54",
+        "offset": 8032,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-55",
+        "offset": 8048,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-56",
+        "offset": 8064,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-57",
+        "offset": 8080,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-58",
+        "offset": 8096,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-59",
+        "offset": 8112,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-60",
+        "offset": 8128,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-61",
+        "offset": 8144,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-62",
+        "offset": 8160,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-63",
+        "offset": 8176,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-64",
+        "offset": 8192,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-65",
+        "offset": 8208,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-66",
+        "offset": 8224,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-67",
+        "offset": 8240,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-68",
+        "offset": 8256,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-69",
+        "offset": 8272,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-70",
+        "offset": 8288,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-71",
+        "offset": 8304,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-72",
+        "offset": 8320,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-73",
+        "offset": 8336,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-74",
+        "offset": 8352,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-75",
+        "offset": 8368,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-76",
+        "offset": 8384,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-77",
+        "offset": 8400,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-78",
+        "offset": 8416,
+        "bytes": 16
+      },
+      {
+        "name": "random-scale-10000.0-trial-79",
+        "offset": 8432,
+        "bytes": 16
+      }
+    ],
+    "native_sha256": "6efdf520244068e3d42869fa63ecfb508a539c3c77de92e3305ef245cb0e7c4a",
     "native_returncode": 0,
     "exact_bytes": true
   }

@@ -64,6 +64,13 @@ four return flags, the 101-evaluation limit, three numerical scales, and
 callbacks that adjust the trial argument. The fixtures are in
 [`tests/reference/root_solver/`](tests/reference/root_solver/).
 
+Contraction adjustment and culvert velocity-head loss match **528 direct
+original-executable cases**. These check the full-width coefficient return,
+the caller's float store, and the head-loss result at three scales and around
+the contraction threshold. The fixtures retain the exact original head-loss
+instruction bytes by hash in
+[`tests/reference/culvert_loss/`](tests/reference/culvert_loss/).
+
 The independent section-boundary geometry also matches **every geometric output
 bit in 363 direct FEQUTL tests**. These cover dry, partially submerged, and fully
 submerged boundaries, multiple subsections, three scales, vertical/horizontal

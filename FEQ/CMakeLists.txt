@@ -5,7 +5,7 @@ option(FEQ_SANITIZERS "Check authored C++ for invalid memory and undefined behav
 
 add_library(feq_numerics STATIC src/section_energy.cpp src/conduit_boundary.cpp src/weir_flow.cpp src/arch_perimeter.cpp src/trigonometry.cpp src/elevation_arguments.cpp src/section_properties.cpp src/section_flux.cpp src/power.cpp src/section_geometry.cpp src/decimal.cpp src/md5.cpp src/profile_matrix.cpp src/section_interpolation.cpp src/table_interpolation.cpp)
 target_include_directories(feq_numerics PUBLIC include)
-target_sources(feq_numerics PRIVATE src/root_solver.cpp)
+target_sources(feq_numerics PRIVATE src/root_solver.cpp src/culvert_loss.cpp)
 target_compile_features(feq_numerics PUBLIC cxx_std_20)
 set_target_properties(feq_numerics PROPERTIES CXX_EXTENSIONS OFF)
 
@@ -114,6 +114,12 @@ if(BUILD_TESTING)
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_root_fixture.py $<TARGET_FILE:feq_root_probe>)
     add_test(NAME root_adapter_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_root_fixture.py $<TARGET_FILE:feq_root_probe> --adapter)
+
+    add_executable(feq_culvert_loss_probe tools/culvert_loss_probe.cpp)
+    target_link_libraries(feq_culvert_loss_probe PRIVATE feq_numerics)
+    feq_checks(feq_culvert_loss_probe)
+    add_test(NAME culvert_loss_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_culvert_loss_fixture.py $<TARGET_FILE:feq_culvert_loss_probe>)
 
     add_executable(feq_conduit_probe tools/conduit_probe.cpp)
     target_link_libraries(feq_conduit_probe PRIVATE feq_numerics)
