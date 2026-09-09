@@ -44,6 +44,9 @@ if(BUILD_TESTING)
     add_test(NAME profile_model_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_profile_fixture.py $<TARGET_FILE:feq_profile_probe>
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/reference/profile_models)
+    add_test(NAME profile_control_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_profile_fixture.py $<TARGET_FILE:feq_profile_probe>
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/reference/profile_controls)
 
     add_executable(feq_section_probe tools/section_probe.cpp)
     target_link_libraries(feq_section_probe PRIVATE feq_numerics)

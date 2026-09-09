@@ -115,7 +115,7 @@ companion installer does not imply that its source has been recovered or ported.
 ## Independent profile solver and complete research engines
 
 The independent C++ profile solver in `src/profile_matrix.cpp` reproduces the
-original `PROFAC` and `PROSLV` routines bit for bit across 56 controlled fixtures.
+original `PROFAC` and `PROSLV` routines bit for bit across 62 controlled fixtures.
 `tools/probe_profile_original.py` replaces only PROGRAM entry in a disposable
 copy of FEQ. The original runtime initializes normally, then the driver calls
 the original factorization and solution addresses with explicitly populated
@@ -124,7 +124,8 @@ The original executable hash is checked before any temporary copy is patched.
 
 The fixtures comprise 24 dense systems (orders 1, 2, 3, 5, 8, 12, 20, and 24,
 at scales 0.0001, 1, and 10000), 24 specialized branch-block factorizations,
-and eight 44-equation mixed-block matrices captured during the original FEQEX1 run.
+eight 44-equation mixed-block matrices captured during the original FEQEX1 run,
+and six 74-equation matrices around FEQEX4's control-flow transition.
 The native comparison also passed AddressSanitizer and UndefinedBehaviorSanitizer.
 The committed fixtures are under `tests/reference/profile_matrix/` and
 `tests/reference/profile_models/`; the original
@@ -150,7 +151,7 @@ units, including their unified COMMON definitions and dynamic-array adapters.
 All 27 callback parameters use four concrete function-pointer signatures,
 derived from 91 recorded call constraints or inspected unused routine bodies.
 All six supplied cases execute. The current whole-file acceptance result is
-**10 of 17 files matching**; the remaining numerical and decimal-formatting differences are unresolved.
+**11 of 17 files matching**; the remaining numerical and decimal-formatting differences are unresolved.
 The full results are in `cpp-research-status.json`. Passing a direct routine test
 does not establish equivalence of an entire hydraulic model.
 
@@ -217,12 +218,23 @@ FEQEX4 additionally requires wider steady-initialization locals in `SFPSBM`,
 including the compiler-generated temporary used when squaring conveyance and
 velocity. Formatted output and `NINT` still receive explicitly rounded float
 copies; passing the wide object at those interfaces would change the call ABI.
-The current candidate matches all active inputs of the first 40 FEQEX4 matrices.
-Matrix 41 first differs only in residual 45: original -3.7085983753204346 versus
-candidate -3.7084853649139404. This remains unresolved.
+Initial tracing matched the first 40 FEQEX4 matrices. The first difference was
+in the bidirectional-control residual. `BDFTAB` retains water-surface elevation
+sums before storing its heads, and retains discharge through the final residual
+subtraction. `SETEXT`'s code-13 energy junction also retains velocity quotients
+and their squares, while explicitly storing the critical-speed square root as
+binary32 before multiplying by area. The instruction listings and integration
+comments record those separate boundaries.
 
-The current whole-output result is 10 of 17 files. The seven failures include
-FEQEX1's history, FEQEX4's main report and history, and four FEQUTL outputs.
+With those corrections, all 568 FEQEX4 matrices match every active word. Its
+water-level and discharge history also matches the distributed file exactly.
+`CMPCOR` compares a wider relative correction against the stored binary32
+maximum; rounding both operands first could report a different maximum-error
+node. Preserving that comparison fixes the remaining location discrepancy.
+Two decimal-formatting differences remain in FEQEX4's main report.
+
+The current whole-output result is 11 of 17 files. The six failures include
+FEQEX1's history, FEQEX4's main report, and four FEQUTL outputs.
 `cpp-research-status.json` records the current executable and output hashes.
 `model-active-matrices.json` records complete active-matrix trace comparisons,
 with the original trace runs' independent report checks. The older full-COMMON

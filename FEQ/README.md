@@ -29,13 +29,15 @@ C++ equivalence. See [the recorded comparison](recovery/reference-1061-compariso
 and [recovery findings](recovery/FINDINGS.md).
 
 The independent C++ profile-matrix factorization and solution routines now match
-**every output bit in 56 direct tests of the original executable**. These include
+**every output bit in 62 direct tests of the original executable**. These include
 dense matrices at three scales, specialized branch blocks, and eight mixed-block
-matrices captured during the original FEQEX1 model. The tests
+matrices captured during the original FEQEX1 model and six FEQEX4 matrices
+spanning a control-flow transition. The tests
 preserve the original compiler's wider register intermediates and explicit
 single-precision stores. Their captured inputs and outputs are committed in
-[`tests/reference/profile_matrix/`](tests/reference/profile_matrix/) and
-[`tests/reference/profile_models/`](tests/reference/profile_models/).
+[`tests/reference/profile_matrix/`](tests/reference/profile_matrix/),
+[`tests/reference/profile_models/`](tests/reference/profile_models/), and
+[`tests/reference/profile_controls/`](tests/reference/profile_controls/).
 
 The independent cross-section interval interpolation matches **all seven output
 words in 240 cases against both original lookup routines**, for 480 original
@@ -49,19 +51,19 @@ The captured fixtures are in
 [`tests/reference/section_interpolation/`](tests/reference/section_interpolation/).
 
 Complete translated research engines also execute all six examples. Full-engine
-equivalence remains in progress: the current strict comparison passes 10 of the
+equivalence remains in progress: the current strict comparison passes 11 of the
 17 files. Every FEQEX2 and FEQEX3 report matches, masking only execution clocks;
 their water-level and discharge histories match without masking. FEQEX1's main
 report also matches, with three decimal-rounding differences remaining in its
-history file. FEQEX4 and the FEQUTL reports/tables still have numerical differences.
+history file. FEQEX4's history matches exactly; two decimal-rounding differences
+remain in its main report. The FEQUTL reports/tables still have numerical differences.
 [`recovery/cpp-research-status.json`](recovery/cpp-research-status.json) records
 the actual binaries, runtime changes, and all comparisons. These research
 engines are not application releases.
 
 Tracing establishes exact active solver inputs at every matrix assembly in
-FEQEX1 (621 matrices), FEQEX2 (325), and FEQEX3 (578). FEQEX4 matches through
-40 matrices; matrix 41 first differs in one residual. These comparisons include
-every active coefficient, residual, and profile/block index, with no tolerance.
+FEQEX1 (621 matrices), FEQEX2 (325), FEQEX3 (578), and FEQEX4 (568). These comparisons
+include every active coefficient, residual, and profile/block index, with no tolerance.
 The recorded comparison and trace configurations are in
 [`recovery/model-active-matrices.json`](recovery/model-active-matrices.json).
 

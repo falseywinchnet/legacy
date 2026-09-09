@@ -112,7 +112,8 @@ connects the independently tested solver to the research COMMON layout.
 trace environment variables; it is not an end-user interface.
 
 The current integration options are `--setinx-distance-rounding`,
-`--traced-register-stores`, and `--steady-initialization-registers`. These
+`--traced-register-stores`, `--steady-initialization-registers`, and
+`--control-register-stores`. These
 preserve specific observed conversions, including single-precision call and
 formatted-I/O boundaries within wider steady-initialization expressions.
 
@@ -151,9 +152,14 @@ python3 FEQ/tools/compare_active_matrices.py compare \
   --output FEQ/build/matrix-comparison.json
 ```
 
-Every active word now matches throughout FEQEX1, FEQEX2, and FEQEX3. FEQEX4's
-first 40 matrices match; the next differs in residual 45. The current full-output
-comparison passes 10 of 17 files. `model-active-matrices.json` preserves all
-trace hashes, counts, original-output checks, and the first remaining difference.
+Every active word now matches throughout all four models, including 568 FEQEX4
+matrices. The current full-output comparison passes 11 of 17 files. `model-active-matrices.json` preserves all
+trace hashes, counts, and independent original-output checks.
 Unused COMMON capacity is outside this compact comparison. The older full-COMMON
 capture remains in `matrix-entry-comparison.json` as historical evidence.
+
+The six control-transition solver fixtures can be recaptured with
+`probe_profile_original.py --fixtures FEQ/tests/reference/profile_controls/fixtures.json`,
+using the same `--native` and new `--output` arguments as the earlier examples.
+They cover FEQEX4 matrices 38 through 43 and preserve every factorized coefficient
+and solution word.

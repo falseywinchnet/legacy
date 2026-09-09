@@ -156,6 +156,62 @@ def restore_steady_initialization(body):
     return edit_text(data,edits).decode()
 
 
+def restore_control_precision(body, name):
+    """Recover observed control-flow and convergence-report register values."""
+    selected_by_name = {
+        'bdftab_':{'el','er','disch'},
+        'setext_':{'vl','vr','feq_gen_r_d_1','feq_gen_r_d_2'},
+        'cmpcor_':{'b','t','dq','dy','div','temp','feq_gen_r_d_1','feq_gen_r_d_2','feq_gen_r_d_3'},
+    }
+    comments = {
+        'bdftab_':('EL=YL+ZL and ER=YR+ZR retain 53-bit sums before the stored heads.\n'
+                   '    // Original 0x4203f0-0x420423. DISCH=QF*CS also remains wider\n'
+                   '    // until RES=Q-QF*CS is stored at 0x420d2a.'),
+        'setext_':('Code 13 retains V=Q/A and its square in 53-bit registers.\n'
+                   '    // Original 0x429fe2-0x42a03a. Q/Qcritical is squared without\n'
+                   '    // a binary32 intermediate at 0x42a109-0x42a147.'),
+        'cmpcor_':('Relative corrections B=abs(DQ)/(abs(Q)+QEPS), or abs(DY*T/A),\n'
+                   '    // remain wider through comparisons against the stored REAL maximum.\n'
+                   '    // Original 0x4754de-0x47550d and 0x475599-0x4755ce.\n'
+                   '    // Rounding B before comparing can select a different reported node.'),
+    }
+    selected = selected_by_name[name]
+    data = body.encode()
+    function = functions(data)[0]
+    edits = []
+    found = set()
+    square_roots = 0
+    for node in nodes(function):
+        if node.type == 'declaration' and content(node.child_by_field_name('type'),data) == 'real':
+            declarators = node.children_by_field_name('declarator')
+            if not declarators or any(item.type != 'identifier' for item in declarators):
+                continue
+            names = [content(item,data) for item in declarators]
+            wide = [item for item in names if item in selected]
+            narrow = [item for item in names if item not in selected]
+            if wide:
+                replacement = ('real '+', '.join(narrow)+';\n    ' if narrow else '')+'doublereal '+', '.join(wide)+';'
+                edits.append((node.start_byte,node.end_byte,replacement))
+                found.update(wide)
+        if node.type == 'pointer_expression' and content(node,data) in {'&'+item for item in selected}:
+            raise ValueError('A widened control local is passed by address: '+content(node,data))
+        if name == 'setext_' and node.type == 'call_expression':
+            text = content(node,data)
+            if text in ('sqrt(static_cast<double>(static_cast<double>(gravcm_1.grav) * al) / tl)',
+                        'sqrt(static_cast<double>(static_cast<double>(gravcm_1.grav) * ar) / tr)'):
+                edits.append((node.start_byte,node.end_byte,'static_cast<float>('+text+')'))
+                square_roots += 1
+    if found != selected or (name == 'setext_' and square_roots != 4):
+        raise ValueError('The expected control declarations or square-root expressions changed: '+name)
+    comment = '\n    // '+comments[name]+'\n'
+    if name == 'setext_':
+        comment += ('    // Qcritical=A*sqrt(g*A/T): the original stores sqrt as REAL before\n'
+                    '    // multiplication, at 0x4299ae, 0x4299d8, 0x429ee0, and 0x429f0a.\n')
+    position = function.child_by_field_name('body').start_byte+1
+    edits.append((position,position,comment))
+    return edit_text(data,edits).decode()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('source',type=Path)
@@ -166,6 +222,8 @@ def main():
                         help='Restore traced SETINX, CONTRL, BDYFLW, and INTERP register/store behavior.')
     parser.add_argument('--steady-initialization-registers',action='store_true',
                         help='Restore SFPSBM register temporaries with separate REAL output argument stores.')
+    parser.add_argument('--control-register-stores',action='store_true',
+                        help='Restore BDFTAB, SETEXT, and CMPCOR register values and observed REAL stores.')
     args = parser.parse_args()
     source, output = args.source.resolve(),args.output.resolve()
     if output.exists() or ROOT/'build' not in output.parents:
@@ -204,6 +262,11 @@ def main():
                 changes.append({'file':path.name,'function':name,
                                 'rounding':'Retained scalar and power temporaries; separate REAL stores for output arguments.',
                                 'evidence':'recovery/assembly/feq/_sfpsbm_.asm'})
+            elif name in ('bdftab_','setext_','cmpcor_') and args.control_register_stores:
+                body = restore_control_precision(body,name)
+                changes.append({'file':path.name,'function':name,
+                                'rounding':'Retained control and correction registers; observed critical-speed REAL stores.',
+                                'evidence':'recovery/assembly/feq/_'+name+'.asm'})
             elif name == 'setinx_' and args.setinx_distance_rounding:
                 old = 'dxdt = dx / *dt;'
                 if body.count(old)!=1:

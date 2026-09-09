@@ -1,0 +1,54 @@
+{
+  "original_sha256": "16e46628e3d55f654e5b39ceecc621bcfcec86a0b881197a6e5f5fd17ec42399",
+  "native_sha256": "4f974be24eeffb1b8e47e5fa213e5a1ff441bb8bac3f2a27e83156814379aa13",
+  "wine_version": "wine-11.4",
+  "native_returncode": 0,
+  "fixtures": [
+    {
+      "name": "FEQEX4-matrix-38",
+      "offset": 0,
+      "bytes": 1712,
+      "sha256": "9f23e5a8210d00d17a9d0883cbca6dfbb60c49b7036018a52889dab422ec9880",
+      "exact_bytes": true
+    },
+    {
+      "name": "FEQEX4-matrix-39",
+      "offset": 1712,
+      "bytes": 1712,
+      "sha256": "c4409931be4c7c09ecc13f58ab2c2e50fc834bbeaa53364b05583467e9c925d3",
+      "exact_bytes": true
+    },
+    {
+      "name": "FEQEX4-matrix-40",
+      "offset": 3424,
+      "bytes": 1712,
+      "sha256": "54e9ac44c0fc4f703dd5b46e5a8eeeee7ce50d5b22e39a9ecc710c849540af8d",
+      "exact_bytes": true
+    },
+    {
+      "name": "FEQEX4-matrix-41",
+      "offset": 5136,
+      "bytes": 1712,
+      "sha256": "22406d2d866355e1ec26a2f66f5a0c2b3f2d13848295abf3497519ab0e2e8454",
+      "exact_bytes": true
+    },
+    {
+      "name": "FEQEX4-matrix-42",
+      "offset": 6848,
+      "bytes": 1712,
+      "sha256": "70025bfa0b4ec72a1351fb397089adcd8036245091cca488ba381de93c56bfe3",
+      "exact_bytes": true
+    },
+    {
+      "name": "FEQEX4-matrix-43",
+      "offset": 8560,
+      "bytes": 1712,
+      "sha256": "889b849f357366eae313f73b53bbb7ca75f60aecfe3a4139dbc65686ab247e71",
+      "exact_bytes": true
+    }
+  ],
+  "exact_bytes": true,
+  "input_sha256": "359d3a463a1efc9dcee8cc21df02e7f871cde3f44489e6aa22a44c48ab5ddbe8",
+  "output_sha256": "68bf8566572871b1372f67888732a63c636ff7a2033788a9e736604aac5bf7f5",
+  "source": "FEQEX4 compact active matrices 38 through 43, recaptured by unchanged original PROFAC and PROSLV."
+}
