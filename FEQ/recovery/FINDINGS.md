@@ -17,12 +17,18 @@ Intel x86, despite the download page's “DOS” terminology. Their PE imports a
 Windows system libraries; a DOS-only emulator is not sufficient. The compiler
 identity recorded by the supplied programs is Lahey/Fujitsu Fortran 95 5.70f.
 
-The FEQ double-solver build uses `FEQ/double/linsys.for` and `matcom.cmn`, the
-Lahey double-precision build identity, and HEC-DSS dummy routines. “Double” here
-does not mean every hydraulic variable is double precision. FEQUTL uses the
-single-precision build identity and a separate shared-parameter configuration.
-[`tools/stage_source.py`](../tools/stage_source.py) reproduces those compilation
-file selections without modifying the original source.
+The shipped FEQ executable reports **Solution precision: Single**. This is
+verified in its captured output, not inferred from a build script. The archive
+also contains a double-solver variant in `FEQ/double/`; selecting that variant
+would change the target behavior. Both versions mix single- and double-precision
+variables elsewhere. FEQUTL also uses the single-precision build identity.
+The distribution README states that HEC-DSS support is not compiled into FEQ,
+although the archived single-solver build script selects DSS library routines.
+The release therefore cannot be reproduced by blindly running either archived
+script. [`tools/stage_source.py`](../tools/stage_source.py) defaults to the
+shipped single-solver identity with HEC-DSS dummy routines and records every
+selected file. Its optional double-solver selection is a separate research
+configuration. Neither configuration modifies the preserved source.
 
 ## Original-executable verification
 

@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'originals/feq1061/wrdapp/FEQ_10.61/SRC'
 
 
-def stage(program, destination):
+def stage(program, destination, precision='single'):
     destination = destination.resolve()
     if destination.exists():
         raise ValueError('Destination must be new.')
@@ -34,13 +34,14 @@ def stage(program, destination):
         if selected[name].parent.name == 'SHARE' and name.endswith('.prm') and name != 'arsize.prm':
             del selected[name]
     select(SOURCE / 'SHARE' / ('morglh.prm' if program == 'feq' else 'morgux.prm'), 'morg.prm')
-    who = 'lf95_ms_d_npf' if program == 'feq' else 'lf95_ms_s_npf'
+    who = 'lf95_ms_d_npf' if program == 'feq' and precision == 'double' else 'lf95_ms_s_npf'
     select(SOURCE / 'SHARE' / (who+'.who'), who+'.for')
     select(SOURCE / 'SVN_REPORT/svn_reportdmy.for', 'svn_report.for')
     excluded = ['locsubux.for', 'timer90.for', 'getsvn_lx_g95.for', 'getsvn_lx_lf95.for', 'getsvn_msw_g95.for', 'pwd_lx_g95.for', 'pwd_lx_lf95.for', 'pwd_msw_g95.for']
     if program == 'feq':
-        select(SOURCE / 'FEQ/double/linsys.for')
-        select(SOURCE / 'FEQ/double/matcom.cmn')
+        if precision == 'double':
+            select(SOURCE / 'FEQ/double/linsys.for')
+            select(SOURCE / 'FEQ/double/matcom.cmn')
         select(SOURCE / 'FEQ/mkdir_fun_msw_lf95.for', 'mkdir_fun.for')
         excluded += ['hecdss.for', 'mkdir_fun_msw_lf95.for', 'mkdir_fun_msw_g95.for', 'mkdir_fun_lx_lf95.for', 'mkdir_fun_lx_g95.for']
     else:
@@ -54,12 +55,13 @@ def stage(program, destination):
         manifest.append({'staged': name, 'source': path.relative_to(ROOT).as_posix(),
                          'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
     (destination / 'source-manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
-    print(f'{program}: {len(selected)} staged files')
+    print(f'{program}: {len(selected)} staged files; {precision} solver; HEC-DSS stubs')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('program', choices=['feq', 'fequtl'])
     parser.add_argument('destination', type=Path)
+    parser.add_argument('--precision', choices=['single', 'double'], default='single')
     arguments = parser.parse_args()
-    stage(arguments.program, arguments.destination)
+    stage(arguments.program, arguments.destination, arguments.precision)
