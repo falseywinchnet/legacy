@@ -112,6 +112,14 @@ residual stays wide through the root-solver return. Flap force is an input to
 these fixtures. See [`src/tailwater_residual.cpp`](src/tailwater_residual.cpp) and
 [`tests/reference/tailwater_momentum/`](tests/reference/tailwater_momentum/).
 
+Tailwater spacing and both square-root-drop table stores match **3,072
+original-executable cases**, covering three elevation scales, nine table sizes,
+and eleven powers. The original level-generation loop runs in place, including
+its REAL power routine. The C++ preserves the wide head difference and
+reciprocal, the REAL power argument and result, and the REAL square root stored
+in a DOUBLE PRECISION table. See
+[`tests/reference/tailwater_spacing/`](tests/reference/tailwater_spacing/).
+
 The standalone conveyance lookup matches **2,688 calls to the complete original
 LKTK routine**, covering all fourteen accepted section table types, three
 scales, interval endpoints, and increasing or decreasing conveyance. Its

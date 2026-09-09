@@ -843,6 +843,31 @@ def integrate_normal_flow_residual(data):
     return b'#include <feq/steady_residual.hpp>\n'+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
 
 
+def integrate_tailwater_spacing(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'qvstw_']
+    if len(targets) != 1:raise ValueError('Expected QVSTW.')
+    body = targets[0].child_by_field_name('body');edits = [];found = set()
+    for node in nodes(body):
+        if node.type != 'expression_statement':continue
+        text = content(node,data)
+        if text.startswith('sqrtdp[0] = sqrt('):
+            replacement = 'sqrtdp[0] = feq::culvert_sqrt_drop(*z1true,x43com_1.z43old);'
+            found.add('first-root')
+        elif text.startswith('sqrtdp[feq_gen_i_d_ - 1] = sqrt('):
+            replacement = 'sqrtdp[feq_gen_i_d_ - 1] = feq::culvert_sqrt_drop(*z1true,ztail);'
+            found.add('interior-root')
+        elif text.startswith('ztvec[feq_gen_i_d_ - 1] = x43com_1.z43old + dz * '):
+            replacement = ('ztvec[feq_gen_i_d_ - 1] = feq::culvert_tailwater_level(\n'
+                '            x43com_1.z43old,*z1true,feq_gen_i_d_,*nfrac,*power);')
+            found.add('spacing')
+        else:continue
+        edits.append((node.start_byte,node.end_byte,replacement))
+    if found != {'first-root','interior-root','spacing'} or len(edits) != 3:
+        raise ValueError('Expected tailwater spacing and both square-root table stores.')
+    return b'#include <feq/tailwater_residual.hpp>\n'+edit_text(data,edits)
+
+
 def integrate_tailwater_momentum(data):
     targets = [function for function in functions(data)
                if content(identifier(function.child_by_field_name('declarator')),data) == 'rty7rf_']
@@ -1026,7 +1051,7 @@ def main():
         elif path.name == 'tablook.cpp':data = integrate_scalar_moment(integrate_scalar_conveyance(data))
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
-        elif path.name == 'culverta.cpp':data = integrate_tailwater_momentum(data)
+        elif path.name == 'culverta.cpp':data = integrate_tailwater_spacing(integrate_tailwater_momentum(data))
         elif path.name == 'culvertc.cpp':data = integrate_full_barrel(integrate_steady_profile(integrate_steady_residuals(data)))
         elif path.name == 'culvertd.cpp':data = integrate_departure_energy(integrate_normal_flow_residual(integrate_approach_residual(integrate_culvert_losses(data))))
         elif path.name == 'numrmath.cpp':data = integrate_gaussian_rule(data)
@@ -1118,6 +1143,9 @@ def main():
                 {'file':'culverta.cpp','function':'rty7rf_','component':'src/tailwater_residual.cpp',
                  'scope':'Wide section-43 momentum preserved across calls and normalized section-44 momentum residual.',
                  'verification':'tests/reference/tailwater_momentum/manifest.json'},
+                {'file':'culverta.cpp','function':'qvstw_','component':'src/tailwater_residual.cpp',
+                 'scope':'Tailwater spacing with wide reciprocal and head difference, REAL power and REAL square-root table stores.',
+                 'verification':'tests/reference/tailwater_spacing/manifest.json'},
                 {'file':'culvertc.cpp','functions':['sber_','sper_','sfpsbe_'],'component':'src/steady_residual.cpp',
                  'scope':'Wide velocity, energy, eddy loss and normalized residuals after original section lookup.',
                  'verification':['tests/reference/steady_residual/manifest.json','tests/reference/steady_profile/manifest.json']},

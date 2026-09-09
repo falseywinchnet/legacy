@@ -81,7 +81,22 @@ int main(int argc, char** argv) {
         const bool normal_flow = argc == 2 && std::strcmp(argv[1],"--normal-flow-residual") == 0;
         const bool departure_energy = argc == 2 && std::strcmp(argv[1],"--departure-energy") == 0;
         const bool tailwater_momentum = argc == 2 && std::strcmp(argv[1],"--tailwater-momentum") == 0;
+        const bool tailwater_spacing = argc == 2 && std::strcmp(argv[1],"--tailwater-spacing") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (tailwater_spacing) {
+                const float free_level = std::bit_cast<float>(read_word());
+                const float upstream = std::bit_cast<float>(read_word());
+                const float power = std::bit_cast<float>(read_word());
+                const int count = std::bit_cast<std::int32_t>(read_word());
+                const int index = std::bit_cast<std::int32_t>(read_word());
+                const float level = feq::culvert_tailwater_level(free_level,upstream,index,count,power);
+                write_float(level);
+                write_double(static_cast<double>(upstream)-free_level);
+                write_double(feq::culvert_sqrt_drop(upstream,free_level));
+                write_double(static_cast<double>(upstream)-level);
+                write_double(feq::culvert_sqrt_drop(upstream,level));
+                continue;
+            }
             if (tailwater_momentum) {
                 float fields[10]{};
                 for (int i = 0; i < 10; ++i) { fields[i] = std::bit_cast<float>(read_word()); }

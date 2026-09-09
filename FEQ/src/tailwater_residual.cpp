@@ -1,7 +1,27 @@
 // Work: Astra. Sponsor: Rainstar. Foundation: Hashem. MIT licensed.
 #include <feq/tailwater_residual.hpp>
+#include <feq/power.hpp>
+#include <cmath>
 
 namespace feq {
+float culvert_tailwater_level(float free_level, float upstream, int index,
+    int count, float power) {
+    // ZT(i) = Zfree + (Zup-Zfree)*(1-REAL((N-i)/(N-1))**power).
+    // QVSTW 0x412fbf retains 1/(N-1); 0x41301c stores its product as
+    // REAL. _g_arxr returns REAL; DZ and the subsequent arithmetic stay wide.
+    const double reciprocal = 1.0/(count-1);
+    const float fraction = static_cast<float>((count-index)*reciprocal);
+    const float powered = legacy_power(fraction,power);
+    const double difference = static_cast<double>(upstream)-free_level;
+    return static_cast<float>(free_level+difference*(1.0-powered));
+}
+
+double culvert_sqrt_drop(float upstream, float tailwater) {
+    // SQRTDP = DOUBLE(REAL(sqrt(Zup-Ztail))); 0x412efa..0x412f08 and
+    // 0x414012..0x414021 store and reload REAL before the DOUBLE table store.
+    return static_cast<float>(std::sqrt(static_cast<double>(upstream)-tailwater));
+}
+
 double tailwater_upstream_momentum(float flow, float momentum_factor, float area,
     float road_momentum, float first_moment, float gravity) {
     // M43 = beta3*Q3*Q3/A3 + Mroad + g*J43.

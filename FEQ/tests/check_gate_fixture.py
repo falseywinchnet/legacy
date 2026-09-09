@@ -12,7 +12,8 @@ mode={'gate_residual':'--gate','gate_levels':'--gate-levels','gate_free':'--gate
       'specific_energy':'--specific-energy','power_spacing':'--power-spacing',
       'full_barrel':'--full-barrel','type2_head_loss':'--head-loss',
       'normal_flow_residual':'--normal-flow-residual','scalar_conveyance':'--scalar-conveyance',
-      'departure_energy':'--departure-energy','tailwater_momentum':'--tailwater-momentum'}[kind]
+      'departure_energy':'--departure-energy','tailwater_momentum':'--tailwater-momentum',
+      'tailwater_spacing':'--tailwater-spacing'}[kind]
 fixtures=Path(__file__).resolve().parent/'reference'/kind
 inputs=(fixtures/'inputs.bin').read_bytes();expected=(fixtures/'outputs.bin').read_bytes()
 manifest=json.loads((fixtures/'manifest.json').read_text())

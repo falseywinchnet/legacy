@@ -3,6 +3,15 @@
 #define FEQ_TAILWATER_RESIDUAL_HPP
 
 namespace feq {
+// QVSTW interior tailwater level, with one-based index 2..count-1.
+// Require finite elevations, upstream > free_level, count >= 3 and power > 0.
+float culvert_tailwater_level(float free_level, float upstream, int index,
+    int count, float power);
+
+// The head difference remains wide through SQRT, then crosses a REAL store
+// before entering QVSTW's DOUBLE PRECISION square-root-drop table.
+double culvert_sqrt_drop(float upstream, float tailwater);
+
 // Momentum flux plus hydrostatic impulse at section 43, including road flow.
 // Evaluate before downstream section calculations can change the input state.
 double tailwater_upstream_momentum(float flow, float momentum_factor, float area,

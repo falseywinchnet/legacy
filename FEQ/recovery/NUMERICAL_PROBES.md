@@ -1082,3 +1082,39 @@ FEQ/build/python312/bin/python FEQ/tools/probe_departure_energy_original.py \
 FEQ/build/python312/bin/python FEQ/tools/probe_tailwater_momentum_original.py \
   --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/tailwater-momentum-recapture
 ```
+
+## Culvert tailwater spacing and square-root drops
+
+`probe_tailwater_spacing_original.py` executes QVSTW's original loop at
+0x412f7d..0x41313c in place, including its unchanged `_g_arxr` calls. The driver
+supplies the loop's incoming elevations and arguments, then substitutes RET at
+the first instruction after the loop. It also executes the original initial
+and interior head-drop/square-root store sequences. No hydraulic arithmetic
+instruction is replaced.
+
+The 3,072 cases use three elevation scales, nine table sizes from 3 through 149,
+and eleven positive powers, including integral and nonintegral exponents.
+Each 20-byte input contains three floats (free-flow elevation, upstream
+elevation, power) and two integers (point count and one-based selected index).
+Each 36-byte output contains the selected REAL level, then four doubles: the
+initial head difference, initial square root, interior head difference and
+interior square root. Every output bit matches the independent implementation.
+
+The retained head difference is `DZ=double(Zup)-Zfree`. QVSTW multiplies the
+integer numerator by a retained reciprocal, stores that fraction as REAL and
+calls the REAL power routine. Both square-root expressions retain the head
+difference through SQRT, store the root as REAL, then promote it into the
+DOUBLE PRECISION table. The adapter preserves the separate REAL diagnostic
+value of DZ and changes only the three verified numerical expressions.
+
+All 58 release and sanitizer checks pass. Fresh full-model runs retain 14/17
+matching output files and every active word in 2,092 FEQ matrices. The first
+remaining differences in the two FEQUTL reports now occur within CHANRAT:
+line 2,521 of UTLEXM and line 2,131 of CULVERT. These report comparisons retain
+every hydraulic value and diagnostic; only the existing execution-clock fields
+are masked. Channel-rating recovery and application release work continue.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_tailwater_spacing_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/tailwater-spacing-recapture
+```
