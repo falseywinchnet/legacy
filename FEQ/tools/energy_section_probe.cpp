@@ -8,6 +8,8 @@
 #include <feq/full_barrel.hpp>
 #include <feq/tailwater_residual.hpp>
 #include <feq/channel_rating.hpp>
+#include <feq/transition_energy.hpp>
+#include <feq/weir_flow.hpp>
 #include <array>
 #include <bit>
 #include <cstdint>
@@ -84,7 +86,41 @@ int main(int argc, char** argv) {
         const bool tailwater_momentum = argc == 2 && std::strcmp(argv[1],"--tailwater-momentum") == 0;
         const bool tailwater_spacing = argc == 2 && std::strcmp(argv[1],"--tailwater-spacing") == 0;
         const bool channel_rating = argc == 2 && std::strcmp(argv[1],"--channel-rating") == 0;
+        const bool transition_factors = argc == 2 && std::strcmp(argv[1],"--transition-factors") == 0;
+        const bool transition_energy = argc == 2 && std::strcmp(argv[1],"--transition-energy") == 0;
+        const bool transition_spacing = argc == 2 && std::strcmp(argv[1],"--transition-spacing") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (transition_spacing) {
+                const float head = std::bit_cast<float>(read_word());
+                const float free_drop = std::bit_cast<float>(read_word());
+                const float power = std::bit_cast<float>(read_word());
+                const int count = std::bit_cast<std::int32_t>(read_word());
+                const int index = std::bit_cast<std::int32_t>(read_word());
+                const float fraction = feq::transition_partial_free_flow(index,count,power);
+                write_float(fraction);
+                write_float(static_cast<float>(static_cast<double>(free_drop)*fraction));
+                write_float(feq::weir_downstream_head(head,free_drop,fraction));
+                continue;
+            }
+            if (transition_energy) {
+                float fields[18]{};
+                for (int i = 0; i < 18; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const feq::TransitionEnergyInput input{fields[0],fields[1],fields[2],fields[3],
+                    fields[4],fields[5],fields[6],fields[7],fields[8],fields[9],fields[10],fields[11],
+                    fields[12],fields[13],fields[14]};
+                write_double(feq::transition_energy_check(input,fields[15]));
+                write_double(feq::transition_head_residual(input));
+                write_float(static_cast<float>(feq::steady_specific_energy(fields[16],fields[13],fields[2],fields[4],fields[12])));
+                write_double(feq::transition_froude_residual(fields[13],fields[17]));
+                continue;
+            }
+            if (transition_factors) {
+                float fields[7]{};
+                for (int i = 0; i < 7; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                write_double(feq::transition_loss_factor(fields[0],fields[1],fields[2],fields[3]));
+                write_double(feq::transition_conveyance_mean(fields[4],fields[5],fields[6]));
+                continue;
+            }
             if (channel_rating) {
                 float fields[8]{};
                 for (int i = 0; i < 8; ++i) { fields[i] = std::bit_cast<float>(read_word()); }

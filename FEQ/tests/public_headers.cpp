@@ -28,3 +28,4 @@
 #include <feq/full_barrel.hpp>
 #include <feq/tailwater_residual.hpp>
 #include <feq/channel_rating.hpp>
+#include <feq/transition_energy.hpp>

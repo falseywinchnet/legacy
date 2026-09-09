@@ -3,6 +3,13 @@
 #include <cmath>
 #include <stdexcept>
 namespace feq {
+float weir_downstream_head(float upstream_head, float free_drop, float fraction) {
+    // 0x432734..0x43273c retains DROP; 0x432762..0x43276e subtracts
+    // that wide product. Only 0x432795 stores the downstream head as REAL.
+    const double drop = static_cast<double>(free_drop)*fraction;
+    return static_cast<float>(upstream_head-drop);
+}
+
 WeirFlow submerged_weir_flow(const WeirFlowInput& input, WeirLookup lookup, void* tables) {
     if (lookup == nullptr || !std::isfinite(input.head) || !std::isfinite(input.tail_head) ||
         !std::isfinite(input.critical_head_ratio) || !std::isfinite(input.breadth) ||

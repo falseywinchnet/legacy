@@ -843,6 +843,65 @@ def integrate_normal_flow_residual(data):
     return b'#include <feq/steady_residual.hpp>\n'+edit_text(data,[(body.start_byte,body.end_byte,replacement)])
 
 
+def integrate_transition_energy(data):
+    edits = [];found = set()
+    state = ('    const feq::TransitionEnergyInput input{feccom_1.htl,feccom_1.hpr,\n'
+        '        feccom_1.al,feccom_1.ar,feccom_1.alphal,feccom_1.alphar,\n'
+        '        feccom_1.kl,feccom_1.kr,feccom_1.dx,feccom_1.smooth,\n'
+        '        feccom_1.ka,feccom_1.kd,feccom_1.grv2,feccom_1.q,feccom_1.tgm};\n')
+    for function in functions(data):
+        name = content(identifier(function.child_by_field_name('declarator')),data)
+        body = function.child_by_field_name('body')
+        if name == 'facdc_':
+            replacement = '{\n    return feq::transition_loss_factor(*x,*smooth,*ka,*kd);\n}'
+        elif name == 'gmean_':
+            replacement = '{\n    return feq::transition_conveyance_mean(*xa,*ya,*ta);\n}'
+        elif name == 'ecechk_':
+            replacement = '{\n'+state+'    return feq::transition_energy_check(input,epscom_1.epsdif);\n}'
+        else:replacement = None
+        if replacement is not None:
+            edits.append((body.start_byte,body.end_byte,replacement));found.add(name);continue
+        if name == 'frlres_':
+            calls = [node for node in body.named_children if node.type == 'expression_statement' and content(node,data) == 'fndhpl_();']
+            if len(calls) != 1:raise ValueError('Expected the original transition head lookup.')
+            edits.append((calls[0].end_byte,body.end_byte-1,
+                '\n    if (feccom_1.flg == 0 || feccom_1.flg == 5) {\n'
+                '        return feq::transition_froude_residual(feccom_1.q,feccom_1.qcl);\n'
+                '    }\n    return -1.0;\n'))
+            found.add(name)
+        elif name == 'fhpl_':
+            heads = [node for node in nodes(body) if node.type == 'expression_statement' and content(node,data).startswith('feccom_1.htl = static_cast<double>(feccom_1.hpl)')]
+            starts = [node for node in body.named_children if node.type == 'expression_statement' and content(node,data).startswith('x = feccom_1.q * ')]
+            if len(heads) != 1 or len(starts) != 1:raise ValueError('Expected FHPL head and residual boundaries.')
+            edits.append((heads[0].start_byte,heads[0].end_byte,
+                'feccom_1.htl = feq::steady_specific_energy(feccom_1.hpl,feccom_1.q,\n'
+                '            feccom_1.al,feccom_1.alphal,feccom_1.grv2);'))
+            edits.append((starts[0].start_byte,body.end_byte-1,
+                state+'    return feq::transition_head_residual(input);\n'))
+            found.add(name)
+        elif name == 'expcon_':
+            stores = [node for node in nodes(body) if node.type == 'expression_statement' and content(node,data).startswith('pfqvec[feq_gen_i_d_ - 1] = pow_dd(')]
+            if len(stores) != 1:raise ValueError('Expected EXPCON partial-flow power loop.')
+            edits.append((stores[0].start_byte,stores[0].end_byte,
+                'pfqvec[feq_gen_i_d_ - 1] = feq::transition_partial_free_flow(feq_gen_i_d_,nfrac,power);'))
+            found.add(name)
+    if found != {'facdc_','gmean_','ecechk_','frlres_','fhpl_','expcon_'}:
+        raise ValueError('Missing transition-energy integration targets.')
+    return b'#include <feq/transition_energy.hpp>\n#include <feq/steady_residual.hpp>\n'+edit_text(data,edits)
+
+
+def integrate_weir_report_head(data):
+    edits = []
+    for function in functions(data):
+        if content(identifier(function.child_by_field_name('declarator')),data) != 'embank_':continue
+        for node in nodes(function):
+            if node.type == 'expression_statement' and content(node,data) == 'feq_gen_r_d_1 = static_cast<double>(hup) - drop;':
+                edits.append((node.start_byte,node.end_byte,
+                    'feq_gen_r_d_1 = feq::weir_downstream_head(hup,freed,pfdvec[j - 1]);'))
+    if len(edits) != 1:raise ValueError('Expected the EMBANK downstream-head report expression.')
+    return b'#include <feq/weir_flow.hpp>\n'+edit_text(data,edits)
+
+
 def integrate_channel_rating(data):
     edits = [];counts = {'zl-declaration':0,'zl':0,'drop':0,'normal':0,'partial-drop':0}
     for function in functions(data):
@@ -1081,17 +1140,18 @@ def main():
         elif path.name == 'fqshrftb.cpp':data = integrate_station_fractions(integrate_scalar_lookup(integrate_section_lookup(data)))
         elif path.name == 'ufgate.cpp':data = integrate_gate_state(integrate_power_spacing(integrate_gate_orifice(integrate_gate_free(integrate_gate_levels(integrate_gate_residuals(data))))))
         elif path.name == 'tablook.cpp':data = integrate_scalar_moment(integrate_scalar_conveyance(data))
-        elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
+        elif path.name == 'embank.cpp':data = integrate_weir_report_head(integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data))))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
         elif path.name == 'chanrat.cpp':data = integrate_channel_rating(data)
+        elif path.name == 'expcon.cpp':data = integrate_transition_energy(data)
         elif path.name == 'culverta.cpp':data = integrate_tailwater_spacing(integrate_tailwater_momentum(data))
         elif path.name == 'culvertc.cpp':data = integrate_full_barrel(integrate_steady_profile(integrate_steady_residuals(data)))
         elif path.name == 'culvertd.cpp':data = integrate_departure_energy(integrate_normal_flow_residual(integrate_approach_residual(integrate_culvert_losses(data))))
         elif path.name == 'numrmath.cpp':data = integrate_gaussian_rule(data)
-        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','chanrat.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'):
+        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','chanrat.cpp','expcon.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'):
             integrated_files.add(path.name)
         (output/path.name).write_bytes(data)
-    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','chanrat.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'}:
+    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','chanrat.cpp','expcon.cpp','culverta.cpp','culvertc.cpp','culvertd.cpp','numrmath.cpp','ufgate.cpp','tablook.cpp'}:
         raise ValueError('Prepared utility sources are missing required integration files.')
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
@@ -1182,6 +1242,13 @@ def main():
                 {'file':'chanrat.cpp','functions':['frfchn_','chntab_'],'component':'src/channel_rating.cpp',
                  'scope':'Retained upstream elevation, wide free-drop subtraction, stored REAL normal flow and partial-drop power sequence.',
                  'verification':'tests/reference/channel_rating/manifest.json'},
+                {'file':'expcon.cpp','functions':['facdc_','gmean_','ecechk_','frlres_','fhpl_','expcon_'],
+                 'component':'src/transition_energy.cpp',
+                 'scope':'Loss smoothing, generalized conveyance mean, energy residuals, head/Froude stores and partial-flow power sequence.',
+                 'verification':['tests/reference/transition_factors/manifest.json','tests/reference/transition_energy/manifest.json','tests/reference/transition_spacing/manifest.json']},
+                {'file':'embank.cpp','function':'embank_','component':'src/weir_flow.cpp',
+                 'scope':'Retained free-drop product for the reported downstream head.',
+                 'verification':'tests/reference/transition_spacing/manifest.json'},
                 {'file':'culvertc.cpp','functions':['sber_','sper_','sfpsbe_'],'component':'src/steady_residual.cpp',
                  'scope':'Wide velocity, energy, eddy loss and normalized residuals after original section lookup.',
                  'verification':['tests/reference/steady_residual/manifest.json','tests/reference/steady_profile/manifest.json']},

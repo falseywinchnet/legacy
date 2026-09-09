@@ -2,6 +2,10 @@
 #ifndef FEQ_WEIR_FLOW_HPP
 #define FEQ_WEIR_FLOW_HPP
 namespace feq {
+// EMBANK report head Hup-Fdrop*PFD. Keep the product wide until subtracting
+// it from Hup; the separately displayed drop has its own REAL store.
+float weir_downstream_head(float upstream_head, float free_drop, float fraction);
+
 // Selectors 0/1/2 identify high-head, low-head and submergence tables.
 typedef float (*WeirLookup)(void*, int, float);
 struct WeirFlowInput {

@@ -127,6 +127,15 @@ downstream elevations until their final subtraction. See
 [`src/channel_rating.cpp`](src/channel_rating.cpp) and
 [`tests/reference/channel_rating/`](tests/reference/channel_rating/).
 
+Transition loss smoothing and generalized conveyance means match **3,072
+calls to each unchanged original routine**. The energy checks, head residuals,
+left total-head stores and Froude residuals match another **3,072 original
+instruction-sequence cases**. Partial-flow spacing and the independently
+stored weir drop and downstream head match **3,072 cases**. The implementation
+preserves the branch-specific REAL store in the conveyance mean and the wide
+energy balances. See [`src/transition_energy.cpp`](src/transition_energy.cpp)
+and [`the numerical evidence`](recovery/NUMERICAL_PROBES.md).
+
 The standalone conveyance lookup matches **2,688 calls to the complete original
 LKTK routine**, covering all fourteen accepted section table types, three
 scales, interval endpoints, and increasing or decreasing conveyance. Its

@@ -14,6 +14,7 @@ target_sources(feq_numerics PRIVATE src/power_spacing.cpp)
 target_sources(feq_numerics PRIVATE src/full_barrel.cpp)
 target_sources(feq_numerics PRIVATE src/tailwater_residual.cpp)
 target_sources(feq_numerics PRIVATE src/channel_rating.cpp)
+target_sources(feq_numerics PRIVATE src/transition_energy.cpp)
 target_compile_features(feq_numerics PUBLIC cxx_std_20)
 set_target_properties(feq_numerics PROPERTIES CXX_EXTENSIONS OFF)
 
@@ -149,6 +150,10 @@ if(BUILD_TESTING)
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_energy_section_probe> tailwater_spacing)
     add_test(NAME channel_rating_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_energy_section_probe> channel_rating)
+    foreach(transition_fixture transition_factors transition_energy transition_spacing)
+        add_test(NAME ${transition_fixture}_original_bytes COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_gate_fixture.py $<TARGET_FILE:feq_energy_section_probe> ${transition_fixture})
+    endforeach()
     add_test(NAME station_fraction_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_station_fraction_fixture.py $<TARGET_FILE:feq_section_probe>)
     add_executable(feq_slot_probe tools/slot_probe.cpp)

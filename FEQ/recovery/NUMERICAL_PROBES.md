@@ -1154,3 +1154,51 @@ separately. Application release work remains incomplete.
 FEQ/build/python312/bin/python FEQ/tools/probe_channel_rating_original.py \
   --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/channel-rating-recapture
 ```
+
+## Expansion and contraction energy balances
+
+`probe_transition_factors_original.py` calls the complete original FACDC and
+GMEAN routines. Each of 3,072 fixtures records both binary64 returns. Cases
+cover smoothing endpoints, zero smoothing, three scales, positive and negative
+arguments, and exponents on both sides of the REAL(0.01) branch threshold.
+FACDC retains its smoothed quadratic and linear branches without a REAL result
+store. GMEAN returns the wide product for the geometric branch; its other
+branch uses two original DOUBLE power calls and rounds the squared mean to
+REAL before returning. All captured output bits match.
+
+`probe_transition_energy_original.py` runs the complete ECECHK routine and the
+unchanged arithmetic blocks of FHPL and FRLRES after their external lookups.
+The 3,072 fixtures record the energy-check residual, head residual, left
+total-head store and Froude residual. Both square roots store REAL before their
+wide area divisions; friction, downstream total head and energy losses remain
+wide. Only the argument passed to FACDC stores REAL. The normalized residuals
+return without a REAL store. These fixtures supply the section properties;
+they do not claim to verify the surrounding head-search controller.
+
+`probe_transition_spacing_original.py` executes the original EXPCON partial-flow
+loop in place and copies the unchanged EMBANK downstream-head arithmetic.
+The 3,072 cases cover three scales, eleven table sizes and eleven powers.
+They record the REAL flow fraction, displayed REAL drop and independently
+stored REAL downstream head. EMBANK retains the free-drop product when it
+subtracts it from upstream head, even though the displayed drop separately
+rounds to REAL. Reusing that rounded display value changes downstream-head
+rounding. All three fixture families retain source executable, instruction,
+probe, input and output hashes in their manifests.
+
+The integrated candidate passes all 62 release and address/undefined-behavior
+sanitizer checks. All six supplied examples complete. Sixteen of seventeen
+outputs match with only the defined execution clocks masked; the UTLEXM report
+now differs in one line, down from 38. At line 4420, the original prints flow
+19.2436 and the candidate prints 19.2435. All 2,092 FEQ active matrices and
+19,701 gate residual entries still match every byte. The complete UFGATE report
+section also matches raw bytes. The remaining report discrepancy, broader
+controller verification and application release work remain open.
+
+```sh
+python3 FEQ/tools/probe_transition_factors_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/transition-factors-recapture
+python3 FEQ/tools/probe_transition_energy_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/transition-energy-recapture
+python3 FEQ/tools/probe_transition_spacing_original.py \
+  --native FEQ/build/core/feq_energy_section_probe --output FEQ/build/transition-spacing-recapture
+```
