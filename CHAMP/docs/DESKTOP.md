@@ -2,7 +2,7 @@
 
 ## Use the application
 
-1. Download your computer's package from the repository's Releases page.
+1. Download your computer's package from the [Legacy Coastal release](https://github.com/falseywinchnet/legacy/releases/tag/v0.1.0).
 2. On Mac, open the DMG and drag Legacy Coastal to Applications. On Windows,
    extract the ZIP and open Legacy Coastal.exe. On Linux, extract the archive
    and open Start Legacy Coastal.sh or the Legacy Coastal executable.
@@ -84,6 +84,8 @@ manuals, including the WHAFIS 4 supplement. These PDFs are included in the packa
 
 CMake 3.24+, a C++20 compiler, and Python for the test scripts are required for a
 source build. Python is not a runtime dependency of the resulting application.
+Run the build commands below from the repository's `CHAMP/` directory. From the
+repository root, enter `cd CHAMP` first.
 
 ```sh
 make test
@@ -98,7 +100,7 @@ make test DESKTOP=OFF
 
 The first desktop configuration downloads SHA-256-pinned SDL 3.4.16 and Dear ImGui
 1.92.9b sources. Subsequent builds reuse them. Linux window-system development
-packages are listed in `.github/workflows/build.yml`. Inter and the original
+packages are listed in `../.github/workflows/build.yml`. Inter and the original
 example project are included locally. Dependency licenses accompany the package.
 
 For a universal Mac build:

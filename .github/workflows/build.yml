@@ -1,13 +1,22 @@
-name: Build, original-engine comparisons, and desktop packages
+name: CHAMP — build, original-engine comparisons, and desktop packages
 on:
   push:
+    paths:
+      - 'CHAMP/**'
+      - '.github/workflows/build.yml'
   pull_request:
+    paths:
+      - 'CHAMP/**'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   native:
     name: ${{ matrix.name }}
+    defaults:
+      run:
+        working-directory: CHAMP
     strategy:
       fail-fast: false
       matrix:
@@ -91,9 +100,9 @@ jobs:
         with:
           name: Legacy-Coastal-${{ matrix.name }}
           path: |
-            build/packages/*.dmg
-            build/packages/*.zip
-            build/packages/*.tar.gz
-            build/desktop.bmp
-            build/desktop-launchservices.bmp
+            CHAMP/build/packages/*.dmg
+            CHAMP/build/packages/*.zip
+            CHAMP/build/packages/*.tar.gz
+            CHAMP/build/desktop.bmp
+            CHAMP/build/desktop-launchservices.bmp
           if-no-files-found: error
