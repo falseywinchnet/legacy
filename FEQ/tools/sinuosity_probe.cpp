@@ -14,7 +14,7 @@
 #include <cstdio>
 #endif
 
-extern "C" void feq_section_sinuosity(float,int,int,const float*,const float*,const int*,const float*,const int*,
+void feq_section_sinuosity(float,int,int,const float*,const float*,const int*,const float*,const int*,
     const float*,const float*,float,float,int,int,int,const double*,const double*,
     double*,double*,double*,double*,double*,double*,double*,double*,float*,float*);
 

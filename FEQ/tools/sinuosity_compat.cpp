@@ -7,7 +7,9 @@
 #include <stdexcept>
 #include <vector>
 
-extern "C" void feq_section_sinuosity(float water, int count, int subsections,
+// C++ linkage is required: SinuosityDepthError crosses this adapter and is
+// caught by the C++ FBASEL caller before its original diagnostic is executed.
+void feq_section_sinuosity(float water, int count, int subsections,
     const float* x, const float* z, const int* sb, const float* lsn, const int* nvar,
     const float* roughness, const float* sinuosity, float factor, float gravity,
     int new_beta, int local_coefficients, int order, const double* nodes, const double* weights,

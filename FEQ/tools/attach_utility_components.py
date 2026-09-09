@@ -98,7 +98,7 @@ def integrate_sinuosity(data):
     }
     '''
     declaration = ('#include <feq/section_sinuosity.hpp>\n'
-        'extern "C" void feq_section_sinuosity(float,int,int,const float*,const float*,const int*,const float*,const int*,'
+        'void feq_section_sinuosity(float,int,int,const float*,const float*,const int*,const float*,const int*,'
         'const float*,const float*,float,float,int,int,int,const double*,const double*,'
         'double*,double*,double*,double*,double*,double*,double*,double*,float*,float*);\n')
     return declaration.encode()+edit_text(data,[(analytical[0].start_byte,analytical[0].start_byte,replacement)])
