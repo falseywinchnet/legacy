@@ -423,6 +423,42 @@ RGF3 and RGF5 choose the better endpoint at collapse and retain the previous
 left residual at iteration failure. Callback results and their previous values
 stay wide; bracket residuals and trial arguments store REAL.
 
+`probe_root_search_original.py` independently captures REGFAL and FDROOT, with
+894 cases per routine. Unlike the four routines above, REGFAL evaluates its own
+endpoint residuals and keeps FL and FR wide through every update and damping
+step. It copies both REAL endpoints before either callback, calls both before
+testing either residual, and sends subsequent trials through the caller's
+actual XM object. Its strict residual test means FM=0 with EPSF=0 needs another
+trial before the endpoint-zero test terminates. The iteration limit permits
+101 trial callbacks in addition to the two endpoint callbacks.
+
+FDROOT calls the supplied A and B objects directly. An existing sign change or
+small endpoint residual returns with the incoming flag untouched. Otherwise
+the original caches A and B-A after both endpoint callbacks, tries
+`XM = A + ((B-A)*i)/16` for i=-8 through 15, and skips nonpositive REAL trial
+arguments. A discovered sign change writes the possibly callback-adjusted XM
+to A and preserves the flag; exhausting the search sets it to one.
+
+The 1,592-byte inputs contain tolerances, initial bracket and status, scripted
+binary64 residuals or polynomial coefficients, and optional callback mutations.
+Each 3,092-byte output contains final A/B/XM/status, callback count, and 128
+trace slots. Each slot records the argument and external A/B/XM/status before
+the callback's changes, plus whether the argument is external A, B or XM, the
+first local argument object, or a different local object. This tests observable
+aliasing without comparing process-specific addresses. Fixtures cover both
+argument mutations and external state mutations. Both direct C++ and adapter
+tests require every byte in both original traces. The oracle reads a regular
+input file because redirected host pipes may return partial Windows reads.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_root_search_original.py \
+  --method regfal --native FEQ/build/core/feq_root_search_probe \
+  --output FEQ/build/regfal-recapture
+FEQ/build/python312/bin/python FEQ/tools/probe_root_search_original.py \
+  --method fdroot --native FEQ/build/core/feq_root_search_probe \
+  --output FEQ/build/fdroot-recapture
+```
+
 `probe_steady_residual_original.py` calls original SBER and SPER with synthetic
 section tables and populated COMMON values. Their original XLKTAL calls run
 unchanged. The 840 cases cover five table types, three depth scales, endpoints,

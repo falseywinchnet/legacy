@@ -67,6 +67,16 @@ adjust the trial argument. The same fixtures separately verify the adapter's
 original argument addresses. See [`src/root_solver.cpp`](src/root_solver.cpp)
 and [`tests/reference/root_solver/`](tests/reference/root_solver/).
 
+`REGFAL` and `FDROOT` each match **894 original-executable cases**. These
+add wide endpoint residuals, every search position, status preservation and
+callbacks that change their argument or the external bracket and status.
+Every callback's visible state and argument relationship matches, both through
+the C++ API and the research adapter. REGFAL retains wide residuals throughout;
+FDROOT preserves the incoming status on success and caches its search interval
+after evaluating both endpoints. See
+[`tests/reference/root_search_regfal/`](tests/reference/root_search_regfal/) and
+[`tests/reference/root_search_fdroot/`](tests/reference/root_search_fdroot/).
+
 The subcritical and supercritical energy residuals match **840 cases against
 both original functions**, for 1,680 original calls. These include all five
 section-table types and depths above the barrel-height lookup limit. Velocity,

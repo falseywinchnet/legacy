@@ -24,5 +24,17 @@ void solve_root(RootMethod method, float argument_tolerance, float residual_tole
 // the bracket and residual outputs on failure are part of that contract.
 void solve_root3(float argument_tolerance, float residual_tolerance,
     RootResidual residual, void* context, RootBracket& bracket);
+// REGFAL evaluates copies of both endpoints before testing convergence. Its
+// residuals remain binary64 throughout, unlike the four variants above. Trial
+// callbacks receive the caller's actual trial object. Flags: 0 success, 1 no
+// sign change, 2 iteration limit. Early failure leaves trial untouched.
+void solve_regfal(float argument_tolerance, float residual_tolerance,
+    RootResidual residual, void* context, float& left, float& right,
+    float& trial, int& flag);
+// FDROOT first evaluates the caller's endpoint objects. If neither already
+// suffices, search A+(B-A)*i/16 for i=-8..15, skipping nonpositive arguments.
+// A successful search updates left and preserves flag; failure sets flag=1.
+void find_sign_change(float residual_tolerance, RootResidual residual,
+    void* context, float& left, float& right, int& flag);
 }
 #endif

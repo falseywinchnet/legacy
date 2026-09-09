@@ -540,13 +540,21 @@ def integrate_roots(data):
     edits = []
     for function in functions(data):
         name = content(identifier(function.child_by_field_name('declarator')),data)
-        if name not in methods:continue
+        if name not in methods and name not in ('regfal_','fdroot_'):continue
         body = function.child_by_field_name('body')
+        if name == 'regfal_':
+            call = 'feq_regfal(*epsx,*epsf,f,a,b,xm,feq_gen_flag_d_);'
+        elif name == 'fdroot_':
+            call = 'feq_fdroot(*epsf,fun,a,b,eflag);'
+        else:
+            call = f'feq_root_variant({methods[name]},*epsx,*epsf,f,a,b,fl,fr,xm,feq_gen_flag_d_);'
         replacement = ('{\n    // Original-verified bracket updates, wide residuals and convergence ordering.\n'
-            f'    feq_root_variant({methods[name]},*epsx,*epsf,f,a,b,fl,fr,xm,feq_gen_flag_d_);\n    return 0;\n}}')
+            f'    {call}\n    return 0;\n}}')
         edits.append((body.start_byte,body.end_byte,replacement))
-    if len(edits) != len(methods):raise ValueError('Expected all four verified root definitions.')
-    declaration = 'extern "C" void feq_root_variant(int,float,float,double(*)(float*),float*,float*,float*,float*,float*,int*);\n'
+    if len(edits) != len(methods)+2:raise ValueError('Expected all six verified root definitions.')
+    declaration = ('extern "C" void feq_root_variant(int,float,float,double(*)(float*),float*,float*,float*,float*,float*,int*);\n'
+        'extern "C" void feq_regfal(float,float,double(*)(float*),float*,float*,float*,int*);\n'
+        'extern "C" void feq_fdroot(float,double(*)(float*),float*,float*,int*);\n')
     return declaration.encode()+edit_text(data,edits)
 
 
@@ -808,10 +816,11 @@ def main():
                 {'file':'embank.cpp','function':'sbfemb_',
                  'scope':'Retained Simpson width/flow registers and original REAL reciprocal of six.',
                  'evidence':'recovery/assembly/fequtl/_sbfemb_.asm, VA 0x42ff92..0x42ffb5.'},
-                {'file':'rootfind.cpp','functions':['regflt_','rgf_','rgf3_','rgf5_'],'component':'src/root_solver.cpp',
+                {'file':'rootfind.cpp','functions':['regflt_','rgf_','rgf3_','rgf5_','regfal_','fdroot_'],'component':'src/root_solver.cpp',
                  'scope':'Modified false position, wide callback results, mutable trial arguments and exact failure outputs.',
                  'verification':['tests/reference/root_solver/manifest.json','tests/reference/root_solver_regflt/manifest.json',
-                     'tests/reference/root_solver_rgf/manifest.json','tests/reference/root_solver_rgf5/manifest.json']},
+                     'tests/reference/root_solver_rgf/manifest.json','tests/reference/root_solver_rgf5/manifest.json',
+                     'tests/reference/root_search_regfal/manifest.json','tests/reference/root_search_fdroot/manifest.json']},
                 {'file':'culvertc.cpp','functions':['sber_','sper_','sfpsbe_'],'component':'src/steady_residual.cpp',
                  'scope':'Wide velocity, energy, eddy loss and normalized residuals after original section lookup.',
                  'verification':['tests/reference/steady_residual/manifest.json','tests/reference/steady_profile/manifest.json']},

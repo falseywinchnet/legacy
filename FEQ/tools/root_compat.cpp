@@ -35,6 +35,11 @@ double evaluate(void* pointer, float& argument) {
     argument = *callback.trial;
     return result;
 }
+struct DirectCallback { HistoricalResidual function; };
+double evaluate_direct(void* pointer, float& argument) {
+    const DirectCallback& callback = *static_cast<DirectCallback*>(pointer);
+    return callback.function(&argument);
+}
 }
 extern "C" void feq_root_variant(int method, float epsx, float epsf, HistoricalResidual function,
     float* left, float* right, float* fl, float* fr, float* trial, int* flag) {
@@ -49,4 +54,14 @@ extern "C" void feq_root3(float epsx, float epsf, HistoricalResidual function,
     float* left, float* right, float* fl, float* fr, float* trial, int* flag) {
     feq_root_variant(static_cast<int>(feq::RootMethod::rgf3),epsx,epsf,function,
         left,right,fl,fr,trial,flag);
+}
+extern "C" void feq_regfal(float epsx, float epsf, HistoricalResidual function,
+    float* left, float* right, float* trial, int* flag) {
+    DirectCallback callback{function};
+    feq::solve_regfal(epsx,epsf,evaluate_direct,&callback,*left,*right,*trial,*flag);
+}
+extern "C" void feq_fdroot(float epsf, HistoricalResidual function,
+    float* left, float* right, int* flag) {
+    DirectCallback callback{function};
+    feq::find_sign_change(epsf,evaluate_direct,&callback,*left,*right,*flag);
 }

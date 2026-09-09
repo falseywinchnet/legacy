@@ -116,6 +116,15 @@ if(BUILD_TESTING)
     add_executable(feq_root_probe tools/root_probe.cpp tools/root_compat.cpp)
     target_link_libraries(feq_root_probe PRIVATE feq_numerics)
     feq_checks(feq_root_probe)
+    add_executable(feq_root_search_probe tools/root_search_probe.cpp tools/root_compat.cpp)
+    target_link_libraries(feq_root_search_probe PRIVATE feq_numerics)
+    feq_checks(feq_root_search_probe)
+    foreach(method regfal fdroot)
+        add_test(NAME root_search_${method}_original_bytes COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_root_search_fixture.py $<TARGET_FILE:feq_root_search_probe> --${method})
+        add_test(NAME root_search_${method}_adapter_original_bytes COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_root_search_fixture.py $<TARGET_FILE:feq_root_search_probe> --${method} --adapter)
+    endforeach()
     add_test(NAME root_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_root_fixture.py $<TARGET_FILE:feq_root_probe>)
     add_test(NAME root_adapter_original_bytes COMMAND ${Python3_EXECUTABLE}
