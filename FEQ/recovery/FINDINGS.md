@@ -300,3 +300,38 @@ both geometric accumulation types intact. Fresh complete example runs still
 pass all twelve FEQ files and FEQUTL's CHX file; four FEQUTL outputs remain
 numerically different. A decrease in differing table lines is diagnostic only,
 not an acceptance criterion.
+
+## Analytical section flux and original power arithmetic
+
+`src/section_flux.cpp` implements FBASEL's analytical NEWBETA second pass.
+All eight double output sums and all three subsection arrays match in 458
+controlled calls. The suite includes 216 isolated-segment cases and 242 cases
+covering multiple subsections, variable roughness modes, vertical segments,
+horizontal segments, the `1e-6` slope threshold, and unequal depth precision.
+Sinuosity modes 0 and 2 are covered; mode 1's Gaussian path is separate.
+
+Clipped offsets and right depth retain double precision. Left depth is rounded
+to REAL at original VA `0x5b99a4`. Horizontal-segment powers use the REAL power
+routine, while sloping-segment powers use the DOUBLE PRECISION routine. The
+roughness exponent and integral exponents are the exact promoted REAL decimal
+constants in the original image. The source comments preserve the formulas and
+operation order rather than replacing those constants with exact fractions.
+
+`src/power.cpp` recovers `_g_arxr`, `_g_adxd`, and their numerical kernels in
+portable C++. All 3,382 committed cases match every bit, including every finite
+normal exponent field and selected subnormals. The logarithm and exponential
+approximation coefficients are recorded as exact hexadecimal literals; the
+recovery tool checks the original executable hash and records coefficient-byte
+hashes. Integer powers one through seven use sequential multiplication; eight
+uses the approximation kernel. REAL powers round each small-integer product.
+The DOUBLE PRECISION kernel leaves its binary exponent at the pre-normalization
+value for subnormal input. The port reproduces that observed behavior.
+These tests do not claim equivalence for NaN handling or legacy runtime error
+callbacks; the authored API requires finite arguments and rejects invalid domains.
+
+The analytical pass is integrated after FBASEL's roughness lookup. Full examples
+still pass 13 of 17 reports: all twelve FEQ reports and the FEQUTL CHX file.
+The first NEWBETA table now has the original beta/alpha values. Conveyance,
+critical-flow, spline, and later utility differences remain; no numerical
+comparison mask or tolerance was added. Thirteen component checks pass in both
+the local release build and the address/undefined-behavior sanitizer build.

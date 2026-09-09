@@ -13,7 +13,10 @@ from prepare_cpp_probe import content, edit_text, functions, identifier, nodes
 ROOT = Path(__file__).resolve().parents[1]
 DECLARATION = ('extern "C" void feq_section_geometry(float,int,int,const float*,const float*,'
                'const int*,const float*,const int*,float*,float*,double*,double*,float*,float*,'
-               'float*,int*,int*);\n')
+               'float*,int*,int*);\n'
+               'extern "C" void feq_section_flux(float,int,int,const float*,const float*,'
+               'const int*,const float*,const int*,const float*,const float*,int,float,'
+               'double*,double*,double*,double*,double*,double*,float*);\n')
 
 
 def integrate_geometry(data):
@@ -40,7 +43,14 @@ def integrate_geometry(data):
     replacement = ('// FBASEL geometry: original-verified mixed binary32/binary64 accumulations.\n'
                    '    feq_section_geometry(*zi,*npnt,*nsub,&x[1],&feq_gen_z_d_[1],&sb[1],&lsn[1],\n'
                    '        &nvar[1],&ts[1],&ps[1],&as[1],&ybs[1],&ns[1],&ysmx[1],pvec,&jmin,&jmax);\n    ')
-    return DECLARATION.encode()+edit_text(data,[(start[0].start_byte,previous.start_byte,replacement)])
+    flux = ('\n    // Independently verified analytical NEWBETA pass (sinuosity modes 0/2).\n'
+            '    if (nbflag == 1 && *snflg != 1) {\n'
+            '        feq_section_flux(*zi,*npnt,*nsub,&x[1],&feq_gen_z_d_[1],&sb[1],&lsn[1],\n'
+            '            &nvar[1],&n[1],&sn[1],*snflg,*nfac,sumq,sumfm,sumfe,sumdq,sumdfm,sumdfe,&sbsn[1]);\n'
+            '        return 0;\n'
+            '    }\n')
+    return DECLARATION.encode()+edit_text(data,[(start[0].start_byte,previous.start_byte,replacement),
+        (stop[0].end_byte,stop[0].end_byte,flux)])
 
 
 def main():
@@ -56,9 +66,11 @@ def main():
         (output/path.name).write_bytes(integrate_geometry(data) if path.name == 'xsection.cpp' else data)
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
-                'component':'src/section_geometry.cpp','scope':'First pass only: geometric accumulation and line roughness weights.'}]}
+                'component':'src/section_geometry.cpp','scope':'First pass: geometric accumulation and line roughness weights.'},
+                {'file':'xsection.cpp','function':'fbasel_','component':'src/section_flux.cpp',
+                 'scope':'Analytical NEWBETA second pass; preserve the separate piecewise linear Gaussian path.'}]}
     (output/'verified-components.json').write_text(json.dumps(manifest,indent=2)+'\n')
-    print('Integrated independent section geometry into FEQUTL FBASEL.')
+    print('Integrated independent section geometry and analytical flux into FEQUTL FBASEL.')
 
 
 if __name__ == '__main__':main()

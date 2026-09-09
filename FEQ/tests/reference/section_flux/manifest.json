@@ -1,0 +1,2311 @@
+{
+  "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+  "routine": "_fbasel_ (analytical flow integrals)",
+  "cases": 458,
+  "input_sha256": "3d2ce99474e413b68534762c8a89c9c5680d6aaab16b583799774b0f824d485e",
+  "output_sha256": "93c8f2df7adcb47e96701113aa512b96cff766196edfc242dc9521c1d56fecce",
+  "fixtures": [
+    {
+      "name": "scale-0.001-trial-0-fraction-0-mode-0",
+      "offset": 0,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-0-fraction-0-mode-2",
+      "offset": 76,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-0-fraction-0.31-mode-0",
+      "offset": 152,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-0-fraction-0.31-mode-2",
+      "offset": 228,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-0-fraction-1.1-mode-0",
+      "offset": 304,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-0-fraction-1.1-mode-2",
+      "offset": 380,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-1-fraction-0-mode-0",
+      "offset": 456,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-1-fraction-0-mode-2",
+      "offset": 532,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-1-fraction-0.31-mode-0",
+      "offset": 608,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-1-fraction-0.31-mode-2",
+      "offset": 684,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-1-fraction-1.1-mode-0",
+      "offset": 760,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-1-fraction-1.1-mode-2",
+      "offset": 836,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-2-fraction-0-mode-0",
+      "offset": 912,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-2-fraction-0-mode-2",
+      "offset": 988,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-2-fraction-0.31-mode-0",
+      "offset": 1064,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-2-fraction-0.31-mode-2",
+      "offset": 1140,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-2-fraction-1.1-mode-0",
+      "offset": 1216,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-2-fraction-1.1-mode-2",
+      "offset": 1292,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-3-fraction-0-mode-0",
+      "offset": 1368,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-3-fraction-0-mode-2",
+      "offset": 1444,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-3-fraction-0.31-mode-0",
+      "offset": 1520,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-3-fraction-0.31-mode-2",
+      "offset": 1596,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-3-fraction-1.1-mode-0",
+      "offset": 1672,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-3-fraction-1.1-mode-2",
+      "offset": 1748,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-4-fraction-0-mode-0",
+      "offset": 1824,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-4-fraction-0-mode-2",
+      "offset": 1900,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-4-fraction-0.31-mode-0",
+      "offset": 1976,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-4-fraction-0.31-mode-2",
+      "offset": 2052,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-4-fraction-1.1-mode-0",
+      "offset": 2128,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-4-fraction-1.1-mode-2",
+      "offset": 2204,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-5-fraction-0-mode-0",
+      "offset": 2280,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-5-fraction-0-mode-2",
+      "offset": 2356,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-5-fraction-0.31-mode-0",
+      "offset": 2432,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-5-fraction-0.31-mode-2",
+      "offset": 2508,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-5-fraction-1.1-mode-0",
+      "offset": 2584,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-5-fraction-1.1-mode-2",
+      "offset": 2660,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-6-fraction-0-mode-0",
+      "offset": 2736,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-6-fraction-0-mode-2",
+      "offset": 2812,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-6-fraction-0.31-mode-0",
+      "offset": 2888,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-6-fraction-0.31-mode-2",
+      "offset": 2964,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-6-fraction-1.1-mode-0",
+      "offset": 3040,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-6-fraction-1.1-mode-2",
+      "offset": 3116,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-7-fraction-0-mode-0",
+      "offset": 3192,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-7-fraction-0-mode-2",
+      "offset": 3268,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-7-fraction-0.31-mode-0",
+      "offset": 3344,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-7-fraction-0.31-mode-2",
+      "offset": 3420,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-7-fraction-1.1-mode-0",
+      "offset": 3496,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-7-fraction-1.1-mode-2",
+      "offset": 3572,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-8-fraction-0-mode-0",
+      "offset": 3648,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-8-fraction-0-mode-2",
+      "offset": 3724,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-8-fraction-0.31-mode-0",
+      "offset": 3800,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-8-fraction-0.31-mode-2",
+      "offset": 3876,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-8-fraction-1.1-mode-0",
+      "offset": 3952,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-8-fraction-1.1-mode-2",
+      "offset": 4028,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-9-fraction-0-mode-0",
+      "offset": 4104,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-9-fraction-0-mode-2",
+      "offset": 4180,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-9-fraction-0.31-mode-0",
+      "offset": 4256,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-9-fraction-0.31-mode-2",
+      "offset": 4332,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-9-fraction-1.1-mode-0",
+      "offset": 4408,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-9-fraction-1.1-mode-2",
+      "offset": 4484,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-10-fraction-0-mode-0",
+      "offset": 4560,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-10-fraction-0-mode-2",
+      "offset": 4636,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-10-fraction-0.31-mode-0",
+      "offset": 4712,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-10-fraction-0.31-mode-2",
+      "offset": 4788,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-10-fraction-1.1-mode-0",
+      "offset": 4864,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-10-fraction-1.1-mode-2",
+      "offset": 4940,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-11-fraction-0-mode-0",
+      "offset": 5016,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-11-fraction-0-mode-2",
+      "offset": 5092,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-11-fraction-0.31-mode-0",
+      "offset": 5168,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-11-fraction-0.31-mode-2",
+      "offset": 5244,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-11-fraction-1.1-mode-0",
+      "offset": 5320,
+      "bytes": 76
+    },
+    {
+      "name": "scale-0.001-trial-11-fraction-1.1-mode-2",
+      "offset": 5396,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-0-fraction-0-mode-0",
+      "offset": 5472,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-0-fraction-0-mode-2",
+      "offset": 5548,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-0-fraction-0.31-mode-0",
+      "offset": 5624,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-0-fraction-0.31-mode-2",
+      "offset": 5700,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-0-fraction-1.1-mode-0",
+      "offset": 5776,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-0-fraction-1.1-mode-2",
+      "offset": 5852,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-1-fraction-0-mode-0",
+      "offset": 5928,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-1-fraction-0-mode-2",
+      "offset": 6004,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-1-fraction-0.31-mode-0",
+      "offset": 6080,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-1-fraction-0.31-mode-2",
+      "offset": 6156,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-1-fraction-1.1-mode-0",
+      "offset": 6232,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-1-fraction-1.1-mode-2",
+      "offset": 6308,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-2-fraction-0-mode-0",
+      "offset": 6384,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-2-fraction-0-mode-2",
+      "offset": 6460,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-2-fraction-0.31-mode-0",
+      "offset": 6536,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-2-fraction-0.31-mode-2",
+      "offset": 6612,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-2-fraction-1.1-mode-0",
+      "offset": 6688,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-2-fraction-1.1-mode-2",
+      "offset": 6764,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-3-fraction-0-mode-0",
+      "offset": 6840,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-3-fraction-0-mode-2",
+      "offset": 6916,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-3-fraction-0.31-mode-0",
+      "offset": 6992,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-3-fraction-0.31-mode-2",
+      "offset": 7068,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-3-fraction-1.1-mode-0",
+      "offset": 7144,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-3-fraction-1.1-mode-2",
+      "offset": 7220,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-4-fraction-0-mode-0",
+      "offset": 7296,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-4-fraction-0-mode-2",
+      "offset": 7372,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-4-fraction-0.31-mode-0",
+      "offset": 7448,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-4-fraction-0.31-mode-2",
+      "offset": 7524,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-4-fraction-1.1-mode-0",
+      "offset": 7600,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-4-fraction-1.1-mode-2",
+      "offset": 7676,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-5-fraction-0-mode-0",
+      "offset": 7752,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-5-fraction-0-mode-2",
+      "offset": 7828,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-5-fraction-0.31-mode-0",
+      "offset": 7904,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-5-fraction-0.31-mode-2",
+      "offset": 7980,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-5-fraction-1.1-mode-0",
+      "offset": 8056,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-5-fraction-1.1-mode-2",
+      "offset": 8132,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-6-fraction-0-mode-0",
+      "offset": 8208,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-6-fraction-0-mode-2",
+      "offset": 8284,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-6-fraction-0.31-mode-0",
+      "offset": 8360,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-6-fraction-0.31-mode-2",
+      "offset": 8436,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-6-fraction-1.1-mode-0",
+      "offset": 8512,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-6-fraction-1.1-mode-2",
+      "offset": 8588,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-7-fraction-0-mode-0",
+      "offset": 8664,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-7-fraction-0-mode-2",
+      "offset": 8740,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-7-fraction-0.31-mode-0",
+      "offset": 8816,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-7-fraction-0.31-mode-2",
+      "offset": 8892,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-7-fraction-1.1-mode-0",
+      "offset": 8968,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-7-fraction-1.1-mode-2",
+      "offset": 9044,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-8-fraction-0-mode-0",
+      "offset": 9120,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-8-fraction-0-mode-2",
+      "offset": 9196,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-8-fraction-0.31-mode-0",
+      "offset": 9272,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-8-fraction-0.31-mode-2",
+      "offset": 9348,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-8-fraction-1.1-mode-0",
+      "offset": 9424,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-8-fraction-1.1-mode-2",
+      "offset": 9500,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-9-fraction-0-mode-0",
+      "offset": 9576,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-9-fraction-0-mode-2",
+      "offset": 9652,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-9-fraction-0.31-mode-0",
+      "offset": 9728,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-9-fraction-0.31-mode-2",
+      "offset": 9804,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-9-fraction-1.1-mode-0",
+      "offset": 9880,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-9-fraction-1.1-mode-2",
+      "offset": 9956,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-10-fraction-0-mode-0",
+      "offset": 10032,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-10-fraction-0-mode-2",
+      "offset": 10108,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-10-fraction-0.31-mode-0",
+      "offset": 10184,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-10-fraction-0.31-mode-2",
+      "offset": 10260,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-10-fraction-1.1-mode-0",
+      "offset": 10336,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-10-fraction-1.1-mode-2",
+      "offset": 10412,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-11-fraction-0-mode-0",
+      "offset": 10488,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-11-fraction-0-mode-2",
+      "offset": 10564,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-11-fraction-0.31-mode-0",
+      "offset": 10640,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-11-fraction-0.31-mode-2",
+      "offset": 10716,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-11-fraction-1.1-mode-0",
+      "offset": 10792,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1-trial-11-fraction-1.1-mode-2",
+      "offset": 10868,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-0-fraction-0-mode-0",
+      "offset": 10944,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-0-fraction-0-mode-2",
+      "offset": 11020,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-0-fraction-0.31-mode-0",
+      "offset": 11096,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-0-fraction-0.31-mode-2",
+      "offset": 11172,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-0-fraction-1.1-mode-0",
+      "offset": 11248,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-0-fraction-1.1-mode-2",
+      "offset": 11324,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-1-fraction-0-mode-0",
+      "offset": 11400,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-1-fraction-0-mode-2",
+      "offset": 11476,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-1-fraction-0.31-mode-0",
+      "offset": 11552,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-1-fraction-0.31-mode-2",
+      "offset": 11628,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-1-fraction-1.1-mode-0",
+      "offset": 11704,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-1-fraction-1.1-mode-2",
+      "offset": 11780,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-2-fraction-0-mode-0",
+      "offset": 11856,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-2-fraction-0-mode-2",
+      "offset": 11932,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-2-fraction-0.31-mode-0",
+      "offset": 12008,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-2-fraction-0.31-mode-2",
+      "offset": 12084,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-2-fraction-1.1-mode-0",
+      "offset": 12160,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-2-fraction-1.1-mode-2",
+      "offset": 12236,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-3-fraction-0-mode-0",
+      "offset": 12312,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-3-fraction-0-mode-2",
+      "offset": 12388,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-3-fraction-0.31-mode-0",
+      "offset": 12464,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-3-fraction-0.31-mode-2",
+      "offset": 12540,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-3-fraction-1.1-mode-0",
+      "offset": 12616,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-3-fraction-1.1-mode-2",
+      "offset": 12692,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-4-fraction-0-mode-0",
+      "offset": 12768,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-4-fraction-0-mode-2",
+      "offset": 12844,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-4-fraction-0.31-mode-0",
+      "offset": 12920,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-4-fraction-0.31-mode-2",
+      "offset": 12996,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-4-fraction-1.1-mode-0",
+      "offset": 13072,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-4-fraction-1.1-mode-2",
+      "offset": 13148,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-5-fraction-0-mode-0",
+      "offset": 13224,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-5-fraction-0-mode-2",
+      "offset": 13300,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-5-fraction-0.31-mode-0",
+      "offset": 13376,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-5-fraction-0.31-mode-2",
+      "offset": 13452,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-5-fraction-1.1-mode-0",
+      "offset": 13528,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-5-fraction-1.1-mode-2",
+      "offset": 13604,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-6-fraction-0-mode-0",
+      "offset": 13680,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-6-fraction-0-mode-2",
+      "offset": 13756,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-6-fraction-0.31-mode-0",
+      "offset": 13832,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-6-fraction-0.31-mode-2",
+      "offset": 13908,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-6-fraction-1.1-mode-0",
+      "offset": 13984,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-6-fraction-1.1-mode-2",
+      "offset": 14060,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-7-fraction-0-mode-0",
+      "offset": 14136,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-7-fraction-0-mode-2",
+      "offset": 14212,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-7-fraction-0.31-mode-0",
+      "offset": 14288,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-7-fraction-0.31-mode-2",
+      "offset": 14364,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-7-fraction-1.1-mode-0",
+      "offset": 14440,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-7-fraction-1.1-mode-2",
+      "offset": 14516,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-8-fraction-0-mode-0",
+      "offset": 14592,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-8-fraction-0-mode-2",
+      "offset": 14668,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-8-fraction-0.31-mode-0",
+      "offset": 14744,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-8-fraction-0.31-mode-2",
+      "offset": 14820,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-8-fraction-1.1-mode-0",
+      "offset": 14896,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-8-fraction-1.1-mode-2",
+      "offset": 14972,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-9-fraction-0-mode-0",
+      "offset": 15048,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-9-fraction-0-mode-2",
+      "offset": 15124,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-9-fraction-0.31-mode-0",
+      "offset": 15200,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-9-fraction-0.31-mode-2",
+      "offset": 15276,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-9-fraction-1.1-mode-0",
+      "offset": 15352,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-9-fraction-1.1-mode-2",
+      "offset": 15428,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-10-fraction-0-mode-0",
+      "offset": 15504,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-10-fraction-0-mode-2",
+      "offset": 15580,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-10-fraction-0.31-mode-0",
+      "offset": 15656,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-10-fraction-0.31-mode-2",
+      "offset": 15732,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-10-fraction-1.1-mode-0",
+      "offset": 15808,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-10-fraction-1.1-mode-2",
+      "offset": 15884,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-11-fraction-0-mode-0",
+      "offset": 15960,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-11-fraction-0-mode-2",
+      "offset": 16036,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-11-fraction-0.31-mode-0",
+      "offset": 16112,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-11-fraction-0.31-mode-2",
+      "offset": 16188,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-11-fraction-1.1-mode-0",
+      "offset": 16264,
+      "bytes": 76
+    },
+    {
+      "name": "scale-1000-trial-11-fraction-1.1-mode-2",
+      "offset": 16340,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-0-fraction-0.0-mode-0",
+      "offset": 16416,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-0-fraction-0.0-mode-2",
+      "offset": 16492,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-0-fraction-0.23-mode-0",
+      "offset": 16568,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-0-fraction-0.23-mode-2",
+      "offset": 16644,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-0-fraction-0.81-mode-0",
+      "offset": 16720,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-0-fraction-0.81-mode-2",
+      "offset": 16796,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-0-fraction-1.1-mode-0",
+      "offset": 16872,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-0-fraction-1.1-mode-2",
+      "offset": 16948,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-1-fraction-0.0-mode-0",
+      "offset": 17024,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-1-fraction-0.0-mode-2",
+      "offset": 17112,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-1-fraction-0.23-mode-0",
+      "offset": 17200,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-1-fraction-0.23-mode-2",
+      "offset": 17288,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-1-fraction-0.81-mode-0",
+      "offset": 17376,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-1-fraction-0.81-mode-2",
+      "offset": 17464,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-1-fraction-1.1-mode-0",
+      "offset": 17552,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-1-fraction-1.1-mode-2",
+      "offset": 17640,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-2-fraction-0.0-mode-0",
+      "offset": 17728,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-2-fraction-0.0-mode-2",
+      "offset": 17828,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-2-fraction-0.23-mode-0",
+      "offset": 17928,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-2-fraction-0.23-mode-2",
+      "offset": 18028,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-2-fraction-0.81-mode-0",
+      "offset": 18128,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-2-fraction-0.81-mode-2",
+      "offset": 18228,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-2-fraction-1.1-mode-0",
+      "offset": 18328,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-2-fraction-1.1-mode-2",
+      "offset": 18428,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-3-fraction-0.0-mode-0",
+      "offset": 18528,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-3-fraction-0.0-mode-2",
+      "offset": 18604,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-3-fraction-0.23-mode-0",
+      "offset": 18680,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-3-fraction-0.23-mode-2",
+      "offset": 18756,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-3-fraction-0.81-mode-0",
+      "offset": 18832,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-3-fraction-0.81-mode-2",
+      "offset": 18908,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-3-fraction-1.1-mode-0",
+      "offset": 18984,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-3-fraction-1.1-mode-2",
+      "offset": 19060,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-4-fraction-0.0-mode-0",
+      "offset": 19136,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-4-fraction-0.0-mode-2",
+      "offset": 19224,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-4-fraction-0.23-mode-0",
+      "offset": 19312,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-4-fraction-0.23-mode-2",
+      "offset": 19400,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-4-fraction-0.81-mode-0",
+      "offset": 19488,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-4-fraction-0.81-mode-2",
+      "offset": 19576,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-4-fraction-1.1-mode-0",
+      "offset": 19664,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-4-fraction-1.1-mode-2",
+      "offset": 19752,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-5-fraction-0.0-mode-0",
+      "offset": 19840,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-5-fraction-0.0-mode-2",
+      "offset": 19940,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-5-fraction-0.23-mode-0",
+      "offset": 20040,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-5-fraction-0.23-mode-2",
+      "offset": 20140,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-5-fraction-0.81-mode-0",
+      "offset": 20240,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-5-fraction-0.81-mode-2",
+      "offset": 20340,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-5-fraction-1.1-mode-0",
+      "offset": 20440,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-5-fraction-1.1-mode-2",
+      "offset": 20540,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-0.001-trial-6-fraction-0.0-mode-0",
+      "offset": 20640,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-6-fraction-0.0-mode-2",
+      "offset": 20716,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-6-fraction-0.23-mode-0",
+      "offset": 20792,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-6-fraction-0.23-mode-2",
+      "offset": 20868,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-6-fraction-0.81-mode-0",
+      "offset": 20944,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-6-fraction-0.81-mode-2",
+      "offset": 21020,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-6-fraction-1.1-mode-0",
+      "offset": 21096,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-6-fraction-1.1-mode-2",
+      "offset": 21172,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-0.001-trial-7-fraction-0.0-mode-0",
+      "offset": 21248,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-7-fraction-0.0-mode-2",
+      "offset": 21336,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-7-fraction-0.23-mode-0",
+      "offset": 21424,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-7-fraction-0.23-mode-2",
+      "offset": 21512,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-7-fraction-0.81-mode-0",
+      "offset": 21600,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-7-fraction-0.81-mode-2",
+      "offset": 21688,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-7-fraction-1.1-mode-0",
+      "offset": 21776,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-0.001-trial-7-fraction-1.1-mode-2",
+      "offset": 21864,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-0-fraction-0.0-mode-0",
+      "offset": 21952,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-0-fraction-0.0-mode-2",
+      "offset": 22028,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-0-fraction-0.23-mode-0",
+      "offset": 22104,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-0-fraction-0.23-mode-2",
+      "offset": 22180,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-0-fraction-0.81-mode-0",
+      "offset": 22256,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-0-fraction-0.81-mode-2",
+      "offset": 22332,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-0-fraction-1.1-mode-0",
+      "offset": 22408,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-0-fraction-1.1-mode-2",
+      "offset": 22484,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-1-fraction-0.0-mode-0",
+      "offset": 22560,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-1-fraction-0.0-mode-2",
+      "offset": 22648,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-1-fraction-0.23-mode-0",
+      "offset": 22736,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-1-fraction-0.23-mode-2",
+      "offset": 22824,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-1-fraction-0.81-mode-0",
+      "offset": 22912,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-1-fraction-0.81-mode-2",
+      "offset": 23000,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-1-fraction-1.1-mode-0",
+      "offset": 23088,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-1-fraction-1.1-mode-2",
+      "offset": 23176,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-2-fraction-0.0-mode-0",
+      "offset": 23264,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-2-fraction-0.0-mode-2",
+      "offset": 23364,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-2-fraction-0.23-mode-0",
+      "offset": 23464,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-2-fraction-0.23-mode-2",
+      "offset": 23564,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-2-fraction-0.81-mode-0",
+      "offset": 23664,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-2-fraction-0.81-mode-2",
+      "offset": 23764,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-2-fraction-1.1-mode-0",
+      "offset": 23864,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-2-fraction-1.1-mode-2",
+      "offset": 23964,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-3-fraction-0.0-mode-0",
+      "offset": 24064,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-3-fraction-0.0-mode-2",
+      "offset": 24140,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-3-fraction-0.23-mode-0",
+      "offset": 24216,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-3-fraction-0.23-mode-2",
+      "offset": 24292,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-3-fraction-0.81-mode-0",
+      "offset": 24368,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-3-fraction-0.81-mode-2",
+      "offset": 24444,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-3-fraction-1.1-mode-0",
+      "offset": 24520,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-3-fraction-1.1-mode-2",
+      "offset": 24596,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-4-fraction-0.0-mode-0",
+      "offset": 24672,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-4-fraction-0.0-mode-2",
+      "offset": 24760,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-4-fraction-0.23-mode-0",
+      "offset": 24848,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-4-fraction-0.23-mode-2",
+      "offset": 24936,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-4-fraction-0.81-mode-0",
+      "offset": 25024,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-4-fraction-0.81-mode-2",
+      "offset": 25112,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-4-fraction-1.1-mode-0",
+      "offset": 25200,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-4-fraction-1.1-mode-2",
+      "offset": 25288,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-5-fraction-0.0-mode-0",
+      "offset": 25376,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-5-fraction-0.0-mode-2",
+      "offset": 25476,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-5-fraction-0.23-mode-0",
+      "offset": 25576,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-5-fraction-0.23-mode-2",
+      "offset": 25676,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-5-fraction-0.81-mode-0",
+      "offset": 25776,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-5-fraction-0.81-mode-2",
+      "offset": 25876,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-5-fraction-1.1-mode-0",
+      "offset": 25976,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-5-fraction-1.1-mode-2",
+      "offset": 26076,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1.0-trial-6-fraction-0.0-mode-0",
+      "offset": 26176,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-6-fraction-0.0-mode-2",
+      "offset": 26252,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-6-fraction-0.23-mode-0",
+      "offset": 26328,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-6-fraction-0.23-mode-2",
+      "offset": 26404,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-6-fraction-0.81-mode-0",
+      "offset": 26480,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-6-fraction-0.81-mode-2",
+      "offset": 26556,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-6-fraction-1.1-mode-0",
+      "offset": 26632,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-6-fraction-1.1-mode-2",
+      "offset": 26708,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1.0-trial-7-fraction-0.0-mode-0",
+      "offset": 26784,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-7-fraction-0.0-mode-2",
+      "offset": 26872,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-7-fraction-0.23-mode-0",
+      "offset": 26960,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-7-fraction-0.23-mode-2",
+      "offset": 27048,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-7-fraction-0.81-mode-0",
+      "offset": 27136,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-7-fraction-0.81-mode-2",
+      "offset": 27224,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-7-fraction-1.1-mode-0",
+      "offset": 27312,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1.0-trial-7-fraction-1.1-mode-2",
+      "offset": 27400,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-0-fraction-0.0-mode-0",
+      "offset": 27488,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-0-fraction-0.0-mode-2",
+      "offset": 27564,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-0-fraction-0.23-mode-0",
+      "offset": 27640,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-0-fraction-0.23-mode-2",
+      "offset": 27716,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-0-fraction-0.81-mode-0",
+      "offset": 27792,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-0-fraction-0.81-mode-2",
+      "offset": 27868,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-0-fraction-1.1-mode-0",
+      "offset": 27944,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-0-fraction-1.1-mode-2",
+      "offset": 28020,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-1-fraction-0.0-mode-0",
+      "offset": 28096,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-1-fraction-0.0-mode-2",
+      "offset": 28184,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-1-fraction-0.23-mode-0",
+      "offset": 28272,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-1-fraction-0.23-mode-2",
+      "offset": 28360,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-1-fraction-0.81-mode-0",
+      "offset": 28448,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-1-fraction-0.81-mode-2",
+      "offset": 28536,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-1-fraction-1.1-mode-0",
+      "offset": 28624,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-1-fraction-1.1-mode-2",
+      "offset": 28712,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-2-fraction-0.0-mode-0",
+      "offset": 28800,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-2-fraction-0.0-mode-2",
+      "offset": 28900,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-2-fraction-0.23-mode-0",
+      "offset": 29000,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-2-fraction-0.23-mode-2",
+      "offset": 29100,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-2-fraction-0.81-mode-0",
+      "offset": 29200,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-2-fraction-0.81-mode-2",
+      "offset": 29300,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-2-fraction-1.1-mode-0",
+      "offset": 29400,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-2-fraction-1.1-mode-2",
+      "offset": 29500,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-3-fraction-0.0-mode-0",
+      "offset": 29600,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-3-fraction-0.0-mode-2",
+      "offset": 29676,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-3-fraction-0.23-mode-0",
+      "offset": 29752,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-3-fraction-0.23-mode-2",
+      "offset": 29828,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-3-fraction-0.81-mode-0",
+      "offset": 29904,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-3-fraction-0.81-mode-2",
+      "offset": 29980,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-3-fraction-1.1-mode-0",
+      "offset": 30056,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-3-fraction-1.1-mode-2",
+      "offset": 30132,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-4-fraction-0.0-mode-0",
+      "offset": 30208,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-4-fraction-0.0-mode-2",
+      "offset": 30296,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-4-fraction-0.23-mode-0",
+      "offset": 30384,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-4-fraction-0.23-mode-2",
+      "offset": 30472,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-4-fraction-0.81-mode-0",
+      "offset": 30560,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-4-fraction-0.81-mode-2",
+      "offset": 30648,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-4-fraction-1.1-mode-0",
+      "offset": 30736,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-4-fraction-1.1-mode-2",
+      "offset": 30824,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-5-fraction-0.0-mode-0",
+      "offset": 30912,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-5-fraction-0.0-mode-2",
+      "offset": 31012,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-5-fraction-0.23-mode-0",
+      "offset": 31112,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-5-fraction-0.23-mode-2",
+      "offset": 31212,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-5-fraction-0.81-mode-0",
+      "offset": 31312,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-5-fraction-0.81-mode-2",
+      "offset": 31412,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-5-fraction-1.1-mode-0",
+      "offset": 31512,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-5-fraction-1.1-mode-2",
+      "offset": 31612,
+      "bytes": 100
+    },
+    {
+      "name": "multi-scale-1000.0-trial-6-fraction-0.0-mode-0",
+      "offset": 31712,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-6-fraction-0.0-mode-2",
+      "offset": 31788,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-6-fraction-0.23-mode-0",
+      "offset": 31864,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-6-fraction-0.23-mode-2",
+      "offset": 31940,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-6-fraction-0.81-mode-0",
+      "offset": 32016,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-6-fraction-0.81-mode-2",
+      "offset": 32092,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-6-fraction-1.1-mode-0",
+      "offset": 32168,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-6-fraction-1.1-mode-2",
+      "offset": 32244,
+      "bytes": 76
+    },
+    {
+      "name": "multi-scale-1000.0-trial-7-fraction-0.0-mode-0",
+      "offset": 32320,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-7-fraction-0.0-mode-2",
+      "offset": 32408,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-7-fraction-0.23-mode-0",
+      "offset": 32496,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-7-fraction-0.23-mode-2",
+      "offset": 32584,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-7-fraction-0.81-mode-0",
+      "offset": 32672,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-7-fraction-0.81-mode-2",
+      "offset": 32760,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-7-fraction-1.1-mode-0",
+      "offset": 32848,
+      "bytes": 88
+    },
+    {
+      "name": "multi-scale-1000.0-trial-7-fraction-1.1-mode-2",
+      "offset": 32936,
+      "bytes": 88
+    },
+    {
+      "name": "near-horizontal-0.0-water-0.0-mode-0",
+      "offset": 33024,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-0.0-water-0.0-mode-2",
+      "offset": 33100,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-0.0-water-0.31-mode-0",
+      "offset": 33176,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-0.0-water-0.31-mode-2",
+      "offset": 33252,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-0.0-water-1.0-mode-0",
+      "offset": 33328,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-0.0-water-1.0-mode-2",
+      "offset": 33404,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-5e-07-water-0.0-mode-0",
+      "offset": 33480,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-5e-07-water-0.0-mode-2",
+      "offset": 33556,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-5e-07-water-0.31-mode-0",
+      "offset": 33632,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-5e-07-water-0.31-mode-2",
+      "offset": 33708,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-5e-07-water-1.0-mode-0",
+      "offset": 33784,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-5e-07-water-1.0-mode-2",
+      "offset": 33860,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1e-06-water-0.0-mode-0",
+      "offset": 33936,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1e-06-water-0.0-mode-2",
+      "offset": 34012,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1e-06-water-0.31-mode-0",
+      "offset": 34088,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1e-06-water-0.31-mode-2",
+      "offset": 34164,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1e-06-water-1.0-mode-0",
+      "offset": 34240,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1e-06-water-1.0-mode-2",
+      "offset": 34316,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.000001e-06-water-0.0-mode-0",
+      "offset": 34392,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.000001e-06-water-0.0-mode-2",
+      "offset": 34468,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.000001e-06-water-0.31-mode-0",
+      "offset": 34544,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.000001e-06-water-0.31-mode-2",
+      "offset": 34620,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.000001e-06-water-1.0-mode-0",
+      "offset": 34696,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.000001e-06-water-1.0-mode-2",
+      "offset": 34772,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.1e-06-water-0.0-mode-0",
+      "offset": 34848,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.1e-06-water-0.0-mode-2",
+      "offset": 34924,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.1e-06-water-0.31-mode-0",
+      "offset": 35000,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.1e-06-water-0.31-mode-2",
+      "offset": 35076,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.1e-06-water-1.0-mode-0",
+      "offset": 35152,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal-1.1e-06-water-1.0-mode-2",
+      "offset": 35228,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1e-06-water-0.0-mode-0",
+      "offset": 35304,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1e-06-water-0.0-mode-2",
+      "offset": 35380,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1e-06-water-0.31-mode-0",
+      "offset": 35456,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1e-06-water-0.31-mode-2",
+      "offset": 35532,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1e-06-water-1.0-mode-0",
+      "offset": 35608,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1e-06-water-1.0-mode-2",
+      "offset": 35684,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1.000001e-06-water-0.0-mode-0",
+      "offset": 35760,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1.000001e-06-water-0.0-mode-2",
+      "offset": 35836,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1.000001e-06-water-0.31-mode-0",
+      "offset": 35912,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1.000001e-06-water-0.31-mode-2",
+      "offset": 35988,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1.000001e-06-water-1.0-mode-0",
+      "offset": 36064,
+      "bytes": 76
+    },
+    {
+      "name": "near-horizontal--1.000001e-06-water-1.0-mode-2",
+      "offset": 36140,
+      "bytes": 76
+    },
+    {
+      "name": "depth-storage-0-mode-0",
+      "offset": 36216,
+      "bytes": 76
+    },
+    {
+      "name": "depth-storage-0-mode-2",
+      "offset": 36292,
+      "bytes": 76
+    },
+    {
+      "name": "depth-storage-1-mode-0",
+      "offset": 36368,
+      "bytes": 76
+    },
+    {
+      "name": "depth-storage-1-mode-2",
+      "offset": 36444,
+      "bytes": 76
+    },
+    {
+      "name": "depth-storage-2-mode-0",
+      "offset": 36520,
+      "bytes": 76
+    },
+    {
+      "name": "depth-storage-2-mode-2",
+      "offset": 36596,
+      "bytes": 76
+    },
+    {
+      "name": "depth-storage-3-mode-0",
+      "offset": 36672,
+      "bytes": 76
+    },
+    {
+      "name": "depth-storage-3-mode-2",
+      "offset": 36748,
+      "bytes": 76
+    }
+  ],
+  "captures": [
+    {
+      "cases": 216,
+      "input_sha256": "5330eea2e594ee41326e456c828563c72a05e8d7d0d0015e9109676ea6cc95a5",
+      "output_sha256": "bbbc93cc16b5c8eb9ad9af70367f72a8cbd82e53126217bfa5e3524a0faa9331"
+    },
+    {
+      "cases": 242,
+      "input_sha256": "d894d4c7005c698e8171016a96d116bceac3ef4220af6c8e2c3833a34755f49b",
+      "output_sha256": "509746e25c2c9b5fe17832be4ad220a204cce512025d86f7f2becb241e6e0381"
+    }
+  ]
+}

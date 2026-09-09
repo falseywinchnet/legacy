@@ -58,6 +58,19 @@ moment retain their original double precision; width, wetted perimeter, weighted
 roughness, and maximum depth retain their observed single precision stores.
 The fixtures are in [`tests/reference/section_geometry/`](tests/reference/section_geometry/).
 
+The analytical NEWBETA flow pass matches **every output bit in 458 direct
+FEQUTL cases**, including the six flow/flux sums and their derivatives,
+multiple subsections, depth-dependent roughness, piecewise constant sinuosity,
+and slopes on both sides of the horizontal-segment threshold. The independent
+real and double power implementation matches **3,382 original-executable cases**
+covering every finite normal exponent field and representative subnormals.
+It retains the released approximation tables, sequential small-integer powers,
+and even the original double-power subnormal normalization behavior. These
+components use explicit portable C++ arithmetic and do not call host `pow`.
+Their fixtures are in [`tests/reference/section_flux/`](tests/reference/section_flux/)
+and [`tests/reference/power/`](tests/reference/power/). Piecewise linear
+sinuosity uses a separate Gaussian integration path that remains to be verified.
+
 The independent single precision decimal converter matches **all 2,360 direct
 original-executable cases**, including every finite exponent field, subnormals,
 signed zeros, halfway values and their adjacent floats, infinities, and NaNs.
@@ -93,7 +106,8 @@ cmake --build FEQ/build/core --config Release
 ctest --test-dir FEQ/build/core -C Release --output-on-failure
 ```
 
-This checks the original-executable matrix, interpolation and decimal fixtures, defined
+This checks the original-executable matrix, interpolation, geometry, flux, power,
+and decimal fixtures, defined
 shared storage, and the historical input fingerprint algorithm. It does not require Wine,
 Fortran, or a source translator. The CI workflow runs these checks on Windows,
 macOS, and Linux, with a separate sanitizer build.

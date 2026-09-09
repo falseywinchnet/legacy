@@ -1,0 +1,32 @@
+{
+  "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+  "routines": [
+    "_g_arxr",
+    "_g_adxd"
+  ],
+  "cases": 3382,
+  "input_sha256": "2a2c140b5152f71c1f9e2362662aaecc61e62993702b6083f3fd53ca97cb85ea",
+  "output_sha256": "4622e147251855992f33d97767264f18c08d83367cc2aa81da03fac41dee3782",
+  "captures": [
+    {
+      "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+      "routines": [
+        "_g_arxr",
+        "_g_adxd"
+      ],
+      "cases": 1046,
+      "input_sha256": "732abc277474faf1d7c9a2d2f44a6fe2882b4d30a1cd8522350ad07ab6717ebd",
+      "output_sha256": "d55c723a0259226ac89829a83d81c27e0cb66f97d1ca46e3c5b5c7bdc55f8a83"
+    },
+    {
+      "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+      "routines": [
+        "_g_arxr",
+        "_g_adxd"
+      ],
+      "cases": 2336,
+      "input_sha256": "cfa8f0c9cd4bc9ccb670676f5ffc2f97f99c24a8e776199c3af7b457af2f0b41",
+      "output_sha256": "7a4ac67cb787b0459876ce5ed7f6db0986f5bada7a5405815a7d8e1fe7aebdea"
+    }
+  ]
+}

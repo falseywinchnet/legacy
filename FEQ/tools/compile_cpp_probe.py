@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def header_inputs(directory, runtime):
     """Record the complete project/runtime header set, including unused headers."""
     paths = set()
-    for base in (ROOT/'include', directory, runtime):
-        for suffix in ('*.h', '*.hpp'):
+    for base in (ROOT/'include', ROOT/'src', directory, runtime):
+        for suffix in ('*.h', '*.hpp', '*.inc'):
             paths.update(base.rglob(suffix))
     return [{'path':str(path.resolve()), 'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
             for path in sorted(paths)]

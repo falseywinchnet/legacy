@@ -70,7 +70,8 @@ def main():
         sources.extend(['src/profile_matrix.cpp','src/section_interpolation.cpp','src/table_interpolation.cpp',
                         'tools/profile_compat.cpp','tools/section_compat.cpp','tools/table_compat.cpp'])
     else:
-        sources.extend(['src/section_geometry.cpp','tools/geometry_compat.cpp'])
+        sources.extend(['src/section_geometry.cpp','src/section_flux.cpp','src/power.cpp',
+                        'tools/geometry_compat.cpp','tools/flux_compat.cpp'])
     if args.matrix_trace:
         sources.append('tools/matrix_trace.cpp')
     commands = []

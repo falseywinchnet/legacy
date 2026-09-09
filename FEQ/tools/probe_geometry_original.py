@@ -67,7 +67,7 @@ def record(case):
             b''.join(struct.pack('<fffI',*point) for point in points))
 
 
-def image(original,pe,symbols,cases):
+def image(original,pe,symbols,cases,flux=False):
     base = pe.OPTIONAL_HEADER.ImageBase
     start = base+symbols['_MAIN__']['rva']
     scratch = base+symbols['_ftable_']['rva']
@@ -82,12 +82,12 @@ def image(original,pe,symbols,cases):
             address = scratch+len(data)
             data.extend(struct.pack(fmt,*values))
             return address
-        snflg = put('<i',0);zi = put('<f',case['water_surface']);npnt = put('<i',count);nsub = put('<i',subs)
+        snflg = put('<i',case.get('sinuosity_mode',0));zi = put('<f',case['water_surface']);npnt = put('<i',count);nsub = put('<i',subs)
         x = put('<'+str(count)+'f',*[p[0] for p in points]);z = put('<'+str(count)+'f',*[p[1] for p in points])
         sb = put('<'+str(count)+'i',*[p[3]+1 for p in points]);lsn = put('<'+str(count)+'f',*[p[2] for p in points])
-        nvar = put('<'+str(subs)+'i',*case['roughness_modes']);sn = put('<'+str(count)+'f',*([1.0]*count))
+        nvar = put('<'+str(subs)+'i',*case['roughness_modes']);sn = put('<'+str(count)+'f',*case.get('sinuosity',[1.0]*count))
         naty = put('<'+str(9*subs)+'f',*([0.03]*(9*subs)));yatn = put('<'+str(9*subs)+'f',*(list(range(9))*subs))
-        nny = put('<'+str(subs)+'i',*([9]*subs));nfac = put('<f',1.49);betopt = put('<8s',b'OLDBETA ')
+        nny = put('<'+str(subs)+'i',*([9]*subs));nfac = put('<f',case.get('manning_factor',1.49));betopt = put('<8s',case.get('beta_option','OLDBETA ').encode())
         n = put('<'+str(subs)+'f',*([0.03]*subs))
         ts = put('<'+str(subs)+'f',*([0]*subs));ps = put('<'+str(subs)+'f',*([0]*subs))
         area = put('<'+str(subs)+'d',*([0]*subs));moment = put('<'+str(subs)+'d',*([0]*subs));ns = put('<'+str(subs)+'f',*([0]*subs))
@@ -99,8 +99,12 @@ def image(original,pe,symbols,cases):
         args = [snflg,zi,npnt,nsub,x,z,sb,lsn,nvar,sn,naty,yatn,nny,nfac,betopt,n,ts,ps,area,moment,ns,*sums,ymax,sbsn,qs,ks,8]
         for value in reversed(args):code.push(value)
         code.call(base+symbols['_fbasel_']['rva']);code.emit('81c4'+struct.pack('<I',len(args)*4).hex())
-        for address,size in ((ts,4),(ps,4),(area,8),(moment,8),(ns,4),(ymax,4)):
-            code.write(address,size*subs,written)
+        if flux:
+            for address in sums:code.write(address,8,written)
+            for address in (sbsn,qs,ks):code.write(address,4*subs,written)
+        else:
+            for address,size in ((ts,4),(ps,4),(area,8),(moment,8),(ns,4),(ymax,4)):
+                code.write(address,size*subs,written)
     driver = code.finish()
     later = sorted(item['rva'] for item in symbols.values() if item['type']==32 and item['section']==1 and item['rva']>symbols['_MAIN__']['rva'])
     if len(driver) > later[0]-symbols['_MAIN__']['rva']:

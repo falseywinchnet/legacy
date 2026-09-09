@@ -228,3 +228,38 @@ The utility integration replaces only the first geometric pass. Native output
 verification must still use the unmodified full reports with the existing
 clock-only comparison policy. Flux, conveyance, derivative fitting and culvert
 computations remain separate recovery work.
+
+## Powers and analytical flow integrals
+
+The power driver calls the unchanged original `_g_arxr` and `_g_adxd` after
+normal startup. Input records contain a 32-bit kind (0=REAL, 1=DOUBLE), a zero
+reserved word, and two binary64 values. Outputs occupy eight bytes: a binary64
+result or a binary32 result followed by four zero bytes. The default suite
+reconstructs all 3,382 committed cases, including the full normal exponent
+range and selected subnormal inputs.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_power_original.py \
+  --native FEQ/build/core/feq_power_probe --output FEQ/build/power-recapture
+```
+
+The flow driver reuses the section geometry driver's temporary PROGRAM setup
+and supplies NEWBETA with sinuosity modes 0 or 2. It writes the eight original
+double sums, followed by SBSN, QS, and KS arrays in their original order. The
+first six sums are the flow, momentum flux, energy flux, and their depth
+derivatives. The remaining sums and QS/KS remain zero in this analytical path;
+SBSN records the last wet segment's sinuosity for each subsection in mode 2.
+The default suite has 216 isolated-segment cases. The committed full suite adds
+242 multi-segment and boundary cases and can be recaptured explicitly:
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_flux_original.py \
+  --fixtures FEQ/tests/reference/section_flux/fixtures.json \
+  --native FEQ/build/core/feq_flux_probe --output FEQ/build/flux-recapture
+```
+
+`tools/recover_power_tables.py` independently extracts the three numerical
+coefficient tables to hexadecimal C++ literals. `src/power_coefficients.inc`
+records the original executable and table-byte hashes. The compiler receipt
+inventory includes `.inc` files so a coefficient change invalidates old object
+receipts. All new fixture comparisons are raw-byte equality tests.
