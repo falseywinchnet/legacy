@@ -20,7 +20,8 @@ The [Actions builds](https://github.com/falseywinchnet/legacy/actions) also reta
 Choose **Open the example project**. Four transects include surveyed, adjusted,
 and eroded profiles plus historical analysis data. Select **WHAFIS wave heights**
 and **Run WHAFIS**, or **RUNUP** and **Run RUNUP**. Review the Results page, then
-use **Save project** to keep a copy. The Getting started page explains a new study
+use **Save project** to keep a copy. See [desktop instructions](docs/DESKTOP.md) for first-launch approval on unsigned releases.
+The Getting started page explains a new study
 from profile import through results export. No emulator, Python, Fortran compiler,
 Access installation, or original executable is needed to use the application.
 
@@ -44,7 +45,8 @@ recovered CHAMP geometry routines have 4,000 original raw numerical records.
 These comparisons establish the tested behavior; they are not a proof of equality
 for every possible input. See [implementation evidence](docs/IMPLEMENTATION.md),
 [CHAMP implementation](docs/CHAMP_IMPLEMENTATION.md), and
-[RUNUP historical differences](docs/RUNUP_DIFFERENCES.md).
+[RUNUP historical differences](docs/RUNUP_DIFFERENCES.md), and
+[WHAFIS version and compiler differences](docs/WHAFIS_DIFFERENCES.md).
 
 ## Recovered so far
 

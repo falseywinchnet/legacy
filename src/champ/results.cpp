@@ -55,7 +55,8 @@ void extract_whafis_tables(Project &project, std::string_view id,
     if (part == 1 && line.starts_with("          ") && line.size() > 12) {
       auto kind = field(line, 10, 2);
       const std::string codes = " IE IF OF AS DU BU VE VH MG ET ";
-      if (kind.size() != 2 || kind == "ET" || codes.find(" " + kind + " ") == codes.npos)
+      if (kind.size() != 2 || kind == "ET" ||
+          codes.find(" " + kind + " ") == codes.npos)
         continue;
       Json row = {{"WHAFIS CARD", kind}};
       for (int i = 0; i < 10; ++i)
@@ -115,8 +116,10 @@ void extract_whafis_tables(Project &project, std::string_view id,
         // CHAMP labels an unprinted interval X and carries its previous
         // zone elevation and FHF (FrmWhafisEditor p-code 14ED..1547).
         designation["ZONE"] = "X";
-        if (!designation.contains("ZONE ELEVATION")) designation["ZONE ELEVATION"] = 0;
-        if (!designation.contains("FHF")) designation["FHF"] = 0;
+        if (!designation.contains("ZONE ELEVATION"))
+          designation["ZONE ELEVATION"] = 0;
+        if (!designation.contains("FHF"))
+          designation["FHF"] = 0;
       } else {
         auto text = trim(line);
         if (!text.empty() &&

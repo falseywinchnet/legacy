@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 #include "legacy/project.hpp"
 #include <algorithm>
-#include <charconv>
+
 #include <cmath>
 #include <iomanip>
 #include <locale>
@@ -52,10 +52,10 @@ std::string number_field(double value, std::size_t width, int precision) {
   return std::string(width - s.size(), ' ') + s;
 }
 std::string single_text(float value) {
-  char buffer[64];
-  auto r = std::to_chars(buffer, buffer + sizeof buffer, value,
-                         std::chars_format::general, 7);
-  return std::string(buffer, r.ptr);
+  std::ostringstream text;
+  text.imbue(std::locale::classic());
+  text << std::setprecision(7) << value;
+  return text.str();
 }
 Json &stored_document(Project &p, std::string_view id, Scenario s,
                       const char *engine) {
@@ -229,8 +229,10 @@ RunupSummary Project::run_runup(std::string_view id, Scenario scenario) {
   for (const auto &w : summary.result.waves) {
     if (w.fatal_error || !w.error.empty()) {
       const auto error = "RUNUP could not complete this wave: " + w.error;
-      stored_document(*this, id, scenario, "runup") = {
-          {"input", summary.input}, {"report", summary.report}, {"error", error}};
+      stored_document(*this, id, scenario,
+                      "runup") = {{"input", summary.input},
+                                  {"report", summary.report},
+                                  {"error", error}};
       replace_rows(scenario_table("RUNUP OUTPUT", scenario), id, {});
       replace_rows(scenario_table("RUNUP ZONE", scenario), id, {});
       throw std::runtime_error(error);
@@ -374,7 +376,9 @@ whafis::Report Project::run_whafis(std::string_view id, Scenario scenario,
     detail::extract_whafis_tables(*this, id, scenario, result.text);
   else
     for (int part = 1; part <= 6; ++part)
-      replace_rows(scenario_table("WHAFIS PART " + std::to_string(part), scenario), id, {});
+      replace_rows(
+          scenario_table("WHAFIS PART " + std::to_string(part), scenario), id,
+          {});
   return result;
 }
 } // namespace legacy::champ

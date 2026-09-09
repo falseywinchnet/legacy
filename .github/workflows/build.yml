@@ -46,17 +46,30 @@ jobs:
         run: cmake --build build/native --config Release --parallel 3
       - name: Compare against original routine outputs and test project workflow
         run: ctest --test-dir build/native -C Release --output-on-failure
+      - name: Compare Intel slices on macOS
+        if: runner.os == 'macOS'
+        run: python3 tests/check_macos_intel.py build/native
       - name: Install package contents
         run: cmake --install build/native --config Release --prefix build/installed
       - name: Exercise installed macOS desktop
         if: runner.os == 'macOS'
         run: '"build/installed/Legacy Coastal.app/Contents/MacOS/Legacy Coastal" --smoke-test --screenshot build/desktop.bmp'
+      - name: Verify macOS bundle and Intel launch
+        if: runner.os == 'macOS'
+        run: |
+          codesign --verify --deep --strict --all-architectures --verbose=2 "build/installed/Legacy Coastal.app"
+          arch -x86_64 "build/installed/Legacy Coastal.app/Contents/MacOS/Legacy Coastal" --smoke-test
       - name: Exercise installed Linux desktop
         if: runner.os == 'Linux'
         run: xvfb-run -a "build/installed/Legacy Coastal" --smoke-test --screenshot build/desktop.bmp
       - name: Exercise installed Windows desktop
         if: runner.os == 'Windows'
-        run: '& "build/installed/Legacy Coastal.exe" --smoke-test --screenshot build/desktop.bmp'
+        run: |
+          $binary = (Resolve-Path "build/installed/Legacy Coastal.exe").Path
+          $capture = Join-Path $PWD "build/desktop.bmp"
+          $process = Start-Process -FilePath $binary -ArgumentList @('--smoke-test', '--screenshot', $capture) -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Desktop smoke check failed with exit code $($process.ExitCode)" }
+          if (!(Test-Path $capture)) { throw "Desktop did not produce its screenshot" }
       - name: Package
         run: cpack --config build/native/CPackConfig.cmake -C Release -B build/packages
       - uses: actions/upload-artifact@v4

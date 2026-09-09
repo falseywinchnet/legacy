@@ -1,8 +1,8 @@
 # CHAMP implementation evidence
 
-The native project layer is in progress. The destination includes project and
-transect editing, adjustment, erosion, WHAFIS preparation, RUNUP preparation,
-plots, exports, and separate 100-/500-year analyses.
+The native project layer implements project and transect editing, adjustment,
+erosion, WHAFIS preparation, RUNUP preparation, plots, exports, and separate
+100-/500-year analyses. The Dear ImGui application exposes that workflow directly.
 
 ## Database recovery
 
@@ -56,9 +56,9 @@ initial general determinant, and returns `-99999` coordinates for parallel slope
 These are compatibility details, not invitations to use this helper as a generic
 analytic-geometry library.
 
-Further workflow and original-execution comparisons will be recorded here as
-implementation proceeds. The raw routine fixtures establish the tested cases,
-not universal equivalence or completion of CHAMP.
+The raw routine fixtures establish the tested cases, rather than universal
+equivalence for every possible input. The connected workflow has the additional
+comparisons described below.
 
 ## Connected project workflow
 
@@ -98,5 +98,35 @@ from its supplied RUNUP input/output. The port preserves the imported values and
 replaces a result only when that analysis is run. New averages accumulate the
 original printed decimal runup values with the original Single storage step.
 
-Desktop controls, exports, packaging, and further geometry branch checks are the
-next integration work.
+## Results and desktop integration
+
+WHAFIS reports populate all six historical result tables. The parser retains the
+report's printed precision and excludes the ET terminator from PART 1. In PART 6,
+an interval without a printed designation becomes X and retains the preceding
+zone elevation and FHF, as the original form does at p-code offsets 14ED–1547.
+The first generated transect produces 9/29/1/3/1/17 rows in Parts 1–6. This is
+checked alongside the current report stations so stale imported values cannot
+masquerade as a fresh result.
+
+RUNUP's zone boundary uses mean runup + stillwater − 3 feet, despite its separately
+displayed 2% estimate using the 2.23 multiplier. The native first-transect zone
+coordinates match the saved original coordinates exactly. Failed calculations
+retain their input and diagnostic report and clear the affected result tables.
+
+The interface applies parameter, profile, card, and selection edits before save,
+calculation, or transect/scenario changes. It validates a candidate project before
+replacing the current project, preserves undo history, and saves atomically.
+Erosion preview controls remain explicit: Save eroded profile commits a treatment.
+The full WHAFIS deck and card table are alternative editors; simultaneous edits
+require choosing which editor to apply rather than silently overwriting one.
+
+CSV/TSV import supports headers, quotes, source labels, and quoted line breaks.
+DXF import reads 2D LWPOLYLINE, POLYLINE/VERTEX, and LINE geometry, with X as station
+and Y as elevation. Export writes open DXF polylines and standalone SVG charts.
+Result charts include wave crests or the 2% runup elevation. Original project
+tables can also be exported as CSV or edited through the advanced table view.
+Original CHAMP, WHAFIS, and RUNUP manuals are bundled with the application.
+
+The desktop is implemented in `src/desktop/`; project geometry, import/export, and
+workflow code remain independently usable libraries. All application calculations
+use native C++ and do not launch original executables or historical runtimes.

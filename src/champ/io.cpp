@@ -66,9 +66,12 @@ std::vector<std::string> fields(std::string_view line, char separator) {
   return result;
 }
 float number(const std::string &s) {
-  std::size_t used{};
-  float value = std::stof(s, &used);
-  if (used != s.size() || !std::isfinite(value))
+  const auto text = trim(s);
+  float value{};
+  std::istringstream input(text);
+  input.imbue(std::locale::classic());
+  if (!(input >> value) || input.peek() != std::char_traits<char>::eof() ||
+      !std::isfinite(value))
     throw std::runtime_error("Invalid coordinate: " + s);
   return value;
 }
@@ -198,13 +201,37 @@ parse_profile_text(std::string text, std::string name, std::string extension) {
   std::string line;
   ProfileImport profile{std::move(name), {}};
   bool first = true;
+  char separator = 0;
   while (std::getline(in, line)) {
     line = trim(line);
     if (line.empty() || line.starts_with('#'))
       continue;
-    char separator = line.find(',') != line.npos    ? ','
-                     : line.find('\t') != line.npos ? '\t'
-                                                    : ' ';
+    if (!separator)
+      separator = line.find('\t') != line.npos  ? '\t'
+                  : line.find(',') != line.npos ? ','
+                                                : ' ';
+    // Quoted CSV fields may contain line breaks, including exported source
+    // names.
+    bool quoted = false;
+    for (std::size_t at = 0;; ++at) {
+      if (at == line.size()) {
+        if (!quoted)
+          break;
+        std::string next;
+        if (!std::getline(in, next))
+          throw std::runtime_error(
+              "An imported CSV row has an unfinished quote.");
+        if (!line.empty() && line.back() == '\r')
+          line.pop_back();
+        line += '\n' + next;
+      }
+      if (line[at] == '"') {
+        if (quoted && at + 1 < line.size() && line[at + 1] == '"')
+          ++at;
+        else
+          quoted = !quoted;
+      }
+    }
     const auto v = fields(line, separator);
     if (v.size() < 2)
       throw std::runtime_error("Each profile row needs station and elevation.");
@@ -317,13 +344,13 @@ std::string profiles_svg(std::string_view title,
   for (int i = 0; i <= 5; ++i) {
     const float xv = float(xmin + dx * i / 5);
     const float yv = float(ymin + (double(ymax) - ymin) * i / 5);
-    out << "<path d=\"M" << x(xv) << " 125V565 M85 " << y(yv)
-        << "H1135\" fill=\"none\" stroke=\"#dce3e8\"/><text x=\"" << x(xv)
-        << "\" y=\"589\" text-anchor=\"middle\">" << xv
+    out << std::setprecision(5) << "<path d=\"M" << x(xv) << " 125V565 M85 "
+        << y(yv) << "H1135\" fill=\"none\" stroke=\"#dce3e8\"/><text x=\""
+        << x(xv) << "\" y=\"589\" text-anchor=\"middle\">" << xv
         << "</text><text x=\"73\" y=\"" << y(yv) + 5
         << "\" text-anchor=\"end\">" << yv << "</text>";
   }
-  const char *colors[] = {"#366e94", "#91a0ab", "#d97d28", "#008f82"};
+  const char *colors[] = {"#687e97", "#286d9f", "#db7f2c", "#009886"};
   std::size_t i = 0;
   for (const auto &profile : profiles) {
     out << "<text x=\"" << 85 + i * 240 << "\" y=\"89\" fill=\""

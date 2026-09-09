@@ -30,6 +30,15 @@ target_include_directories(legacy_imgui PUBLIC ${imgui_SOURCE_DIR}
 target_link_libraries(legacy_imgui PUBLIC SDL3::SDL3-static)
 add_executable(legacy_coastal WIN32 MACOSX_BUNDLE src/desktop/main.cpp src/desktop/application.cpp src/desktop/plot.cpp)
 target_link_libraries(legacy_coastal PRIVATE legacy_champ legacy_imgui)
+if(WIN32)
+  enable_language(RC)
+  target_sources(legacy_coastal PRIVATE resources/coastal.rc)
+  target_include_directories(legacy_coastal PRIVATE resources)
+endif()
+if(APPLE)
+  target_sources(legacy_coastal PRIVATE resources/coastal.icns)
+  set_source_files_properties(resources/coastal.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+endif()
 set_target_properties(legacy_coastal PROPERTIES OUTPUT_NAME "Legacy Coastal"
   MACOSX_BUNDLE_BUNDLE_NAME "Legacy Coastal"
   MACOSX_BUNDLE_GUI_IDENTIFIER "org.rainstar.legacy-coastal"
@@ -46,12 +55,23 @@ endif()
 add_custom_command(TARGET legacy_coastal POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources/examples "${legacy_example_directory}"
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources/fonts "${legacy_example_directory}/../fonts")
+set(legacy_manual_sources
+  CHAMP2.0_Manual.pdf RUNUP2.0_Manual.pdf WHAFIS3.0_Manual_1988.pdf WHAFIS4.0_Supplement_2007.pdf)
+foreach(manual IN LISTS legacy_manual_sources)
+  add_custom_command(TARGET legacy_coastal POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${legacy_example_directory}/../manuals"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "${CMAKE_CURRENT_SOURCE_DIR}/originals/manuals/${manual}" "${legacy_example_directory}/../manuals/${manual}")
+endforeach()
 if(APPLE)
   install(TARGETS legacy_coastal BUNDLE DESTINATION .)
   install(FILES README.md LICENSE NOTICE.md DESTINATION "Legacy Coastal.app/Contents/Resources")
 else()
   install(TARGETS legacy_coastal RUNTIME DESTINATION .)
   install(DIRECTORY resources/examples resources/fonts DESTINATION .)
+  foreach(manual IN LISTS legacy_manual_sources)
+    install(FILES "originals/manuals/${manual}" DESTINATION manuals)
+  endforeach()
   install(FILES README.md LICENSE NOTICE.md DESTINATION .)
 endif()
 if(APPLE)
@@ -75,7 +95,11 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Coastal profiles, dune erosion, WHAFIS, a
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 if(APPLE)
   set(CPACK_GENERATOR "DragNDrop;ZIP")
-  set(CPACK_SYSTEM_NAME "macOS-universal")
+  if("arm64" IN_LIST CMAKE_OSX_ARCHITECTURES AND "x86_64" IN_LIST CMAKE_OSX_ARCHITECTURES)
+    set(CPACK_SYSTEM_NAME "macOS-universal")
+  else()
+    set(CPACK_SYSTEM_NAME "macOS-${CMAKE_SYSTEM_PROCESSOR}")
+  endif()
   set(CPACK_DMG_VOLUME_NAME "Legacy Coastal")
 elseif(WIN32)
   set(CPACK_GENERATOR ZIP)
@@ -84,5 +108,17 @@ else()
   set(CPACK_GENERATOR TGZ)
   set(CPACK_SYSTEM_NAME "Linux-${CMAKE_SYSTEM_PROCESSOR}")
   install(PROGRAMS "resources/Start Legacy Coastal.sh" DESTINATION .)
+endif()
+if(APPLE)
+  add_custom_command(TARGET legacy_coastal POST_BUILD
+    COMMAND codesign --force --deep --sign - "$<TARGET_BUNDLE_DIR:legacy_coastal>")
+  install(CODE [[
+    execute_process(COMMAND codesign --force --deep --sign -
+      "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/Legacy Coastal.app"
+      RESULT_VARIABLE signing_result)
+    if(NOT signing_result EQUAL 0)
+      message(FATAL_ERROR "Could not sign the installed application bundle.")
+    endif()
+  ]])
 endif()
 include(CPack)

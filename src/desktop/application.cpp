@@ -1,5 +1,6 @@
 #include "application.hpp"
 #include "imgui_stdlib.h"
+#include "paths.hpp"
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -32,7 +33,7 @@ void SDLCALL selected_file(void *userdata, const char *const *paths, int) {
   if (!paths)
     result.error = SDL_GetError();
   else if (paths[0])
-    result.path = std::filesystem::u8path(paths[0]);
+    result.path = utf8_path(paths[0]);
   else
     result.operation = -1;
   std::lock_guard lock(dialog_mutex);
@@ -81,61 +82,63 @@ std::vector<TransectPoint> wave_series(const Project &p, const std::string &id,
 Application::Application(SDL_Window *window, ImFont *monospace)
     : window_(window), monospace_(monospace) {}
 
-Json Application::draft_state() const {
-  const auto &p = parameters_;
-  Json state = {{"parameters", {p.stillwater, p.ten_year_stillwater,
-      p.fifty_year_stillwater, p.significant_height, p.peak_period, p.wave_setup,
-      p.fetch_miles, p.mean_height, p.mean_period, p.spread_percent, p.last_slope,
-      p.wind_overwater, p.wind_inland, p.wind_vegetation}},
-      {"profile", Json::array()}, {"cards", Json::array()},
-      {"deck", deck_}, {"runup", runup_rows_}};
-  for (const auto &p : points_)
-    state["profile"].push_back({p.station, p.elevation, p.source});
-  for (const auto &c : cards_)
-    state["cards"].push_back({c.kind, c.fields, c.text});
-  return state;
+Application::Draft Application::draft_state() const {
+  return {parameters_, points_, cards_, deck_, runup_rows_};
 }
 bool Application::has_drafts() const {
-  return project_ && ((!selected_.empty() && !draft_baseline_.is_null() &&
-      draft_state() != draft_baseline_) || raw_table_ != table_baseline_);
+  if (!project_)
+    return false;
+  if (raw_table_ != table_baseline_)
+    return true;
+  if (!draft_baseline_ || selected_.empty())
+    return false;
+  const auto &b = *draft_baseline_;
+  return parameters_ != b.parameters || points_ != b.points ||
+         cards_ != b.cards || deck_ != b.deck || runup_rows_ != b.runup;
 }
 bool Application::apply_drafts() {
-  if (!has_drafts()) return true;
+  if (!has_drafts())
+    return true;
   try {
     auto candidate = *project_;
     const auto current = draft_state();
-    const auto changed = [&](const char *key) {
-      return !draft_baseline_.is_null() && current.at(key) != draft_baseline_.at(key);
-    };
-    if (changed("parameters"))
+    const auto baseline = draft_baseline_.value_or(current);
+    if ((current.parameters != baseline.parameters))
       candidate.set_parameters(selected_, scenario_, parameters_);
-    if (changed("profile"))
-      candidate.set_profile(selected_, static_cast<ProfileKind>(profile_kind_), points_, scenario_);
-    if (changed("cards") && changed("deck"))
-      throw std::invalid_argument("The WHAFIS card table and full input deck both have edits. Apply one editor or reload the project before continuing.");
-    if (changed("cards")) {
+    if ((current.points != baseline.points))
+      candidate.set_profile(selected_, static_cast<ProfileKind>(profile_kind_),
+                            points_, scenario_);
+    if ((current.cards != baseline.cards) && (current.deck != baseline.deck))
+      throw std::invalid_argument(
+          "The WHAFIS card table and full input deck both have edits. Apply "
+          "one editor or reload the project before continuing.");
+    if ((current.cards != baseline.cards)) {
       auto edited = cards_;
       for (std::size_t i = 0; i < edited.size(); ++i)
-        if (i >= draft_baseline_.at("cards").size() ||
-            current.at("cards").at(i) != draft_baseline_.at("cards").at(i))
+        if (i >= baseline.cards.size() || current.cards[i] != baseline.cards[i])
           edited[i].text.clear();
       candidate.set_whafis_cards(selected_, scenario_, edited);
     }
-    if (changed("deck"))
-      candidate.set_whafis_cards(selected_, scenario_, read_whafis_cards(deck_));
-    if (changed("runup")) {
+    if ((current.deck != baseline.deck))
+      candidate.set_whafis_cards(selected_, scenario_,
+                                 read_whafis_cards(deck_));
+    if ((current.runup != baseline.runup)) {
       for (const auto &r : runup_rows_) {
         const auto rough = numeric(r, "ROUGHNESS COEFF", 1);
         if (!std::isfinite(rough) || rough < 0 || rough > 1)
-          throw std::invalid_argument("Roughness coefficients must be between 0 and 1.");
+          throw std::invalid_argument(
+              "Roughness coefficients must be between 0 and 1.");
       }
-      candidate.replace_rows(scenario_table("RUNUP", scenario_), selected_, runup_rows_);
+      candidate.replace_rows(scenario_table("RUNUP", scenario_), selected_,
+                             runup_rows_);
     }
     if (raw_table_ != table_baseline_) {
       auto rows = Json::parse(raw_table_);
-      if (!rows.is_array()) throw std::invalid_argument("Table rows must be a JSON array.");
+      if (!rows.is_array())
+        throw std::invalid_argument("Table rows must be a JSON array.");
       for (const auto &r : rows)
-        if (!r.is_object()) throw std::invalid_argument("Each row must be a JSON object.");
+        if (!r.is_object())
+          throw std::invalid_argument("Each row must be a JSON object.");
       auto data = candidate.serialize();
       data["tables"][table_name_]["rows"] = rows;
       candidate = Project::deserialize(data);
@@ -143,8 +146,9 @@ bool Application::apply_drafts() {
     remember();
     *project_ = std::move(candidate);
     dirty_ = true;
-    draft_baseline_ = current;
-    table_baseline_ = raw_table_;
+    const auto controls = erosion_;
+    reload();
+    erosion_ = controls;
     status_ = "Edits applied";
     return true;
   } catch (const std::exception &e) {
@@ -172,7 +176,8 @@ void Application::remember() {
 }
 void Application::mutate(const std::string &label,
                          const std::function<void()> &action) {
-  if (!apply_drafts()) return;
+  if (!apply_drafts())
+    return;
   guarded([&] {
     auto before = project_->serialize();
     try {
@@ -217,7 +222,7 @@ void Application::reload() {
   plot_.fitted = false;
   raw_table_.clear();
   table_baseline_.clear();
-  draft_baseline_ = nullptr;
+  draft_baseline_.reset();
   erosion_preview_.reset();
   point_selection_ = -1;
   if (!project_)
@@ -261,12 +266,12 @@ void Application::open(const std::filesystem::path &path) {
     selected_.clear();
     profile_kind_ = 0;
     page_ = 0;
-    status_ = "Opened " + path.filename().string();
+    status_ = "Opened " + utf8_text(path.filename());
     reload();
   });
 }
 void Application::open_example() {
-  const auto base = std::filesystem::u8path(SDL_GetBasePath());
+  const auto base = utf8_path(SDL_GetBasePath());
   open(base / "examples/Coastal-Town.coastal");
   if (project_) {
     path_.clear();
@@ -294,18 +299,20 @@ void Application::ask_discard(std::function<void()> action) {
     action();
 }
 void Application::request_open(const std::filesystem::path &path) {
-  if (worker_.valid() || dialog_pending_) return;
+  if (worker_.valid() || dialog_pending_)
+    return;
   ask_discard([this, path] { open(path); });
 }
 void Application::request_quit() {
-  if (worker_.valid()) {
-    status_ = "Wait for the calculation to finish before closing.";
+  if (worker_.valid() || dialog_pending_) {
+    status_ = "Finish the current calculation or file dialog before closing.";
     return;
   }
   ask_discard([this] { quit_ = true; });
 }
 void Application::dialog(int operation, const std::string &suggested) {
-  if (dialog_pending_) return;
+  if (dialog_pending_)
+    return;
   dialog_pending_ = true;
   static const SDL_DialogFileFilter project_filters[] = {
       {"Coastal projects", "coastal;mdb"}, {"All files", "*"}};
@@ -326,21 +333,22 @@ void Application::dialog(int operation, const std::string &suggested) {
                            2, nullptr, false);
 }
 void Application::save(bool save_as) {
-  if (!apply_drafts()) return;
+  if (!apply_drafts())
+    return;
   if (!project_)
     return;
   const auto ext = path_.extension().string();
   if (save_as || path_.empty() || ext == ".mdb" || ext == ".MDB") {
-    dialog(1, path_.empty() ? "Coastal project.coastal"
-                            : std::filesystem::path(path_)
-                                  .replace_extension(".coastal")
-                                  .string());
+    dialog(1, path_.empty()
+                  ? "Coastal project.coastal"
+                  : utf8_text(std::filesystem::path(path_).replace_extension(
+                        ".coastal")));
     return;
   }
   guarded([&] {
     project_->save(path_);
     dirty_ = false;
-    status_ = "Saved " + path_.filename().string();
+    status_ = "Saved " + utf8_text(path_.filename());
     if (after_discard_) {
       auto next = std::move(after_discard_);
       after_discard_ = {};
@@ -356,6 +364,7 @@ void Application::poll() {
   }
   for (const auto &r : results) {
     dialog_pending_ = false;
+    SDL_RaiseWindow(window_);
     if (r.operation == -1) {
       after_discard_ = {};
       continue;
@@ -386,7 +395,7 @@ void Application::poll() {
         show_import_ = true;
       } else if (r.operation == 3) {
         write_text_file(r.path, export_text_);
-        status_ = "Exported " + r.path.filename().string();
+        status_ = "Exported " + utf8_text(r.path.filename());
       } else if (r.operation == 4) {
         deck_ = read_text_file(r.path);
         status_ = "Imported WHAFIS deck — apply it before running";
@@ -401,25 +410,47 @@ void Application::poll() {
       *project_ = std::move(p.project);
       dirty_ = true;
       error_ = p.error;
-      status_ = worker_label_ + (p.error.empty() ? " complete" : " needs attention — report retained");
+      status_ = worker_label_ + (p.error.empty()
+                                     ? " complete"
+                                     : " needs attention — report retained");
       page_ = 5;
       reload();
     });
   }
 }
+void Application::run_engine(bool runup) {
+  if (!project_ || selected_.empty())
+    return;
+  const auto id = selected_;
+  const auto scenario = scenario_;
+  result_kind_ = runup ? 1 : 0;
+  launch(runup ? "RUNUP" : "WHAFIS", [=](Project &p) {
+    if (runup)
+      p.run_runup(id, scenario);
+    else {
+      auto report = p.run_whafis(id, scenario);
+      if (!report.error.empty())
+        throw std::runtime_error(report.error);
+    }
+  });
+}
 void Application::launch(const std::string &label,
                          const std::function<void(Project &)> &action) {
   if (worker_.valid() || !project_)
     return;
-  if (!apply_drafts()) return;
+  if (!apply_drafts())
+    return;
   auto copy = *project_;
   worker_label_ = label;
   status_ = "Calculating " + label + "…";
   worker_ = std::async(std::launch::async,
                        [copy = std::move(copy), action]() mutable {
                          std::string error;
-                         try { action(copy); }
-                         catch (const std::exception &e) { error = e.what(); }
+                         try {
+                           action(copy);
+                         } catch (const std::exception &e) {
+                           error = e.what();
+                         }
                          return Calculation{std::move(copy), std::move(error)};
                        });
 }
@@ -600,7 +631,8 @@ void Application::sidebar() {
   ImGui::Dummy({0, 15});
   if (ImGui::Button("Save project", {-1, 36}))
     save();
-  ImGui::TextDisabled("%s", dirty_ || has_drafts() ? "Unsaved changes" : "Saved / unchanged");
+  ImGui::TextDisabled("%s", dirty_ || has_drafts() ? "Unsaved changes"
+                                                   : "Saved / unchanged");
 }
 void Application::overview() {
   heading("Project & transect parameters",
@@ -665,9 +697,7 @@ void Application::overview() {
   ImGui::SameLine();
   ImGui::TextDisabled("Height × 0.626; period × 0.85");
   if (ImGui::Button("Apply parameters", {190, 36}))
-    mutate("Parameters applied", [&] {
-      project_->set_parameters(selected_, scenario_, parameters_);
-    });
+    apply_drafts();
   ImGui::Spacing();
   ImGui::TextWrapped(
       "Model geometry and water levels use feet. Choose the vertical datum "
@@ -695,9 +725,34 @@ std::vector<PlotSeries> Application::profile_series(bool draft) const {
   }
   return result;
 }
+std::vector<PlotSeries> Application::result_series() const {
+  auto series = profile_series();
+  if (result_kind_ == 0)
+    series.push_back(
+        {"Wave crest",
+         wave_series(*project_, selected_, scenario_, "WAVE CREST ELEVATION"),
+         IM_COL32(0, 152, 134, 255), false});
+  else if (result_kind_ == 1) {
+    const auto *document =
+        analysis_document(*project_, selected_, scenario_, "runup");
+    if (document && document->contains("two_percent_elevation") &&
+        !series.empty()) {
+      const auto &ground = series.back().points;
+      if (ground.size() >= 2) {
+        const auto level = numeric(*document, "two_percent_elevation");
+        series.push_back({"2% runup elevation",
+                          {{ground.front().station, level, ""},
+                           {ground.back().station, level, ""}},
+                          IM_COL32(0, 152, 134, 255),
+                          false});
+      }
+    }
+  }
+  return series;
+}
 void Application::export_plot(bool dxf) {
   std::vector<ProfileImport> profiles;
-  for (const auto &s : profile_series())
+  for (const auto &s : page_ == 5 ? result_series() : profile_series())
     profiles.push_back({s.label, s.points});
   export_text_ = dxf ? profiles_dxf(profiles)
                      : profiles_svg(textual(project_->metadata(), "TITLE") +
@@ -786,10 +841,7 @@ void Application::transect_page() {
   }
   ImGui::SameLine();
   if (ImGui::Button("Apply profile"))
-    mutate("Profile updated", [&] {
-      project_->set_profile(selected_, static_cast<ProfileKind>(profile_kind_),
-                            points_, scenario_);
-    });
+    apply_drafts();
   ImGui::SameLine();
   if (ImGui::Button("Export CSV…")) {
     export_text_ = profile_csv(points_);
@@ -922,15 +974,8 @@ void Application::whafis_page() {
   if (ImGui::Button("Import input…"))
     dialog(4);
   ImGui::SameLine();
-  if (ImGui::Button("Run WHAFIS", {155, 36})) {
-    auto id = selected_;
-    auto s = scenario_;
-    launch("WHAFIS", [=](Project &p) {
-      auto r = p.run_whafis(id, s);
-      if (!r.error.empty())
-        throw std::runtime_error(r.error);
-    });
-  }
+  if (ImGui::Button("Run WHAFIS", {155, 36}))
+    run_engine(false);
   ImGui::TextWrapped(
       "IE = initial conditions; IF/OF = inland/overwater fetch; DU = dune; BU "
       "= buildings; VE = trees; VH/MG = vegetation; AS = additional surge; ET "
@@ -951,7 +996,9 @@ void Application::whafis_page() {
       auto &c = cards_[i];
       ImGui::TableNextRow();
       ImGui::TableNextColumn();
-      ImGui::Text("%zu", i + 1);
+      if (ImGui::Selectable(std::to_string(i + 1).c_str(),
+                            card_selection_ == int(i)))
+        card_selection_ = int(i);
       ImGui::TableNextColumn();
       ImGui::SetNextItemWidth(-1);
       ImGui::InputText("##code", &c.kind);
@@ -967,12 +1014,21 @@ void Application::whafis_page() {
   if (ImGui::Button("Insert card")) {
     auto at = std::find_if(cards_.begin(), cards_.end(),
                            [](const auto &c) { return c.kind == "ET"; });
+    if (card_selection_ >= 0 && card_selection_ < int(cards_.size()))
+      at = cards_.begin() + card_selection_;
     cards_.insert(at, {"IF", {}, {}});
   }
   ImGui::SameLine();
+  if (ImGui::Button("Remove selected") && card_selection_ >= 0 &&
+      card_selection_ < int(cards_.size())) {
+    cards_.erase(cards_.begin() + card_selection_);
+    card_selection_ = -1;
+  }
+  ImGui::SameLine();
   if (ImGui::Button("Apply card table")) {
-    deck_ = draft_baseline_.at("deck").get<std::string>();
-    if (apply_drafts()) reload();
+    deck_ = draft_baseline_->deck;
+    if (apply_drafts())
+      reload();
   }
   ImGui::SameLine();
   if (ImGui::Button("Export input…")) {
@@ -990,7 +1046,8 @@ void Application::whafis_page() {
     ImGui::PopFont();
     if (ImGui::Button("Apply input deck")) {
       cards_ = project_->whafis_cards(selected_, scenario_);
-      if (apply_drafts()) reload();
+      if (apply_drafts())
+        reload();
     }
   }
   if (ImGui::CollapsingHeader("Card field guide")) {
@@ -1013,11 +1070,8 @@ void Application::runup_page() {
     mutate("RUNUP selection prepared",
            [&] { project_->populate_runup(selected_, scenario_); });
   ImGui::SameLine();
-  if (ImGui::Button("Run RUNUP", {155, 36})) {
-    auto id = selected_;
-    auto s = scenario_;
-    launch("RUNUP", [=](Project &p) { p.run_runup(id, s); });
-  }
+  if (ImGui::Button("Run RUNUP", {155, 36}))
+    run_engine(true);
   std::size_t included = 0;
   std::vector<TransectPoint> selected;
   for (const auto &r : runup_rows_)
@@ -1083,15 +1137,7 @@ void Application::runup_page() {
     ImGui::EndTable();
   }
   if (ImGui::Button("Apply selection / roughness"))
-    mutate("RUNUP selection applied", [&] {
-      for (const auto &r : runup_rows_)
-        if (numeric(r, "ROUGHNESS COEFF") < 0 ||
-            numeric(r, "ROUGHNESS COEFF") > 1)
-          throw std::invalid_argument(
-              "Roughness coefficients must be between 0 and 1.");
-      project_->replace_rows(scenario_table("RUNUP", scenario_), selected_,
-                             runup_rows_);
-    });
+    apply_drafts();
   ImGui::SameLine();
   if (ImGui::Button("Export input…"))
     guarded([&] {
@@ -1119,14 +1165,10 @@ void Application::results_page() {
   const Json *document =
       analysis_document(*project_, selected_, scenario_, engine);
   if (document && !textual(*document, "error").empty())
-    ImGui::TextWrapped("Calculation incomplete: %s", textual(*document, "error").c_str());
+    ImGui::TextWrapped("Calculation incomplete: %s",
+                       textual(*document, "error").c_str());
   if (result_kind_ == 0) {
-    auto series = profile_series();
-    series.push_back(
-        {"Wave crest",
-         wave_series(*project_, selected_, scenario_, "WAVE CREST ELEVATION"),
-         IM_COL32(0, 152, 134, 255), false});
-    plot("waves", plot_, series, {0, 340}, parameters_.stillwater);
+    plot("waves", plot_, result_series(), {0, 340}, parameters_.stillwater);
   } else if (result_kind_ == 1) {
     if (document) {
       ImGui::Text(
@@ -1140,7 +1182,7 @@ void Application::results_page() {
                           scenario_ == Scenario::annual_0_2_percent
                               ? "AVERAGERUNUP500"
                               : "AVERAGERUNUP"));
-    plot("runup_result", plot_, profile_series(), {0, 280},
+    plot("runup_result", plot_, result_series(), {0, 280},
          parameters_.stillwater);
   } else {
     plot("all_profiles", plot_, profile_series(), {0, 430},
@@ -1168,6 +1210,12 @@ void Application::results_page() {
   ImGui::SameLine();
   if (ImGui::Button("Fit plot"))
     plot_.fitted = false;
+  ImGui::SameLine();
+  if (ImGui::Button("SVG…"))
+    export_plot(false);
+  ImGui::SameLine();
+  if (ImGui::Button("DXF…"))
+    export_plot(true);
   if (!rows.empty()) {
     std::vector<std::string> fields;
     for (auto it = rows.front().begin(); it != rows.front().end(); ++it)
@@ -1238,17 +1286,7 @@ void Application::tables_page() {
                             ImGuiInputTextFlags_AllowTabInput);
   ImGui::PopFont();
   if (ImGui::Button("Apply table rows"))
-    mutate("Project table updated", [&] {
-      auto rows = Json::parse(raw_table_);
-      if (!rows.is_array())
-        throw std::invalid_argument("Table rows must be a JSON array.");
-      for (const auto &r : rows)
-        if (!r.is_object())
-          throw std::invalid_argument("Each row must be a JSON object.");
-      auto draft = project_->serialize();
-      draft["tables"][name]["rows"] = rows;
-      *project_ = Project::deserialize(draft);
-    });
+    apply_drafts();
   ImGui::SameLine();
   if (ImGui::Button("Export table CSV…")) {
     export_text_ = table_csv(table.rows);
@@ -1298,11 +1336,33 @@ void Application::help_page() {
       "Original .mdb projects open directly. Save your work as .coastal, which "
       "retains the original tables and new reports. The 100-year and 500-year "
       "erosion and analysis data are separate. Parameter, profile, card, and "
-      "selection edits are applied when saving, running, or switching transects. "
+      "selection edits are applied when saving, running, or switching "
+      "transects. "
       "Erosion previews become project data when you save the eroded profile. "
       "Changing a profile or "
       "parameters does not recalculate old results: apply changes, prepare the "
       "affected engine, and run again.");
+  ImGui::SeparatorText("Original manuals (included)");
+  const std::pair<const char *, const char *> manuals[] = {
+      {"CHAMP workflow", "CHAMP2.0_Manual.pdf"},
+      {"RUNUP", "RUNUP2.0_Manual.pdf"},
+      {"WHAFIS cards", "WHAFIS3.0_Manual_1988.pdf"},
+      {"WHAFIS 4 supplement", "WHAFIS4.0_Supplement_2007.pdf"}};
+  for (const auto &[label, filename] : manuals) {
+    if (ImGui::Button(label)) {
+      const auto path = utf8_path(SDL_GetBasePath()) / "manuals" / filename;
+      if (!SDL_OpenURL(file_url(path).c_str()))
+        error_ = SDL_GetError();
+    }
+    ImGui::SameLine();
+  }
+  ImGui::NewLine();
+  ImGui::SeparatorText("Keyboard shortcuts");
+  ImGui::TextWrapped(
+      "Ctrl/Cmd + 1–8 opens a page; Ctrl/Cmd + Enter runs the current "
+      "engine; Ctrl/Cmd + S saves; Ctrl/Cmd + Shift + S saves a copy. "
+      "Tab and the arrow keys navigate controls. Ctrl/Cmd + Z reverses an "
+      "edit.");
   ImGui::SeparatorText("Credits");
   ImGui::TextUnformatted(
       "Work: Astra   •   Sponsor: Rainstar   •   Foundation: Hashem");
@@ -1410,10 +1470,14 @@ void Application::modals() {
 void Application::render() {
   poll();
   const auto &io = ImGui::GetIO();
-  if (!worker_.valid() && !dialog_pending_ && !ImGui::IsPopupOpen(nullptr, ImGuiPopupFlags_AnyPopupId) && (io.KeyCtrl || io.KeySuper)) {
+  if (!worker_.valid() && !dialog_pending_ &&
+      !ImGui::IsPopupOpen(nullptr, ImGuiPopupFlags_AnyPopupId) &&
+      (io.KeyCtrl || io.KeySuper)) {
     for (int i = 0; i < 8; ++i)
       if (ImGui::IsKeyPressed(static_cast<ImGuiKey>(ImGuiKey_1 + i)))
         page_ = i;
+    if (ImGui::IsKeyPressed(ImGuiKey_Enter))
+      run_engine(page_ == 4 || (page_ == 5 && result_kind_ == 1));
     if (ImGui::IsKeyPressed(ImGuiKey_S))
       save(io.KeyShift);
     if (ImGui::IsKeyPressed(ImGuiKey_O))
@@ -1474,12 +1538,30 @@ void Application::smoke_test() {
   open_example();
   if (!project_)
     throw std::runtime_error(error_);
+  parameters_.spread_percent = 6;
+  points_.front().source = "Desktop save test";
+  if (!apply_drafts() ||
+      project_->parameters(selected_, scenario_).spread_percent != 6 ||
+      project_->profile(selected_, ProfileKind::surveyed).front().source !=
+          "Desktop save test")
+    throw std::runtime_error("Desktop pending edits were not applied.");
+  undo();
+  if (parameters_.spread_percent != 5 || has_drafts())
+    throw std::runtime_error("Desktop undo did not restore the example.");
   auto p = *project_;
   auto r = p.run_runup("1", Scenario::annual_1_percent);
   auto w = p.run_whafis("1", Scenario::annual_1_percent);
   if (!w.error.empty() || r.result.waves.size() != 9)
     throw std::runtime_error("Desktop example calculation failed.");
-  project_ = std::move(p);
+  const auto saved =
+      std::filesystem::temp_directory_path() /
+      ("legacy-desktop-" + std::to_string(SDL_GetTicksNS()) + ".coastal");
+  p.save(saved);
+  auto reopened = Project::open(saved);
+  std::filesystem::remove(saved);
+  if (reopened.serialize() != p.serialize())
+    throw std::runtime_error("Desktop project save/reopen lost analysis data.");
+  project_ = std::move(reopened);
   page_ = 5;
   result_kind_ = 0;
   reload();

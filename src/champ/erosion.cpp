@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 #include "legacy/project.hpp"
 #include <algorithm>
-#include <charconv>
 #include <cmath>
+#include <iomanip>
 #include <limits>
+#include <locale>
+#include <sstream>
 #include <stdexcept>
 
 namespace legacy::champ {
@@ -12,11 +14,11 @@ Point point(const TransectPoint &p) { return {p.station, p.elevation}; }
 // VB6 CStr(Single), followed by the form's conversion back to Single. CHAMP
 // passes geometry through its text boxes between each interactive operation.
 float textbox(float x) {
-  char buffer[64];
-  auto r = std::to_chars(buffer, buffer + sizeof buffer, x,
-                         std::chars_format::general, 7);
+  std::stringstream text;
+  text.imbue(std::locale::classic());
+  text << std::setprecision(7) << x;
   float stored{};
-  std::from_chars(buffer, r.ptr, stored);
+  text >> stored;
   return stored;
 }
 Point textbox(Point p) { return {textbox(p.station), textbox(p.elevation)}; }

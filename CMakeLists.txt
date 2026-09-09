@@ -93,6 +93,16 @@ if(BUILD_TESTING)
   endforeach()
 endif()
 
+if(APPLE)
+  foreach(program runup whafis io_probe project_probe access_probe champ_math_probe
+      runup_math_probe runup_state_probe whafis_math_probe whafis_state_probe)
+    if(TARGET ${program})
+      add_custom_command(TARGET ${program} POST_BUILD
+        COMMAND codesign --force --sign - "$<TARGET_FILE:${program}>")
+    endif()
+  endforeach()
+endif()
+
 option(LEGACY_DESKTOP "Build the Dear ImGui desktop application" ON)
 if(LEGACY_DESKTOP)
   include(cmake/Desktop.cmake)

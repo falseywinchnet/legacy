@@ -15,12 +15,14 @@ enum class ProfileKind { surveyed, adjusted, eroded };
 struct TransectPoint {
   float station{}, elevation{};
   std::string source;
+  bool operator==(const TransectPoint &) const = default;
 };
 struct Parameters {
   float stillwater{}, ten_year_stillwater{}, fifty_year_stillwater{};
   float significant_height{}, peak_period{}, wave_setup{}, fetch_miles{};
   float mean_height{}, mean_period{}, spread_percent{5}, last_slope{7};
   float wind_overwater{80}, wind_inland{60}, wind_vegetation{60};
+  bool operator==(const Parameters &) const = default;
 };
 struct ErosionSettings {
   float peak_station{}, toe_station{}, face_station{};
@@ -43,6 +45,7 @@ struct WhafisCard {
   std::array<std::string, 10> fields{};
   // CM/PS and unusual legacy records can be retained verbatim.
   std::string text;
+  bool operator==(const WhafisCard &) const = default;
 };
 struct RunupSummary {
   runup::ProfileResult result;

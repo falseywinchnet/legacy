@@ -22,10 +22,17 @@ public:
 private:
   SDL_Window *window_{};
   ImFont *monospace_{};
-  champ::Json draft_baseline_;
+  struct Draft {
+    champ::Parameters parameters;
+    std::vector<champ::TransectPoint> points;
+    std::vector<champ::WhafisCard> cards;
+    std::string deck;
+    std::vector<champ::Json> runup;
+  };
+  std::optional<Draft> draft_baseline_;
   std::string table_name_ = "TRANSECTCTL", table_baseline_;
   bool dialog_pending_{};
-  champ::Json draft_state() const;
+  Draft draft_state() const;
   bool has_drafts() const;
   bool apply_drafts();
   std::optional<champ::Project> project_;
@@ -33,7 +40,7 @@ private:
   std::string selected_, status_ = "Ready", error_, new_id_, profile_paste_,
                          deck_, raw_table_, report_text_;
   champ::Scenario scenario_{champ::Scenario::annual_1_percent};
-  int point_selection_{-1};
+  int point_selection_{-1}, card_selection_{-1};
   int page_{}, profile_kind_{}, erosion_pick_{}, result_kind_{},
       import_choice_{};
   bool dirty_{}, quit_{}, show_tables_{}, show_about_{}, show_import_{},
@@ -47,7 +54,10 @@ private:
   std::vector<champ::Json> runup_rows_;
   std::vector<champ::WhafisCard> cards_;
   std::vector<champ::ProfileImport> imports_;
-  struct Calculation { champ::Project project; std::string error; };
+  struct Calculation {
+    champ::Project project;
+    std::string error;
+  };
   std::future<Calculation> worker_;
   std::string worker_label_;
   std::function<void()> after_discard_;
@@ -76,9 +86,11 @@ private:
   void tables_page();
   void help_page();
   void modals();
+  void run_engine(bool runup);
   void launch(const std::string &label,
               const std::function<void(champ::Project &)> &action);
   std::vector<PlotSeries> profile_series(bool draft = false) const;
+  std::vector<PlotSeries> result_series() const;
   void export_plot(bool dxf);
   void edit_metadata(champ::Json &row, const char *field, const char *label);
   bool float_input(const char *label, float &value,

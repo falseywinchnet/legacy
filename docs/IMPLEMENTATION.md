@@ -42,13 +42,41 @@ The first published wave also matches captured original intermediate values, inc
 
 The native geometry and curve code is in `src/runup/calculation.cpp` and `src/runup/curves.cpp`. Original variable names are retained inside the calculation record to make comparisons with original debug symbols reviewable; the public interface uses profile, wave, and result records. Table constants are generated reproducibly from the recovered binary data.
 
-## Work still required
+## Native desktop and project workflow
 
-- Continue RUNUP boundary review while integrating the desktop application. The current fixtures cover normal results, nonconvergence, reflection notes, model steepness limits, multiple profiles, and observed arithmetic stops. Malformed-input UX must remain clear, and new discrepancies must become reproducible tests.
-- Expand WHAFIS comparisons beyond its 17 full reports and four fully matched numerical routines, including every obstruction, marsh-region, 500-year, and error path. Refine the remaining source translations against direct binary probes and simplify their C++ structure.
-- Recover CHAMP's p-code logic and file/database formats, then implement its project, transect, erosion, wave-setup, plotting, and export workflows.
-- Complete the Dear ImGui application, bundled examples, file dialogs, useful errors, and installable packages so ordinary users need no development tools or knowledge of this recovery work.
-- Verify the completed applications on macOS, Linux, and Windows and publish the corresponding artifacts.
+The C++20 project layer, Dear ImGui desktop, and packages are implemented. The
+application opens the original Access database without an Access dependency,
+retains all imported tables, and saves native `.coastal` projects. Its workflow
+covers shoreline adjustment, dune removal/retreat, separate annual-chance
+scenarios, WHAFIS cards, RUNUP selection, both native engines, plots, and exports.
+See [CHAMP implementation](CHAMP_IMPLEMENTATION.md) and
+[desktop operation and builds](DESKTOP.md).
+
+The 16-test suite includes database and project round trips, original geometry,
+complete original reports, raw routine comparisons, result table extraction,
+CSV/TSV/DXF import, CSV/DXF float round trips, SVG escaping, malformed imports,
+and atomic parameter validation. Desktop smoke checks additionally exercise
+pending-edit application, undo, both engines, project save/reopen, and rendering
+from the installed application with its packaged example and font. Windows and
+Linux packages passed these checks at `92658ad`; the final release's Actions run
+records the subsequent Mac compatibility and packaging checks.
+
+## Limits of the evidence
+
+The available original cases do not prove equivalence for every floating-point
+input or malformed historical project. RUNUP's observed arithmetic stops and
+20-point array effects are modeled explicitly without reproducing unsafe memory
+access. WHAFIS's active source paths are ported, with full report and selected raw
+routine comparisons. Additional combinations of obstruction geometry, marsh
+parameters, and degenerate input can be checked using the preserved probe tools.
+The CHAMP erosion sample covers two retreat profiles and two removal endpoints;
+four numerical geometry routines have direct original-byte fixtures. Database
+compatibility is constrained to the implemented unencrypted Jet 3/4 formats.
+
+New discrepancies should be minimized into an input fixture and captured against
+the original executable before changing numerical code. The engineering models
+retain their historical assumptions and limits; the new interface does not
+silently substitute a newer coastal model.
 
 The expanded RUNUP suite passed GitHub Actions on macOS, Linux, and Windows at commit `d656bbc`. The same 113-report and 6,209-routine suite also passed local address, undefined-behavior, and float-to-integer sanitizers.
 
@@ -56,12 +84,12 @@ The expanded RUNUP suite passed GitHub Actions on macOS, Linux, and Windows at c
 
 The `whafis` C++ program covers the complete active 4.0G source: surge preprocessing, inland and overwater fetch, dunes, buildings, vegetation and marshes, default plant lookup, above-surge sections, all report sections, and 100-/500-year wind options. The current 17-report suite includes all four supplied CHAMP reports, dunes, buildings, trees, marsh defaults and region weighting, surge changes, above-surge sections, comments, nondefault winds, and all four supplied transects under 500-year winds. It matches 154,499 bytes after excluding exactly three metadata lines: execution date, input filename, and output filename. Every remaining byte, including spacing and line endings, is compared. Coverage of a source path does not establish its numerical equivalence. The two previously failing 500-year cases are now included in the passing suite.
 
-The historical scratch-file conversions are performed in memory, with the same field widths and decimal precision. The included `MG.DAT` table eliminates an external runtime data-file requirement. One-based arrays have bounds checks, and each calculation owns its state. `tools/port_whafis.py` preserves the source control-flow labels while producing the initial readable C++ statements; binary-verified routines are maintained directly. Further simplification is part of the ongoing implementation.
+The historical scratch-file conversions are performed in memory, with the same field widths and decimal precision. The included `MG.DAT` table eliminates an external runtime data-file requirement. One-based arrays have bounds checks, and each calculation owns its state. `tools/port_whafis.py` preserves the source control-flow labels while producing the initial readable C++ statements; binary-verified routines are maintained directly. The larger routines retain source labels and original scalar names for direct differential review; the public C++ API, state ownership, input/output handling, and desktop workflow are independent of those labels.
 
 WHAFIS's retained `.trace` section names 17 original procedures. `tools/disassemble_whafis.py` locates these procedures without guessed boundaries. `tools/probe_whafis_routines.py` patches only temporary executable copies to call the original routines on binary inputs. The breaking-height routine SHBM, period-growth routine T, zero-moment wave-height routine HM0, and inland wave-height routine HIN each match 1,000 original binary32 results. All four are hand-maintained C++ routines. `tools/capture_whafis_state.py` captures original COMMON storage just before the report phase, allowing differences hidden by printed rounding to be inspected.
 
 The supplied Windows compiler retains some intermediate quantities in x87 registers across source assignments. The C++ implementation preserves those wider intermediates where established from the executable, including fetch-cell midpoint elevations and the breaking-height wavelength calculation. This prevents a one-hundredth-foot station discrepancy and a boundary flood-zone elevation discrepancy found in the supplied reports.
 
-Confirmed RUNUP changes between the printed listing and executable are recorded in [RUNUP historical differences](RUNUP_DIFFERENCES.md).
+Confirmed RUNUP changes between the printed listing and executable are recorded in [RUNUP historical differences](RUNUP_DIFFERENCES.md). The recovered WHAFIS version changes and compiler effects are described in [WHAFIS differences](WHAFIS_DIFFERENCES.md).
 
 The original WHAFIS x87 control word is `0x027f` (53-bit significand). FETCH keeps several averages, ratios, and drag terms in those registers across Fortran assignments; other quantities are explicitly stored to binary32 temporaries. For example, the old period is squared into a single-precision temporary before its wider cube is computed. Wind coefficients also use single-precision constants folded by the original compiler. The preserved storage boundaries resolve both remaining 500-year station-rounding differences. The direct-state probe now supports fetch coefficient and completed-fetch boundaries as well as the reporting boundary.

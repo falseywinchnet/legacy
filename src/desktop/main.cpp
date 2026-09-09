@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_sdlrenderer3.h"
+#include "paths.hpp"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <cstdio>
@@ -50,9 +51,12 @@ int main(int argc, char **argv) {
   auto &io = ImGui::GetIO();
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
   io.IniFilename = nullptr;
-  const auto font_path = std::filesystem::path(SDL_GetBasePath()) / "fonts/Inter.ttf";
-  ImFont *font = io.Fonts->AddFontFromFileTTF(font_path.string().c_str(), 17);
-  if (font) io.FontDefault = font;
+  const auto font_path =
+      legacy::desktop::utf8_path(SDL_GetBasePath()) / "fonts/Inter.ttf";
+  ImFont *font = io.Fonts->AddFontFromFileTTF(
+      legacy::desktop::utf8_text(font_path).c_str(), 17);
+  if (font)
+    io.FontDefault = font;
   ImFont *monospace = io.Fonts->AddFontDefault();
   ImGui::StyleColorsLight();
   auto &style = ImGui::GetStyle();
@@ -85,7 +89,7 @@ int main(int argc, char **argv) {
     if (smoke)
       app.smoke_test();
     else if (!open_path.empty())
-      app.open(std::filesystem::u8path(open_path));
+      app.open(legacy::desktop::utf8_path(open_path));
     int frames = 0;
     while (!app.finished()) {
       SDL_Event event;
@@ -95,7 +99,7 @@ int main(int argc, char **argv) {
             event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)
           app.request_quit();
         if (event.type == SDL_EVENT_DROP_FILE && event.drop.data)
-          app.request_open(std::filesystem::u8path(event.drop.data));
+          app.request_open(legacy::desktop::utf8_path(event.drop.data));
       }
       ImGui_ImplSDLRenderer3_NewFrame();
       ImGui_ImplSDL3_NewFrame();

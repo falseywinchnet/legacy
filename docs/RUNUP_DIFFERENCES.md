@@ -22,7 +22,7 @@ DEP(J)=NINT(RDEP(J)*100.)+ SIGN(1.0,RDEP(J))
 
 The executable at `0000:046a` calls `__FInint` after multiplication by 100, then **adds +1 unconditionally**, rather than using the sign of the elevation. For example, the original sample's -16.7-foot elevation becomes integer -1669, not -1671. This is confirmed by a data-memory capture after the original INPUT routine, using `tools/capture_runup_state.py`.
 
-The executable additionally maintains the REAL*4 array `RDEPP` at data offset `0x1974`, calculated as the unrounded input elevation times 100 plus 1. Its synthetic final point adds **1000** to this real coordinate, while the integer DEP final point adds **10000**. The sample's final real station is 141, while its last supplied station is 131. Later geometry uses additional real coordinates `RDTR` and `RDSL`; their full use is still being translated and checked. They should not be replaced with the older integer-coordinate formulas without inspecting the executable.
+The executable additionally maintains the REAL*4 array `RDEPP` at data offset `0x1974`, calculated as the unrounded input elevation times 100 plus 1. Its synthetic final point adds **1000** to this real coordinate, while the integer DEP final point adds **10000**. The sample's final real station is 141, while its last supplied station is 131. Later geometry uses additional real coordinates `RDTR` and `RDSL`; the native geometry follows these executable coordinates and is checked by the complete-report and intermediate-state fixtures. They should not be replaced with the older integer-coordinate formulas without inspecting the executable.
 
 ## Arithmetic and execution environment
 
