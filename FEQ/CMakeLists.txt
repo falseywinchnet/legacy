@@ -22,7 +22,7 @@ set_target_properties(feq_numerics PROPERTIES CXX_EXTENSIONS OFF)
 
 function(feq_checks target)
     if(MSVC)
-        target_compile_options(${target} PRIVATE /W4 /WX /permissive- /fp:strict)
+        target_compile_options(${target} PRIVATE /W4 /WX /permissive- /fp:strict /EHsc-)
     else()
         target_compile_options(${target} PRIVATE -Wall -Wextra -Werror -pedantic-errors
             -fstrict-aliasing -fno-fast-math -ffp-contract=off)

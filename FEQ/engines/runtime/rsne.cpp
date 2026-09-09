@@ -32,10 +32,6 @@
  static int n_nlcache;
  static hashentry **zot;
  static int colonseen;
- extern ftnlen f__typesize[];
-
- extern flag f__lquit;
- extern int f__lcount, nml_read;
  extern "C" int t_getc(Void);
 
 #ifdef KR_headers

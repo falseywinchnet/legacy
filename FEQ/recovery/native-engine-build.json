@@ -5,14 +5,14 @@
     {
       "build": "application",
       "test_count": 68,
-      "ctest_log_sha256": "0c9657c131a6f703cc70be9d0783c8cd50f485a39ca6efa8ae4820eb614a006f",
+      "ctest_log_sha256": "9f213e05d8b30957668454cba6dcec30d335f9fa23dc622056e431ad339ebf5e",
       "complete_reports": [
         {
           "path": "feqex1.out",
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
-          "actual_sha256": "2a37d39e4b4769b897e47414297ca521b7dd46851f04f2f3f7845610494c48af",
+          "actual_sha256": "76e654c0acd63a976330e2e152ee337634c7136346f3d23b54151bc027afa232",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -29,7 +29,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
-          "actual_sha256": "491f0c3c6f8c68f97531f518be435e6c4dd9cd070643ddc7a21b27388a380bb9",
+          "actual_sha256": "c219a3ac55767f145eb9de7b75be86e8d6576ff5bfb172408377827c64ab96b2",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -63,7 +63,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
-          "actual_sha256": "cc9cf8e62a13386e623168f2f6d5e44bd2eb2fbe113315c1756c7021f5d5f595",
+          "actual_sha256": "bd4540c48a20f87cfe10202b13cea1287daf22ce11503a29110b83606d9ea777",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -80,7 +80,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
-          "actual_sha256": "fe13374da50cb6bb657b1f67429fd095530b208b46ec82ea2bdeace77497d409",
+          "actual_sha256": "f482e3e24a07a3453a3bae8cb16ebbbd99b01e0b10867c6aaa266ff7eb0c9c45",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -114,7 +114,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
-          "actual_sha256": "93318444c1bd76411a0aaee7763184b767d2c88840d03721bde4ff42477e62e0",
+          "actual_sha256": "d19104711a570669236fcde8e8f9ece1a5f51b35cdb2a68427b8e8f6a7752667",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -131,7 +131,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
-          "actual_sha256": "6d67ec7363d035fbaa10d6ce675c881dc8f4a8dde6ebace79ee7b62d29222f60",
+          "actual_sha256": "a983541d12d55f1903ed24b8b64b2c8fa2dfaf5b1d131051e5eccec6440ee933",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -165,7 +165,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
-          "actual_sha256": "cf7d45b36618898f66e2b32f002440a25dcdbcf6522b2d5b508e6f612e2b4257",
+          "actual_sha256": "cd30aea0e1a1859efcb25a33f13190d91589cfd08fa45678075016b7d5259e7c",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -182,7 +182,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
-          "actual_sha256": "3f10a47240a7672a687d5f41ddb6e83e35078165613795c2ec0602201bd6898a",
+          "actual_sha256": "cc23ae0fa65b009568ff11a24459797456a95df213f40cb027c523ae3884ecd8",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -216,7 +216,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
-          "actual_sha256": "89917bba95bbf7b3c487eeb9434c3f3a66b5d1c623ab7a9cabe760a1271e4168",
+          "actual_sha256": "47fbcd401f90db82617e181943d6887a7fa4ba648691614caddb97f941a5de6c",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -233,7 +233,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
-          "actual_sha256": "562a0c5a5a7e7d3088e88bbe53df2b4d876913af984064b8388bc1f440c3805f",
+          "actual_sha256": "45309686ea3130ce19fbae3fc96a3aa4213ef828f3159f75ca3ced637ed23ffd",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -267,7 +267,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72",
-          "actual_sha256": "f6db758b7900445bcf796daacff9f918fd850c0cb1bd383f3000037deb45dbe7",
+          "actual_sha256": "621912ebeab04214372d12b4cc22b8acfdbd087b2d9520fbb949a08e7c16d5b8",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -284,7 +284,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade",
-          "actual_sha256": "40ac6cc9e5cbba6b94ab5c88fb4914ceebd2f49185b7d876652836fe07e6128d",
+          "actual_sha256": "615a62f915777e7e6485d6f14a34b8b9bb45bd164127248b78f7e08782b426b2",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -311,14 +311,14 @@
     {
       "build": "application-asan",
       "test_count": 68,
-      "ctest_log_sha256": "e2ae489a8730ae1e751662d1e2dfc5d64076aac7ead18d40a0a5493b48580c49",
+      "ctest_log_sha256": "e393bf8f34b9531b30094c2305577a3aadb2691b9f85a1e8e7476d38071c34d2",
       "complete_reports": [
         {
           "path": "feqex1.out",
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
-          "actual_sha256": "fd47737d6b9be9d74f140de74c0822fd7c557be687bd8d9409cc90be4994765c",
+          "actual_sha256": "2eb0320cafaea32de528a7028adf9fce37e151e20c19b94635b1a9162018284a",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -335,7 +335,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
-          "actual_sha256": "653464011fbbdf17dddcb9ed08b73afe85eeac87c35464d41227192767788f62",
+          "actual_sha256": "fa759aeca8b283405b56de65040d6866dce7c7a2397bdcb3234f3eb4488b480c",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -369,7 +369,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
-          "actual_sha256": "8a9850ecc5c59da0a27f5a12defb0c9f4472fcfeb242b5008d1b0d0198408b27",
+          "actual_sha256": "b1cab103d81fc5423cb00e1aa9024480cecc5c847cbcae0c5e0c211a04cd528d",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -386,7 +386,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
-          "actual_sha256": "07ec7c8622d7b7a314b11d929e04a00e17dbc16239cd224310d146d1b2cc28b1",
+          "actual_sha256": "003a55e2ee67b45bc0ea4434aa824ee73fd8129bc6d0101810ca09f5065ac0b9",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -420,7 +420,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
-          "actual_sha256": "06d30dcc1e155e12bac79a5d936dd64d26c5102af4a3a5234c55b07551641b18",
+          "actual_sha256": "ba4bbed3874ae7cdab0cfa16cb483ff6cb0d359ba02f6d9404ece1e3fb3cccb9",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -437,7 +437,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
-          "actual_sha256": "4edd0c70e8f00ee9620c119f3534aa7e43854fa78f473c9f61aceace47a544c1",
+          "actual_sha256": "b54610a754c6d5e1cb748cf19957513b48bf47199a4737f14e722a877cf3fac6",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -471,7 +471,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
-          "actual_sha256": "e6fddb35bcf6ccae01a01b597f49730d686409051833e3ba79079eecfbafc04d",
+          "actual_sha256": "806e04ebc5664bb5521246e099a4e5bfc308c3de87c66ccae7a9c70f1984cc0e",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -488,7 +488,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
-          "actual_sha256": "768d10d6c40f481ca41c63cd50331903767f9d6ed5fe39e72a5dcd2c31b10580",
+          "actual_sha256": "710408529405a3a664a06eeb007bb04f0ad4b92d9a456d88874e05619bf463de",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -522,7 +522,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
-          "actual_sha256": "1927dfc980b16d4242eb8e691cc1437c6a9f11568d733843caaa1bee31749432",
+          "actual_sha256": "cede4339bb74d544de8d4896b28ad0a19730ced455b4ee1b58e38c3772078a47",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -539,7 +539,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
-          "actual_sha256": "1f27269082273d0fe9bbdc0b22a934129d4e3bc29784d2ab66c9cc8b0b05f5eb",
+          "actual_sha256": "bf5f864ca2403ab1f4dc3657fcae3621bb52bae6533783caca012d96dea326af",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -573,7 +573,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72",
-          "actual_sha256": "5e49d6ea82b354e1eb7b7bf6ad08b153303b6743ab40f63e0822758772d416cb",
+          "actual_sha256": "0f34b905526d2db4c466ff08ecaa910cae24f3bd91da6681356e5834f1605ec2",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -590,7 +590,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade",
-          "actual_sha256": "a4e7d11a5f6a10929c4707e685a0d7a156321798414ba68f52b41b3a7a23d937",
+          "actual_sha256": "c34bda26f851c817479eb51992af8b115e8773c6bf0acf3632be2ecdfc1a5457",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -606,11 +606,11 @@
       "binaries": [
         {
           "program": "feq",
-          "sha256": "7e6ee4d2d1782b900310850b8424135e8b8a0946522882ff4f4c079d27682857"
+          "sha256": "390c4601ac04ff45ad639fa022c9c9e0a2c185442273124e092cd005f34435f2"
         },
         {
           "program": "fequtl",
-          "sha256": "9528ba0d95d72287bcb7d421a31708fb457203347d142a06c298f7cbf639930f"
+          "sha256": "9d51f29f16a28b367a74696bc0f655c3f8160db4a19822f1c16447f38ddfcc75"
         }
       ]
     }
@@ -618,11 +618,11 @@
   "inputs": [
     {
       "path": "CMakeLists.txt",
-      "sha256": "cfde536cbe8b1cc8d43aacd212187c0f76120c916d059d84ed4dd2a1761d036b"
+      "sha256": "b3244fe9bf4238c99047c8c34f8b9ba4bfec99588fa0f18651e321037c55f9d7"
     },
     {
       "path": "cmake/engines.cmake",
-      "sha256": "cc5788e6291239ba5999bec6828038fc83c9de8fdae8a7425246f023d6809d6b"
+      "sha256": "8f23d08a7275b2e0a7d0acad055f2775d783d063ac19cfe5c956ff9b5617836f"
     },
     {
       "path": "cmake/feq-sources.cmake",
@@ -1134,11 +1134,11 @@
     },
     {
       "path": "engines/runtime/endfile.cpp",
-      "sha256": "2240d901a5a8e1130ab3b9e9b0a16c647bcaf3d4f1bfe7b59beb263fc67a2547"
+      "sha256": "44deea23fd628690084989e2a45e8c03e8efe9315095ea5aa00e2824a26e4085"
     },
     {
       "path": "engines/runtime/err.cpp",
-      "sha256": "65b49d177bc165a77eab2e3efefc6cf9074cb3d5377863ecb1a7347585b7709e"
+      "sha256": "801a71cbf9b4c999dfef1a520989a274d26655f57cc723ae8af1cc49d33d3aae"
     },
     {
       "path": "engines/runtime/exit_.cpp",
@@ -1234,7 +1234,7 @@
     },
     {
       "path": "engines/runtime/lio.h",
-      "sha256": "d13b5bb1c0217dd0456251dbd8400fd2ac75910b0c135cc45a59d7dfc2181345"
+      "sha256": "be1748463a30db9a448af2b3931758ec4993b4c1450afb983b0d6cce80be2c72"
     },
     {
       "path": "engines/runtime/lread.cpp",
@@ -1282,7 +1282,7 @@
     },
     {
       "path": "engines/runtime/rsne.cpp",
-      "sha256": "50a68aa579b5186595a9009c3b6ec57f9b8b00ecdd5e08688c88df2edf4fab99"
+      "sha256": "48061a61e92bcf0e9588a562457a8f59836464eab19a0029f94e27d34901a17a"
     },
     {
       "path": "engines/runtime/s_cat.cpp",
@@ -1314,7 +1314,7 @@
     },
     {
       "path": "engines/runtime/sysdep1.h",
-      "sha256": "adb4392f31a4cf0f843ecd8b044b0c6e235281ee45953dd1198dc167a1a3431a"
+      "sha256": "4e57c168e787f96e205278099ab1b1aae2136fed4f81b89bcb0033410df81fa7"
     },
     {
       "path": "engines/runtime/typesize.cpp",
@@ -1350,7 +1350,7 @@
     },
     {
       "path": "engines/runtime/xwsne.cpp",
-      "sha256": "ba70d2d605d3edfcce5ab360159aebfc6c32f7238709b8a0cb75071318e09068"
+      "sha256": "f6058f390e852824a2a3560fcd02fc2686fc0dd342cb747e8348066fddc3ec1c"
     },
     {
       "path": "engines/support/format.hpp",
@@ -1604,5 +1604,11 @@
       "path": "src/weir_flow.cpp",
       "sha256": "23c1c2ca97144789bc9bd024e596638b6afabd75bd3f648b5d726d8a479d6309"
     }
-  ]
+  ],
+  "platform_integration": {
+    "initial_ci": "https://github.com/falseywinchnet/legacy/actions/runs/34372809433",
+    "macos": "All 68 checks pass.",
+    "linux": "Inherited large-file feature macros collided with glibc definitions; now guarded.",
+    "windows": "Five inherited I/O global declarations lacked C linkage; centralized in lio.h. C++ exception propagation explicitly enabled across C-linkage adapters."
+  }
 }

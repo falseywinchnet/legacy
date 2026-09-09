@@ -43,8 +43,12 @@
 #ifndef OFF_T
 #define OFF_T off64_t
 #endif
-#define _LARGEFILE_SOURCE
-#define _LARGEFILE64_SOURCE
+#ifndef _LARGEFILE_SOURCE
+#define _LARGEFILE_SOURCE 1
+#endif
+#ifndef _LARGEFILE64_SOURCE
+#define _LARGEFILE64_SOURCE 1
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #define FOPEN fopen64

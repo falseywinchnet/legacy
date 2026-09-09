@@ -27,7 +27,7 @@ extern "C" {
 #endif
 #endif
 
-extern char *f__r_mode[], *f__w_mode[];
+extern const char *f__r_mode[], *f__w_mode[];
 
 #ifdef KR_headers
 integer f_end(a) alist *a;

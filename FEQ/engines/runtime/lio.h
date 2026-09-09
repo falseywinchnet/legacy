@@ -66,6 +66,9 @@ extern int c_le(cilist*), (*l_getc)(void), (*l_ungetc)(int,FILE*);
 extern int l_read(ftnint*,char*,ftnlen,ftnint);
 extern integer e_rsle(void), e_wsle(void), s_wsne(cilist*);
 extern int z_rnew(void);
+extern ftnlen f__typesize[];
+extern flag f__lquit;
+extern int f__lcount, nml_read, f__Aquote;
 #endif
 extern ftnint L_len;
 extern int f__scale;

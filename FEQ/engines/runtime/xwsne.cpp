@@ -3,8 +3,6 @@
 #include "lio.h"
 #include "fmt.h"
 
-extern int f__Aquote;
-
  static VOID
 nl_donewrec(Void)
 {

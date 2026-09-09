@@ -208,7 +208,7 @@ f__nowreading(unit *x)
 {
 	OFF_T loc;
 	int ufmt, urw;
-	extern char *f__r_mode[], *f__w_mode[];
+	extern const char *f__r_mode[], *f__w_mode[];
 
 	if (x->urw & 1)
 		goto done;
@@ -241,7 +241,7 @@ f__nowwriting(unit *x)
 {
 	OFF_T loc;
 	int ufmt;
-	extern char *f__w_mode[];
+	extern const char *f__w_mode[];
 
 	if (x->urw & 2) {
 		if (x->urw & 1)

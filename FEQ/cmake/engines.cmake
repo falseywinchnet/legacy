@@ -8,7 +8,9 @@ function(feq_engine_checks target)
     target_compile_features(${target} PRIVATE cxx_std_20)
     set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
     if(MSVC)
-        target_compile_options(${target} PRIVATE /permissive- /fp:strict /bigobj)
+        # C-linkage adapters are C++ functions and may propagate checked errors.
+        # /EHsc- explicitly clears MSVC's implicit extern-C-is-nothrow assumption.
+        target_compile_options(${target} PRIVATE /permissive- /fp:strict /bigobj /EHsc-)
         target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
     else()
         target_compile_options(${target} PRIVATE -pedantic-errors -fstrict-aliasing
