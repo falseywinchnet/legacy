@@ -13,6 +13,12 @@ records that initial snapshot; subsequent source changes are tracked in Git.
 The original `LINSYS` implementation is omitted from FEQ's build because the
 independently verified profile-matrix solver supplies those operations.
 
+Thirty-one automatic work arrays of at least 64 KiB use scoped vectors. This
+includes FEQ's 744,000-integer input workspace, which would exceed the default
+Windows thread stack by itself. Their original types, element counts and
+indexing are unchanged. The arrays are value-initialized and freed when the
+routine returns; `provenance/heap-workspaces.json` records every conversion.
+
 `runtime/` is the required subset of the Netlib record I/O and intrinsic
 support library, compiled as C++20. It preserves Netlib's
 [license and warranty notice](runtime/NOTICE.txt). This code is linked into each

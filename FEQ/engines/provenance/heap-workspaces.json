@@ -1,0 +1,352 @@
+[
+  {
+    "file": "engines/feq/inputuf.cpp",
+    "before_sha256": "0ebd2af4e3fab88047fb17c86426209a0ad553c5a4a8d354747f6cca8016e72e",
+    "after_sha256": "bb7674678b634530b16522b745d7ca450dfbdbf893361f299267cb98d3cb7dfe",
+    "arrays": [
+      {
+        "function": "info2_",
+        "name": "work",
+        "type": "integer",
+        "elements": 744000,
+        "bytes": 2976000
+      },
+      {
+        "function": "info2_",
+        "name": "chksq",
+        "type": "integer",
+        "elements": 16800,
+        "bytes": 67200
+      }
+    ]
+  },
+  {
+    "file": "engines/feq/miscfeq.cpp",
+    "before_sha256": "1045062b00a96be76a89531d58eeb13e12e4998b94e4b95cc750b7c1b285a177",
+    "after_sha256": "fa6967ec80c812fb95d31eced0fbabd484c8fbdd7d41792abdee5d8a7ea32ba3",
+    "arrays": [
+      {
+        "function": "dmpeqs_",
+        "name": "a",
+        "type": "doublereal",
+        "elements": 10001,
+        "bytes": 80008
+      }
+    ]
+  },
+  {
+    "file": "engines/feq/newlookup.cpp",
+    "before_sha256": "24765bf7f97a395d93e6bb228f0aac58e56d40d1e9555d96821b7951acaf954e",
+    "after_sha256": "a2ad2cc22b78174020466dbd34f74ddbcb58fa40e5d8fdbb3c2107c602d97bb6",
+    "arrays": [
+      {
+        "function": "feq_gen_convert_to_43_d_",
+        "name": "qmat",
+        "type": "doublereal",
+        "elements": 53352,
+        "bytes": 426816
+      },
+      {
+        "function": "feq_gen_do_upgrade_xsec_tab_d_",
+        "name": "xst",
+        "type": "real",
+        "elements": 21978,
+        "bytes": 87912
+      }
+    ]
+  },
+  {
+    "file": "engines/feq/schematic.cpp",
+    "before_sha256": "4b4d9044d482c531d39cd43f03b3a35d4e2457e46206a4799fe79be66e531b03",
+    "after_sha256": "ca6d7228817c07559cdbcd5508e919587b700f833bed45d7e465cd0fd18a63e0",
+    "arrays": [
+      {
+        "function": "feq_gen_output_schematic_script_d_",
+        "name": "x",
+        "type": "doublereal",
+        "elements": 8400,
+        "bytes": 67200
+      },
+      {
+        "function": "feq_gen_output_schematic_script_d_",
+        "name": "y",
+        "type": "doublereal",
+        "elements": 8400,
+        "bytes": 67200
+      }
+    ]
+  },
+  {
+    "file": "engines/feq/tdtchk_free.cpp",
+    "before_sha256": "79d765220bd404ec270699e5d6b387b94f48f995f7d0d716bb1d600d5bd5d65d",
+    "after_sha256": "b374979381b832dd3922f2f9f496424ce3c0d03205698da2ea08d581507c8c05",
+    "arrays": [
+      {
+        "function": "feq_gen_tdtchk_free_d_",
+        "name": "list54",
+        "type": "char",
+        "elements": 453600,
+        "bytes": 453600
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/chanrat.cpp",
+    "before_sha256": "5178023d8a81b335f0169cad85a5d814a168688a6e4108edb379814bf19be99b",
+    "after_sha256": "a346a0950dc138b7973480620e503d493970873fedc3b60cddb58c707b62f3c9",
+    "arrays": [
+      {
+        "function": "chntab_",
+        "name": "qmat",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/culverta.cpp",
+    "before_sha256": "74d7b47be4f0dd1f7fd9989d6c4765803145aaa26c38299757ade54082fb8820",
+    "after_sha256": "37c4ffe4489afd54c1c5c4e2a0d55b8013d1c36193c811b8173923bc8ee2261a",
+    "arrays": [
+      {
+        "function": "culvrt_",
+        "name": "y2mat",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      },
+      {
+        "function": "culvrt_",
+        "name": "bnodid",
+        "type": "char",
+        "elements": 67200,
+        "bytes": 67200
+      },
+      {
+        "function": "culvrt_",
+        "name": "qmat",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/culvertd.cpp",
+    "before_sha256": "7a81390f5262a5630917d4b9e013d69627965128cd3c8d7b9eef5651e3b3aca4",
+    "after_sha256": "1144ecf0ef25c83a20a26e7faba48a6cc2b6b9fcecc598a282a8fcd1b39e2516",
+    "arrays": [
+      {
+        "function": "mkxvec_",
+        "name": "w",
+        "type": "doublereal",
+        "elements": 8400,
+        "bytes": 67200
+      },
+      {
+        "function": "mkxvec_",
+        "name": "x",
+        "type": "doublereal",
+        "elements": 8400,
+        "bytes": 67200
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/embank.cpp",
+    "before_sha256": "b13c2917f011bfb47c70ba3db93af49ac184d16cc282e9e30df5c7b399371ca6",
+    "after_sha256": "06a2f6c3f65083276eb9c272fb17e6ffd17ff20b08c2b448434975950786480e",
+    "arrays": [
+      {
+        "function": "embank_",
+        "name": "q",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/expcon.cpp",
+    "before_sha256": "820272bb42d6432006cfc0abd57eb38a5eb702a2ce3d5402227a322be419ec0b",
+    "after_sha256": "cbf646dccd3a9f6711f7fc89471428733bc15d93045bb215ac9108867ec3c99a",
+    "arrays": [
+      {
+        "function": "expcon_",
+        "name": "humat",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/newlookup.cpp",
+    "before_sha256": "24765bf7f97a395d93e6bb228f0aac58e56d40d1e9555d96821b7951acaf954e",
+    "after_sha256": "a2ad2cc22b78174020466dbd34f74ddbcb58fa40e5d8fdbb3c2107c602d97bb6",
+    "arrays": [
+      {
+        "function": "feq_gen_convert_to_43_d_",
+        "name": "qmat",
+        "type": "doublereal",
+        "elements": 53352,
+        "bytes": 426816
+      },
+      {
+        "function": "feq_gen_do_upgrade_xsec_tab_d_",
+        "name": "xst",
+        "type": "real",
+        "elements": 21978,
+        "bytes": 87912
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/orifice.cpp",
+    "before_sha256": "cfa7866c66d6f3eb054d28831cb75d49ac12bdcce1a1619af8a60d3ba9eb4043",
+    "after_sha256": "04e083d36dd464c1c8508e340f4add6e231bd7d8a454ca9cebd19b70b10bb34d",
+    "arrays": [
+      {
+        "function": "orifice_",
+        "name": "qmat",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/riserclv.cpp",
+    "before_sha256": "aeec638520fcdb0b8667d8ae41ae0733a690557354c2466df206eeafd8470481",
+    "after_sha256": "5125259ae5d2d8b783d92d86cd3302ceb360436fc4e40387a045a2aa9ff110a4",
+    "arrays": [
+      {
+        "function": "riserclv_",
+        "name": "qmat",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/tabfit.cpp",
+    "before_sha256": "dc44d72625019d8e34c89c59d4453faa117bd2f0d1f7a3046a8602ab78bd34d4",
+    "after_sha256": "9a3bbc5b10bf13ecf70504bbcc7ee1a3e3d9c1c0451f9dc585a03b760273145b",
+    "arrays": [
+      {
+        "function": "twodfit_",
+        "name": "qmat",
+        "type": "doublereal",
+        "elements": 53352,
+        "bytes": 426816
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/tracking.cpp",
+    "before_sha256": "c4abfdfb99d746e697c1e52489868498d0318873c789ed5ac5ed24168519fb14",
+    "after_sha256": "3b15e215b1728f8ce41b12b9665a62254686353df785b0c06b902c1ebc3cd761",
+    "arrays": [
+      {
+        "function": "feq_gen_find_md5_for_fequtl_input_d_",
+        "name": "message",
+        "type": "char",
+        "elements": 256000,
+        "bytes": 256000
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/ufgate.cpp",
+    "before_sha256": "53c0c4016826c3fada2429e6edd74211b578acb737bc8178860ebe35e846488e",
+    "after_sha256": "02c049fd3037caeff26776dc2067368f88cca510d29341c7e46dbd06635fd084",
+    "arrays": [
+      {
+        "function": "ufgate_",
+        "name": "qmat",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/ufgculv.cpp",
+    "before_sha256": "2083e6c02a4beff3cf711e476f4008eac05ad1a0b31a27aaf06ae413d9ec0bfc",
+    "after_sha256": "b440ad5e940610ef744b310a19c8304d53955d9122ffe9a8124092a94cfa7178",
+    "arrays": [
+      {
+        "function": "ufgculv_",
+        "name": "qmat",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/wspro.cpp",
+    "before_sha256": "3509bef551b6e015406f00769a7018433a59c8fda15572edde9ba2cc575197c4",
+    "after_sha256": "4d7db39dcce3d974941a898e51d8dbfd31a4d473271f84520b0c697368734a39",
+    "arrays": [
+      {
+        "function": "wpro14_",
+        "name": "q",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      },
+      {
+        "function": "wpro14_",
+        "name": "humat",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      },
+      {
+        "function": "feq_gen_wpro14_new_d_",
+        "name": "q",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      },
+      {
+        "function": "feq_gen_wpro14_new_d_",
+        "name": "humat",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      },
+      {
+        "function": "wproqz_",
+        "name": "q",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      },
+      {
+        "function": "wproqz_",
+        "name": "zdmat",
+        "type": "real",
+        "elements": 53001,
+        "bytes": 212004
+      }
+    ]
+  },
+  {
+    "file": "engines/fequtl/xsection.cpp",
+    "before_sha256": "6952330eef503523cb03bf7132c6a3091a79a55b866c7fa585fc478dd5b594e2",
+    "after_sha256": "a53494925aa2d2dc1f1a6f74cea8471186d4baf31e04c91ddd98784746cddb52",
+    "arrays": [
+      {
+        "function": "xstmak_",
+        "name": "bnodid",
+        "type": "char",
+        "elements": 67200,
+        "bytes": 67200
+      }
+    ]
+  }
+]

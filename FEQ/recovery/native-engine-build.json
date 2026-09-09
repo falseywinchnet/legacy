@@ -5,14 +5,14 @@
     {
       "build": "application",
       "test_count": 68,
-      "ctest_log_sha256": "9f213e05d8b30957668454cba6dcec30d335f9fa23dc622056e431ad339ebf5e",
+      "ctest_log_sha256": "080f9469e45a877b5ea21da4175d48fea366cfd1aa14311cebaf7c5d38fbedc7",
       "complete_reports": [
         {
           "path": "feqex1.out",
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
-          "actual_sha256": "76e654c0acd63a976330e2e152ee337634c7136346f3d23b54151bc027afa232",
+          "actual_sha256": "752790181ee46fde45a730c5c7ddd6629417c124f5ccf496a5b98a5662b143c6",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -29,7 +29,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
-          "actual_sha256": "c219a3ac55767f145eb9de7b75be86e8d6576ff5bfb172408377827c64ab96b2",
+          "actual_sha256": "33efbeee75ced2cfce7ed79d0868f3d52e099bf6c5499a73a797401baebf529b",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -63,7 +63,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
-          "actual_sha256": "bd4540c48a20f87cfe10202b13cea1287daf22ce11503a29110b83606d9ea777",
+          "actual_sha256": "21ec310e380497b498d3e30fd2884a4bd76bcb82fa4ed84f7891b78e281f5935",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -80,7 +80,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
-          "actual_sha256": "f482e3e24a07a3453a3bae8cb16ebbbd99b01e0b10867c6aaa266ff7eb0c9c45",
+          "actual_sha256": "af826958f8ef754b323b91144db161009e93731a403ff4d83a5bb2415fad305f",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -114,7 +114,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
-          "actual_sha256": "d19104711a570669236fcde8e8f9ece1a5f51b35cdb2a68427b8e8f6a7752667",
+          "actual_sha256": "309be3ed467634de5a0636a11b6189315969cebe4ae2d958f3b37c033a112133",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -131,7 +131,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
-          "actual_sha256": "a983541d12d55f1903ed24b8b64b2c8fa2dfaf5b1d131051e5eccec6440ee933",
+          "actual_sha256": "85f467dfeed504370452812f237c3f3f2e1dfcaeb12b323966a7016585e7906c",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -165,7 +165,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
-          "actual_sha256": "cd30aea0e1a1859efcb25a33f13190d91589cfd08fa45678075016b7d5259e7c",
+          "actual_sha256": "6837cd94e46d0ecbc1bd2c26dec35d514f7bae66697c4fa0d9abd6cb9a968b23",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -182,7 +182,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
-          "actual_sha256": "cc23ae0fa65b009568ff11a24459797456a95df213f40cb027c523ae3884ecd8",
+          "actual_sha256": "cea7e0078daea8b91a40e33ef5fe190b16d5ad1ea6eb4c0266df88aa4ca35dbe",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -216,7 +216,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
-          "actual_sha256": "47fbcd401f90db82617e181943d6887a7fa4ba648691614caddb97f941a5de6c",
+          "actual_sha256": "c5872207b2360394d37c25855e9ce4603968272dea7c7dc4bbdfa3968bf5f94d",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -233,7 +233,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
-          "actual_sha256": "45309686ea3130ce19fbae3fc96a3aa4213ef828f3159f75ca3ced637ed23ffd",
+          "actual_sha256": "d6d82b838981fe687eafd394052a2fca980facc852b1b68d9c870ba502896e27",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -267,7 +267,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72",
-          "actual_sha256": "621912ebeab04214372d12b4cc22b8acfdbd087b2d9520fbb949a08e7c16d5b8",
+          "actual_sha256": "6de00b9fd8fb1e4d5db59124a975cd8629f9038b2c21ab963fe1f46d5b05d936",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -284,7 +284,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade",
-          "actual_sha256": "615a62f915777e7e6485d6f14a34b8b9bb45bd164127248b78f7e08782b426b2",
+          "actual_sha256": "b1d381b1f293b2f8536b56f5d66b4e9b7f63b40e1acc0c3b615208456510c307",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -300,25 +300,25 @@
       "binaries": [
         {
           "program": "feq",
-          "sha256": "11d48f9fe900e67aca987192a1f3d4df2a51f4d81953434db9b794ef7c4bb4d9"
+          "sha256": "582ae672190d74a3599c0be25fc6b7e4fce52fd4c5bad65f326c9b0aba936bac"
         },
         {
           "program": "fequtl",
-          "sha256": "7f7e58b1c9043da89b9b667fb1f3c6ea8ed9879f2693d298758682d393eef491"
+          "sha256": "18de23a0e2ed35a70079bfeac303963bf802c8a3c2b91504b18cec1935959362"
         }
       ]
     },
     {
       "build": "application-asan",
       "test_count": 68,
-      "ctest_log_sha256": "e393bf8f34b9531b30094c2305577a3aadb2691b9f85a1e8e7476d38071c34d2",
+      "ctest_log_sha256": "802842e840680326f09fe6fd07fa873e2b82c8cb99eb400b62e58386a9b6a2da",
       "complete_reports": [
         {
           "path": "feqex1.out",
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
-          "actual_sha256": "2eb0320cafaea32de528a7028adf9fce37e151e20c19b94635b1a9162018284a",
+          "actual_sha256": "3223759ee2fa069627f0121a6d965937bb2dd4260092261854bd70d9f95d9b41",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -335,7 +335,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
-          "actual_sha256": "fa759aeca8b283405b56de65040d6866dce7c7a2397bdcb3234f3eb4488b480c",
+          "actual_sha256": "4bd4d3782e77f0d4c63c00de8922c054ed76d7bec176deebe6649bf6ef79ac85",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -369,7 +369,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
-          "actual_sha256": "b1cab103d81fc5423cb00e1aa9024480cecc5c847cbcae0c5e0c211a04cd528d",
+          "actual_sha256": "e6342d3317c6a4f23305aa3423b9cafc65d6d60cc56995261849060202897afe",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -386,7 +386,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
-          "actual_sha256": "003a55e2ee67b45bc0ea4434aa824ee73fd8129bc6d0101810ca09f5065ac0b9",
+          "actual_sha256": "50bd890ea73bd6f83ee387223631b8f4a2f404db7712cde464db13790b2ab4a1",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -420,7 +420,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
-          "actual_sha256": "ba4bbed3874ae7cdab0cfa16cb483ff6cb0d359ba02f6d9404ece1e3fb3cccb9",
+          "actual_sha256": "32faa430f409ac715bf068dd47c7d0e0fb1fdc330b4742c063a355b0be4019e8",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -437,7 +437,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
-          "actual_sha256": "b54610a754c6d5e1cb748cf19957513b48bf47199a4737f14e722a877cf3fac6",
+          "actual_sha256": "ece324e0ea7f121e86462306c9bdbe3a97869ba450a4ad0a0f783d400344e971",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -471,7 +471,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
-          "actual_sha256": "806e04ebc5664bb5521246e099a4e5bfc308c3de87c66ccae7a9c70f1984cc0e",
+          "actual_sha256": "9c82340fe8c4406e931e2845b8b81166cc719e7e70ca595a6350e2b6b03b7b6e",
           "expected_clock_fields": {
             "run_timestamp": 2,
             "elapsed_time": 2
@@ -488,7 +488,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
-          "actual_sha256": "710408529405a3a664a06eeb007bb04f0ad4b92d9a456d88874e05619bf463de",
+          "actual_sha256": "f580bfbc5d7347a64dff2e47fe61c5849b8845539894b58c2b2676fa955f6f65",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -522,7 +522,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
-          "actual_sha256": "cede4339bb74d544de8d4896b28ad0a19730ced455b4ee1b58e38c3772078a47",
+          "actual_sha256": "6ae7384cca6ee1ec57b1fd009bf26d10e05501ab97e523f945249c58234da86f",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -539,7 +539,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
-          "actual_sha256": "bf5f864ca2403ab1f4dc3657fcae3621bb52bae6533783caca012d96dea326af",
+          "actual_sha256": "3536b38da47e80a65b3fa16053dbe6ae0e1078e5657ed9e32629f07025717cb5",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -573,7 +573,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72",
-          "actual_sha256": "0f34b905526d2db4c466ff08ecaa910cae24f3bd91da6681356e5834f1605ec2",
+          "actual_sha256": "8caaa1804c2fd2a15b15c1fe49c772e5a9ba960422f5473ae6b77ecf7d6149e8",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -590,7 +590,7 @@
           "raw_equal": false,
           "clock_masked_equal": true,
           "expected_sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade",
-          "actual_sha256": "c34bda26f851c817479eb51992af8b115e8773c6bf0acf3632be2ecdfc1a5457",
+          "actual_sha256": "8ad0d2c6d89e2ba4685f789337239d7a67b46c80127ff4b13f2e1b9379a53a1e",
           "expected_clock_fields": {
             "run_timestamp": 1,
             "elapsed_time": 0
@@ -606,11 +606,11 @@
       "binaries": [
         {
           "program": "feq",
-          "sha256": "390c4601ac04ff45ad639fa022c9c9e0a2c185442273124e092cd005f34435f2"
+          "sha256": "97a32c8e09ab18495f2c896043aef158c6739169fbf84fd1215fe57959d46435"
         },
         {
           "program": "fequtl",
-          "sha256": "9d51f29f16a28b367a74696bc0f655c3f8160db4a19822f1c16447f38ddfcc75"
+          "sha256": "9cea5aadb6c96bd3a8fa127da16ceadfe1b24f5a71a0c1de33e4cd6ed8d3fb9c"
         }
       ]
     }
@@ -762,7 +762,7 @@
     },
     {
       "path": "engines/feq/inputuf.cpp",
-      "sha256": "0ebd2af4e3fab88047fb17c86426209a0ad553c5a4a8d354747f6cca8016e72e"
+      "sha256": "bb7674678b634530b16522b745d7ca450dfbdbf893361f299267cb98d3cb7dfe"
     },
     {
       "path": "engines/feq/iounits.cpp",
@@ -790,7 +790,7 @@
     },
     {
       "path": "engines/feq/miscfeq.cpp",
-      "sha256": "1045062b00a96be76a89531d58eeb13e12e4998b94e4b95cc750b7c1b285a177"
+      "sha256": "fa6967ec80c812fb95d31eced0fbabd484c8fbdd7d41792abdee5d8a7ea32ba3"
     },
     {
       "path": "engines/feq/mkdir_fun.cpp",
@@ -798,7 +798,7 @@
     },
     {
       "path": "engines/feq/newlookup.cpp",
-      "sha256": "24765bf7f97a395d93e6bb228f0aac58e56d40d1e9555d96821b7951acaf954e"
+      "sha256": "a2ad2cc22b78174020466dbd34f74ddbcb58fa40e5d8fdbb3c2107c602d97bb6"
     },
     {
       "path": "engines/feq/ntmatrix.cpp",
@@ -830,7 +830,7 @@
     },
     {
       "path": "engines/feq/schematic.cpp",
-      "sha256": "4b4d9044d482c531d39cd43f03b3a35d4e2457e46206a4799fe79be66e531b03"
+      "sha256": "ca6d7228817c07559cdbcd5508e919587b700f833bed45d7e465cd0fd18a63e0"
     },
     {
       "path": "engines/feq/select.cpp",
@@ -850,7 +850,7 @@
     },
     {
       "path": "engines/feq/tdtchk_free.cpp",
-      "sha256": "79d765220bd404ec270699e5d6b387b94f48f995f7d0d716bb1d600d5bd5d65d"
+      "sha256": "b374979381b832dd3922f2f9f496424ce3c0d03205698da2ea08d581507c8c05"
     },
     {
       "path": "engines/feq/timeman.cpp",
@@ -870,7 +870,7 @@
     },
     {
       "path": "engines/fequtl/chanrat.cpp",
-      "sha256": "5178023d8a81b335f0169cad85a5d814a168688a6e4108edb379814bf19be99b"
+      "sha256": "a346a0950dc138b7973480620e503d493970873fedc3b60cddb58c707b62f3c9"
     },
     {
       "path": "engines/fequtl/common.cpp",
@@ -890,7 +890,7 @@
     },
     {
       "path": "engines/fequtl/culverta.cpp",
-      "sha256": "74d7b47be4f0dd1f7fd9989d6c4765803145aaa26c38299757ade54082fb8820"
+      "sha256": "37c4ffe4489afd54c1c5c4e2a0d55b8013d1c36193c811b8173923bc8ee2261a"
     },
     {
       "path": "engines/fequtl/culvertb.cpp",
@@ -902,7 +902,7 @@
     },
     {
       "path": "engines/fequtl/culvertd.cpp",
-      "sha256": "7a81390f5262a5630917d4b9e013d69627965128cd3c8d7b9eef5651e3b3aca4"
+      "sha256": "1144ecf0ef25c83a20a26e7faba48a6cc2b6b9fcecc598a282a8fcd1b39e2516"
     },
     {
       "path": "engines/fequtl/culverte.cpp",
@@ -914,11 +914,11 @@
     },
     {
       "path": "engines/fequtl/embank.cpp",
-      "sha256": "b13c2917f011bfb47c70ba3db93af49ac184d16cc282e9e30df5c7b399371ca6"
+      "sha256": "06a2f6c3f65083276eb9c272fb17e6ffd17ff20b08c2b448434975950786480e"
     },
     {
       "path": "engines/fequtl/expcon.cpp",
-      "sha256": "820272bb42d6432006cfc0abd57eb38a5eb702a2ce3d5402227a322be419ec0b"
+      "sha256": "cbf646dccd3a9f6711f7fc89471428733bc15d93045bb215ac9108867ec3c99a"
     },
     {
       "path": "engines/fequtl/fequtl.cpp",
@@ -1018,7 +1018,7 @@
     },
     {
       "path": "engines/fequtl/newlookup.cpp",
-      "sha256": "24765bf7f97a395d93e6bb228f0aac58e56d40d1e9555d96821b7951acaf954e"
+      "sha256": "a2ad2cc22b78174020466dbd34f74ddbcb58fa40e5d8fdbb3c2107c602d97bb6"
     },
     {
       "path": "engines/fequtl/numrmath.cpp",
@@ -1030,7 +1030,7 @@
     },
     {
       "path": "engines/fequtl/orifice.cpp",
-      "sha256": "cfa7866c66d6f3eb054d28831cb75d49ac12bdcce1a1619af8a60d3ba9eb4043"
+      "sha256": "04e083d36dd464c1c8508e340f4add6e231bd7d8a454ca9cebd19b70b10bb34d"
     },
     {
       "path": "engines/fequtl/pumpitem.cpp",
@@ -1042,7 +1042,7 @@
     },
     {
       "path": "engines/fequtl/riserclv.cpp",
-      "sha256": "aeec638520fcdb0b8667d8ae41ae0733a690557354c2466df206eeafd8470481"
+      "sha256": "5125259ae5d2d8b783d92d86cd3302ceb360436fc4e40387a045a2aa9ff110a4"
     },
     {
       "path": "engines/fequtl/ritter.cpp",
@@ -1066,7 +1066,7 @@
     },
     {
       "path": "engines/fequtl/tabfit.cpp",
-      "sha256": "dc44d72625019d8e34c89c59d4453faa117bd2f0d1f7a3046a8602ab78bd34d4"
+      "sha256": "9a3bbc5b10bf13ecf70504bbcc7ee1a3e3d9c1c0451f9dc585a03b760273145b"
     },
     {
       "path": "engines/fequtl/tableid.cpp",
@@ -1082,23 +1082,23 @@
     },
     {
       "path": "engines/fequtl/tracking.cpp",
-      "sha256": "c4abfdfb99d746e697c1e52489868498d0318873c789ed5ac5ed24168519fb14"
+      "sha256": "3b15e215b1728f8ce41b12b9665a62254686353df785b0c06b902c1ebc3cd761"
     },
     {
       "path": "engines/fequtl/ufgate.cpp",
-      "sha256": "53c0c4016826c3fada2429e6edd74211b578acb737bc8178860ebe35e846488e"
+      "sha256": "02c049fd3037caeff26776dc2067368f88cca510d29341c7e46dbd06635fd084"
     },
     {
       "path": "engines/fequtl/ufgculv.cpp",
-      "sha256": "2083e6c02a4beff3cf711e476f4008eac05ad1a0b31a27aaf06ae413d9ec0bfc"
+      "sha256": "b440ad5e940610ef744b310a19c8304d53955d9122ffe9a8124092a94cfa7178"
     },
     {
       "path": "engines/fequtl/wspro.cpp",
-      "sha256": "3509bef551b6e015406f00769a7018433a59c8fda15572edde9ba2cc575197c4"
+      "sha256": "4d7db39dcce3d974941a898e51d8dbfd31a4d473271f84520b0c697368734a39"
     },
     {
       "path": "engines/fequtl/xsection.cpp",
-      "sha256": "6952330eef503523cb03bf7132c6a3091a79a55b866c7fa585fc478dd5b594e2"
+      "sha256": "a53494925aa2d2dc1f1a6f74cea8471186d4baf31e04c91ddd98784746cddb52"
     },
     {
       "path": "engines/runtime/backspac.cpp",
@@ -1608,7 +1608,304 @@
   "platform_integration": {
     "initial_ci": "https://github.com/falseywinchnet/legacy/actions/runs/34372809433",
     "macos": "All 68 checks pass.",
-    "linux": "Inherited large-file feature macros collided with glibc definitions; now guarded.",
-    "windows": "Five inherited I/O global declarations lacked C linkage; centralized in lio.h. C++ exception propagation explicitly enabled across C-linkage adapters."
+    "linux": "All 68 tests pass in Release and ASan/UBSan.",
+    "windows": "All objects link; first whole-model run stops before diagnostics. A 2976000-byte automatic workspace exceeded the default thread stack. 31 arrays of at least 64 KiB now use scoped heap storage; full Windows rerun pending.",
+    "second_ci": "https://github.com/falseywinchnet/legacy/actions/runs/34373463722"
+  },
+  "small_stack_validation": {
+    "stack_limit_bytes": 1048576,
+    "reports": [
+      {
+        "path": "feqex1.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "b5cd612314ba6ea60135a82059885746781f9b46ae31e50722a2a620903ade0e",
+        "actual_sha256": "867a2b6c894a3e003779f048bf621be5d9482d405f83f3ea83fb80c0f421ffad",
+        "expected_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "expected_bytes": 1693210,
+        "actual_bytes": 1693210
+      },
+      {
+        "path": "feqex1.out.spi",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "e07ff9b817ff8654a0be729651ed11676986cb1eb3995c3b8102689cababe6fc",
+        "actual_sha256": "eedecfefd581f85504299ca6d7abcee43495aa90635ad60152295beedb602a8d",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 1836,
+        "actual_bytes": 1836
+      },
+      {
+        "path": "feqex1.out.wsq",
+        "raw_equal": true,
+        "clock_masked_equal": true,
+        "expected_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
+        "actual_sha256": "361f28e51d49d77b1705753d02155279d25b51b04567dd63eb0539242cc2381b",
+        "expected_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 129731,
+        "actual_bytes": 129731
+      },
+      {
+        "path": "feqex2.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "2aea67f9bb2011c0092f16f709b4359d4bcc8019e18f08751f8ea3e4c48052db",
+        "actual_sha256": "73c11a6613f6b18be8337a5f25f299c2602d8c2818ffbf677b45681db0a98888",
+        "expected_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "expected_bytes": 876444,
+        "actual_bytes": 876444
+      },
+      {
+        "path": "feqex2.out.spi",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "a7c454d752c15dfa5958c5a049eefef590d95814ab473d3952be0aa5dfe95e60",
+        "actual_sha256": "142181b26192270ba01d219c0ddc10cd8b751a9bec75524beb1a2a45fb7adbfb",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 1132,
+        "actual_bytes": 1132
+      },
+      {
+        "path": "feqex2.out.wsq",
+        "raw_equal": true,
+        "clock_masked_equal": true,
+        "expected_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
+        "actual_sha256": "abff26eed05bb03fa89ae7ff25c789d6a7664b4de1ed8cf4aee00b4768a5784b",
+        "expected_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 15809,
+        "actual_bytes": 15809
+      },
+      {
+        "path": "feqex3.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "7577ed8612531158520b1c95951633ca3012d853d7416117c341166866e24b96",
+        "actual_sha256": "07b01fca6d01d8a7261f0a21d7fbb0061aa1626f8596d3c43de9619245e4e201",
+        "expected_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "expected_bytes": 1340610,
+        "actual_bytes": 1340610
+      },
+      {
+        "path": "feqex3.out.spi",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "63000793ae07154365e70e5c2e26f4338b7790ffec4c440fae5c23a76c73fd41",
+        "actual_sha256": "508a772e8fb915e0b93db53377dc6321288688fc42e962f628faa5e3253ff213",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 1132,
+        "actual_bytes": 1132
+      },
+      {
+        "path": "feqex3.out.wsq",
+        "raw_equal": true,
+        "clock_masked_equal": true,
+        "expected_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
+        "actual_sha256": "77e5e9ee106a27521c72920645004eb891a9df901c3f6be268e1178dcbd8f2f2",
+        "expected_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 23579,
+        "actual_bytes": 23579
+      },
+      {
+        "path": "feqex4.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "ab06b0096e69f14402edc2cec856197efb0443edc932276b9a9d087256751650",
+        "actual_sha256": "bbd3d8d22a4251f1d5dba9dd09883ae4f81f2904406d782ea9c4f800cf208952",
+        "expected_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 2,
+          "elapsed_time": 2
+        },
+        "expected_bytes": 1371793,
+        "actual_bytes": 1371793
+      },
+      {
+        "path": "feqex4.out.spi",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "b463ea3340ec7127449f605eb49c4c6427f01debf64deb2ec8abea493b800cc6",
+        "actual_sha256": "b37ea9ecbb9d9e589e8328f9fda68e4649b3da4a3a98a75231997cbe85431570",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 1132,
+        "actual_bytes": 1132
+      },
+      {
+        "path": "feqex4.out.wsq",
+        "raw_equal": true,
+        "clock_masked_equal": true,
+        "expected_sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff",
+        "actual_sha256": "e523e444e07abec66a4b52dab4b24f08fdbbedb3fa965e4f08b7b98df8ba5bff",
+        "expected_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 23579,
+        "actual_bytes": 23579
+      },
+      {
+        "path": "utlexm.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "f1bf2708bb36596ed5cdf96ec33d36d67eb0a76a0d2de8c9406060f77a01c2de",
+        "actual_sha256": "7563e30e7cfa8899eb90d01ff0b15901b834b9de0fd1cc8aa945a4f7a0f4ad29",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 775740,
+        "actual_bytes": 775740
+      },
+      {
+        "path": "utlexm.tab",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "9521addde65ca44e77990157fe51e39231ccf48795450c3d21c5cc9a6dcfe705",
+        "actual_sha256": "e5d5b9fceb8f1afc7588e7311d709040f375f57969b49ac38178eceae9f22e3c",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 135953,
+        "actual_bytes": 135953
+      },
+      {
+        "path": "utlexm.chx",
+        "raw_equal": true,
+        "clock_masked_equal": true,
+        "expected_sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af",
+        "actual_sha256": "26f5c8893a046dcb0ad96f69135dc2af4c4cdfc1a0fd342c040753b518a612af",
+        "expected_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 0,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 12998,
+        "actual_bytes": 12998
+      },
+      {
+        "path": "culvert.out",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "503febf6ca462e06e3e645c0630a3674a1e13c5ca94e74ad729bc4521ef24f72",
+        "actual_sha256": "7f48b853ed60c9a43702452bf7039eddf07e2e2a044dbd04ae86209ba301f349",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 141152,
+        "actual_bytes": 141152
+      },
+      {
+        "path": "culvert.tab",
+        "raw_equal": false,
+        "clock_masked_equal": true,
+        "expected_sha256": "fc77ccf86cba4e6cfbef85cc9ce927896cd8e3befad1391d2889b0dd6253fade",
+        "actual_sha256": "982a6dcee1fa6076f86531bd70ff6bba61746b62491e140236f13e5d761b9c58",
+        "expected_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "actual_clock_fields": {
+          "run_timestamp": 1,
+          "elapsed_time": 0
+        },
+        "expected_bytes": 6015,
+        "actual_bytes": 6015
+      }
+    ],
+    "platform": "macOS arm64",
+    "purpose": "Exercise both complete engines below a one-MiB thread stack after scoped workspace allocation."
   }
 }

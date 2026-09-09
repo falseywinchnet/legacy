@@ -3743,7 +3743,9 @@ on=\002,f5.3)";
     /* Local variables */
     doublereal northing;
     integer feq_gen_i_d_, j, k, n;
-    real q[53001]	/* was [151][351] */;
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_q(53001);
+    real *q = feq_heap_q.data()	/* was [151][351] */;
     extern /* Character */ VOID feq_gen_get_tabid_d_(char *, ftnlen, integer *);
     real feq_gen_rms_error_d_;
     char cq[8];

@@ -3637,7 +3637,10 @@ L100:
     extern /* Subroutine */ int feq_gen_strip_all_blanks_d_(char *, integer *, ftnlen);
     doublereal a, b, feq_gen_c_d_;
     integer feq_gen_i_d_, j;
-    doublereal m, x[8400], y[8400];
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<doublereal> feq_heap_x(8400);
+    std::vector<doublereal> feq_heap_y(8400);
+    doublereal m, *x = feq_heap_x.data(), *y = feq_heap_y.data();
     extern /* Subroutine */ int feq_gen_free_unit_d_(integer *, integer *), 
 	    feq_gen_do_dummy_branches_d_(integer *, integer *, integer *, integer *, 
 	    integer *, integer *, integer *, doublereal *);

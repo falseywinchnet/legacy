@@ -1999,7 +1999,9 @@ G AT:\002,f10.2)";
     integer dutab, udtab, wflag;
     real qfvec[151];
     integer xtabl, xtabr, nitem;
-    real humat[53001]	/* was [151][351] */;
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_humat(53001);
+    real *humat = feq_heap_humat.data()	/* was [151][351] */;
     char idout[32], hgrid[8];
     real power;
     char basis[8];

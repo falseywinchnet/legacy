@@ -39,7 +39,7 @@ def main():
         console = result.stdout+result.stderr
         (output/(case+'.console.log')).write_bytes(console)
         if result.returncode or b'runtime error:' in console or b'ERROR: AddressSanitizer' in console:
-            raise AssertionError(case+' failed; see '+str(output/(case+'.console.log'))+'\n'+console.decode(errors='replace'))
+            raise AssertionError(case+' failed (exit '+str(result.returncode)+'); see '+str(output/(case+'.console.log'))+'\n'+console.decode(errors='replace'))
         names = [case+'.out', case+'.out.spi', case+'.out.wsq'] if program == 'feq' else [case+'.out', case+'.tab']
         if case == 'utlexm':
             names.append('utlexm.chx')

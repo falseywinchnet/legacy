@@ -3937,7 +3937,10 @@ L160:
 
     /* Local variables */
     integer feq_gen_i_d_;
-    doublereal w[8400], x[8400];
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<doublereal> feq_heap_w(8400);
+    std::vector<doublereal> feq_heap_x(8400);
+    doublereal *w = feq_heap_w.data(), *x = feq_heap_x.data();
     integer ip;
     extern /* Subroutine */ int grule_(integer *, doublereal *, doublereal *);
 

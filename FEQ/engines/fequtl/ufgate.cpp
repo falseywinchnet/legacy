@@ -1029,7 +1029,9 @@ ssing.\002,\002 Check for version\002,/,11x,\002of file: TYPE5.TAB.\002)";
 #define itab (feq::BitView<integer>(&ftable_1, sizeof(ftable_1)))
     integer ipfd;
     char line[80];
-    real prec, qhat, herr, qmat[53001];
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_qmat(53001);
+    real prec, qhat, herr, *qmat = feq_heap_qmat.data();
     double drop;
     extern /* Subroutine */ int lktj_(integer *, real *, real *);
     real xbrk[351], rerr;

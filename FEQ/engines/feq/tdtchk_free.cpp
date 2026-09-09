@@ -829,7 +829,9 @@ e\002,\002 than 5 percent.\002)";
     real qfree;
     integer npair;
     real qtemp;
-    char list54[54*8400];
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<char> feq_heap_list54(453600);
+    char *list54 = feq_heap_list54.data();
     real rover;
     integer sysgn, wspro;
     extern /* Subroutine */ int sort2i_(integer *, integer *, integer *);

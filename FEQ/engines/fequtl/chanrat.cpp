@@ -1283,7 +1283,9 @@ at:\002,f10.2)";
     real fmid;
     integer feq_gen_n_gt_d_;
     char line[80];
-    real elev, xmid, qmat[53001]	/* was [151][351] */, drop, rerr;
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_qmat(53001);
+    real elev, xmid, *qmat = feq_heap_qmat.data()	/* was [151][351] */, drop, rerr;
     char zone[8];
 #define rtmp (feq::BitView<real>(&ftablea_1.itmp, sizeof(ftablea_1.itmp)))
     integer feq_gen_location_pfd_d_;

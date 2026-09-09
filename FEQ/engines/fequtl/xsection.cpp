@@ -13953,7 +13953,9 @@ ht in file name: \002,/,5x,a)";
 	    integer *, integer *, integer *, integer *, integer *, ftnlen, 
 	    ftnlen), feq_gen_os_file_style_d_(char *, ftnlen);
     integer begtab, chkbar, endtab, negtab[8400], bshape;
-    char bnodid[8*8400], nodeid[4], flname[6], flfile[64];
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<char> feq_heap_bnodid(67200);
+    char *bnodid = feq_heap_bnodid.data(), nodeid[4], flname[6], flfile[64];
     extern /* Subroutine */ int inline_(integer *, integer *, char *, ftnlen),
 	     feq_gen_maybe_add_home_d_(char *, ftnlen);
     extern integer gettbn_(integer *);

@@ -7152,7 +7152,9 @@ R   H4FWULR H4SWSOMDR\002)";
     real prec;
     extern /* Subroutine */ int lkta_(integer *, real *, real *);
     integer getq;
-    real herr, qhat, drop, qmat[53001]	/* was [151][351] */, rerr, xbrk[351],
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_qmat(53001);
+    real herr, qhat, drop, *qmat = feq_heap_qmat.data()	/* was [151][351] */, rerr, xbrk[351],
 	     dqeu;
     integer nrms;
     real feq_gen_xe_r_d_;

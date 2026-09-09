@@ -1396,7 +1396,9 @@ L9000:
 #define ftab (feq::BitView<real>(&ftable_1, sizeof(ftable_1)))
 #define itab (feq::BitView<integer>(&ftable_1, sizeof(ftable_1)))
     integer ipfd, npfd, ppfd;
-    doublereal qmat[53352]	/* was [152][351] */;
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<doublereal> feq_heap_qmat(53352);
+    doublereal *qmat = feq_heap_qmat.data()	/* was [152][351] */;
 #define rtmp (feq::BitView<real>(&ftablea_1.itmp, sizeof(ftablea_1.itmp)))
     doublereal huall[152];
     integer ftpup, maxrow;
@@ -4385,8 +4387,10 @@ d dalpha/dy from cubic-spline fit */
     real mal, mam, dkl, dkm;
     extern /* Character */ VOID feq_gen_get_string_from_ft_d_(char *, ftnlen, integer *
 	    );
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_xst(21978);
     real khl, khm, mar, dkr, qcl, dtl, khr, dtm, qcm, qcr, mql, mqm, dtr, mqr,
-	     xst[21978]	/* was [999][22] */;
+	     *xst = feq_heap_xst.data()	/* was [999][22] */;
     integer feq_gen_feql_select3_d_, feq_gen_feql_select4_d_;
 #define ftab (feq::BitView<real>(&ftable_1, sizeof(ftable_1)))
     real dmal, dmam;

@@ -8817,10 +8817,14 @@ at:\002,f10.4)";
     /* Subroutine */ int s_stop(char *, ftnlen);
 
     /* Local variables */
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_y2mat(53001);
     real yexit, z1true, z3psav, z3sav, z3sof, z44sav, z4old, z4sav, zdatum, 
-	    zsbrdf, y2mat[53001]	/* was [151][351] */, zrhufd;
+	    zsbrdf, *y2mat = feq_heap_y2mat.data()	/* was [151][351] */, zrhufd;
     doublereal easting;
-    char bnodid[8*8400], c5vec[5*3], char10[10], char4[4], char5[5], char6[6],
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<char> feq_heap_bnodid(67200);
+    char *bnodid = feq_heap_bnodid.data(), c5vec[5*3], char10[10], char4[4], char5[5], char6[6],
 	     char7[7], culcls[8], label[50], line[80], line120[120], losopt[8]
 	    , nodeid[4], cqfree[7], cwfrd[7], cboth[7], cqclv[7], tabid[16], 
 	    deptabid[16], begtabid[16], char16[16], apptabid[16], zone[8], 
@@ -8924,9 +8928,11 @@ at:\002,f10.4)";
 	    q3vsrd, tabtyp, feq_gen_type_d_, typflg, wflag, y3vstw, y2vsd, ftpbase, 
 	    ftpup, verbose, brpt[8]	/* was [8][1] */, negtab[8400], 
 	    feq_gen_default_tabvec_d_[13];
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_qmat(53001);
     real a1true, alp1t, ddrop, depcon, dfdr, drop, fdrdw, fdrop, fdvec[151], 
 	    freed, hcrest, hdatum, hhlim, hrdfd, hrdfu, huold, huvec[151], 
-	    k1true, pfdvec[351], power, qclv, qfree, qmat[53001]	/* 
+	    k1true, pfdvec[351], power, qclv, qfree, *qmat = feq_heap_qmat.data()	/* 
 	    was [151][351] */, qold, ratio, rdflow, sfac, y3limu;
 
     /* Fortran I/O blocks */

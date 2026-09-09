@@ -13770,7 +13770,9 @@ r\002,/,\002 somewhere in the input.  One or more tables may also be\002,\
 	    real *, integer *, integer *, integer *, integer *, char *, 
 	    ftnlen);
 #define rtmp (feq::BitView<real>(&ftablea_1.itmp, sizeof(ftablea_1.itmp)))
-    integer lvar, twon, work[744000];
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<integer> feq_heap_work(744000);
+    integer lvar, twon, *work = feq_heap_work.data();
     extern /* Subroutine */ int opin_(integer *, integer *, integer *, 
 	    integer *, integer *, integer *, integer *, integer *, integer *);
     extern integer feq_gen_feq_len_trim_d_(char *, ftnlen);
@@ -13781,7 +13783,9 @@ r\002,/,\002 somewhere in the input.  One or more tables may also be\002,\
     extern /* Subroutine */ int feq_gen_genscn_input_d_(integer *, integer *, integer *
 	    , integer *, integer *, integer *, integer *, integer *, integer *
 	    , real *, integer *, integer *);
-    integer ftknt, lbuff, ljunc, table, chksq[16800], feq_gen_base_node_vec_d_[8400];
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<integer> feq_heap_chksq(16800);
+    integer ftknt, lbuff, ljunc, table, *chksq = feq_heap_chksq.data(), feq_gen_base_node_vec_d_[8400];
     logical there;
     extern /* Subroutine */ int chkbr_(integer *, integer *, integer *, 
 	    integer *, integer *, integer *, integer *, integer *, real *, 

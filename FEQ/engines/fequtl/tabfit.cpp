@@ -47,7 +47,9 @@ static integer feq_gen_c_d_152 = 152;
 	    *, integer *, ftnlen);
     doublereal pfd[351];
     integer ihu, ipfd;
-    doublereal qmat[53352]	/* was [152][351] */, huall[152];
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<doublereal> feq_heap_qmat(53352);
+    doublereal *qmat = feq_heap_qmat.data()	/* was [152][351] */, huall[152];
 
 /*     + + + PURPOSE + + + */
 /*     Experiment with fitting 2-d tables of type 13. */

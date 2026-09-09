@@ -1904,7 +1904,9 @@ in sample=\002,i5)";
 #define itab (feq::BitView<integer>(&ftable_1, sizeof(ftable_1)))
     integer ipfd;
     char line[80];
-    real qhat, herr, qmat[53001]	/* was [151][351] */, drop;
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_qmat(53001);
+    real qhat, herr, *qmat = feq_heap_qmat.data()	/* was [151][351] */, drop;
     integer ihup;
     real xbrk[351], twef;
     integer nhup;

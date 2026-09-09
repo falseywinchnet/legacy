@@ -4192,7 +4192,9 @@ thnd Sd\002,\002  Correction Variable ID\002)";
     /* Subroutine */ int s_cat(char *, char **, integer *, integer *, ftnlen);
 
     /* Local variables */
-    doublereal a[10001];
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<doublereal> feq_heap_a(10001);
+    doublereal *a = feq_heap_a.data();
     integer feq_gen_i_d_, j, k, n, vn, neq, feq_gen_global_kmin_d_, feq_gen_global_kmax_d_;
     doublereal coef[50];
     integer kmin, kmax;

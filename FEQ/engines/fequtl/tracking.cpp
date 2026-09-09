@@ -300,7 +300,9 @@ L999:
     integer stdtmp;
     extern /* Subroutine */ int feq_gen_update_message_d_(char *, integer *, char *, 
 	    ftnlen, ftnlen);
-    char feq_gen_cmd_in_process_d_[8], command[8*44], message[256000];
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<char> feq_heap_message(256000);
+    char feq_gen_cmd_in_process_d_[8], command[8*44], *message = feq_heap_message.data();
 
     /* Fortran I/O blocks */
     static cilist feq_gen_io_d__9 = { 0, 0, 0, 0, 0 };

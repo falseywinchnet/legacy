@@ -2075,7 +2075,9 @@ les\002,\002 failed in WSPRO.\002)";
     /* Local variables */
     doublereal northing;
     integer feq_gen_i_d_;
-    real q[53001]	/* was [151][351] */;
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_q(53001);
+    real *q = feq_heap_q.data()	/* was [151][351] */;
     integer it;
     extern /* Subroutine */ int feq_gen_read_tabid_d_(integer *, char *, char *, 
 	    integer *, char *, integer *, ftnlen, ftnlen, ftnlen);
@@ -2099,7 +2101,9 @@ les\002,\002 failed in WSPRO.\002)";
     char hgrid[8], basis[8];
     real qfvec[151];
     integer terml[16];
-    real humat[53001]	/* was [151][351] */;
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_humat(53001);
+    real *humat = feq_heap_humat.data()	/* was [151][351] */;
     doublereal dpval[16];
     logical there;
     extern /* Subroutine */ int feq_gen_os_file_style_d_(char *, ftnlen), tabchk_(
@@ -3210,7 +3214,9 @@ nt when they\002,\002 should be.\002,/,10x,\002  First elevation=\002,f10.3\
     /* Local variables */
     doublereal northing;
     integer feq_gen_i_d_;
-    real q[53001]	/* was [151][351] */, hd;
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_q(53001);
+    real *q = feq_heap_q.data()	/* was [151][351] */, hd;
     integer it;
     extern /* Subroutine */ int feq_gen_read_tabid_d_(integer *, char *, char *, 
 	    integer *, char *, integer *, ftnlen, ftnlen, ftnlen);
@@ -3234,7 +3240,9 @@ nt when they\002,\002 should be.\002,/,10x,\002  First elevation=\002,f10.3\
     char hgrid[8], basis[8];
     real qfvec[151];
     integer terml[16];
-    real humat[53001]	/* was [151][351] */;
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_humat(53001);
+    real *humat = feq_heap_humat.data()	/* was [151][351] */;
     doublereal dpval[16];
     integer first;
     logical there;
@@ -4550,7 +4558,9 @@ nce for each\002,\002 input block below.\002)";
     integer feq_gen_i_d_, j;
     real k;
     integer n;
-    real q[53001], y;
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_q(53001);
+    real *q = feq_heap_q.data(), y;
     integer je, js;
     extern /* Subroutine */ int feq_gen_read_tabid_d_(integer *, char *, char *, 
 	    integer *, char *, integer *, ftnlen, ftnlen, ftnlen);
@@ -4571,7 +4581,9 @@ nce for each\002,\002 input block below.\002)";
     real qcoff;
     char hgrid[8], basis[8];
     integer qntab, total;
-    real oldzd, qcrit, zdmat[53001], zdvec[151], maxqs;
+    // Owned workspace avoids platform-dependent stack limits.
+    std::vector<real> feq_heap_zdmat(53001);
+    real oldzd, qcrit, *zdmat = feq_heap_zdmat.data(), zdvec[151], maxqs;
     doublereal shift;
     real power, qnorm;
     extern /* Subroutine */ int lktqc_(integer *, real *, real *);
