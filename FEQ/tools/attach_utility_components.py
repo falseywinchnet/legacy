@@ -240,6 +240,71 @@ def integrate_scalar_lookup(data):
     return declaration.encode()+edit_text(data,[(function.start_byte,function.end_byte,body)])
 
 
+def integrate_submerged_weir(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'stothq_']
+    if len(targets) != 1:
+        raise ValueError('Expected one STOTHQ definition.')
+    function = targets[0]
+    statements = [node for node in function.child_by_field_name('body').named_children if node.type != 'comment']
+    starts = [node for node in statements if node.type == 'expression_statement' and content(node,data) == 'knt = 0;']
+    returns = [node for node in statements if node.type == 'return_statement']
+    conditions = {}
+    for node in nodes(function):
+        if node.type == 'if_statement':
+            condition = content(node.child_by_field_name('condition'),data)
+            if condition in ('(*l == (float)0.)','(knt > 100)'):
+                conditions[condition] = content(node.child_by_field_name('consequence'),data)
+    if len(starts) != 1 or len(returns) != 1 or len(conditions) != 2:
+        raise ValueError('Expected STOTHQ arithmetic and diagnostic boundaries.')
+    replacement = ('// Original-verified STOTHQ iteration; retain historical diagnostic output.\n'
+        '    const int feq_weir_error = feq_submerged_weir(*hcwtab,*lcwtab,*subtab,*hlcrit,*l,*feq_gen_h_d_,\n'
+        '        *htail,*depth,grvcom_1.grav,grvcom_1.grav2,htot,q,&head,&qw,&qwold,&cw,&frac);\n'
+        '    if (feq_weir_error == 1) '+conditions['(*l == (float)0.)']+'\n'
+        '    if (feq_weir_error == 2) '+conditions['(knt > 100)']+'\n    ')
+    declaration = ('extern "C" int feq_submerged_weir(int,int,int,float,float,float,float,float,float,float,'
+                   'float*,float*,float*,float*,float*,float*,float*);\n')
+    return declaration.encode()+edit_text(data,[(starts[0].start_byte,returns[0].start_byte,replacement)])
+
+
+def integrate_weir_quadrature(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'sbfemb_']
+    if len(targets) != 1:
+        raise ValueError('Expected one SBFEMB definition.')
+    statements = [node for node in nodes(targets[0]) if node.type == 'expression_statement']
+    starts = [node for node in statements if content(node,data).startswith('dx = (feq_gen_r_d_1 =')]
+    ends = [node for node in statements if content(node,data) == 'qsub += qseg;']
+    if len(starts) != 1 or len(ends) != 1 or starts[0].parent != ends[0].parent:
+        raise ValueError('Expected one complete SBFEMB Simpson accumulation.')
+    replacement = ('// Qsegment = abs(XR-XL)*(Qleft+4*Qmid+Qright)/6.\n'
+        '        // Original 0x42ff92..0x42ffb5 retains the width and segment flow wide,\n'
+        '        // and multiplies by the REAL reciprocal at 0x56cf40 before adding QSUB.\n'
+        '        const double feq_width = (std::abs)(static_cast<double>(xr[iseg])-xl[iseg]);\n'
+        '        const double feq_flow = (static_cast<double>(qmid)*4.0+qleft)+qright;\n'
+        '        qsub += (feq_width*feq_flow)*static_cast<double>(0.1666666716337204F);')
+    return b'#include <cmath>\n'+edit_text(data,[(starts[0].start_byte,ends[0].end_byte,replacement)])
+
+
+def integrate_weir_drop_fractions(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'embank_']
+    if len(targets) != 1:
+        raise ValueError('Expected one EMBANK definition.')
+    statements = [node for node in nodes(targets[0]) if node.type == 'expression_statement']
+    targets = [node for node in statements if content(node,data) ==
+               'pfdvec[feq_gen_i_d_ - 1] = pow_dd(&feq_gen_d_d_1, &feq_gen_d_d_2);']
+    if len(targets) != 1:
+        raise ValueError('Expected the original EMBANK drop-fraction power.')
+    statement = targets[0]
+    replacement = ('// PFD = REAL((I-1)/(NFRAC-1)) ** REAL(POWER).\n'
+        '        // Original 0x431d10..0x431d4a uses a retained reciprocal and a\n'
+        '        // REAL argument store before the released REAL power kernel.\n'
+        '        pfdvec[feq_gen_i_d_ - 1] = feq::legacy_power(\n'
+        '            static_cast<float>(static_cast<double>(feq_gen_i_d_-1)*(1.0/static_cast<double>(nfrac-1))),power);')
+    return b'#include <feq/power.hpp>\n'+edit_text(data,[(statement.start_byte,statement.end_byte,replacement)])
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('source',type=Path);parser.add_argument('output',type=Path)
@@ -255,10 +320,11 @@ def main():
         elif path.name == 'critq.cpp':data = integrate_critical_speed_store(data)
         elif path.name == 'conduit.cpp':data = integrate_arch(data)
         elif path.name == 'fqshrftb.cpp':data = integrate_scalar_lookup(integrate_section_lookup(data))
-        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp'):
+        elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
+        if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp'):
             integrated_files.add(path.name)
         (output/path.name).write_bytes(data)
-    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp'}:
+    if integrated_files != {'xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp'}:
         raise ValueError('Prepared utility sources are missing required integration files.')
     manifest = {'status':'Research integration; full-model verification remains separate.',
                 'source_files':sources,'changes':[{'file':'xsection.cpp','function':'fbasel_',
@@ -279,9 +345,18 @@ def main():
                                  'tests/reference/section_first_moment/fequtl-manifest.json']},
                 {'file':'fqshrftb.cpp','function':'lktab_','component':'src/table_interpolation.cpp',
                  'scope':'Scalar table types 2, 3 and 4.',
-                 'verification':'tests/reference/function_tables/fequtl-manifest.json'}]}
+                 'verification':'tests/reference/function_tables/fequtl-manifest.json'},
+                {'file':'embank.cpp','function':'stothq_','component':'src/weir_flow.cpp',
+                 'scope':'Submerged-flow iteration with original lookup and diagnostic behavior.',
+                 'verification':'tests/reference/weir_flow/manifest.json'},
+                {'file':'embank.cpp','function':'sbfemb_',
+                 'scope':'Retained Simpson width/flow registers and original REAL reciprocal of six.',
+                 'evidence':'recovery/assembly/fequtl/_sbfemb_.asm, VA 0x42ff92..0x42ffb5.'},
+                {'file':'embank.cpp','function':'embank_','component':'src/power.cpp',
+                 'scope':'Original reciprocal and REAL power argument/result for partial free-drop fractions.',
+                 'evidence':'recovery/assembly/fequtl/_embank_.asm, VA 0x431d10..0x431d4a.'}]}
     (output/'verified-components.json').write_text(json.dumps(manifest,indent=2)+'\n')
-    print('Integrated independent section geometry/flux/properties, elevations, arch perimeter and section lookups.')
+    print('Integrated independent section geometry/flux/properties, elevations, arch perimeter, section lookups and submerged-weir iteration.')
 
 
 if __name__ == '__main__':main()

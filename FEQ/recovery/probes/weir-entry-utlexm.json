@@ -1,0 +1,78 @@
+{
+  "original_sha256": "031e9e753dfd66f1b7a7f160fffd9832c347dd493babe064e13e952628efe7b2",
+  "hooks": [
+    {
+      "routine": "_stothq_",
+      "limit": 4096,
+      "captures": [
+        {
+          "stack_offset": 4,
+          "dereference": true,
+          "bytes": 4
+        },
+        {
+          "stack_offset": 8,
+          "dereference": true,
+          "bytes": 4
+        },
+        {
+          "stack_offset": 12,
+          "dereference": true,
+          "bytes": 4
+        },
+        {
+          "stack_offset": 16,
+          "dereference": true,
+          "bytes": 4
+        },
+        {
+          "stack_offset": 20,
+          "dereference": true,
+          "bytes": 4
+        },
+        {
+          "stack_offset": 24,
+          "dereference": true,
+          "bytes": 4
+        },
+        {
+          "stack_offset": 28,
+          "dereference": true,
+          "bytes": 4
+        },
+        {
+          "stack_offset": 32,
+          "dereference": true,
+          "bytes": 4
+        },
+        {
+          "stack_offset": 36,
+          "dereference": true,
+          "bytes": 4
+        },
+        {
+          "stack_offset": 40,
+          "dereference": true,
+          "bytes": 4
+        }
+      ]
+    },
+    {
+      "routine": "_stothq_",
+      "offset": 16,
+      "limit": 1,
+      "captures": [
+        {
+          "symbol": "_ftable_",
+          "offset": 0,
+          "bytes": 100000
+        },
+        {
+          "symbol": "_grvcom_",
+          "offset": 0,
+          "bytes": 16
+        }
+      ]
+    }
+  ]
+}

@@ -13,3 +13,4 @@
 #include <feq/storage.hpp>
 #include <feq/table_interpolation.hpp>
 #include <feq/trigonometry.hpp>
+#include <feq/weir_flow.hpp>

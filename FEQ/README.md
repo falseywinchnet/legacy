@@ -91,6 +91,14 @@ bits agreeing with the corresponding FEQ fixtures. The fixtures are in
 [`tests/reference/arch_perimeter/`](tests/reference/arch_perimeter/) and
 [`tests/reference/trigonometry/`](tests/reference/trigonometry/).
 
+The submerged-weir iteration matches **2,901 direct FEQUTL calls**: 2,691
+distinct calls captured from the supplied example and 210 added cases around
+the low/high-head table boundary, free-flow bypass, and complete submergence.
+Both the returned total head and discharge match every bit. The integration
+also restores the original Simpson accumulation and REAL power call used to
+construct drop fractions. The fixtures and their original trace provenance are
+in [`tests/reference/weir_flow/`](tests/reference/weir_flow/).
+
 The independent single precision decimal converter matches **all 2,360 direct
 original-executable cases**, including every finite exponent field, subnormals,
 signed zeros, halfway values and their adjacent floats, infinities, and NaNs.

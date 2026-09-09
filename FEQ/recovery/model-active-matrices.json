@@ -1,6 +1,6 @@
 {
   "scope": "All active matrix words at every PROFAC call in each supplied FEQ model. Unused COMMON capacity is not compared.",
-  "native_executable_sha256": "e3c2cf105bded968f0ee2a7d2012a73e4bc5e5f0a75736ee95d96de35b81c35a",
+  "native_executable_sha256": "9ea030a9612fb4afc4a80c161ec4c0a64d561d3613e2680025d2399336db54be",
   "models": [
     {
       "scope": "All active solver inputs; no tolerance or masked words.",
@@ -164,7 +164,7 @@
       },
       "native_run_manifest": {
         "purpose": "C++ research execution; equivalence requires a separate comparison.",
-        "created_utc": "2026-09-09T07:51:16.367727+00:00",
+        "created_utc": "2026-09-09T08:09:02.835557+00:00",
         "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
         "legacy_path_links": false,
         "inputs": [
@@ -303,12 +303,12 @@
           {
             "path": "bin/feq",
             "bytes": 1319480,
-            "sha256": "e3c2cf105bded968f0ee2a7d2012a73e4bc5e5f0a75736ee95d96de35b81c35a"
+            "sha256": "9ea030a9612fb4afc4a80c161ec4c0a64d561d3613e2680025d2399336db54be"
           },
           {
             "path": "bin/fequtl",
-            "bytes": 1408416,
-            "sha256": "8b7972e770de3c649124c62983df5f5377ae5f672c858c9f13766307d3b31ee6"
+            "bytes": 1407440,
+            "sha256": "198bb7e1ec9eb73a532086f7f4e5f1c70c8e43b9604d9c2e73d6844f8ed8993c"
           }
         ],
         "cases": [
@@ -320,18 +320,18 @@
               "feqex1.out"
             ],
             "returncode": 0,
-            "elapsed_seconds": 0.31309337518177927,
+            "elapsed_seconds": 0.3729552498552948,
             "process_completed": true,
             "outputs": [
               {
                 "path": "feqex1.out",
                 "bytes": 1693210,
-                "sha256": "567302d3c966eea5b945b28fa6124e5ea3f1e305b6109ce23f5adb3575e63563"
+                "sha256": "d2b32340af92f66faaa5c028c2abbe841a2e5e3e0905f5c2fb0bc7575956d356"
               },
               {
                 "path": "feqex1.out.spi",
                 "bytes": 1836,
-                "sha256": "186b4894b987eeb55e1d0aef0d27904f435d4d7a79a98df187b6e32fc99431cd"
+                "sha256": "cbb3bdbc4b0a5a4510cc53685523e881f89cbdf1c7c07940fa51055ee15f598f"
               },
               {
                 "path": "feqex1.out.wsq",
@@ -506,7 +506,7 @@
       },
       "native_run_manifest": {
         "purpose": "C++ research execution; equivalence requires a separate comparison.",
-        "created_utc": "2026-09-09T07:51:16.738549+00:00",
+        "created_utc": "2026-09-09T08:09:03.264905+00:00",
         "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
         "legacy_path_links": false,
         "inputs": [
@@ -645,12 +645,12 @@
           {
             "path": "bin/feq",
             "bytes": 1319480,
-            "sha256": "e3c2cf105bded968f0ee2a7d2012a73e4bc5e5f0a75736ee95d96de35b81c35a"
+            "sha256": "9ea030a9612fb4afc4a80c161ec4c0a64d561d3613e2680025d2399336db54be"
           },
           {
             "path": "bin/fequtl",
-            "bytes": 1408416,
-            "sha256": "8b7972e770de3c649124c62983df5f5377ae5f672c858c9f13766307d3b31ee6"
+            "bytes": 1407440,
+            "sha256": "198bb7e1ec9eb73a532086f7f4e5f1c70c8e43b9604d9c2e73d6844f8ed8993c"
           }
         ],
         "cases": [
@@ -662,18 +662,18 @@
               "feqex2.out"
             ],
             "returncode": 0,
-            "elapsed_seconds": 0.271151791093871,
+            "elapsed_seconds": 0.25252220779657364,
             "process_completed": true,
             "outputs": [
               {
                 "path": "feqex2.out",
                 "bytes": 876444,
-                "sha256": "a6bb6f7cf55c3a56b1c7e6896c2efa6c57e3666626af66208e8e0fa031210e16"
+                "sha256": "e6735f647894659b335e28da22e084bddeac5b6ad6033c52e9a3e3899356f25f"
               },
               {
                 "path": "feqex2.out.spi",
                 "bytes": 1132,
-                "sha256": "b023e368f16c30c1c14201b96f10f2c05a0a3627c7bd2be673253eed01f96c39"
+                "sha256": "e52ff2e43a170527284bf4b52e9251afb065a41cb11c84e7273255ebc7150567"
               },
               {
                 "path": "feqex2.out.wsq",
@@ -848,7 +848,7 @@
       },
       "native_run_manifest": {
         "purpose": "C++ research execution; equivalence requires a separate comparison.",
-        "created_utc": "2026-09-09T07:51:17.071259+00:00",
+        "created_utc": "2026-09-09T08:09:03.576327+00:00",
         "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
         "legacy_path_links": false,
         "inputs": [
@@ -987,12 +987,12 @@
           {
             "path": "bin/feq",
             "bytes": 1319480,
-            "sha256": "e3c2cf105bded968f0ee2a7d2012a73e4bc5e5f0a75736ee95d96de35b81c35a"
+            "sha256": "9ea030a9612fb4afc4a80c161ec4c0a64d561d3613e2680025d2399336db54be"
           },
           {
             "path": "bin/fequtl",
-            "bytes": 1408416,
-            "sha256": "8b7972e770de3c649124c62983df5f5377ae5f672c858c9f13766307d3b31ee6"
+            "bytes": 1407440,
+            "sha256": "198bb7e1ec9eb73a532086f7f4e5f1c70c8e43b9604d9c2e73d6844f8ed8993c"
           }
         ],
         "cases": [
@@ -1004,18 +1004,18 @@
               "feqex3.out"
             ],
             "returncode": 0,
-            "elapsed_seconds": 0.2566159169655293,
+            "elapsed_seconds": 0.2571699998807162,
             "process_completed": true,
             "outputs": [
               {
                 "path": "feqex3.out",
                 "bytes": 1340610,
-                "sha256": "6beba92fceb98f1a79614d35c4e626c975176568558ba1179fb7cd5370f3f622"
+                "sha256": "6ec8831643958459e1af2de3bc0184ea7b04f906ca9db2b7078004723b5b7f5d"
               },
               {
                 "path": "feqex3.out.spi",
                 "bytes": 1132,
-                "sha256": "2f37715b098399163a13e3e4fa12ebc75b3c124916a35db33b191f673f1db5ed"
+                "sha256": "5885b211cfa4717b6115aef163bbcc72d1408e485ec3bd423d7751a127381dad"
               },
               {
                 "path": "feqex3.out.wsq",
@@ -1190,7 +1190,7 @@
       },
       "native_run_manifest": {
         "purpose": "C++ research execution; equivalence requires a separate comparison.",
-        "created_utc": "2026-09-09T07:51:17.387722+00:00",
+        "created_utc": "2026-09-09T08:09:03.890580+00:00",
         "host": "macOS-26.5-arm64-arm-64bit-Mach-O",
         "legacy_path_links": false,
         "inputs": [
@@ -1329,12 +1329,12 @@
           {
             "path": "bin/feq",
             "bytes": 1319480,
-            "sha256": "e3c2cf105bded968f0ee2a7d2012a73e4bc5e5f0a75736ee95d96de35b81c35a"
+            "sha256": "9ea030a9612fb4afc4a80c161ec4c0a64d561d3613e2680025d2399336db54be"
           },
           {
             "path": "bin/fequtl",
-            "bytes": 1408416,
-            "sha256": "8b7972e770de3c649124c62983df5f5377ae5f672c858c9f13766307d3b31ee6"
+            "bytes": 1407440,
+            "sha256": "198bb7e1ec9eb73a532086f7f4e5f1c70c8e43b9604d9c2e73d6844f8ed8993c"
           }
         ],
         "cases": [
@@ -1346,18 +1346,18 @@
               "feqex4.out"
             ],
             "returncode": 0,
-            "elapsed_seconds": 0.227163374889642,
+            "elapsed_seconds": 0.25634124991483986,
             "process_completed": true,
             "outputs": [
               {
                 "path": "feqex4.out",
                 "bytes": 1371793,
-                "sha256": "8be5e288d997c2590e82672c59177d43a0526b52617335419a18e42aac3eaf40"
+                "sha256": "b1a94724c6b1ef642c6026ec4e5b4154f10a21438340ff580632b56fdd46d452"
               },
               {
                 "path": "feqex4.out.spi",
                 "bytes": 1132,
-                "sha256": "ca47e00672587a9fe6bbcf7432a2e1c6d118aa60bbde8eddce9ca9140428855f"
+                "sha256": "d1b50be615cb178016ab0128bd1b5ca12ee8ec8093fd63160c2656ec9618158e"
               },
               {
                 "path": "feqex4.out.wsq",
@@ -1371,5 +1371,5 @@
       "differences": []
     }
   ],
-  "created_utc": "2026-09-09T07:53:12.331550+00:00"
+  "created_utc": "2026-09-09T08:13:28.642511+00:00"
 }

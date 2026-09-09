@@ -298,3 +298,34 @@ the existing FEQ fixtures; separate utility manifests retain that evidence.
 `attach_utility_components.py` verifies that every required target source is
 present before reporting a successful integration. The normal CMake build
 also compiles all public headers together to detect conflicting declarations.
+
+## Submerged-weir iteration
+
+`probe_weir_original.py` installs three linear coefficient tables and uses a
+bounded loop in a temporary PROGRAM driver to call the unchanged `STOTHQ`.
+Input data starts with binary32 gravity and twice gravity, then three tables
+(32-bit row count followed by binary32 argument/value pairs). Each case contains
+seven binary32 inputs: critical head ratio, breadth, piezometric head, tailwater
+head, approach depth, initial total head, and initial free flow. Each output is
+the returned total head followed by discharge, as two unmodified binary32 words.
+
+```sh
+FEQ/build/python312/bin/python FEQ/tools/probe_weir_original.py \
+  --native FEQ/build/core/feq_weir_probe --output FEQ/build/weir-recapture
+```
+
+The committed fixture JSON supplies 2,691 distinct model calls and 210 explicit
+coefficient-boundary and submergence cases. Its source trace manifest records
+the original hook locations, argument captures and unchanged model-output
+comparison. The original trace captures the first 4,096 calls; the fixtures
+select calls that use its initial coefficient-table snapshot. This is a bounded
+component capture, not a claim to cover every call in the full example.
+
+`weir_flow.cpp` retains the original reciprocal-depth multiplication, wide
+iteration head and flow, REAL lookup ratios, and both REAL square-root stores.
+The compatibility adapter retains the generated table lookup and original
+diagnostic formats. The caller's Simpson integration also retains its wide
+segment values and the original REAL reciprocal of six. Drop-fraction generation
+uses the already verified REAL power kernel, including the original ratio
+rounding before the call. Whole-output comparisons remain separate from these
+component fixtures.
