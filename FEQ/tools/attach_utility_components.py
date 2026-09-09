@@ -380,6 +380,49 @@ def integrate_steady_residuals(data):
     return b'#include <feq/steady_residual.hpp>\n'+edit_text(data,edits)
 
 
+def integrate_steady_profile(data):
+    targets = [function for function in functions(data)
+               if content(identifier(function.child_by_field_name('declarator')),data) == 'sfpsbe_']
+    if len(targets) != 1:raise ValueError('Expected one SFPSBE definition.')
+    body = targets[0].child_by_field_name('body');edits = [];promoted = set()
+    wide_names = {'feq_gen_r_d_1','el','er','qn','froude','yr'}
+    for node in nodes(body):
+        if node.type == 'declaration' and content(node.child_by_field_name('type'),data) == 'real':
+            declarators = node.children_by_field_name('declarator')
+            if not declarators or any(item.type != 'identifier' for item in declarators):continue
+            names = [content(item,data) for item in declarators]
+            wide = [name for name in names if name in wide_names]
+            if not wide:continue
+            narrow = [name for name in names if name not in wide_names]
+            replacement = ('real '+', '.join(narrow)+';\n    ' if narrow else '')+'double '+', '.join(wide)+';'
+            edits.append((node.start_byte,node.end_byte,replacement));promoted.update(wide)
+    replacements = {
+        'er':'er = feq::steady_specific_energy(yr,*q,sberc_1.ar,sberc_1.alpr,grvcom_1.grav2);',
+        'el':'el = feq::steady_specific_energy(yl,*q,al,alpl,grvcom_1.grav2);',
+    }
+    energies = 0;normal_flows = 0;diagnostics = 0
+    for node in nodes(body):
+        if node.type != 'expression_statement':continue
+        statement = content(node,data)
+        if statement.startswith('er = ') and statement != 'er = el;':
+            edits.append((node.start_byte,node.end_byte,replacements['er']));energies += 1
+        elif statement.startswith('el = '):
+            edits.append((node.start_byte,node.end_byte,replacements['el']));energies += 1
+        elif statement == 'qn = sberc_1.kr * sqrt(sbold);':
+            edits.append((node.start_byte,node.end_byte,'qn = feq::steady_normal_flow(sberc_1.kr,sbold);'));normal_flows += 1
+        elif statement == 'qn = kl * sqrt(sb);':
+            edits.append((node.start_byte,node.end_byte,'qn = feq::steady_normal_flow(kl,sb);'));normal_flows += 1
+        elif statement.startswith('do_fio(') and '&yr' in statement:
+            replacement = 'float feq_profile_yr = static_cast<float>(yr);\n        '+statement.replace('&yr','&feq_profile_yr')
+            edits.append((node.start_byte,node.end_byte,replacement));diagnostics += 1
+    if promoted != wide_names or energies != 2 or normal_flows != 2 or diagnostics != 1:
+        raise ValueError('SFPSBE register/store structure changed.')
+    comment = ('// SFPSBE retains YR after FST at 0x426aa6, energy in x87 spills, and\n'
+        '// wide differences/Froude ratios. Only the error diagnostic stores YR\n'
+        '// into a REAL temporary; normal-flow square roots store REAL before K.\n')
+    return comment.encode()+edit_text(data,edits)
+
+
 def integrate_culvert_losses(data):
     definitions = {content(identifier(function.child_by_field_name('declarator')),data):function
                    for function in functions(data)}
@@ -471,7 +514,7 @@ def main():
         elif path.name == 'fqshrftb.cpp':data = integrate_scalar_lookup(integrate_section_lookup(data))
         elif path.name == 'embank.cpp':data = integrate_weir_drop_fractions(integrate_weir_quadrature(integrate_submerged_weir(data)))
         elif path.name == 'rootfind.cpp':data = integrate_roots(data)
-        elif path.name == 'culvertc.cpp':data = integrate_steady_residuals(data)
+        elif path.name == 'culvertc.cpp':data = integrate_steady_profile(integrate_steady_residuals(data))
         elif path.name == 'culvertd.cpp':data = integrate_culvert_losses(data)
         if path.name in ('xsection.cpp','critq.cpp','conduit.cpp','fqshrftb.cpp','embank.cpp','rootfind.cpp','culvertc.cpp','culvertd.cpp'):
             integrated_files.add(path.name)
@@ -517,9 +560,9 @@ def main():
                  'scope':'Modified false position, wide callback results, mutable trial arguments and exact failure outputs.',
                  'verification':['tests/reference/root_solver/manifest.json','tests/reference/root_solver_regflt/manifest.json',
                      'tests/reference/root_solver_rgf/manifest.json','tests/reference/root_solver_rgf5/manifest.json']},
-                {'file':'culvertc.cpp','functions':['sber_','sper_'],'component':'src/steady_residual.cpp',
+                {'file':'culvertc.cpp','functions':['sber_','sper_','sfpsbe_'],'component':'src/steady_residual.cpp',
                  'scope':'Wide velocity, energy, eddy loss and normalized residuals after original section lookup.',
-                 'verification':'tests/reference/steady_residual/manifest.json'},
+                 'verification':['tests/reference/steady_residual/manifest.json','tests/reference/steady_profile/manifest.json']},
                 {'file':'culvertd.cpp','functions':['degcon_','rqvstw_','fcd123_'],'component':'src/culvert_loss.cpp',
                  'scope':'Discharge curves, contraction adjustment and RQVSTW velocity head loss.',
                  'verification':['tests/reference/culvert_loss/manifest.json','tests/reference/culvert_coefficient/manifest.json']},

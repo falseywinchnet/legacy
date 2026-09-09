@@ -118,6 +118,8 @@ if(BUILD_TESTING)
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_root_fixture.py $<TARGET_FILE:feq_root_probe> --adapter)
     add_test(NAME steady_residual_original_bytes COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_steady_residual_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
+    add_test(NAME steady_profile_original_bytes COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_steady_profile_fixture.py $<TARGET_FILE:feq_energy_section_probe>)
     foreach(method regflt rgf rgf5)
         add_test(NAME root_${method}_original_bytes COMMAND ${Python3_EXECUTABLE}
             ${CMAKE_CURRENT_SOURCE_DIR}/tests/check_root_fixture.py $<TARGET_FILE:feq_root_probe> --${method})

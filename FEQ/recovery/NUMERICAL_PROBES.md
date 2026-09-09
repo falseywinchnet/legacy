@@ -437,3 +437,22 @@ These kernels are integrated into the utility research engine. They do not
 complete whole-program equivalence: four supplied utility numerical outputs
 still differ. The complete FEQ report and active-matrix checks remain separate
 and are rerun on the integrated binaries.
+
+`probe_steady_profile_original.py` captures 432 additional cases for SFPSBE's
+specific-energy and normal-flow instruction sequences. Both copied sequences
+retain their complete original bytes, including internal branches; the manifest
+records each RVA interval and instruction hash. The wrapper only supplies the
+original frame and COMMON values. The energy sequence receives the wide initial
+ZDN-ZBR difference. The normal-flow sequence includes the positive-slope test,
+the REAL square-root store, and the wide multiplication by conveyance.
+
+The SFPSBE integration retains YR, ER, EL, QN, Froude ratios and temporary
+differences as binary64. Initial YR has an FST REAL vector output at 0x426aa6,
+but the unrounded register survives in an x87 spill and supplies the energy
+calculation. The initial-depth error message separately stores a REAL copy at
+0x426ae5. The energy and normal-flow expressions call the verified independent
+helpers; table lookups, root callbacks, traversal, COMMON stores and diagnostics
+retain their existing interfaces. The first supplied utility report difference
+moves from line 1732 to line 1785, and the first culvert table difference moves
+from line 10 to line 55. Those are progress measurements, not acceptance of the
+remaining utility outputs.

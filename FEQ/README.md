@@ -76,6 +76,13 @@ lookup uses a lower barrel height. See
 [`src/steady_residual.cpp`](src/steady_residual.cpp) and
 [`tests/reference/steady_residual/`](tests/reference/steady_residual/).
 
+Specific energy and normal-flow calculations also match **432 original
+instruction-sequence cases**. `SFPSBE` retains the initial depth difference,
+velocity, energy and Froude ratio in wide registers, while its normal-flow
+square roots store REAL before multiplication. The integration preserves
+those distinctions and the separate REAL value used by the initial-depth
+error message. See [`tests/reference/steady_profile/`](tests/reference/steady_profile/).
+
 Contraction adjustment and culvert velocity-head loss match **528 direct
 original-executable cases**. These check the full-width coefficient return,
 the caller's float store, and the head-loss result at three scales and around

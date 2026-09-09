@@ -62,7 +62,16 @@ int main(int argc, char** argv) {
     try {
         const bool critical_only = argc == 2 && std::strcmp(argv[1],"--critical-flow") == 0;
         const bool steady = argc == 2 && std::strcmp(argv[1],"--steady") == 0;
+        const bool profile = argc == 2 && std::strcmp(argv[1],"--profile") == 0;
         while (std::cin.peek() != std::char_traits<char>::eof()) {
+            if (profile) {
+                float fields[8]{};
+                for (int i = 0; i < 8; ++i) { fields[i] = std::bit_cast<float>(read_word()); }
+                const double depth = static_cast<double>(fields[0])-fields[1];
+                write_double(feq::steady_specific_energy(depth,fields[2],fields[3],fields[4],fields[5]));
+                write_double(feq::steady_normal_flow(fields[7],fields[6]));
+                continue;
+            }
             const std::uint32_t table_type = read_word();
             const float depth = std::bit_cast<float>(read_word());
             const feq::EnergySectionRow lower = read_row();
